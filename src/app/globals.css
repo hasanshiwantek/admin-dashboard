@@ -134,7 +134,7 @@ a {
 
 /* Buttons (Optional Custom Tailwind Styling) */
 .btn-outline-primary {
-  @apply text-[#2c83ec] border border-[#2c83ec] font-semibold rounded px-4 py-[6px] text-lg transition-all duration-200 cursor-pointer;
+  @apply text-[#2c83ec] border border-[#2c83ec] font-semibold rounded px-4 py-[8px] text-lg transition-all my-1 duration-200 cursor-pointer;
   background-color: transparent;
 }
 

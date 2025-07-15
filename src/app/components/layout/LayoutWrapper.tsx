@@ -6,12 +6,13 @@ interface LayoutWrapperProps {
   children: React.ReactNode;
 }
 
-const LayoutWrapper: React.FC<LayoutWrapperProps> = () => {
+const LayoutWrapper: React.FC<LayoutWrapperProps> = ({ children }) => {
   return (
     <>
-      <div>
-        <Header />
-        <SideBar/>
+      <Header />
+      <div className="flex">
+        <SideBar />
+        <main className="flex-1">{children}</main>
       </div>
     </>
   );
