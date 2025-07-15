@@ -26,7 +26,7 @@ export const SideBar = () => {
             <Collapsible key={item.title} className="group/collapsible">
               <SidebarMenuItem>
                 <CollapsibleTrigger asChild>
-                  <SidebarMenuButton className="group w-full flex items-center p-8 cursor-pointer text-2xl">
+                  <SidebarMenuButton className="group w-full flex items-center p-8 cursor-pointer text-xl">
                     {item.icon && <item.icon  className="mr-2 !h-8 !w-8" />}
                     {item.title }
                     <ChevronDown  className="ml-auto !h-7 !w-7 transition-transform group-data-[state=open]:rotate-180" />
@@ -36,7 +36,7 @@ export const SideBar = () => {
                   <SidebarMenuSub className="ml-16">
                     {item.children.map((child) => (
                       <SidebarMenuSubItem key={child.title}>
-                        <Link href={child.url} className="!text-[14px] !leading-12">{child.title}</Link>
+                        <Link href={child.url} className="!text-[13px] !leading-12 cursor-pointer ">{child.title}</Link>
                       </SidebarMenuSubItem>
                     ))}
                   </SidebarMenuSub>
@@ -46,7 +46,7 @@ export const SideBar = () => {
           ) : (
             <SidebarMenuItem key={item.title}>
               <Link href={item.url || "#"}>
-                <SidebarMenuButton className="p-8 cursor-pointer text-2xl">
+                <SidebarMenuButton className="p-8 cursor-pointer text-xl">
                   {item.icon && <item.icon  className="mr-2 !h-8 !w-8 " />}
                   {item.title}  
                 </SidebarMenuButton>
