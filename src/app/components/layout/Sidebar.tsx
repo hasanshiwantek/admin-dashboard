@@ -18,12 +18,12 @@ import { ChevronDown } from "lucide-react"
 
 export const SideBar = () => {
   return (
-    <div className="w-[26.8rem]  bg-[rgb(3,16,51)] text-white border-t-2 border-[#2d3748] ">
+    <div className="w-[26.8rem] h-full max-h-full overflow-y-auto overflow-x-hidden bg-[rgb(3,16,51)] text-white border-t-2 border-[#2d3748] custom-scroll">
     <SidebarProvider>
       <SidebarMenu>
         {sidebarData.map((item) =>
           item.children ? (
-            <Collapsible key={item.title} defaultOpen className="group/collapsible">
+            <Collapsible key={item.title} className="group/collapsible">
               <SidebarMenuItem>
                 <CollapsibleTrigger asChild>
                   <SidebarMenuButton className="group w-full flex items-center p-8 cursor-pointer text-2xl">
@@ -33,7 +33,7 @@ export const SideBar = () => {
                   </SidebarMenuButton>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
-                  <SidebarMenuSub className="ml-20">
+                  <SidebarMenuSub className="ml-16">
                     {item.children.map((child) => (
                       <SidebarMenuSubItem key={child.title}>
                         <Link href={child.url} className="!text-[14px] !leading-12">{child.title}</Link>

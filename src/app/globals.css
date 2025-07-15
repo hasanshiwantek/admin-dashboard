@@ -219,3 +219,21 @@ img {
     @apply text-[1.1rem];
   }
 }
+
+/* Only show scrollbar when scrolling */
+.custom-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+.custom-scroll:hover {
+  scrollbar-color: #4a5568 transparent;
+}
+.custom-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+.custom-scroll::-webkit-scrollbar-thumb {
+  background-color: transparent;
+}
+.custom-scroll:hover::-webkit-scrollbar-thumb {
+  background-color: #4a5568;
+}
