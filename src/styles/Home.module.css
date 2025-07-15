@@ -10,12 +10,12 @@
   width: 100%;
 }
 .step {
-  display: flex;
+  /* display: flex; */
   align-items: flex-start;
   margin-bottom: 20px;
 }
 
-.step i {
+.step i svg{
   margin-right: 10px;
   margin-top: 4px;
   font-size: 16px;
