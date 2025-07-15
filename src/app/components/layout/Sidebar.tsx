@@ -18,7 +18,7 @@ import { ChevronDown } from "lucide-react"
 
 export const SideBar = () => {
   return (
-    <div className="w-[20rem] h-screen bg-[rgb(3,16,51)] text-white">
+    <div className="w-[20rem] bg-[rgb(3,16,51)] text-white">
     <SidebarProvider>
       <SidebarMenu>
         {sidebarData.map((item) =>
