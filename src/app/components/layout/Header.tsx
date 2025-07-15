@@ -33,15 +33,15 @@ const Header: React.FC = () => {
       <div className="flex items-center gap-2 !ml-10 ">
         <div className="flex justify-start items-center gap-10  ">
           <div className="!p-2 hover:bg-[#2d3748] cursor-pointer">
-            <img src="/logo.svg" alt="Logo" className="h-10  cursor-pointer " />
+            <img src="/logo.svg" alt="Logo" className="h-8  cursor-pointer " />
           </div>
           <div ref={companyRef} className="relative">
             {/* Toggle Button */}
             <div
-              className="flex justify-between gap-15 !px-4 items-center border-r-2 border-l-2 border-[#2d3748] h-[5rem] cursor-pointer hover:bg-[#2d3748]"
+              className="flex justify-between gap-22 !px-4 items-center border-r-2 border-l-2 border-[#2d3748] h-[5rem] cursor-pointer hover:bg-[#2d3748]"
               onClick={() => setCompanyOpen(!companyOpen)}
             >
-              <button className="text-white text-2xl font-semibold py-1 rounded-md cursor-pointer">
+              <button className="text-white text-xl font-semibold py-1 rounded-md cursor-pointer">
                 CTS Point Inc
               </button>
               <IoIosArrowDown
