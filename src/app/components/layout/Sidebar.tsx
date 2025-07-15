@@ -32,7 +32,7 @@ export const SideBar = () => {
                     <ChevronDown  className="ml-auto !h-7 !w-7 transition-transform group-data-[state=open]:rotate-180" />
                   </SidebarMenuButton>
                 </CollapsibleTrigger>
-                <CollapsibleContent>
+                <CollapsibleContent >
                   <SidebarMenuSub className="ml-16">
                     {item.children.map((child) => (
                       <SidebarMenuSubItem key={child.title}>

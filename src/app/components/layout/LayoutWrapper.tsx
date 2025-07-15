@@ -10,7 +10,7 @@ const LayoutWrapper: React.FC<LayoutWrapperProps> = ({ children }) => {
   return (
      <>
       <Header />
-      <div className="flex  h-[calc(100vh-5.5rem)] overflow-hidden">
+      <div className="flex h-[calc(100vh-5.5rem)] overflow-hidden">
         <div className="w-[26.8rem] shrink-0 h-full overflow-y-auto">
           <SideBar />
         </div>
