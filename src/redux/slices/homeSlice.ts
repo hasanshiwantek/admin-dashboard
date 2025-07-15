@@ -24,6 +24,7 @@ export const fetchOrdersByStatus = createAsyncThunk(
   }
 );
 
+// 2. Initial State
 const initialState = {
   metrics: null,
   statistics: null,
@@ -32,6 +33,7 @@ const initialState = {
   error: null as string | null,
 };
 
+// 3. Slice
 const homeSlice = createSlice({
   name: 'home',
   initialState,
