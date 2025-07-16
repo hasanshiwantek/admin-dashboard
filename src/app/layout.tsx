@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import LayoutWrapper from "./components/layout/LayoutWrapper";
+import Providers from "./components/Providers";
 import { Cabin } from "next/font/google";
 
 const cabin = Cabin({
@@ -20,8 +21,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${cabin.className} antialiased`}>
-        <LayoutWrapper>{children}</LayoutWrapper>
+      <body
+        className={`${cabin.className} antialiased`}
+      >
+        <Providers>
+          <LayoutWrapper>
+            {children}
+          </LayoutWrapper>
+        </Providers>
       </body>
     </html>
   );
