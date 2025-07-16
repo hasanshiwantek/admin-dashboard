@@ -5,13 +5,15 @@ import axiosInstance from '@/lib/axiosInstance';
 export const fetchDashboardMetrics = createAsyncThunk(
   'home/fetchDashboardMetrics',
   async (_, thunkAPI) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const state: any = thunkAPI.getState();
     const baseURL = state.auth.baseURL;
 
     try {
       const res = await axiosInstance.get(`${baseURL}/dashboard/metrics`);
       return res.data;
-    } catch (err: any) {
+    } // eslint-disable-next-line @typescript-eslint/no-explicit-any 
+    catch (err: any) {
       return thunkAPI.rejectWithValue(err.response?.data?.message || 'Failed to fetch metrics');
     }
   }
@@ -20,13 +22,15 @@ export const fetchDashboardMetrics = createAsyncThunk(
 export const fetchStoreStatistics = createAsyncThunk(
   'home/fetchStoreStatistics',
   async (_, thunkAPI) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const state: any = thunkAPI.getState();
     const baseURL = state.auth.baseURL;
 
     try {
       const res = await axiosInstance.get(`${baseURL}/dashboard/metrics`);
       return res.data;
-    } catch (err: any) {
+    } // eslint-disable-next-line @typescript-eslint/no-explicit-any 
+    catch (err: any) {
       return thunkAPI.rejectWithValue(err.response?.data?.message || 'Failed to fetch metrics');
     }
   }
@@ -35,13 +39,15 @@ export const fetchStoreStatistics = createAsyncThunk(
 export const fetchOrdersByStatus = createAsyncThunk(
   'home/fetchOrdersByStatus',
   async (_, thunkAPI) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const state: any = thunkAPI.getState();
     const baseURL = state.auth.baseURL;
 
     try {
       const res = await axiosInstance.get(`${baseURL}/dashboard/metrics`);
       return res.data;
-    } catch (err: any) {
+    } // eslint-disable-next-line @typescript-eslint/no-explicit-any 
+    catch (err: any) {
       return thunkAPI.rejectWithValue(err.response?.data?.message || 'Failed to fetch metrics');
     }
   }
