@@ -38,7 +38,6 @@ const getBaseUrl = () => {
 
 const axiosInstance = axios.create({
   baseURL: getBaseUrl(),
-  // Remove headers block here
 });
 
 axiosInstance.interceptors.request.use((config) => {

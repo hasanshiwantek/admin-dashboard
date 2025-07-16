@@ -17,7 +17,6 @@ export const fetchDashboardMetrics = createAsyncThunk(
   }
 );
 
-
 export const fetchStoreStatistics = createAsyncThunk(
   'home/fetchStoreStatistics',
   async (_, thunkAPI) => {

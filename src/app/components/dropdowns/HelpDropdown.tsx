@@ -37,7 +37,7 @@ export default function HelpDropdown() {
 
       {/* Dropdown */}
       {open && (
-        <div className="absolute right-0 top-[150%] w-[350px] bg-white  text-black rounded-md shadow-lg z-50 !px-8 !py-6">
+        <div className="absolute right-0 top-[130%] w-[350px] bg-white  text-black rounded-md shadow-lg z-50 !px-8 !py-6  ">
           <div>
             <h2 className="!text-[#5d5b66] !text-3xl !my-4">Help</h2>
           </div>
