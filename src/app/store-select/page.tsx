@@ -1,5 +1,5 @@
 "use client";
-
+import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import { setBaseURL } from "@/redux/slices/configSlice";
@@ -14,6 +14,14 @@ export default function StoreSelectPage() {
     dispatch(setBaseURL(baseURL));
     router.push("/dashboard");
   };
+
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
+
+useEffect(() => {
+  if (!isAuthenticated) {
+    router.push("/login");
+  }
+}, [isAuthenticated]);
 
   if (!websites || websites.length === 0) {
     return <p>No websites found for this user.</p>;
