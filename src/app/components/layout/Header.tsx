@@ -1,17 +1,15 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
-import styles from "@/style/Header/Header.module.css";
-import { Bell, HelpCircle } from "lucide-react";
+import styles from "@/styles/Header/Header.module.css"
 import { IoIosArrowDown } from "react-icons/io";
 import { IoSearchOutline } from "react-icons/io5";
-import { FaRegCircleUser } from "react-icons/fa6";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import HelpDropdown from "../dropdowns/HelpDropdown";
 import BellDropdown from "../dropdowns/BellDropdown";
 import UserDropdown from "../dropdowns/UserDropdown";
 
 const Header: React.FC = () => {
-  const [companyOpen, setCompanyOpen] = useState(false);
+  const [companyOpen, setCompanyOpen] = useState<boolean>(false);
   const companyRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -41,7 +39,7 @@ const Header: React.FC = () => {
               className="flex justify-between gap-22 !px-4 items-center border-r-2 border-l-2 border-[#2d3748] h-[5rem] cursor-pointer hover:bg-[#2d3748]"
               onClick={() => setCompanyOpen(!companyOpen)}
             >
-              <button className="text-white text-xl font-semibold py-1 rounded-md cursor-pointer">
+              <button className="text-white text-xl font-medium py-1 rounded-md cursor-pointer">
                 CTS Point Inc
               </button>
               <IoIosArrowDown
@@ -71,8 +69,8 @@ const Header: React.FC = () => {
 
       {/* Center: Search Input */}
       <div
-        className="flex justify-start items-center bg-[#1e2a3f] text-center !px-6 !py-4 rounded-xl
-             focus-within:ring-3 focus-within:ring-blue-200 focus-within:border-blue-200 border border-[#2c2c2c] transition"
+        className="flex justify-start items-center bg-[#1e2a3f] text-center !px-4 !py-3 rounded-md
+             focus-within:ring-3 focus-within:ring-blue-200 focus-within:border-blue-200 border border-[#2c2c2c] transition hover:border-blue-200"
       >
         <i>
           <IoSearchOutline
@@ -84,27 +82,27 @@ const Header: React.FC = () => {
         <input
           type="text"
           placeholder=" Search products, orders, customers, or navigate to"
-          className="w-[40rem] !ml-3 bg-transparent text-white !text-2xl !font-medium outline-none placeholder:text-gray-100"
+          className="w-[40rem]  !ml-3 bg-transparent text-white !text-xl !font-medium outline-none placeholder:text-gray-100"
         />
       </div>
 
       {/* Right: Icons and Link */}
-      <div className="flex items-center  gap-5  !mr-2 ">
-        <div className="flex items-center justify-between gap-1  ">
-          <div className="!p-4 hover:bg-[#2d3748] cursor-pointer ">
+      <div className="flex items-center  gap-1  !mr-2 ">
+        <div className="flex items-center justify-between  ">
+          <div className="!p-1 hover:bg-[#2d3748] cursor-pointer ">
             <HelpDropdown />
           </div>
-          <div className=" !p-4 hover:bg-[#2d3748] cursor-pointer">
+          <div className=" !p-1 hover:bg-[#2d3748] cursor-pointer">
             <BellDropdown />
           </div>
-          <div className="relative !p-4 hover:bg-[#2d3748] cursor-pointer">
+          <div className="relative !p-1 hover:bg-[#2d3748] cursor-pointer">
             <UserDropdown />
           </div>
         </div>
         <div className="!p-1 hover:bg-[#2d3748] cursor-pointer text-white">
           <a
             href="#"
-            className="!text-2xl font-semibold hover:underline flex items-center gap-1  h-[5rem] !px-3 border-l-2 border-[#2d3748]"
+            className="!text-xl font-medium hover:underline flex items-center gap-1  h-[5rem] !px-3 border-l-2 border-[#2d3748]"
           >
             View storefront
             <span>
@@ -119,4 +117,3 @@ const Header: React.FC = () => {
 
 export default Header;
 
-// border:1px solid rgb(45, 55, 72)

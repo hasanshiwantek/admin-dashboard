@@ -30,7 +30,7 @@ export default function BellDropdown() {
           className={open ? "text-black" : "text-white"}
           fill={open ? "white" : "none"}
         />
-        <span className="absolute -top-[1px] -right-1 text-sm bg-red-500 text-white rounded-md !p-2 w-5 h-5 flex items-center justify-center !text-[10px]">
+        <span className="absolute top-[1px] -right-0.5 text-sm bg-red-500 !text-white rounded-md !p-2 w-5 h-5 flex items-center justify-center !text-[10px]">
           38
         </span>
       </div>
