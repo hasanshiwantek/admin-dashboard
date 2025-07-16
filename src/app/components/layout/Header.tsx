@@ -1,13 +1,13 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
-import styles from "@/styles/Header/Header.module.css"
+import styles from "@/styles/Header/Header.module.css";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoSearchOutline } from "react-icons/io5";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import HelpDropdown from "../dropdowns/HelpDropdown";
 import BellDropdown from "../dropdowns/BellDropdown";
 import UserDropdown from "../dropdowns/UserDropdown";
-
+import Image from "next/image";
 const Header: React.FC = () => {
   const [companyOpen, setCompanyOpen] = useState<boolean>(false);
   const companyRef = useRef<HTMLDivElement>(null);
@@ -31,12 +31,19 @@ const Header: React.FC = () => {
       <div className="flex items-center gap-2 !ml-10 ">
         <div className="flex justify-start items-center gap-10  ">
           <div className="!p-2 hover:bg-[#2d3748] cursor-pointer">
-            <img src="/logo.svg" alt="Logo" className="h-8  cursor-pointer " />
+            {/* <img  /> */}
+            <Image
+              src="/logo.svg"
+              alt="Logo"
+              className="h-8 cursor-pointer "
+              width={20}
+              height={20}
+            />
           </div>
           <div ref={companyRef} className="relative">
             {/* Toggle Button */}
             <div
-              className="flex justify-between gap-22 !px-4 items-center border-r-2 border-l-2 border-[#2d3748] h-[5rem] cursor-pointer hover:bg-[#2d3748]"
+              className="flex justify-between gap-[62px] !px-4 items-center border-r-2 border-l-2 border-[#2d3748] h-[5rem] cursor-pointer hover:bg-[#2d3748]"
               onClick={() => setCompanyOpen(!companyOpen)}
             >
               <button className="text-white text-xl font-medium py-1 rounded-md cursor-pointer">
@@ -116,4 +123,3 @@ const Header: React.FC = () => {
 };
 
 export default Header;
-
