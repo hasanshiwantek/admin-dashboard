@@ -10,7 +10,7 @@ const stats = [
 const Stats = () => {
   return (
     <div className="bg-[#f7f8fa]  rounded-md">
-      <h1 className="text-[#34313f] !text-3xl !font-medium my-5">
+      <h1 className=" my-5">
         Store statistics
       </h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border rounded bg-white overflow-hidden">
@@ -21,10 +21,10 @@ const Stats = () => {
               index < stats.length - 1 ? "border-r" : ""
             }`}
           >
-            <div className="text-5xl font-light text-gray-800 group-hover:text-[#4b71fc]">
+            <div className="text-[2rem] font-light text-gray-600 group-hover:text-[#4b71fc]">
               {item.value}
             </div>
-            <div className="text-xl text-gray-600 mt-1 group-hover:text-[#4b71fc]">
+            <div className="text-lg text-gray-600 mt-1 group-hover:text-[#4b71fc]">
               {item.label}
             </div>
           </div>

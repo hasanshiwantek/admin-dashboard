@@ -44,7 +44,7 @@
 }
 
 :root {
-   --primary-color: #2c83ec;
+  --primary-color: #2c83ec;
   --font-color: #323232;
   --border-color: #f2f2f2;
   --header-bg: rgb(3, 16, 51);
@@ -102,15 +102,15 @@ html {
 
 /* Tailwind Typography System */
 h1 {
-  @apply text-3xl font-bold text-[#323232]; /* 2.5rem */
+  @apply text-3xl font-medium text-[#34313f]; /* 2.5rem */
 }
 
 h2 {
-  @apply text-2xl font-medium text-[#323232] ; /* 1.5rem */
+  @apply text-2xl font-medium text-[#303540]; /* 1.5rem */
 }
 
 h3 {
-  @apply text-xl font-medium text-[#323232]; /* 1.2rem */
+  @apply text-xl font-medium text-[#303540]; /* 1.2rem */
 }
 
 p,
@@ -120,7 +120,7 @@ li {
 }
 
 span {
-  @apply text-lg font-bold leading-relaxed tracking-wide;
+  @apply text-lg font-bold leading-relaxed tracking-wide text-[#5e637a];
 }
 
 p {
@@ -134,17 +134,16 @@ a {
 
 /* Buttons (Optional Custom Tailwind Styling) */
 .btn-outline-primary {
-  @apply text-[#2c83ec] border border-[#2c83ec] font-semibold rounded px-4 py-[8px] text-xl transition-all my-1 duration-200 cursor-pointer;
+  @apply text-[#2c83ec] border border-[#2c83ec] font-medium rounded px-4 py-[8px] text-xl transition-all my-1 duration-200 cursor-pointer;
   background-color: transparent;
 }
 
 .btn-outline-primary:hover {
-  @apply bg-[#f1f8fe] ;
+  @apply bg-[#f1f8fe];
 }
 
 /* Input & Text */
-input,
-span {
+input {
   font-size: 1.1rem;
   font-weight: 700;
 }
@@ -199,6 +198,7 @@ img {
   }
   body {
     @apply bg-background text-foreground;
+    /* font-family: "Source Sans Pro", "Helvetica Neue", Arial, sans-serif; */
   }
 }
 

@@ -41,7 +41,7 @@ const Header: React.FC = () => {
               className="flex justify-between gap-22 !px-4 items-center border-r-2 border-l-2 border-[#2d3748] h-[5rem] cursor-pointer hover:bg-[#2d3748]"
               onClick={() => setCompanyOpen(!companyOpen)}
             >
-              <button className="text-white text-xl font-semibold py-1 rounded-md cursor-pointer">
+              <button className="text-white text-xl font-medium py-1 rounded-md cursor-pointer">
                 CTS Point Inc
               </button>
               <IoIosArrowDown
@@ -84,13 +84,13 @@ const Header: React.FC = () => {
         <input
           type="text"
           placeholder=" Search products, orders, customers, or navigate to"
-          className="w-[40rem] !ml-3 bg-transparent text-white !text-2xl !font-medium outline-none placeholder:text-gray-100"
+          className="w-[40rem] !ml-3 bg-transparent text-white !text-xl !font-medium outline-none placeholder:text-gray-100"
         />
       </div>
 
       {/* Right: Icons and Link */}
-      <div className="flex items-center  gap-5  !mr-2 ">
-        <div className="flex items-center justify-between gap-1  ">
+      <div className="flex items-center  gap-1  !mr-2 ">
+        <div className="flex items-center justify-between  ">
           <div className="!p-4 hover:bg-[#2d3748] cursor-pointer ">
             <HelpDropdown />
           </div>
@@ -104,7 +104,7 @@ const Header: React.FC = () => {
         <div className="!p-1 hover:bg-[#2d3748] cursor-pointer text-white">
           <a
             href="#"
-            className="!text-2xl font-semibold hover:underline flex items-center gap-1  h-[5rem] !px-3 border-l-2 border-[#2d3748]"
+            className="!text-xl font-medium hover:underline flex items-center gap-1  h-[5rem] !px-3 border-l-2 border-[#2d3748]"
           >
             View storefront
             <span>

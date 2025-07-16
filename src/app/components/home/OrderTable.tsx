@@ -88,7 +88,7 @@ const tabs = ["Recent", "Pending", "Completed", "Refunded"];
 const OrderTable = () => {
   return (
     <div>
-      <h1 className="!text-[#34313f] !text-3xl !font-medium my-5">Orders</h1>
+      <h1 className="my-5">Orders</h1>
 
       <div className="bg-white rounded shadow-sm p-4">
         {/* Tabs and Header Row */}
@@ -135,7 +135,7 @@ const OrderTable = () => {
 
               {/* Price + Date */}
               <div className="w-1/3 flex justify-between  text-right  text-gray-700">
-                <div className="font-semibold text-xl">{order.price}</div>
+                <div className="font-semibold text-xl text-gray-500">{order.price}</div>
                 <div className="text-xl text-gray-500">{order.date}</div>
               </div>
             </div>

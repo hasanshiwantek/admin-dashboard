@@ -31,34 +31,41 @@ const steps = [
 
 const SetupProgress = () => {
   return (
-    <div className={`${styles.cardBox}`}>
-      <h2 className="mb-3 uppercase ">Start Accepting Orders</h2>
-      <hr className=" border-[1px] my-4 w-92" />
-      <div className={`grid grid-cols-1 md:grid-cols-2 gap-y-8 gap-x-8 `}>
-      {steps.map((step, idx) => (
-          <div key={idx} className="flex">
-            {/* Timeline Line + Icon */}
-            <div className="flex flex-col items-center mr-4 w-11">
-              <FontAwesomeIcon
-                icon={step.done ? faCheckCircle : faCircle}
-                className={`text-lg ${
-                  step.done ? "text-green-600" : "text-gray-300 "
-                }`}
-              />
-              {/* Show vertical line unless last item in its column */}
-              {((idx < 2) || (idx >= 2 && idx < steps.length - 1)) && (
-                <div className="w-px bg-gray-300 h-full mt-1"></div>
-              )}
-            </div>
+    <div>
+      <h1 className="my-5">
+        Get started guides
+      </h1>
+      <div className={`${styles.cardBox}`}>
+        <h2 className="mb-3 uppercase ">Start Accepting Orders</h2>
+        <hr className=" border-[1px] my-4 w-92" />
+        <div className={`grid grid-cols-1 md:grid-cols-2 gap-y-8 gap-x-8 `}>
+          {steps.map((step, idx) => (
+            <div key={idx} className="flex">
+              {/* Timeline Line + Icon */}
+              <div className="flex flex-col items-center mr-4 w-11">
+                <FontAwesomeIcon
+                  icon={step.done ? faCheckCircle : faCircle}
+                  className={`text-lg ${
+                    step.done ? "text-green-600" : "text-gray-300 "
+                  }`}
+                />
+                {/* Show vertical line unless last item in its column */}
+                {(idx < 2 || (idx >= 2 && idx < steps.length - 1)) && (
+                  <div className="w-px bg-gray-300 h-full mt-1"></div>
+                )}
+              </div>
 
-            {/* Content */}
-            <div className="mb-6 space-y-2">
-              <h3 className="!text-2xl font-medium text-gray-800">{`${idx + 1}. ${step.title}`}</h3>
-              <p className="text-sm !text-gray-500">{step.desc}</p>
-              <button className="btn-outline-primary">{step.btn}</button>
+              {/* Content */}
+              <div className="mb-6 space-y-2">
+                <h3 className="!text-2xl font-medium text-gray-800">{`${
+                  idx + 1
+                }. ${step.title}`}</h3>
+                <p className="text-sm !text-gray-500">{step.desc}</p>
+                <button className="btn-outline-primary">{step.btn}</button>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );
