@@ -13,6 +13,7 @@ interface RegisterPayload {
 }
 
 interface AuthState {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   user: any;
   token: string | null;
   loading: boolean;
@@ -40,7 +41,8 @@ export const loginUser = createAsyncThunk(
     try {
       const res = await axiosInstance.post("/auth/login", { email, password });
       return res.data;
-    } catch (err: any) {
+    } // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      catch (err: any) {
       return thunkAPI.rejectWithValue(
         err.response?.data?.message || "Login failed"
       );
@@ -55,7 +57,8 @@ export const registerUser = createAsyncThunk(
     try {
       const res = await axiosInstance.post("/auth/register", formData);
       return res.data;
-    } catch (err: any) {
+    } // eslint-disable-next-line @typescript-eslint/no-explicit-any 
+    catch (err: any) {
       return thunkAPI.rejectWithValue(
         err.response?.data?.message || "Registration failed"
       );

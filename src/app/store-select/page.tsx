@@ -22,8 +22,7 @@ export default function StoreSelectPage() {
   return (
     <div className="max-w-md mx-auto mt-20 space-y-4">
       <h2 className="text-xl font-bold">Select a Store</h2>
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      {websites.map((site: any) => (
+      {websites.map((site: { baseURL: string; name?: string }) => (
         <button
           key={site.baseURL}
           className="w-full px-4 py-2 bg-blue-600 text-white rounded"
