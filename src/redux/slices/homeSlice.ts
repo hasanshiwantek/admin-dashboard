@@ -1,26 +1,50 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import axiosInstance from '@/lib/axiosInstance';
 
+// homeSlice.ts
 export const fetchDashboardMetrics = createAsyncThunk(
   'home/fetchDashboardMetrics',
-  async () => {
-    const res = await fetch('/api/dashboard/metrics');
-    return await res.json();
+  async (_, thunkAPI) => {
+    const state: any = thunkAPI.getState();
+    const baseURL = state.auth.baseURL;
+
+    try {
+      const res = await axiosInstance.get(`${baseURL}/dashboard/metrics`);
+      return res.data;
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(err.response?.data?.message || 'Failed to fetch metrics');
+    }
   }
 );
 
+
 export const fetchStoreStatistics = createAsyncThunk(
   'home/fetchStoreStatistics',
-  async () => {
-    const res = await fetch('/api/dashboard/statistics');
-    return await res.json();
+  async (_, thunkAPI) => {
+    const state: any = thunkAPI.getState();
+    const baseURL = state.auth.baseURL;
+
+    try {
+      const res = await axiosInstance.get(`${baseURL}/dashboard/metrics`);
+      return res.data;
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(err.response?.data?.message || 'Failed to fetch metrics');
+    }
   }
 );
 
 export const fetchOrdersByStatus = createAsyncThunk(
   'home/fetchOrdersByStatus',
-  async (status: string) => {
-    const res = await fetch(`/api/orders?status=${status}`);
-    return await res.json();
+  async (_, thunkAPI) => {
+    const state: any = thunkAPI.getState();
+    const baseURL = state.auth.baseURL;
+
+    try {
+      const res = await axiosInstance.get(`${baseURL}/dashboard/metrics`);
+      return res.data;
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(err.response?.data?.message || 'Failed to fetch metrics');
+    }
   }
 );
 

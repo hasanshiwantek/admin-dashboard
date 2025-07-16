@@ -1,0 +1,123 @@
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axiosInstance from "@/lib/axiosInstance";
+
+interface RegisterPayload {
+  name: string;
+  email: string;
+  password: string;
+  phoneNumber: string;
+  storeName: string;
+  userRole: number;
+  businessSize: string;
+  region: string;
+}
+
+interface AuthState {
+  user: any;
+  token: string | null;
+  loading: boolean;
+  error: string | null;
+  isAuthenticated: boolean;
+  websites: { baseURL: string; name?: string }[];
+}
+
+const initialState: AuthState = {
+  user: null,
+  token: null,
+  loading: false,
+  error: null,
+  isAuthenticated: false,
+  websites: [],
+};
+
+// Login thunk
+export const loginUser = createAsyncThunk(
+  "auth/loginUser",
+  async (
+    { email, password }: { email: string; password: string },
+    thunkAPI
+  ) => {
+    try {
+      const res = await axiosInstance.post("/auth/login", { email, password });
+      return res.data;
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Login failed"
+      );
+    }
+  }
+);
+
+// Register thunk
+export const registerUser = createAsyncThunk(
+  "auth/registerUser",
+  async (formData: RegisterPayload, thunkAPI) => {
+    try {
+      const res = await axiosInstance.post("/auth/register", formData);
+      return res.data;
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Registration failed"
+      );
+    }
+  }
+);
+
+// Slice
+const authSlice = createSlice({
+  name: "auth",
+  initialState,
+  reducers: {
+    logout: (state) => {
+      state.user = null;
+      state.token = null;
+      state.isAuthenticated = false;
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("baseURL");
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      // Pending
+      .addCase(loginUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(registerUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+
+      // Fulfilled - login
+      .addCase(loginUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user;
+        state.token = action.payload.token;
+        state.isAuthenticated = true;
+        state.websites = action.payload.websites
+
+        localStorage.setItem("accessToken", action.payload.token);
+        if (action.payload.websites?.length === 1) {
+          localStorage.setItem("baseURL", action.payload.websites[0].baseURL);
+        }
+      })
+
+      // Fulfilled - register
+      .addCase(registerUser.fulfilled, (state) => {
+        state.loading = false;
+      })
+
+      // Rejected
+      .addCase(loginUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(registerUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
+  },
+});
+
+export const { logout } = authSlice.actions;
+export default authSlice.reducer;
