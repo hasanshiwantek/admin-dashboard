@@ -5,7 +5,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "@/redux/slices/authSlice";
 import type { AppDispatch, RootState } from "@/redux/store";
 import { setBaseURL } from "@/redux/slices/configSlice";
-
+import { Eye, EyeOff } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 export default function LoginPage() {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
@@ -13,68 +16,87 @@ export default function LoginPage() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-//   const handleLogin = async (e: React.FormEvent) => {
-//     e.preventDefault();
-//     const result = await dispatch(loginUser({ email, password }));
-
-//     if (loginUser.fulfilled.match(result)) {
-//       router.push("/dashboard");
-//     }
-//   };
-
+  const [showPassword, setShowPassword] = useState(false);
   const handleLogin = async (e: React.FormEvent) => {
-  e.preventDefault();
-  const result = await dispatch(loginUser({ email, password }));
+    e.preventDefault();
+    const result = await dispatch(loginUser({ email, password }));
 
-  if (loginUser.fulfilled.match(result)) {
-    const websites = result.payload.websites;
+    if (loginUser.fulfilled.match(result)) {
+      const websites = result.payload.websites;
 
-    if (websites.length === 1) {
-      // Single store – set baseURL and go to dashboard
-      localStorage.setItem("baseURL", websites[0].baseURL);
-      dispatch(setBaseURL(websites[0].baseURL));
-      router.push("/dashboard");
-    } else {
-      // Multiple stores – let user select
-      localStorage.setItem("availableWebsites", JSON.stringify(websites));
-      router.push("/store-select");
+      if (websites.length === 1) {
+        // Single store – set baseURL and go to dashboard
+        localStorage.setItem("baseURL", websites[0].baseURL);
+        dispatch(setBaseURL(websites[0].baseURL));
+        router.push("/dashboard");
+      } else {
+        // Multiple stores – let user select
+        localStorage.setItem("availableWebsites", JSON.stringify(websites));
+        router.push("/store-select");
+      }
     }
-  }
-};
+  };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-100">
-      <form onSubmit={handleLogin} className="bg-white p-8 rounded shadow-md w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-6">Login</h1>
+    <div className="flex flex-col min-h-screen items-center justify-center bg-black">
+      <h1 className="!text-5xl mb-2 !text-white">Login to your store</h1>
 
-        {error && <p className="text-red-500 mb-4">{error}</p>}
+      <form
+        onSubmit={handleLogin}
+        className=" p-10 rounded shadow-md w-full max-w-md"
+      >
+        <div className="flex justify-center flex-col items-center">
+          {error && <p className="text-red-500 mb-4">{error}</p>}
+          <Input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className=" w-[30rem] !text-2xl my-5 px-6 py-8 bg-blue-50 text-black placeholder:text-gray-500"
+          />
 
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          className="w-full mb-4 px-4 py-2 border rounded"
-        />
+          <div className="relative">
+            <Input
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-[30rem] !text-2xl my-5 px-6 py-8 bg-blue-50 text-black placeholder:text-gray-500"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 "
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
+          <Button
+            type="submit"
+            variant="default"
+            size="xxl"
+            disabled={loading}
+            className="w-[30rem] py-6 cursor-pointer my-5 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium !text-2xl focus-within:ring-blue-200 focus-within:border-blue-200 border border-[#2c2c2c] transition hover:border-blue-200"
+          >
+            {loading ? "Logging in..." : "Log In"}
+          </Button>
 
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          className="w-full mb-6 px-4 py-2 border rounded"
-        />
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
-        >
-          {loading ? "Logging in..." : "Log In"}
-        </button>
+          <div className="flex justify-between text-base text-gray-100 mt-2 whitespace-nowrap">
+            <a href="#" className="hover:underline !text-xl">
+              Log in with SSO
+            </a>
+            <div className="space-x-3 ml-40">
+              <a href="#" className="hover:underline !text-xl">
+                Forgot?
+              </a>
+              <a href="#" className="hover:underline !text-xl">
+                Sign up
+              </a>
+            </div>
+          </div>
+        </div>
       </form>
     </div>
   );
