@@ -31,7 +31,6 @@ const Header: React.FC = () => {
       <div className="flex items-center gap-2 !ml-10 ">
         <div className="flex justify-start items-center gap-10  ">
           <div className="!p-2 hover:bg-[#2d3748] cursor-pointer">
-            {/* <img  /> */}
             <Image
               src="/logo.svg"
               alt="Logo"
