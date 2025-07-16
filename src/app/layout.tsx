@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import LayoutWrapper from "./components/layout/LayoutWrapper";
-import { Roboto } from "next/font/google";
+import { Cabin } from "next/font/google";
 
-const roboto = Roboto({
+const cabin = Cabin({
   subsets: ["latin"],
   weight: ["400", "500", "700"],
 });
@@ -20,7 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${roboto.className} antialiased`}>
+      <body className={`${cabin.className} antialiased`}>
         <LayoutWrapper>{children}</LayoutWrapper>
       </body>
     </html>

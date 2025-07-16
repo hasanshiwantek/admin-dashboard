@@ -60,7 +60,7 @@ const SetupProgress = () => {
                 <h3 className="!text-2xl font-medium text-gray-800">{`${
                   idx + 1
                 }. ${step.title}`}</h3>
-                <p className="text-sm !text-gray-500">{step.desc}</p>
+                <p className="!font-medium  !text-gray-500">{step.desc}</p>
                 <button className="btn-outline-primary">{step.btn}</button>
               </div>
             </div>

@@ -110,7 +110,7 @@ h2 {
 }
 
 h3 {
-  @apply text-xl font-medium text-[#303540]; /* 1.2rem */
+  @apply text-xl font-light text-[#303540]; /* 1.2rem */
 }
 
 p,

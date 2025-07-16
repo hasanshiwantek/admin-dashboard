@@ -98,7 +98,7 @@ const OrderTable = () => {
             {tabs.map((tab, i) => (
               <button
                 key={i}
-                className={`text-2xl px-6 py-2 rounded-full transition ${
+                className={`text-xl px-6 py-2 rounded-full transition cursor-pointer ${
                   i === 0
                     ? "bg-blue-600 text-white"
                     : "text-gray-600 hover:text-blue-600"
