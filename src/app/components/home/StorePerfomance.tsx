@@ -64,11 +64,11 @@ export default function StorePerformanceChart() {
 
                     return (
                         <div key={metric.key} className="p-4 bg-gray-50 border rounded shadow-sm">
-                            <div className="text-sm font-medium text-gray-600">{metric.label}</div>
-                            <div className={`text-xl font-semibold ${metric.color}`}>
+                            <div className="text-xl font-medium text-gray-600">{metric.label}</div>
+                            <div className={`text-[2rem] font-semibold ${metric.color}`}>
                                 {metric.prefix || ''}{metric.suffix ? total.toFixed(2) : Math.round(total)}{metric.suffix || ''}
                             </div>
-                            <div className="text-xs text-gray-500">
+                            <div className="text-md text-gray-500">
                                 {last} last week's total
                             </div>
                         </div>
