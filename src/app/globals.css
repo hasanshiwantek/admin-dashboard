@@ -117,7 +117,7 @@ h3 {
 p,
 a,
 li {
-  @apply text-lg font-medium leading-relaxed tracking-wide;
+  @apply text-xl font-medium leading-relaxed tracking-wide;
 }
 
 span {
@@ -145,12 +145,12 @@ a {
 
 
 .btn-primary {
-  @apply text-[#2c83ec] border border-[#2c83ec] font-medium rounded px-4 py-[6px] text-xl transition-all my-1 duration-200 cursor-pointer;
-  background-color: white;
+  @apply text-white border-2 border-[#2c83ec]  font-medium rounded px-4 py-[6px] text-xl transition-all my-1 duration-200 cursor-pointer;
+  background-color:#2c83ec ;
 }
 
 .btn-primary:hover {
-  @apply border-[#418ce7];
+  @apply border-[#418ce7] bg-white text-[#2c83ec];
 }
 
 
