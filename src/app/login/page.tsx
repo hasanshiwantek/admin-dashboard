@@ -46,7 +46,7 @@ export default function LoginPage() {
         className=" p-10 rounded shadow-md w-full max-w-md"
       >
         <div className="flex justify-center flex-col items-center">
-          {error && <p className="text-red-500 mb-4">{error}</p>}
+          {error && <div className="text-red-400 text-xl mb-4">{error}</div>}
           <Input
             type="email"
             placeholder="Email"
@@ -78,7 +78,7 @@ export default function LoginPage() {
             variant="default"
             size="xxl"
             disabled={loading}
-            className="w-[30rem] py-6 cursor-pointer my-5 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium !text-2xl focus-within:ring-blue-200 focus-within:border-blue-200 border border-[#2c2c2c] transition hover:border-blue-200"
+            className="w-[30rem]  cursor-pointer my-5  bg-blue-600  rounded-lg font-medium !text-2xl focus-within:ring-blue-200 focus-within:border-blue-200 border border-[#2c2c2c]  transition hover:border-blue-200 hover:bg-[#3A426E] "
           >
             {loading ? "Logging in..." : "Log In"}
           </Button>

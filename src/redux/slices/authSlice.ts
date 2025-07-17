@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "@/lib/axiosInstance";
 
-interface RegisterPayload {
+export interface RegisterPayload {
   name: string;
   email: string;
   password: string;
