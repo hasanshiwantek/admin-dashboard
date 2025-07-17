@@ -11,10 +11,20 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { MoreHorizontal, Plus } from "lucide-react";
+import {
+  Plus,
+  ChevronLeft,
+  ChevronRight,
+  ChevronDown,
+  Settings,
+  Star,
+  StarOff,
+} from "lucide-react";
+import { IoSearchOutline } from "react-icons/io5";
 import Image from "next/image";
 import { useState } from "react";
-
+import Pagination from "@/components/ui/pagination";
+import OrderActionsDropdown from "../orders/OrderActionsDropdown";
 const filterTabs = [
   "All",
   "Featured",
@@ -187,6 +197,38 @@ const products = [
 
 export default function AllProducts() {
   const [selectedTab, setSelectedTab] = useState("All");
+  const [search, setSearch] = useState("");
+  const [favMap, setFavMap] = useState<{ [key: number]: boolean }>({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage, setPerPage] = useState("20");
+  const dropdownActions = [
+    { label: "Edit", onClick: () => console.log("Edit clicked") },
+    { label: "Duplicate", onClick: () => console.log("Duplicate clicked") },
+    {
+      label: "View on storefront",
+      onClick: () => console.log("View on storefront clicked"),
+    },
+    {
+      label: "Disable visibility",
+      onClick: () => console.log("Disable visibility clicked"),
+    },
+    {
+      label: "Make featured",
+      onClick: () => console.log("Make featured clicked"),
+    },
+    {
+      label: "View in page builder",
+      onClick: () => console.log("View in page builder clicked"),
+    },
+    { label: "View orders", onClick: () => console.log("View orders clicked") },
+    { label: "Delete", onClick: () => console.log("Delete clicked") },
+  ];
+
+  // Assuming you fetched totalPages from backend
+  const totalPages = 21;
+  const toggleFav = (id: number) => {
+    setFavMap((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
 
   return (
     <div className="">
@@ -217,16 +259,63 @@ export default function AllProducts() {
         </div>
 
         <div className="flex justify-between gap-10 items-center mb-5">
-          <Input placeholder="Search products" className="max-w-[80%] !p-7 " />
+          <div
+            className="flex justify-start items-center bg-white text-center !px-4 !py-3 rounded-md
+                         focus-within:ring-3 focus-within:ring-blue-200 focus-within:border-blue-200 border border-blue-200  transition hover:border-blue-200 w-[80%]"
+          >
+            <i>
+              <IoSearchOutline
+                size={20}
+                color="gray"
+                className="cursor-pointer"
+              />
+            </i>
+            <input
+              type="text"
+              placeholder=" Search products, orders, customers, or navigate to"
+              className=" !ml-3 bg-transparent !text-xl !font-medium outline-none placeholder:text-gray-400 w-[80%]"
+            />
+          </div>
+
+          {/* <Input placeholder="Search products" className="max-w-[80%] !p-7 " /> */}
+
           <span className="!text-xl !text-blue-600 cursor-pointer">
             Add filters
           </span>
         </div>
 
+        <div className="flex items-center justify-between border-t border-b border-gray-200 px-4 py-2 bg-white text-sm">
+          {/* Left side: checkbox and product count */}
+          <div className="flex items-center space-x-2">
+            <Input
+              type="checkbox"
+              className="w-6 h-6 border-gray-300 rounded"
+            />
+            <span className="text-gray-700 !text-xl">275215 Products</span>
+          </div>
+
+          {/* Right side: pagination and controls */}
+          <div className="flex items-center space-x-10 text-gray-700">
+            {/* Settings icon */}
+            <Settings className="w-8 h-8 text-gray-500" />
+            <div className="p-6">
+              {/* Pagination */}
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+                perPage={perPage}
+                onPerPageChange={setPerPage}
+              />
+            </div>
+          </div>
+        </div>
         <Table>
-          <TableHeader>
+          <TableHeader className="h-18">
             <TableRow>
+              <TableHead></TableHead>
               <TableHead>Name</TableHead>
+              <TableHead></TableHead>
               <TableHead>SKU</TableHead>
               <TableHead>Categories</TableHead>
               <TableHead>Current stock</TableHead>
@@ -250,10 +339,25 @@ export default function AllProducts() {
                     height={60}
                     className="rounded !border !border-gray-300 p-2"
                   />
-                  <span className="!text-blue-600 !underline cursor-pointer">
+                  <span className="!text-blue-600  cursor-pointer">
                     {product.name}
                   </span>
                 </TableCell>
+                <TableCell>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    onClick={() => toggleFav(product.id)}
+                    className="cursor-pointer "
+                  >
+                    {favMap[product.id] ? (
+                      <Star className="w-8 h-8 text-blue-500 fill-blue-500" />
+                    ) : (
+                      <StarOff className="w-8 h-8 text-muted-foreground" />
+                    )}
+                  </Button>
+                </TableCell>
+
                 <TableCell>{product.sku}</TableCell>
                 <TableCell>{product.category}</TableCell>
                 <TableCell>{product.stock}</TableCell>
@@ -265,15 +369,23 @@ export default function AllProducts() {
                   </Badge>
                 </TableCell>
                 <TableCell>
-                  <MoreHorizontal className="w-4 h-4 text-gray-600 cursor-pointer" />
+                  <OrderActionsDropdown actions={dropdownActions} />
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
+        <div className="flex justify-end my-6">
+          {/* Pagination */}
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+            perPage={perPage}
+            onPerPageChange={setPerPage}
+          />
+        </div>
       </div>
-
-      <div className="mt-4 text-sm text-gray-500">275215 Products</div>
     </div>
   );
 }
