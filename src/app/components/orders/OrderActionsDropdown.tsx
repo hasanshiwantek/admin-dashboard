@@ -6,7 +6,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 
-const OrderActionsDropdown = () => {
+interface OrderActionsDropdownProps {
+  actions: {
+    label: string;
+    onClick?: () => void;
+  }[];
+}
+
+const OrderActionsDropdown: React.FC<OrderActionsDropdownProps> = ({ actions }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -15,15 +22,12 @@ const OrderActionsDropdown = () => {
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent className="w-52 space-y-2 ">
-        <DropdownMenuItem>Edit order</DropdownMenuItem>
-        <DropdownMenuItem>Print invoice</DropdownMenuItem>
-        <DropdownMenuItem>Print packing slip</DropdownMenuItem>
-        <DropdownMenuItem>Resend invoice</DropdownMenuItem>
-        <DropdownMenuItem>View notes</DropdownMenuItem>
-        <DropdownMenuItem>View shipments</DropdownMenuItem>
-        <DropdownMenuItem>Refund</DropdownMenuItem>
-        <DropdownMenuItem>View order timeline</DropdownMenuItem>
+      <DropdownMenuContent className="w-52 space-y-2">
+        {actions.map((action, index) => (
+          <DropdownMenuItem key={index} onClick={action.onClick}>
+            {action.label}
+          </DropdownMenuItem>
+        ))}
       </DropdownMenuContent>
     </DropdownMenu>
   );
