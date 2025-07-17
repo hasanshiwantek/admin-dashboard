@@ -9,21 +9,22 @@ import { Eye, EyeOff } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+
 export default function LoginPage() {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
   const { loading, error } = useSelector((state: RootState) => state.auth);
-
+ 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     const result = await dispatch(loginUser({ email, password }));
-
+ 
     if (loginUser.fulfilled.match(result)) {
       const websites = result.payload.websites;
-
+ 
       if (websites.length === 1) {
         // Single store – set baseURL and go to dashboard
         localStorage.setItem("baseURL", websites[0].baseURL);
@@ -36,11 +37,11 @@ export default function LoginPage() {
       }
     }
   };
-
+ 
   return (
     <div className="flex flex-col min-h-screen items-center justify-center bg-black">
       <h1 className="!text-5xl mb-2 !text-white">Login to your store</h1>
-
+ 
       <form
         onSubmit={handleLogin}
         className=" p-10 rounded shadow-md w-full max-w-md"
@@ -55,7 +56,7 @@ export default function LoginPage() {
             required
             className=" w-[30rem] !text-2xl my-5 px-6 py-8 bg-blue-50 text-black placeholder:text-gray-500"
           />
-
+ 
           <div className="relative">
             <Input
               type={showPassword ? "text" : "password"}
@@ -82,7 +83,7 @@ export default function LoginPage() {
           >
             {loading ? "Logging in..." : "Log In"}
           </Button>
-
+ 
           <div className="flex justify-between text-base text-gray-100 mt-2 whitespace-nowrap">
             <a href="#" className="hover:underline !text-xl">
               Log in with SSO

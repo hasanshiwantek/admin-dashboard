@@ -14,7 +14,8 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import styles from "@/styles/auth/Auth.module.css";
+import styles from "@/styles/auth/Auth.module.css"
+
 const initialForm: RegisterPayload = {
   name: "",
   email: "",
@@ -25,7 +26,7 @@ const initialForm: RegisterPayload = {
   businessSize: "",
   region: "",
 };
-
+ 
 const fields: {
   name: keyof typeof initialForm;
   label: string;
@@ -53,35 +54,31 @@ const fields: {
     options: ["Asia", "Middle East", "Europe", "Northeast"],
   },
 ];
-
+ 
 export default function RegisterPage() {
   const [registerForm, setRegisterForm] = useState(initialForm);
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
-
+ 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setRegisterForm((prev) => ({ ...prev, [name]: value }));
   };
-
+ 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     alert("Form submitted! (Check console)");
-    console.log("Form Registered", registerForm);
-
+    console.log("Form Registered",registerForm);
+   
     // dispatch(registerUser(registerForm)); // 🔥 send entire form as payload
   };
-
+ 
   return (
-    <div
-      className={`${styles.registerBg} flex flex-col min-h-screen items-center justify-center bg-black `}
-    >
-      <h1 className="!text-5xl mt-10 !text-white">
-        Create your beautiful store today
-      </h1>
-
+    <div className={`${styles.registerBg} flex flex-col min-h-screen items-center justify-center bg-black `}>
+      <h1 className="!text-5xl mt-10 !text-white">Create your beautiful store today</h1>
+ 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="flex justify-center flex-col items-center w-full p-10 rounded-md">
           {fields.map((field) => (
@@ -89,7 +86,7 @@ export default function RegisterPage() {
               <label className="block text-xl font-medium mb-1 text-gray-200">
                 {field.label}
               </label>
-
+ 
               {field.options ? (
                 <Select
                   value={registerForm[field.name]?.toString()}
@@ -119,16 +116,12 @@ export default function RegisterPage() {
                     className="w-[30rem] !text-2xl my-5 px-6 py-8 bg-blue-50 text-black placeholder:text-gray-500"
                     placeholder={`Enter your ${field.name}`}
                   />
-
+ 
                   <span
                     className=" absolute right-3 top-6 cursor-pointer"
                     onClick={() => setShowPassword((p) => !p)}
                   >
-                    {showPassword ? (
-                      <FaEyeSlash size={15} />
-                    ) : (
-                      <FaEye size={15} />
-                    )}
+                    {showPassword ? <FaEyeSlash size={15} /> : <FaEye size={15}/>}
                   </span>
                 </div>
               ) : (
@@ -144,7 +137,7 @@ export default function RegisterPage() {
               )}
             </div>
           ))}
-
+ 
           <Button
             type="submit"
             variant="default"
@@ -158,3 +151,4 @@ export default function RegisterPage() {
     </div>
   );
 }
+ 

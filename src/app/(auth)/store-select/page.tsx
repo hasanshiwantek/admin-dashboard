@@ -1,9 +1,10 @@
 "use client";
-
+import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import { setBaseURL } from "@/redux/slices/configSlice";
 import { RootState } from "@/redux/store";
+import ProtectedRoute from "@/auth/ProtectedRoute";
 
 export default function StoreSelectPage() {
   const dispatch = useDispatch();
@@ -15,11 +16,20 @@ export default function StoreSelectPage() {
     router.push("/dashboard");
   };
 
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
+
+useEffect(() => {
+  if (!isAuthenticated) {
+    router.push("/login");
+  }
+}, [isAuthenticated]);
+
   if (!websites || websites.length === 0) {
     return <p>No websites found for this user.</p>;
   }
 
   return (
+    <ProtectedRoute>
     <div className="max-w-md mx-auto mt-20 space-y-4">
       <h2 className="text-xl font-bold">Select a Store</h2>
       {websites.map((site: { baseURL: string; name?: string }) => (
@@ -32,5 +42,6 @@ export default function StoreSelectPage() {
         </button>
       ))}
     </div>
+    </ProtectedRoute>
   );
 }

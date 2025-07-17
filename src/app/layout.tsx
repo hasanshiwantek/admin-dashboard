@@ -1,6 +1,6 @@
+//src/app/layout.sx
 import type { Metadata } from "next";
 import "./globals.css";
-import LayoutWrapper from "./components/layout/LayoutWrapper";
 import Providers from "./components/Providers";
 import { Cabin } from "next/font/google";
 
@@ -25,9 +25,7 @@ export default function RootLayout({
         className={`${cabin.className} antialiased`}
       >
         <Providers>
-          <LayoutWrapper>
-            {children}
-          </LayoutWrapper>
+          {children}
         </Providers>
       </body>
     </html>
