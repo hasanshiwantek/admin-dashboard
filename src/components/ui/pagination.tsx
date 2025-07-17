@@ -47,7 +47,7 @@ const Pagination = ({
               key={page}
               variant={currentPage === page ? "secondary" : "ghost"}
               size="lg"
-              className={`h-7 w-7 p-2 text-blue-600 font-medium text-xl ${
+              className={`h-7 w-7 p-2 text-blue-600 font-medium text-xl cursor-pointer hover:text-gray-400 hover:border ${
                 currentPage === page && "bg-gray-400 text-white"
               }`}
               onClick={() => onPageChange(Number(page))}
@@ -69,7 +69,7 @@ const Pagination = ({
       {/* View per page */}
       <div className="flex items-center">
         <Select value={perPage} onValueChange={onPerPageChange}>
-          <SelectTrigger className="w-[100px] h-8 text-lg">
+          <SelectTrigger className="w-[100px] h-9 text-lg">
             <SelectValue placeholder={`View ${perPage}`} />
           </SelectTrigger>
           <SelectContent>

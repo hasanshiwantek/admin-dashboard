@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import Pagination from "@/components/ui/pagination";
+import OrderActionsDropdown from "./OrderActionsDropdown";
 const AllOrders = () => {
   const tabs = [
     "All orders",
@@ -98,7 +99,7 @@ const AllOrders = () => {
       status: "refunded",
       total: "$320.00",
     },
-        {
+    {
       date: "Mar 15, 2024",
       id: "310005",
       name: "Dana Tyler",
@@ -143,7 +144,7 @@ const AllOrders = () => {
   return (
     <div className=" bg-[var(--store-bg)] min-h-screen mt-20">
       {/* Tabs */}
-      <div className="flex space-x-5 border-b pb-2 mb-4 overflow-x-auto">
+      <div className="flex space-x-7 border-b pb-2 mb-4 overflow-x-auto">
         {tabs.map((tab, index) => (
           <button
             key={index}
@@ -161,29 +162,105 @@ const AllOrders = () => {
       {/* Top Actions */}
       <div className="bg-white p-4 shadow-sm">
         <div className="flex flex-wrap gap-3 items-center mb-1">
-          <button className="btn-primary">Add</button>
-          <button className="btn-primary">Export all</button>
+          <button className="btn-outline-primary">Add</button>
+          <button className="btn-outline-primary">Export all</button>
 
           <Select>
-            <SelectTrigger className="w-[200px] p-6 ">
+            <SelectTrigger className="w-fit p-6">
               <SelectValue placeholder="Choose an action" />
             </SelectTrigger>
+
             <SelectContent>
-              <SelectItem value="cancel">Cancel Orders</SelectItem>
-              <SelectItem value="mark">Mark as Fulfilled</SelectItem>
+              {/* Static actions */}
+              <SelectItem
+                value="printMultiOrderInvoices"
+                data-action="print_invoice"
+              >
+                Print invoices for selected
+              </SelectItem>
+              <SelectItem
+                value="printOrderPackingSlips"
+                data-action="print_packing_slip"
+              >
+                Print packing slips for selected
+              </SelectItem>
+              <SelectItem
+                value="resendOrderInvoices"
+                data-action="send_invoice"
+              >
+                Resend invoices for selected
+              </SelectItem>
+              <SelectItem value="bulkCapture" data-action="capture_funds">
+                Capture funds for selected
+              </SelectItem>
+              <SelectItem value="startExport" data-action="export">
+                Export selected
+              </SelectItem>
+              <SelectItem value="deleteOrders" data-action="archive">
+                Archive selected
+              </SelectItem>
+
+              {/* Divider for optgroup */}
+              <div className="px-2 pt-2 pb-1 my-3 text-2xl font-semibold text-muted-foreground">
+                Update status for selected to:
+              </div>
+
+              {/* Status update options */}
+              <SelectItem value="updateMultiOrderStatus:1" data-status-id="1">
+                Pending
+              </SelectItem>
+              <SelectItem value="updateMultiOrderStatus:7" data-status-id="7">
+                Awaiting Payment
+              </SelectItem>
+              <SelectItem value="updateMultiOrderStatus:11" data-status-id="11">
+                Awaiting Fulfillment
+              </SelectItem>
+              <SelectItem value="updateMultiOrderStatus:9" data-status-id="9">
+                Awaiting Shipment
+              </SelectItem>
+              <SelectItem value="updateMultiOrderStatus:8" data-status-id="8">
+                Awaiting Pickup
+              </SelectItem>
+              <SelectItem value="updateMultiOrderStatus:3" data-status-id="3">
+                Partially Shipped
+              </SelectItem>
+              <SelectItem value="updateMultiOrderStatus:10" data-status-id="10">
+                Completed
+              </SelectItem>
+              <SelectItem value="updateMultiOrderStatus:2" data-status-id="2">
+                Shipped
+              </SelectItem>
+              <SelectItem value="updateMultiOrderStatus:5" data-status-id="5">
+                Cancelled
+              </SelectItem>
+              <SelectItem value="updateMultiOrderStatus:6" data-status-id="6">
+                Declined
+              </SelectItem>
+              <SelectItem value="updateMultiOrderStatus:4" data-status-id="4">
+                Refunded
+              </SelectItem>
+              <SelectItem value="updateMultiOrderStatus:13" data-status-id="13">
+                Disputed
+              </SelectItem>
+              <SelectItem value="updateMultiOrderStatus:12" data-status-id="12">
+                Manual Verification Required
+              </SelectItem>
+              <SelectItem value="updateMultiOrderStatus:14" data-status-id="14">
+                Partially Refunded
+              </SelectItem>
             </SelectContent>
           </Select>
 
-          <button className="btn-primary">Confirm</button>
+          <button className="btn-outline-primary">Confirm</button>
 
           <Input
             placeholder="Filter by keyword"
-            className="w-[200px] border-2 !text-xl"
+            className="w-[150px] border-2 border-blue-500 !text-xl p-6"
           />
-          <button className="btn-primary">Search</button>
+          <button className="btn-outline-primary">Search</button>
         </div>
         {/* Pagination */}
-        <div className="flex items-center justify-end ">
+        <div className="flex items-center justify-end my-2">
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
@@ -229,7 +306,7 @@ const AllOrders = () => {
                         return (
                           <>
                             <span
-                              className={`w-6 h-6 inline-block rounded-sm ${
+                              className={`w-7 h-7 inline-block rounded-sm ${
                                 currentStatus?.color || "bg-gray-300"
                               }`}
                             />
@@ -256,9 +333,7 @@ const AllOrders = () => {
 
                   <TableCell>{order.total}</TableCell>
                   <TableCell>
-                    <Button variant="ghost" size="icon">
-                      •••
-                    </Button>
+                    <OrderActionsDropdown />
                   </TableCell>
                 </TableRow>
               ))}

@@ -5,7 +5,7 @@ import OrderTable from "./OrderTable";
 const Home = () => {
   return (
     <>
-      <div className=" p-10  bg-[var(--store-bg)]">
+      <div className=" p-10  ">
         <main className="flex flex-col gap-5">
           <SetupProgress />
           <Stats />
