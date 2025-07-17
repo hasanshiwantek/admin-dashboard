@@ -1,10 +1,5 @@
-import Home from "./components/home/Home";
-export default function page() {
-  return (
-    <>
-      <main>
-        <Home />
-      </main>
-    </>
-  );
+import { redirect } from 'next/navigation';
+
+export default function Page() {
+  redirect('/login');
 }
