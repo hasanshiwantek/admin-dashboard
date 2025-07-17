@@ -13,6 +13,7 @@ export default function StoreSelectPage() {
 
   const handleSelect = (baseURL: string) => {
     dispatch(setBaseURL(baseURL));
+    localStorage.setItem("baseURL", baseURL);
     router.push("/dashboard");
   };
 
