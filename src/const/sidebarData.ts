@@ -3,7 +3,7 @@ import { Home, ShoppingCart, Users, Store, LineChart, Gift, Settings, AppWindow,
 export const sidebarData = [
   {
     title: "Home",
-    url: "/",
+    url: "/manage/dashboard",
     icon: Home,
   },
   {
@@ -12,13 +12,13 @@ export const sidebarData = [
     children: [
       { title: "All Orders", url: "/manage/orders" },
       { title: "Add", url: "/manage/orders/add" },
-      { title: "Search", url: "manage/orders/search" },
-      { title: "Export", url: "/orders/export" },
-      { title: "Draft Orders", url: "/orders/draft" },
-      { title: "Shipments", url: "/orders/shipments" },
-      { title: "Return request", url: "/orders/returns" },
-      { title: "Tracking Numbers", url: "/orders/tracking" },
-      { title: "Gift Certificates", url: "/orders/gifts" },
+      { title: "Search", url: "/manage/orders/search" },
+      { title: "Export", url: "/manage/orders/export" },
+      { title: "Draft Orders", url: "/manage/orders/draft" },
+      { title: "Shipments", url: "/manage/orders/shipments" },
+      { title: "Return request", url: "/manage/orders/returns" },
+      { title: "Tracking Numbers", url: "/manage/orders/tracking" },
+      { title: "Gift Certificates", url: "/manage/orders/gifts" },
     ],
   },
   {

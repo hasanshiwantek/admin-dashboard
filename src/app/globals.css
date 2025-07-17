@@ -103,7 +103,7 @@ html {
 
 /* Tailwind Typography System */
 h1 {
-  @apply text-3xl font-medium text-[#34313f]; /* 2.5rem */
+  @apply text-4xl font-medium text-[#34313f]; /* 2.5rem */
 }
 
 h2 {
@@ -143,11 +143,25 @@ a {
   @apply bg-[#f1f8fe];
 }
 
+
+.btn-primary {
+  @apply text-[#2c83ec] border border-[#2c83ec] font-medium rounded px-4 py-[6px] text-xl transition-all my-1 duration-200 cursor-pointer;
+  background-color: white;
+}
+
+.btn-primary:hover {
+  @apply border-[#418ce7];
+}
+
+
+
+
 /* Input & Text */
 input {
   font-size: 1.1rem;
   font-weight: 700;
 }
+
 
 input {
   border: none;
