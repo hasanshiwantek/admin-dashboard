@@ -10,7 +10,7 @@ export const fetchDashboardMetrics = createAsyncThunk(
     const baseURL = state.auth.baseURL;
 
     try {
-      const res = await axiosInstance.get(`${baseURL}/dashboard/metrics`);
+      const res = await axiosInstance.get(`${baseURL}/dashboard/store-perfomance`);
       return res.data;
     } // eslint-disable-next-line @typescript-eslint/no-explicit-any 
     catch (err: any) {
