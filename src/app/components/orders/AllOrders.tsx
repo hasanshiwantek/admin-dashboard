@@ -135,6 +135,25 @@ const AllOrders = () => {
       total: "$320.00",
     },
   ];
+
+  const handlePrintInvoice = () => {
+  console.log("Printing invoice...");
+};
+
+const handleRefund = () => {
+  console.log("Processing refund...");
+};
+
+const orderActions = [
+  { label: "Edit order", onClick: () => console.log("Edit order clicked") },
+  { label: "Print invoice", onClick: handlePrintInvoice },
+  { label: "Print packing slip" },
+  { label: "Resend invoice" },
+  { label: "View notes" },
+  { label: "View shipments" },
+  { label: "Refund", onClick: handleRefund },
+  { label: "View order timeline" },
+];
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState("20");
 
@@ -333,7 +352,7 @@ const AllOrders = () => {
 
                   <TableCell>{order.total}</TableCell>
                   <TableCell>
-                    <OrderActionsDropdown />
+                    <OrderActionsDropdown actions={orderActions} />
                   </TableCell>
                 </TableRow>
               ))}

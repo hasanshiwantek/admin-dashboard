@@ -34,7 +34,7 @@ const Pagination = ({
   };
 
   return (
-    <div className="flex items-center justify-between pt-3 px-2 text-lg mt-6">
+    <div className="flex items-center justify-start gap-5 px-2 text-lg ">
       {/* Page numbers */}
       <div className="flex items-center space-x-1">
         {getVisiblePages().map((page, i) =>
