@@ -10,9 +10,9 @@ export const sidebarData = [
     title: "Orders",
     icon: ShoppingCart,
     children: [
-      { title: "All Orders", url: "/orders" },
-      { title: "Add", url: "/orders/add" },
-      { title: "Search", url: "/orders/search" },
+      { title: "All Orders", url: "/manage/orders" },
+      { title: "Add", url: "/manage/orders/add" },
+      { title: "Search", url: "manage/orders/search" },
       { title: "Export", url: "/orders/export" },
       { title: "Draft Orders", url: "/orders/draft" },
       { title: "Shipments", url: "/orders/shipments" },
