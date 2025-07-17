@@ -9,21 +9,22 @@ import { Eye, EyeOff } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+
 export default function LoginPage() {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
   const { loading, error } = useSelector((state: RootState) => state.auth);
-
+ 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     const result = await dispatch(loginUser({ email, password }));
-
+ 
     if (loginUser.fulfilled.match(result)) {
       const websites = result.payload.websites;
-
+ 
       if (websites.length === 1) {
         // Single store – set baseURL and go to dashboard
         localStorage.setItem("baseURL", websites[0].baseURL);
@@ -36,17 +37,17 @@ export default function LoginPage() {
       }
     }
   };
-
+ 
   return (
     <div className="flex flex-col min-h-screen items-center justify-center bg-black">
       <h1 className="!text-5xl mb-2 !text-white">Login to your store</h1>
-
+ 
       <form
         onSubmit={handleLogin}
         className=" p-10 rounded shadow-md w-full max-w-md"
       >
         <div className="flex justify-center flex-col items-center">
-          {error && <p className="text-red-500 mb-4">{error}</p>}
+          {error && <div className="text-red-400 text-xl mb-4">{error}</div>}
           <Input
             type="email"
             placeholder="Email"
@@ -55,7 +56,7 @@ export default function LoginPage() {
             required
             className=" w-[30rem] !text-2xl my-5 px-6 py-8 bg-blue-50 text-black placeholder:text-gray-500"
           />
-
+ 
           <div className="relative">
             <Input
               type={showPassword ? "text" : "password"}
@@ -78,11 +79,11 @@ export default function LoginPage() {
             variant="default"
             size="xxl"
             disabled={loading}
-            className="w-[30rem] py-6 cursor-pointer my-5 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium !text-2xl focus-within:ring-blue-200 focus-within:border-blue-200 border border-[#2c2c2c] transition hover:border-blue-200"
+            className="w-[30rem]  cursor-pointer my-5  bg-blue-600  rounded-lg font-medium !text-2xl focus-within:ring-blue-200 focus-within:border-blue-200 border border-[#2c2c2c]  transition hover:border-blue-200 hover:bg-[#3A426E] "
           >
             {loading ? "Logging in..." : "Log In"}
           </Button>
-
+ 
           <div className="flex justify-between text-base text-gray-100 mt-2 whitespace-nowrap">
             <a href="#" className="hover:underline !text-xl">
               Log in with SSO

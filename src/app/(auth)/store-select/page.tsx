@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import { setBaseURL } from "@/redux/slices/configSlice";
 import { RootState } from "@/redux/store";
+import ProtectedRoute from "@/auth/ProtectedRoute";
 
 export default function StoreSelectPage() {
   const dispatch = useDispatch();
@@ -28,6 +29,7 @@ useEffect(() => {
   }
 
   return (
+    <ProtectedRoute>
     <div className="max-w-md mx-auto mt-20 space-y-4">
       <h2 className="text-xl font-bold">Select a Store</h2>
       {websites.map((site: { baseURL: string; name?: string }) => (
@@ -40,5 +42,6 @@ useEffect(() => {
         </button>
       ))}
     </div>
+    </ProtectedRoute>
   );
 }
