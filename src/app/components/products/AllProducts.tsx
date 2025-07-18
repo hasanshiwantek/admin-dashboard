@@ -1,5 +1,4 @@
 "use client";
-
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,19 +12,14 @@ import {
 import { Plus } from "lucide-react";
 import { IoSearchOutline } from "react-icons/io5";
 import Image from "next/image";
-import { useState } from "react";
+import { useDebugValue, useEffect, useState } from "react";
 import Pagination from "@/components/ui/pagination";
 import OrderActionsDropdown from "../orders/OrderActionsDropdown";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "@radix-ui/react-dropdown-menu";
-import { FaRegStar } from "react-icons/fa";
-import { FaStar } from "react-icons/fa";
 import VisibilityToggle from "../dropdowns/VisibilityToggle";
 import FeaturedToggle from "../dropdowns/FeaturedToggle";
+import { fetchAllProducts } from "@/redux/slices/productSlice";
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
+import Cookies from "js-cookie";
 const filterTabs = [
   "All",
   "Featured",
@@ -197,6 +191,8 @@ const products = [
 ];
 
 export default function AllProducts() {
+  const allProducts = useAppSelector((state) => state.product.products);
+  const dispatch = useAppDispatch();
   const [selectedTab, setSelectedTab] = useState("All");
   const [search, setSearch] = useState("");
   const [featuredMap, setFeaturedMap] = useState<{ [key: number]: boolean }>(
@@ -205,9 +201,9 @@ export default function AllProducts() {
   const [visibilityMap, setVisibilityMap] = useState<{
     [key: number]: "ENABLED" | "DISABLED";
   }>({});
-
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState("20");
+  const totalPages = 21;
   const dropdownActions = [
     { label: "Edit", onClick: () => console.log("Edit clicked") },
     { label: "Duplicate", onClick: () => console.log("Duplicate clicked") },
@@ -231,8 +227,11 @@ export default function AllProducts() {
     { label: "Delete", onClick: () => console.log("Delete clicked") },
   ];
 
-  // Assuming you fetched totalPages from backend
-  const totalPages = 21;
+  // const token=Cookies.get("token")
+
+  // useEffect(()=>{
+  //   dispatch(fetchAllProducts(token))
+  // },[])
 
   return (
     <div className="">
@@ -348,14 +347,14 @@ export default function AllProducts() {
                   </span>
                 </TableCell>
                 <TableCell className="relative ">
-                    <FeaturedToggle
-                      productId={product.id}
-                      isFeatured={featuredMap[product.id] || false}
-                      onChange={(id, value) => {
-                        setFeaturedMap((prev) => ({ ...prev, [id]: value }));
-                        // Optional: call backend API here
-                      }}
-                    />
+                  <FeaturedToggle
+                    productId={product.id}
+                    isFeatured={featuredMap[product.id] || false}
+                    onChange={(id, value) => {
+                      setFeaturedMap((prev) => ({ ...prev, [id]: value }));
+                      // Optional: call backend API here
+                    }}
+                  />
                 </TableCell>
 
                 <TableCell>{product.sku}</TableCell>
