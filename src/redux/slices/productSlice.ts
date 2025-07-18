@@ -8,10 +8,11 @@ export const fetchAllProducts = createAsyncThunk(
     try {
       const state = thunkAPI.getState() as any; // Still using any if you don’t have RootState
       const baseURL = state.auth.baseURL;
-
       const res = await axiosInstance.get(`${baseURL}/fetch/AllProducts`);
+      console.log("✅ Response Data:", res.data);
       return res.data;
     } catch (err: any) {
+      console.error("❌ Error in fetchAllProducts:", err);
       return thunkAPI.rejectWithValue(
         err.response?.data?.message || 'Failed to fetch products'
       );
