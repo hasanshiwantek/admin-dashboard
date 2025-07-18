@@ -25,6 +25,7 @@
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-tooltip": "^1.2.7",
     "@reduxjs/toolkit": "^2.8.2",
+    "@tinymce/tinymce-react": "^6.2.1",
     "axios": "^1.10.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -38,7 +39,8 @@
     "react-icons": "^5.5.0",
     "react-redux": "^9.2.0",
     "recharts": "^3.1.0",
-    "tailwind-merge": "^3.3.1"
+    "tailwind-merge": "^3.3.1",
+    "tinymce": "^7.9.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

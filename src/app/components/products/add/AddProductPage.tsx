@@ -4,6 +4,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import SidebarNavigation from "./SidebarNavigation";
 import BasicInfoForm from "./BasicInformation";
+import DescriptionEditor from "./DescriptionEditor";
 
 export default function AddProductPage() {
     const methods = useForm();
@@ -21,9 +22,7 @@ export default function AddProductPage() {
                 <FormProvider {...methods}>
                     <form onSubmit={onSubmit} className="flex-1 overflow-y-auto p-6 space-y-8">
                         <BasicInfoForm />
-                        {/* <DescriptionEditor /> */}
-                        {/* <ImagesUploader /> */}
-                        {/* ...more */}
+                        <DescriptionEditor />
                         <Button type="submit">Save Product</Button>
                     </form>
                 </FormProvider>
