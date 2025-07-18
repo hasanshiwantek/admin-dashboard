@@ -15,15 +15,19 @@ export default function BasicInfoForm() {
 
     return (
         <section id="basic-info" className="space-y-4 scroll-mt-20">
-            <div className="p-10 bg-white">
-                <h2 className="text-xl font-semibold">Basic Information</h2>
-                <div className="flex items-center space-x-2">
+            <div className="flex justify-center items-center flex-col">
+            <h1>Product Information</h1>
+            <p>Information to help define a product.</p>
+            </div>
+            <div className="p-10 bg-white shadow-md">
+                <h1 >Basic Information</h1>
+                <div className="flex items-center space-x-2 my-6 ">
                     <Checkbox id="visible" />
                     <Label htmlFor="visible">Visible on Storefront</Label>
                 </div>
                 <div className="grid grid-cols-2 gap-6 my-4">
                     {/* Left Div */}
-                    <div className="space-y-4">
+                    <div className="space-y-12">
                         <div>
                             <Label htmlFor="productName">Product Name</Label>
                             <Input id="productName" name="productName" placeholder="Sample Product Name" />
@@ -31,11 +35,12 @@ export default function BasicInfoForm() {
 
                         <div>
                             <Label htmlFor="productType">Product Type</Label>
+
                             <Select name="productType">
                                 <SelectTrigger>
                                     <SelectValue placeholder="Select type" />
                                 </SelectTrigger>
-                                <SelectContent>
+                                <SelectContent >
                                     <SelectItem value="physical">Physical</SelectItem>
                                     <SelectItem value="digital">Digital</SelectItem>
                                 </SelectContent>
@@ -57,10 +62,10 @@ export default function BasicInfoForm() {
                     </div>
 
                     {/* Right Div */}
-                    <div className="space-y-4">
+                    <div className="space-y-12">
                         <div>
                             <Label htmlFor="sku">SKU</Label>
-                            <Input id="sku" name="sku" defaultValue="THX-1138" />
+                            <Input id="sku" name="sku"  placeholder="THX-1138" />
                         </div>
 
                         <div>
@@ -75,9 +80,9 @@ export default function BasicInfoForm() {
                     </div>
                 </div>
 
-                <div className="flex justify-between">
+                <div className="flex justify-between my-5">
                     <h1>Categories</h1>
-                    <Button> <Plus></Plus> Add Categories</Button>
+                    <Button className="bg-transparent shadow-none text-blue-600 text-xl hover:bg-blue-100 transition-all p-6 cursor-pointer"> <Plus></Plus> Add Categories</Button>
                 </div>
                      <CategoryTree name="categoryIds" />
 

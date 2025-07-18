@@ -43,13 +43,13 @@ export default function SidebarNavigation() {
     //   ))}
     // </ScrollArea>
 
-    <ScrollArea className="w-64 h-175 border-r sticky top-0">
-  <div className="p-4 space-y-2">
+    <ScrollArea className="w-70 h-175 border-r fixed top-0">
+  <div className="p-4 space-y-4">
     {sections.map((sec) => (
       <Button
         key={sec.id}
         variant="ghost"
-        className="w-full justify-start text-[1.2rem]"
+        className="w-full justify-start text-2xl hover:text-blue-600 hover:bg-blue-100 transition-all cursor-pointer p-6 text-gray-600"
         onClick={() => scrollTo(sec.id)}
       >
         {sec.label}
