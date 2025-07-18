@@ -4,9 +4,13 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import CategoryTree from "./CategoryTree";
 
 
 export default function BasicInfoForm() {
+
     const { register } = useFormContext();
 
     return (
@@ -70,6 +74,12 @@ export default function BasicInfoForm() {
                         </div>
                     </div>
                 </div>
+
+                <div className="flex justify-between">
+                    <h1>Categories</h1>
+                    <Button> <Plus></Plus> Add Categories</Button>
+                </div>
+                     <CategoryTree name="categoryIds" />
 
             </div>
         </section>
