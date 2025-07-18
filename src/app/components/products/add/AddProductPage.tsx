@@ -12,9 +12,10 @@ export default function AddProductPage() {
     return (
         <div>
             <div className=" items-center mb-4">
-                <h1 className="!text-5xl !font-extralight !text-gray-600 !my-5">
-                    Products
-                </h1>
+              <h1 className="!text-5xl !font-extralight !text-gray-600 !my-5">
+          Add Product
+        </h1>
+        <hr className="my-5"/>
             </div>
             <div className="flex">
                 <SidebarNavigation />

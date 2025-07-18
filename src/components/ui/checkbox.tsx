@@ -18,10 +18,10 @@ function Checkbox({
         "peer size-7 shrink-0 rounded-md border border-gray-300 bg-white shadow-xs cursor-pointer",
 
         // Checked state
-        "data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-600 data-[state=checked]:text-white",
+        "data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-400 data-[state=checked]:text-white",
 
         // Ring + focus
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:ring-offset-2 focus-visible:ring-offset-white",
 
         // Smooth transitions
         "transition-all duration-200 ease-in-out",

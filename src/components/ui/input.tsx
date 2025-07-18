@@ -15,7 +15,7 @@ function Input({ className, type = "text", ...props }: React.ComponentProps<"inp
         "border-input dark:bg-input/30 placeholder:text-muted-foreground file:text-foreground",
 
         // Focus styles: Blue border & ring
-        "focus-visible:outline-none  focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:border-blue-500",
+          "focus-visible:outline-none  focus-visible:ring-1 focus-visible:ring-blue-300 focus-visible:border-blue-300",
 
         // Validation + accessibility
         "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
