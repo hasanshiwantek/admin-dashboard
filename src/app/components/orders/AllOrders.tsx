@@ -137,23 +137,23 @@ const AllOrders = () => {
   ];
 
   const handlePrintInvoice = () => {
-  console.log("Printing invoice...");
-};
+    console.log("Printing invoice...");
+  };
 
-const handleRefund = () => {
-  console.log("Processing refund...");
-};
+  const handleRefund = () => {
+    console.log("Processing refund...");
+  };
 
-const orderActions = [
-  { label: "Edit order", onClick: () => console.log("Edit order clicked") },
-  { label: "Print invoice", onClick: handlePrintInvoice },
-  { label: "Print packing slip" },
-  { label: "Resend invoice" },
-  { label: "View notes" },
-  { label: "View shipments" },
-  { label: "Refund", onClick: handleRefund },
-  { label: "View order timeline" },
-];
+  const orderActions = [
+    { label: "Edit order", onClick: () => console.log("Edit order clicked") },
+    { label: "Print invoice", onClick: handlePrintInvoice },
+    { label: "Print packing slip" },
+    { label: "Resend invoice" },
+    { label: "View notes" },
+    { label: "View shipments" },
+    { label: "Refund", onClick: handleRefund },
+    { label: "View order timeline" },
+  ];
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState("20");
 
@@ -352,7 +352,18 @@ const orderActions = [
 
                   <TableCell>{order.total}</TableCell>
                   <TableCell>
-                    <OrderActionsDropdown actions={orderActions} />
+                    <OrderActionsDropdown
+                      actions={orderActions}
+                      trigger={
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="text-xl cursor-pointer"
+                        >
+                          •••
+                        </Button>
+                      }
+                    />
                   </TableCell>
                 </TableRow>
               ))}

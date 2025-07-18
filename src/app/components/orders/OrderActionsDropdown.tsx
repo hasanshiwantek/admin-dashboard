@@ -4,22 +4,24 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
+import { ReactNode } from "react";
 
 interface OrderActionsDropdownProps {
   actions: {
     label: string;
     onClick?: () => void;
   }[];
+  trigger: ReactNode;
 }
 
-const OrderActionsDropdown: React.FC<OrderActionsDropdownProps> = ({ actions }) => {
+const OrderActionsDropdown: React.FC<OrderActionsDropdownProps> = ({
+  actions,
+  trigger,
+}) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="text-xl cursor-pointer">
-          •••
-        </Button>
+        {trigger}
       </DropdownMenuTrigger>
 
       <DropdownMenuContent className="w-52 space-y-2">
