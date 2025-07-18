@@ -30,7 +30,7 @@ export default function SidebarNavigation() {
   };
 
   return (
-    //  <ScrollArea className="w-68 border-r p-4 sticky  top-0 h-screen w-48">
+    //  <ScrollArea className="w-68 border-r p-4 sticky top-0 h-screen w-48">
     //   {sections.map((sec) => (
     //     <Button
     //       key={sec.id}

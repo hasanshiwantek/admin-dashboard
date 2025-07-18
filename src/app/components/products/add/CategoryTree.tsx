@@ -12,8 +12,8 @@ type Category = {
 };
 
 interface CategoryTreeProps {
-//   categories: Category[];
-  name: string; // e.g., "categoryIds"
+//   categories: Category[]; // this will be needed if data is coming from db.
+  name: string;
 }
 
 export default function CategoryTree({  name }: CategoryTreeProps) {
@@ -43,25 +43,23 @@ export default function CategoryTree({  name }: CategoryTreeProps) {
           <div key={category.id} className="ml-4 my-1">
               <div className="flex items-center space-x-2">
                   {category.children?.length ? (
-  <button type="button" onClick={() => toggleOpen(category.id)} className="w-6 h-6">
-    {isOpen ? <Minus className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
-  </button>
-) : (
-  <span className="w-6 h-6" />
-)}
+                      <button type="button" onClick={() => toggleOpen(category.id)} className="w-6 h-6">
+                          {isOpen ? <Minus className="w-6 h-6" /> : <Plus className="w-6 h-6" />}
+                      </button>
+                  ) : (
+                      <span className="w-6 h-6" />
+                  )}
+                  <Checkbox
+                      id={category.id}
+                      checked={selected.includes(category.id)}
+                      onCheckedChange={() => toggleCategory(category.id)}
+                  />
+                  <label htmlFor={category.id} className="text-xl">{category.name}</label>
+              </div>
 
-
-          <Checkbox
-            id={category.id}
-            checked={selected.includes(category.id)}
-            onCheckedChange={() => toggleCategory(category.id)}
-          />
-          <label htmlFor={category.id} className="text-sm">{category.name}</label>
-        </div>
-
-        {isOpen && Array.isArray(category.children) && category.children.map(child => renderCategory(child))}
-      </div>
-    );
+              {isOpen && Array.isArray(category.children) && category.children.map(child => renderCategory(child))}
+          </div>
+      );
   };
 
   return (
@@ -70,7 +68,7 @@ export default function CategoryTree({  name }: CategoryTreeProps) {
       name={name}
       defaultValue={[]}
       render={() => (
-        <div className="p-4 border rounded bg-white">
+        <div className="p-4 border rounded bg-white overflow-y-auto max-h-100">
           <h3 className="text-md font-semibold mb-2">Categories</h3>
           {categories.map(cat => renderCategory(cat))}
         </div>
