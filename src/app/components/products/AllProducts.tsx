@@ -10,21 +10,22 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import {
-  Plus,
-  ChevronLeft,
-  ChevronRight,
-  ChevronDown,
-  Settings,
-  Star,
-  StarOff,
-} from "lucide-react";
+import { Plus } from "lucide-react";
 import { IoSearchOutline } from "react-icons/io5";
 import Image from "next/image";
 import { useState } from "react";
 import Pagination from "@/components/ui/pagination";
 import OrderActionsDropdown from "../orders/OrderActionsDropdown";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@radix-ui/react-dropdown-menu";
+import { FaRegStar } from "react-icons/fa";
+import { FaStar } from "react-icons/fa";
+import VisibilityToggle from "../dropdowns/VisibilityToggle";
+import FeaturedToggle from "../dropdowns/FeaturedToggle";
 const filterTabs = [
   "All",
   "Featured",
@@ -198,7 +199,13 @@ const products = [
 export default function AllProducts() {
   const [selectedTab, setSelectedTab] = useState("All");
   const [search, setSearch] = useState("");
-  const [favMap, setFavMap] = useState<{ [key: number]: boolean }>({});
+  const [featuredMap, setFeaturedMap] = useState<{ [key: number]: boolean }>(
+    {}
+  );
+  const [visibilityMap, setVisibilityMap] = useState<{
+    [key: number]: "ENABLED" | "DISABLED";
+  }>({});
+
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState("20");
   const dropdownActions = [
@@ -226,9 +233,6 @@ export default function AllProducts() {
 
   // Assuming you fetched totalPages from backend
   const totalPages = 21;
-  const toggleFav = (id: number) => {
-    setFavMap((prev) => ({ ...prev, [id]: !prev[id] }));
-  };
 
   return (
     <div className="">
@@ -297,7 +301,7 @@ export default function AllProducts() {
           {/* Right side: pagination and controls */}
           <div className="flex items-center space-x-10 text-gray-700">
             {/* Settings icon */}
-            <Settings className="w-8 h-8 text-gray-500" />
+            {/* <Settings className="w-8 h-8 text-gray-500" /> */}
             <div className="p-6">
               {/* Pagination */}
               <Pagination
@@ -339,23 +343,19 @@ export default function AllProducts() {
                     height={60}
                     className="rounded !border !border-gray-300 p-2"
                   />
-                  <span className="!text-blue-600  cursor-pointer">
+                  <span className="!text-blue-600  cursor-pointer ">
                     {product.name}
                   </span>
                 </TableCell>
-                <TableCell>
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    onClick={() => toggleFav(product.id)}
-                    className="cursor-pointer "
-                  >
-                    {favMap[product.id] ? (
-                      <Star className="w-8 h-8 text-blue-500 fill-blue-500" />
-                    ) : (
-                      <StarOff className="w-8 h-8 text-muted-foreground" />
-                    )}
-                  </Button>
+                <TableCell className="relative ">
+                    <FeaturedToggle
+                      productId={product.id}
+                      isFeatured={featuredMap[product.id] || false}
+                      onChange={(id, value) => {
+                        setFeaturedMap((prev) => ({ ...prev, [id]: value }));
+                        // Optional: call backend API here
+                      }}
+                    />
                 </TableCell>
 
                 <TableCell>{product.sku}</TableCell>
@@ -363,13 +363,30 @@ export default function AllProducts() {
                 <TableCell>{product.stock}</TableCell>
                 <TableCell>{product.price}</TableCell>
                 <TableCell>{product.channels}</TableCell>
-                <TableCell>
-                  <Badge className="!bg-green-700 !text-white  border-none">
-                    {product.visibility}
-                  </Badge>
+                <TableCell className="relative hover:bg-blue-100 transition-all">
+                  <VisibilityToggle
+                    productId={product.id}
+                    value={visibilityMap[product.id] || product.visibility}
+                    onChange={(id, value) => {
+                      setVisibilityMap((prev) => ({ ...prev, [id]: value }));
+                      // Optional: call backend API here
+                    }}
+                  />
                 </TableCell>
+
                 <TableCell>
-                  <OrderActionsDropdown actions={dropdownActions} />
+                  <OrderActionsDropdown
+                    actions={dropdownActions}
+                    trigger={
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-xl cursor-pointer"
+                      >
+                        •••
+                      </Button>
+                    }
+                  />
                 </TableCell>
               </TableRow>
             ))}
