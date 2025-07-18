@@ -8,7 +8,8 @@ function Input({ className, type = "text", ...props }: React.ComponentProps<"inp
       data-slot="input"
       className={cn(
         // Base styles
-        "text-base md:text-sm w-full max-w-md h-13 px-6 py-4  rounded-sm !border-2 !border-gray-200 bg-white  transition-colors",
+        "!text-xl !md:text-lg w-full max-w-md h-13 px-6 py-4  rounded-sm !border !border-gray-400 bg-white  transition-colors ",
+        "hover:border-blue-500",
 
         // Colors & dark mode
         "border-input dark:bg-input/30 placeholder:text-muted-foreground file:text-foreground",

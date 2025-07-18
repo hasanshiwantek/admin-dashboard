@@ -20,6 +20,7 @@ import FeaturedToggle from "../dropdowns/FeaturedToggle";
 import { fetchAllProducts } from "@/redux/slices/productSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import Cookies from "js-cookie";
+import { Checkbox } from "@/components/ui/checkbox";
 const filterTabs = [
   "All",
   "Featured",
@@ -227,6 +228,35 @@ export default function AllProducts() {
     { label: "Delete", onClick: () => console.log("Delete clicked") },
   ];
 
+  const editdropdownActions = [
+    { label: "Add to channels", onClick: () => console.log("Channel add clicked") },
+    { label: "Remove from channels", onClick: () => console.log("remove clicked") },
+    {
+      label: "Add to categories",
+      onClick: () => console.log("Add to categories clicked"),
+    },
+    {
+      label: "Remove from categories",
+      onClick: () => console.log("Remove from categories"),
+    },
+    { label: "Enable visiblity", onClick: () => console.log("Enable visiblity clicked") },
+    { label: "Disable visiblity", onClick: () => console.log("Disable Visiblityclicked") },
+    {
+      label: "Make featured",
+      onClick: () => console.log("Make featured clicked"),
+    },
+    {
+      label: "Make Not featured",
+      onClick: () => console.log("Make Not featured"),
+    },
+        {
+      label: "Delete",
+      onClick: () => console.log("Delete"),
+    },
+  
+  ];
+
+
   // const token=Cookies.get("token")
 
   // useEffect(()=>{
@@ -250,7 +280,7 @@ export default function AllProducts() {
             <button
               key={tab}
               onClick={() => setSelectedTab(tab)}
-              className={`!text-2xl px-5 py-2 rounded  cursor-pointer transition  ${
+              className={`!text-2xl px-5 py-2 rounded  cursor-pointer transition hover:bg-blue-100 ${
                 selectedTab === tab
                   ? "bg-blue-100 border-blue-600 text-blue-600"
                   : " text-blue-600"
@@ -263,8 +293,8 @@ export default function AllProducts() {
 
         <div className="flex justify-between gap-10 items-center mb-5">
           <div
-            className="flex justify-start items-center bg-white text-center !px-4 !py-3 rounded-md
-                         focus-within:ring-3 focus-within:ring-blue-200 focus-within:border-blue-200 border border-blue-200  transition hover:border-blue-200 w-[80%]"
+            className="flex justify-start items-center bg-white text-center !px-4 !py-4 rounded-md 
+                         focus-within:ring-3 focus-within:ring-blue-200 focus-within:border-blue-200 border border-gray-200  transition hover:border-blue-200 w-[80%]"
           >
             <i>
               <IoSearchOutline
@@ -282,19 +312,38 @@ export default function AllProducts() {
 
           {/* <Input placeholder="Search products" className="max-w-[80%] !p-7 " /> */}
 
-          <span className="!text-xl !text-blue-600 cursor-pointer">
-            Add filters
-          </span>
+          <button className="btn-outline-primary">Add filters</button>
+          {/* <Checkbox/> */}
         </div>
 
         <div className="flex items-center justify-between border-t border-b border-gray-200 px-4 py-2 bg-white text-sm">
           {/* Left side: checkbox and product count */}
-          <div className="flex items-center space-x-2">
-            <Input
-              type="checkbox"
-              className="w-6 h-6 border-gray-300 rounded"
-            />
+          <div className="flex items-center space-x-10">
+            <div className="flex justify-start items-center gap-2">
+            <Checkbox
+
+              />
             <span className="text-gray-700 !text-xl">275215 Products</span>
+              </div>
+
+            <div>
+              <button className="btn-outline-primary">Export</button>
+              <button className="btn-outline-primary">Bulk edit</button>
+              <button className="btn-outline-primary">Edit Inventory</button>
+              <OrderActionsDropdown
+                actions={editdropdownActions}
+                trigger={
+                  <button
+                    className="text-xl cursor-pointer btn-outline-primary"
+                  >
+                    •••
+                  </button>
+                }
+              />
+            </div>
+            <div>
+              <span className="!text-xl !text-blue-600 hover:bg-blue-100 cursor-pointer px-6 py-3 rounded-sm transition-all ">Select all products</span>
+            </div>
           </div>
 
           {/* Right side: pagination and controls */}
@@ -332,7 +381,7 @@ export default function AllProducts() {
             {products.map((product) => (
               <TableRow key={product.id}>
                 <TableCell>
-                  <input type="checkbox" />
+                  <Checkbox  />
                 </TableCell>
                 <TableCell className="flex items-center gap-2">
                   <Image
