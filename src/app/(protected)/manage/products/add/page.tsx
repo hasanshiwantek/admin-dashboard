@@ -1,8 +1,10 @@
+import AddProductPage from '@/app/components/products/add/AddProductPage'
 import React from 'react'
 
 const page = () => {
   return (
-    <div>page</div>
+    <div className='p-10'>
+      <AddProductPage/></div>
   )
 }
 
