@@ -3,9 +3,12 @@
 import { FormProvider, useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import SidebarNavigation from "./SidebarNavigation";
+import dynamic from "next/dynamic";
 import BasicInfoForm from "./BasicInformation";
 import Link from "next/link";
 import { FaArrowLeftLong } from "react-icons/fa6";
+import DescriptionEditor from "./DescriptionEditor";
+
 export default function AddProductPage() {
   const methods = useForm();
   const onSubmit = methods.handleSubmit((data) => console.log(data));
@@ -33,9 +36,7 @@ export default function AddProductPage() {
             className="flex-1 overflow-y-auto p-6 space-y-8"
           >
             <BasicInfoForm />
-            {/* <DescriptionEditor /> */}
-            {/* <ImagesUploader /> */}
-            {/* ...more */}
+            <DescriptionEditor />
             <div className="flex justify-end  gap-10 items-center fixed  bottom-0 right-0 bg-white/90 z-10 shadow-xs border-t w-full p-4">
               <button className="btn-outline-primary">Cancel</button>
               <button className="btn-primary" type="submit">
