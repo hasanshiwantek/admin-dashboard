@@ -13,7 +13,10 @@ export default function AddProductPage() {
   return (
     <div>
       <div className=" items-center mb-4">
-        <Link href={"/manage/products"} className="flex items-center justify-start gap-2 text-gray-500">
+        <Link
+          href={"/manage/products"}
+          className="flex items-center justify-start gap-2 text-gray-500"
+        >
           <FaArrowLeftLong size={18} />
           <h2 className="!text-gray-500">VIEW PRODUCTS</h2>
         </Link>
@@ -34,8 +37,10 @@ export default function AddProductPage() {
             {/* <ImagesUploader /> */}
             {/* ...more */}
             <div className="flex justify-end  gap-10 items-center fixed  bottom-0 right-0 bg-white/90 z-10 shadow-xs border-t w-full p-4">
-                <button className="btn-outline-primary">Cancel</button>
-            <button className="btn-primary" type="submit">Save Product</button>
+              <button className="btn-outline-primary">Cancel</button>
+              <button className="btn-primary" type="submit">
+                Save Product
+              </button>
             </div>
           </form>
         </FormProvider>
