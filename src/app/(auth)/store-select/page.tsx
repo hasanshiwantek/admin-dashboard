@@ -31,18 +31,18 @@ useEffect(() => {
 
   return (
     <ProtectedRoute>
-    <div className="max-w-md mx-auto mt-20 space-y-4">
-      <h2 className="text-xl font-bold">Select a Store</h2>
-      {websites.map((site: { baseURL: string; name?: string }) => (
-        <button
-          key={site.baseURL}
-          className="w-full px-4 py-2 bg-blue-600 text-white rounded"
-          onClick={() => handleSelect(site.baseURL)}
-        >
-          {site.name || site.baseURL}
-        </button>
-      ))}
-    </div>
+      <div className="max-w-md mx-auto mt-20 space-y-4">
+        <h2 className="text-xl font-bold">Select a Store</h2>
+        {websites.map((site: { baseURL: string; name?: string }) => (
+          <button
+            key={site.baseURL}
+            className="w-full px-4 py-2 bg-blue-600 text-white rounded"
+            onClick={() => handleSelect(site.baseURL)}
+          >
+            {site.name || site.baseURL}
+          </button>
+        ))}
+      </div>
     </ProtectedRoute>
   );
 }
