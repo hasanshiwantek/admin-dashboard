@@ -11,6 +11,7 @@ import ProductIdentifiers from "./ProductIdentifiers";
 import Inventory from "./Inventory";
 import Seo from "./Seo";
 import Pricing from "./Pricing";
+import StoreFront from "./StoreFront";
 export default function AddProductPage() {
   const methods = useForm();
   const onSubmit = methods.handleSubmit((data) => console.log(data));
@@ -44,6 +45,7 @@ export default function AddProductPage() {
             <Pricing/>
             {/* <Inventory /> */}
             <Seo />
+            <StoreFront/>
             <div className="flex justify-end  gap-10 items-center fixed  bottom-0 right-0 bg-white/90 z-10 shadow-xs border-t w-full p-4">
               <button className="btn-outline-primary">Cancel</button>
               <button className="btn-primary" type="submit">

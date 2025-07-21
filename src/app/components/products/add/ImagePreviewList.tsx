@@ -105,7 +105,7 @@ export default function ImagePreviewList({
                 updated[index].description = e.target.value;
                 setPreviews(updated);
               }}
-              className="w-full border rounded px-3 py-1 text-sm"
+              className="w-full border rounded px-3 py-4 text-lg"
               placeholder="Write a description of this image to improve search engine optimization"
             />
           </div>

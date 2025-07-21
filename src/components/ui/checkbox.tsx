@@ -15,7 +15,7 @@ function Checkbox({
       data-slot="checkbox"
       className={cn(
         // Base appearance
-        "peer size-7 shrink-0 rounded-md border border-gray-300 bg-white shadow-xs cursor-pointer",
+        "peer size-7 shrink-0 rounded-md border border-gray-400 bg-white shadow-xs cursor-pointer",
 
         // Checked state
         "data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-400 data-[state=checked]:text-white",
