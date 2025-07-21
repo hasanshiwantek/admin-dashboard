@@ -13,8 +13,8 @@ const DescriptionEditor = () => {
   const [content, setContent] = useState<string>('');
 
   return (
-      <div id="description" className='p-10 bg-white'>
-          <h2>Description</h2>
+      <div id="description" className='p-10 bg-white shadow-lg'>
+          <h1 className='my-5'>Description</h1>
           <JoditEditor
               value={content}
               config={{

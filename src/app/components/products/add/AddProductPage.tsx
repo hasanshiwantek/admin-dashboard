@@ -1,20 +1,19 @@
 "use client";
 // AddProductPage.tsx
 import { FormProvider, useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
 import SidebarNavigation from "./SidebarNavigation";
 import dynamic from "next/dynamic";
 import BasicInfoForm from "./BasicInformation";
 import Link from "next/link";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import DescriptionEditor from "./DescriptionEditor";
-
+import ImageVideoUploader from "./ImageVideoUploader";
 export default function AddProductPage() {
   const methods = useForm();
   const onSubmit = methods.handleSubmit((data) => console.log(data));
 
   return (
-    <div>
+    <div className="my-5">
       <div className=" items-center mb-4">
         <Link
           href={"/manage/products"}
@@ -37,6 +36,7 @@ export default function AddProductPage() {
           >
             <BasicInfoForm />
             <DescriptionEditor />
+            <ImageVideoUploader/>
             <div className="flex justify-end  gap-10 items-center fixed  bottom-0 right-0 bg-white/90 z-10 shadow-xs border-t w-full p-4">
               <button className="btn-outline-primary">Cancel</button>
               <button className="btn-primary" type="submit">
