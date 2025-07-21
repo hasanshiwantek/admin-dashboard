@@ -48,14 +48,35 @@ export default function Seo() {
                         </div>
                     
                         <div className="space-x-6">
-                            <Label htmlFor="productURL">Product URL <span className="!text-red-500">*</span></Label>
+                            <Label htmlFor="productURL">Product URL <span className="!text-red-500">*</span> <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <HiQuestionMarkCircle />
+                                        {/* <HiMiniQuestionMarkCircle /> */}
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                       The URL shown here is how people can access the product on your website. To change the URL, just click in the text box and type in your changes. <br/>To change the default URL format, go to the settings - Store Settings menu and click the URL Structure tab.
+                                       click on the reset button to return the URL to its default format.
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider></Label>
                             <Input id="ProductURL" placeholder="" {...register("productURL")}/>
                             <Button>Reset</Button>
                         </div>
                 </div>
 
                 <div>
-                    <Label htmlFor="metaDescription">Meta Description</Label>
+                    <Label htmlFor="metaDescription">Meta Description <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <HiQuestionMarkCircle />
+                                        {/* <HiMiniQuestionMarkCircle /> */}
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        Specify the description that will appear in the relevant meta tag for this product.
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider></Label>
                     <Input id="metaDescription" placeholder="" {...register("metaDescription")} className="!min-w-[75rem]"/>
                 </div>
             </div>
