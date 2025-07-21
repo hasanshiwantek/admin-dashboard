@@ -3,7 +3,6 @@
 import { FormProvider, useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import SidebarNavigation from "./SidebarNavigation";
-import dynamic from 'next/dynamic';
 import BasicInfoForm from "./BasicInformation";
 import DescriptionEditor from "./DescriptionEditor";
 

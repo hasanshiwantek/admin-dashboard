@@ -1,7 +1,8 @@
 'use client';
 
 // import JoditEditor from 'jodit-react';
-import { useState } from 'react';
+import { useFormContext } from 'react-hook-form';
+import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import type { Jodit } from 'jodit';
 
@@ -10,18 +11,27 @@ const JoditEditor = dynamic(() => import('jodit-react'), {
 });
 
 const DescriptionEditor = () => {
-  const [content, setContent] = useState<string>('');
+
+    const { setValue, getValues } = useFormContext();
+    const [content, setContent] = useState<string>('');
+   
+    useEffect(() => {
+    // Load initial form value once
+    const initial = getValues('description') || '';
+    setContent(initial);
+  }, [getValues]);
 
   return (
       <div id="description" className='p-10 bg-white'>
-          <h2>Description</h2>
+          <label htmlFor="description" className="block mb-2 font-medium">Description</label>
           <JoditEditor
               value={content}
               config={{
                   readonly: false,
                   height: 400,
               }}
-              onChange={(newContent: string) => setContent(newContent)}
+            //   onChange={(newContent: string) => setContent(newContent)}
+              onChange={(newContent) => setValue('description', newContent)}
           />
       </div>
   );
