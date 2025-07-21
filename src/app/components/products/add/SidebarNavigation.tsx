@@ -19,8 +19,8 @@ const sections = [
   { id: "purchasability", label: "Purchasability" },
   { id: "giftWrapping", label: "Gift wrapping" },
   { id: "customsInformation", label: "Customs information" },
+  { id: "seo", label: "SEO" },
   { id: "openGraphSharing", label: "Open graph sharing" },
-
 ];
 
 export default function SidebarNavigation() {
