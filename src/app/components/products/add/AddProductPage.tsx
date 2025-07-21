@@ -9,6 +9,8 @@ import DescriptionEditor from "./DescriptionEditor";
 import ImageVideoUploader from "./ImageVideoUploader";
 import ProductIdentifiers from "./ProductIdentifiers";
 import Inventory from "./Inventory";
+import Seo from "./Seo";
+
 export default function AddProductPage() {
   const methods = useForm();
   const onSubmit = methods.handleSubmit((data) => console.log(data));
@@ -39,7 +41,8 @@ export default function AddProductPage() {
             <DescriptionEditor />
             <ImageVideoUploader/>
             <ProductIdentifiers />
-            <Inventory />
+            {/* <Inventory /> */}
+            <Seo />
             <div className="flex justify-end  gap-10 items-center fixed  bottom-0 right-0 bg-white/90 z-10 shadow-xs border-t w-full p-4">
               <button className="btn-outline-primary">Cancel</button>
               <button className="btn-primary" type="submit">
