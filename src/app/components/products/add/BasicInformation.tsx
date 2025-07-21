@@ -27,7 +27,7 @@ export default function BasicInfoForm() {
             <h1>Product Information</h1>
             <p>Information to help define a product.</p>
             </div>
-            <div className="p-10 bg-white shadow-md">
+            <div className="p-10 bg-white shadow-lg rounded-sm ">
                 <h1 >Basic Information</h1>
                 <div className="flex items-center space-x-2 my-6 ">
                     <Checkbox id="visible" {...register("visible")}/>

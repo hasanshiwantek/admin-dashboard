@@ -145,7 +145,7 @@ a {
 
 
 .btn-primary {
-  @apply text-white border-2 border-[#2c83ec]  font-medium rounded px-4 py-[6px] text-xl transition-all my-1 duration-200 cursor-pointer;
+  @apply text-white border border-[#2c83ec]  font-medium rounded px-4 py-[6px] text-xl transition-all my-1 duration-200 cursor-pointer;
   background-color:#2c83ec ;
 }
 
