@@ -3,6 +3,15 @@ import { useFormContext } from "react-hook-form";
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { HiQuestionMarkCircle } from "react-icons/hi2";
+import { HiMiniQuestionMarkCircle } from "react-icons/hi2";
+
 
 
 export default function Seo() {
@@ -21,13 +30,27 @@ export default function Seo() {
                 <h1 >Search Engine Optimization</h1>
                 <div className="grid grid-cols-2 gap-6 my-4">
                         <div>
-                            <Label htmlFor="pageTitle">Page Title</Label>
+                        <Label htmlFor="pageTitle">
+                            Page Title
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <HiQuestionMarkCircle />
+                                        {/* <HiMiniQuestionMarkCircle /> */}
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        Specify a page title, or leave blank to use the products name as the page title.
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+                        </Label>
                             <Input id="pageTitle" placeholder="" {...register("pageTitle")}/>
                         </div>
                     
-                        <div>
-                            <Label htmlFor="productURL">Product URL</Label>
+                        <div className="space-x-6">
+                            <Label htmlFor="productURL">Product URL <span className="!text-red-500">*</span></Label>
                             <Input id="ProductURL" placeholder="" {...register("productURL")}/>
+                            <Button>Reset</Button>
                         </div>
                 </div>
 
