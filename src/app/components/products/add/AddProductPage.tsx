@@ -10,6 +10,7 @@ import ImageVideoUploader from "./ImageVideoUploader";
 import ProductIdentifiers from "./ProductIdentifiers";
 import Inventory from "./Inventory";
 import Seo from "./Seo";
+import Dimensions from "./Dimensions";
 
 export default function AddProductPage() {
   const methods = useForm();
@@ -43,6 +44,7 @@ export default function AddProductPage() {
             <ProductIdentifiers />
             {/* <Inventory /> */}
             <Seo />
+            <Dimensions />
             <div className="flex justify-end  gap-10 items-center fixed  bottom-0 right-0 bg-white/90 z-10 shadow-xs border-t w-full p-4">
               <button className="btn-outline-primary">Cancel</button>
               <button className="btn-primary" type="submit">
