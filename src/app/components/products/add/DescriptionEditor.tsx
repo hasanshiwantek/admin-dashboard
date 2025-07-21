@@ -22,8 +22,8 @@ const DescriptionEditor = () => {
   }, [getValues]);
 
   return (
-      <div id="description" className='p-10 bg-white'>
-          <label htmlFor="description" className="block mb-2 font-medium">Description</label>
+      <div id="description" className='p-10 bg-white shadow-lg'>
+          <h1 className='my-5'>Description</h1>
           <JoditEditor
               value={content}
               config={{
