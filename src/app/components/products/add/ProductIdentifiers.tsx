@@ -8,9 +8,8 @@ export default function ProductIdentifiers() {
     const { register } = useFormContext();
 
     return (
-        <section id="productIdentifiers" className="">
            
-            <div className="p-10 bg-white shadow-lg rounded-sm ">
+            <div id="productIdentifiers" className="p-10 bg-white shadow-lg rounded-sm" >
                 <h1 >Product Identifiers</h1>
                 <div className="grid grid-cols-2 gap-6 my-4">
                     {/* Left Div */}
@@ -45,6 +44,5 @@ export default function ProductIdentifiers() {
                 </div>
 
             </div>
-        </section>
     );
 }
