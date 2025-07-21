@@ -11,12 +11,9 @@ import {
 import { HiQuestionMarkCircle } from "react-icons/hi2";
 
 
-
 export default function Dimensions() {
 
-    const { register, setValue, watch } = useFormContext();
-    const productType = watch("productType");
-    const brand = watch("brand");
+    const { register } = useFormContext();
 
     return (
         <section id="dimensionWeight" className="space-y-4 scroll-mt-20">
