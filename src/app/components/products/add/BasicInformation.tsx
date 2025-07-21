@@ -3,7 +3,13 @@ import { useFormContext } from "react-hook-form";
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { 
+    Select, 
+    SelectTrigger, 
+    SelectValue, 
+    SelectContent, 
+    SelectItem 
+} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import CategoryTree from "./CategoryTree";
@@ -11,7 +17,9 @@ import CategoryTree from "./CategoryTree";
 
 export default function BasicInfoForm() {
 
-    const { register } = useFormContext();
+    const { register, setValue, watch } = useFormContext();
+    const productType = watch("productType");
+    const brand = watch("brand");
 
     return (
         <section id="basic-info" className="space-y-4 scroll-mt-20">
@@ -22,7 +30,7 @@ export default function BasicInfoForm() {
             <div className="p-10 bg-white shadow-lg rounded-sm ">
                 <h1 >Basic Information</h1>
                 <div className="flex items-center space-x-2 my-6 ">
-                    <Checkbox id="visible" />
+                    <Checkbox id="visible" {...register("visible")}/>
                     <Label htmlFor="visible">Visible on Storefront</Label>
                 </div>
                 <div className="grid grid-cols-2 gap-6 my-4">
@@ -30,13 +38,16 @@ export default function BasicInfoForm() {
                     <div className="space-y-12">
                         <div>
                             <Label htmlFor="productName">Product Name</Label>
-                            <Input id="productName" name="productName" placeholder="Sample Product Name" />
+                            <Input id="productName" placeholder="Sample Product Name" {...register("productName")}/>
                         </div>
 
                         <div>
                             <Label htmlFor="productType">Product Type</Label>
 
-                            <Select name="productType">
+                            <Select 
+                            value={productType}
+                            onValueChange={(value) => setValue("productType", value)}
+                            >
                                 <SelectTrigger>
                                     <SelectValue placeholder="Select type" />
                                 </SelectTrigger>
@@ -49,7 +60,10 @@ export default function BasicInfoForm() {
 
                         <div>
                             <Label htmlFor="brand">Brand</Label>
-                            <Select name="brand">
+                            <Select 
+                            value={brand}
+                            onValueChange={(value) => setValue("brand", value)}
+                            >
                                 <SelectTrigger>
                                     <SelectValue placeholder="Select brand" />
                                 </SelectTrigger>
@@ -65,17 +79,17 @@ export default function BasicInfoForm() {
                     <div className="space-y-12">
                         <div>
                             <Label htmlFor="sku">SKU</Label>
-                            <Input id="sku" name="sku"  placeholder="THX-1138" />
+                            <Input id="sku" placeholder="THX-1138" {...register("sku")}/>
                         </div>
 
                         <div>
                             <Label htmlFor="price">Default Price</Label>
-                            <Input id="price" name="price" type="number" defaultValue="35" />
+                            <Input id="price" type="number" defaultValue="35" {...register("price")}/>
                         </div>
 
                         <div>
                             <Label htmlFor="weight">Weight (lbs)</Label>
-                            <Input id="weight" name="weight" type="number" defaultValue="0" />
+                            <Input id="weight" type="number" defaultValue="0" {...register("weight")}/>
                         </div>
                     </div>
                 </div>
