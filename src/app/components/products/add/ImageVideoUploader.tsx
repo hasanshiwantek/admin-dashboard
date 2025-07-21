@@ -1,23 +1,26 @@
 "use client";
 
-import { useRef, useState,useEffect } from "react";
-import { useFormContext } from "react-hook-form";
+import { useRef, useState, useEffect } from "react";
+import { useFormContext,UseFormSetValue } from "react-hook-form";
 import { ImageIcon, UploadCloudIcon, PlusIcon } from "lucide-react";
 import ImagePreviewList from "./ImagePreviewList";
-
-type PreviewItem = {
-  file: File;
-  url: string;
-  description: string;
-  selected: boolean;
-  isThumbnail: boolean;
-};
+import AddFromUrlModal from "./AddFromUrlModal";
+import { PreviewItem } from "@/types/types";
+// export type PreviewItem = {
+//   file: File ;
+//   url: string;
+//   description: string;
+//   selected: boolean;
+//   isThumbnail: boolean;
+// };
 
 export default function ImageVideoUploader() {
   const { register, setValue } = useFormContext();
   const inputRef = useRef<HTMLInputElement>(null);
   const imageRegister = register("images");
   const [previews, setPreviews] = useState<PreviewItem[]>([]);
+  const [urlImages, setUrlImages] = useState<string[]>([]);
+  const [isUrlModalOpen, setIsUrlModalOpen] = useState(false);
 
   const handleUploadClick = () => {
     inputRef.current?.click();
@@ -29,6 +32,23 @@ export default function ImageVideoUploader() {
     return dt.files;
   };
 
+  const syncFormState = (updatedPreviews: PreviewItem[]) => {
+    const filePreviews = updatedPreviews.filter((p) => p.file);
+    const urlPreviews = updatedPreviews.filter((p) => !p.file);
+
+    setValue("images", fileListFromArray(filePreviews.map((p) => p.file!)), {
+      shouldValidate: true,
+    });
+    setValue("urlImages", urlPreviews.map((p) => p.url), {
+      shouldValidate: true,
+    });
+
+    console.log("🟢 Synced to react-hook-form:");
+    console.log("  → Files:", filePreviews.map((p) => p.file?.name));
+    console.log("  → URLs :", urlPreviews.map((p) => p.url));
+  };
+
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
@@ -36,11 +56,11 @@ export default function ImageVideoUploader() {
     const newFiles = Array.from(files).filter(
       (file) =>
         !previews.some(
-          (p) => p.file.name === file.name && p.file.size === file.size
+          (p) => p.file?.name === file.name && p.file?.size === file.size
         )
     );
 
-    const newPreviews = newFiles.map((file) => ({
+    const newPreviews: PreviewItem[] = newFiles.map((file) => ({
       file,
       url: URL.createObjectURL(file),
       description: "",
@@ -50,30 +70,39 @@ export default function ImageVideoUploader() {
 
     const updated = [...previews, ...newPreviews];
     setPreviews(updated);
-    console.log("Image Previews: ",previews);
-    console.log("Image Previews: ",updated);
-
-    
-    setValue("images", fileListFromArray(updated.map((p) => p.file)), {
-      shouldValidate: true,
-    });
+    syncFormState(updated);
   };
 
+
+
   useEffect(() => {
+    register("urlImages"); // Register it once
+  }, [register]);
+
+  const addUrlPreview = (item: PreviewItem) => {
+    const updated = [...previews, item];
+    setPreviews(updated);
+    syncFormState(updated);
+  };
+
+useEffect(() => {
   return () => {
-    previews.forEach(p => URL.revokeObjectURL(p.url));
+    previews.forEach((p) => {
+      if (p.file) URL.revokeObjectURL(p.url); // ✅ only revoke object URLs
+    });
   };
 }, []);
 
 
   return (
-    <div className="p-10 shadow-lg bg-white rounded-md">
+    <div className="p-10 shadow-lg bg-white rounded-md" id="images">
       <div className="flex items-center justify-between mb-2">
         <h1 className="my-5 text-xl font-semibold">Images & Videos</h1>
         <div className="flex space-x-4">
           <button
             type="button"
             className="btn-outline-primary flex items-center border border-gray-300 px-4 py-2 rounded-md text-sm"
+            onClick={() => setIsUrlModalOpen(true)}
           >
             <PlusIcon className="w-5 h-5 mr-2" />
             Add from URL
@@ -120,7 +149,7 @@ export default function ImageVideoUploader() {
       </div>
 
       {previews.length > 0 && (
-        <ImagePreviewList previews={previews} setPreviews={setPreviews} />
+        <ImagePreviewList previews={previews} setPreviews={setPreviews} setValue={setValue} />
       )}
 
       <div className="mt-8">
@@ -129,6 +158,11 @@ export default function ImageVideoUploader() {
           No videos have been added yet.
         </p>
       </div>
+      <AddFromUrlModal
+        open={isUrlModalOpen}
+        onOpenChange={setIsUrlModalOpen}
+        addUrlPreview={addUrlPreview}
+      />
     </div>
   );
 }

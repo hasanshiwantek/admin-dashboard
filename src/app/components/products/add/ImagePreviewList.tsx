@@ -1,27 +1,42 @@
 "use client";
 
 import { TrashIcon } from "lucide-react";
+import { UseFormSetValue } from "react-hook-form";
+import { PreviewItem } from "@/types/types";
 
-type PreviewItem = {
-  file: File;
-  url: string;
-  description: string;
-  selected: boolean;
-  isThumbnail: boolean;
-};
 
 type Props = {
   previews: PreviewItem[];
   setPreviews: React.Dispatch<React.SetStateAction<PreviewItem[]>>;
+  setValue: UseFormSetValue<any>;
 };
 
-export default function ImagePreviewList({ previews, setPreviews }: Props) {
+export default function ImagePreviewList({
+  previews,
+  setPreviews,
+  setValue,
+}: Props) {
+  const fileListFromArray = (files: File[]): FileList => {
+    const dt = new DataTransfer();
+    files.forEach((file) => dt.items.add(file));
+    return dt.files;
+  };
+  const syncForm = (updated: PreviewItem[]) => {
+    setValue(
+      "images",
+      fileListFromArray(updated.filter((p) => p.file).map((p) => p.file!))
+    );
+    setValue(
+      "urlImages",
+      updated.filter((p) => !p.file).map((p) => p.url)
+    );
+    console.log("🧹 Synced after delete:", updated);
+  };
   const handleDeleteSelected = () => {
-    const toDelete = previews.filter((p) => p.selected);
-    toDelete.forEach((p) => URL.revokeObjectURL(p.url));
-    setPreviews(previews.filter((p) => !p.selected));
-    console.log("Images after deletion: ",previews);
-    
+    const updated = previews.filter((p) => !p.selected);
+    previews.forEach((p) => p.selected && p.file && URL.revokeObjectURL(p.url));
+    setPreviews(updated);
+    syncForm(updated);
   };
 
   return (
@@ -38,7 +53,9 @@ export default function ImagePreviewList({ previews, setPreviews }: Props) {
               )
             }
           />
-          <span>{previews.filter((p) => p.selected).length} image selected</span>
+          <span>
+            {previews.filter((p) => p.selected).length} image selected
+          </span>
         </div>
         <button
           type="button"
@@ -52,7 +69,7 @@ export default function ImagePreviewList({ previews, setPreviews }: Props) {
       <div className="grid grid-cols-12 gap-2 text-base font-semibold text-gray-600">
         <div className="col-span-1" />
         <div className="col-span-2">Image</div>
-        <div className="col-span-7">Description  (Image alt text)</div>
+        <div className="col-span-7">Description (Image alt text)</div>
         <div className="col-span-2">Thumbnail</div>
       </div>
 
@@ -108,8 +125,10 @@ export default function ImagePreviewList({ previews, setPreviews }: Props) {
             <button
               type="button"
               onClick={() => {
-                URL.revokeObjectURL(p.url);
-                setPreviews(previews.filter((_, i) => i !== index));
+                if (p.file) URL.revokeObjectURL(p.url);
+                const updated = previews.filter((_, i) => i !== index);
+                setPreviews(updated);
+                syncForm(updated);
               }}
               className="text-gray-400 hover:text-red-500 cursor-pointer ml-20"
             >
