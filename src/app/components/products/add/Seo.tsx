@@ -19,7 +19,7 @@ export default function Seo() {
 
   return (
     <section id="seo" className="space-y-4 scroll-mt-20">
-      <div className="flex justify-center items-center flex-col">
+      <div className="flex justify-center items-center flex-col my-5">
         <h1>SEO & Sharing</h1>
         <p>Boost traffic to your online business.</p>
       </div>
