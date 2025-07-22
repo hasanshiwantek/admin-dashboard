@@ -16,7 +16,7 @@ export default function Dimensions() {
     const { register } = useFormContext();
 
     return (
-        <section id="dimensionWeight" className="space-y-4 scroll-mt-20">
+        <section id="dimensionWeight" className="space-y-4 scroll-mt-20" >
             <div className="flex justify-center items-center flex-col">
             <h1>Fulfillment</h1>
             <p>Setup shipping and inventory details for this product.</p>

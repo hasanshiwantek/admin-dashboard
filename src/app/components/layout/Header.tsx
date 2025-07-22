@@ -26,7 +26,7 @@ const Header: React.FC = () => {
   }, []);
 
   return (
-    <header className="w-full fixed h-22 px-4 flex items-center justify-between relative z-40 bg-[var(--header-bg)]">
+    <header className="w-full fixed h-22 px-4 flex items-center justify-between z-40  bg-[var(--header-bg)]">
       {/* Left: Logo & Company Name */}
       <div className="flex items-center gap-2 !ml-10 ">
         <div className="flex justify-start items-center gap-10  ">
@@ -42,7 +42,7 @@ const Header: React.FC = () => {
           <div ref={companyRef} className="relative">
             {/* Toggle Button */}
             <div
-              className="flex justify-between gap-[62px] !px-4 items-center border-r-2 border-l-2 border-[#2d3748] h-[5rem] cursor-pointer hover:bg-[#2d3748]"
+              className=" relative flex justify-between gap-[62px] !px-4 items-center border-r-2 border-l-2 border-[#2d3748] h-[5rem] cursor-pointer hover:bg-[#2d3748]"
               onClick={() => setCompanyOpen(!companyOpen)}
             >
               <button className="text-white text-xl font-medium py-1 rounded-md cursor-pointer">
@@ -59,7 +59,7 @@ const Header: React.FC = () => {
 
             {/* Dropdown Menu */}
             {companyOpen && (
-              <div className="absolute left-0 mt-2 w-[300px] bg-white rounded-md shadow-lg z-50 !p-5">
+              <div className="absolute left-0 mt-2 w-[300px] bg-white rounded-md shadow-lg z-60 !p-5">
                 <div className="p-4 !my-5">
                   <p className="!text-2xl !text-black">CTS Point Inc</p>
                   <p className="!text-xl !text-gray-500">Pro Plan Store</p>

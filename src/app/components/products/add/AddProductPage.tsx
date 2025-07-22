@@ -16,8 +16,7 @@ import Pricing from "./Pricing";
 import StoreFront from "./StoreFront";
 import ShippingDetails from "./ShippingDetails";
 import Purchasability from "./Purchasibility";
-import RelatedProducts from "./RelatedProducts";
-
+import CustomFields from "./CustomFieldsSection";
 export default function AddProductPage() {
   const methods = useForm();
   const onSubmit = methods.handleSubmit((data) => console.log(data));
@@ -51,14 +50,15 @@ export default function AddProductPage() {
             <ProductIdentifiers />
             <Pricing />
             <Inventory />
-            <StoreFront/>
-            <RelatedProducts />
-            <Dimensions />
+            <StoreFront />
+            <CustomFields/>
+            <Dimensions/>
+            <ShippingDetails />
             <Purchasability />
-            <ShippingDetails/>
+
+            <OpenGraph/>
             <Seo />
-            <OpenGraph />
-            <div className="flex justify-end  gap-10 items-center fixed  bottom-0 right-0 bg-white/90 z-10 shadow-xs border-t w-full p-4">
+            <div className="flex justify-end  gap-10 items-center fixed w-full bottom-0 right-0  bg-white/90 z-10 shadow-xs border-t  p-4">
               <button className="btn-outline-primary">Cancel</button>
               <button className="btn-primary" type="submit">
                 Save Product
