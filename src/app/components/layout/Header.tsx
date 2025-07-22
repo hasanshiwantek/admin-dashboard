@@ -26,7 +26,7 @@ const Header: React.FC = () => {
   }, []);
 
   return (
-    <header className="w-full fixed h-22 px-4 flex items-center justify-between relative z-40 bg-[var(--header-bg)]">
+    <header className="w-full fixed h-22 px-4 flex items-center justify-between z-40 bg-[var(--header-bg)]">
       {/* Left: Logo & Company Name */}
       <div className="flex items-center gap-2 !ml-10 ">
         <div className="flex justify-start items-center gap-10  ">

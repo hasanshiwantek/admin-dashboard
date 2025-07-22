@@ -24,7 +24,7 @@ const StoreFront = () => {
 
   return (
     <div>
-      <div className="flex justify-center items-center flex-col my-5">
+      <div className="flex justify-center items-center flex-col my-5" id="storefrontDetails">
         <h1>Storefront</h1>
         <p className="text-muted-foreground">
           Setup what customers will see on the storefront.
