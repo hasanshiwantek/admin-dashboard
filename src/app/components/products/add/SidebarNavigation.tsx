@@ -17,7 +17,7 @@ const sections = [
   { id: "dimensionWeight", label: "Dimension & weight" },
   { id: "shippingDetails", label: "Shipping details" },
   { id: "purchasability", label: "Purchasability" },
-  { id: "giftWrapping", label: "Gift wrapping" },
+  // { id: "giftWrapping", label: "Gift wrapping" },
   { id: "customsInformation", label: "Customs information" },
   { id: "seo", label: "SEO" },
   { id: "openGraphSharing", label: "Open graph sharing" },
