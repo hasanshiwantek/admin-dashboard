@@ -12,8 +12,8 @@ export default function Inventory() {
             <div id="inventory" className="p-10 bg-white shadow-lg rounded-sm ">
                 <h1 >Inventory</h1>
                 <div className="flex items-center space-x-2 my-6 ">
-                    <Checkbox id="visible" {...register("trackInventory")}/>
-                    <Label htmlFor="visible">Track Inventory</Label>
+                    <Checkbox id="visibleInventory" {...register("trackInventory")}/>
+                    <Label htmlFor="visibleInventory">Track Inventory</Label>
                 </div>
             </div>
     );

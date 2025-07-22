@@ -16,7 +16,7 @@ export default function ShippingDetails() {
   const { register } = useFormContext();
 
   return (
-    <div className="bg-white shadow p-6  space-y-4">
+    <div className="bg-white shadow p-6  space-y-4" id="shippingDetails">
       <h1>Shipping Details</h1>
 
       <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
