@@ -40,11 +40,11 @@ const LayoutWrapper: React.FC<LayoutWrapperProps> = ({ children }) => {
       <Header />
       <NavigationLoader />
       <div className="flex min-h-[calc(100vh-5.5rem)]">
-        <div className="w-[26.8rem] shrink-0 h-auto z-50 overflow-y-auto sticky">
+        <div className="w-[26.8rem] shrink-0 h-auto overflow-y-auto z-20">
           <SideBar />
         </div>
 
-        <main className="flex-1 bg-[var(--store-bg)]">{children}</main>
+        <main className="flex-1 bg-[var(--store-bg)] mt-20">{children}</main>
       </div>
     </>
   );
