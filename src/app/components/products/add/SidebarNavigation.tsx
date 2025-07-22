@@ -43,8 +43,8 @@ export default function SidebarNavigation() {
     //   ))}
     // </ScrollArea>
 
-    <ScrollArea className="w-70 h-175 border-r fixed top-0">
-  <div className="p-4 space-y-4 ">
+    <ScrollArea className="w-70 h-175 border-r fixed sticky top-0">
+    <div className="p-4 space-y-4 ">
     {sections.map((sec) => (
       <Button
         key={sec.id}
