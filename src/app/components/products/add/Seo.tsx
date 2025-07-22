@@ -10,7 +10,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { HiQuestionMarkCircle } from "react-icons/hi2";
-import { HiMiniQuestionMarkCircle } from "react-icons/hi2";
 
 export default function Seo() {
   const { register, setValue, watch } = useFormContext();
