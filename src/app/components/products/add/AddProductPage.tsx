@@ -16,6 +16,8 @@ import Pricing from "./Pricing";
 import StoreFront from "./StoreFront";
 import ShippingDetails from "./ShippingDetails";
 import Purchasability from "./Purchasibility";
+import RelatedProducts from "./RelatedProducts";
+
 export default function AddProductPage() {
   const methods = useForm();
   const onSubmit = methods.handleSubmit((data) => console.log(data));
@@ -41,20 +43,21 @@ export default function AddProductPage() {
         <FormProvider {...methods}>
           <form
             onSubmit={onSubmit}
-            className="flex-1 overflow-y-auto p-6 space-y-8 "
+            className="flex-1  p-6 space-y-8 "
           >
             <BasicInfoForm />
             <DescriptionEditor />
             <ImageVideoUploader />
             <ProductIdentifiers />
             <Pricing />
-            {/* <Inventory /> */}
-            {/* <StoreFront/> */}
-            {/* <RelatedProducts /> */}
+            <Inventory />
+            <StoreFront/>
+            <RelatedProducts />
             <Dimensions />
-            {/* <ShippingDetails/> */}
+            <Purchasability />
+            <ShippingDetails/>
             <Seo />
-            {/* <OpenGraph /> */}
+            <OpenGraph />
             <div className="flex justify-end  gap-10 items-center fixed  bottom-0 right-0 bg-white/90 z-10 shadow-xs border-t w-full p-4">
               <button className="btn-outline-primary">Cancel</button>
               <button className="btn-primary" type="submit">
