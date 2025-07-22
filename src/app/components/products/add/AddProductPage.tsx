@@ -15,8 +15,7 @@ import OpenGraph from "./OpenGraph";
 import Pricing from "./Pricing";
 import StoreFront from "./StoreFront";
 import ShippingDetails from "./ShippingDetails";
-import RelatedProducts from "./RelatedProducts";
-
+import Purchasability from "./Purchasibility";
 export default function AddProductPage() {
   const methods = useForm();
   const onSubmit = methods.handleSubmit((data) => console.log(data));
@@ -46,9 +45,9 @@ export default function AddProductPage() {
           >
             <BasicInfoForm />
             <DescriptionEditor />
-            <ImageVideoUploader/>
+            <ImageVideoUploader />
             <ProductIdentifiers />
-            {/* <Pricing/> */}
+            <Pricing />
             {/* <Inventory /> */}
             {/* <StoreFront/> */}
             {/* <RelatedProducts /> */}
