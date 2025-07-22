@@ -9,7 +9,7 @@ export default function ProductIdentifiers() {
 
     return (
            
-            <div id="productIdentifiers" className="p-10 bg-white shadow-lg rounded-sm" >
+            <div id="productIdentifiers" className="p-10 bg-white shadow-lg rounded-sm scroll-mt-20" >
                 <h1 >Product Identifiers</h1>
                 <div className="grid grid-cols-2 gap-6 my-4">
                     {/* Left Div */}

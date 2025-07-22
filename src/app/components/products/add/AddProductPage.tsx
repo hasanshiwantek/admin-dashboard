@@ -55,9 +55,8 @@ export default function AddProductPage() {
             <Dimensions/>
             <ShippingDetails />
             <Purchasability />
-
-            <OpenGraph/>
             <Seo />
+            <OpenGraph/>
             <div className="flex justify-end  gap-10 items-center fixed w-full bottom-0 right-0  bg-white/90 z-10 shadow-xs border-t  p-4">
               <button className="btn-outline-primary">Cancel</button>
               <button className="btn-primary" type="submit">

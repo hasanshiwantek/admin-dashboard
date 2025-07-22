@@ -21,7 +21,7 @@ export default function Purchasability() {
   const removePreorderDate = watch("removePreorderStatus");
 
   return (
-    <div className="bg-white p-6 border rounded-md space-y-6"  id="purchasability">
+    <div className="bg-white p-6 border rounded-md space-y-6 scroll-mt-20"  id="purchasability">
       <h1>Purchasability</h1>
 
       {/* Radio Group with Controller */}

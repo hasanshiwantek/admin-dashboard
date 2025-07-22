@@ -27,7 +27,7 @@ export default function Pricing() {
   const { register, control } = useFormContext();
 
   return (
-    <div className="bg-white shadow-lg p-10 space-y-8" id="pricing">
+    <div className="bg-white shadow-lg p-10 space-y-8 scroll-mt-20" id="pricing">
       <h1 className="text-xl font-semibold">Pricing</h1>
 
       {/* Default Price and Tax Class */}
