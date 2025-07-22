@@ -13,6 +13,7 @@ import Seo from "./Seo";
 import Pricing from "./Pricing";
 import StoreFront from "./StoreFront";
 import ShippingDetails from "./ShippingDetails";
+import Purchasability from "./Purchasibility";
 export default function AddProductPage() {
   const methods = useForm();
   const onSubmit = methods.handleSubmit((data) => console.log(data));
@@ -41,13 +42,15 @@ export default function AddProductPage() {
           >
             <BasicInfoForm />
             <DescriptionEditor />
-            <ImageVideoUploader/>
+            <ImageVideoUploader />
             <ProductIdentifiers />
-            <Pricing/>
+            <Pricing />
             {/* <Inventory /> */}
+            <StoreFront />
+            <ShippingDetails />
+            <Purchasability />
             <Seo />
-            <StoreFront/>
-            <ShippingDetails/>
+
             <div className="flex justify-end  gap-10 items-center fixed  bottom-0 right-0 bg-white/90 z-10 shadow-xs border-t w-full p-4">
               <button className="btn-outline-primary">Cancel</button>
               <button className="btn-primary" type="submit">
