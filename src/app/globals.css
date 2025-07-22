@@ -135,6 +135,11 @@ a {
 }
 
 /* Buttons (Optional Custom Tailwind Styling) */
+
+button{
+  cursor: pointer;
+}
+
 .btn-outline-primary {
   @apply text-[#2c83ec] border border-[#2c83ec] font-medium rounded px-4 py-[8px] text-xl transition-all my-1 duration-200 cursor-pointer;
   background-color: transparent;
