@@ -25,7 +25,7 @@ export default function CustomFields() {
   })
 
   return (
-    <div className="bg-white p-10 shadow-lg space-y-6">
+    <div className="bg-white p-10 shadow-lg space-y-6" id="customFields">
         <h1>Custom Fields</h1>
         <p >
          Custom fields allow you to specify additional information that will appear on the products page. Custom fields appear automatically in the product's details if they are defined on the product. If you don't want to show any custom fields, simply remove them from the product. 
