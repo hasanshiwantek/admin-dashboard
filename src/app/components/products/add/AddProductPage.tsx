@@ -17,6 +17,7 @@ import StoreFront from "./StoreFront";
 import ShippingDetails from "./ShippingDetails";
 import Purchasability from "./Purchasibility";
 import CustomFields from "./CustomFieldsSection";
+import CustomsInformation from "./CustomsInformation";
 export default function AddProductPage() {
   const methods = useForm();
   const onSubmit = methods.handleSubmit((data) => console.log(data));
@@ -51,10 +52,12 @@ export default function AddProductPage() {
             <Pricing />
             <Inventory />
             <StoreFront />
-            <CustomFields/>
-            <Dimensions/>
+            <CustomFields />
+            <Dimensions />
             <ShippingDetails />
             <Purchasability />
+            <CustomsInformation/>
+            <OpenGraph />
             <Seo />
             <OpenGraph/>
             <div className="flex justify-end  gap-10 items-center fixed w-full bottom-0 right-0  bg-white/90 z-10 shadow-xs border-t  p-4">
@@ -66,7 +69,6 @@ export default function AddProductPage() {
           </form>
         </FormProvider>
       </div>
-
     </div>
   );
 }

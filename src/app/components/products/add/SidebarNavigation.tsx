@@ -30,33 +30,21 @@ export default function SidebarNavigation() {
   };
 
   return (
-    //  <ScrollArea className="w-68 border-r p-4 sticky top-0 h-screen w-48">
-    //   {sections.map((sec) => (
-    //     <Button
-    //       key={sec.id}
-    //       variant="ghost"
-    //       className="w-full justify-start my-1 text-[1.2rem]"
-    //       onClick={() => scrollTo(sec.id)}
-    //     >
-    //       {sec.label}
-    //     </Button>
-    //   ))}
-    // </ScrollArea>
-
-    <ScrollArea className="w-70 h-175 border-r sticky  top-0">
-    <div className="p-4 space-y-4 ">
-    {sections.map((sec) => (
-      <Button
-        key={sec.id}
-        variant="ghost"
-        className="w-full justify-start text-2xl hover:text-blue-600 hover:bg-blue-100 transition-all cursor-pointer p-6 text-gray-600"
-        onClick={() => scrollTo(sec.id)}
-      >
-        {sec.label}
-      </Button>
-    ))}
-  </div>
-</ScrollArea>
-
+    <aside className="w-[20rem] shadow-xs h-[calc(80vh-5.5rem)]  sticky top-[9rem] border-r bg-[var(--store-bg)] ">
+      <ScrollArea className="h-full">
+        <div className="p-4 space-y-3">
+          {sections.map((sec) => (
+            <Button
+              key={sec.id}
+              variant="ghost"
+              className="w-full justify-start text-[1.3rem] hover:text-blue-600 hover:bg-blue-100 transition-all cursor-pointer  py-5 text-gray-600"
+              onClick={() => scrollTo(sec.id)}
+            >
+              {sec.label}
+            </Button>
+          ))}
+        </div>
+      </ScrollArea>
+    </aside>
   );
 }
