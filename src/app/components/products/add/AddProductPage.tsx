@@ -55,8 +55,8 @@ export default function AddProductPage() {
             <ProductIdentifiers />
             <Pricing />
             <Inventory />
-            <Variations />
-            <Customizations />
+            {/* <Variations /> */}
+            {/* <Customizations /> */}
             <StoreFront />
             <CustomFields />
             <RelatedProducts />
