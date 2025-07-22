@@ -43,10 +43,8 @@ const LayoutWrapper: React.FC<LayoutWrapperProps> = ({ children }) => {
         <div className="w-[26.8rem] shrink-0 h-auto overflow-y-auto z-20">
           <SideBar />
         </div>
-
-        <main className="flex-1 bg-[var(--store-bg)] mt-20">{children}</main>
+        <main className="flex-1 bg-[var(--store-bg)] mt-20 ">{children}</main>
       </div>
-      
     </>
   );
 };
