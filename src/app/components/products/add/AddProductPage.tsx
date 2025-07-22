@@ -10,6 +10,8 @@ import ImageVideoUploader from "./ImageVideoUploader";
 import ProductIdentifiers from "./ProductIdentifiers";
 import Inventory from "./Inventory";
 import Seo from "./Seo";
+import Dimensions from "./Dimensions";
+import OpenGraph from "./OpenGraph";
 import Pricing from "./Pricing";
 import StoreFront from "./StoreFront";
 import ShippingDetails from "./ShippingDetails";
@@ -32,22 +34,25 @@ export default function AddProductPage() {
         </h1>
         <hr className="my-5" />
       </div>
-      <div className="flex">
+
+      <div className="flex ">
         <SidebarNavigation />
         <FormProvider {...methods}>
           <form
             onSubmit={onSubmit}
-            className="flex-1 overflow-y-auto p-6 space-y-8"
+            className="flex-1 overflow-y-auto p-6 space-y-8 "
           >
             <BasicInfoForm />
             <DescriptionEditor />
             <ImageVideoUploader/>
             <ProductIdentifiers />
-            <Pricing/>
+            {/* <Pricing/> */}
             {/* <Inventory /> */}
             <Seo />
-            <StoreFront/>
-            <ShippingDetails/>
+            {/* <StoreFront/> */}
+            {/* <ShippingDetails/> */}
+            {/* <OpenGraph /> */}
+            
             <div className="flex justify-end  gap-10 items-center fixed  bottom-0 right-0 bg-white/90 z-10 shadow-xs border-t w-full p-4">
               <button className="btn-outline-primary">Cancel</button>
               <button className="btn-primary" type="submit">
@@ -57,6 +62,7 @@ export default function AddProductPage() {
           </form>
         </FormProvider>
       </div>
+
     </div>
   );
 }
