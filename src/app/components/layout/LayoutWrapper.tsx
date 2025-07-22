@@ -46,6 +46,7 @@ const LayoutWrapper: React.FC<LayoutWrapperProps> = ({ children }) => {
 
         <main className="flex-1 bg-[var(--store-bg)] mt-20">{children}</main>
       </div>
+      
     </>
   );
 };

@@ -13,7 +13,7 @@ export default function InventorySection() {
   const inventoryLevel = watch("inventoryLevel");
 
   return (
-    <div className="p-10 border rounded-md bg-white space-y-4">
+    <div className="p-10 border rounded-md bg-white space-y-4 scroll-mt-20" id="inventory">
       <h1>Inventory</h1>
 
       {/* Switch: Track Inventory */}
