@@ -86,8 +86,8 @@
 body {
   /* overflow-x: hidden; */
   /* overflow-y: auto; */
-  scroll-behavior: smooth;
-  height: fit-content;
+  /* scroll-behavior: smooth; */
+  /* height: fit-content; */
 }
 
 *::before,
@@ -100,6 +100,15 @@ body {
 html {
   font-size: 62.5%; /* 1rem = 10px */
   overflow-x: hidden;
+}
+
+/* Fix layout calculation */
+html,
+body {
+  height: 100%;
+  overflow: hidden; 
+  scroll-behavior: smooth;
+
 }
 
 /* Tailwind Typography System */
@@ -168,11 +177,6 @@ input {
   font-weight: 700;
 }
 
-
-input {
-  /* border: none; */
-  /* outline: none; */
-}
 
 /* Image Reset */
 img {
