@@ -229,8 +229,14 @@ export default function AllProducts() {
   ];
 
   const editdropdownActions = [
-    { label: "Add to channels", onClick: () => console.log("Channel add clicked") },
-    { label: "Remove from channels", onClick: () => console.log("remove clicked") },
+    {
+      label: "Add to channels",
+      onClick: () => console.log("Channel add clicked"),
+    },
+    {
+      label: "Remove from channels",
+      onClick: () => console.log("remove clicked"),
+    },
     {
       label: "Add to categories",
       onClick: () => console.log("Add to categories clicked"),
@@ -239,8 +245,14 @@ export default function AllProducts() {
       label: "Remove from categories",
       onClick: () => console.log("Remove from categories"),
     },
-    { label: "Enable visiblity", onClick: () => console.log("Enable visiblity clicked") },
-    { label: "Disable visiblity", onClick: () => console.log("Disable Visiblityclicked") },
+    {
+      label: "Enable visiblity",
+      onClick: () => console.log("Enable visiblity clicked"),
+    },
+    {
+      label: "Disable visiblity",
+      onClick: () => console.log("Disable Visiblityclicked"),
+    },
     {
       label: "Make featured",
       onClick: () => console.log("Make featured clicked"),
@@ -249,13 +261,11 @@ export default function AllProducts() {
       label: "Make Not featured",
       onClick: () => console.log("Make Not featured"),
     },
-        {
+    {
       label: "Delete",
       onClick: () => console.log("Delete"),
     },
-  
   ];
-
 
   // const token=Cookies.get("token")
 
@@ -274,7 +284,7 @@ export default function AllProducts() {
         </Button>
       </div>
 
-      <div className="bg-white p-4 shadow-sm">
+      <div className="bg-white p-4 shadow-md">
         <div className="flex flex-wrap gap-5 mb-4">
           {filterTabs.map((tab) => (
             <button
@@ -320,11 +330,9 @@ export default function AllProducts() {
           {/* Left side: checkbox and product count */}
           <div className="flex items-center space-x-10">
             <div className="flex justify-start items-center gap-2">
-            <Checkbox
-
-              />
-            <span className="text-gray-700 !text-xl">275215 Products</span>
-              </div>
+              <Checkbox />
+              <span className="text-gray-700 !text-xl">275215 Products</span>
+            </div>
 
             <div>
               <button className="btn-outline-primary">Export</button>
@@ -333,16 +341,16 @@ export default function AllProducts() {
               <OrderActionsDropdown
                 actions={editdropdownActions}
                 trigger={
-                  <button
-                    className="text-xl cursor-pointer btn-outline-primary"
-                  >
+                  <button className="text-xl cursor-pointer btn-outline-primary">
                     •••
                   </button>
                 }
               />
             </div>
             <div>
-              <span className="!text-xl !text-blue-600 hover:bg-blue-100 cursor-pointer px-6 py-3 rounded-sm transition-all ">Select all products</span>
+              <span className="!text-xl !text-blue-600 hover:bg-blue-100 cursor-pointer px-6 py-3 rounded-sm transition-all ">
+                Select all products
+              </span>
             </div>
           </div>
 
@@ -362,84 +370,87 @@ export default function AllProducts() {
             </div>
           </div>
         </div>
-        <Table>
-          <TableHeader className="h-18">
-            <TableRow>
-              <TableHead></TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead></TableHead>
-              <TableHead>SKU</TableHead>
-              <TableHead>Categories</TableHead>
-              <TableHead>Current stock</TableHead>
-              <TableHead>Price</TableHead>
-              <TableHead>Channels</TableHead>
-              <TableHead>Visibility</TableHead>
-              <TableHead></TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {products.map((product) => (
-              <TableRow key={product.id}>
-                <TableCell>
-                  <Checkbox  />
-                </TableCell>
-                <TableCell className="flex items-center gap-2">
-                  <Image
-                    src={product.image}
-                    alt={product.name}
-                    width={60}
-                    height={60}
-                    className="rounded !border !border-gray-300 p-2"
-                  />
-                  <span className="!text-blue-600  cursor-pointer ">
-                    {product.name}
-                  </span>
-                </TableCell>
-                <TableCell className="relative ">
-                  <FeaturedToggle
-                    productId={product.id}
-                    isFeatured={featuredMap[product.id] || false}
-                    onChange={(id, value) => {
-                      setFeaturedMap((prev) => ({ ...prev, [id]: value }));
-                      // Optional: call backend API here
-                    }}
-                  />
-                </TableCell>
-
-                <TableCell>{product.sku}</TableCell>
-                <TableCell>{product.category}</TableCell>
-                <TableCell>{product.stock}</TableCell>
-                <TableCell>{product.price}</TableCell>
-                <TableCell>{product.channels}</TableCell>
-                <TableCell className="relative hover:bg-blue-100 transition-all">
-                  <VisibilityToggle
-                    productId={product.id}
-                    value={visibilityMap[product.id] || product.visibility}
-                    onChange={(id, value) => {
-                      setVisibilityMap((prev) => ({ ...prev, [id]: value }));
-                      // Optional: call backend API here
-                    }}
-                  />
-                </TableCell>
-
-                <TableCell>
-                  <OrderActionsDropdown
-                    actions={dropdownActions}
-                    trigger={
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="text-xl cursor-pointer"
-                      >
-                        •••
-                      </Button>
-                    }
-                  />
-                </TableCell>
+        <div>
+          <Table>
+            <TableHeader className="h-18">
+              <TableRow>
+                <TableHead></TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead></TableHead>
+                <TableHead>SKU</TableHead>
+                <TableHead>Categories</TableHead>
+                <TableHead>Current stock</TableHead>
+                <TableHead>Price</TableHead>
+                <TableHead>Channels</TableHead>
+                <TableHead>Visibility</TableHead>
+                <TableHead></TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {products.map((product) => (
+                <TableRow key={product.id}>
+                  <TableCell>
+                    <Checkbox />
+                  </TableCell>
+                  <TableCell className="flex items-center gap-2 ">
+                    <Image
+                      src={product.image}
+                      alt={product.name}
+                      width={60}
+                      height={60}
+                      className="rounded !border !border-gray-300 p-2 shrink-0"
+                    />
+                    <span className="!text-blue-600   cursor-pointer whitespace-normal break-words leading-snug max-w-[300px]">
+                      {product.name}
+                    </span>
+                  </TableCell>
+                  <TableCell className="relative  ">
+                    <FeaturedToggle
+                      productId={product.id}
+                      isFeatured={featuredMap[product.id] || false}
+                      onChange={(id, value) => {
+                        setFeaturedMap((prev) => ({ ...prev, [id]: value }));
+                        // Optional: call backend API here
+                      }}
+                    />
+                  </TableCell>
+
+                  <TableCell>{product.sku}</TableCell>
+                  <TableCell>{product.category}</TableCell>
+                  <TableCell>{product.stock}</TableCell>
+                  <TableCell>{product.price}</TableCell>
+                  <TableCell>{product.channels}</TableCell>
+                  <TableCell className="relative hover:bg-blue-100 transition-all">
+                    <VisibilityToggle
+                      productId={product.id}
+                      value={visibilityMap[product.id] || product.visibility}
+                      onChange={(id, value) => {
+                        setVisibilityMap((prev) => ({ ...prev, [id]: value }));
+                        // Optional: call backend API here
+                      }}
+                    />
+                  </TableCell>
+
+                  <TableCell>
+                    <OrderActionsDropdown
+                      actions={dropdownActions}
+                      trigger={
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="text-xl cursor-pointer"
+                        >
+                          •••
+                        </Button>
+                      }
+                    />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+
         <div className="flex justify-end my-6">
           {/* Pagination */}
           <Pagination

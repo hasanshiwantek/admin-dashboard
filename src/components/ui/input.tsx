@@ -12,7 +12,7 @@ function Input({
       data-slot="input"
       className={cn(
         // Base styles
-        "!text-xl !md:text-lg w-full max-w-md h-13 px-6 py-4 rounded-sm bg-white transition-colors",
+        "!text-xl !md:text-lg w-full max-w-md h-13 px-4 py-4 rounded-sm bg-white transition-colors",
 
         // Default border
         "border border-gray-400",
