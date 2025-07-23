@@ -30,9 +30,9 @@ export default function SidebarNavigation() {
   };
 
   return (
-    <aside className="w-[20rem] shadow-xs h-[calc(80vh-5.5rem)]  sticky top-[9rem] border-r bg-[var(--store-bg)] ">
+    <aside className="w-[20rem] shadow-xs h-[calc(80vh-5.5rem)]  sticky top-[4rem] border-r bg-[var(--store-bg)] ">
       <ScrollArea className="h-full">
-        <div className="p-4 space-y-3">
+        <div className="p-6 space-y-3">
           {sections.map((sec) => (
             <Button
               key={sec.id}
