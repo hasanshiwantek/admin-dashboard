@@ -21,6 +21,7 @@ import { fetchAllProducts } from "@/redux/slices/productSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import Cookies from "js-cookie";
 import { Checkbox } from "@/components/ui/checkbox";
+import EditPriceSheet from "./EditPriceSheet";
 const filterTabs = [
   "All",
   "Featured",
@@ -418,7 +419,17 @@ export default function AllProducts() {
                   <TableCell>{product.sku}</TableCell>
                   <TableCell>{product.category}</TableCell>
                   <TableCell>{product.stock}</TableCell>
-                  <TableCell>{product.price}</TableCell>
+                  <TableCell>
+                    <EditPriceSheet
+                      product={product}
+                      trigger={
+                        <span className="hover:text-blue-400 !text-xl cursor-pointer hover:underline">
+                          {product.price}
+                        </span>
+                      }
+                    />
+                  </TableCell>
+
                   <TableCell>{product.channels}</TableCell>
                   <TableCell className="relative hover:bg-blue-100 transition-all">
                     <VisibilityToggle
