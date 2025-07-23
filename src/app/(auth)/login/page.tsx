@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "@/redux/slices/authSlice";
 import type { AppDispatch, RootState } from "@/redux/store";
-import { setBaseURL } from "@/redux/slices/configSlice";
+import { setStoreId } from "@/redux/slices/configSlice";
 import { Eye, EyeOff } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -29,9 +29,8 @@ export default function LoginPage() {
       localStorage.setItem("token", token);
 
       if (websites.length === 1) {
-        // Single store – set baseURL and go to dashboard
-        localStorage.setItem("baseURL", websites[0].baseURL);
-        dispatch(setBaseURL(websites[0].baseURL));
+        localStorage.setItem("storeId", websites[0].storeId.toString());
+        dispatch(setStoreId(websites[0].storeId));
         router.push("/dashboard");
       } else {
         // Multiple stores – let user select

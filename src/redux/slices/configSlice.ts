@@ -1,27 +1,28 @@
+// configSlice.ts
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface ConfigState {
-  baseURL: string | null;
+  storeId: number | null;
 }
 
 const initialState: ConfigState = {
-  baseURL: typeof window !== 'undefined' ? localStorage.getItem('baseURL') : null,
+  storeId: typeof window !== 'undefined' ? Number(localStorage.getItem('storeId')) || null : null,
 };
 
 const configSlice = createSlice({
   name: 'config',
   initialState,
   reducers: {
-    setBaseURL: (state, action: PayloadAction<string>) => {
-      state.baseURL = action.payload;
-      localStorage.setItem('baseURL', action.payload);
+    setStoreId: (state, action: PayloadAction<number>) => {
+      state.storeId = action.payload;
+      localStorage.setItem('storeId', action.payload.toString());
     },
-    clearBaseURL: (state) => {
-      state.baseURL = null;
-      localStorage.removeItem('baseURL');
+    clearStoreId: (state) => {
+      state.storeId = null;
+      localStorage.removeItem('storeId');
     },
   },
 });
 
-export const { setBaseURL, clearBaseURL } = configSlice.actions;
+export const { setStoreId, clearStoreId } = configSlice.actions;
 export default configSlice.reducer;

@@ -62,4 +62,4 @@ export const SideBar = () => {
       </SidebarProvider>
     </div>
   );
-};
+};``

@@ -2,7 +2,7 @@
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
-import { setBaseURL } from "@/redux/slices/configSlice";
+import { setStoreId } from "@/redux/slices/configSlice";
 import { RootState } from "@/redux/store";
 import ProtectedRoute from "@/auth/ProtectedRoute";
 
@@ -10,14 +10,13 @@ export default function StoreSelectPage() {
   const dispatch = useDispatch();
   const router = useRouter();
   const websites = useSelector((state: RootState) => state.auth.websites);
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
 
-  const handleSelect = (baseURL: string) => {
-    dispatch(setBaseURL(baseURL));
-    localStorage.setItem("baseURL", baseURL);
+  const handleSelect = (storeId: number) => {
+    dispatch(setStoreId(storeId));
+    localStorage.setItem("storeId", storeId.toString());
     router.push("/dashboard");
   };
-
-  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
 
 useEffect(() => {
   if (!isAuthenticated) {
@@ -33,13 +32,13 @@ useEffect(() => {
     <ProtectedRoute>
       <div className="max-w-md mx-auto mt-20 space-y-4">
         <h2 className="text-xl font-bold">Select a Store</h2>
-        {websites.map((site: { baseURL: string; name?: string }) => (
+        {websites.map((site: { storeId: number; name?: string }) => (
           <button
-            key={site.baseURL}
+            key={site.storeId}
             className="w-full px-4 py-2 bg-blue-600 text-white rounded"
-            onClick={() => handleSelect(site.baseURL)}
+            onClick={() => handleSelect(site.storeId)}
           >
-            {site.name || site.baseURL}
+            {site.name || `Store ${site.storeId}` }
           </button>
         ))}
       </div>
