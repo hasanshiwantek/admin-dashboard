@@ -1,6 +1,6 @@
-import React from 'react'
+import React from "react";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const sections = [
   { id: "basic-info", label: "Basic information" },
@@ -26,7 +26,7 @@ const sections = [
 export default function SidebarNavigation() {
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "nearest" });
   };
 
   return (
