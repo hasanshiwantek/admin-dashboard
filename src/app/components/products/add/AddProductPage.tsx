@@ -64,7 +64,6 @@ export default function AddProductPage() {
             <ShippingDetails />
             <Purchasability />
             <CustomsInformation/>
-            <OpenGraph />
             <Seo />
             <OpenGraph/>
             <div className="flex justify-end  gap-10 items-center fixed w-full bottom-0 right-0  bg-white/90 z-10 shadow-xs border-t  p-4">
