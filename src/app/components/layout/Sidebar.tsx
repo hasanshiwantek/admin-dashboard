@@ -18,7 +18,7 @@ import { ChevronDown } from "lucide-react";
 export const SideBar = () => {
   return (
     <div className="  shrink-0 h-auto  z-20 fixed top-22 w-[26.7rem]  max-h-full overflow-y-auto overflow-x-hidden  bg-[rgb(3,16,51)] text-white border-t-2 border-[#2d3748] custom-scroll">
-      <SidebarProvider>
+      <SidebarProvider>  
         <SidebarMenu>
           {sidebarData.map((item) =>
             item.children ? (
