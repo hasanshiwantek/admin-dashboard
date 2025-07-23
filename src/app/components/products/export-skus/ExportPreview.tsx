@@ -125,7 +125,7 @@ const previewData = [
 
 export default function ExportPreview() {
   const [currentPage, setCurrentPage] = useState(1);
-  const totalItems = 275217;
+  const totalItems = 200;
   const totalPages = Math.ceil(totalItems / 10);
   const [perPage, setPerPage] = useState("20");
 

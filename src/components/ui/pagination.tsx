@@ -69,7 +69,7 @@ const Pagination = ({
       {/* View per page */}
       <div className="flex items-center">
         <Select value={perPage} onValueChange={onPerPageChange}>
-          <SelectTrigger className="w-[100px] h-9 text-lg">
+          <SelectTrigger className="">
             <SelectValue placeholder={`View ${perPage}`} />
           </SelectTrigger>
           <SelectContent>
