@@ -19,7 +19,7 @@ interface AuthState {
   loading: boolean;
   error: string | null;
   isAuthenticated: boolean;
-  websites: { baseURL: string; name?: string }[];
+  websites: { storeId: number; name?: string }[];
 }
 
 const initialState: AuthState = {
@@ -75,8 +75,8 @@ const authSlice = createSlice({
       state.user = null;
       state.token = null;
       state.isAuthenticated = false;
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("baseURL");
+      localStorage.removeItem("token");
+      localStorage.removeItem("storeId");
     },
   },
   extraReducers: (builder) => {
@@ -97,11 +97,15 @@ const authSlice = createSlice({
         state.user = action.payload.user;
         state.token = action.payload.token;
         state.isAuthenticated = true;
-        state.websites = action.payload.websites
+        // state.websites = action.payload.websites
+        state.websites = action.payload.stores.map((store: any) => ({
+          storeId: store.id,
+          name: store.name,
+        }));
 
-        localStorage.setItem("accessToken", action.payload.token);
-        if (action.payload.websites?.length === 1) {
-          localStorage.setItem("baseURL", action.payload.websites[0].baseURL);
+        localStorage.setItem("token", action.payload.token);
+        if (action.payload.stores?.length === 1) {
+          localStorage.setItem("storeId", action.payload.stores[0].id.toString());
         }
       })
 

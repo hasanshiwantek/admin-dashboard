@@ -58,6 +58,7 @@ import React from "react";
 import Header from "./Header";
 import { SideBar } from "./Sidebar";
 import NavigationLoader from "../loader/NavigationLoader";
+
 interface LayoutWrapperProps {
   children: React.ReactNode;
 }

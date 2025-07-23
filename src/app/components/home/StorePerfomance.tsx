@@ -119,13 +119,13 @@ export default function StorePerformanceChart() {
     },
   ];
 
-  //   useEffect(() => {
-  //     dispatch(fetchDashboardMetrics());
-  //   }, [dispatch]);
+    useEffect(() => {
+      dispatch(fetchDashboardMetrics());
+    }, [dispatch]);
 
-  useEffect(() => {
-    setMetrics(dummyMetrics);
-  }, []);
+  // useEffect(() => {
+  //   setMetrics(dummyMetrics);
+  // }, []);
 
   return (
     <div>
