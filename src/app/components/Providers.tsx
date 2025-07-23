@@ -4,14 +4,14 @@
 import { Provider } from 'react-redux';
 import { store } from '@/redux/store';
 import { useEffect } from 'react';
-import { setBaseURL } from '@/redux/slices/configSlice';
+import { setStoreId } from '@/redux/slices/configSlice';
 
 export default function Providers({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
-    const savedURL = localStorage.getItem("baseURL");
-    if (savedURL) {
-      store.dispatch(setBaseURL(savedURL));
+    const savedId = localStorage.getItem("storeId");
+    if (savedId) {
+      store.dispatch(setStoreId(Number (savedId)));
     }
   }, []);
 
