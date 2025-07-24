@@ -28,7 +28,7 @@ export default function AddProductPage() {
 
   return (
     <div className="my-5">
-      <div className=" items-center mb-4">
+      <div className=" items-center mt-10">
         <Link
           href={"/manage/products"}
           className="flex items-center justify-start gap-2 text-gray-500"
