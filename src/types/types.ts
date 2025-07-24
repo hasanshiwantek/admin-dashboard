@@ -6,25 +6,11 @@ export type PreviewItem = {
   isThumbnail: boolean;
 };
 
-// export interface DailyMetric {
-//   label: string; 
-//   visits: number;
-//   orders: number;
-//   revenue: number;
-//   conversion: number;
-// }
-
-// export interface StorePerformanceAPIResponse {
-//   range_start: string;
-//   range_end: string;
-//   data: DailyMetric[];
-// }
-
 export interface StoreMetric {
   date: string;
   revenue: string;
   orders: number;
-  visits: number;
+  visits: string;
   label: string;
   conversions: number;
 }

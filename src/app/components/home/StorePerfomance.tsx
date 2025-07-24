@@ -103,19 +103,16 @@ export default function StorePerformanceChart() {
               name="Last week"
               strokeDasharray="4 4"
             /> */}
-            <Line
+            {/* <Line
               type="monotone"
               dataKey="revenue"
               stroke="#1d4ed8"
               name="Revenue"
-            />
-            <Line
-              type="monotone"
-              dataKey="orders"
-              stroke="#d1d5db"
-              name="orders"
-              strokeDasharray="4 4"
-            />
+            /> */}
+            <Line dataKey={(d) => Number(d.revenue)} stroke="#9d10b9ff" name="Revenue" />
+            <Line dataKey={(d) => Number(d.orders)} stroke="#0046afff" name="Orders" />
+            <Line dataKey={(d) => Number(d.visits)} stroke="#4f5050" name="Visits" />
+            <Line dataKey={(d) => Number(d.conversion)} stroke="#5a9e1b" name="Conversion" />
           </LineChart>
         </ResponsiveContainer>
       </div>
