@@ -1,105 +1,60 @@
-import React from "react";
-
-const orders = [
-  {
-    status: "Awaiting Payment",
-    color: "bg-orange-500",
-    orderId: "#310692",
-    name: "IT Department",
-    price: "$429.50",
-    date: "Jul 15, 2025, 6:56 AM",
-  },
-  {
-    status: "Awaiting Payment",
-    color: "bg-orange-500",
-    orderId: "#310691",
-    name: "Michael Sikora",
-    price: "$442.34",
-    date: "Jul 14, 2025, 12:42 PM",
-  },
-  {
-    status: "Awaiting Fulfillment",
-    color: "bg-sky-400",
-    orderId: "#310689",
-    name: "Catherine Thompson Floyd",
-    price: "$428.83",
-    date: "Jul 14, 2025, 10:53 AM",
-  },
-  {
-    status: "Awaiting Fulfillment",
-    color: "bg-sky-400",
-    orderId: "#310688",
-    name: "Cheryl Sung",
-    price: "$108.00",
-    date: "Jul 14, 2025, 1:02 AM",
-  },
-  {
-    status: "Awaiting Payment",
-    color: "bg-orange-500",
-    orderId: "#310687",
-    name: "Jeanette Becker",
-    price: "$373.92",
-    date: "Jul 13, 2025, 5:12 PM",
-  },
-  {
-    status: "Awaiting Fulfillment",
-    color: "bg-sky-400",
-    orderId: "#310686",
-    name: "Tommy Molina",
-    price: "$244.90",
-    date: "Jul 10, 2025, 1:03 PM",
-  },
-  {
-    status: "Shipped",
-    color: "bg-green-400",
-    orderId: "#310685",
-    name: "Brian Bell",
-    price: "$2,558.17",
-    date: "Jul 10, 2025, 11:12 AM",
-  },
-  {
-    status: "Shipped",
-    color: "bg-green-400",
-    orderId: "#310684",
-    name: "Beverly Bilbro",
-    price: "$755.09",
-    date: "Jul 10, 2025, 9:18 AM",
-  },
-  {
-    status: "Shipped",
-    color: "bg-green-400",
-    orderId: "#310683",
-    name: "Jason McAninch",
-    price: "$373.92",
-    date: "Jul 9, 2025, 1:15 PM",
-  },
-  {
-    status: "Awaiting Fulfillment",
-    color: "bg-sky-400",
-    orderId: "#310682",
-    name: "Josiah hemphill",
-    price: "$287.50",
-    date: "Jul 9, 2025, 10:26 AM",
-  },
-];
-
+"use client";
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import { fetchAllOrders } from "@/redux/slices/orderSlice";
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
+import { OrderItem, OrderListResponse } from "@/types/types";
+import Spinner from "../loader/Spinner";
 const tabs = ["Recent", "Pending", "Completed", "Refunded"];
 
 const OrderTable = () => {
+  const dispatch = useAppDispatch();
+  const { loading, error, orders } = useAppSelector(
+    (state) => state.order
+  ) as unknown as {
+    loading: boolean;
+    error: string | null;
+    orders: OrderListResponse;
+  };
+
+  console.log("Orders data from frontend: ", orders);
+
+  const [activeTab, setActiveTab] = useState("Recent");
+  const [filteredOrders, setFilteredOrders] = useState<OrderItem[]>([]);
+
+  // Fetch all orders on mount
+  useEffect(() => {
+    dispatch(fetchAllOrders());
+  }, [dispatch]);
+
+  // Filter orders based on active tab
+  useEffect(() => {
+    if (!orders?.data) return;
+
+    if (activeTab === "Recent") {
+      setFilteredOrders(orders.data);
+    } else {
+      const filtered = orders.data.filter(
+        (order) => order.status.toLowerCase() === activeTab.toLowerCase()
+      );
+      setFilteredOrders(filtered);
+    }
+  }, [activeTab, orders]);
+
   return (
     <div>
       <h1 className="my-5">Orders</h1>
 
-      <div className="bg-white rounded shadow-sm p-4">
-        {/* Tabs and Header Row */}
+      <div className="bg-white rounded shadow-sm p-4 mb-10">
+        {/* Tabs */}
         <div className="flex justify-between items-center mb-4">
-          {/* Tabs */}
           <div className="flex space-x-4">
             {tabs.map((tab, i) => (
               <button
                 key={i}
+                onClick={() => setActiveTab(tab)}
                 className={`text-xl px-6 py-2 rounded-full transition cursor-pointer ${
-                  i === 0
+                  activeTab === tab
                     ? "bg-blue-600 text-white"
                     : "text-gray-600 hover:text-blue-600"
                 }`}
@@ -108,38 +63,80 @@ const OrderTable = () => {
               </button>
             ))}
           </div>
-
-          {/* View More */}
-          <a href="#" className="!text-xl text-blue-500 hover:underline">
+          <Link
+            href="/manage/orders"
+            className="!text-xl text-blue-500 hover:underline"
+          >
             View more &rarr;
-          </a>
+          </Link>
         </div>
 
-        {/* Orders Table */}
+        {/* Loading Spinner */}
+        {loading && (
+          <div className="text-center py-10">
+            <Spinner />
+          </div>
+        )}
+
+        {/* Error Message */}
+        {!loading && error && (
+          <div className="text-center py-10 text-red-500 text-lg">
+            Error: {error}
+          </div>
+        )}
+
+        {/* Orders */}
         <div className="divide-y">
-          {orders.map((order, i) => (
-            <div
-              key={i}
-              className="flex items-center justify-between py-4 hover:bg-[#f1f8fe]"
-            >
-              {/* Status + Color */}
-              <div className="flex items-center gap-4 w-1/3">
-                <span className={`w-4 h-6  ${order.color}`}></span>
-                <span className="!text-2xl !font-[400] text-[#5d5b66]">{order.status}</span>
-              </div>
+          {filteredOrders.length === 0 && (
+            <p className="text-center  py-10">
+              No orders found for <strong>{activeTab}</strong>.
+            </p>
+          )}
 
-              {/* Order Info */}
-              <div className="w-1/3 text-xl text-blue-600 hover:underline cursor-pointer">
-                Order {order.orderId} - {order.name}
-              </div>
+          {filteredOrders.map((order) => {
+            const colorMap: Record<string, string> = {
+              Pending: "bg-orange-500",
+              "Awaiting Payment": "bg-orange-500",
+              "Awaiting Fulfillment": "bg-sky-400",
+              Completed: "bg-green-700",
+              Shipped: "bg-green-400",
+              Delivered: "bg-green-700",
+              Refunded: "bg-red-500",
+            };
 
-              {/* Price + Date */}
-              <div className="w-1/3 flex justify-between  text-right  text-gray-700">
-                <div className="font-semibold text-xl text-gray-500">{order.price}</div>
-                <div className="text-xl text-gray-500">{order.date}</div>
+            const color = colorMap[order.status] || "bg-gray-400";
+
+            const formattedDate = new Date(order.createdAt).toLocaleString(
+              "en-US",
+              {
+                dateStyle: "medium",
+                timeStyle: "short",
+              }
+            );
+
+            return (
+              <div
+                key={order.id}
+                className="flex items-center justify-between py-4 hover:bg-[#f1f8fe]"
+              >
+                <div className="flex items-center gap-4 w-1/3">
+                  <span className={`w-4 h-6 ${color}`}></span>
+                  <span className="text-2xl font-medium text-[#5d5b66]">
+                    {order.status}
+                  </span>
+                </div>
+                <div className="w-1/3 text-xl text-blue-600 hover:underline cursor-pointer">
+                  Order #{order.id} - {order.name}
+                </div>
+                <div className="w-1/3 flex justify-between text-right text-gray-700">
+                  <div className="font-semibold text-xl text-gray-500">
+                    ${parseFloat(order.totalAmount).toFixed(2)}
+                  </div>
+                  <div className="text-xl text-gray-500">{formattedDate}</div>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>
