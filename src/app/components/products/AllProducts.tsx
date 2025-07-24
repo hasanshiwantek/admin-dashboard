@@ -310,9 +310,11 @@ const handleEditInventory = () => {
         <h1 className="!text-5xl !font-extralight !text-gray-600 !my-5">
           Products
         </h1>
-        <Button size="xl" className="!text-2xl btn-primary">
-          <Plus className="w-6 h-12 mr-2 " /> Add new
+        <Link href={"/manage/products/add"}>
+        <Button size="xl" className="!text-2xl btn-primary !flex !justify-start !items-center">
+          <Plus className="!w-6 !h-6" /> Add new
         </Button>
+        </Link>
       </div>
 
       <div className="bg-white p-4 shadow-md">
