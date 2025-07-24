@@ -15,30 +15,40 @@ export default function LoginPage() {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
   const { loading, error } = useSelector((state: RootState) => state.auth);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({
+  email: "",
+  password: "",
+  showPassword: false,
+  });
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const result = await dispatch(loginUser({ email, password }));
+    const result = await dispatch(loginUser({ email: formData.email, password: formData.password }));
 
     if (loginUser.fulfilled.match(result)) {
-      const { token, websites } = result.payload;
+      const { token, stores } = result.payload;
       Cookies.set("token", token, { expires: 7 });
       localStorage.setItem("token", token);
 
-      if (websites.length === 1) {
-        localStorage.setItem("storeId", websites[0].storeId.toString());
-        dispatch(setStoreId(websites[0].storeId));
+      if (stores.length === 1) {
+        localStorage.setItem("storeId", stores[0].storeId.toString());
+        dispatch(setStoreId(stores[0].storeId));
         router.push("/dashboard");
       } else {
         // Multiple stores – let user select
-        localStorage.setItem("availableWebsites", JSON.stringify(websites));
+        localStorage.setItem("availableStores", JSON.stringify(stores));
         router.push("/store-select");
       }
     }
   };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const toggleShowPassword = () =>
+    setFormData((prev) => ({ ...prev, showPassword: !prev.showPassword }));
 
   return (
     <div className="flex flex-col min-h-screen items-center justify-center bg-black">
@@ -51,29 +61,31 @@ export default function LoginPage() {
         <div className="flex justify-center flex-col items-center">
           {error && <div className="text-red-400 text-xl mb-4">{error}</div>}
           <Input
+            name="email"
             type="email"
             placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={formData.email}
+            onChange={handleChange}
             required
             className=" w-[30rem] !text-2xl my-5 px-6 py-8 bg-blue-50 text-black placeholder:text-gray-500"
           />
 
           <div className="relative">
             <Input
-              type={showPassword ? "text" : "password"}
+              name="password"
+              type={formData.showPassword ? "text" : "password"}
               placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={formData.password}
+              onChange={handleChange}
               required
               className="w-[30rem] !text-2xl my-5 px-6 py-8 bg-blue-50 text-black placeholder:text-gray-500"
             />
             <button
               type="button"
-              onClick={() => setShowPassword(!showPassword)}
+              onClick={toggleShowPassword}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 "
             >
-              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              {formData.showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
           <Button
