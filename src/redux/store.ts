@@ -3,12 +3,14 @@ import homeReducer from './slices/homeSlice';
 import authReducer from './slices/authSlice'
 import configReducer from './slices/configSlice'
 import productReducer from "./slices/productSlice"
+import orderReducer from "./slices/orderSlice"
 export const store = configureStore({
   reducer: {
     home: homeReducer,
     auth: authReducer,
     config: configReducer,
     product:productReducer,
+    order:orderReducer
   },
 });
 
