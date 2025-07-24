@@ -19,7 +19,8 @@ interface AuthState {
   loading: boolean;
   error: string | null;
   isAuthenticated: boolean;
-  websites: { storeId: number; name?: string }[];
+  // websites: { storeId: number; name?: string }[];
+  stores: {storeId: number; name?: string}[];
 }
 
 const initialState: AuthState = {
@@ -28,7 +29,8 @@ const initialState: AuthState = {
   loading: false,
   error: null,
   isAuthenticated: false,
-  websites: [],
+  // websites: [],
+  stores: [],
 };
 
 // Login thunk
@@ -39,7 +41,7 @@ export const loginUser = createAsyncThunk(
     thunkAPI
   ) => {
     try {
-      const res = await axiosInstance.post("/auth/login", { email, password });
+      const res = await axiosInstance.post("user/login", { email, password });
       return res.data;
     } // eslint-disable-next-line @typescript-eslint/no-explicit-any
       catch (err: any) {
@@ -98,7 +100,7 @@ const authSlice = createSlice({
         state.token = action.payload.token;
         state.isAuthenticated = true;
         // state.websites = action.payload.websites
-        state.websites = action.payload.stores.map((store: any) => ({
+        state.stores = action.payload.stores.map((store: any) => ({
           storeId: store.id,
           name: store.name,
         }));

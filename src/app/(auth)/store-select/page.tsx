@@ -9,7 +9,7 @@ import ProtectedRoute from "@/auth/ProtectedRoute";
 export default function StoreSelectPage() {
   const dispatch = useDispatch();
   const router = useRouter();
-  const websites = useSelector((state: RootState) => state.auth.websites);
+  const stores = useSelector((state: RootState) => state.auth.stores);
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
 
   const handleSelect = (storeId: number) => {
@@ -24,15 +24,15 @@ useEffect(() => {
   }
 }, [isAuthenticated]);
 
-  if (!websites || websites.length === 0) {
-    return <p>No websites found for this user.</p>;
+  if (!stores || stores.length === 0) {
+    return <p>No stores found for this user.</p>;
   }
 
   return (
     <ProtectedRoute>
       <div className="max-w-md mx-auto mt-20 space-y-4">
         <h2 className="text-xl font-bold">Select a Store</h2>
-        {websites.map((site: { storeId: number; name?: string }) => (
+        {stores.map((site: { storeId: number; name?: string }) => (
           <button
             key={site.storeId}
             className="w-full px-4 py-2 bg-blue-600 text-white rounded"

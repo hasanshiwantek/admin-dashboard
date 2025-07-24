@@ -1,7 +1,7 @@
 import axios from "axios"
 
 const axiosInstance = axios.create({
-  baseURL: "https://ecom.brokercell.com",
+  baseURL: "https://ecom.brokercell.com/api/",
 })
 
 axiosInstance.interceptors.request.use((config) => {

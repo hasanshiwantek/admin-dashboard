@@ -1,5 +1,4 @@
 "use client";
-
 import React from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -18,7 +17,7 @@ import {
 } from "@/components/ui/tooltip";
 import { HiQuestionMarkCircle } from "react-icons/hi2";
 import { Controller, useFormContext } from "react-hook-form";
-import CategoryTreeSm from "../add/CategoryTreeSm";
+import CategoryTreeSm from "../add/CategoryTreeSm"; 
 
 const SearchProduct = () => {
     const { register, control } = useFormContext();
