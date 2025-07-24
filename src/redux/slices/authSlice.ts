@@ -19,7 +19,6 @@ interface AuthState {
   loading: boolean;
   error: string | null;
   isAuthenticated: boolean;
-  // websites: { storeId: number; name?: string }[];
   stores: {storeId: number; name?: string}[];
 }
 
@@ -29,7 +28,6 @@ const initialState: AuthState = {
   loading: false,
   error: null,
   isAuthenticated: false,
-  // websites: [],
   stores: [],
 };
 
@@ -99,7 +97,6 @@ const authSlice = createSlice({
         state.user = action.payload.user;
         state.token = action.payload.token;
         state.isAuthenticated = true;
-        // state.websites = action.payload.websites
         state.stores = action.payload.stores.map((store: any) => ({
           storeId: store.id,
           name: store.name,
