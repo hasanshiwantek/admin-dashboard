@@ -12,8 +12,7 @@ import {
   AreaChart,
 } from "recharts";
 import { fetchDashboardMetrics } from "@/redux/slices/homeSlice";
-import { useDispatch, UseDispatch, useSelector } from "react-redux";
-import { RootState, AppDispatch } from "@/redux/store";
+import { useAppDispatch,useAppSelector } from "@/hooks/useReduxHooks";
 
 interface StoreMetric {
   date: string;
@@ -36,8 +35,10 @@ interface DailyMetric {
 
 export default function StorePerformanceChart() {
   const [metrics, setMetrics] = useState<DailyMetric[]>([]);
-  const dispatch = useDispatch<AppDispatch>();
-  //   const metrics = useSelector((state: RootState) => state.home.metrics);
+  const dispatch = useAppDispatch();
+    const metricsData = useAppSelector((state) => state.home.metrics);
+    console.log(metricsData);
+    
 
   const dummyMetrics: DailyMetric[] = [
     {
@@ -119,9 +120,9 @@ export default function StorePerformanceChart() {
     },
   ];
 
-    // useEffect(() => {
-    //   dispatch(fetchDashboardMetrics());
-    // }, [dispatch]);
+    useEffect(() => {
+      dispatch(fetchDashboardMetrics());
+    }, [dispatch]);
 
   useEffect(() => {
     setMetrics(dummyMetrics);
