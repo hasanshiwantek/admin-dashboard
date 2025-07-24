@@ -4,9 +4,10 @@ import { fetchStoreStatistics } from "@/redux/slices/homeSlice";
 import { useAppSelector, useAppDispatch } from "@/hooks/useReduxHooks";
 import Link from "next/link";
 const Stats = () => {
-  const { data, loading, error } = useAppSelector(
-    (state: any) => state.home.statistics
+  const { statistics, loading, error } = useAppSelector(
+    (state: any) => state.home
   );
+  const data=statistics?.data
   const dispatch = useAppDispatch();
   console.log("Stats Data from frontend: ", data);
 
