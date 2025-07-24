@@ -31,7 +31,7 @@ export default function LoginPage() {
       localStorage.setItem("token", token);
 
       if (stores.length === 1) {
-        localStorage.setItem("storeId", stores[0].storeId.toString());
+        localStorage.setItem("storeId", stores[0].storeId?.toString());
         dispatch(setStoreId(stores[0].storeId));
         router.push("/dashboard");
       } else {
