@@ -6,7 +6,7 @@ export const fetchAllProducts = createAsyncThunk(
   'product/fetchAllProducts',
   async (_, thunkAPI) => {
     try {
-      const res = await axiosInstance.get(`/fetch/AllProducts`);
+      const res = await axiosInstance.get(`fetch/AllProducts`);
       console.log("✅ Response Data:", res.data);
       return res.data;
     } catch (err: any) {

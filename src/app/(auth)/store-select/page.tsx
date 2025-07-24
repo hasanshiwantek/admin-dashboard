@@ -15,7 +15,7 @@ export default function StoreSelectPage() {
   const handleSelect = (storeId: number) => {
     dispatch(setStoreId(storeId));
     localStorage.setItem("storeId", storeId.toString());
-    router.push("/dashboard");
+    router.push("/manage/dashboard");
   };
 
 useEffect(() => {
