@@ -23,13 +23,21 @@ const initialState = {
   products: [],
   loading: false,
   error: null as string | null,
+  selectedProducts: []
 };
 
 // 3. Slice
 const productSlice = createSlice({
   name: 'product',
   initialState,
-  reducers: {},
+  reducers: {
+  setSelectedProducts: (state, action) => {
+    state.selectedProducts = action.payload;
+  },
+  clearSelectedProducts: (state) => {
+    state.selectedProducts = [];
+  },
+},
   extraReducers: (builder) => {
     builder
       .addCase(fetchAllProducts.pending, (state) => {
@@ -46,5 +54,5 @@ const productSlice = createSlice({
       });
   },
 });
-
+export const { setSelectedProducts, clearSelectedProducts } = productSlice.actions;
 export default productSlice.reducer;
