@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
   LineChart,
   Line,
@@ -13,23 +13,7 @@ import {
 } from "recharts";
 import { fetchDashboardMetrics } from "@/redux/slices/homeSlice";
 import { useAppDispatch,useAppSelector } from "@/hooks/useReduxHooks";
-
-interface StoreMetric {
-  date: string;
-  revenue: string;
-  orders: number;
-  visits: number;
-  label: string;
-  conversions: number;
-}
-
-interface StoreMetricsResponse {
-  status: boolean;
-  message: string;
-  range_start: string;
-  range_end: string;
-  data: StoreMetric[];
-}
+import { StoreMetric, StoreMetricsResponse } from "@/types/types";
 
 export default function StorePerformanceChart() {
   const dispatch = useAppDispatch();
