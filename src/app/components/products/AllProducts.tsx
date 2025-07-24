@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Plus } from "lucide-react";
+import { Plus, Pencil, Filter } from "lucide-react";
 import { IoSearchOutline } from "react-icons/io5";
 import Image from "next/image";
 import { useDebugValue, useEffect, useState } from "react";
@@ -17,11 +17,14 @@ import Pagination from "@/components/ui/pagination";
 import OrderActionsDropdown from "../orders/OrderActionsDropdown";
 import VisibilityToggle from "../dropdowns/VisibilityToggle";
 import FeaturedToggle from "../dropdowns/FeaturedToggle";
-import { fetchAllProducts } from "@/redux/slices/productSlice";
+import { fetchAllProducts,setSelectedProducts } from "@/redux/slices/productSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import Cookies from "js-cookie";
 import { Checkbox } from "@/components/ui/checkbox";
 import EditPriceSheet from "./EditPriceSheet";
+import EditStockSheet from "./EditStockSheet";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 const filterTabs = [
   "All",
   "Featured",
@@ -200,9 +203,12 @@ export default function AllProducts() {
   const [featuredMap, setFeaturedMap] = useState<{ [key: number]: boolean }>(
     {}
   );
+  const router=useRouter()
   const [visibilityMap, setVisibilityMap] = useState<{
     [key: number]: "ENABLED" | "DISABLED";
   }>({});
+  const [selectedProductIds, setSelectedProductIds] = useState<number[]>([]);
+
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState("20");
   const totalPages = 21;
@@ -268,6 +274,30 @@ export default function AllProducts() {
     },
   ];
 
+  // CHECKBOX SELECTION LOGIC
+  const isAllSelected = selectedProductIds.length === products.length;
+
+  const handleSelectAllChange = (checked: boolean) => {
+    const updated = checked ? products.map((p) => p.id) : [];
+    setSelectedProductIds(updated);
+    console.log("✅ Updated selectedProductIds (Select All):", updated);
+  };
+
+  const handleProductCheckboxChange = (id: number, checked: boolean) => {
+    const updated = checked
+      ? [...selectedProductIds, id]
+      : selectedProductIds.filter((pid) => pid !== id);
+
+    setSelectedProductIds(updated);
+    console.log("✅ Updated selectedProductIds:", updated);
+  };
+
+
+const handleEditInventory = () => {
+  const selected = products.filter(p => selectedProductIds.includes(p.id));
+  dispatch(setSelectedProducts(selected));
+  router.push("/manage/products/inventory");
+};
   // const token=Cookies.get("token")
 
   // useEffect(()=>{
@@ -322,8 +352,12 @@ export default function AllProducts() {
           </div>
 
           {/* <Input placeholder="Search products" className="max-w-[80%] !p-7 " /> */}
-
-          <button className="btn-outline-primary">Add filters</button>
+          <Link href={"/manage/products/search"}>
+            <button className="btn-outline-primary flex justify-start gap-1 items-center">
+              <Filter className="w-6 h-6" />
+              Add filters
+            </button>
+          </Link>
           {/* <Checkbox/> */}
         </div>
 
@@ -331,28 +365,36 @@ export default function AllProducts() {
           {/* Left side: checkbox and product count */}
           <div className="flex items-center space-x-10">
             <div className="flex justify-start items-center gap-2">
-              <Checkbox />
+              <Checkbox
+                checked={isAllSelected}
+                onCheckedChange={(checked: boolean) =>
+                  handleSelectAllChange(checked)
+                }
+              />
               <span className="text-gray-700 !text-xl">275215 Products</span>
             </div>
 
-            <div>
-              <button className="btn-outline-primary">Export</button>
-              <button className="btn-outline-primary">Bulk edit</button>
-              <button className="btn-outline-primary">Edit Inventory</button>
-              <OrderActionsDropdown
-                actions={editdropdownActions}
-                trigger={
-                  <button className="text-xl cursor-pointer btn-outline-primary">
-                    •••
-                  </button>
-                }
-              />
-            </div>
-            <div>
+            {selectedProductIds.length > 0 && (
+              <div>
+                <button className="btn-outline-primary">Export</button>
+                <button className="btn-outline-primary">Bulk edit</button>
+                <button className="btn-outline-primary" onClick={handleEditInventory}>Edit Inventory</button>
+                <OrderActionsDropdown
+                  actions={editdropdownActions}
+                  trigger={
+                    <button className="text-xl cursor-pointer btn-outline-primary">
+                      •••
+                    </button>
+                  }
+                />
+              </div>
+            )}
+
+            {/* <div>
               <span className="!text-xl !text-blue-600 hover:bg-blue-100 cursor-pointer px-6 py-3 rounded-sm transition-all ">
                 Select all products
               </span>
-            </div>
+            </div> */}
           </div>
 
           {/* Right side: pagination and controls */}
@@ -391,7 +433,12 @@ export default function AllProducts() {
               {products.map((product) => (
                 <TableRow key={product.id}>
                   <TableCell>
-                    <Checkbox />
+                    <Checkbox
+                      checked={selectedProductIds.includes(product.id)}
+                      onCheckedChange={(checked: boolean) =>
+                        handleProductCheckboxChange(product.id, checked)
+                      }
+                    />
                   </TableCell>
                   <TableCell className="flex items-center gap-2 ">
                     <Image
@@ -417,15 +464,32 @@ export default function AllProducts() {
                   </TableCell>
 
                   <TableCell>{product.sku}</TableCell>
+
                   <TableCell>{product.category}</TableCell>
-                  <TableCell>{product.stock}</TableCell>
+                  <TableCell>
+                    <EditStockSheet
+                      product={product}
+                      trigger={
+                        <div className="group hover:text-blue-600 flex items-center gap-1 hover:bg-blue-100 p-4 rounded-md cursor-pointer transition-colors">
+                          <a className="text-xl group-hover:opacity-100">
+                            {product.stock}
+                          </a>
+                          <Pencil className="w-5 h-5 text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </div>
+                      }
+                    />
+                  </TableCell>
+
                   <TableCell>
                     <EditPriceSheet
                       product={product}
                       trigger={
-                        <span className="hover:text-blue-400 !text-xl cursor-pointer hover:underline">
-                          {product.price}
-                        </span>
+                        <div className="group hover:text-blue-600 flex items-center gap-1 hover:bg-blue-100 p-4 rounded-md cursor-pointer transition-colors">
+                          <a className="text-xl group-hover:opacity-100">
+                            {product.price}
+                          </a>
+                          <Pencil className="w-5 h-5 text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </div>
                       }
                     />
                   </TableCell>

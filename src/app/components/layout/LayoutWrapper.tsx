@@ -23,7 +23,7 @@ const LayoutWrapper: React.FC<LayoutWrapperProps> = ({ children }) => {
           </aside>
  
           {/* Main content with scroll */}
-          <main className="flex-1 overflow-y-auto bg-[var(--store-bg)] mt-20 px-6 py-4">
+          <main className="flex-1 overflow-y-auto bg-[var(--store-bg)] mt-20 ">
             {children}
           </main>
         </div>

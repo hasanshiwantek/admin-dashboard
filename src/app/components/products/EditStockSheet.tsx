@@ -1,4 +1,5 @@
 "use client";
+
 import {
   Sheet,
   SheetContent,
@@ -18,17 +19,19 @@ import {
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 
-export default function EditPriceSheet({ trigger, product }: any) {
-  // console.log("Product to edit: ", product);
+export default function EditStockSheet({ trigger, product }: any) {
+//   console.log("Product to edit: ", product);
 
   const [open, setOpen] = useState(false);
   const [values, setValues] = useState({
     name: product?.name || "",
     sku: product?.sku || "",
-    price: product?.price || "",
-    salePrice: product?.salePrice || "",
-    cost: product?.cost || "",
-    msrp: product?.msrp || "",
+    adjustBy: product?.adjustBy || 0,
+    stock: product?.stock || 0,
+    lowStock: product?.lowCost || 0,
+    bpn: product?.bpn || 0,
+    safetyStock: product?.safetyStock || 0,
+    availability: product?.availability || 0,
   });
 
   const handleChange = (key: string, val: string) => {
@@ -53,7 +56,7 @@ export default function EditPriceSheet({ trigger, product }: any) {
       <SheetTrigger asChild>{trigger}</SheetTrigger>
       <SheetContent side="right">
         <SheetHeader className="p-6 border-b">
-          <SheetTitle>Edit prices</SheetTitle>
+          <SheetTitle>Edit Inventory</SheetTitle>
         </SheetHeader>
 
         {/* Scrollable Editable Table */}
@@ -63,10 +66,12 @@ export default function EditPriceSheet({ trigger, product }: any) {
               <TableRow>
                 <TableHead>Product name</TableHead>
                 <TableHead>SKU</TableHead>
-                <TableHead>Price</TableHead>
-                <TableHead>Sale price</TableHead>
-                <TableHead>Cost</TableHead>
-                <TableHead>MSRP</TableHead>
+                <TableHead>Adjust by</TableHead>
+                <TableHead>Current stock</TableHead>
+                <TableHead>Low stock</TableHead>
+                <TableHead>BPN</TableHead>
+                <TableHead>Safety stock</TableHead>
+                <TableHead>Availabilty</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -87,32 +92,55 @@ export default function EditPriceSheet({ trigger, product }: any) {
                     readOnly
                   />
                 </TableCell>
+
                 <TableCell className=" align-top">
                   <Input
-                    className="border border-gray-300"
-                    value={values.price}
-                    onChange={(e) => handleChange("price", e.target.value)}
+                    className=" border border-gray-300"
+                    value={values.adjustBy}
+                    onChange={(e) => handleChange("adjustBy", e.target.value)}
                   />
                 </TableCell>
-                <TableCell className="align-top">
-                  <Input
-                    className="border border-gray-300"
-                    value={values.salePrice}
-                    onChange={(e) => handleChange("salePrice", e.target.value)}
-                  />
-                </TableCell>
-                <TableCell className="align-top">
+                <TableCell className=" align-top">
                   <Input
                     className=" border border-gray-300"
-                    value={values.cost}
-                    onChange={(e) => handleChange("cost", e.target.value)}
+                    value={values.stock}
+                    onChange={(e) => handleChange("stock", e.target.value)}
                   />
                 </TableCell>
-                <TableCell className="align-top">
+
+                <TableCell className=" align-top">
                   <Input
-                    className="border border-gray-300"
-                    value={values.msrp}
-                    onChange={(e) => handleChange("msrp", e.target.value)}
+                    className=" border border-gray-300"
+                    value={values.lowStock}
+                    onChange={(e) => handleChange("lowStock", e.target.value)}
+                  />
+                </TableCell>
+
+                <TableCell className=" align-top">
+                  <Input
+                    className=" border border-gray-300"
+                    value={values.bpn}
+                    onChange={(e) => handleChange("bpn", e.target.value)}
+                  />
+                </TableCell>
+
+                <TableCell className=" align-top">
+                  <Input
+                    className=" border border-gray-300"
+                    value={values.safetyStock}
+                    onChange={(e) =>
+                      handleChange("safetyStock", e.target.value)
+                    }
+                  />
+                </TableCell>
+
+                <TableCell className=" align-top">
+                  <Input
+                    className=" border border-gray-300"
+                    value={values.availability}
+                    onChange={(e) =>
+                      handleChange("availability", e.target.value)
+                    }
                   />
                 </TableCell>
               </TableRow>
