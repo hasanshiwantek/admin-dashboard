@@ -48,6 +48,7 @@ export default function StorePerformanceChart() {
     <div>
       <h1 className="my-5">Store Performance</h1>
       <div className="w-full h-100% p-4 bg-white rounded shadow">
+        {/* Summary Cards */}
         <div className="grid grid-cols-4 gap-4 mb-6">
           {[
             { label: "Visits", key: "visits", color: "text-blue-600" },
@@ -98,6 +99,7 @@ export default function StorePerformanceChart() {
           })}
         </div>
 
+        {/* Chart */}
         <ResponsiveContainer width="100%" height={250}>
           <LineChart data={metricsData}>
             <CartesianGrid strokeDasharray="3 3" />
@@ -108,7 +110,7 @@ export default function StorePerformanceChart() {
               type="monotone"
               dataKey="visits"
               stroke="#1d4ed8"
-              name="This week"
+              name="Visits"
             />
             <Line
               type="monotone"

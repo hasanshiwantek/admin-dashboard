@@ -19,7 +19,7 @@ export const fetchStoreStatistics = createAsyncThunk(
   'home/fetchStoreStatistics',
   async (_, thunkAPI) => {
     try {
-      const res = await axiosInstance.get(`/dashboard/metrics`);
+      const res = await axiosInstance.get(`dashboard/total-count`);
       return res.data;
     } // eslint-disable-next-line @typescript-eslint/no-explicit-any 
     catch (err: any) {
