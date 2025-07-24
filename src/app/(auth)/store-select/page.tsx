@@ -5,6 +5,13 @@ import { useRouter } from "next/navigation";
 import { setStoreId } from "@/redux/slices/configSlice";
 import { RootState } from "@/redux/store";
 import ProtectedRoute from "@/auth/ProtectedRoute";
+import { 
+  Select, 
+  SelectTrigger, 
+  SelectValue, 
+  SelectContent, 
+  SelectItem 
+} from "@/components/ui/select";
 
 export default function StoreSelectPage() {
   const dispatch = useDispatch();
@@ -30,17 +37,20 @@ useEffect(() => {
 
   return (
     <ProtectedRoute>
-      <div className="max-w-md mx-auto mt-20 space-y-4">
-        <h2 className="text-xl font-bold">Select a Store</h2>
-        {stores.map((site: { storeId: number; name?: string }) => (
-          <button
-            key={site.storeId}
-            className="w-full px-4 py-2 bg-blue-600 text-white rounded"
-            onClick={() => handleSelect(site.storeId)}
-          >
-            {site.name || `Store ${site.storeId}` }
-          </button>
-        ))}
+      <div className="flex flex-col min-h-screen items-center justify-center bg-black">
+        <h1 className="!text-4xl !text-white">Login to your store</h1>
+        <Select onValueChange={(value) => handleSelect(Number(value))}>
+          <SelectTrigger className="w-full mt-4">
+            <SelectValue placeholder="Select a store" />
+          </SelectTrigger>
+          <SelectContent>
+            {stores.map((site: { storeId: number; name?: string }) => (
+              <SelectItem key={site.storeId} value={String(site.storeId)}>
+                {site.name || `Store ${site.storeId}`}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
     </ProtectedRoute>
   );

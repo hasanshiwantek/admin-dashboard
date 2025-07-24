@@ -31,9 +31,9 @@ export default function LoginPage() {
       localStorage.setItem("token", token);
 
       if (stores.length === 1) {
-        localStorage.setItem("storeId", stores[0].storeId?.toString());
-        dispatch(setStoreId(stores[0].storeId));
-        router.push("/dashboard");
+        localStorage.setItem("storeId", stores[0].id.toString());
+        dispatch(setStoreId(stores[0].id));
+        router.push("/manage/dashboard");``
       } else {
         // Multiple stores – let user select
         localStorage.setItem("availableStores", JSON.stringify(stores));

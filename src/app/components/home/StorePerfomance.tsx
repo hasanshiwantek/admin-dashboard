@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
   LineChart,
   Line,
@@ -12,35 +12,21 @@ import {
   AreaChart,
 } from "recharts";
 import { fetchDashboardMetrics } from "@/redux/slices/homeSlice";
-import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
-import { StorePerformanceAPIResponse, DailyMetric } from "@/types/types";
+import { useAppDispatch,useAppSelector } from "@/hooks/useReduxHooks";
+import { StoreMetric, StoreMetricsResponse } from "@/types/types";
 
 export default function StorePerformanceChart() {
-  const [metrics, setMetrics] = useState<DailyMetric[]>([]);
   const dispatch = useAppDispatch();
-  const metricsData = useAppSelector(
-    (state) => state.home.metrics
-  ) as StorePerformanceAPIResponse | null;
+    // const metricsData = useAppSelector((state) => state.home.metrics?.data ) as StoreMetricsResponse[] | null;
+    const metrics = useAppSelector((state) => state.home?.metrics) as StoreMetricsResponse | null;
+    const metricsData = metrics?.data ?? [];
+    console.log(metricsData);
 
-  console.log("Graph Data: ", metricsData);
+    useEffect(() => {
+      dispatch(fetchDashboardMetrics());
+    }, [dispatch]);
 
-  useEffect(() => {
-    dispatch(fetchDashboardMetrics());
-  }, [dispatch]);
-
-  // Convert API data
-  useEffect(() => {
-    if (metricsData?.data?.length) {
-      const parsed = metricsData.data.map((item) => ({
-        label: item.label,
-        visits: Number(item.visits),
-        orders: Number(item.orders),
-        revenue: Number(item.revenue),
-        conversion: Number(item.conversion),
-      }));
-      setMetrics(parsed);
-    }
-  }, [metricsData]);
+  if (!metricsData) return <div>Loading...</div>;
 
   return (
     <div>
@@ -64,10 +50,17 @@ export default function StorePerformanceChart() {
               prefix: "$",
             },
           ].map((metric) => {
-            const total = metrics.reduce(
-              (sum, m) => sum + (m[metric.key as keyof DailyMetric] as number),
+            const total = metricsData.reduce(
+              (sum, m) => sum + Number(m[metric.key as keyof StoreMetric]),
               0
             );
+            // const last = metricsData.reduce(
+            //   (sum, m) =>
+            //     sum +
+            //     (m[`${metric.key}LastWeek` as keyof StoreMetric] as number),
+            //   0
+            // );
+            // const diff = ((total - last) / (last || 1)) * 100;
 
             return (
               <div
@@ -82,7 +75,9 @@ export default function StorePerformanceChart() {
                   {metric.suffix ? total.toFixed(2) : Math.round(total)}
                   {metric.suffix || ""}
                 </div>
-                <div className="text-md text-gray-500">This week's total</div>
+                <div className="text-md text-gray-500">
+                  {/* {last} last week's total */}
+                </div>
               </div>
             );
           })}
@@ -90,12 +85,12 @@ export default function StorePerformanceChart() {
 
         {/* Chart */}
         <ResponsiveContainer width="100%" height={250}>
-          <LineChart data={metrics}>
+          <LineChart data={metricsData}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="label" />
             <YAxis />
             <Tooltip />
-            <Line
+            {/* <Line
               type="monotone"
               dataKey="visits"
               stroke="#1d4ed8"
@@ -103,21 +98,23 @@ export default function StorePerformanceChart() {
             />
             <Line
               type="monotone"
-              dataKey="orders"
-              stroke="#10b981"
-              name="Orders"
-            />
+              dataKey="visitsLastWeek"
+              stroke="#d1d5db"
+              name="Last week"
+              strokeDasharray="4 4"
+            /> */}
             <Line
               type="monotone"
               dataKey="revenue"
-              stroke="#047857"
+              stroke="#1d4ed8"
               name="Revenue"
             />
             <Line
               type="monotone"
-              dataKey="conversion"
-              stroke="#9333ea"
-              name="Conversion (%)"
+              dataKey="orders"
+              stroke="#d1d5db"
+              name="orders"
+              strokeDasharray="4 4"
             />
           </LineChart>
         </ResponsiveContainer>
