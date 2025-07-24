@@ -6,7 +6,7 @@ export const fetchDashboardMetrics = createAsyncThunk(
   'home/fetchDashboardMetrics',
   async (_, thunkAPI) => {
     try {
-      const res = await axiosInstance.get(`dashboard/store-perfomance`);
+      const res = await axiosInstance.get(`dashboard/store-performance`);
       return res.data;
     } // eslint-disable-next-line @typescript-eslint/no-explicit-any 
     catch (err: any) {
