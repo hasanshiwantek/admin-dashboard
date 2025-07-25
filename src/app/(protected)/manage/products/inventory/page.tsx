@@ -19,11 +19,11 @@ type Product = {
   name: string;
   sku: string;
   adjustBy: string;
-  stock: string;
+  currentStock: string;
   lowStock: string;
   bpn: string;
   safetyStock: string;
-  availability: boolean;
+  allowPurchase: boolean;
 };
 
 export default function EditInventoryPage() {
@@ -102,9 +102,9 @@ export default function EditInventoryPage() {
                     <Input
                       type="number"
                       className="w-50"
-                      value={product.stock}
+                      value={product.currentStock}
                       onChange={(e) =>
-                        handleChange(product.id, "stock", e.target.value)
+                        handleChange(product.id, "currentStock", e.target.value)
                       }
                     />
                   </TableCell>
@@ -149,9 +149,9 @@ export default function EditInventoryPage() {
 
                   <TableCell>
                     <Checkbox
-                      checked={product.availability}
+                      checked={product.allowPurchase}
                       onCheckedChange={(checked) =>
-                        handleChange(product.id, "availability", checked)
+                        handleChange(product.id, "allowPurchase", checked)
                       }
                     />
                   </TableCell>

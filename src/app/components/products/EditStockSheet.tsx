@@ -17,24 +17,25 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
 
 export default function EditStockSheet({ trigger, product }: any) {
-//   console.log("Product to edit: ", product);
+  // console.log("Product to edit: ", product);
 
   const [open, setOpen] = useState(false);
   const [values, setValues] = useState({
     name: product?.name || "",
     sku: product?.sku || "",
-    adjustBy: product?.adjustBy || 0,
-    stock: product?.stock || 0,
-    lowStock: product?.lowCost || 0,
-    bpn: product?.bpn || 0,
-    safetyStock: product?.safetyStock || 0,
-    availability: product?.availability || 0,
+    adjustBy: product?.adjustBy || "",
+    stock: product?.currentStock || "",
+    lowStock: product?.lowStock || "",
+    bpn: product?.bpn || "",
+    safetyStock: product?.safetyStock || "",
+    allowPurchase: product?.allowPurchase,
   });
 
-  const handleChange = (key: string, val: string) => {
+  const handleChange = (key: string, val: string | boolean) => {
     setValues((prev) => ({
       ...prev,
       [key]: val,
@@ -134,12 +135,11 @@ export default function EditStockSheet({ trigger, product }: any) {
                   />
                 </TableCell>
 
-                <TableCell className=" align-top">
-                  <Input
-                    className=" border border-gray-300"
-                    value={values.availability}
-                    onChange={(e) =>
-                      handleChange("availability", e.target.value)
+                <TableCell className="align-top  ">
+                  <Checkbox
+                    checked={values.allowPurchase}
+                    onCheckedChange={(checked: boolean) =>
+                      handleChange("availability", checked)
                     }
                   />
                 </TableCell>

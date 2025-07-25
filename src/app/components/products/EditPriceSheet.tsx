@@ -27,7 +27,7 @@ export default function EditPriceSheet({ trigger, product }: any) {
     sku: product?.sku || "",
     price: product?.price || "",
     salePrice: product?.salePrice || "",
-    cost: product?.cost || "",
+    cost: product?.costPrice || "",
     msrp: product?.msrp || "",
   });
 
