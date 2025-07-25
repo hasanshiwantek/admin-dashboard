@@ -146,6 +146,13 @@ export default function RegisterPage() {
           >
             CREATE YOUR STORE
           </Button>
+
+          <div className="flex justify-between gap-2 text-base text-gray-100 whitespace-nowrap">
+            <p className="hover:underline !text-base !text-gray-100 !text-xl"> Already have an account? </p>
+             <a href="/login" className="hover:underline !text-xl">
+              Login
+            </a>
+          </div>
         </div>
       </form>
     </div>
