@@ -41,6 +41,25 @@ export const searchAllProducts = createAsyncThunk(
   }
 );
 
+export const updateProduct = createAsyncThunk(
+  "product/updateProduct",
+  async ({ body }: { body: any }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.put(
+        `dashboard/products/update-product`,
+        body
+      );
+      console.log("✅ Updation Product response from thunk:", res.data);
+      return res.data;
+    } catch (err: any) {
+      console.error("❌ Error Updating Product:", err);
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to update products"
+      );
+    }
+  }
+);
+
 // 2. Initial State
 const initialState = {
   products: [],

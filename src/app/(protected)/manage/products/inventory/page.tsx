@@ -11,13 +11,15 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Button } from "@/components/ui/button";
-import { useAppSelector } from "@/hooks/useReduxHooks";
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { useRouter } from "next/navigation";
+import { updateProduct } from "@/redux/slices/productSlice";
+import { refetchProducts } from "@/lib/productUtils";
 type Product = {
   id: number;
   name: string;
   sku: string;
+  price: string;
   adjustBy: string;
   currentStock: string;
   lowStock: string;
@@ -30,7 +32,7 @@ export default function EditInventoryPage() {
   const selectedProducts = useAppSelector(
     (state) => state.product.selectedProducts
   );
-
+  const dispatch = useAppDispatch();
   console.log("Edited Seledcted Products From Redux: ", selectedProducts);
 
   const [products, setProducts] = useState<Product[]>([]);
@@ -48,9 +50,32 @@ export default function EditInventoryPage() {
     );
   };
 
-  const handleSave = () => {
-    console.log("📝 Save clicked:", products);
-    // TODO: Send updated data to backend
+  const prepareUpdatePayload = (products: Product[]) => {
+    return {
+      products: products.map((p) => ({
+        id: p.id,
+        fields: {
+          price: Number(p.price),
+          currentStock: Number(p.currentStock),
+          lowStock: Number(p.lowStock),
+          safetyStock: Number(p.safetyStock),
+          allowPurchase: p.allowPurchase,
+          // bpn: p.bpn,
+          // adjustBy: Number(p.adjustBy), // optional: only if needed by backend
+        },
+      })),
+    };
+  };
+
+  const handleSave = async () => {
+    try {
+      const payload = prepareUpdatePayload(products);
+      console.log("🔼 Sending payload:", payload);
+      const res = await dispatch(updateProduct({ body: payload })).unwrap();
+      console.log("✅ Updated successfully:", res);
+    } catch (err) {
+      console.error("❌ Failed to update products:", err);
+    }
   };
 
   const handleSaveAndExit = () => {
@@ -74,6 +99,7 @@ export default function EditInventoryPage() {
                 <TableHead>Adjust by</TableHead>
                 <TableHead>Current stock</TableHead>
                 <TableHead>Low stock</TableHead>
+                <TableHead>Price</TableHead>
                 <TableHead>BPN</TableHead>
                 <TableHead>Safety stock</TableHead>
                 <TableHead>Availability</TableHead>
@@ -118,6 +144,22 @@ export default function EditInventoryPage() {
                         handleChange(
                           product.id,
                           "lowStock",
+
+                          e.target.value
+                        )
+                      }
+                    />
+                  </TableCell>
+
+                  <TableCell>
+                    <Input
+                      type="number"
+                      className="w-50"
+                      value={product.price}
+                      onChange={(e) =>
+                        handleChange(
+                          product.id,
+                          "price",
 
                           e.target.value
                         )

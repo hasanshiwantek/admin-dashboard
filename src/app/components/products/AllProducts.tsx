@@ -21,6 +21,7 @@ import {
   fetchAllProducts,
   setSelectedProducts,
   searchAllProducts,
+  updateProduct,
 } from "@/redux/slices/productSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import Cookies from "js-cookie";
@@ -212,8 +213,8 @@ export default function AllProducts() {
   // SearchPoduct Logic
 
   const handleSearchProduct = () => {
-    if(searchTerm===""){
-    dispatch(fetchAllProducts({ page: currentPage, pageSize: perPage }));
+    if (searchTerm === "") {
+      dispatch(fetchAllProducts({ page: currentPage, pageSize: perPage }));
     }
     dispatch(searchAllProducts({ query: searchTerm }));
     console.log(searchTerm);
@@ -413,7 +414,21 @@ export default function AllProducts() {
                         }
                         onChange={(id, value) => {
                           setFeaturedMap((prev) => ({ ...prev, [id]: value }));
-                          // Optional: call API to persist
+
+                          dispatch(
+                            updateProduct({
+                              body: {
+                                products: [
+                                  {
+                                    id,
+                                    fields: {
+                                      isFeatured: value,
+                                    },
+                                  },
+                                ],
+                              },
+                            })
+                          );
                         }}
                       />
                     </TableCell>
@@ -464,7 +479,20 @@ export default function AllProducts() {
                             ...prev,
                             [id]: isVisible,
                           }));
-                          // Optional: call API here
+                          dispatch(
+                            updateProduct({
+                              body: {
+                                products: [
+                                  {
+                                    id,
+                                    fields: {
+                                      isVisible,
+                                    },
+                                  },
+                                ],
+                              },
+                            })
+                          );
                         }}
                       />
                     </TableCell>
