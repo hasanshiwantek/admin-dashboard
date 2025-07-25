@@ -17,7 +17,7 @@ import { PreviewItem } from "@/types/types";
 export default function ImageVideoUploader() {
   const { register, setValue } = useFormContext();
   const inputRef = useRef<HTMLInputElement>(null);
-  const imageRegister = register("images");
+  // const imageRegister = register("image");
   const [previews, setPreviews] = useState<PreviewItem[]>([]);
   const [urlImages, setUrlImages] = useState<string[]>([]);
   const [isUrlModalOpen, setIsUrlModalOpen] = useState(false);
@@ -32,22 +32,28 @@ export default function ImageVideoUploader() {
     return dt.files;
   };
 
-  const syncFormState = (updatedPreviews: PreviewItem[]) => {
-    const filePreviews = updatedPreviews.filter((p) => p.file);
-    const urlPreviews = updatedPreviews.filter((p) => !p.file);
+  // const syncFormState = (updatedPreviews: PreviewItem[]) => {
+  //   const filePreviews = updatedPreviews.filter((p) => p.file);
+  //   const urlPreviews = updatedPreviews.filter((p) => !p.file);
 
-    setValue("images", fileListFromArray(filePreviews.map((p) => p.file!)), {
-      shouldValidate: true,
-    });
-    setValue("urlImages", urlPreviews.map((p) => p.url), {
-      shouldValidate: true,
-    });
+  //   setValue("images", fileListFromArray(filePreviews.map((p) => p.file!)), {
+  //     shouldValidate: true,
+  //   });
+  //   setValue("urlImages", urlPreviews.map((p) => p.url), {
+  //     shouldValidate: true,
+  //   });
+
+  //   console.log("🟢 Synced to react-hook-form:");
+  //   console.log("  → Files:", filePreviews.map((p) => p.file?.name));
+  //   console.log("  → URLs :", urlPreviews.map((p) => p.url));
+  // };
+
+  const syncFormState = (updatedPreviews: PreviewItem[]) => {
+    setValue("image", updatedPreviews, { shouldValidate: true });
 
     console.log("🟢 Synced to react-hook-form:");
-    console.log("  → Files:", filePreviews.map((p) => p.file?.name));
-    console.log("  → URLs :", urlPreviews.map((p) => p.url));
+    console.log("  → image:", updatedPreviews);
   };
-
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -66,6 +72,7 @@ export default function ImageVideoUploader() {
       description: "",
       selected: false,
       isThumbnail: false,
+      type: file.type.startsWith("video/") ? "video" : "image",
     }));
 
     const updated = [...previews, ...newPreviews];
@@ -73,11 +80,9 @@ export default function ImageVideoUploader() {
     syncFormState(updated);
   };
 
-
-
-  useEffect(() => {
-    register("urlImages"); // Register it once
-  }, [register]);
+  // useEffect(() => {
+  //   register("urlImages"); // Register it once
+  // }, [register]);
 
   const addUrlPreview = (item: PreviewItem) => {
     const updated = [...previews, item];
@@ -124,17 +129,11 @@ useEffect(() => {
 
       <input
         type="file"
-        accept="image/*"
+        accept="image/*,video/*"
         multiple
         className="hidden"
-        onChange={(e) => {
-          handleFileChange(e);
-          imageRegister.onChange(e);
-        }}
-        ref={(el) => {
-          imageRegister.ref(el);
-          inputRef.current = el;
-        }}
+        onChange={handleFileChange}
+        ref={inputRef}
       />
 
       <div

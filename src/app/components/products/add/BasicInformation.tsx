@@ -19,7 +19,7 @@ export default function BasicInfoForm() {
 
     const { register, setValue, watch } = useFormContext();
     const productType = watch("productType");
-    const brand = watch("brand");
+    const isVisible = watch("isVisible");
 
     return (
         <section id="basic-info" className="space-y-4 scroll-mt-20">
@@ -30,15 +30,15 @@ export default function BasicInfoForm() {
             <div className="p-10 bg-white shadow-lg rounded-sm ">
                 <h1 >Basic Information</h1>
                 <div className="flex items-center space-x-2 my-6 ">
-                    <Checkbox id="visible" {...register("visible")}/>
-                    <Label htmlFor="visible">Visible on Storefront</Label>
+                    <Checkbox id="isVisible"  checked={!!isVisible} onCheckedChange={(checked) => setValue("isVisible", checked === true)}/>
+                    <Label htmlFor="isVisible">Visible on Storefront</Label>
                 </div>
                 <div className="grid grid-cols-2 gap-6 my-4">
                     {/* Left Div */}
                     <div className="space-y-12">
                         <div>
-                            <Label htmlFor="productName">Product Name</Label>
-                            <Input id="productName" placeholder="Sample Product Name" {...register("productName")}/>
+                            <Label htmlFor="name">Product Name</Label>
+                            <Input id="name" placeholder="Sample Product Name" {...register("name")}/>
                         </div>
 
                         <div>
@@ -59,17 +59,17 @@ export default function BasicInfoForm() {
                         </div>
 
                         <div>
-                            <Label htmlFor="brand">Brand</Label>
+                            <Label htmlFor="brandId">Brand</Label>
                             <Select 
-                            value={brand}
-                            onValueChange={(value) => setValue("brand", value)}
+                            value={String(watch("brandId") ?? "")}
+                            onValueChange={(value) => setValue("brandId", Number(value))}
                             >
                                 <SelectTrigger>
                                     <SelectValue placeholder="Select brand" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="brandA">Brand A</SelectItem>
-                                    <SelectItem value="brandB">Brand B</SelectItem>
+                                    <SelectItem value="1">Brand A</SelectItem>
+                                    <SelectItem value="2">Brand B</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
@@ -88,8 +88,8 @@ export default function BasicInfoForm() {
                         </div>
 
                         <div>
-                            <Label htmlFor="weight">Weight (lbs)</Label>
-                            <Input id="weight" type="number" defaultValue="0" {...register("weight")}/>
+                            <Label htmlFor="dimensions.weight">Weight (lbs)</Label>
+                            <Input id="weight" type="number" defaultValue="0" {...register("dimensions.weight")}/>
                         </div>
                     </div>
                 </div>
