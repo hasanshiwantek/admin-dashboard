@@ -17,7 +17,11 @@ import Pagination from "@/components/ui/pagination";
 import OrderActionsDropdown from "../orders/OrderActionsDropdown";
 import VisibilityToggle from "../dropdowns/VisibilityToggle";
 import FeaturedToggle from "../dropdowns/FeaturedToggle";
-import { fetchAllProducts,setSelectedProducts } from "@/redux/slices/productSlice";
+import {
+  fetchAllProducts,
+  setSelectedProducts,
+  searchAllProducts,
+} from "@/redux/slices/productSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import Cookies from "js-cookie";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -25,6 +29,7 @@ import EditPriceSheet from "./EditPriceSheet";
 import EditStockSheet from "./EditStockSheet";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Spinner from "../loader/Spinner";
 const filterTabs = [
   "All",
   "Featured",
@@ -36,182 +41,64 @@ const filterTabs = [
   "Not visible",
 ];
 
-const products = [
-  {
-    id: 1,
-    image:
-      "https://cdn11.bigcommerce.com/s-wb5rkphzy3/products/289268/images/565878/L014-205__08023.1739214863.1280.1280__69310.1752524990.220.290.jpg?c=1",
-    name: "KV-S4065CW - Panasonic - Sheetfed Scanner",
-    sku: "KV-S4065CW",
-    category: "Scanners",
-    stock: "-",
-    price: "$994.00",
-    channels: 1,
-    visibility: "ENABLED",
-  },
-  {
-    id: 2,
-    image:
-      "https://cdn11.bigcommerce.com/s-wb5rkphzy3/products/289267/images/565876/059k58953__89273.1751896771.220.290.jpg?c=1",
-    name: "059K059K58958 - Xerox - Fuser Roller",
-    sku: "059K059K58958",
-    category: "Rollers",
-    stock: "1000",
-    price: "$404.93",
-    channels: 1,
-    visibility: "ENABLED",
-  },
-  {
-    id: 3,
-    image:
-      "https://cdn11.bigcommerce.com/s-wb5rkphzy3/products/289266/images/565875/TRD106R1371__23073.1751896543.220.290.jpg?c=1",
-    name: "TRD106R1371 - Xerox - Black High Yield Toner Cartridge",
-    sku: "TRD106R1371",
-    category: "Toner Cartridges",
-    stock: "1000",
-    price: "$134.40",
-    channels: 1,
-    visibility: "ENABLED",
-  },
-  {
-    id: 4,
-    image:
-      "https://cdn11.bigcommerce.com/s-wb5rkphzy3/products/289265/images/565874/TRD106R1294__65464.1751896372.220.290.jpg?c=1",
-    name: "TRD106R1294 - Xerox - Toner Phaser 5500",
-    sku: "TRD106R1294",
-    category: "Toner Cartridges",
-    stock: "1000",
-    price: "$126.00",
-    channels: 1,
-    visibility: "ENABLED",
-  },
-  {
-    id: 5,
-    image:
-      "https://cdn11.bigcommerce.com/s-wb5rkphzy3/products/289264/images/565873/L016-2014-00__72638.1751896150.220.290.jpg?c=1",
-    name: "016-2014-00 - Xerox - Fuser Unit Assembly 110 Volt",
-    sku: "016-2014-00",
-    category: "Fuser",
-    stock: "1000",
-    price: "$168.75",
-    channels: 1,
-    visibility: "ENABLED",
-  },
-  {
-    id: 6,
-    image:
-      "https://cdn11.bigcommerce.com/s-wb5rkphzy3/products/289268/images/565878/L014-205__08023.1739214863.1280.1280__69310.1752524990.220.290.jpg?c=1",
-    name: "016-2008-00 - Xerox - Phaser 6200 Black Toner Cartridge 8K Yield",
-    sku: "016-2008-00",
-    category: "Toner Cartridges",
-    stock: "1000",
-    price: "$135.00",
-    channels: 1,
-    visibility: "ENABLED",
-  },
-  {
-    id: 7,
-    image:
-      "https://cdn11.bigcommerce.com/s-wb5rkphzy3/products/289267/images/565876/059k58953__89273.1751896771.220.290.jpg?c=1",
-    name: "016-2007-00 - Xerox - Phaser 6200 Yellow Toner Cartridge 8K Yield",
-    sku: "016-2007-00",
-    category: "Toner Cartridges",
-    stock: "1000",
-    price: "$155.25",
-    channels: 1,
-    visibility: "ENABLED",
-  },
-  {
-    id: 8,
-    image:
-      "https://cdn11.bigcommerce.com/s-wb5rkphzy3/products/289267/images/565876/059k58953__89273.1751896771.220.290.jpg?c=1",
-    name: "016-2006-00 - Xerox - Phaser 6200 Magenta Toner Cartridge 8K Yield",
-    sku: "016-2006-00",
-    category: "Toner Cartridges",
-    stock: "1000",
-    price: "$155.25",
-    channels: 1,
-    visibility: "ENABLED",
-  },
-  {
-    id: 9,
-    image:
-      "https://cdn11.bigcommerce.com/s-wb5rkphzy3/products/289267/images/565876/059k58953__89273.1751896771.220.290.jpg?c=1",
-    name: "016-2005-00 - Xerox - Phaser 6200 Cyan Toner Cartridge 8K Yield",
-    sku: "016-2005-00",
-    category: "Toner Cartridges",
-    stock: "1000",
-    price: "$155.25",
-    channels: 1,
-    visibility: "ENABLED",
-  },
-  {
-    id: 10,
-    image:
-      "https://cdn11.bigcommerce.com/s-wb5rkphzy3/products/289265/images/565874/TRD106R1294__65464.1751896372.220.290.jpg?c=1",
-    name: "016-2004-00 - Xerox - Black Toner Cartridge",
-    sku: "016-2004-00",
-    category: "Toner Cartridges",
-    stock: "1000",
-    price: "$93.80",
-    channels: 1,
-    visibility: "ENABLED",
-  },
-  {
-    id: 11,
-    image:
-      "https://cdn11.bigcommerce.com/s-wb5rkphzy3/products/289265/images/565874/TRD106R1294__65464.1751896372.220.290.jpg?c=1",
-    name: "016-2003-00 - Xerox - Yellow Toner Cartridge",
-    sku: "016-2003-00",
-    category: "Toner Cartridges",
-    stock: "1000",
-    price: "$133.00",
-    channels: 1,
-    visibility: "ENABLED",
-  },
-  {
-    id: 12,
-    image:
-      "https://cdn11.bigcommerce.com/s-wb5rkphzy3/products/289257/images/565866/L016-2002-00__88558.1751894754.220.290.jpg?c=1",
-    name: "016-2002-00 - Xerox - Magenta Toner Cartridge",
-    sku: "016-2002-00",
-    category: "Toner Cartridges",
-    stock: "1000",
-    price: "$133.00",
-    channels: 1,
-    visibility: "ENABLED",
-  },
-  {
-    id: 13,
-    image:
-      "https://cdn11.bigcommerce.com/s-wb5rkphzy3/products/289265/images/565874/TRD106R1294__65464.1751896372.220.290.jpg?c=1",
-    name: "016-2001-00 - Xerox - Cyan Toner Cartridge",
-    sku: "016-2001-00",
-    category: "Toner Cartridges",
-    stock: "1000",
-    price: "$133.00",
-    channels: 1,
-    visibility: "ENABLED",
-  },
-];
-
 export default function AllProducts() {
-  const allProducts = useAppSelector((state) => state.product.products);
-  const dispatch = useAppDispatch();
+  const allProducts = useAppSelector((state: any) => state.product.products);
+  const { loading, error } = useAppSelector((state: any) => state.product);
   const [selectedTab, setSelectedTab] = useState("All");
-  const [search, setSearch] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const products = allProducts?.data;
+  console.log("All Products data from frontend: ", products);
+
+  const filteredProducts = [...(products || [])]
+    .filter((product: any) => {
+      switch (selectedTab) {
+        case "Featured":
+          return product.isFeatured === true;
+
+        case "Free shipping":
+          return (
+            product.fixedShippingCost === 0 ||
+            product.fixedShippingCost === null
+          );
+
+        case "Out of stock":
+          return product.currentStock === 0;
+
+        case "Inventory low":
+          return product.currentStock <= product.lowStock;
+
+        case "Visible":
+          return product.isVisible === true;
+
+        case "Not visible":
+          return product.isVisible === false;
+
+        default:
+          return true; // "All" or unknown tab
+      }
+    })
+    .sort((a: any, b: any) => {
+      if (selectedTab === "Last imported") {
+        return (
+          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+        );
+      }
+      return 0;
+    });
+
+  console.log("Filtered Products: ", filteredProducts);
+
+  const dispatch = useAppDispatch();
   const [featuredMap, setFeaturedMap] = useState<{ [key: number]: boolean }>(
     {}
   );
-  const router=useRouter()
+  const router = useRouter();
   const [visibilityMap, setVisibilityMap] = useState<{
     [key: number]: "ENABLED" | "DISABLED";
   }>({});
   const [selectedProductIds, setSelectedProductIds] = useState<number[]>([]);
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [perPage, setPerPage] = useState("20");
-  const totalPages = 21;
   const dropdownActions = [
     { label: "Edit", onClick: () => console.log("Edit clicked") },
     { label: "Duplicate", onClick: () => console.log("Duplicate clicked") },
@@ -275,10 +162,10 @@ export default function AllProducts() {
   ];
 
   // CHECKBOX SELECTION LOGIC
-  const isAllSelected = selectedProductIds.length === products.length;
+  const isAllSelected = selectedProductIds?.length === products?.length;
 
   const handleSelectAllChange = (checked: boolean) => {
-    const updated = checked ? products.map((p) => p.id) : [];
+    const updated = checked ? products?.map((p: any) => p.id) : [];
     setSelectedProductIds(updated);
     console.log("✅ Updated selectedProductIds (Select All):", updated);
   };
@@ -292,18 +179,53 @@ export default function AllProducts() {
     console.log("✅ Updated selectedProductIds:", updated);
   };
 
+  const handleEditInventory = () => {
+    const selected = products.filter((p: any) =>
+      selectedProductIds.includes(p.id)
+    );
+    dispatch(setSelectedProducts(selected));
+    router.push("/manage/products/inventory");
+  };
 
-const handleEditInventory = () => {
-  const selected = products.filter(p => selectedProductIds.includes(p.id));
-  dispatch(setSelectedProducts(selected));
-  router.push("/manage/products/inventory");
-};
-  // const token=Cookies.get("token")
+  // PAGINATION LOGIC
+  const pagination = allProducts?.meta;
+  const totalPages = pagination?.lastPage || 1;
+  const [currentPage, setCurrentPage] = useState(pagination?.page || 1);
+  const [perPage, setPerPage] = useState(
+    pagination?.pageSize?.toString() || "20"
+  );
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    router.push(`?page=${page}&limit=${perPage}`);
+  };
 
-  // useEffect(()=>{
-  //   dispatch(fetchAllProducts(token))
-  // },[])
+  const handlePerPageChange = (value: string) => {
+    setPerPage(value);
+    setCurrentPage(1);
+    router.push(`?page=1&limit=${value}`);
+  };
 
+  useEffect(() => {
+    dispatch(fetchAllProducts({ page: currentPage, pageSize: perPage }));
+  }, [dispatch, currentPage, perPage]); // 👈 Make it reactive
+
+  // SearchPoduct Logic
+
+  const handleSearchProduct = () => {
+    if(searchTerm===""){
+    dispatch(fetchAllProducts({ page: currentPage, pageSize: perPage }));
+    }
+    dispatch(searchAllProducts({ query: searchTerm }));
+    console.log(searchTerm);
+  };
+
+  if (error) {
+    return (
+      <div className="text-center py-10 text-red-500 text-lg">
+        Error: {error}
+      </div>
+    );
+  }
   return (
     <div className="">
       <div className="flex justify-between items-center mb-4">
@@ -311,9 +233,12 @@ const handleEditInventory = () => {
           Products
         </h1>
         <Link href={"/manage/products/add"}>
-        <Button size="xl" className="!text-2xl btn-primary !flex !justify-start !items-center">
-          <Plus className="!w-6 !h-6" /> Add new
-        </Button>
+          <Button
+            size="xl"
+            className="!text-2xl btn-primary !flex !justify-start !items-center"
+          >
+            <Plus className="!w-6 !h-6" /> Add new
+          </Button>
         </Link>
       </div>
 
@@ -339,7 +264,7 @@ const handleEditInventory = () => {
             className="flex justify-start items-center bg-white text-center !px-4 !py-4 rounded-md 
                          focus-within:ring-3 focus-within:ring-blue-200 focus-within:border-blue-200 border border-gray-200  transition hover:border-blue-200 w-[80%]"
           >
-            <i>
+            <i onClick={handleSearchProduct}>
               <IoSearchOutline
                 size={20}
                 color="gray"
@@ -348,8 +273,10 @@ const handleEditInventory = () => {
             </i>
             <input
               type="text"
-              placeholder=" Search products, orders, customers, or navigate to"
+              placeholder=" Search products"
               className=" !ml-3 bg-transparent !text-xl !font-medium outline-none placeholder:text-gray-400 w-[80%]"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
 
@@ -373,14 +300,21 @@ const handleEditInventory = () => {
                   handleSelectAllChange(checked)
                 }
               />
-              <span className="text-gray-700 !text-xl">275215 Products</span>
+              <span className="text-gray-700 !text-xl">
+                {products?.length} Products
+              </span>
             </div>
 
             {selectedProductIds.length > 0 && (
               <div>
                 <button className="btn-outline-primary">Export</button>
                 <button className="btn-outline-primary">Bulk edit</button>
-                <button className="btn-outline-primary" onClick={handleEditInventory}>Edit Inventory</button>
+                <button
+                  className="btn-outline-primary"
+                  onClick={handleEditInventory}
+                >
+                  Edit Inventory
+                </button>
                 <OrderActionsDropdown
                   actions={editdropdownActions}
                   trigger={
@@ -403,14 +337,15 @@ const handleEditInventory = () => {
           <div className="flex items-center space-x-10 text-gray-700">
             {/* Settings icon */}
             {/* <Settings className="w-8 h-8 text-gray-500" /> */}
+
             <div className="p-6">
               {/* Pagination */}
               <Pagination
                 currentPage={currentPage}
                 totalPages={totalPages}
-                onPageChange={setCurrentPage}
+                onPageChange={handlePageChange}
                 perPage={perPage}
-                onPerPageChange={setPerPage}
+                onPerPageChange={handlePerPageChange}
               />
             </div>
           </div>
@@ -432,98 +367,125 @@ const handleEditInventory = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {products.map((product) => (
-                <TableRow key={product.id}>
-                  <TableCell>
-                    <Checkbox
-                      checked={selectedProductIds.includes(product.id)}
-                      onCheckedChange={(checked: boolean) =>
-                        handleProductCheckboxChange(product.id, checked)
-                      }
-                    />
-                  </TableCell>
-                  <TableCell className="flex items-center gap-2 ">
-                    <Image
-                      src={product.image}
-                      alt={product.name}
-                      width={60}
-                      height={60}
-                      className="rounded !border !border-gray-300 p-2 shrink-0"
-                    />
-                    <span className="!text-blue-600   cursor-pointer whitespace-normal break-words leading-snug max-w-[300px]">
-                      {product.name}
-                    </span>
-                  </TableCell>
-                  <TableCell className="relative  ">
-                    <FeaturedToggle
-                      productId={product.id}
-                      isFeatured={featuredMap[product.id] || false}
-                      onChange={(id, value) => {
-                        setFeaturedMap((prev) => ({ ...prev, [id]: value }));
-                        // Optional: call backend API here
-                      }}
-                    />
-                  </TableCell>
-
-                  <TableCell>{product.sku}</TableCell>
-
-                  <TableCell>{product.category}</TableCell>
-                  <TableCell>
-                    <EditStockSheet
-                      product={product}
-                      trigger={
-                        <div className="group hover:text-blue-600 flex items-center gap-1 hover:bg-blue-100 p-4 rounded-md cursor-pointer transition-colors">
-                          <a className="text-xl group-hover:opacity-100">
-                            {product.stock}
-                          </a>
-                          <Pencil className="w-5 h-5 text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
-                        </div>
-                      }
-                    />
-                  </TableCell>
-
-                  <TableCell>
-                    <EditPriceSheet
-                      product={product}
-                      trigger={
-                        <div className="group hover:text-blue-600 flex items-center gap-1 hover:bg-blue-100 p-4 rounded-md cursor-pointer transition-colors">
-                          <a className="text-xl group-hover:opacity-100">
-                            {product.price}
-                          </a>
-                          <Pencil className="w-5 h-5 text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
-                        </div>
-                      }
-                    />
-                  </TableCell>
-
-                  <TableCell>{product.channels}</TableCell>
-                  <TableCell className="relative hover:bg-blue-100 transition-all">
-                    <VisibilityToggle
-                      productId={product.id}
-                      value={visibilityMap[product.id] || product.visibility}
-                      onChange={(id, value) => {
-                        setVisibilityMap((prev) => ({ ...prev, [id]: value }));
-                        // Optional: call backend API here
-                      }}
-                    />
-                  </TableCell>
-
-                  <TableCell>
-                    <OrderActionsDropdown
-                      actions={dropdownActions}
-                      trigger={
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="text-xl cursor-pointer"
-                        >
-                          •••
-                        </Button>
-                      }
-                    />
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={10} className="text-center py-10">
+                    <Spinner />
                   </TableCell>
                 </TableRow>
-              ))}
+              ) : filteredProducts?.length === 0 && !loading ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={10}
+                    className="text-center py-10 text-gray-500 text-xl"
+                  >
+                    No products yet.
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredProducts?.map((product: any) => (
+                  <TableRow key={product.id}>
+                    <TableCell>
+                      <Checkbox
+                        checked={selectedProductIds.includes(product.id)}
+                        onCheckedChange={(checked: boolean) =>
+                          handleProductCheckboxChange(product.id, checked)
+                        }
+                      />
+                    </TableCell>
+                    <TableCell className="flex items-center gap-2 ">
+                      <Image
+                        src={product.images?.[0]?.path}
+                        alt={product.name}
+                        width={60}
+                        height={60}
+                        className="rounded !border !border-gray-300 p-2 shrink-0"
+                      />
+                      <span className="!text-blue-600   cursor-pointer whitespace-normal break-words leading-snug max-w-[300px]">
+                        {product.name}
+                      </span>
+                    </TableCell>
+                    <TableCell className="relative  ">
+                      <FeaturedToggle
+                        productId={product.id}
+                        isFeatured={
+                          featuredMap[product.id] ?? product.isFeatured
+                        }
+                        onChange={(id, value) => {
+                          setFeaturedMap((prev) => ({ ...prev, [id]: value }));
+                          // Optional: call API to persist
+                        }}
+                      />
+                    </TableCell>
+
+                    <TableCell>{product.sku}</TableCell>
+
+                    <TableCell>{product.category?.name}</TableCell>
+                    <TableCell>
+                      <EditStockSheet
+                        product={product}
+                        trigger={
+                          <div className="group hover:text-blue-600 flex items-center gap-1 hover:bg-blue-100 p-4 rounded-md cursor-pointer transition-colors">
+                            <a className="text-xl group-hover:opacity-100">
+                              {product.currentStock}
+                            </a>
+                            <Pencil className="w-5 h-5 text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                          </div>
+                        }
+                      />
+                    </TableCell>
+
+                    <TableCell>
+                      <EditPriceSheet
+                        product={product}
+                        trigger={
+                          <div className="group hover:text-blue-600 flex items-center gap-1 hover:bg-blue-100 p-4 rounded-md cursor-pointer transition-colors">
+                            <a className="text-xl group-hover:opacity-100">
+                              {product.price}
+                            </a>
+                            <Pencil className="w-5 h-5 text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                          </div>
+                        }
+                      />
+                    </TableCell>
+
+                    <TableCell>{product.channels}</TableCell>
+                    <TableCell className="relative hover:bg-blue-100 transition-all">
+                      <VisibilityToggle
+                        productId={product.id}
+                        value={
+                          visibilityMap[product.id] ?? product.isVisible
+                            ? "ENABLED"
+                            : "DISABLED"
+                        }
+                        onChange={(id, value) => {
+                          const isVisible = value === "ENABLED";
+                          setVisibilityMap((prev: any) => ({
+                            ...prev,
+                            [id]: isVisible,
+                          }));
+                          // Optional: call API here
+                        }}
+                      />
+                    </TableCell>
+
+                    <TableCell>
+                      <OrderActionsDropdown
+                        actions={dropdownActions}
+                        trigger={
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="text-xl cursor-pointer"
+                          >
+                            •••
+                          </Button>
+                        }
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </div>
@@ -533,9 +495,9 @@ const handleEditInventory = () => {
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
-            onPageChange={setCurrentPage}
+            onPageChange={handlePageChange}
             perPage={perPage}
-            onPerPageChange={setPerPage}
+            onPerPageChange={handlePerPageChange}
           />
         </div>
       </div>
