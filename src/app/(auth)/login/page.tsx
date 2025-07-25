@@ -106,7 +106,7 @@ export default function LoginPage() {
               <a href="#" className="hover:underline !text-xl">
                 Forgot?
               </a>
-              <a href="#" className="hover:underline !text-xl">
+              <a href="/register" className="hover:underline !text-xl">
                 Sign up
               </a>
             </div>

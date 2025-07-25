@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Providers from "./components/Providers";
 import { Cabin } from "next/font/google";
+import ProtectedLayout from "@/auth/ProtectedLayout";
 
 const cabin = Cabin({
   subsets: ["latin"],
@@ -21,12 +22,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+
       <body
         className={`${cabin.className} antialiased`}
       >
-        <Providers>
-          {children}
-        </Providers>
+          <Providers>
+            {children}
+          </Providers>
       </body>
     </html>
   );

@@ -12,7 +12,7 @@ const ProtectedLayout = ({ children }: Props) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
   useEffect(() => {
-    const token = localStorage.getItem("accessToken");
+    const token = localStorage.getItem("token");
 
     if (!token) {
       router.replace("/login");
