@@ -6,7 +6,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -17,17 +16,21 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-
+import { updateProduct } from "@/redux/slices/productSlice";
+import { useAppDispatch } from "@/hooks/useReduxHooks";
+import { refetchProducts } from "@/lib/productUtils";
 export default function EditPriceSheet({ trigger, product }: any) {
   // console.log("Product to edit: ", product);
 
   const [open, setOpen] = useState(false);
+  const dispatch = useAppDispatch();
   const [values, setValues] = useState({
+    id: product?.id || "",
     name: product?.name || "",
     sku: product?.sku || "",
     price: product?.price || "",
     salePrice: product?.salePrice || "",
-    cost: product?.costPrice || "",
+    costPrice: product?.costPrice || "",
     msrp: product?.msrp || "",
   });
 
@@ -38,10 +41,36 @@ export default function EditPriceSheet({ trigger, product }: any) {
     }));
   };
 
-  const handleSubmit = () => {
-    console.log("Edited Values:", values);
-    // TODO: add API call or state sync here
-  };
+const handleSubmit = async () => {
+  try {
+    const response = await dispatch(
+      updateProduct({
+        body: {
+          products: [
+            {
+              id: product?.id,
+              fields: {
+                name: values?.name,
+                sku: values?.sku,
+                price: values?.price,
+                salePrice: values?.salePrice,
+                costPrice: values?.costPrice,
+                msrp: values?.msrp,
+              },
+            },
+          ],
+        },
+      })
+    ).unwrap(); // ✅ unwrap for error handling
+
+    console.log("✅ Product updated:", response);
+
+    // Refetch products after successful update
+    await refetchProducts(dispatch);
+  } catch (err) {
+    console.error("❌ Error Updating:", err);
+  }
+};
 
   const handleSaveAndExit = () => {
     handleSubmit();
@@ -104,8 +133,8 @@ export default function EditPriceSheet({ trigger, product }: any) {
                 <TableCell className="align-top">
                   <Input
                     className=" border border-gray-300"
-                    value={values.cost}
-                    onChange={(e) => handleChange("cost", e.target.value)}
+                    value={values.costPrice}
+                    onChange={(e) => handleChange("costPrice", e.target.value)}
                   />
                 </TableCell>
                 <TableCell className="align-top">

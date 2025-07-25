@@ -7,7 +7,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -19,16 +18,19 @@ import {
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
-
+import { updateProduct } from "@/redux/slices/productSlice";
+import { useAppDispatch } from "@/hooks/useReduxHooks";
+import { refetchProducts } from "@/lib/productUtils";
 export default function EditStockSheet({ trigger, product }: any) {
   // console.log("Product to edit: ", product);
 
   const [open, setOpen] = useState(false);
+  const dispatch = useAppDispatch();
   const [values, setValues] = useState({
     name: product?.name || "",
     sku: product?.sku || "",
     adjustBy: product?.adjustBy || "",
-    stock: product?.currentStock || "",
+    currentStock: product?.currentStock || "",
     lowStock: product?.lowStock || "",
     bpn: product?.bpn || "",
     safetyStock: product?.safetyStock || "",
@@ -42,9 +44,37 @@ export default function EditStockSheet({ trigger, product }: any) {
     }));
   };
 
-  const handleSubmit = () => {
-    console.log("Edited Values:", values);
-    // TODO: add API call or state sync here
+  const handleSubmit = async () => {
+    try {
+      const response = await dispatch(
+        updateProduct({
+          body: {
+            products: [
+              {
+                id: product?.id,
+                fields: {
+                  name: values?.name,
+                  sku: values?.sku,
+                  // adjustBy: values?.adjustBy || "",
+                  currentStock: values?.currentStock,
+                  lowStock: values?.lowStock,
+                  // bpn: values?.bpn || "",
+                  // safetyStock: values?.safetyStock || "",
+                  allowPurchase: values?.allowPurchase,
+                },
+              },
+            ],
+          },
+        })
+      ).unwrap(); // ✅ unwrap for error handling
+
+      console.log("✅ Product updated:", response);
+
+      // Refetch products after successful update
+      await refetchProducts(dispatch);
+    } catch (err) {
+      console.error("❌ Error Updating:", err);
+    }
   };
 
   const handleSaveAndExit = () => {
@@ -104,8 +134,10 @@ export default function EditStockSheet({ trigger, product }: any) {
                 <TableCell className=" align-top">
                   <Input
                     className=" border border-gray-300"
-                    value={values.stock}
-                    onChange={(e) => handleChange("stock", e.target.value)}
+                    value={values.currentStock}
+                    onChange={(e) =>
+                      handleChange("currentStock", e.target.value)
+                    }
                   />
                 </TableCell>
 
