@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import NavigationLoader from "@/app/components/loader/NavigationLoader";
 
 interface Props {
   children: React.ReactNode;
@@ -13,6 +14,7 @@ const ProtectedLayout = ({ children }: Props) => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+    const expiry = localStorage.getItem("tokenExpiry");
 
     if (!token) {
       router.replace("/login");
@@ -22,9 +24,9 @@ const ProtectedLayout = ({ children }: Props) => {
     }
   }, [router]);
 
-  if (isAuthenticated === null) {
-    return null; // or show a loader
-  }
+  if (isAuthenticated === null || isAuthenticated === false) {
+  return <NavigationLoader />
+}
 
   return <>{children}</>;
 };

@@ -26,7 +26,7 @@ export default function LoginPage() {
     const result = await dispatch(loginUser({ email: formData.email, password: formData.password }));
 
     if (loginUser.fulfilled.match(result)) {
-      const { token, stores } = result.payload;
+      const { token, stores, expires_at } = result.payload;
       Cookies.set("token", token, { expires: 7 });
       localStorage.setItem("token", token);
 
