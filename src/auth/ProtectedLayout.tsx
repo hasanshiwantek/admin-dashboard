@@ -12,18 +12,6 @@ const ProtectedLayout = ({ children }: Props) => {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
-  // useEffect(() => {
-  //   const token = localStorage.getItem("token");
-  //   const expiry = localStorage.getItem("tokenExpiry");
-
-  //   if (!token || !expiry) {
-  //     router.replace("/login");
-  //     setIsAuthenticated(false);
-  //   } else {
-  //     setIsAuthenticated(true);
-  //   }
-  // }, [router]);
-
   useEffect(() => {
     const token = localStorage.getItem("token");
     const expiry = localStorage.getItem("tokenExpiry");
