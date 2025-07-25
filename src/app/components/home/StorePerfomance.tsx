@@ -8,8 +8,6 @@ import {
   Tooltip,
   CartesianGrid,
   ResponsiveContainer,
-  Area,
-  AreaChart,
 } from "recharts";
 import { fetchDashboardMetrics } from "@/redux/slices/homeSlice";
 import { useAppDispatch,useAppSelector } from "@/hooks/useReduxHooks";
@@ -17,7 +15,6 @@ import { StoreMetric, StoreMetricsResponse } from "@/types/types";
 
 export default function StorePerformanceChart() {
   const dispatch = useAppDispatch();
-    // const metricsData = useAppSelector((state) => state.home.metrics?.data ) as StoreMetricsResponse[] | null;
     const metrics = useAppSelector((state) => state.home?.metrics) as StoreMetricsResponse | null;
     const metricsData = metrics?.data ?? [];
     console.log(metricsData);
@@ -83,32 +80,14 @@ export default function StorePerformanceChart() {
           })}
         </div>
 
-        {/* Chart */}
         <ResponsiveContainer width="100%" height={250}>
           <LineChart data={metricsData}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="label" />
             <YAxis />
             <Tooltip />
-            {/* <Line
-              type="monotone"
-              dataKey="visits"
-              stroke="#1d4ed8"
-              name="Visits"
-            />
-            <Line
-              type="monotone"
-              dataKey="visitsLastWeek"
-              stroke="#d1d5db"
-              name="Last week"
-              strokeDasharray="4 4"
-            /> */}
-            {/* <Line
-              type="monotone"
-              dataKey="revenue"
-              stroke="#1d4ed8"
-              name="Revenue"
-            /> */}
+            {/* <Line type="monotone" dataKey="visits" stroke="#1d4ed8" name="Visits" /> */}
+            {/* <Line type="monotone" dataKey="visitsLastWeek" stroke="#d1d5db" name="Last week" strokeDasharray="4 4"/> */}
             <Line dataKey={(d) => Number(d.revenue)} stroke="#9d10b9ff" name="Revenue" />
             <Line dataKey={(d) => Number(d.orders)} stroke="#0046afff" name="Orders" />
             <Line dataKey={(d) => Number(d.visits)} stroke="#4f5050" name="Visits" />
