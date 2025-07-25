@@ -12,15 +12,46 @@ const ProtectedLayout = ({ children }: Props) => {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
+  // useEffect(() => {
+  //   const token = localStorage.getItem("token");
+  //   const expiry = localStorage.getItem("tokenExpiry");
+
+  //   if (!token || !expiry) {
+  //     router.replace("/login");
+  //     setIsAuthenticated(false);
+  //   } else {
+  //     setIsAuthenticated(true);
+  //   }
+  // }, [router]);
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     const expiry = localStorage.getItem("tokenExpiry");
 
-    if (!token) {
+    if (!token || !expiry) {
       router.replace("/login");
       setIsAuthenticated(false);
     } else {
-      setIsAuthenticated(true);
+      const timeLeft = Number(expiry) - Date.now();
+      if (timeLeft > 0) {
+        setIsAuthenticated(true);
+
+        // Auto-logout after expiry
+        const timer = setTimeout(() => {
+          localStorage.removeItem("token");
+          localStorage.removeItem("tokenExpiry");
+          router.replace("/login");
+        }, timeLeft);
+
+        return () => clearTimeout(timer);
+      } else {
+        // Token expired
+        localStorage.removeItem("token");
+        localStorage.removeItem("tokenExpiry");
+        localStorage.removeItem("storeId")
+        router.replace("/login");
+        setIsAuthenticated(false);
+      }
     }
   }, [router]);
 
