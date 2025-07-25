@@ -1,11 +1,17 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { IoIosLogOut } from "react-icons/io";
 import { CircleUser } from "lucide-react";
+import { logout } from "@/redux/slices/authSlice";
+import { useAppDispatch } from "@/hooks/useReduxHooks";
+
 export default function UserDropdown() {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const dispatch = useAppDispatch()
+  const router = useRouter();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -17,6 +23,11 @@ export default function UserDropdown() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const handleLogout = () => {
+    dispatch(logout())
+    router.push("/login");
+  }
 
   return (
     <div className="relative" ref={ref}>
@@ -50,7 +61,9 @@ export default function UserDropdown() {
             </li>
           </ul>
           <div className=" hover:text-blue-800  cursor-pointer !ml-5 !my-5  flex justify-between items-center">
-            <a className="!text-xl !font-medium text-[#313440] hover:text-blue-800">
+            <a
+            onClick={handleLogout} 
+            className="!text-xl !font-medium text-[#313440] hover:text-blue-800">
               Log out
             </a>
             <i>

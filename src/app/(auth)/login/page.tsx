@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "@/redux/slices/authSlice";
@@ -26,9 +26,11 @@ export default function LoginPage() {
     const result = await dispatch(loginUser({ email: formData.email, password: formData.password }));
 
     if (loginUser.fulfilled.match(result)) {
-      const { token, stores } = result.payload;
+      const { token, stores, expireAt } = result.payload;
       Cookies.set("token", token, { expires: 7 });
       localStorage.setItem("token", token);
+      localStorage.setItem("tokenExpiry", new Date(expireAt).getTime().toString());
+
 
       if (stores.length === 1) {
         localStorage.setItem("storeId", stores[0].id.toString());
@@ -49,6 +51,13 @@ export default function LoginPage() {
 
   const toggleShowPassword = () =>
     setFormData((prev) => ({ ...prev, showPassword: !prev.showPassword }));
+
+  useEffect (() => {
+    const token = localStorage.getItem("token")
+    if (token) {
+      router.replace('/manage/dashboard')
+    }
+  }, [])
 
   return (
     <div className="flex flex-col min-h-screen items-center justify-center bg-black">
@@ -106,7 +115,7 @@ export default function LoginPage() {
               <a href="#" className="hover:underline !text-xl">
                 Forgot?
               </a>
-              <a href="#" className="hover:underline !text-xl">
+              <a href="/register" className="hover:underline !text-xl">
                 Sign up
               </a>
             </div>

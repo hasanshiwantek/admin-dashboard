@@ -83,7 +83,7 @@ export default function RegisterPage() {
         <div className="flex justify-center flex-col items-center w-full p-10 rounded-md">
           {fields.map((field) => (
             <div key={field.name} className="relative">
-              <label className="block text-xl font-medium mb-1 text-gray-200">
+              <label className="block text-xl font-medium  text-gray-200">
                 {field.label}
               </label>
  
@@ -94,7 +94,7 @@ export default function RegisterPage() {
                     setRegisterForm((prev) => ({ ...prev, [field.name]: val }))
                   }
                 >
-                  <SelectTrigger className="w-[30rem] !text-2xl my-5 px-6 py-8 bg-blue-50 text-black placeholder:text-gray-500">
+                  <SelectTrigger className="w-[30rem] !text-2xl  px-6 py-8 bg-blue-50 text-black placeholder:text-gray-500">
                     <SelectValue placeholder={`Select ${field.label}`} />
                   </SelectTrigger>
                   <SelectContent>
@@ -113,7 +113,7 @@ export default function RegisterPage() {
                     value={registerForm[field.name]}
                     onChange={handleChange}
                     required
-                    className="w-[30rem] !text-2xl my-5 px-6 py-8 bg-blue-50 text-black placeholder:text-gray-500"
+                    className="w-[30rem] !text-2xl  px-6 py-8 bg-blue-50 text-black placeholder:text-gray-500"
                     placeholder={`Enter your ${field.name}`}
                   />
  
@@ -132,7 +132,7 @@ export default function RegisterPage() {
                   onChange={handleChange}
                   placeholder={`Enter your ${field.name}`}
                   required
-                  className=" w-[30rem] !text-2xl my-5 px-6 py-8 bg-blue-50 text-black placeholder:text-gray-500"
+                  className=" w-[30rem] !text-2xl  px-6 py-8 bg-blue-50 text-black placeholder:text-gray-500"
                 />
               )}
             </div>
@@ -146,9 +146,15 @@ export default function RegisterPage() {
           >
             CREATE YOUR STORE
           </Button>
+
+          <div className="flex justify-between gap-2 text-base text-gray-100 whitespace-nowrap">
+            <p className="hover:underline !text-base !text-gray-100 !text-xl"> Already have an account? </p>
+             <a href="/login" className="hover:underline !text-xl">
+              Login
+            </a>
+          </div>
         </div>
       </form>
     </div>
   );
 }
- 

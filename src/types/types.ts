@@ -24,7 +24,6 @@ export interface StoreMetricsResponse {
 }
 
 // types/order.ts
-
 export interface OrderProduct {
   product_id: number;
   product_name: string;
@@ -60,5 +59,3 @@ export interface OrderListResponse {
     totalPages: number;
   };
 }
-
-
