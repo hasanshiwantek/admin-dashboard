@@ -2,31 +2,57 @@
 import React from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import SearchProduct from "@/app/components/products/search/SearchProduct";
-
+import { advanceSearchProduct } from "@/redux/slices/productSlice";
+import { useRouter } from "next/navigation";
+import { useAppDispatch } from "@/hooks/useReduxHooks";
 const Page = () => {
   const methods = useForm({
     defaultValues: {
-      searchKeywords: "",
-      brandName: "",
-      categoryIds: [],
-      priceFrom: "",
-      priceTo: "",
-      qtyFrom: "",
-      qtyTo: "",
-      invFrom: "",
-      invTo: "",
-      visibility: "",
-      featured: "",
-      freeShipping: "",
-      status: "",
-      sortBy: "",
-      sortOrder: "",
+      page: 1,
+      pageSize: 50,
     },
   });
 
-  const onSubmit = (data: Record<string, any>) => {
-    console.log("✅ Final Search Payload", data);
-  };
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+const onSubmit = async (data: Record<string, any>) => {
+  const filteredData = Object.entries(data).reduce((acc, [key, value]) => {
+    const isEmptyArray = Array.isArray(value) && value.length === 0;
+    const isEmpty =
+      value === "" || value === null || value === undefined || isEmptyArray;
+
+    const alwaysInclude = ["page", "pageSize"];
+    if (!isEmpty || alwaysInclude.includes(key)) {
+      acc[key] = value;
+    }
+    return acc;
+  }, {} as Record<string, any>);
+
+  try {
+    const result = await dispatch(
+      advanceSearchProduct({ data: filteredData })
+    );
+
+    if (advanceSearchProduct.fulfilled.match(result)) {
+      // ✅ Push ALL filters to URL — not just page & limit
+      const queryParams = new URLSearchParams();
+      Object.entries(filteredData).forEach(([key, value]) => {
+        if (Array.isArray(value)) {
+          value.forEach((v) => queryParams.append(key, v));
+        } else {
+          queryParams.set(key, String(value));
+        }
+      });
+
+      router.push(`/manage/products?${queryParams.toString()}`);
+    } else {
+      console.error("❌ Search Failed:", result.error);
+    }
+  } catch (error) {
+    console.error("🔥 Unexpected Error:", error);
+  }
+};
+
 
   return (
     <div className="p-10">

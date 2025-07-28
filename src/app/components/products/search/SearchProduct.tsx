@@ -93,22 +93,22 @@ const SearchProduct = () => {
                 <h1 className="my-5">Search by Range</h1>
                 <div className="bg-white shadow-md p-10 space-y-10">
                     <div className="flex items-center gap-4">
-                        <Label htmlFor="priceFrom" className="w-[90px] text-right">
+                        <Label htmlFor="priceMin" className="w-[90px] text-right">
                             Price Range:
                         </Label>
                         <span className="text-sm text-gray-600">From $</span>
                         <Input
-                            id="priceFrom"
+                            id="priceMin"
                             type="number"
                             className="w-[100px]"
-                            {...register("priceFrom")}
+                            {...register("priceMin")}
                         />
                         <span className="text-sm text-gray-600">to $</span>
                         <Input
-                            id="priceTo"
+                            id="priceMax"
                             type="number"
                             className="w-[100px]"
-                            {...register("priceTo")}
+                            {...register("priceMax")}
                         />
                     </div>
 
@@ -159,8 +159,8 @@ const SearchProduct = () => {
                 <h1 className="my-5 ">Search by Setting</h1>
                 <div className="bg-white shadow-md p-10 space-y-10">
                     {[
-                        { label: "Product Visibility", name: "visibility" },
-                        { label: "Featured Product", name: "featured" },
+                        { label: "Product Visibility", name: "isVisible" },
+                        { label: "Featured Product", name: "isFeatured" },
                         { label: "Free Shipping", name: "freeShipping" },
                         { label: "Status", name: "status" },
                     ].map(({ label, name }) => (
@@ -178,20 +178,20 @@ const SearchProduct = () => {
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="any">No Preference</SelectItem>
-                                            {name === "visibility" && (
+                                            {name === "isVisible" && (
                                                 <>
-                                                    <SelectItem value="visible">
+                                                    <SelectItem value="true">
                                                         Only Visible Products
                                                     </SelectItem>
-                                                    <SelectItem value="invisible">
+                                                    <SelectItem value="false">
                                                         Only Invisible Products
                                                     </SelectItem>
                                                 </>
                                             )}
-                                            {name === "featured" && (
+                                            {name === "isFeatured" && (
                                                 <>
-                                                    <SelectItem value="featured">Featured</SelectItem>
-                                                    <SelectItem value="not-featured">
+                                                    <SelectItem value="true">Featured</SelectItem>
+                                                    <SelectItem value="false">
                                                         Not Featured
                                                     </SelectItem>
                                                 </>

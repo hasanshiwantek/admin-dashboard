@@ -23,6 +23,7 @@ export const fetchAllProducts = createAsyncThunk(
   }
 );
 
+//QUERY SEARCH
 export const searchAllProducts = createAsyncThunk(
   "product/searchAllProducts",
   async ({ query }: { query: any }, thunkAPI) => {
@@ -41,6 +42,7 @@ export const searchAllProducts = createAsyncThunk(
   }
 );
 
+//PRODUCT UPDATION THUNK
 export const updateProduct = createAsyncThunk(
   "product/updateProduct",
   async ({ body }: { body: any }, thunkAPI) => {
@@ -60,6 +62,7 @@ export const updateProduct = createAsyncThunk(
   }
 );
 
+//PROODUCT DELETION THUNK
 export const deleteProduct = createAsyncThunk(
   "product/deleteProduct",
   async ({ ids }: { ids: number[] }, thunkAPI) => {
@@ -76,6 +79,25 @@ export const deleteProduct = createAsyncThunk(
       console.error("❌ Error deleting Product:", err);
       return thunkAPI.rejectWithValue(
         err.response?.data?.message || "Failed to delete products"
+      );
+    }
+  }
+);
+
+export const advanceSearchProduct = createAsyncThunk(
+  "product/advanceSearchProduct",
+  async ({ data }: { data: any }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.post(
+        `dashboard/products/advanced-search`,
+        data
+      );
+      console.log("✅ Advanced Search Product Response  Data:", res.data);
+      return res.data;
+    } catch (err: any) {
+      console.error("❌ Error Searching  Product:", err);
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to search products"
       );
     }
   }
@@ -131,6 +153,10 @@ const productSlice = createSlice({
             (item: any) => !deletedIds.includes(item.id)
           ),
         };
+      })
+      .addCase(advanceSearchProduct.fulfilled, (state, action) => {
+        state.loading = false;
+        state.products = action.payload;
       });
   },
 });
