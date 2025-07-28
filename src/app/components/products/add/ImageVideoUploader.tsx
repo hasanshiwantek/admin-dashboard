@@ -26,11 +26,11 @@ export default function ImageVideoUploader() {
     inputRef.current?.click();
   };
 
-  const fileListFromArray = (files: File[]): FileList => {
-    const dt = new DataTransfer();
-    files.forEach((file) => dt.items.add(file));
-    return dt.files;
-  };
+  // const fileListFromArray = (files: File[]): FileList => {
+  //   const dt = new DataTransfer();
+  //   files.forEach((file) => dt.items.add(file));
+  //   return dt.files;
+  // };
 
   // const syncFormState = (updatedPreviews: PreviewItem[]) => {
   //   const filePreviews = updatedPreviews.filter((p) => p.file);

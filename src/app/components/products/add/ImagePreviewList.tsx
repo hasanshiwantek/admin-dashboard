@@ -17,11 +17,13 @@ export default function ImagePreviewList({
   setPreviews,
   setValue,
 }: Props) {
-  const fileListFromArray = (files: File[]): FileList => {
-    const dt = new DataTransfer();
-    files.forEach((file) => dt.items.add(file));
-    return dt.files;
-  };
+
+  // const fileListFromArray = (files: File[]): FileList => {
+  //   const dt = new DataTransfer();
+  //   files.forEach((file) => dt.items.add(file));
+  //   return dt.files;
+  // };
+  
   // const syncForm = (updated: PreviewItem[]) => {
   //   setValue(
   //     "images",
