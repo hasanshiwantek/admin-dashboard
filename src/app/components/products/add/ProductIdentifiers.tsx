@@ -19,8 +19,8 @@ export default function ProductIdentifiers() {
                             <Input id="sku" placeholder="THX-1138"  {...register("sku")} />
                         </div>
                          <div>
-                            <Label htmlFor="productUPC/EAN">Product UPC/EAN</Label>
-                            <Input id="productUPC/EAN" placeholder="" {...register("productUPC/EAN")}/>
+                            <Label htmlFor="upc">Product UPC/EAN</Label>
+                            <Input id="upc" placeholder="" {...register("upc")}/>
                         </div>
                          <div>
                             <Label htmlFor="bpn">Bin Picking Number (BPN)</Label>

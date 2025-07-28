@@ -28,7 +28,7 @@ export default function Dimensions() {
                     {/* Left Div */}
                     <div className="space-y-12">
                         <div>
-                            <Label htmlFor="weight">Weight (LBS) <span className="!text-red-500">*</span>
+                            <Label htmlFor="dimensions.weight">Weight (LBS) <span className="!text-red-500">*</span>
                                 <TooltipProvider>
                                     <Tooltip>
                                         <TooltipTrigger asChild>
@@ -41,10 +41,10 @@ export default function Dimensions() {
                                     </Tooltip>
                                 </TooltipProvider>
                             </Label>
-                            <Input id="weight" placeholder="0" {...register("weight")}/>
+                            <Input id="weight" placeholder="0" {...register("dimensions.weight", { valueAsNumber: true})}/> 
                         </div>
                         <div>
-                            <Label htmlFor="height">Height (Inches) 
+                            <Label htmlFor="dimensions.height">Height (Inches) 
                                 <span className="!text-red-500">*</span>
                                 <TooltipProvider>
                                     <Tooltip>
@@ -58,7 +58,7 @@ export default function Dimensions() {
                                     </Tooltip>
                                 </TooltipProvider>
                             </Label>
-                            <Input id="height" {...register("height")}/>
+                            <Input id="height" {...register("dimensions.height", { valueAsNumber: true })}/>
                         </div>
 
                     </div>
@@ -66,7 +66,7 @@ export default function Dimensions() {
                     {/* Right Div */}
                     <div className="space-y-12">
                         <div>
-                            <Label htmlFor="width">Width (Inches)
+                            <Label htmlFor="dimensions.width">Width (Inches)
                                 <span className="!text-red-500">*</span>
                                 <TooltipProvider>
                                     <Tooltip>
@@ -80,11 +80,11 @@ export default function Dimensions() {
                                     </Tooltip>
                                 </TooltipProvider>
                             </Label>
-                            <Input id="width" placeholder="" {...register("width")}/>
+                            <Input id="width" placeholder="" {...register("dimensions.width", {valueAsNumber: true})}/>
                         </div>
 
                         <div>
-                            <Label htmlFor="depth">Depth (Inches) 
+                            <Label htmlFor="dimensions.depth">Depth (Inches) 
                                 <span className="!text-red-500">*</span>
                                 <TooltipProvider>
                                     <Tooltip>
@@ -98,7 +98,7 @@ export default function Dimensions() {
                                     </Tooltip>
                                 </TooltipProvider>
                             </Label>
-                            <Input id="depth" {...register("depth")}/>
+                            <Input id="depth" {...register("dimensions.depth", {valueAsNumber: true})}/>
                         </div>
                     </div>
                 </div>
