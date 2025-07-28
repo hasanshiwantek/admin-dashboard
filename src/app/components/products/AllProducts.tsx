@@ -25,7 +25,6 @@ import {
   deleteProduct,
 } from "@/redux/slices/productSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
-import Cookies from "js-cookie";
 import { Checkbox } from "@/components/ui/checkbox";
 import EditPriceSheet from "./EditPriceSheet";
 import EditStockSheet from "./EditStockSheet";
@@ -33,6 +32,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Spinner from "../loader/Spinner";
 import { refetchProducts } from "@/lib/productUtils";
+import { useSearchParams } from "next/navigation";
+import { advanceSearchProduct } from "@/redux/slices/productSlice";
 const filterTabs = [
   "All",
   "Featured",
@@ -137,7 +138,9 @@ export default function AllProducts() {
             },
           })
         );
-        refetchProducts(dispatch);
+        setTimeout(() => {
+          refetchProducts(dispatch);
+        }, 200);
       },
     },
     {
@@ -159,7 +162,9 @@ export default function AllProducts() {
             },
           })
         );
-        refetchProducts(dispatch);
+        setTimeout(() => {
+          refetchProducts(dispatch);
+        }, 200);
       },
     },
     {
@@ -180,7 +185,9 @@ export default function AllProducts() {
             },
           })
         );
-        refetchProducts(dispatch);
+        setTimeout(() => {
+          refetchProducts(dispatch);
+        }, 200);
       },
     },
     {
@@ -201,7 +208,9 @@ export default function AllProducts() {
             },
           })
         );
-        refetchProducts(dispatch);
+        setTimeout(() => {
+          refetchProducts(dispatch);
+        }, 200);
       },
     },
     {
@@ -209,9 +218,9 @@ export default function AllProducts() {
       onClick: () => {
         console.log("Delete", product);
         dispatch(deleteProduct({ ids: [product.id] }));
-        setTimeout(()=>{
+        setTimeout(() => {
           refetchProducts(dispatch);
-        },200)
+        }, 200);
       },
     },
   ];
@@ -227,7 +236,9 @@ export default function AllProducts() {
     },
     {
       label: "Add to categories",
-      onClick: () => console.log("Add to categories clicked"),
+      onClick: () => {
+        console.log("Add to categories clicked");
+      },
     },
     {
       label: "Remove from categories",
@@ -239,23 +250,104 @@ export default function AllProducts() {
       label: "Enable visiblity",
       onClick: () => {
         console.log("Enable visiblity clicked");
+        dispatch(
+          updateProduct({
+            body: {
+              products: [
+                {
+                  id: selectedProductIds,
+                  fields: {
+                    isVisible: false,
+                  },
+                },
+              ],
+            },
+          })
+        );
+        setTimeout(() => {
+          refetchProducts(dispatch);
+        }, 200);
       },
     },
     {
       label: "Disable visiblity",
-      onClick: () => console.log("Disable Visiblityclicked"),
+      onClick: () => {
+        console.log("Disable visibility clicked");
+
+        dispatch(
+          updateProduct({
+            body: {
+              products: [
+                {
+                  id: selectedProductIds,
+                  fields: {
+                    isVisible: true,
+                  },
+                },
+              ],
+            },
+          })
+        );
+        setTimeout(() => {
+          refetchProducts(dispatch);
+        }, 200);
+      },
     },
     {
       label: "Make featured",
-      onClick: () => console.log("Make featured clicked"),
+      onClick: () => {
+        console.log("Make featured clicked");
+        dispatch(
+          updateProduct({
+            body: {
+              products: [
+                {
+                  id: selectedProductIds,
+                  fields: {
+                    isFeatured: true,
+                  },
+                },
+              ],
+            },
+          })
+        );
+        setTimeout(() => {
+          refetchProducts(dispatch);
+        }, 200);
+      },
     },
     {
       label: "Make Not featured",
-      onClick: () => console.log("Make Not featured"),
+      onClick: () => {
+        console.log("Make Notfeatured clicked");
+        dispatch(
+          updateProduct({
+            body: {
+              products: [
+                {
+                  id: selectedProductIds,
+                  fields: {
+                    isFeatured: true,
+                  },
+                },
+              ],
+            },
+          })
+        );
+        setTimeout(() => {
+          refetchProducts(dispatch);
+        }, 200);
+      },
     },
     {
       label: "Delete",
-      onClick: () => console.log("Delete"),
+      onClick: () => {
+        console.log("Delete", selectedProductIds);
+        dispatch(deleteProduct({ ids: selectedProductIds }));
+        setTimeout(() => {
+          refetchProducts(dispatch);
+        }, 200);
+      },
     },
   ];
 
@@ -305,9 +397,43 @@ export default function AllProducts() {
     router.push(`?page=1&limit=${value}`);
   };
 
-  useEffect(() => {
-    dispatch(fetchAllProducts({ page: currentPage, pageSize: perPage }));
-  }, [dispatch, currentPage, perPage]); // 👈 Make it reactive
+
+  
+const searchParams = useSearchParams();
+
+const queryObject: Record<string, any> = {};
+searchParams.forEach((value, key) => {
+  if (queryObject[key]) {
+    queryObject[key] = [...queryObject[key], value];
+  } else {
+    queryObject[key] = value;
+  }
+});
+
+useEffect(() => {
+  const page = Number(queryObject.page || 1);
+  const pageSize = Number(queryObject.limit || queryObject.pageSize || 50);
+
+  const filterKeys = Object.keys(queryObject).filter(
+    (key) => !["page", "limit", "pageSize"].includes(key)
+  );
+
+  if (filterKeys.length > 0) {
+    // 🔍 Run filtered search if extra filters exist
+    dispatch(
+      advanceSearchProduct({
+        data: {
+          ...queryObject,
+          page,
+          pageSize,
+        },
+      })
+    );
+  } else {
+    // 📦 Default: Fetch all products
+    dispatch(fetchAllProducts({ page, pageSize }));
+  }
+}, [searchParams]); // reruns whenever URL changes
 
   // SearchPoduct Logic
 
@@ -527,6 +653,7 @@ export default function AllProducts() {
                                     id,
                                     fields: {
                                       isFeatured: value,
+                                      // categoryIds:[1]
                                     },
                                   },
                                 ],
