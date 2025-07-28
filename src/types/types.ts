@@ -4,6 +4,7 @@ export type PreviewItem = {
   description: string;
   selected: boolean;
   isThumbnail: boolean;
+  type: "image" | "video";
 };
 
 export interface StoreMetric {
