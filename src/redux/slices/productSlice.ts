@@ -60,6 +60,27 @@ export const updateProduct = createAsyncThunk(
   }
 );
 
+export const deleteProduct = createAsyncThunk(
+  "product/deleteProduct",
+  async ({ ids }: { ids: number[] }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.delete(
+        `dashboard/products/delete-product`,
+        {
+          data: { ids }, // ✅ this wraps your array inside an object
+        }
+      );
+      console.log("✅ Product Deletion response from thunk:", res.data);
+      return res.data;
+    } catch (err: any) {
+      console.error("❌ Error deleting Product:", err);
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to delete products"
+      );
+    }
+  }
+);
+
 // 2. Initial State
 const initialState = {
   products: [],
@@ -98,6 +119,18 @@ const productSlice = createSlice({
       .addCase(searchAllProducts.fulfilled, (state, action) => {
         state.loading = false;
         state.products = action.payload;
+      })
+      .addCase(deleteProduct.fulfilled, (state: any, action) => {
+        state.loading = false;
+
+        const deletedIds = action.payload?.deletedIds || [];
+
+        state.products = {
+          ...state.products,
+          data: state.products.data.filter(
+            (item: any) => !deletedIds.includes(item.id)
+          ),
+        };
       });
   },
 });
