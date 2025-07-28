@@ -35,7 +35,18 @@ const StoreFront = () => {
         <div className="space-y-6">
           {/* Featured Checkbox */}
           <div className="flex items-center space-x-5">
-            <Checkbox id="isFeatured" {...register("isFeatured")} />
+            <Controller
+              control={control}
+              name="isFeatured"
+              defaultValue={false}
+              render={({ field }) => (
+                <Checkbox
+                  id="isFeatured"
+                  checked={field.value}
+                  onCheckedChange={(val) => field.onChange(val === true)}
+                />
+              )}
+            />
             <Label htmlFor="isFeatured">
               Set as a Featured Product on my Storefront
             </Label>
@@ -53,7 +64,7 @@ const StoreFront = () => {
           {/* Search Keywords */}
 
           <div className="space-y-4">
-            <Label htmlFor="keywords">
+            <Label htmlFor="searchKeywords">
               Search Keywords
               <Tooltip>
                 <TooltipTrigger>
@@ -70,7 +81,7 @@ const StoreFront = () => {
               </Tooltip>
             </Label>
             <Input
-              id="keywords"
+              id="searchKeywords"
               placeholder="e.g. Widget, affordable, portable, etc..."
               {...register("searchKeywords")}
               className="max-w-full"
@@ -133,7 +144,7 @@ const StoreFront = () => {
 
           {/* Warranty Information */}
           <div className="space-y-4">
-            <Label htmlFor="warrantyInfo">
+            <Label htmlFor="warranty">
               Warranty Information
               <Tooltip>
                 <TooltipTrigger>
@@ -146,10 +157,10 @@ const StoreFront = () => {
               </Tooltip>
             </Label>
             <Textarea
-              id="warrantyInfo"
+              id="warranty"
               rows={6} // typical row height
               className="w-full md:h-[100px]" // full width on small screens, fixed width on md+
-              {...register("warrantyInfo")}
+              {...register("warranty")}
             />
           </div>
 
@@ -209,7 +220,18 @@ const StoreFront = () => {
               />
             </div>
             <div className="flex items-center space-x-2 pt-6">
-              <Checkbox id="showCondition" {...register("showCondition")} />
+              <Controller
+                control={control}
+                name="showCondition"
+                defaultValue={false}
+                render={({ field }) => (
+                  <Checkbox
+                    id="showCondition"
+                    checked={field.value}
+                    onCheckedChange={(val) => field.onChange(val === true)}
+                  />
+                )}
+              />
               <Label htmlFor="showCondition">
                 Show condition on storefront
               </Label>

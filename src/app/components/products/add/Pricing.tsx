@@ -39,7 +39,7 @@ export default function Pricing() {
         <Input
           type="number"
           placeholder="$0"
-          {...register("defaultPrice", { valueAsNumber: true })}
+          {...register("price", { valueAsNumber: true })}
         />
 
         <div className="space-y-1">
@@ -88,7 +88,7 @@ export default function Pricing() {
                 <Input
                   type="number"
                   placeholder="$0"
-                  {...register("cost", { valueAsNumber: true })}
+                  {...register("costPrice", { valueAsNumber: true })}
                 />
               </div>
               <div>
