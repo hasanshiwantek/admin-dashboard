@@ -137,7 +137,9 @@ export default function AllProducts() {
             },
           })
         );
-        refetchProducts(dispatch);
+        setTimeout(() => {
+          refetchProducts(dispatch);
+        }, 200);
       },
     },
     {
@@ -159,7 +161,9 @@ export default function AllProducts() {
             },
           })
         );
-        refetchProducts(dispatch);
+        setTimeout(() => {
+          refetchProducts(dispatch);
+        }, 200);
       },
     },
     {
@@ -180,7 +184,9 @@ export default function AllProducts() {
             },
           })
         );
-        refetchProducts(dispatch);
+        setTimeout(() => {
+          refetchProducts(dispatch);
+        }, 200);
       },
     },
     {
@@ -201,7 +207,9 @@ export default function AllProducts() {
             },
           })
         );
-        refetchProducts(dispatch);
+        setTimeout(() => {
+          refetchProducts(dispatch);
+        }, 200);
       },
     },
     {
@@ -209,9 +217,9 @@ export default function AllProducts() {
       onClick: () => {
         console.log("Delete", product);
         dispatch(deleteProduct({ ids: [product.id] }));
-        setTimeout(()=>{
+        setTimeout(() => {
           refetchProducts(dispatch);
-        },200)
+        }, 200);
       },
     },
   ];
@@ -227,7 +235,9 @@ export default function AllProducts() {
     },
     {
       label: "Add to categories",
-      onClick: () => console.log("Add to categories clicked"),
+      onClick: () => {
+        console.log("Add to categories clicked");
+      },
     },
     {
       label: "Remove from categories",
@@ -239,23 +249,104 @@ export default function AllProducts() {
       label: "Enable visiblity",
       onClick: () => {
         console.log("Enable visiblity clicked");
+        dispatch(
+          updateProduct({
+            body: {
+              products: [
+                {
+                  id: selectedProductIds,
+                  fields: {
+                    isVisible: false,
+                  },
+                },
+              ],
+            },
+          })
+        );
+        setTimeout(() => {
+          refetchProducts(dispatch);
+        }, 200);
       },
     },
     {
       label: "Disable visiblity",
-      onClick: () => console.log("Disable Visiblityclicked"),
+      onClick: () => {
+        console.log("Disable visibility clicked");
+
+        dispatch(
+          updateProduct({
+            body: {
+              products: [
+                {
+                  id: selectedProductIds,
+                  fields: {
+                    isVisible: true,
+                  },
+                },
+              ],
+            },
+          })
+        );
+        setTimeout(() => {
+          refetchProducts(dispatch);
+        }, 200);
+      },
     },
     {
       label: "Make featured",
-      onClick: () => console.log("Make featured clicked"),
+      onClick: () => {
+        console.log("Make featured clicked");
+        dispatch(
+          updateProduct({
+            body: {
+              products: [
+                {
+                  id: selectedProductIds,
+                  fields: {
+                    isFeatured: true,
+                  },
+                },
+              ],
+            },
+          })
+        );
+        setTimeout(() => {
+          refetchProducts(dispatch);
+        }, 200);
+      },
     },
     {
       label: "Make Not featured",
-      onClick: () => console.log("Make Not featured"),
+      onClick: () => {
+        console.log("Make Notfeatured clicked");
+        dispatch(
+          updateProduct({
+            body: {
+              products: [
+                {
+                  id: selectedProductIds,
+                  fields: {
+                    isFeatured: true,
+                  },
+                },
+              ],
+            },
+          })
+        );
+        setTimeout(() => {
+          refetchProducts(dispatch);
+        }, 200);
+      },
     },
     {
       label: "Delete",
-      onClick: () => console.log("Delete"),
+      onClick: () => {
+        console.log("Delete", selectedProductIds);
+        dispatch(deleteProduct({ ids: selectedProductIds }));
+        setTimeout(() => {
+          refetchProducts(dispatch);
+        }, 200);
+      },
     },
   ];
 
