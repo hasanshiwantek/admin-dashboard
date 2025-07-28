@@ -22,6 +22,7 @@ import {
   setSelectedProducts,
   searchAllProducts,
   updateProduct,
+  deleteProduct,
 } from "@/redux/slices/productSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import Cookies from "js-cookie";
@@ -205,7 +206,13 @@ export default function AllProducts() {
     },
     {
       label: "Delete",
-      onClick: () => console.log("Delete", product),
+      onClick: () => {
+        console.log("Delete", product);
+        dispatch(deleteProduct({ ids: [product.id] }));
+        setTimeout(()=>{
+          refetchProducts(dispatch);
+        },200)
+      },
     },
   ];
 
@@ -253,10 +260,10 @@ export default function AllProducts() {
   ];
 
   // CHECKBOX SELECTION LOGIC
-  const isAllSelected = selectedProductIds?.length === products?.length;
+  const isAllSelected = selectedProductIds?.length === filteredProducts?.length;
 
   const handleSelectAllChange = (checked: boolean) => {
-    const updated = checked ? products?.map((p: any) => p.id) : [];
+    const updated = checked ? filteredProducts?.map((p: any) => p.id) : [];
     setSelectedProductIds(updated);
     console.log("✅ Updated selectedProductIds (Select All):", updated);
   };
@@ -271,7 +278,7 @@ export default function AllProducts() {
   };
 
   const handleEditInventory = () => {
-    const selected = products.filter((p: any) =>
+    const selected = filteredProducts.filter((p: any) =>
       selectedProductIds.includes(p.id)
     );
     dispatch(setSelectedProducts(selected));
@@ -283,7 +290,7 @@ export default function AllProducts() {
   console.log("Pagination: ", pagination);
 
   const totalPages = pagination?.lastPage;
-  const [currentPage, setCurrentPage] = useState(pagination?.page);
+  const [currentPage, setCurrentPage] = useState(pagination?.page || 1);
   const [perPage, setPerPage] = useState(
     pagination?.pageSize?.toString() || "50"
   );
@@ -394,7 +401,7 @@ export default function AllProducts() {
                 }
               />
               <span className="text-gray-700 !text-xl">
-                {products?.length} Products
+                {filteredProducts?.length} Products
               </span>
             </div>
 
@@ -499,7 +506,7 @@ export default function AllProducts() {
                         className="rounded !border !border-gray-300 p-2 shrink-0"
                       />
 
-                      <span className="!text-blue-600   cursor-pointer whitespace-normal break-words leading-snug max-w-[300px]">
+                      <span className="!text-blue-600 !text-xl capitalize  cursor-pointer whitespace-normal break-words leading-snug max-w-[300px]">
                         {product.name}
                       </span>
                     </TableCell>
@@ -526,13 +533,16 @@ export default function AllProducts() {
                               },
                             })
                           );
+                          refetchProducts(dispatch);
                         }}
                       />
                     </TableCell>
 
                     <TableCell>{product.sku}</TableCell>
 
-                    <TableCell>{product.category?.name}</TableCell>
+                    <TableCell className="whitespace-normal break-words leading-snug max-w-[300px]">
+                      {product.category?.name}
+                    </TableCell>
                     <TableCell>
                       <EditStockSheet
                         product={product}
@@ -590,6 +600,7 @@ export default function AllProducts() {
                               },
                             })
                           );
+                          refetchProducts(dispatch);
                         }}
                       />
                     </TableCell>
