@@ -24,13 +24,13 @@ export default function InventorySection() {
           defaultValue={false}
           render={({ field }) => (
             <Checkbox
-              id="track-inventory"
+              id="trackInventory"
               checked={field.value}
               onCheckedChange={(val) => field.onChange(val)}
             />
           )}
         />
-        <Label htmlFor="track-inventory">Track inventory</Label>
+        <Label htmlFor="trackInventory">Track inventory</Label>
       </div>
 
       {trackInventory && (
