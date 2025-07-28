@@ -106,6 +106,7 @@ export default function AddFromUrlModal({
                 description: "",
                 selected: false,
                 isThumbnail: false,
+                type: "image",
               });
               onOpenChange(false);
               setUrl("");
