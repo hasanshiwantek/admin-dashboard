@@ -10,10 +10,10 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { HiQuestionMarkCircle } from "react-icons/hi2";
-import { useFormContext } from "react-hook-form";
+import { useFormContext, Controller } from "react-hook-form";
 
 export default function ShippingDetails() {
-  const { register } = useFormContext();
+  const { register, control, watch } = useFormContext();
 
   return (
     <div className="bg-white shadow p-6 space-y-4 scroll-mt-20" id="shippingDetails">
@@ -48,17 +48,28 @@ export default function ShippingDetails() {
             type="number"
             step="0.01"
             placeholder="$ 0"
-            {...register("fixedShippingPrice", { valueAsNumber: true })}
+            disabled={watch("freeShipping")}
+            {...register("fixedShippingCost", { valueAsNumber: true })}
           />
         </div>
 
         {/* Free Shipping */}
-        <div className="flex items-center space-x-2 mt-6 md:mt-8">
-          <Checkbox id="freeShipping" {...register("freeShipping")} />
-          <Label htmlFor="freeShipping" >
-            Free Shipping
-          </Label>
-        </div>
+        <Controller
+          control={control}
+          name="freeShipping"
+          defaultValue={false}
+          render={({ field }) => (
+            <div className="flex items-center space-x-2 mt-6 md:mt-8">
+              <Checkbox
+                id="freeShipping"
+                checked={field.value}
+                onCheckedChange={(val) => field.onChange(val === true)}
+              />
+              <Label htmlFor="freeShipping">Free Shipping</Label>
+            </div>
+          )}
+        />
+
       </div>
     </div>
   );
