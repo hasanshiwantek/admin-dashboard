@@ -60,3 +60,11 @@ export interface OrderListResponse {
     totalPages: number;
   };
 }
+
+export interface MappingField  {
+  label: string;
+  type: "dropdown" | "radio-dropdown";
+  options?: string[]; // For radio
+};
+
+

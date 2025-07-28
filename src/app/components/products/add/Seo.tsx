@@ -45,7 +45,7 @@ export default function Seo() {
           </div>
 
           <div className="space-x-6">
-            <Label htmlFor="productURL">
+            <Label htmlFor="productUrl">
               Product URL <span className="!text-red-500">*</span>{" "}
               <TooltipProvider>
                 <Tooltip>
@@ -64,7 +64,7 @@ export default function Seo() {
                 </Tooltip>
               </TooltipProvider>
             </Label>
-            <Input id="ProductURL" placeholder="" {...register("productURL")} />
+            <Input id="ProductUrl" placeholder="" {...register("productUrl")} />
             <button className="btn-outline-primary">Reset</button>
           </div>
         </div>
