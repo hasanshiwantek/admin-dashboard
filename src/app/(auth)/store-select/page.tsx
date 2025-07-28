@@ -38,14 +38,14 @@ useEffect(() => {
   return (
     <ProtectedRoute>
       <div className="flex flex-col min-h-screen items-center justify-center bg-black">
-        <h1 className="!text-4xl !text-white">Login to your store</h1>
+        <h1 className="!text-4xl !text-white my-8">Login to your store</h1>
         <Select onValueChange={(value) => handleSelect(Number(value))}>
           <SelectTrigger className="w-full mt-4">
             <SelectValue placeholder="Select a store" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent >
             {stores.map((site: { storeId: number; name?: string }) => (
-              <SelectItem key={site.storeId} value={String(site.storeId)}>
+              <SelectItem key={site.storeId} value={String(site.storeId)} className="cursor-pointer">
                 {site.name || `Store ${site.storeId}`}
               </SelectItem>
             ))}

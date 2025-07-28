@@ -12,7 +12,7 @@ import {
 import { Plus, Pencil, Filter } from "lucide-react";
 import { IoSearchOutline } from "react-icons/io5";
 import Image from "next/image";
-import { useDebugValue, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Pagination from "@/components/ui/pagination";
 import OrderActionsDropdown from "../orders/OrderActionsDropdown";
 import VisibilityToggle from "../dropdowns/VisibilityToggle";
@@ -22,6 +22,7 @@ import {
   setSelectedProducts,
   searchAllProducts,
   updateProduct,
+  deleteProduct,
 } from "@/redux/slices/productSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import Cookies from "js-cookie";
@@ -31,6 +32,7 @@ import EditStockSheet from "./EditStockSheet";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Spinner from "../loader/Spinner";
+import { refetchProducts } from "@/lib/productUtils";
 const filterTabs = [
   "All",
   "Featured",
@@ -100,27 +102,118 @@ export default function AllProducts() {
   }>({});
   const [selectedProductIds, setSelectedProductIds] = useState<number[]>([]);
 
-  const dropdownActions = [
-    { label: "Edit", onClick: () => console.log("Edit clicked") },
-    { label: "Duplicate", onClick: () => console.log("Duplicate clicked") },
+  const getDropdownActions = (product: any) => [
     {
-      label: "View on storefront",
-      onClick: () => console.log("View on storefront clicked"),
+      label: "Add to channels",
+      onClick: () => console.log("Channel add clicked", product),
+    },
+    {
+      label: "Remove from channels",
+      onClick: () => console.log("Remove from channels clicked", product),
+    },
+    {
+      label: "Add to categories",
+      onClick: () => console.log("Add to categories clicked", product),
+    },
+    {
+      label: "Remove from categories",
+      onClick: () => console.log("Remove from categories", product),
+    },
+    {
+      label: "Enable visibility",
+      onClick: () => {
+        console.log("Enable visibility clicked", product);
+        dispatch(
+          updateProduct({
+            body: {
+              products: [
+                {
+                  id: product?.id,
+                  fields: {
+                    isVisible: false,
+                  },
+                },
+              ],
+            },
+          })
+        );
+        refetchProducts(dispatch);
+      },
     },
     {
       label: "Disable visibility",
-      onClick: () => console.log("Disable visibility clicked"),
+      onClick: () => {
+        console.log("Disable visibility clicked", product);
+
+        dispatch(
+          updateProduct({
+            body: {
+              products: [
+                {
+                  id: product?.id,
+                  fields: {
+                    isVisible: true,
+                  },
+                },
+              ],
+            },
+          })
+        );
+        refetchProducts(dispatch);
+      },
     },
     {
       label: "Make featured",
-      onClick: () => console.log("Make featured clicked"),
+      onClick: () => {
+        console.log("Make featured clicked", product);
+        dispatch(
+          updateProduct({
+            body: {
+              products: [
+                {
+                  id: product?.id,
+                  fields: {
+                    isFeatured: true,
+                  },
+                },
+              ],
+            },
+          })
+        );
+        refetchProducts(dispatch);
+      },
     },
     {
-      label: "View in page builder",
-      onClick: () => console.log("View in page builder clicked"),
+      label: "Make not featured",
+      onClick: () => {
+        console.log("Make not featured", product);
+        dispatch(
+          updateProduct({
+            body: {
+              products: [
+                {
+                  id: product?.id,
+                  fields: {
+                    isFeatured: false,
+                  },
+                },
+              ],
+            },
+          })
+        );
+        refetchProducts(dispatch);
+      },
     },
-    { label: "View orders", onClick: () => console.log("View orders clicked") },
-    { label: "Delete", onClick: () => console.log("Delete clicked") },
+    {
+      label: "Delete",
+      onClick: () => {
+        console.log("Delete", product);
+        dispatch(deleteProduct({ ids: [product.id] }));
+        setTimeout(()=>{
+          refetchProducts(dispatch);
+        },200)
+      },
+    },
   ];
 
   const editdropdownActions = [
@@ -138,11 +231,15 @@ export default function AllProducts() {
     },
     {
       label: "Remove from categories",
-      onClick: () => console.log("Remove from categories"),
+      onClick: () => {
+        console.log("Remove from categories");
+      },
     },
     {
       label: "Enable visiblity",
-      onClick: () => console.log("Enable visiblity clicked"),
+      onClick: () => {
+        console.log("Enable visiblity clicked");
+      },
     },
     {
       label: "Disable visiblity",
@@ -163,10 +260,10 @@ export default function AllProducts() {
   ];
 
   // CHECKBOX SELECTION LOGIC
-  const isAllSelected = selectedProductIds?.length === products?.length;
+  const isAllSelected = selectedProductIds?.length === filteredProducts?.length;
 
   const handleSelectAllChange = (checked: boolean) => {
-    const updated = checked ? products?.map((p: any) => p.id) : [];
+    const updated = checked ? filteredProducts?.map((p: any) => p.id) : [];
     setSelectedProductIds(updated);
     console.log("✅ Updated selectedProductIds (Select All):", updated);
   };
@@ -181,7 +278,7 @@ export default function AllProducts() {
   };
 
   const handleEditInventory = () => {
-    const selected = products.filter((p: any) =>
+    const selected = filteredProducts.filter((p: any) =>
       selectedProductIds.includes(p.id)
     );
     dispatch(setSelectedProducts(selected));
@@ -189,11 +286,13 @@ export default function AllProducts() {
   };
 
   // PAGINATION LOGIC
-  const pagination = allProducts?.meta;
-  const totalPages = pagination?.lastPage || 1;
+  const pagination = allProducts?.pagination;
+  console.log("Pagination: ", pagination);
+
+  const totalPages = pagination?.lastPage;
   const [currentPage, setCurrentPage] = useState(pagination?.page || 1);
   const [perPage, setPerPage] = useState(
-    pagination?.pageSize?.toString() || "20"
+    pagination?.pageSize?.toString() || "50"
   );
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -302,7 +401,7 @@ export default function AllProducts() {
                 }
               />
               <span className="text-gray-700 !text-xl">
-                {products?.length} Products
+                {filteredProducts?.length} Products
               </span>
             </div>
 
@@ -396,13 +495,18 @@ export default function AllProducts() {
                     </TableCell>
                     <TableCell className="flex items-center gap-2 ">
                       <Image
-                        src={product.images?.[1]?.path}
+                        src={
+                          product.images?.[1]?.path ||
+                          product.images?.[0]?.path ||
+                          null
+                        }
                         alt={product.name}
                         width={60}
                         height={60}
                         className="rounded !border !border-gray-300 p-2 shrink-0"
                       />
-                      <span className="!text-blue-600   cursor-pointer whitespace-normal break-words leading-snug max-w-[300px]">
+
+                      <span className="!text-blue-600 !text-xl capitalize  cursor-pointer whitespace-normal break-words leading-snug max-w-[300px]">
                         {product.name}
                       </span>
                     </TableCell>
@@ -429,13 +533,16 @@ export default function AllProducts() {
                               },
                             })
                           );
+                          refetchProducts(dispatch);
                         }}
                       />
                     </TableCell>
 
                     <TableCell>{product.sku}</TableCell>
 
-                    <TableCell>{product.category?.name}</TableCell>
+                    <TableCell className="whitespace-normal break-words leading-snug max-w-[300px]">
+                      {product.category?.name}
+                    </TableCell>
                     <TableCell>
                       <EditStockSheet
                         product={product}
@@ -493,13 +600,14 @@ export default function AllProducts() {
                               },
                             })
                           );
+                          refetchProducts(dispatch);
                         }}
                       />
                     </TableCell>
 
                     <TableCell>
                       <OrderActionsDropdown
-                        actions={dropdownActions}
+                        actions={getDropdownActions(product)}
                         trigger={
                           <Button
                             variant="ghost"

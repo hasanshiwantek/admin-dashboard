@@ -44,7 +44,7 @@ const Pagination = ({
             </span>
           ) : (
             <Button
-              key={page}
+              key={i}
               variant={currentPage === page ? "secondary" : "ghost"}
               size="lg"
               className={`h-7 w-7 p-2 text-blue-600 font-medium text-xl cursor-pointer hover:text-gray-400 hover:border ${
