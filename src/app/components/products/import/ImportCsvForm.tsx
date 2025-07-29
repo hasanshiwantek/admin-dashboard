@@ -11,6 +11,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import * as XLSX from "xlsx";
 
 import { useForm, Controller, useFormContext } from "react-hook-form";
 
@@ -27,8 +28,19 @@ export type ImportFormValues = {
   enclosure: string;
 };
 
-export default function ImportCsvForm() {
-  const { register, control } = useFormContext();
+export default function ImportCsvForm({ onNext }: { onNext: () => void }) {
+  const { register, control, setValue } = useFormContext();
+
+  const handleFileParse = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const data = await file.arrayBuffer();
+    const workbook = XLSX.read(data);
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+    const headers = json[0] as string[];
+    setValue("excelHeaders", headers);
+  };
 
   return (
     <div className="p-10">
@@ -55,6 +67,7 @@ export default function ImportCsvForm() {
                   <Input
                     type="file"
                     {...register("file")}
+                    onChange={handleFileParse}
                     className="cursor-pointer border bg-gray-100 !text-lg"
                   />
                 </div>
@@ -69,8 +82,7 @@ export default function ImportCsvForm() {
           />
         </div>
       </div>
-
-      {/* Import Options */}
+      s {/* Import Options */}
       <div className=" mt-5 space-y-4">
         <div className="mt-5 space-y-4">
           <h1>Import Options</h1>

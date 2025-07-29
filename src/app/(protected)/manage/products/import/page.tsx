@@ -1,12 +1,9 @@
 import React from 'react'
-import ImportCsv from '@/app/components/products/import/ImportCsv'
+import ImportCsv from '@/app/components/products/import/ImportCSV'
+
 const page = () => {
   return (
-    <>
-    <div className='p-10'>
-        <ImportCsv/>
-    </div>
-    </>
+    <div><ImportCsv/></div>
   )
 }
 
