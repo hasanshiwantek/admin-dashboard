@@ -6,7 +6,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 const templates = [
-  { label: "SKU Inventory Management", value: "skuInventory" },
+  { label: "Bulk Edit", value: "bulkEdit" },
+  { label: "Default", value: "default" },
 ];
 
 export default function ExportOptions() {

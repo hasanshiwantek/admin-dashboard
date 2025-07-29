@@ -84,6 +84,7 @@ export const deleteProduct = createAsyncThunk(
   }
 );
 
+//ADVANCED SEARCH PRODUCT
 export const advanceSearchProduct = createAsyncThunk(
   "product/advanceSearchProduct",
   async ({ data }: { data: any }, thunkAPI) => {
@@ -98,6 +99,25 @@ export const advanceSearchProduct = createAsyncThunk(
       console.error("❌ Error Searching  Product:", err);
       return thunkAPI.rejectWithValue(
         err.response?.data?.message || "Failed to search products"
+      );
+    }
+  }
+);
+
+export const addProduct = createAsyncThunk(
+  "product/addProduct",
+  async ({ data }: { data: any }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.post(
+        `dashboard/products/add-product`,
+        data
+      );
+      console.log("✅ Add Product Response  From Thunk:", res.data);
+      return res.data;
+    } catch (err: any) {
+      console.error("❌ Error Adding  Product:", err);
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to Add products"
       );
     }
   }

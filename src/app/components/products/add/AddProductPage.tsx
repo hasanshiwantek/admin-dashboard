@@ -21,10 +21,24 @@ import CustomsInformation from "./CustomsInformation";
 import RelatedProducts from "./RelatedProducts";
 import Variations from "./Variations";
 import Customizations from "./Customizations";
-
+import { addProduct } from "@/redux/slices/productSlice";
+import { useAppDispatch } from "@/hooks/useReduxHooks";
 export default function AddProductPage() {
+  const dispatch = useAppDispatch();
   const methods = useForm();
-  const onSubmit = methods.handleSubmit((data) => console.log(data));
+  const onSubmit = methods.handleSubmit(async (data: Record<string, any>) => {
+    try {
+      const result = await dispatch(addProduct({ data: data }));
+
+      if (addProduct.fulfilled.match(result)) {
+        console.log("✅ Product Added:", result.payload);
+      } else {
+        console.error("❌ Product add failed:", result.error);
+      }
+    } catch (error) {
+      console.error("🔥 Unexpected error during add:", error);
+    }
+  });
 
   return (
     <div className="my-5">
@@ -45,10 +59,7 @@ export default function AddProductPage() {
       <div className="flex ">
         <SidebarNavigation />
         <FormProvider {...methods}>
-          <form
-            onSubmit={onSubmit}
-            className="flex-1  p-6 space-y-8 "
-          >
+          <form onSubmit={onSubmit} className="flex-1  p-6 space-y-8 ">
             <BasicInfoForm />
             <DescriptionEditor />
             <ImageVideoUploader />
@@ -63,11 +74,11 @@ export default function AddProductPage() {
             <Dimensions />
             <ShippingDetails />
             <Purchasability />
-            <CustomsInformation/>
+            <CustomsInformation />
             <Seo />
             <OpenGraph />
             <div className="flex justify-end  gap-10 items-center fixed w-full bottom-0 right-0  bg-white/90 z-10 shadow-xs border-t  p-4">
-              <button className="btn-outline-primary">Cancel</button>
+              <button className="btn-outline-primary" type="button">Cancel</button>
               <button className="btn-primary" type="submit">
                 Save Product
               </button>

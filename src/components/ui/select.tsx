@@ -48,7 +48,7 @@ function SelectTrigger({
         "focus:border-blue-400 focus:ring-blue-300 focus:ring-2 focus:border-1",
         "focus-visible:border-blue-300 focus-visible:ring-blue-300 focus-visible:ring-1 focus-visible:border-1",
         "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
-        "dark:bg-input/30 dark:hover:bg-input/50 flex items-center justify-between gap-2 rounded-md bg-transparent px-3 py-2 whitespace-nowrap  transition-[color,box-shadow] outline-none disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-13 data-[size=sm]:h-8",
+        "dark:bg-input/30 dark:hover:bg-input/50 flex items-center justify-between gap-2 rounded-sm bg-transparent px-3 py-2 whitespace-nowrap  transition-[color,box-shadow] outline-none disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-13 data-[size=sm]:h-8",
         "*:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2",
         className
       )}
@@ -75,7 +75,18 @@ function SelectContent({
       <SelectPrimitive.Content
         data-slot="select-content"
         className={cn(
-          "bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 relative z-50 max-h-[--radix-select-content-available-height] min-w-[8rem] origin-[--radix-select-content-transform-origin] overflow-x-hidden overflow-y-auto rounded-md border  shadow-md",
+          // Appearance and border
+          "bg-popover text-popover-foreground border shadow-md rounded-sm",
+          // Animations and transitions
+          "data-[state=open]:animate-in data-[state=closed]:animate-out",
+          "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+          "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
+          "data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2",
+          "data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
+          // Scroll handling
+          "max-h-[500px] overflow-y-auto overflow-x-hidden",
+          // Scrollbar styles (optional)
+          "scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent",
           position === "popper" &&
             "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
           className
@@ -86,7 +97,7 @@ function SelectContent({
         <SelectScrollUpButton />
         <SelectPrimitive.Viewport
           className={cn(
-            "p-1",
+            "p-1 max-h-60", // Ensures scrolling area inside
             position === "popper" &&
               "h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)] scroll-my-1"
           )}

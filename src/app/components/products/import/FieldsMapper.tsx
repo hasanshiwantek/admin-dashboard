@@ -33,7 +33,7 @@ export default function FieldsMapper({ fields, columnOptions }: Props) {
   const { control, watch } = useFormContext();
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-10 p-10">
       {fields.map((field, index) => {
         const defaultMatch = columnOptions.find(col =>
           col.toLowerCase().includes(field.label.toLowerCase())
@@ -41,8 +41,8 @@ export default function FieldsMapper({ fields, columnOptions }: Props) {
         const radioValue = watch(`${field.label}_mode`);
 
         return (
-          <div key={index} className="flex  gap-2">
-            <Label className="font-semibold">{field.label}</Label>
+          <div key={index} className="flex  gap-2 ">
+            <Label className="font-semibold w-44">{field.label}</Label>
 
             {field.type === "radio-dropdown" ? (
               <>

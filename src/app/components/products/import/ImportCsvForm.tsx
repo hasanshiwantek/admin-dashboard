@@ -1,5 +1,5 @@
 "use client";
- 
+
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -13,9 +13,8 @@ import {
 } from "@/components/ui/select";
 import * as XLSX from "xlsx";
 
- 
 import { useForm, Controller, useFormContext } from "react-hook-form";
- 
+
 export type ImportFormValues = {
   importSource: "upload" | "server";
   file?: FileList;
@@ -33,18 +32,18 @@ export default function ImportCsvForm() {
   const { register, control, setValue } = useFormContext();
 
   const handleFileParse = async (e: React.ChangeEvent<HTMLInputElement>) => {
-  const file = e.target.files?.[0];
-  if (!file) return;
-  const data = await file.arrayBuffer();
-  const workbook = XLSX.read(data);
-  const sheet = workbook.Sheets[workbook.SheetNames[0]];
-  const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-  const headers = json[0] as string[];
-  setValue("excelHeaders", headers);
-};
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const data = await file.arrayBuffer();
+    const workbook = XLSX.read(data);
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+    const headers = json[0] as string[];
+    setValue("excelHeaders", headers);
+  };
 
   return (
-    <div className="p-10">
+    <div className="p-15">
       {/* Import Source */}
       <div className="mt-2 ">
         <h1 className="mb-4">Import Products via CSV</h1>
@@ -83,8 +82,7 @@ export default function ImportCsvForm() {
           />
         </div>
       </div>
- 
-      {/* Import Options */}
+       {/* Import Options */}
       <div className=" mt-5 space-y-4">
         <div className="mt-5 space-y-4">
           <h1>Import Options</h1>
@@ -121,7 +119,7 @@ export default function ImportCsvForm() {
                 )}
               />
             ))}
- 
+
             <div className="flex items-center space-x-1">
               <Label htmlFor="optionType" className="w-52">
                 Default Option Type
@@ -147,7 +145,7 @@ export default function ImportCsvForm() {
                 )}
               />
             </div>
- 
+
             <div className="flex items-center space-x-3">
               <Label htmlFor="separator" className="w-56">
                 Field Separator
@@ -158,7 +156,7 @@ export default function ImportCsvForm() {
                 className="w-[100px]"
               />
             </div>
- 
+
             <div className="flex items-center space-x-3">
               <Label htmlFor="enclosure" className="w-56">
                 Field Enclosure
@@ -172,7 +170,6 @@ export default function ImportCsvForm() {
           </div>
         </div>
       </div>
-      
     </div>
   );
 }
