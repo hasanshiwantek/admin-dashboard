@@ -1,7 +1,9 @@
 //src/app/(protected)/layou.tsx
 import LayoutWrapper from '@/app/components/layout/LayoutWrapper';
 import ProtectedLayout from '@/auth/ProtectedLayout';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function WithLayout({ children }: { children: React.ReactNode }) {
-  return <ProtectedLayout> <LayoutWrapper>{children}</LayoutWrapper>; </ProtectedLayout>
+  return <ProtectedLayout>   <ToastContainer position="top-right" /> <LayoutWrapper>{children}</LayoutWrapper>; </ProtectedLayout>
 }
