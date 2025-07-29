@@ -15,6 +15,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { useRouter } from "next/navigation";
 import { updateProduct } from "@/redux/slices/productSlice";
 import { refetchProducts } from "@/lib/productUtils";
+
 type Product = {
   id: number;
   name: string;

@@ -45,7 +45,7 @@ const [step, setStep] = useState(1);
         <FormProvider {...methods}>
           <form onSubmit={methods.handleSubmit(onSubmit)}>
             {step === 1 ? (
-                <ImportCsvForm onNext={() => setStep(2)} />
+                <ImportCsvForm  />
             ) : (
                 <StepTwo />
             )}
