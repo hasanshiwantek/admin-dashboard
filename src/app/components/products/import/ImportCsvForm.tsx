@@ -28,7 +28,7 @@ export type ImportFormValues = {
   enclosure: string;
 };
 
-export default function ImportCsvForm({ onNext }: { onNext: () => void }) {
+export default function ImportCsvForm() {
   const { register, control, setValue } = useFormContext();
 
   const handleFileParse = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,7 +43,7 @@ export default function ImportCsvForm({ onNext }: { onNext: () => void }) {
   };
 
   return (
-    <div className="p-10">
+    <div className="p-15">
       {/* Import Source */}
       <div className="mt-2 ">
         <h1 className="mb-4">Import Products via CSV</h1>
@@ -82,7 +82,7 @@ export default function ImportCsvForm({ onNext }: { onNext: () => void }) {
           />
         </div>
       </div>
-      s {/* Import Options */}
+       {/* Import Options */}
       <div className=" mt-5 space-y-4">
         <div className="mt-5 space-y-4">
           <h1>Import Options</h1>
