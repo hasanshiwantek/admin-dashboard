@@ -1,35 +1,35 @@
- 
+
 "use client";
 import React from "react";
 import ImportCsvForm from "./ImportCsvForm";
 import StepTwo from "./StepTwo";
 import { useForm, FormProvider } from "react-hook-form";
 import { useState, useEffect } from "react";
- 
-const ImportCsv = () => {
-const methods = useForm({
-  defaultValues: {
-    importSource: "upload",
-    bulkTemplate: false,
-    overwrite: false,
-    detectCategories: true,
-    ignoreBlanks: true,
-    optionType: "Multi-choice (select)",
-    hasHeader: true,
-    separator: ",",
-    enclosure: `"`,
-  },
-});
 
-const [step, setStep] = useState(1);
+const ImportCsv = () => {
+  const methods = useForm({
+    defaultValues: {
+      importSource: "upload",
+      bulkTemplate: false,
+      overwrite: false,
+      detectCategories: true,
+      ignoreBlanks: true,
+      optionType: "Multi-choice (select)",
+      hasHeader: true,
+      separator: ",",
+      enclosure: `"`,
+    },
+  });
+
+  const [step, setStep] = useState(1);
 
   const onSubmit = async (data: Record<string, any>) => {
     console.log("Csv Data: ", data);
   };
 
   useEffect(() => {
-  setStep(1); // reset on mount
-}, []);
+    setStep(1); // reset on mount
+  }, []);
 
   return (
     <>
@@ -41,23 +41,23 @@ const [step, setStep] = useState(1);
             exporting any existing products before running an import.
           </p>
         </div>
- 
+
         <FormProvider {...methods}>
           <form onSubmit={methods.handleSubmit(onSubmit)}>
             {step === 1 ? (
-                <ImportCsvForm  />
+              <ImportCsvForm />
             ) : (
-                <StepTwo />
+              <StepTwo />
             )}
             <div className="flex justify-end  gap-10 items-center fixed w-full bottom-0 right-0  bg-white/90 z-10 shadow-xs border-t  p-4">
               <button className="btn-outline-primary" type="button">Cancel</button>
               <button
-  type={step === 2 ? "submit" : "button"}
-  className="btn-primary"
-  onClick={step === 1 ? () => setStep(2) : undefined}
->
-  Next
-</button>
+                type={step === 2 ? "submit" : "button"}
+                className="btn-primary"
+                onClick={step === 1 ? () => setStep(2) : undefined}
+              >
+                Next
+              </button>
             </div>
           </form>
         </FormProvider>
@@ -65,5 +65,5 @@ const [step, setStep] = useState(1);
     </>
   );
 };
- 
+
 export default ImportCsv;
