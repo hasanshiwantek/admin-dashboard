@@ -7,7 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 export default function WithLayout({ children }: { children: React.ReactNode }) {
   return (
   <ProtectedLayout>  
-    <ToastContainer position="top-right" /> 
+    <ToastContainer position="top-right" autoClose={2000}/> 
     <LayoutWrapper>
       {children}
     </LayoutWrapper> 

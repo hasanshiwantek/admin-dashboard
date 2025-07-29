@@ -1,4 +1,3 @@
-
 "use client";
 import React from "react";
 import ImportCsvForm from "./ImportCsvForm";
@@ -6,7 +5,7 @@ import StepTwo from "./StepTwo";
 import { useForm, FormProvider } from "react-hook-form";
 import { useState, useEffect } from "react";
 import { mappingFields } from "@/const/ImportExportData";
-
+ 
 const ImportCsv = () => {
   const methods = useForm({
     defaultValues: {
@@ -21,43 +20,38 @@ const ImportCsv = () => {
       enclosure: `"`,
     },
   });
-
+ 
   const [step, setStep] = useState(1);
-
+ 
   const handleFinalSubmit = (data: Record<string, any>) => {
-    const { 
-      file, 
-      importSource, 
-      detectCategories, 
-      ignoreBlanks, 
-      optionType, 
-      hasHeader, 
-      separatorm, 
-      enclosure, 
-      bulkTemplate, 
-      overwrite 
+    const {
+      file,
+      importSource,
+      detectCategories,
+      ignoreBlanks,
+      optionType,
+      hasHeader,
+      separatorm,
+      enclosure,
+      bulkTemplate,
+      overwrite
     } = data;
-
-    const payload = { 
-      file, 
-      detectCategories, 
-      ignoreBlanks, 
-      optionType, 
-      hasHeader, 
-      separatorm, 
-      enclosure, 
-      importSource, 
-      bulkTemplate, 
-      overwrite 
+ 
+    const payload = {
+      file,
+      detectCategories,
+      ignoreBlanks,
+      optionType,
+      hasHeader,
+      separatorm,
+      enclosure,
+      importSource,
+      bulkTemplate,
+      overwrite
     };
     console.log("Final Payload:", payload);
   };
-
-
-  useEffect(() => {
-    setStep(1); // reset on mount
-  }, []);
-
+ 
   return (
     <>
       <div className="p-10">
@@ -68,7 +62,7 @@ const ImportCsv = () => {
             exporting any existing products before running an import.
           </p>
         </div>
-
+ 
         <FormProvider {...methods}>
           <form onSubmit={methods.handleSubmit((data) => {
             if (step === 1) return setStep(2);
@@ -97,5 +91,5 @@ const ImportCsv = () => {
     </>
   );
 };
-
+ 
 export default ImportCsv;
