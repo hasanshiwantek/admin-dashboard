@@ -108,7 +108,7 @@ export default function EditInventoryPage() {
             <TableBody>
               {products.map((product) => (
                 <TableRow key={product.id}>
-                  <TableCell className=" whitespace-normal break-words leading-snug max-w-[300px]">
+                  <TableCell className="  !max-w-[500px]">
                     {product.name}
                   </TableCell>
                   <TableCell>{product.sku}</TableCell>

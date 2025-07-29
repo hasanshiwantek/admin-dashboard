@@ -397,43 +397,41 @@ export default function AllProducts() {
     router.push(`?page=1&limit=${value}`);
   };
 
+  const searchParams = useSearchParams();
 
-  
-const searchParams = useSearchParams();
+  const queryObject: Record<string, any> = {};
+  searchParams.forEach((value, key) => {
+    if (queryObject[key]) {
+      queryObject[key] = [...queryObject[key], value];
+    } else {
+      queryObject[key] = value;
+    }
+  });
 
-const queryObject: Record<string, any> = {};
-searchParams.forEach((value, key) => {
-  if (queryObject[key]) {
-    queryObject[key] = [...queryObject[key], value];
-  } else {
-    queryObject[key] = value;
-  }
-});
+  useEffect(() => {
+    const page = Number(queryObject.page || 1);
+    const pageSize = Number(queryObject.limit || queryObject.pageSize || 50);
 
-useEffect(() => {
-  const page = Number(queryObject.page || 1);
-  const pageSize = Number(queryObject.limit || queryObject.pageSize || 50);
-
-  const filterKeys = Object.keys(queryObject).filter(
-    (key) => !["page", "limit", "pageSize"].includes(key)
-  );
-
-  if (filterKeys.length > 0) {
-    // 🔍 Run filtered search if extra filters exist
-    dispatch(
-      advanceSearchProduct({
-        data: {
-          ...queryObject,
-          page,
-          pageSize,
-        },
-      })
+    const filterKeys = Object.keys(queryObject).filter(
+      (key) => !["page", "limit", "pageSize"].includes(key)
     );
-  } else {
-    // 📦 Default: Fetch all products
-    dispatch(fetchAllProducts({ page, pageSize }));
-  }
-}, [searchParams]); // reruns whenever URL changes
+
+    if (filterKeys.length > 0) {
+      // 🔍 Run filtered search if extra filters exist
+      dispatch(
+        advanceSearchProduct({
+          data: {
+            ...queryObject,
+            page,
+            pageSize,
+          },
+        })
+      );
+    } else {
+      // 📦 Default: Fetch all products
+      dispatch(fetchAllProducts({ page, pageSize }));
+    }
+  }, [searchParams]); // reruns whenever URL changes
 
   // SearchPoduct Logic
 
@@ -668,7 +666,7 @@ useEffect(() => {
                     <TableCell>{product.sku}</TableCell>
 
                     <TableCell className="whitespace-normal break-words leading-snug max-w-[300px]">
-                      {product.category?.name}
+                      {product.categories.map((cat: any) => cat.name)}
                     </TableCell>
                     <TableCell>
                       <EditStockSheet
