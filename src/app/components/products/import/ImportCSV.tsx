@@ -53,11 +53,6 @@ const ImportCsv = () => {
     console.log("Final Payload:", payload);
   };
 
-
-  useEffect(() => {
-    setStep(1); // reset on mount
-  }, []);
-
   return (
     <>
       <div className="p-10">
