@@ -1,12 +1,13 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import ImportCsvForm from "./ImportCsvForm";
 import StepTwo from "./StepTwo";
 import { useForm, FormProvider } from "react-hook-form";
-
+import { useState, useEffect } from "react";
+import { mappingFields } from "@/const/ImportExportData";
+ 
 const ImportCsv = () => {
   const methods = useForm({
-    mode: "onChange", // improves validation triggering
     defaultValues: {
       importSource: "upload",
       bulkTemplate: false,
@@ -17,83 +18,78 @@ const ImportCsv = () => {
       hasHeader: true,
       separator: ",",
       enclosure: `"`,
-      excelHeaders: [], // ✅ needed for XLSX headers
     },
   });
-
-  const [step, setStep] = useState<number>(1);
-
-  // Step transition logic
-  const goToNextStep = async () => {
-    const isValid = await methods.trigger();
-    if (isValid) {
-      setStep((prev) => (prev = 2));
-    }
+ 
+  const [step, setStep] = useState(1);
+ 
+  const handleFinalSubmit = (data: Record<string, any>) => {
+    const {
+      file,
+      importSource,
+      detectCategories,
+      ignoreBlanks,
+      optionType,
+      hasHeader,
+      separatorm,
+      enclosure,
+      bulkTemplate,
+      overwrite
+    } = data;
+ 
+    const payload = {
+      file,
+      detectCategories,
+      ignoreBlanks,
+      optionType,
+      hasHeader,
+      separatorm,
+      enclosure,
+      importSource,
+      bulkTemplate,
+      overwrite
+    };
+    console.log("Final Payload:", payload);
   };
-
-  const goToPreviousStep = () => {
-    setStep((prev) => (prev = 1));
-  };
-
-  // Final submit handler (only for Step 2)
-  const onSubmit = (data: Record<string, any>) => {
-    console.log("✅ CSV Submitted Data:", data);
-  };
-
-  useEffect(() => {
-    setStep((prev) => (prev = 1));
-  }, []);
-
+ 
   return (
-    <div>
-      <div className="flex flex-col space-y-5 p-6">
-        <h1 className="!font-extralight">Import Products</h1>
-        <p>
-          Use the form below to define which import fields should map to which
-          product fields.
-        </p>
-      </div>
-
-      <FormProvider {...methods}>
-        <form onSubmit={methods.handleSubmit(onSubmit)}>
-          {/* Step 1 or 2 */}
-          {step === 1 ? <ImportCsvForm /> : <StepTwo />}
-
-          {/* Navigation Buttons */}
-          <div className="sticky bottom-0 w-full border-t p-6 bg-white flex justify-end gap-4">
-            {/* Previous */}
-            <button
-              type="button"
-              className={`btn-outline-primary ${
-                step === 1
-                  ? "!cursor-not-allowed opacity-50"
-                  : "!cursor-pointer"
-              }`}
-              disabled={step === 1}
-              onClick={goToPreviousStep}
-            >
-              Previous
-            </button>
-
-            {/* Next / Submit */}
+    <>
+      <div className="p-10">
+        <div className="flex flex-col space-y-5">
+          <h1 className="!font-extralight">Import Products</h1>
+          <p>
+            You can import products to your store from a CSV file. We recommend
+            exporting any existing products before running an import.
+          </p>
+        </div>
+ 
+        <FormProvider {...methods}>
+          <form onSubmit={methods.handleSubmit((data) => {
+            if (step === 1) return setStep(2);
+            handleFinalSubmit(data);
+          })}>
             {step === 1 ? (
+              <ImportCsvForm />
+            ) : (
+              <StepTwo />
+            )}
+            <div className="flex justify-end  gap-10 items-center fixed w-full bottom-0 right-0  bg-white/90 z-10 shadow-xs border-t  p-4">
               <button
                 type="button"
-                className="btn-primary"
-                onClick={goToNextStep}
+                className="btn-outline-primary"
+                onClick={step === 2 ? () => setStep(1) : undefined}
               >
-                Next
+                Previous
               </button>
-            ) : (
               <button type="submit" className="btn-primary">
-                Submit
+                {step === 2 ? "Submit" : "Next"}
               </button>
-            )}
-          </div>
-        </form>
-      </FormProvider>
-    </div>
+            </div>
+          </form>
+        </FormProvider>
+      </div>
+    </>
   );
 };
-
+ 
 export default ImportCsv;
