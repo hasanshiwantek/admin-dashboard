@@ -104,6 +104,7 @@ export const advanceSearchProduct = createAsyncThunk(
   }
 );
 
+// ADD PRODUCT THUNK
 export const addProduct = createAsyncThunk(
   "product/addProduct",
   async ({ data }: { data: any }, thunkAPI) => {
@@ -119,6 +120,29 @@ export const addProduct = createAsyncThunk(
       return thunkAPI.rejectWithValue(
         err.response?.data?.message || "Failed to Add products"
       );
+    }
+  }
+);
+
+export const addBrand = createAsyncThunk(
+  "product/addBrand",
+  async (formData: FormData, thunkAPI) => {
+    try {
+      const response = await axiosInstance.post(
+        "dashboard/brands/add-brand",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      console.log("✅ Add Brnad Response  From Thunk:", response.data);
+
+      return response.data;
+    } catch (error: any) {
+      console.error("❌ Error Adding Brand:", error);
+      return thunkAPI.rejectWithValue("Failed to create brand");
     }
   }
 );

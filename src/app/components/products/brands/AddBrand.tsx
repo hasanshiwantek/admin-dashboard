@@ -13,7 +13,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Link from "next/link";
-
+import { addBrand } from "@/redux/slices/productSlice";
+import { useAppDispatch } from "@/hooks/useReduxHooks";
 const AddBrand = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -26,6 +27,7 @@ const AddBrand = () => {
     templateLayout: "default",
   });
 
+  const dispatch = useAppDispatch();
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -50,9 +52,39 @@ const AddBrand = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Submitted Brand Details:", formData);
+
+    const formDataToSend = new FormData();
+    formDataToSend.append("name", formData.name);
+    formDataToSend.append("pageTitle", formData.pageTitle);
+    formDataToSend.append("metaKeywords", formData.metaKeywords);
+    formDataToSend.append("metaDescription", formData.metaDescription);
+    formDataToSend.append("searchKeywords", formData.searchKeywords);
+    formDataToSend.append("brandURL", formData.brandURL);
+    formDataToSend.append("templateLayout", formData.templateLayout);
+
+    if (formData.logo) {
+      formDataToSend.append("logo", formData.logo); // ✅ sends actual File
+    }
+
+    console.log("🧾 FormData being sent:");
+    for (const pair of formDataToSend.entries()) {
+      console.log(`${pair[0]}:`, pair[1]);
+    }
+
+    try {
+      const resultAction = await dispatch(addBrand(formDataToSend));
+      const result = (resultAction as any).payload;
+
+      if ((resultAction as any).meta.requestStatus === "fulfilled") {
+        console.log("✅ Brand added successfully:", result);
+      } else {
+        console.error("❌ Failed to add brand:", result);
+      }
+    } catch (err) {
+      console.error("❌ Unexpected error:", err);
+    }
   };
 
   const formField = (
@@ -148,9 +180,9 @@ const AddBrand = () => {
           </div>
         </div>
         <div className="sticky bottom-0 w-full border-t p-6 bg-white flex justify-end gap-4">
-            <Link href="/manage/products/brands/">
-          <button className="btn-outline-primary">Cancel</button>
-            </Link>
+          <Link href="/manage/products/brands/">
+            <button className="btn-outline-primary">Cancel</button>
+          </Link>
           <button className="btn-primary" type="submit" onClick={handleSubmit}>
             Save
           </button>
