@@ -29,7 +29,7 @@ export type ImportFormValues = {
   enclosure: string;
 };
  
-export default function ImportCsvForm({ onNext }: { onNext: () => void }) {
+export default function ImportCsvForm() {
   const { register, control, setValue } = useFormContext();
 
   const handleFileParse = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,7 +43,6 @@ export default function ImportCsvForm({ onNext }: { onNext: () => void }) {
   setValue("excelHeaders", headers);
 };
 
- 
   return (
     <div className="p-10">
       {/* Import Source */}
