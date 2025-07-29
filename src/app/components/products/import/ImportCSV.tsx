@@ -5,6 +5,7 @@ import ImportCsvForm from "./ImportCsvForm";
 import StepTwo from "./StepTwo";
 import { useForm, FormProvider } from "react-hook-form";
 import { useState, useEffect } from "react";
+import { mappingFields } from "@/const/ImportExportData";
 
 const ImportCsv = () => {
   const methods = useForm({
@@ -23,9 +24,13 @@ const ImportCsv = () => {
 
   const [step, setStep] = useState(1);
 
-  const onSubmit = async (data: Record<string, any>) => {
-    console.log("Csv Data: ", data);
+  const handleFinalSubmit = (data: Record<string, any>) => {
+    const { file, importSource, detectCategories, ignoreBlanks, optionType, hasHeader, separatorm, enclosure, bulkTemplate, overwrite } = data;
+
+    const payload = { file, detectCategories, ignoreBlanks, optionType, hasHeader, separatorm, enclosure, importSource, bulkTemplate, overwrite };
+    console.log("Final Payload:", payload);
   };
+
 
   useEffect(() => {
     setStep(1); // reset on mount
@@ -43,20 +48,32 @@ const ImportCsv = () => {
         </div>
 
         <FormProvider {...methods}>
-          <form onSubmit={methods.handleSubmit(onSubmit)}>
+          {/* <form onSubmit={methods.handleSubmit((data) => {
+            if (step === 1) {
+              setStep(2);
+              return;
+            }
+            console.log("Csv Data: ", data); // only logs on final submit
+          })}> */}
+          <form onSubmit={methods.handleSubmit((data) => {
+            if (step === 1) return setStep(2);
+            handleFinalSubmit(data);
+          })}>
             {step === 1 ? (
               <ImportCsvForm />
             ) : (
               <StepTwo />
             )}
             <div className="flex justify-end  gap-10 items-center fixed w-full bottom-0 right-0  bg-white/90 z-10 shadow-xs border-t  p-4">
-              <button className="btn-outline-primary" type="button">Cancel</button>
               <button
-                type={step === 2 ? "submit" : "button"}
-                className="btn-primary"
-                onClick={step === 1 ? () => setStep(2) : undefined}
+                type="button"
+                className="btn-outline-primary"
+                onClick={step === 2 ? () => setStep(1) : undefined}
               >
-                Next
+                Previous
+              </button>
+              <button type="submit" className="btn-primary">
+                {step === 2 ? "Submit" : "Next"}
               </button>
             </div>
           </form>
