@@ -25,9 +25,31 @@ const ImportCsv = () => {
   const [step, setStep] = useState(1);
 
   const handleFinalSubmit = (data: Record<string, any>) => {
-    const { file, importSource, detectCategories, ignoreBlanks, optionType, hasHeader, separatorm, enclosure, bulkTemplate, overwrite } = data;
+    const { 
+      file, 
+      importSource, 
+      detectCategories, 
+      ignoreBlanks, 
+      optionType, 
+      hasHeader, 
+      separatorm, 
+      enclosure, 
+      bulkTemplate, 
+      overwrite 
+    } = data;
 
-    const payload = { file, detectCategories, ignoreBlanks, optionType, hasHeader, separatorm, enclosure, importSource, bulkTemplate, overwrite };
+    const payload = { 
+      file, 
+      detectCategories, 
+      ignoreBlanks, 
+      optionType, 
+      hasHeader, 
+      separatorm, 
+      enclosure, 
+      importSource, 
+      bulkTemplate, 
+      overwrite 
+    };
     console.log("Final Payload:", payload);
   };
 
@@ -48,13 +70,6 @@ const ImportCsv = () => {
         </div>
 
         <FormProvider {...methods}>
-          {/* <form onSubmit={methods.handleSubmit((data) => {
-            if (step === 1) {
-              setStep(2);
-              return;
-            }
-            console.log("Csv Data: ", data); // only logs on final submit
-          })}> */}
           <form onSubmit={methods.handleSubmit((data) => {
             if (step === 1) return setStep(2);
             handleFinalSubmit(data);
