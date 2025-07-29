@@ -5,7 +5,7 @@ import StepTwo from "./StepTwo";
 import { useForm, FormProvider } from "react-hook-form";
 import { useState, useEffect } from "react";
 import { mappingFields } from "@/const/ImportExportData";
- 
+
 const ImportCsv = () => {
   const methods = useForm({
     defaultValues: {
@@ -20,9 +20,9 @@ const ImportCsv = () => {
       enclosure: `"`,
     },
   });
- 
+
   const [step, setStep] = useState(1);
- 
+
   const handleFinalSubmit = (data: Record<string, any>) => {
     const {
       file,
@@ -34,9 +34,9 @@ const ImportCsv = () => {
       separatorm,
       enclosure,
       bulkTemplate,
-      overwrite
+      overwrite,
     } = data;
- 
+
     const payload = {
       file,
       detectCategories,
@@ -47,11 +47,11 @@ const ImportCsv = () => {
       enclosure,
       importSource,
       bulkTemplate,
-      overwrite
+      overwrite,
     };
     console.log("Final Payload:", payload);
   };
- 
+
   return (
     <>
       <div className="p-10">
@@ -62,17 +62,15 @@ const ImportCsv = () => {
             exporting any existing products before running an import.
           </p>
         </div>
- 
+
         <FormProvider {...methods}>
-          <form onSubmit={methods.handleSubmit((data) => {
-            if (step === 1) return setStep(2);
-            handleFinalSubmit(data);
-          })}>
-            {step === 1 ? (
-              <ImportCsvForm />
-            ) : (
-              <StepTwo />
-            )}
+          <form
+            onSubmit={methods.handleSubmit((data) => {
+              if (step === 1) return setStep(2);
+              handleFinalSubmit(data);
+            })}
+          >
+            {step === 1 ? <ImportCsvForm /> : <StepTwo />}
             <div className="flex justify-end  gap-10 items-center fixed w-full bottom-0 right-0  bg-white/90 z-10 shadow-xs border-t  p-4">
               <button
                 type="button"
@@ -91,5 +89,5 @@ const ImportCsv = () => {
     </>
   );
 };
- 
+
 export default ImportCsv;
