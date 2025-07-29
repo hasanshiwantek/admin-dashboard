@@ -51,11 +51,7 @@ const ImportCsv = () => {
     };
     console.log("Final Payload:", payload);
   };
-<<<<<<< HEAD
-
-=======
- 
->>>>>>> f4e17fc24421b7b1017106548552cf396fbf0b76
+  
   return (
     <>
       <div className="p-10">
