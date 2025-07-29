@@ -12,6 +12,5 @@ export default function WithLayout({ children }: { children: React.ReactNode }) 
       {children}
     </LayoutWrapper> 
   </ProtectedLayout>
-
   )
 }
