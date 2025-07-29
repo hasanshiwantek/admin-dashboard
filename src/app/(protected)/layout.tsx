@@ -5,5 +5,13 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function WithLayout({ children }: { children: React.ReactNode }) {
-  return <ProtectedLayout>   <ToastContainer position="top-right" /> <LayoutWrapper>{children}</LayoutWrapper>; </ProtectedLayout>
+  return (
+  <ProtectedLayout>  
+    <ToastContainer position="top-right" /> 
+    <LayoutWrapper>
+      {children}
+    </LayoutWrapper> 
+  </ProtectedLayout>
+
+  )
 }
