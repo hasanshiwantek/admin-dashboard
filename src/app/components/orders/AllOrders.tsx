@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -19,7 +19,37 @@ import {
 import { Button } from "@/components/ui/button";
 import Pagination from "@/components/ui/pagination";
 import OrderActionsDropdown from "./OrderActionsDropdown";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
+import { fetchAllOrders, updateOrderStatus } from "@/redux/slices/orderSlice";
+import { refetchOrders } from "@/lib/orderUtils";
+import Spinner from "../loader/Spinner";
+import Link from "next/link";
 const AllOrders = () => {
+  const dispatch = useAppDispatch();
+  const orders = useAppSelector((state: any) => state.order.orders);
+  const pagination = orders?.pagination;
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage, setPerPage] = useState("50");
+  const total = pagination?.total;
+  const totalPages = pagination?.totalPages;
+
+  console.log("Orders Pagination: ", pagination);
+
+  const { loading, error } = useAppSelector((state) => state.order);
+  console.log("Orders data from frontend: ", orders);
+
+  useEffect(() => {
+    dispatch(fetchAllOrders({ page: currentPage, perPage }));
+  }, [dispatch, currentPage, perPage]);
+
+  const [activeTab, setActiveTab] = useState("All orders");
+
+  const filteredOrders = orders?.data?.filter((order: any) => {
+    if (activeTab === "All orders") return true;
+    return order.status === activeTab;
+  });
+  console.log("Filtered Orders: ", filteredOrders);
   const tabs = [
     "All orders",
     "Awaiting Payment",
@@ -27,112 +57,80 @@ const AllOrders = () => {
     "Awaiting Shipment",
     "High Risk",
     "Pre-orders",
-    "More",
+    "Refunded",
+    "Shipped",
+    "Incomplete",
+    "Archived",
     "Custom views",
   ];
 
+  const [selectedOrderIds, setSelectedOrderIds] = useState<number[]>([]);
+
+  // Handle single row checkbox change
+  const handleOrderCheckboxChange = (order: any, checked: boolean) => {
+    if (checked) {
+      setSelectedOrderIds((prev) => [...prev, order.id]);
+      console.log("Selected Order:", order);
+    } else {
+      setSelectedOrderIds((prev) => prev.filter((id) => id !== order.id));
+      console.log("Unselected Order ID:", order.id);
+    }
+  };
+
+  // Handle "Select All" checkbox
+  const handleSelectAllChange = (checked: boolean, orders: any[]) => {
+    if (checked) {
+      const allIds = orders.map((order) => order.id);
+      setSelectedOrderIds(allIds);
+      console.log("Selected All IDs:", allIds);
+    } else {
+      setSelectedOrderIds([]);
+      console.log("Deselected All");
+    }
+  };
+
   const statusOptions = [
-    { label: "Shipped", value: "shipped", color: "bg-lime-400" },
-    { label: "Cancelled", value: "cancelled", color: "bg-black" },
+    { label: "Pending", value: "Pending", color: "bg-gray-400" },
+    {
+      label: "Awaiting Payment",
+      value: "Awaiting Payment",
+      color: "bg-orange-400",
+    },
     {
       label: "Awaiting Fulfillment",
-      value: "awaiting-fulfillment",
-      color: "bg-blue-200",
-    },
-    { label: "Refunded", value: "refunded", color: "bg-yellow-400" },
-  ];
-
-  const orders = [
-    {
-      date: "Mar 06, 2024",
-      id: "310002",
-      name: "Jeremy Frost (Guest)",
-      status: "shipped",
-      total: "$263.32",
+      value: "Awaiting Fulfillment",
+      color: "bg-blue-300",
     },
     {
-      date: "Mar 13, 2024",
-      id: "310003",
-      name: "Charles L. Cattell, Jr.",
-      status: "shipped",
-      total: "$552.49",
+      label: "Awaiting Shipment",
+      value: "Awaiting Shipment",
+      color: "bg-blue-500",
     },
     {
-      date: "Mar 15, 2024",
-      id: "310004",
-      name: "Dana Tyler",
-      status: "cancelled",
-      total: "$320.00",
+      label: "Awaiting Pickup",
+      value: "Awaiting Pickup",
+      color: "bg-blue-600",
     },
     {
-      date: "Mar 15, 2024",
-      id: "310005",
-      name: "Dana Tyler",
-      status: "awaiting-fulfillment",
-      total: "$320.00",
+      label: "Partially Shipped",
+      value: "Partially Shipped",
+      color: "bg-teal-400",
+    },
+    { label: "Completed", value: "Completed", color: "bg-green-600" },
+    { label: "Shipped", value: "Shipped", color: "bg-lime-500" },
+    { label: "Cancelled", value: "Cancelled", color: "bg-black" },
+    { label: "Declined", value: "Declined", color: "bg-red-600" },
+    { label: "Refunded", value: "Refunded", color: "bg-yellow-400" },
+    { label: "Disputed", value: "Disputed", color: "bg-pink-600" },
+    {
+      label: "Manual Verification Required",
+      value: "Manual Verification Required",
+      color: "bg-purple-400",
     },
     {
-      date: "Mar 15, 2024",
-      id: "310006",
-      name: "Dana Tyler",
-      status: "awaiting-fulfillment",
-      total: "$320.00",
-    },
-    {
-      date: "Mar 15, 2024",
-      id: "310007",
-      name: "Dana Tyler",
-      status: "cancelled",
-      total: "$320.00",
-    },
-    {
-      date: "Mar 15, 2024",
-      id: "310008",
-      name: "Dana Tyler",
-      status: "awaiting-fulfillment",
-      total: "$320.00",
-    },
-    {
-      date: "Mar 15, 2024",
-      id: "310009",
-      name: "Dana Tyler",
-      status: "refunded",
-      total: "$320.00",
-    },
-    {
-      date: "Mar 15, 2024",
-      id: "310005",
-      name: "Dana Tyler",
-      status: "awaiting-fulfillment",
-      total: "$320.00",
-    },
-    {
-      date: "Mar 15, 2024",
-      id: "310006",
-      name: "Dana Tyler",
-      status: "awaiting-fulfillment",
-      total: "$320.00",
-    },
-    {
-      date: "Mar 15, 2024",
-      id: "310007",
-      name: "Dana Tyler",
-      status: "cancelled",
-      total: "$320.00",
-    },
-    {
-      date: "Mar 15, 2024",
-      id: "310008",
-      name: "Dana Tyler",
-      status: "awaiting-fulfillment",
-      total: "$320.00",
-    },
-    {
-      date: "Mar 15, 2024",
-      id: "310009",
-      name: "Dana Tyler",
-      status: "refunded",
-      total: "$320.00",
+      label: "Partially Refunded",
+      value: "Partially Refunded",
+      color: "bg-yellow-300",
     },
   ];
 
@@ -154,24 +152,20 @@ const AllOrders = () => {
     { label: "Refund", onClick: handleRefund },
     { label: "View order timeline" },
   ];
-  const [currentPage, setCurrentPage] = useState(1);
-  const [perPage, setPerPage] = useState("20");
-
-  // Assuming you fetched totalPages from backend
-  const totalPages = 21;
 
   return (
     <div className=" bg-[var(--store-bg)] min-h-screen mt-20">
       {/* Tabs */}
-      <div className="flex space-x-7 border-b pb-2 mb-4 overflow-x-auto">
-        {tabs.map((tab, index) => (
+      <div className="flex space-x-6 border-b pb-2 mb-4 overflow-x-auto">
+        {tabs.map((tab) => (
           <button
-            key={index}
+            key={tab}
             className={`!text-2xl pb-1 border-b-2 whitespace-nowrap ${
-              index === 0
+              activeTab === tab
                 ? "border-blue-600 text-blue-600 font-semibold"
                 : "border-transparent text-gray-500 hover:text-black"
             }`}
+            onClick={() => setActiveTab(tab)}
           >
             {tab}
           </button>
@@ -181,7 +175,9 @@ const AllOrders = () => {
       {/* Top Actions */}
       <div className="bg-white p-4 shadow-sm">
         <div className="flex flex-wrap gap-3 items-center mb-1">
-          <button className="btn-outline-primary">Add</button>
+          <Link href={"/manage/orders/add"}>
+            <button className="btn-outline-primary">Add</button>
+          </Link>
           <button className="btn-outline-primary">Export all</button>
 
           <Select>
@@ -274,7 +270,7 @@ const AllOrders = () => {
 
           <Input
             placeholder="Filter by keyword"
-            className="w-[150px] border-2 border-blue-500 !text-xl p-6"
+            className=""
           />
           <button className="btn-outline-primary">Search</button>
         </div>
@@ -295,7 +291,17 @@ const AllOrders = () => {
             <TableHeader>
               <TableRow>
                 <TableHead className="w-[50px]">
-                  <input type="checkbox" />
+                  <Checkbox
+                    checked={
+                      filteredOrders.length > 0 &&
+                      filteredOrders.every((order: any) =>
+                        selectedOrderIds.includes(order.id)
+                      )
+                    }
+                    onCheckedChange={(checked) =>
+                      handleSelectAllChange(checked as boolean, filteredOrders)
+                    }
+                  />
                 </TableHead>
                 <TableHead>Date</TableHead>
                 <TableHead>Order ID</TableHead>
@@ -307,66 +313,118 @@ const AllOrders = () => {
             </TableHeader>
 
             <TableBody>
-              {orders.map((order, idx) => (
-                <TableRow key={idx}>
-                  <TableCell>
-                    <input type="checkbox" />
-                  </TableCell>
-                  <TableCell>{order.date}</TableCell>
-                  <TableCell className="text-blue-600">{order.id}</TableCell>
-                  <TableCell>{order.name}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      {(() => {
-                        const currentStatus = statusOptions.find(
-                          (option) => option.value === order.status
-                        );
-
-                        return (
-                          <>
-                            <span
-                              className={`w-7 h-7 inline-block rounded-sm ${
-                                currentStatus?.color || "bg-gray-300"
-                              }`}
-                            />
-                            <Select defaultValue={order.status}>
-                              <SelectTrigger className="w-[160px] h-8 p-6">
-                                <SelectValue placeholder="Status" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {statusOptions.map((option) => (
-                                  <SelectItem
-                                    key={option.value}
-                                    value={option.value}
-                                  >
-                                    {option.label}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </>
-                        );
-                      })()}
-                    </div>
-                  </TableCell>
-
-                  <TableCell>{order.total}</TableCell>
-                  <TableCell>
-                    <OrderActionsDropdown
-                      actions={orderActions}
-                      trigger={
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="text-xl cursor-pointer"
-                        >
-                          •••
-                        </Button>
-                      }
-                    />
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={10} className="text-center py-10">
+                    <Spinner />
                   </TableCell>
                 </TableRow>
-              ))}
+              ) : filteredOrders?.length === 0 ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={10}
+                    className="text-center py-10 text-gray-500 text-xl"
+                  >
+                    No orders found.
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredOrders?.map((order: any, idx: number) => (
+                  <TableRow key={idx}>
+                    <TableCell>
+                      <Checkbox
+                        checked={selectedOrderIds.includes(order.id)}
+                        onCheckedChange={(checked) =>
+                          handleOrderCheckboxChange(order, checked as boolean)
+                        }
+                      />
+                    </TableCell>
+                    <TableCell>
+                      {new Date(order.createdAt).toLocaleDateString("en-GB", {
+                        day: "2-digit",
+                        month: "short", // or "long" for full month name
+                        year: "numeric",
+                      })}
+                    </TableCell>
+
+                    <TableCell className="text-blue-600">{order.id}</TableCell>
+                    <TableCell>{order.name}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        {(() => {
+                          const normalizedStatus = order.status;
+
+                          const currentStatus = statusOptions.find(
+                            (option) => option.value === normalizedStatus
+                          );
+
+                          return (
+                            <>
+                              <span
+                                className={`w-7 h-9 inline-block rounded-sm ${
+                                  currentStatus?.color || "bg-gray-300"
+                                }`}
+                              />
+                              <Select
+                                defaultValue={normalizedStatus}
+                                onValueChange={(newStatus) => {
+                                  dispatch(
+                                    updateOrderStatus({
+                                      id: order.id,
+                                      status: newStatus,
+                                    })
+                                  );
+                                  setTimeout(() => {
+                                    refetchOrders(dispatch);
+                                  }, 600);
+                                }}
+                              >
+                                <SelectTrigger className="w-[160px] h-8 p-6">
+                                  <SelectValue>
+                                    {currentStatus?.label || "Status"}
+                                  </SelectValue>
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {statusOptions.map((option) => (
+                                    <SelectItem
+                                      key={option.value}
+                                      value={option.value}
+                                    >
+                                      {option.label}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </>
+                          );
+                        })()}
+                      </div>
+                    </TableCell>
+
+                    <TableCell>
+                      {new Intl.NumberFormat("en-US", {
+                        style: "currency",
+                        currency: "USD",
+                      }).format(Number(order.totalAmount))}
+                    </TableCell>
+
+                    <TableCell>
+                      <OrderActionsDropdown
+                        actions={orderActions}
+                        trigger={
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="text-xl cursor-pointer"
+                          >
+                            •••
+                          </Button>
+                        }
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </div>

@@ -124,6 +124,7 @@ export const addProduct = createAsyncThunk(
   }
 );
 
+// ADD BRAND THUNK
 export const addBrand = createAsyncThunk(
   "product/addBrand",
   async (formData: FormData, thunkAPI) => {
@@ -137,12 +138,55 @@ export const addBrand = createAsyncThunk(
           },
         }
       );
-      console.log("✅ Add Brnad Response  From Thunk:", response.data);
+      console.log("✅ Add Brand Response  From Thunk:", response.data);
 
       return response.data;
     } catch (error: any) {
       console.error("❌ Error Adding Brand:", error);
       return thunkAPI.rejectWithValue("Failed to create brand");
+    }
+  }
+);
+
+// IMPORT CSV THUNK
+export const importCsv = createAsyncThunk(
+  "product/importCsv",
+  async (formData: FormData, thunkAPI) => {
+    try {
+      const response = await axiosInstance.post(
+        "dashboard/products/import-csv",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      console.log("✅ Import Csv Response  From Thunk:", response.data);
+
+      return response.data;
+    } catch (error: any) {
+      console.error("❌ Error Importing CSV:", error);
+      return thunkAPI.rejectWithValue("Failed to import CSV");
+    }
+  }
+);
+
+// EXPORT PRODUCTS THUNK
+export const exportCsv = createAsyncThunk(
+  "product/exportCsv",
+  async (payload:any, thunkAPI) => {
+    try {
+      const response = await axiosInstance.get(
+        "dashboard/products/export-csv",
+        payload,
+      );
+      console.log("✅ Export Csv Response  From Thunk:", response.data);
+
+      return response.data;
+    } catch (error: any) {
+      console.error("❌ Error Exporting CSV:", error);
+      return thunkAPI.rejectWithValue("Failed to Export CSV");
     }
   }
 );

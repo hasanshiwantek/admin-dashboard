@@ -3,7 +3,7 @@ import { AppDispatch } from "@/redux/store";
 export const refetchProducts = async (
   dispatch: AppDispatch,
   page = 1,
-  pageSize = 20
+  pageSize = 50
 ) => {
   try {
     await dispatch(fetchAllProducts({ page, pageSize })).unwrap();
