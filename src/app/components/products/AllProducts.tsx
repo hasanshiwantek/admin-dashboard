@@ -220,7 +220,7 @@ export default function AllProducts() {
         dispatch(deleteProduct({ ids: [product.id] }));
         setTimeout(() => {
           refetchProducts(dispatch);
-        }, 200);
+        }, 400);
       },
     },
   ];
@@ -346,7 +346,7 @@ export default function AllProducts() {
         dispatch(deleteProduct({ ids: selectedProductIds }));
         setTimeout(() => {
           refetchProducts(dispatch);
-        }, 200);
+        }, 400);
       },
     },
   ];

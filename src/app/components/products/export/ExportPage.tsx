@@ -3,7 +3,8 @@ import { useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import ExportOptions from "./ExportOption";
 import ExportPreview from "./ExportPreview";
-
+import { exportCsv } from "@/redux/slices/productSlice";
+import { useAppDispatch } from "@/hooks/useReduxHooks";
 export default function ExportPage() {
   const form = useForm({
     defaultValues: {
@@ -12,13 +13,28 @@ export default function ExportPage() {
       saveExport: false,
     },
   });
+  const dispatch = useAppDispatch();
 
   const [activeTab, setActiveTab] = useState<"exportOptions" | "exportPreview">(
     "exportOptions"
   );
 
-  const onSubmit = (data: any) => {
-    console.log("Export Data:", data);
+  const onSubmit = async (data: any) => {
+    console.log("📤 Export Data:", data);
+
+    try {
+      const resultAction = await dispatch(exportCsv({payload:data}));
+      const result = (resultAction as any).payload;
+
+      if ((resultAction as any).meta.requestStatus === "fulfilled") {
+        console.log("✅ Export Successful:", result);
+        // You can trigger a file download here or redirect
+      } else {
+        console.error("❌ Export Failed:", result);
+      }
+    } catch (error) {
+      console.error("❌ Unexpected Export Error:", error);
+    }
   };
 
   return (

@@ -24,7 +24,7 @@ const OrderTable = () => {
 
   // Fetch all orders on mount
   useEffect(() => {
-    dispatch(fetchAllOrders());
+    dispatch(fetchAllOrders({ page: 1, perPage: 50 }));
   }, [dispatch]);
 
   // Filter orders based on active tab
@@ -95,13 +95,20 @@ const OrderTable = () => {
 
           {filteredOrders.map((order) => {
             const colorMap: Record<string, string> = {
-              Pending: "bg-orange-500",
-              "Awaiting Payment": "bg-orange-500",
-              "Awaiting Fulfillment": "bg-sky-400",
-              Completed: "bg-green-700",
-              Shipped: "bg-green-400",
-              Delivered: "bg-green-700",
-              Refunded: "bg-red-500",
+              Pending: "bg-gray-400",
+              "Awaiting Payment": "bg-orange-400",
+              "Awaiting Fulfillment": "bg-blue-300",
+              "Awaiting Shipment": "bg-blue-500",
+              "Awaiting Pickup": "bg-blue-600",
+              "Partially Shipped": "bg-teal-400",
+              Completed: "bg-green-600",
+              Shipped: "bg-lime-500",
+              Cancelled: "bg-black",
+              Declined: "bg-red-600",
+              Refunded: "bg-yellow-400",
+              Disputed: "bg-pink-600",
+              "Manual Verification Required": "bg-purple-400",
+              "Partially Refunded": "bg-yellow-300",
             };
 
             const color = colorMap[order.status] || "bg-gray-400";
