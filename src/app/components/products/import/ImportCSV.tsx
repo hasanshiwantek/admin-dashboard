@@ -5,7 +5,8 @@ import StepTwo from "./StepTwo";
 import { useForm, FormProvider } from "react-hook-form";
 import { useState, useEffect } from "react";
 import { mappingFields } from "@/const/ImportExportData";
-
+import { importCsv } from "@/redux/slices/productSlice";
+import { useAppDispatch } from "@/hooks/useReduxHooks";
 const ImportCsv = () => {
   const methods = useForm({
     defaultValues: {
@@ -21,9 +22,10 @@ const ImportCsv = () => {
     },
   });
 
+  const dispatch = useAppDispatch();
   const [step, setStep] = useState(1);
 
-  const handleFinalSubmit = (data: Record<string, any>) => {
+  const handleFinalSubmit = async (data: Record<string, any>) => {
     const {
       file,
       importSource,
@@ -31,25 +33,44 @@ const ImportCsv = () => {
       ignoreBlanks,
       optionType,
       hasHeader,
-      separatorm,
+      separator,
       enclosure,
       bulkTemplate,
       overwrite,
     } = data;
 
-    const payload = {
-      file,
-      detectCategories,
-      ignoreBlanks,
-      optionType,
-      hasHeader,
-      separatorm,
-      enclosure,
-      importSource,
-      bulkTemplate,
-      overwrite,
-    };
-    console.log("Final Payload:", payload);
+    const formData = new FormData();
+    if (file && file.length > 0) {
+      formData.append("file", file[0]); // ✅ file is usually a FileList
+    }
+
+    formData.append("importSource", importSource);
+    formData.append("detectCategories", detectCategories ? "1" : "0");
+    formData.append("ignoreBlanks", ignoreBlanks ? "1" : "0");
+    formData.append("optionType", optionType);
+    formData.append("hasHeader", hasHeader ? "1" : "0");
+    formData.append("separator", separator);
+    formData.append("enclosure", enclosure);
+    formData.append("bulkTemplate", bulkTemplate ? "1" : "0");
+    formData.append("overwrite", overwrite ? "1" : "0");
+
+    console.log("📦 Final FormData:");
+    for (const [key, value] of formData.entries()) {
+      console.log(`${key}:`, value);
+    }
+
+    try {
+      const resultAction = await dispatch(importCsv(formData)); // ✅ pass formData directly
+      const result = (resultAction as any).payload;
+
+      if ((resultAction as any).meta.requestStatus === "fulfilled") {
+        console.log("✅ CSV imported successfully:", result);
+      } else {
+        console.error("❌ Failed to import CSV:", result);
+      }
+    } catch (err) {
+      console.error("❌ Unexpected error:", err);
+    }
   };
 
   return (

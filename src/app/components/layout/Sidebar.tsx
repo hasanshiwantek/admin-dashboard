@@ -1,3 +1,4 @@
+"use client"
 import Link from "next/link";
 import {
   SidebarProvider,
@@ -14,11 +15,14 @@ import {
 } from "@/components/ui/collapsible";
 import { sidebarData } from "@/const/sidebarData";
 import { ChevronDown } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 export const SideBar = () => {
+  const pathname = usePathname();
+
   return (
     <div className="  shrink-0 h-auto  z-20 fixed top-22 w-[26.7rem]  max-h-full overflow-y-auto overflow-x-hidden  bg-[rgb(3,16,51)] text-white border-t-2 border-[#2d3748] custom-scroll">
-      <SidebarProvider>  
+      <SidebarProvider>
         <SidebarMenu>
           {sidebarData.map((item) =>
             item.children ? (
@@ -37,7 +41,9 @@ export const SideBar = () => {
                         <SidebarMenuSubItem key={child.title}>
                           <Link
                             href={child.url}
-                            className="!text-[13px] !leading-12 cursor-pointer "
+                            className={`!text-[13px] !leading-8 cursor-pointer px-4 py-2 rounded-md block ${
+                              pathname === child.url ? "bg-[#122045]" : ""
+                            }`}
                           >
                             {child.title}
                           </Link>
@@ -49,8 +55,12 @@ export const SideBar = () => {
               </Collapsible>
             ) : (
               <SidebarMenuItem key={item.title}>
-                <Link href={item.url || "#"}>
-                  <SidebarMenuButton className="p-8 cursor-pointer text-xl">
+                <Link href={item.url || "#"} className="block">
+                  <SidebarMenuButton
+                    className={`p-8 cursor-pointer text-xl rounded-md ${
+                      pathname === item.url ? "bg-[#122045]" : ""
+                    }`}
+                  >
                     {item.icon && <item.icon className="mr-2 !h-8 !w-8 " />}
                     {item.title}
                   </SidebarMenuButton>
@@ -62,4 +72,5 @@ export const SideBar = () => {
       </SidebarProvider>
     </div>
   );
-};``
+};
+``;
