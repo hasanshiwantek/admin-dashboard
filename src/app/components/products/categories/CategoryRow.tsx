@@ -83,7 +83,6 @@ const CategoryRow = ({
           />
         </TableCell>
         <TableCell className="w-[30px] ">
-            {/* <RiDragMove2Fill className="w-4 h-4 invisible group-hover:visible cursor-move"  /> */}
           {hasChildren && (
             <button type="button" onClick={() => setExpanded(!expanded)}>
               {expanded ? (
