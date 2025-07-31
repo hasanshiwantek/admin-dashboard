@@ -37,6 +37,7 @@ const CategoryRow = ({
     const style = {
         transform: CSS.Transform.toString(transform), transition,
     }
+
   const [expanded, setExpanded] = useState(false);
   const dispatch = useAppDispatch();
   const { register } = useFormContext();
@@ -81,7 +82,7 @@ const CategoryRow = ({
         {...listeners} 
       className="group cursor-move bg-white my-8"
       >
-        <TableCell className="w-[30px]">
+          <TableCell className="w-[30px]">
           <Checkbox
             className="-mt-10"
             id={category.id}
