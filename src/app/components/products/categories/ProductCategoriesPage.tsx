@@ -30,7 +30,6 @@ import { Folder, Plus, ChevronRight, ChevronDown } from "lucide-react";
 import { productCategories } from "@/const/productCategories";
 import AddCategoryModal from "./AddCategoryModal";
 import CategoryRow from "./CategoryRow";
-import { nodeServerAppPaths } from "next/dist/build/webpack/plugins/pages-manifest-plugin";
 
 export default function ProductCategoriesPage() {
   const methods = useForm();
@@ -67,38 +66,38 @@ export default function ProductCategoriesPage() {
     return [null, tree];
   }
 
-  // const handleDragEnd = (event: any) => {
-  //   const { active, over } = event;
-  //   if (active.id !== over?.id) {
-  //     const oldIndex = categories.findIndex(c => c.id === active.id);
-  //     const newIndex = categories.findIndex(c => c.id === over?.id);
-  //     setCategories(arrayMove(categories, oldIndex, newIndex));
-  //   }
-  //   setActiveId(null);
-  // };
-  
   const handleDragEnd = (event: any) => {
-    const {active, over} = event;
-    if (!over || active.id === over.id) return;
-    
-    const updated = structuredClone(categories); //deep clone
-    const [movedItem, newTree] = removeCategory(updated, active.id);
-
-    const insertIntoTree = (tree: any[]) => {
-      for (let node of tree) {
-        if (node.id === over.id){
-          if (!node.children) node.children = [];
-          node.children.push(movedItem);
-          return true;
-        }
-        if (node.children && insertIntoTree(node.children)) return true;
-      }
-      return false
-    };
-    insertIntoTree(newTree)
-    setCategories(newTree);
+    const { active, over } = event;
+    if (active.id !== over?.id) {
+      const oldIndex = categories.findIndex(c => c.id === active.id);
+      const newIndex = categories.findIndex(c => c.id === over?.id);
+      setCategories(arrayMove(categories, oldIndex, newIndex));
+    }
     setActiveId(null);
-  }
+  };
+  
+  // const handleDragEnd = (event: any) => {
+  //   const {active, over} = event;
+  //   if (!over || active.id === over.id) return;
+    
+  //   const updated = structuredClone(categories); //deep clone
+  //   const [movedItem, newTree] = removeCategory(updated, active.id);
+
+  //   const insertIntoTree = (tree: any[]) => {
+  //     for (let node of tree) {
+  //       if (node.id === over.id){
+  //         if (!node.children) node.children = [];
+  //         node.children.push(movedItem);
+  //         return true;
+  //       }
+  //       if (node.children && insertIntoTree(node.children)) return true;
+  //     }
+  //     return false
+  //   };
+  //   insertIntoTree(newTree)
+  //   setCategories(newTree);
+  //   setActiveId(null);
+  // }
 
   const [open, setOpen] = useState(false);
 
