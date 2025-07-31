@@ -1,17 +1,27 @@
-
 "use client";
 
 import { useState } from "react";
-import { useForm, FormProvider, useFormContext } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 import {
   TableCell,
   TableRow,
 } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Folder, Plus, ChevronRight, ChevronDown } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { 
+  Folder, 
+  ChevronRight, 
+  ChevronDown 
+} from "lucide-react";
+import OrderActionsDropdown from "../../orders/OrderActionsDropdown";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import VisibilityToggle from "../../dropdowns/VisibilityToggle";
-import { updateCategory } from "@/redux/slices/categorySlice";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
+import { updateCategory } from "@/redux/slices/categorySlice";
+
 const CategoryRow = ({
   category,
   level = 0,
@@ -19,16 +29,58 @@ const CategoryRow = ({
   category: any;
   level?: number;
 }) => {
+
+    const {attributes, listeners, setNodeRef, transform, transition } = useSortable({
+        id: category.id,
+    })
+
+    const style = {
+        transform: CSS.Transform.toString(transform), transition,
+    }
   const [expanded, setExpanded] = useState(false);
-  const { register } = useFormContext();
   const dispatch = useAppDispatch();
+  const { register } = useFormContext();
   const hasChildren = category.children?.length;
-  const [visibilityMap, setVisibilityMap] = useState<{
+    const [visibilityMap, setVisibilityMap] = useState<{
     [key: number]: "ENABLED" | "DISABLED";
   }>({});
+
+  const editdropdownActions = [
+      {
+        label: "Edit",
+      },
+      {
+        label: "Create sub-category",
+      },
+      {
+        label: "Disable visibility",
+      },
+      {
+        label: "View products",
+      },
+      {
+        label: "View in page builder",
+      },
+      {
+        label: "Manage product filters",
+      },
+      {
+        label: "View on storefront",
+      },
+      {
+        label: "Delete",
+      },
+    ];
+
   return (
     <>
-      <TableRow className="bg-white my-8  ">
+      <TableRow
+       ref={setNodeRef}
+        style={style}
+        {...attributes}
+        {...listeners} 
+      className="group cursor-move bg-white my-8"
+      >
         <TableCell className="w-[30px]">
           <Checkbox
             className="-mt-10"
@@ -58,8 +110,7 @@ const CategoryRow = ({
         </TableCell>
         <TableCell className="text-center text-xl">0</TableCell>
         <TableCell className="text-center text-xl">0</TableCell>
-
-        <TableCell className="relative hover:bg-blue-100 transition-all">
+          <TableCell className="relative hover:bg-blue-100 transition-all">
           <VisibilityToggle
             productId={category.id}
             value={
@@ -82,15 +133,34 @@ const CategoryRow = ({
             }}
           />
         </TableCell>
-      </TableRow>
+        <TableCell>
+          <OrderActionsDropdown
+            actions={editdropdownActions}
+            trigger={
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-xl cursor-pointer"
+              >
+                •••
+              </Button>
+            }
+          />
+              </TableCell>
+          </TableRow>
 
-      {expanded &&
-        hasChildren &&
-        category.children.map((child: any) => (
-          <CategoryRow key={child.id} category={child} level={level + 1} />
-        ))}
+          {expanded && hasChildren && (
+              <SortableContext
+                  items={category.children.map((child: any) => child.id)}
+                  strategy={verticalListSortingStrategy}
+              >
+                  {category.children.map((child: any) => (
+                      <CategoryRow key={child.id} category={child} level={level + 1} />
+                  ))}
+              </SortableContext>
+          )}
     </>
   );
 };
 
-export default CategoryRow
+export default CategoryRow;
