@@ -148,6 +148,85 @@ export const addBrand = createAsyncThunk(
   }
 );
 
+// GET BRAND THUNK
+export const fetchBrands = createAsyncThunk(
+  "product/fetchBrands",
+  async (
+    { page, pageSize }: { page: number; pageSize: number | string },
+    thunkAPI
+  ) => {
+    try {
+      const response = await axiosInstance.get(
+        `dashboard/brands/brand-list?page=${page}&pageSize=${pageSize}`
+      );
+      console.log("✅  Brand Response  From Thunk:", response.data);
+
+      return response.data;
+    } catch (error: any) {
+      console.error("❌ Error fetching  Brand:", error);
+      return thunkAPI.rejectWithValue("Failed to fetch brands");
+    }
+  }
+);
+
+// GET BRAND BY ID THUNK
+export const getBrandById = createAsyncThunk(
+  "product/getBrandById",
+  async (id: any, thunkAPI) => {
+    try {
+      const response = await axiosInstance.get(`dashboard/brands/brand/${id}`);
+      console.log("✅  Brand Response  From Thunk Thru Id:", response.data);
+
+      return response.data.data;
+    } catch (error: any) {
+      console.error("❌ Error fetching  Brand id:", error);
+      return thunkAPI.rejectWithValue("Failed to fetch brand");
+    }
+  }
+);
+
+// UPDATE BRAND THUNK
+export const updateBrand = createAsyncThunk(
+  "product/updateBrand",
+  async ({ id, formData }: { id: any; formData: FormData }, thunkAPI) => {
+    try {
+      const response = await axiosInstance.post(
+        `dashboard/brands/update-brand/${id}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      console.log("✅ Update Brand Response:", response.data);
+      return response.data;
+    } catch (error: any) {
+      console.error("❌ Error Updating Brand:", error);
+      return thunkAPI.rejectWithValue("Failed to update brand");
+    }
+  }
+);
+
+// UPDATE BRAND THUNK
+export const deleteBrand = createAsyncThunk(
+  "product/updateBrand",
+  async ({ id }: { id: any }, thunkAPI) => {
+    try {
+      const response = await axiosInstance.delete(
+        `dashboard/brands/delete-brand/${id}`
+      );
+
+      console.log("✅ Delete Brand Response:", response.data);
+      return response.data;
+    } catch (error: any) {
+      console.error("❌ Error Deleting Brand:", error);
+      return thunkAPI.rejectWithValue("Failed to delete brand");
+    }
+  }
+);
+
 // IMPORT CSV THUNK
 export const importCsv = createAsyncThunk(
   "product/importCsv",
@@ -175,11 +254,11 @@ export const importCsv = createAsyncThunk(
 // EXPORT PRODUCTS THUNK
 export const exportCsv = createAsyncThunk(
   "product/exportCsv",
-  async (payload:any, thunkAPI) => {
+  async (payload: any, thunkAPI) => {
     try {
       const response = await axiosInstance.get(
         "dashboard/products/export-csv",
-        payload,
+        payload
       );
       console.log("✅ Export Csv Response  From Thunk:", response.data);
 
@@ -194,6 +273,7 @@ export const exportCsv = createAsyncThunk(
 // 2. Initial State
 const initialState = {
   products: [],
+  brands: [],
   loading: false,
   error: null as string | null,
   selectedProducts: [],
@@ -222,6 +302,19 @@ const productSlice = createSlice({
         state.products = action.payload;
       })
       .addCase(fetchAllProducts.rejected, (state, action) => {
+        state.loading = false;
+        state.error =
+          (action.payload as string) || action.error.message || "Failed";
+      })
+      .addCase(fetchBrands.pending, (state) => {
+        state.loading = true;
+        state.error = null; // reset error
+      })
+      .addCase(fetchBrands.fulfilled, (state, action) => {
+        state.loading = false;
+        state.brands = action.payload;
+      })
+      .addCase(fetchBrands.rejected, (state, action) => {
         state.loading = false;
         state.error =
           (action.payload as string) || action.error.message || "Failed";

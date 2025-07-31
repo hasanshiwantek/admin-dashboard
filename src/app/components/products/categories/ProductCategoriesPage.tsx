@@ -15,7 +15,10 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Folder, Plus, ChevronRight, ChevronDown } from "lucide-react";
 import { productCategories } from "@/const/productCategories";
-
+import AddCategoryModal from "./AddCategoryModal";
+import VisibilityToggle from "../../dropdowns/VisibilityToggle";
+import { updateCategory } from "@/redux/slices/categorySlice";
+import { useAppDispatch } from "@/hooks/useReduxHooks";
 const CategoryRow = ({
   category,
   level = 0,
@@ -25,8 +28,11 @@ const CategoryRow = ({
 }) => {
   const [expanded, setExpanded] = useState(false);
   const { register } = useFormContext();
+  const dispatch = useAppDispatch();
   const hasChildren = category.children?.length;
-
+  const [visibilityMap, setVisibilityMap] = useState<{
+    [key: number]: "ENABLED" | "DISABLED";
+  }>({});
   return (
     <>
       <TableRow className="bg-white my-8  ">
@@ -59,10 +65,29 @@ const CategoryRow = ({
         </TableCell>
         <TableCell className="text-center text-xl">0</TableCell>
         <TableCell className="text-center text-xl">0</TableCell>
-        <TableCell className="text-center">
-          <span className="!text-white bg-green-700 rounded px-3 py-1 text-lg">
-            ENABLED
-          </span>
+
+        <TableCell className="relative hover:bg-blue-100 transition-all">
+          <VisibilityToggle
+            productId={category.id}
+            value={
+              visibilityMap[category.id] ?? category.isVisible
+                ? "ENABLED"
+                : "DISABLED"
+            }
+            onChange={(id, value) => {
+              const isVisible = value === "ENABLED";
+              setVisibilityMap((prev: any) => ({
+                ...prev,
+                [id]: isVisible,
+              }));
+              dispatch(
+                updateCategory({
+                  id,
+                  data: { isVisible },
+                })
+              );
+            }}
+          />
         </TableCell>
       </TableRow>
 
@@ -78,63 +103,73 @@ const CategoryRow = ({
 export default function ProductCategoriesPage() {
   const methods = useForm();
 
+  const [open, setOpen] = useState(false);
+
   const onSubmit = (data: any) => {
     console.log("Selected Categories:", data);
   };
 
   return (
-    <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(onSubmit)} className="p-10">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-5xl font-extralight text-gray-600">
-            Product Categories
-          </h1>
-          <Button size="xl" className=" flex items-center gap-2 btn-primary">
-            <Plus className="!w-6 !h-6" /> Add new
-          </Button>
-        </div>
-
-        <div className="border rounded shadow-sm bg-white">
-          <div className="p-6 space-y-6">
-            <Input
-              placeholder="Find category in the structure"
-              className="w-[300px]"
-            />
-            <div className="flex items-center gap-3">
-              <Checkbox />
-              <span>10 categories</span>
-            </div>
-            <div className="flex justify-between items-center gap-3 border-t border-b p-4 ">
-              <p className="!font-extrabold">ctspoint</p>
-              <span className="!font-extrabold">282073</span>
-            </div>
+    <>
+      <FormProvider {...methods}>
+        <form onSubmit={methods.handleSubmit(onSubmit)} className="p-10">
+          <div className="flex justify-between items-center mb-6">
+            <h1 className="text-5xl font-extralight text-gray-600">
+              Product Categories
+            </h1>
+            <Button
+              size="xl"
+              className=" flex items-center gap-2 btn-primary"
+              onClick={() => setOpen(true)}
+              type="button"
+            >
+              <Plus className="!w-6 !h-6" /> Add new
+            </Button>
           </div>
 
-          <Table>
-            <TableHeader className="">
-              <TableRow className="border-t ">
-                <TableHead className="w-[30px]" />
-                <TableHead className="w-[30px]" />
-                <TableHead>Name</TableHead>
-                <TableHead className="text-center w-[100px]">
-                  Products
-                </TableHead>
-                <TableHead className="text-center w-[150px]">
-                  In subcategories
-                </TableHead>
-                <TableHead className="text-center w-[100px]">
-                  Visibility
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {productCategories.map((category) => (
-                <CategoryRow key={category.id} category={category} />
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      </form>
-    </FormProvider>
+          <div className="border rounded shadow-sm bg-white">
+            <div className="p-6 space-y-6">
+              <Input
+                placeholder="Find category in the structure"
+                className="w-[300px]"
+              />
+              <div className="flex items-center gap-3">
+                <Checkbox />
+                <span>10 categories</span>
+              </div>
+              <div className="flex justify-between items-center gap-3 border-t border-b p-4 ">
+                <p className="!font-extrabold">ctspoint</p>
+                <span className="!font-extrabold">282073</span>
+              </div>
+            </div>
+
+            <Table>
+              <TableHeader className="">
+                <TableRow className="border-t ">
+                  <TableHead className="w-[30px]" />
+                  <TableHead className="w-[30px]" />
+                  <TableHead>Name</TableHead>
+                  <TableHead className="text-center w-[100px]">
+                    Products
+                  </TableHead>
+                  <TableHead className="text-center w-[150px]">
+                    In subcategories
+                  </TableHead>
+                  <TableHead className="text-center w-[100px]">
+                    Visibility
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {productCategories.map((category) => (
+                  <CategoryRow key={category.id} category={category} />
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </form>
+      </FormProvider>
+      <AddCategoryModal open={open} onOpenChange={setOpen} />
+    </>
   );
 }
