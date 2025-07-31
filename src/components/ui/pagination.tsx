@@ -29,8 +29,24 @@ const Pagination = ({
 
     if (currentPage <= 4) return [1, 2, 3, 4, 5, "...", totalPages];
     if (currentPage >= totalPages - 3)
-      return [1, "...", totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
-    return [1, "...", currentPage - 1, currentPage, currentPage + 1, "...", totalPages];
+      return [
+        1,
+        "...",
+        totalPages - 4,
+        totalPages - 3,
+        totalPages - 2,
+        totalPages - 1,
+        totalPages,
+      ];
+    return [
+      1,
+      "...",
+      currentPage - 1,
+      currentPage,
+      currentPage + 1,
+      "...",
+      totalPages,
+    ];
   };
 
   return (
@@ -78,7 +94,6 @@ const Pagination = ({
             <SelectItem value="30">View 30</SelectItem>
             <SelectItem value="50">View 50</SelectItem>
             <SelectItem value="100">View 100</SelectItem>
-
           </SelectContent>
         </Select>
       </div>

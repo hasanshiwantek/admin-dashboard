@@ -57,36 +57,27 @@ export default function ProductCategoriesPage() {
   };
 
 
+  const [open, setOpen] = useState(false);
+
   const onSubmit = (data: any) => {
     console.log("Selected Categories:", data);
   };
 
   return (
-    <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(onSubmit)} className="p-10">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-5xl font-extralight text-gray-600">
-            Product Categories
-          </h1>
-          <Button size="xl" className=" flex items-center gap-2 btn-primary">
-            <Plus className="!w-6 !h-6" /> Add new
-          </Button>
-        </div>
-
-        <div className="border rounded shadow-sm bg-white">
-          <div className="p-6 space-y-6">
-            <Input
-              placeholder="Find category in the structure"
-              className="w-[300px]"
-            />
-            <div className="flex items-center gap-3">
-              <Checkbox />
-              <span>10 categories</span>
-            </div>
-            <div className="flex justify-between items-center gap-3 border-t border-b p-4 ">
-              <p className="!font-extrabold">ctspoint</p>
-              <span className="!font-extrabold">282073</span>
-            </div>
+      <FormProvider {...methods}>
+        <form onSubmit={methods.handleSubmit(onSubmit)} className="p-10">
+          <div className="flex justify-between items-center mb-6">
+            <h1 className="text-5xl font-extralight text-gray-600">
+              Product Categories
+            </h1>
+            <Button
+              size="xl"
+              className=" flex items-center gap-2 btn-primary"
+              onClick={() => setOpen(true)}
+              type="button"
+            >
+              <Plus className="!w-6 !h-6" /> Add new
+            </Button>
           </div>
 
           <Table>
@@ -122,7 +113,6 @@ export default function ProductCategoriesPage() {
           </DndContext>
         </Table>
 
-        </div>
       </form>
     </FormProvider>
   );

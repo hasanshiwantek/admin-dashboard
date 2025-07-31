@@ -293,8 +293,8 @@ const AllOrders = () => {
                 <TableHead className="w-[50px]">
                   <Checkbox
                     checked={
-                      filteredOrders.length > 0 &&
-                      filteredOrders.every((order: any) =>
+                      filteredOrders?.length > 0 &&
+                      filteredOrders?.every((order: any) =>
                         selectedOrderIds.includes(order.id)
                       )
                     }
@@ -376,10 +376,10 @@ const AllOrders = () => {
                                   );
                                   setTimeout(() => {
                                     refetchOrders(dispatch);
-                                  }, 600);
+                                  }, 700);
                                 }}
                               >
-                                <SelectTrigger className="w-[160px] h-8 p-6">
+                                <SelectTrigger className="w-[200px] h-8 p-6">
                                   <SelectValue>
                                     {currentStatus?.label || "Status"}
                                   </SelectValue>

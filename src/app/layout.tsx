@@ -5,7 +5,7 @@ import Providers from "./components/Providers";
 import { Cabin } from "next/font/google";
 import ProtectedLayout from "@/auth/ProtectedLayout";
 
-const cabin = Cabin({
+const cabin = Cabin ({
   subsets: ["latin"],
   weight: ["400", "500", "700"],
 });

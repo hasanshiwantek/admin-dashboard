@@ -1,0 +1,58 @@
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axiosInstance from "@/lib/axiosInstance";
+
+export const addCategory = createAsyncThunk(
+  "categories/addCategory",
+  async ({ data }: { data: any }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.post(
+        `dashboard/categories/add-categories`,
+        data
+      );
+      console.log("✅ Add Category Response :", res.data);
+      return res.data;
+    } catch (err: any) {
+      console.error("❌ Error adding Categories:", err);
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to add Category"
+      );
+    }
+  }
+);
+
+export const updateCategory = createAsyncThunk(
+  "categories/updateCategory",
+  async ({ data, id }: { data: any; id: number }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.post(
+        `ashboard/categories/update-categories/${id}`,
+        data
+      );
+      console.log("✅ Update Category Response :", res.data);
+      return res.data;
+    } catch (err: any) {
+      console.error("❌ Error updating Categories:", err);
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to update Category"
+      );
+    }
+  }
+);
+
+// 2. Initial State
+const initialState = {
+  categories: [],
+  loading: false,
+  error: null as string | null,
+};
+
+// 3. Slice
+const categorySlice = createSlice({
+  name: "categories",
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder;
+  },
+});
+export default categorySlice.reducer;

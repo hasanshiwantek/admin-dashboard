@@ -42,7 +42,7 @@ export const SideBar = () => {
                           <Link
                             href={child.url}
                             className={`!text-[13px] !leading-8 cursor-pointer px-4 py-2 rounded-md block ${
-                              pathname === child.url ? "bg-[#122045]" : ""
+                              pathname === child.url ? "bg-[#24345c]" : ""
                             }`}
                           >
                             {child.title}
@@ -58,7 +58,7 @@ export const SideBar = () => {
                 <Link href={item.url || "#"} className="block">
                   <SidebarMenuButton
                     className={`p-8 cursor-pointer text-xl rounded-md ${
-                      pathname === item.url ? "bg-[#122045]" : ""
+                      pathname === item.url ? "bg-[#24345c]" : ""
                     }`}
                   >
                     {item.icon && <item.icon className="mr-2 !h-8 !w-8 " />}
