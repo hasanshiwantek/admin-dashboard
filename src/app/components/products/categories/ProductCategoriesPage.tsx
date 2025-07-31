@@ -48,6 +48,24 @@ export default function ProductCategoriesPage() {
     setActiveId(event.active.id);
   };
 
+  function removeCategory (tree: any[], id: string): [any, any[]] {
+    for (let i = 0; i < tree.length; i++){
+      const cat = tree[i];
+      if (cat.id === id){
+        tree.splice(i, 1);
+        return [cat, tree]
+      }
+      if (cat.children){
+        const [found, newChildren] = removeCategory(cat.children, id);
+        if (found) {
+          cat.children = newChildren
+          return [found, tree];
+        }
+      }
+    }
+    return [null, tree];
+  }
+
   const handleDragEnd = (event: any) => {
     const { active, over } = event;
     if (active.id !== over?.id) {
@@ -57,7 +75,29 @@ export default function ProductCategoriesPage() {
     }
     setActiveId(null);
   };
+  
+  // const handleDragEnd = (event: any) => {
+  //   const {active, over} = event;
+  //   if (!over || active.id === over.id) return;
+    
+  //   const updated = structuredClone(categories); //deep clone
+  //   const [movedItem, newTree] = removeCategory(updated, active.id);
 
+  //   const insertIntoTree = (tree: any[]) => {
+  //     for (let node of tree) {
+  //       if (node.id === over.id){
+  //         if (!node.children) node.children = [];
+  //         node.children.push(movedItem);
+  //         return true;
+  //       }
+  //       if (node.children && insertIntoTree(node.children)) return true;
+  //     }
+  //     return false
+  //   };
+  //   insertIntoTree(newTree)
+  //   setCategories(newTree);
+  //   setActiveId(null);
+  // }
 
   const [open, setOpen] = useState(false);
 
