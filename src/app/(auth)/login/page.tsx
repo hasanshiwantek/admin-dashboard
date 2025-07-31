@@ -76,7 +76,7 @@ export default function LoginPage() {
             value={formData.email}
             onChange={handleChange}
             required
-            className=" w-[30rem] !text-2xl my-5 px-6 py-8 bg-blue-50 text-black placeholder:text-gray-500"
+            className="w-[40rem] !text-2xl my-5 px-6 py-8 bg-blue-50 text-black placeholder:text-gray-500"
           />
 
           <div className="relative">
@@ -87,7 +87,7 @@ export default function LoginPage() {
               value={formData.password}
               onChange={handleChange}
               required
-              className="w-[30rem] !text-2xl my-5 px-6 py-8 bg-blue-50 text-black placeholder:text-gray-500"
+              className="w-[40rem] !text-2xl my-5 px-6 py-8 bg-blue-50 text-black placeholder:text-gray-500"
             />
             <button
               type="button"
@@ -96,7 +96,7 @@ export default function LoginPage() {
             >
               {formData.showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
-          </div>
+          </div> 
           <Button
             type="submit"
             variant="default"

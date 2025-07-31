@@ -10,7 +10,7 @@ import { useAppDispatch } from "@/hooks/useReduxHooks";
 export default function UserDropdown() {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
   const router = useRouter();
 
   useEffect(() => {
@@ -25,9 +25,14 @@ export default function UserDropdown() {
   }, []);
 
   const handleLogout = () => {
-    dispatch(logout())
-    router.push("/login");
-  }
+    const confirm = window.confirm("Are you sure want to logout?");
+    if (!confirm) {
+      return;
+    } else {
+      dispatch(logout());
+      router.push("/login");
+    }
+  };
 
   return (
     <div className="relative" ref={ref}>
@@ -36,8 +41,11 @@ export default function UserDropdown() {
         onClick={() => setOpen(!open)}
         className="p-3 hover:bg-[#2d3748] cursor-pointer rounded-md"
       >
-        <CircleUser size={20} fill={open ? "white" : "none"}   className={open ? "text-black" : "text-white"}/>
-
+        <CircleUser
+          size={20}
+          fill={open ? "white" : "none"}
+          className={open ? "text-black" : "text-white"}
+        />
       </div>
 
       {/* Dropdown */}
@@ -60,13 +68,14 @@ export default function UserDropdown() {
               Two-factor authentication
             </li>
           </ul>
-          <div className=" hover:text-blue-800  cursor-pointer !ml-5 !my-5  flex justify-between items-center">
-            <a
-            onClick={handleLogout} 
-            className="!text-xl !font-medium text-[#313440] hover:text-blue-800">
+          <div
+            onClick={handleLogout}
+            className="cursor-pointer !ml-5 !my-5 flex justify-between flex-row group"
+          >
+            <a className="!text-xl !font-medium text-[#313440] group-hover:text-blue-800">
               Log out
             </a>
-            <i>
+            <i className="group-hover:text-blue-800">
               <IoIosLogOut size={18} />
             </i>
           </div>

@@ -1,84 +1,35 @@
 "use client";
 import React, { useState } from "react";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { HelpCircle } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import Link from "next/link";
 import { addBrand } from "@/redux/slices/productSlice";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { HiQuestionMarkCircle } from "react-icons/hi2";
 const AddBrand = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    pageTitle: "",
-    metaKeywords: "",
-    metaDescription: "",
-    searchKeywords: "",
-    logo: null,
-    brandURL: "",
-    templateLayout: "default",
-  });
-
+  const [name, setName] = useState("");
   const dispatch = useAppDispatch();
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev: any) => ({
-      ...prev,
-      logo: e.target.files?.[0] || null,
-    }));
-  };
-
-  const handleSelectChange = (value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      templateLayout: value,
-    }));
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const formDataToSend = new FormData();
-    formDataToSend.append("name", formData.name);
-    formDataToSend.append("pageTitle", formData.pageTitle);
-    formDataToSend.append("metaKeywords", formData.metaKeywords);
-    formDataToSend.append("metaDescription", formData.metaDescription);
-    formDataToSend.append("searchKeywords", formData.searchKeywords);
-    formDataToSend.append("brandURL", formData.brandURL);
-    formDataToSend.append("templateLayout", formData.templateLayout);
-
-    if (formData.logo) {
-      formDataToSend.append("logo", formData.logo); // ✅ sends actual File
-    }
-
-    console.log("🧾 FormData being sent:");
-    for (const pair of formDataToSend.entries()) {
-      console.log(`${pair[0]}:`, pair[1]);
-    }
+    const formData = new FormData();
+    formData.append("name", name);
 
     try {
-      const resultAction = await dispatch(addBrand(formDataToSend));
+      const resultAction = await dispatch(addBrand(formData));
       const result = (resultAction as any).payload;
 
       if ((resultAction as any).meta.requestStatus === "fulfilled") {
         console.log("✅ Brand added successfully:", result);
+        setName("")
       } else {
         console.error("❌ Failed to add brand:", result);
       }
@@ -87,108 +38,64 @@ const AddBrand = () => {
     }
   };
 
-  const formField = (
-    label: string,
-    name: string,
-    optional = true,
-    textarea = false
-  ) => (
-    <div className="space-y-1">
-      <Label className="flex items-center gap-1">
-        {label}
-        {optional && (
-          <span className="text-sm text-muted-foreground">(optional)</span>
-        )}
-        <HelpCircle className="w-5 h-5 text-muted-foreground" />
-      </Label>
-      {textarea ? (
-        <Textarea
-          name={name}
-          value={(formData as any)[name]}
-          onChange={handleChange}
-          className="h-[50px]"
-        />
-      ) : (
-        <Input
-          name={name}
-          value={(formData as any)[name]}
-          onChange={handleChange}
-        />
-      )}
-    </div>
-  );
-
   return (
-    <>
-      <div>
-        <div className="p-10">
-          <div className="flex flex-col   gap-6 ">
-            <h1 className="!font-light">Brand Details</h1>
-            <p>Modify the details of the brand below and click "Save".</p>
-          </div>
-          <div>
-            <div className="bg-white p-5 shadow-md my-2">
-              <form onSubmit={handleSubmit} className="max-w-3xl p-6 space-y-6">
-                {formField("Brand Name", "name", false)}
-                {formField("Page Title", "pageTitle")}
-                {formField("Meta Keywords", "metaKeywords")}
-                {formField("Meta Description", "metaDescription", true, true)}
-                {formField("Search Keywords", "searchKeywords")}
-
-                <div className="space-y-1">
-                  <Label className="flex items-center gap-1">
-                    Brand Image
-                    <span className="text-sm text-muted-foreground">
-                      (optional)
-                    </span>
-                    <HelpCircle className="w-5 h-5 text-muted-foreground" />
-                  </Label>
-                  <p className="text-sm text-muted-foreground mb-1">
-                    Maximum file size: 8MB
-                  </p>
-                  <Input
-                    type="file"
-                    onChange={handleImageChange}
-                    className="bg-gray-50"
-                  />
-                </div>
-
-                {formField("Brand URL", "brandURL")}
-
-                <div className="space-y-1">
-                  <Label className="flex items-center gap-1">
-                    Template Layout File
-                    <span className="text-sm text-muted-foreground">
-                      (optional)
-                    </span>
-                    <HelpCircle className="w-5 h-5 text-muted-foreground" />
-                  </Label>
-                  <Select
-                    value={formData.templateLayout}
-                    onValueChange={handleSelectChange}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="default">default</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </form>
-            </div>
-          </div>
+    <div  >
+      <div className="p-10 ">
+        <div className="flex flex-col gap-6">
+          <h1 className="!font-light">Add Brands</h1>
+          <p>
+            Brands can be associated with products, allowing your customers to
+            shop by browsing their favorite brands. Add brands by typing them
+            into the text box, one brand per line.{" "}
+          </p>
         </div>
-        <div className="sticky bottom-0 w-full border-t p-6 bg-white flex justify-end gap-4">
-          <Link href="/manage/products/brands/">
-            <button className="btn-outline-primary">Cancel</button>
-          </Link>
-          <button className="btn-primary" type="submit" onClick={handleSubmit}>
-            Save
-          </button>
+        <div className="bg-white p-5 shadow-md my-6">
+          <h1>Brand Details</h1>
+          <form onSubmit={handleSubmit} className="max-w-3xl p-6 space-y-6">
+            <div className="space-y-1">
+              <Label className="flex items-center gap-1">
+                Brand Name
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <HiQuestionMarkCircle />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <div className="font-semibold mb-1">Brand Names</div>
+                      <div>
+                        Type the brand names you want to add into the text box.
+                        Enter one brand per line, such as:
+                      </div>
+                      <ul className="list-disc pl-5 mt-2">
+                        <li>Nike</li>
+                        <li>ADIDAS</li>
+                        <li>Apple</li>
+                        <li>Microsoft</li>
+                      </ul>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </Label>
+              <Textarea
+                name="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+            </div>
+          </form>
         </div>
       </div>
-    </>
+
+      <div className="fixed bottom-0 left-0 w-full bg-white border-t p-6 flex justify-end gap-4 ">
+        <Link href="/manage/products/brands">
+          <button className="btn-outline-primary">Cancel</button>
+        </Link>
+        <button className="btn-primary" type="submit" onClick={handleSubmit}>
+          Save
+        </button>
+      </div>
+    </div>
   );
 };
 
