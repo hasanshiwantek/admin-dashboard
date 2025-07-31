@@ -73,16 +73,19 @@ const ImportCsv = () => {
       console.error("❌ Unexpected error:", err);
     }
   };
-  
+
   return (
     <>
-      <div className="p-10">
-        <div className="flex flex-col space-y-5">
-          <h1 className="!font-extralight">Import Products</h1>
-          <p>
-            You can import products to your store from a CSV file. We recommend
-            exporting any existing products before running an import.
-          </p>
+      <div>
+        <div className="p-10">
+          <div className="flex flex-col space-y-5">
+            <h1 className="!font-extralight">Import Products</h1>
+            <p>
+              You can import products to your store from a CSV file. We
+              recommend exporting any existing products before running an
+              import.
+            </p>
+          </div>
         </div>
 
         <FormProvider {...methods}>
@@ -93,7 +96,7 @@ const ImportCsv = () => {
             })}
           >
             {step === 1 ? <ImportCsvForm /> : <StepTwo />}
-            <div className="flex justify-end  gap-10 items-center fixed w-full bottom-0 right-0  bg-white/90 z-10 shadow-xs border-t  p-4">
+            <div className="sticky bottom-0 w-full border-t p-6 bg-white flex justify-end gap-4">
               <button
                 type="button"
                 className="btn-outline-primary"

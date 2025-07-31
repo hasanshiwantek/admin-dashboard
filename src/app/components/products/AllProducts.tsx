@@ -630,7 +630,7 @@ export default function AllProducts() {
                         className="rounded !border !border-gray-300 p-2 shrink-0"
                       />
 
-                      <span className="!text-blue-600 !text-xl capitalize  cursor-pointer whitespace-normal break-words leading-snug max-w-[300px]">
+                      <span className="!text-blue-600 !text-xl !font-medium capitalize  cursor-pointer whitespace-normal break-words leading-snug max-w-[300px]">
                         {product.name}
                       </span>
                     </TableCell>
