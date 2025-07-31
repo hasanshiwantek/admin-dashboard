@@ -100,7 +100,6 @@ export default function ProductCategoriesPage() {
     setActiveId(null);
   }
 
-
   const [open, setOpen] = useState(false);
 
   const onSubmit = (data: any) => {
