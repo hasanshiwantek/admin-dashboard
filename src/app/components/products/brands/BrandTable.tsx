@@ -65,6 +65,10 @@ const BrandTable = () => {
   // BRAND DELETION LOGIC
 
   const deleteBrandHandler = async () => {
+    if (selectedIds.length === 0) {
+      alert("Please select at least one brand before deleting.");
+      return; // stop here
+    }
     const confirm = window.confirm("Delete Brand?");
     if (!confirm) {
       return;

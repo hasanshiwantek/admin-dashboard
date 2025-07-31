@@ -24,10 +24,12 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
 import { productCategories as initialCategories } from "@/const/productCategories";
-import CategoryRow from "./CategoryRow";
 
+import { Folder, Plus, ChevronRight, ChevronDown } from "lucide-react";
+import { productCategories } from "@/const/productCategories";
+import AddCategoryModal from "./AddCategoryModal";
+import CategoryRow from "./CategoryRow";
 
 export default function ProductCategoriesPage() {
   const methods = useForm();

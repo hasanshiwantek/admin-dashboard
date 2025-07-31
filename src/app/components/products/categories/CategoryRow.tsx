@@ -18,7 +18,9 @@ import OrderActionsDropdown from "../../orders/OrderActionsDropdown";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
-
+import VisibilityToggle from "../../dropdowns/VisibilityToggle";
+import { useAppDispatch } from "@/hooks/useReduxHooks";
+import { updateCategory } from "@/redux/slices/categorySlice";
 
 const CategoryRow = ({
   category,
@@ -36,8 +38,12 @@ const CategoryRow = ({
         transform: CSS.Transform.toString(transform), transition,
     }
   const [expanded, setExpanded] = useState(false);
+  const dispatch = useAppDispatch();
   const { register } = useFormContext();
   const hasChildren = category.children?.length;
+    const [visibilityMap, setVisibilityMap] = useState<{
+    [key: number]: "ENABLED" | "DISABLED";
+  }>({});
 
   const editdropdownActions = [
       {
@@ -104,10 +110,28 @@ const CategoryRow = ({
         </TableCell>
         <TableCell className="text-center text-xl">0</TableCell>
         <TableCell className="text-center text-xl">0</TableCell>
-        <TableCell className="text-center">
-          <span className="!text-white bg-green-700 rounded px-3 py-1 text-lg">
-            ENABLED
-          </span>
+          <TableCell className="relative hover:bg-blue-100 transition-all">
+          <VisibilityToggle
+            productId={category.id}
+            value={
+              visibilityMap[category.id] ?? category.isVisible
+                ? "ENABLED"
+                : "DISABLED"
+            }
+            onChange={(id, value) => {
+              const isVisible = value === "ENABLED";
+              setVisibilityMap((prev: any) => ({
+                ...prev,
+                [id]: isVisible,
+              }));
+              dispatch(
+                updateCategory({
+                  id,
+                  data: { isVisible },
+                })
+              );
+            }}
+          />
         </TableCell>
         <TableCell>
           <OrderActionsDropdown
