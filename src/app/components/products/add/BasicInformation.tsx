@@ -1,4 +1,6 @@
 // BasicInfoForm.tsx
+"use client";
+import { useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -13,13 +15,19 @@ import {
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import CategoryTree from "./CategoryTree";
-import { brandOptions } from "@/const/data";
-
+import { fetchBrands } from "@/redux/slices/productSlice";
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 export default function BasicInfoForm() {
   const { register, setValue, watch } = useFormContext();
   const productType = watch("productType");
   const isVisible = watch("isVisible");
   const brandId = watch("brandId");
+  const dispatch = useAppDispatch();
+  const { brands } = useAppSelector((state: any) => state.product);
+
+  useEffect(() => {
+    dispatch(fetchBrands({ page: 1, pageSize: 50 }));
+  }, [dispatch]);
 
   return (
     <section id="basic-info" className="space-y-4 scroll-mt-20">
@@ -71,18 +79,16 @@ export default function BasicInfoForm() {
             <div>
               <Label htmlFor="brandId">Brand</Label>
               <Select
-                value={String(brandId ?? "")}
-                onValueChange={(value) =>
-                  setValue("brandId", value === "all" ? null : Number(value))
-                }
+                value={brandId ? String(brandId) : ""}
+                onValueChange={(value) => setValue("brandId", Number(value))}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select brand" />
                 </SelectTrigger>
                 <SelectContent>
-                  {brandOptions.map((brand) => (
-                    <SelectItem key={brand.value} value={brand.value}>
-                      {brand.label}
+                  {brands?.data?.map((brand: any) => (
+                    <SelectItem key={brand.id} value={String(brand.id)}>
+                      {brand.name}
                     </SelectItem>
                   ))}
                 </SelectContent>

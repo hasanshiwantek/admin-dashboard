@@ -1,50 +1,229 @@
-// app/components/Step1CustomerInfo.tsx
 "use client";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { useForm } from "react-hook-form";
-
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
+import CustomerSearchDropdown from "./CustomerSearchDropdown";
 export default function StepOne({ data, onNext }: any) {
-  const { register, handleSubmit } = useForm({ defaultValues: data });
+  const { register, handleSubmit, setValue, watch } = useForm({
+    defaultValues: data,
+  });
 
   const onSubmit = (formData: any) => {
     console.log("Step1 data:", formData);
     onNext(formData);
   };
 
+  const country = watch("country");
+  const orderType = watch("orderType");
+  useEffect(() => {
+    setValue("orderType", "existing");
+  }, [setValue]);
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <h2 className="text-lg font-bold">Customer Information</h2>
-
-      <RadioGroup defaultValue="existing" className="flex gap-4">
-        <div className="flex items-center space-x-2">
-          <RadioGroupItem value="existing" id="existing" />
-          <Label htmlFor="existing">Existing customer</Label>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
+      {/* Customer Info */}
+      <h1 className="mb-4">Customer information</h1>
+      <div className="p-6 bg-white rounded-sm shadow-md">
+        <div className="flex items-center gap-6 my-4">
+          <Label>Order for:</Label>
+          <RadioGroup
+            defaultValue="existing"
+            className="flex gap-6"
+            onValueChange={(value) => setValue("orderType", value)}
+          >
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="existing" id="existing" />
+              <Label htmlFor="existing">Existing customer</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="new" id="new" />
+              <Label htmlFor="new">New customer</Label>
+            </div>
+          </RadioGroup>
         </div>
-        <div className="flex items-center space-x-2">
-          <RadioGroupItem value="new" id="new" />
-          <Label htmlFor="new">New customer</Label>
+        {orderType === "existing" && (
+          <div className="flex flex-col gap-2 my-4">
+            <Label htmlFor="search">Search</Label>
+            <CustomerSearchDropdown
+              value={watch("search")}
+              onChange={(val) => setValue("search", val)}
+              onSelect={(customer) => {
+                setValue("selectedCustomer", customer); // save selected customer
+              }}
+            />
+          </div>
+        )}
+
+        {orderType === "new" && (
+          <div className="space-y-4">
+            <Label className="block font-medium">Account details</Label>
+
+            <div className="ml-40 space-y-10">
+              <div>
+                <Label htmlFor="email">Email Address</Label>
+                <Input {...register("email")} id="email" />
+              </div>
+
+              <div>
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  type="password"
+                  {...register("password")}
+                  id="password"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Input
+                  type="password"
+                  {...register("confirmPassword")}
+                  id="confirmPassword"
+                />
+                <p className="!text-sm !text-gray-500 mt-1">
+                  Adding a password will create a new customer account, not
+                  applicable to Draft Order.
+                </p>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="exclusiveOffers"
+                  {...register("exclusiveOffers")}
+                />
+                <Label htmlFor="exclusiveOffers">
+                  I would like to receive updates and offers.
+                </Label>
+              </div>
+
+              <div>
+                <Label htmlFor="customerGroup">Customer group</Label>
+                <Select
+                  onValueChange={(value) => setValue("customerGroup", value)}
+                  defaultValue="none"
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="-- Do not assign to any group --" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">
+                      -- Do not assign to any group --
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
+        )}
+        <div className=" mt-4">
+          <span>Selected customer</span> – {/* Placeholder */}
         </div>
-      </RadioGroup>
+      </div>
 
-      <Input {...register("search")} placeholder="Search by name or email" className="text-lg" />
+      {/* Billing Info */}
+      <h1 className="mb-6">Billing Information</h1>
+      <div className=" p-6 bg-white rounded-sm shadow-md">
+        <div className="grid grid-cols-2 gap-6">
+          <div>
+            <Label htmlFor="firstName">First Name</Label>
+            <Input {...register("firstName")} id="firstName" className="mt-1" />
+          </div>
 
-      <h3 className="text-md font-semibold mt-4">Billing Information</h3>
-      <Input {...register("firstName")} placeholder="First Name" className="text-lg" />
-      <Input {...register("lastName")} placeholder="Last Name" className="text-lg" />
-      <Input {...register("companyName")} placeholder="Company Name (optional)" className="text-lg" />
-      <Input {...register("phoneNumber")} placeholder="Phone Number (optional)" className="text-lg" />
-      <Input {...register("address1")} placeholder="Address Line 1" className="text-lg" />
-      <Input {...register("address2")} placeholder="Address Line 2 (optional)" className="text-lg" />
-      <Input {...register("city")} placeholder="City" className="text-lg" />
-      <Input {...register("state")} placeholder="State / Province" className="text-lg" />
-      <Input {...register("zip")} placeholder="Zip / Postal Code" className="text-lg" />
-      <Input {...register("country")} placeholder="Country" className="text-lg" />
+          <div>
+            <Label htmlFor="lastName">Last Name</Label>
+            <Input {...register("lastName")} id="lastName" className="mt-1" />
+          </div>
 
-      <button className="bg-blue-600 text-white px-4 py-2 rounded-lg" type="submit">
+          <div>
+            <Label htmlFor="companyName">
+              Company Name{" "}
+              <span className="text-gray-400 text-xs">(Optional)</span>
+            </Label>
+            <Input
+              {...register("companyName")}
+              id="companyName"
+              className="mt-1"
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="phoneNumber">
+              Phone Number{" "}
+              <span className="text-gray-400 text-xs">(Optional)</span>
+            </Label>
+            <Input
+              {...register("phoneNumber")}
+              id="phoneNumber"
+              className="mt-1"
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="address1">Address Line 1</Label>
+            <Input {...register("address1")} id="address1" className="mt-1" />
+          </div>
+
+          <div>
+            <Label htmlFor="address2">
+              Address Line 2{" "}
+              <span className="text-gray-400 text-xs">(Optional)</span>
+            </Label>
+            <Input {...register("address2")} id="address2" className="mt-1" />
+          </div>
+
+          <div>
+            <Label htmlFor="city">Suburb/City</Label>
+            <Input {...register("city")} id="city" className="mt-1" />
+          </div>
+
+          <div>
+            <Label htmlFor="country">Country</Label>
+            <Select
+              value={country}
+              onValueChange={(value) => setValue("country", value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Choose a country" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="US">United States</SelectItem>
+                <SelectItem value="UK">United Kingdom</SelectItem>
+                <SelectItem value="CA">Canada</SelectItem>
+                <SelectItem value="IN">India</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <Label htmlFor="state">State/Province</Label>
+            <Input {...register("state")} id="state" className="mt-1" />
+          </div>
+
+          <div>
+            <Label htmlFor="zip">Zip/Postcode</Label>
+            <Input {...register("zip")} id="zip" className="mt-1" />
+          </div>
+        </div>
+
+        <div className="flex items-center space-x-2 mt-4">
+          <Checkbox id="saveAddress" defaultChecked />
+          <Label htmlFor="saveAddress">Save to customer’s address book</Label>
+        </div>
+      </div>
+
+      <Button type="submit" className="ml-auto block">
         Next
-      </button>
+      </Button>
     </form>
   );
 }

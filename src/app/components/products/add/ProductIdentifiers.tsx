@@ -15,8 +15,8 @@ export default function ProductIdentifiers() {
                     {/* Left Div */}
                     <div className="space-y-12">
                         <div>
-                            <Label htmlFor="sku">SKU</Label>
-                            <Input id="sku" placeholder="THX-1138"  {...register("sku")} />
+                            <Label htmlFor="productSku">SKU</Label>
+                            <Input id="productSku" placeholder="THX-1138"  {...register("productSku")} />
                         </div>
                          <div>
                             <Label htmlFor="upc">Product UPC/EAN</Label>

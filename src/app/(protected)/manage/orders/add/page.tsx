@@ -7,7 +7,7 @@ const page = () => {
       <h1 className="!text-5xl !font-extralight !text-gray-600 !my-5">
         Add an order
       </h1>
-      <div className=" mt-10 flex flex-col gap-5">
+      <div className="  flex flex-col gap-5">
         <AnnouncementBanner />
         <OrderForm/>
       </div>

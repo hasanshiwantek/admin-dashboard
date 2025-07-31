@@ -15,8 +15,8 @@ export default function OrderForm() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Multi-Step Order Form</h1>
+    <div className="  p-10">
+      {/* <h1 className="text-2xl font-bold mb-6">Multi-Step Order Form</h1> */}
       {step === 1 && <StepOne data={formData} onNext={handleNext} />}
       {step === 2 && <StepTwo data={formData} onNext={handleNext} />}
       {step === 3 && <StepThree data={formData} onNext={handleNext} />}

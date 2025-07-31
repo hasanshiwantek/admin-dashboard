@@ -2,12 +2,12 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Providers from "./components/Providers";
-import { Cabin } from "next/font/google";
+import { Source_Sans_3 } from "next/font/google";
 import ProtectedLayout from "@/auth/ProtectedLayout";
 
-const cabin = Cabin ({
+const sourceSans = Source_Sans_3({
   subsets: ["latin"],
-  weight: ["400", "500", "700"],
+  weight: ["400", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -22,13 +22,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-
-      <body
-        className={`${cabin.className} antialiased`}
-      >
-          <Providers>
-            {children}
-          </Providers>
+      <body className={`${sourceSans.className} antialiased`}>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
