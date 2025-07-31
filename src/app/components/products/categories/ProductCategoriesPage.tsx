@@ -1,5 +1,5 @@
 "use client";
-
+import { useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import {
   Table,
@@ -8,18 +8,54 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  DndContext,
+  closestCenter,
+  DragOverlay,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { 
-  Plus, 
-} from "lucide-react";
-import { productCategories } from "@/const/productCategories";
+import { Plus } from "lucide-react";
+import { productCategories as initialCategories } from "@/const/productCategories";
 import CategoryRow from "./CategoryRow";
 
 
 export default function ProductCategoriesPage() {
   const methods = useForm();
+  const [categories, setCategories] = useState(initialCategories);
+  const [activeId, setActiveId] = useState(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 5,
+      },
+    })
+  );
+
+  const handleDragStart = (event: any) => {
+    setActiveId(event.active.id);
+  };
+
+  const handleDragEnd = (event: any) => {
+    const { active, over } = event;
+    if (active.id !== over?.id) {
+      const oldIndex = categories.findIndex(c => c.id === active.id);
+      const newIndex = categories.findIndex(c => c.id === over?.id);
+      setCategories(arrayMove(categories, oldIndex, newIndex));
+    }
+    setActiveId(null);
+  };
+
 
   const onSubmit = (data: any) => {
     console.log("Selected Categories:", data);
@@ -70,12 +106,22 @@ export default function ProductCategoriesPage() {
                 </TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody>
-              {productCategories.map((category) => (
-                <CategoryRow key={category.id} category={category} />
-              ))}
-            </TableBody>
-          </Table>
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragStart={handleDragStart}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext items={categories} strategy={verticalListSortingStrategy}>
+              <TableBody>
+                {categories.map((category) => (
+                  <CategoryRow key={category.id} category={category} />
+                ))}
+              </TableBody>
+            </SortableContext>
+          </DndContext>
+        </Table>
+
         </div>
       </form>
     </FormProvider>

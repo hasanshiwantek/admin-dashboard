@@ -15,6 +15,10 @@ import {
   ChevronDown 
 } from "lucide-react";
 import OrderActionsDropdown from "../../orders/OrderActionsDropdown";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+
 
 const CategoryRow = ({
   category,
@@ -23,6 +27,14 @@ const CategoryRow = ({
   category: any;
   level?: number;
 }) => {
+
+    const {attributes, listeners, setNodeRef, transform, transition } = useSortable({
+        id: category.id,
+    })
+
+    const style = {
+        transform: CSS.Transform.toString(transform), transition,
+    }
   const [expanded, setExpanded] = useState(false);
   const { register } = useFormContext();
   const hasChildren = category.children?.length;
@@ -56,7 +68,13 @@ const CategoryRow = ({
 
   return (
     <>
-      <TableRow className="bg-white my-8  ">
+      <TableRow
+       ref={setNodeRef}
+        style={style}
+        {...attributes}
+        {...listeners} 
+      className="group cursor-move bg-white my-8"
+      >
         <TableCell className="w-[30px]">
           <Checkbox
             className="-mt-10"
@@ -65,6 +83,7 @@ const CategoryRow = ({
           />
         </TableCell>
         <TableCell className="w-[30px] ">
+            {/* <RiDragMove2Fill className="w-4 h-4 invisible group-hover:visible cursor-move"  /> */}
           {hasChildren && (
             <button type="button" onClick={() => setExpanded(!expanded)}>
               {expanded ? (
@@ -104,14 +123,19 @@ const CategoryRow = ({
               </Button>
             }
           />
-        </TableCell>
-      </TableRow>
+              </TableCell>
+          </TableRow>
 
-      {expanded &&
-        hasChildren &&
-        category.children.map((child: any) => (
-          <CategoryRow key={child.id} category={child} level={level + 1} />
-        ))}
+          {expanded && hasChildren && (
+              <SortableContext
+                  items={category.children.map((child: any) => child.id)}
+                  strategy={verticalListSortingStrategy}
+              >
+                  {category.children.map((child: any) => (
+                      <CategoryRow key={child.id} category={child} level={level + 1} />
+                  ))}
+              </SortableContext>
+          )}
     </>
   );
 };
