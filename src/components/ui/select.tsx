@@ -44,7 +44,7 @@ function SelectTrigger({
       data-size={size}
       className={cn(
         "w-full max-w-md", // ✅ Matches Input field size
-        "text-xl border border-gray-400 data-[placeholder]:text-muted-foreground [&_svg:not([class*='text-'])]:text-muted-foreground",
+        "text-xl border border-gray-400 data-[placeholder]:text-muted-foreground [&_svg:not([class*='text-'])]:text-muted-foreground font-medium",
         "focus:border-blue-400 focus:ring-blue-300 focus:ring-2 focus:border-1",
         "focus-visible:border-blue-300 focus-visible:ring-blue-300 focus-visible:ring-1 focus-visible:border-1",
         "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
@@ -132,7 +132,7 @@ function SelectItem({
     <SelectPrimitive.Item
       data-slot="select-item"
       className={cn(
-        "text-xl focus:bg-accent focus:text-accent-foreground relative flex w-full cursor-default items-center gap-2 rounded-sm py-1.5 pr-8 pl-2 outline-none select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+        "text-xl font-medium focus:bg-accent focus:text-accent-foreground relative flex w-full cursor-default items-center gap-2 rounded-sm py-1.5 pr-8 pl-2 outline-none select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
         className
       )}
       {...props}

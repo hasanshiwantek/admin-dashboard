@@ -158,7 +158,9 @@ export default function ProductCategoriesPage() {
 
       </form>
     </FormProvider>
-    <AddCategoryModal open={open} onOpenChange={setOpen} />
+      <AddCategoryModal open={open} onOpenChange={setOpen} />
     </>
+
+
   );
 }

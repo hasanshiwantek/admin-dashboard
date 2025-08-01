@@ -41,7 +41,7 @@ export default function FieldsMapper({ fields, columnOptions }: Props) {
         const radioValue = watch(`${field.label}_mode`);
 
         return (
-          <div key={index} className="flex  gap-2 ">
+          <div key={index} className="flex   gap-2 ">
             <Label className="font-semibold w-44">{field.label}</Label>
 
             {field.type === "radio-dropdown" ? (
