@@ -36,7 +36,7 @@ export default function ProductCategoriesPage() {
   const [categories, setCategories] = useState(initialCategories);
   const [activeId, setActiveId] = useState(null);
 
-  const sensors = useSensors(
+   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
         distance: 5,

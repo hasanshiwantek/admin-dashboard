@@ -34,6 +34,7 @@ import Spinner from "../loader/Spinner";
 import { refetchProducts } from "@/lib/productUtils";
 import { useSearchParams } from "next/navigation";
 import { advanceSearchProduct } from "@/redux/slices/productSlice";
+
 const filterTabs = [
   "All",
   "Featured",
@@ -630,7 +631,9 @@ export default function AllProducts() {
                         className="rounded !border !border-gray-300 p-2 shrink-0"
                       />
 
-                      <span className="!text-blue-600 !text-xl !font-medium capitalize  cursor-pointer whitespace-normal break-words leading-snug max-w-[300px]">
+                      <span
+                      onClick={() => {router.push(`/manage/products/edit/${product.id}`); console.log("navigated")}} 
+                      className="!text-blue-600 !text-xl !font-medium capitalize  cursor-pointer whitespace-normal break-words leading-snug max-w-[300px]">
                         {product.name}
                       </span>
                     </TableCell>
