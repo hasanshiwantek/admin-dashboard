@@ -21,13 +21,9 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { productCategories as initialCategories } from "@/const/productCategories";
-
-import { Folder, Plus, ChevronRight, ChevronDown } from "lucide-react";
-import { productCategories } from "@/const/productCategories";
+import { Plus } from "lucide-react";
 import AddCategoryModal from "./AddCategoryModal";
 import CategoryRow from "./CategoryRow";
 
@@ -160,7 +156,5 @@ export default function ProductCategoriesPage() {
     </FormProvider>
       <AddCategoryModal open={open} onOpenChange={setOpen} />
     </>
-
-
   );
 }
