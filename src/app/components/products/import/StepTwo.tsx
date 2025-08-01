@@ -13,7 +13,7 @@ export default function StepTwo({ }) {
   const excelHeaders = watch("excelHeaders") || [];
 
   return (
-    <div className="space-y-6 p-10">
+    <div className="space-y-6 p-10 bg-white/60 shadow-md rounded-sm">
         <FieldsMapper
               fields={mappingFields}
               columnOptions={excelHeaders} // e.g. ['SKU', 'Price', 'Name']

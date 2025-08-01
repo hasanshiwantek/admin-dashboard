@@ -90,8 +90,16 @@ const ImportCsv = () => {
 
         <FormProvider {...methods}>
           <form
-            onSubmit={methods.handleSubmit((data) => {
-              if (step === 1) return setStep(2);
+            onSubmit={methods.handleSubmit((data: any) => {
+              if (step === 1) {
+                const file = data.file;
+                if (!file || file.length === 0) {
+                  alert("Please upload a file before proceeding.");
+                  return;
+                }
+                setStep(2);
+                return;
+              }
               handleFinalSubmit(data);
             })}
           >
