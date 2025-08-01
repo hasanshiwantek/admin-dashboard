@@ -1,5 +1,6 @@
 "use client";
 // AddProductPage.tsx
+import { useEffect } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import SidebarNavigation from "./SidebarNavigation";
 import BasicInfoForm from "./BasicInformation";
@@ -21,19 +22,36 @@ import CustomsInformation from "./CustomsInformation";
 import RelatedProducts from "./RelatedProducts";
 import Variations from "./Variations";
 import Customizations from "./Customizations";
-import { addProduct } from "@/redux/slices/productSlice";
-import { useAppDispatch } from "@/hooks/useReduxHooks";
+import { addProduct, updateProduct } from "@/redux/slices/productSlice";
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
+import { useParams } from "next/navigation";
+
 export default function AddProductPage() {
   const dispatch = useAppDispatch();
   const methods = useForm();
+  const { reset } = methods;
+  const { id } = useParams();
+  const allProducts = useAppSelector((state: any) => state.product.products)
+  console.log("all products from edit", allProducts)
+  const product = allProducts.data?.find((p: any) => p.id === Number(id));
+  const isEdit = !!product?.id;
+
+  useEffect(() => {
+    if (product) reset(product);
+  }, [product, reset]);
+
   const onSubmit = methods.handleSubmit(async (data: Record<string, any>) => {
     try {
-      const result = await dispatch(addProduct({ data: data }));
+      // const result = await dispatch(addProduct({ data: data }));
 
-      if (addProduct.fulfilled.match(result)) {
+      const result = isEdit
+        ? await dispatch(updateProduct({ body: { products: [{ id: product.id, fields: data }] } }))
+        : await dispatch(addProduct({ data: data }))
+
+      if ((isEdit ? updateProduct : addProduct).fulfilled.match(result)) {
         console.log("✅ Product Added:", result.payload);
       } else {
-        console.error("❌ Product add failed:", result.error);
+        console.error("Product add failed:", result.error);
       }
     } catch (error) {
       console.error("🔥 Unexpected error during add:", error);
