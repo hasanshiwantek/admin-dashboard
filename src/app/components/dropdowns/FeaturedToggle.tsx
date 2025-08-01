@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
 } from "@radix-ui/react-dropdown-menu";
 import { FaStar, FaRegStar } from "react-icons/fa";
-
+import { Button } from "@/components/ui/button";
 interface FeaturedToggleProps {
   productId: number;
   isFeatured: boolean;
@@ -19,7 +19,7 @@ const FeaturedToggle = ({ productId, isFeatured, onChange }: FeaturedToggleProps
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="cursor-pointer mt-2 !border-none hover:bg-blue-100 p-3 transition-all">
+        <button className="cursor-pointer mt-2 !border-none hover:bg-blue-100  transition-all">
           {isFeatured ? (
             <FaStar className="text-yellow-500 fill-yellow-500 stroke-yellow-500" size={15} />
           ) : (

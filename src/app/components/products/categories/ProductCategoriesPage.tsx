@@ -106,6 +106,7 @@ export default function ProductCategoriesPage() {
   };
 
   return (
+    <>
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)} className="p-10">
           <div className="flex justify-between items-center mb-6">
@@ -157,5 +158,9 @@ export default function ProductCategoriesPage() {
 
       </form>
     </FormProvider>
+      <AddCategoryModal open={open} onOpenChange={setOpen} />
+    </>
+
+
   );
 }

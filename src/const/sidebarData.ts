@@ -44,12 +44,12 @@ export const sidebarData = [
     title: "Customers",
     icon: Users,
     children: [
-      { title: "All Customers", url: "/customers" },
-      { title: "Add", url: "/customers/add" },
-      { title: "Search", url: "/customers/search" },
-      { title: "Import", url: "/customers/import" },
-      { title: "Export", url: "/customers/export" },
-      { title: "Customer Groups", url: "/customers/groups" },
+      { title: "All Customers", url: "/manage/customers" },
+      { title: "Add", url: "/manage/customers/add" },
+      { title: "Search", url: "/manage/customers/search" },
+      { title: "Import", url: "/manage/customers/import" },
+      { title: "Export", url: "/manage/customers/export" },
+      { title: "Customer Groups", url: "/manage/customers/groups" },
     ],
   },
   {

@@ -12,13 +12,13 @@ function Input({
       data-slot="input"
       className={cn(
         // Base styles
-        "!text-xl !md:text-lg w-full max-w-md h-13 px-4 py-4 rounded-sm bg-white transition-colors text-gray-600",
+        "!text-xl !md:text-lg w-full max-w-md h-13 px-4 py-4  rounded-sm bg-white transition-colors text-gray-600",
 
-        // Default border
-        "border border-gray-400",
+        // Default border #d7d6d9
+        "border border-[#d1d0d4]",
 
-        // Hover
-        "hover:border-blue-500",
+        // Hover #86848c
+        "hover:border-[#86848c]",
 
         // Focus
         "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-300 focus-visible:border-blue-500",
