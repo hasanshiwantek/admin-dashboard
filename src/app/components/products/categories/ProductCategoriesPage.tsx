@@ -81,6 +81,7 @@ export default function ProductCategoriesPage() {
     }
     setActiveId(null);
   };
+  
   // const handleDragEnd = (event: any) => {
   //   const {active, over} = event;
   //   if (!over || active.id === over.id) return;
