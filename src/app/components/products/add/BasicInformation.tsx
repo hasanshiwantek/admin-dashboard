@@ -107,7 +107,7 @@ export default function BasicInfoForm() {
               <Label htmlFor="price">Default Price</Label>
               <Input
                 id="price"
-                defaultValue="35"
+                placeholder="35"
                 {...register("price", { valueAsNumber: true })}
               />
             </div>
@@ -116,7 +116,7 @@ export default function BasicInfoForm() {
               <Label htmlFor="dimensions.weight">Weight (lbs)</Label>
               <Input
                 id="weight"
-                defaultValue="0"
+                placeholder="0"
                 {...register("dimensions.weight", { valueAsNumber: true })}
               />
             </div>

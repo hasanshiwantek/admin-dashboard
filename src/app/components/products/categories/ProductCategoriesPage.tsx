@@ -81,11 +81,6 @@ export default function ProductCategoriesPage() {
     }
     setActiveId(null);
   };
-<<<<<<< HEAD
-      
-=======
-
->>>>>>> bf183608e49bace4d01091e42e0edd829eafdce1
   // const handleDragEnd = (event: any) => {
   //   const {active, over} = event;
   //   if (!over || active.id === over.id) return;
