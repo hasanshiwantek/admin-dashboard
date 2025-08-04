@@ -26,6 +26,7 @@ import { addProduct, updateProduct } from "@/redux/slices/productSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
+
 export default function AddProductPage() {
   const dispatch = useAppDispatch();
   const router=useRouter()
