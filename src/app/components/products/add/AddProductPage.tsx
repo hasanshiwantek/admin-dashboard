@@ -44,6 +44,8 @@ export default function AddProductPage() {
     try {
       // const result = await dispatch(addProduct({ data: data }));
 
+      console.log("Payload: ",data);
+      
       const result = isEdit
         ? await dispatch(updateProduct({ body: { products: [{ id: product.id, fields: data }] } }))
         : await dispatch(addProduct({ data: data }))

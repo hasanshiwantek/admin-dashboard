@@ -125,8 +125,7 @@ export default function BasicInfoForm() {
 
         <div className="flex justify-between my-5">
           <h1>Categories</h1>
-          <Button className="bg-transparent shadow-none text-blue-600 text-xl hover:bg-blue-100 transition-all p-6 cursor-pointer">
-            {" "}
+          <Button type="button" className="bg-transparent shadow-none text-blue-600 text-xl hover:bg-blue-100 transition-all p-6 cursor-pointer">
             <Plus></Plus> Add Categories
           </Button>
         </div>
