@@ -111,7 +111,7 @@ const CategoryRow = ({
         </TableCell>
         <TableCell className="text-center text-xl">0</TableCell>
         <TableCell className="text-center text-xl">0</TableCell>
-          <TableCell className="relative hover:bg-blue-100 transition-all">
+          <TableCell className="relative hover:bg-blue-100 transition-all  ">
           <VisibilityToggle
             productId={category.id}
             value={

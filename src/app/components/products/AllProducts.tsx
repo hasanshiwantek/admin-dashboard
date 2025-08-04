@@ -473,11 +473,10 @@ export default function AllProducts() {
             <button
               key={tab}
               onClick={() => setSelectedTab(tab)}
-              className={`!text-2xl px-5 py-2 rounded  cursor-pointer transition hover:bg-blue-100 ${
-                selectedTab === tab
+              className={`!text-2xl px-5 py-2 rounded  cursor-pointer transition hover:bg-blue-100 ${selectedTab === tab
                   ? "bg-blue-100 border-blue-600 text-blue-600"
                   : " text-blue-600"
-              }`}
+                }`}
             >
               {tab}
             </button>
@@ -632,12 +631,16 @@ export default function AllProducts() {
                       />
 
                       <span
-                      onClick={() => {router.push(`/manage/products/edit/${product.id}`); console.log("navigated")}} 
-                      className="!text-blue-600 !text-xl !font-medium capitalize  cursor-pointer whitespace-normal break-words leading-snug max-w-[300px]">
+                        onClick={() => {
+                          router.push(`/manage/products/edit/${product.id}`);
+                          console.log("navigated");
+                        }}
+                        className="!text-blue-600 hover:underline !text-xl !font-medium capitalize  cursor-pointer whitespace-normal break-words leading-snug max-w-[300px]"
+                      >
                         {product.name}
                       </span>
                     </TableCell>
-                    <TableCell className="relative  ">
+                    <TableCell className="relative  mx-4">
                       <FeaturedToggle
                         productId={product.id}
                         isFeatured={

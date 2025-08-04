@@ -33,7 +33,7 @@ export default function Pricing() {
       {/* Default Price and Tax Class */}
       <div className="space-y-4">
         <Label>
-          Default Price{" "}
+          Default Price
           <span className="text-sm text-muted-foreground">(excluding tax)</span>
         </Label>
         <Input
