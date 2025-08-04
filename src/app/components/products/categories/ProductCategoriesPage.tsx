@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import {
   Table,
@@ -26,13 +26,23 @@ import { productCategories as initialCategories } from "@/const/productCategorie
 import { Plus } from "lucide-react";
 import AddCategoryModal from "./AddCategoryModal";
 import CategoryRow from "./CategoryRow";
+import { fetchCategories } from "@/redux/slices/categorySlice";
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 
 export default function ProductCategoriesPage() {
   const methods = useForm();
+  const disptach = useAppDispatch();
+  const allCategories = useAppSelector(
+    (state: any) => state.category.categories
+  );
+  const { loading, error } = useAppSelector((state) => state.category);
+
+  console.log("All Categories fom frontend", allCategories);
+
   const [categories, setCategories] = useState(initialCategories);
   const [activeId, setActiveId] = useState(null);
 
-   const sensors = useSensors(
+  const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
         distance: 5,
@@ -44,17 +54,17 @@ export default function ProductCategoriesPage() {
     setActiveId(event.active.id);
   };
 
-  function removeCategory (tree: any[], id: string): [any, any[]] {
-    for (let i = 0; i < tree.length; i++){
+  function removeCategory(tree: any[], id: string): [any, any[]] {
+    for (let i = 0; i < tree.length; i++) {
       const cat = tree[i];
-      if (cat.id === id){
+      if (cat.id === id) {
         tree.splice(i, 1);
-        return [cat, tree]
+        return [cat, tree];
       }
-      if (cat.children){
+      if (cat.children) {
         const [found, newChildren] = removeCategory(cat.children, id);
         if (found) {
-          cat.children = newChildren
+          cat.children = newChildren;
           return [found, tree];
         }
       }
@@ -65,17 +75,21 @@ export default function ProductCategoriesPage() {
   const handleDragEnd = (event: any) => {
     const { active, over } = event;
     if (active.id !== over?.id) {
-      const oldIndex = categories.findIndex(c => c.id === active.id);
-      const newIndex = categories.findIndex(c => c.id === over?.id);
+      const oldIndex = categories.findIndex((c) => c.id === active.id);
+      const newIndex = categories.findIndex((c) => c.id === over?.id);
       setCategories(arrayMove(categories, oldIndex, newIndex));
     }
     setActiveId(null);
   };
+<<<<<<< HEAD
       
+=======
+
+>>>>>>> bf183608e49bace4d01091e42e0edd829eafdce1
   // const handleDragEnd = (event: any) => {
   //   const {active, over} = event;
   //   if (!over || active.id === over.id) return;
-    
+
   //   const updated = structuredClone(categories); //deep clone
   //   const [movedItem, newTree] = removeCategory(updated, active.id);
 
@@ -100,6 +114,10 @@ export default function ProductCategoriesPage() {
   const onSubmit = (data: any) => {
     console.log("Selected Categories:", data);
   };
+
+  useEffect(() => {
+    disptach(fetchCategories());
+  }, [disptach]);
 
   return (
     <>
@@ -142,18 +160,20 @@ export default function ProductCategoriesPage() {
               onDragStart={handleDragStart}
               onDragEnd={handleDragEnd}
             >
-              <SortableContext items={categories} strategy={verticalListSortingStrategy}>
-              <TableBody>
-                {categories.map((category) => (
-                  <CategoryRow key={category.id} category={category} />
-                ))}
-              </TableBody>
-            </SortableContext>
-          </DndContext>
-        </Table>
-
-      </form>
-    </FormProvider>
+              <SortableContext
+                items={categories}
+                strategy={verticalListSortingStrategy}
+              >
+                <TableBody>
+                  {categories.map((category) => (
+                    <CategoryRow key={category.id} category={category} />
+                  ))}
+                </TableBody>
+              </SortableContext>
+            </DndContext>
+          </Table>
+        </form>
+      </FormProvider>
       <AddCategoryModal open={open} onOpenChange={setOpen} />
     </>
   );
