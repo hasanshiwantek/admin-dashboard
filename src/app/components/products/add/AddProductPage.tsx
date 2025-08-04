@@ -25,9 +25,10 @@ import Customizations from "./Customizations";
 import { addProduct, updateProduct } from "@/redux/slices/productSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { useParams } from "next/navigation";
-
+import { useRouter } from "next/navigation";
 export default function AddProductPage() {
   const dispatch = useAppDispatch();
+  const router=useRouter()
   const methods = useForm({
     defaultValues: {
       price: "35",
@@ -57,7 +58,12 @@ export default function AddProductPage() {
 
       if ((isEdit ? updateProduct : addProduct).fulfilled.match(result)) {
         console.log("✅ Product Added:", result.payload);
-      } else {
+        setTimeout(()=>{
+          router.push("/manage/products")
+        },300)
+      }
+      
+      else {
         console.error("Product add failed:", result.error);
       }
     } catch (error) {

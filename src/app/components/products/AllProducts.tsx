@@ -627,7 +627,7 @@ export default function AllProducts() {
                         alt={product.name}
                         width={60}
                         height={60}
-                        className="rounded !border !border-gray-300 p-2 shrink-0"
+                        className="rounded !border object-contain !border-gray-300 p-2 shrink-0 w-28 h-24"
                       />
 
                       <span
@@ -640,7 +640,7 @@ export default function AllProducts() {
                         {product.name}
                       </span>
                     </TableCell>
-                    <TableCell className="relative  mx-4">
+                    <TableCell className="relative  mx-4 ">
                       <FeaturedToggle
                         productId={product.id}
                         isFeatured={
