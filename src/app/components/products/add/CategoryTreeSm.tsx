@@ -1,11 +1,12 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useFormContext, Controller } from "react-hook-form";
 import { Checkbox } from "@/components/ui/checkbox";
 import { productCategories } from "@/const/productCategories";
 import { PlusCircle, MinusCircle, Folder } from "lucide-react";
 import { Label } from "@/components/ui/label";
-
+import { fetchCategories } from "@/redux/slices/categorySlice";
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 type Category = {
   id: string;
   name: string;
@@ -15,12 +16,30 @@ type Category = {
 interface CategoryTreeProps {
   name: string;
 }
+const normalizeCategories = (data: any[]): Category[] => {
+  return data.map((item) => ({
+    id: item.id.toString(),
+    name: item.name,
+    children: item.subcategories ? normalizeCategories(item.subcategories) : [],
+  }));
+};
 
 export default function CategoryTreeSm({ name }: CategoryTreeProps) {
+  const dispatch = useAppDispatch();
+  const allCategories = useAppSelector(
+    (state: any) => state.category.categories
+  );
+  useEffect(() => {
+    dispatch(fetchCategories());
+  }, [dispatch]);
+
+
   const { control, setValue, getValues } = useFormContext();
   const [openMap, setOpenMap] = useState<Record<string, boolean>>({});
+  const categoriesDataRaw = allCategories?.data || [];
 
-  const categories = productCategories;
+
+  const categories: Category[] = normalizeCategories(categoriesDataRaw);
 
   const toggleCategory = (id: string) => {
     const selected = getValues(name) || [];
