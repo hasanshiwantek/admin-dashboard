@@ -28,7 +28,12 @@ import { useParams } from "next/navigation";
 
 export default function AddProductPage() {
   const dispatch = useAppDispatch();
-  const methods = useForm();
+  const methods = useForm({
+    defaultValues: {
+      price: "35",
+      dimensions: {weight: "0"},
+    }
+  });
   const { reset } = methods;
   const { id } = useParams();
   const allProducts = useAppSelector((state: any) => state.product.products)
