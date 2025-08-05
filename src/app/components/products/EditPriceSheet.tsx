@@ -48,7 +48,7 @@ const handleSubmit = async () => {
         body: {
           products: [
             {
-              id: product?.id,
+              id: [product?.id],
               fields: {
                 name: values?.name,
                 sku: values?.sku,
