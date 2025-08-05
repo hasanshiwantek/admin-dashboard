@@ -193,11 +193,6 @@ export const updateBrand = createAsyncThunk(
       const response = await axiosInstance.post(
         `dashboard/brands/update-brand/${id}`,
         formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
       );
 
       console.log("✅ Update Brand Response:", response.data);
@@ -209,7 +204,8 @@ export const updateBrand = createAsyncThunk(
   }
 );
 
-// UPDATE BRAND THUNK
+
+// DELETE BRAND THUNK
 export const deleteBrand = createAsyncThunk(
   "product/updateBrand",
   async ({ id }: { id: any }, thunkAPI) => {

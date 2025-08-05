@@ -21,18 +21,23 @@ import {
 import { cn } from "@/lib/utils";
 import { addCategory } from "@/redux/slices/categorySlice";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
+import CategoryDropdown from "./CategoryDropdown";
 export default function AddCategoryModal({
   open,
   onOpenChange,
+  categoryData,
 }: {
   open: boolean;
   onOpenChange: (value: boolean) => void;
+  categoryData: any;
 }) {
   const [name, setDisplayName] = useState("");
   const [channel, setChannel] = useState("ctspoint");
-  const [parentId, setParentCategory] = useState("");
+  const [parentId, setParentCategory] = useState<number | null>(null);
   const [isVisible, setVisibility] = useState(false);
   const [showError, setShowError] = useState(false);
+  console.log("Category Data from Modal: ", categoryData);
+
   const dispatch = useAppDispatch();
 
   const handleSave = async () => {
@@ -50,6 +55,9 @@ export default function AddCategoryModal({
       };
 
       await dispatch(addCategory({ data: payload })).unwrap(); // unwrap for error catching
+      setParentCategory(null);
+      console.log("Add Category Payload: ", payload);
+
       onOpenChange(false); // close modal on success
     } catch (error) {
       console.error("Failed to create category:", error);
@@ -59,7 +67,7 @@ export default function AddCategoryModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md p-10">
+      <DialogContent className="!max-w-[500px] p-10">
         <DialogHeader>
           <DialogTitle>Add new category</DialogTitle>
         </DialogHeader>
@@ -74,7 +82,7 @@ export default function AddCategoryModal({
               setDisplayName(e.target.value);
               setShowError(false);
             }}
-            className={cn(showError && "border-red-500")}
+            className={`${cn(showError && "border-red-500")} !max-w-full`}
           />
           {showError && (
             <p className="text-sm text-red-500">Enter category display name</p>
@@ -87,7 +95,7 @@ export default function AddCategoryModal({
             Channel <span className="!text-red-500">*</span>
           </Label>
           <Select value={channel} onValueChange={setChannel}>
-            <SelectTrigger>
+            <SelectTrigger className="!max-w-full">
               <SelectValue placeholder="Select channel" />
             </SelectTrigger>
             <SelectContent>
@@ -100,10 +108,15 @@ export default function AddCategoryModal({
         {/* Parent Category */}
         <div className="space-y-2">
           <Label>Parent category</Label>
-          <Input
-            placeholder="Start typing category name"
-            value={parentId}
-            onChange={(e) => setParentCategory(e.target.value)}
+          <CategoryDropdown
+            categoryData={categoryData}
+            value={{
+              id: parentId ? Number(parentId) : null,
+              path: "", // optional: use if you want to show prefilled path
+            }}
+            onChange={(val) => {
+              setParentCategory(val.id); // keep it as number
+            }}
           />
           <p className="text-sm text-muted-foreground">
             Leave empty to add to the root category

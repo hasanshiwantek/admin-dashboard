@@ -133,6 +133,7 @@ export default function EditStockSheet({ trigger, product }: any) {
                 </TableCell>
                 <TableCell className=" align-top">
                   <Input
+                    type="number"
                     className=" border border-gray-300"
                     value={values.currentStock}
                     onChange={(e) =>
@@ -143,6 +144,7 @@ export default function EditStockSheet({ trigger, product }: any) {
 
                 <TableCell className=" align-top">
                   <Input
+                    type="number"
                     className=" border border-gray-300"
                     value={values.lowStock}
                     onChange={(e) => handleChange("lowStock", e.target.value)}
@@ -159,6 +161,7 @@ export default function EditStockSheet({ trigger, product }: any) {
 
                 <TableCell className=" align-top">
                   <Input
+                    type="number"
                     className=" border border-gray-300"
                     value={values.safetyStock}
                     onChange={(e) =>
