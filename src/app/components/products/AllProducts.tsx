@@ -130,7 +130,7 @@ export default function AllProducts() {
             body: {
               products: [
                 {
-                  id: product?.id,
+                  id: [product?.id],
                   fields: {
                     isVisible: false,
                   },
@@ -154,7 +154,7 @@ export default function AllProducts() {
             body: {
               products: [
                 {
-                  id: product?.id,
+                  id: [product?.id],
                   fields: {
                     isVisible: true,
                   },
@@ -177,7 +177,7 @@ export default function AllProducts() {
             body: {
               products: [
                 {
-                  id: product?.id,
+                  id: [product?.id],
                   fields: {
                     isFeatured: true,
                   },
@@ -200,7 +200,7 @@ export default function AllProducts() {
             body: {
               products: [
                 {
-                  id: product?.id,
+                  id: [product?.id],
                   fields: {
                     isFeatured: false,
                   },
@@ -378,6 +378,14 @@ export default function AllProducts() {
     router.push("/manage/products/inventory");
   };
 
+  const handlebulkEdit = () => {
+    const selected = filteredProducts.filter((p: any) =>
+      selectedProductIds.includes(p.id)
+    );
+    dispatch(setSelectedProducts(selected));
+    router.push("/manage/products/bulk-edit");
+  };
+
   // PAGINATION LOGIC
   const pagination = allProducts?.pagination;
   console.log("Pagination: ", pagination);
@@ -473,10 +481,11 @@ export default function AllProducts() {
             <button
               key={tab}
               onClick={() => setSelectedTab(tab)}
-              className={`!text-2xl px-5 py-2 rounded  cursor-pointer transition hover:bg-blue-100 ${selectedTab === tab
+              className={`!text-2xl px-5 py-2 rounded  cursor-pointer transition hover:bg-blue-100 ${
+                selectedTab === tab
                   ? "bg-blue-100 border-blue-600 text-blue-600"
                   : " text-blue-600"
-                }`}
+              }`}
             >
               {tab}
             </button>
@@ -532,7 +541,12 @@ export default function AllProducts() {
             {selectedProductIds.length > 0 && (
               <div>
                 <button className="btn-outline-primary">Export</button>
-                <button className="btn-outline-primary">Bulk edit</button>
+                <button
+                  className="btn-outline-primary"
+                  onClick={handlebulkEdit}
+                >
+                  Bulk edit
+                </button>
                 <button
                   className="btn-outline-primary"
                   onClick={handleEditInventory}
@@ -646,7 +660,7 @@ export default function AllProducts() {
                         isFeatured={
                           featuredMap[product.id] ?? product.isFeatured
                         }
-                        onChange={(id, value) => {
+                        onChange={(id: any, value) => {
                           setFeaturedMap((prev) => ({ ...prev, [id]: value }));
 
                           dispatch(
@@ -654,7 +668,7 @@ export default function AllProducts() {
                               body: {
                                 products: [
                                   {
-                                    id,
+                                    id: [id],
                                     fields: {
                                       isFeatured: value,
                                       // categoryIds:[1]
@@ -722,7 +736,7 @@ export default function AllProducts() {
                               body: {
                                 products: [
                                   {
-                                    id,
+                                    id:[id],
                                     fields: {
                                       isVisible,
                                     },

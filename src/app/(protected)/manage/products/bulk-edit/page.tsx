@@ -15,21 +15,24 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { useRouter } from "next/navigation";
 import { updateProduct } from "@/redux/slices/productSlice";
 import { refetchProducts } from "@/lib/productUtils";
-
+import Link from "next/link";
 type Product = {
   id: number;
   name: string;
+  brand: string;
+  categories: string;
   sku: string;
+  "upc/ean": string;
+  defaultPrice: string;
   price: string;
-  adjustBy: string;
+  trackInventory: string;
   currentStock: string;
-  lowStock: string;
-  bpn: string;
-  safetyStock: string;
-  allowPurchase: boolean;
+  isVisible: boolean;
+  isFeatured: boolean;
+  freeShipping: any;
 };
 
-export default function EditInventoryPage() {
+export default function BulkEdit() {
   const selectedProducts = useAppSelector(
     (state) => state.product.selectedProducts
   );
@@ -54,15 +57,19 @@ export default function EditInventoryPage() {
   const prepareUpdatePayload = (products: Product[]) => {
     return {
       products: products.map((p) => ({
-        id: [p.id],
+        id: p.id,
         fields: {
           price: Number(p.price),
           currentStock: Number(p.currentStock),
-          lowStock: Number(p.lowStock),
-          safetyStock: Number(p.safetyStock),
-          allowPurchase: p.allowPurchase,
-          // bpn: p.bpn,
-          // adjustBy: Number(p.adjustBy), // optional: only if needed by backend
+          brand: p.brand,
+          categories: p.categories,
+          sku: p.sku,
+          "upc/ean": p["upc/ean"],
+          defaultPrice: p.defaultPrice,
+          trackInventory: p.trackInventory,
+          isVisible: p.isVisible,
+          isFeatured: p.isFeatured,
+          freeShipping: p.freeShipping,
         },
       })),
     };
@@ -89,21 +96,29 @@ export default function EditInventoryPage() {
   return (
     <>
       <div className="p-10 bg-muted min-h-screen">
-        <h1 className="mb-6">Edit Inventory</h1>
+        <h1 className="mb-6">
+          <Link href={"/manage/products"}>
+            <span>View Products</span>
+          </Link>
+          Bulk Edit
+        </h1>
 
         <div className="overflow-x-auto rounded-md border bg-white">
           <Table className="min-w-[1000px]">
             <TableHeader className="h-20">
               <TableRow>
                 <TableHead>Product name</TableHead>
+                <TableHead>Brand</TableHead>
+                <TableHead>Categories</TableHead>
                 <TableHead>SKU</TableHead>
-                <TableHead>Adjust by</TableHead>
-                <TableHead>Current stock</TableHead>
-                <TableHead>Low stock</TableHead>
-                <TableHead>Price</TableHead>
-                <TableHead>BPN</TableHead>
-                <TableHead>Safety stock</TableHead>
-                <TableHead>Availability</TableHead>
+                <TableHead>UPC/EAN</TableHead>
+                <TableHead>Default Price</TableHead>
+                <TableHead>Sale Price</TableHead>
+                <TableHead>Track Inventory</TableHead>
+                <TableHead>Current Stock</TableHead>
+                <TableHead>Visible</TableHead>
+                <TableHead>Featured</TableHead>
+                <TableHead>Free Shipping</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -112,15 +127,46 @@ export default function EditInventoryPage() {
                   <TableCell className="  !max-w-[500px]">
                     {product.name}
                   </TableCell>
-                  <TableCell>{product.sku}</TableCell>
+                  <TableCell>
+                    <Input
+                      type="text"
+                      className="w-50"
+                      value={product.brand}
+                      onChange={(e) =>
+                        handleChange(product.id, "brand", e.target.value)
+                      }
+                    />
+                  </TableCell>
 
                   <TableCell>
                     <Input
-                      type="number"
+                      type="text"
                       className="w-50"
-                      value={product.adjustBy}
+                      value={product.categories}
                       onChange={(e) =>
-                        handleChange(product.id, "adjustBy", e.target.value)
+                        handleChange(product.id, "categories", e.target.value)
+                      }
+                    />
+                  </TableCell>
+
+                  <TableCell>
+                    <Input
+                      type="text"
+                      className="w-50"
+                      value={product.sku}
+                      onChange={(e) =>
+                        handleChange(product.id, "sku", e.target.value)
+                      }
+                    />
+                  </TableCell>
+
+                  <TableCell>
+                    <Input
+                      type="text"
+                      className="w-50"
+                      value={product["upc/ean"]}
+                      onChange={(e) =>
+                        handleChange(product.id, "upc/ean", e.target.value)
                       }
                     />
                   </TableCell>
@@ -129,25 +175,9 @@ export default function EditInventoryPage() {
                     <Input
                       type="number"
                       className="w-50"
-                      value={product.currentStock}
+                      value={product.defaultPrice || ""}
                       onChange={(e) =>
-                        handleChange(product.id, "currentStock", e.target.value)
-                      }
-                    />
-                  </TableCell>
-
-                  <TableCell>
-                    <Input
-                      type="number"
-                      className="w-50"
-                      value={product.lowStock}
-                      onChange={(e) =>
-                        handleChange(
-                          product.id,
-                          "lowStock",
-
-                          e.target.value
-                        )
+                        handleChange(product.id, "defaultPrice", e.target.value)
                       }
                     />
                   </TableCell>
@@ -158,10 +188,20 @@ export default function EditInventoryPage() {
                       className="w-50"
                       value={product.price}
                       onChange={(e) =>
+                        handleChange(product.id, "price", e.target.value)
+                      }
+                    />
+                  </TableCell>
+
+                  <TableCell>
+                    <Input
+                      type="text"
+                      className="w-50"
+                      value={product.trackInventory}
+                      onChange={(e) =>
                         handleChange(
                           product.id,
-                          "price",
-
+                          "trackInventory",
                           e.target.value
                         )
                       }
@@ -172,29 +212,36 @@ export default function EditInventoryPage() {
                     <Input
                       type="text"
                       className="w-50"
-                      value={product.bpn}
+                      value={product.currentStock}
                       onChange={(e) =>
-                        handleChange(product.id, "bpn", e.target.value)
-                      }
-                    />
-                  </TableCell>
-
-                  <TableCell>
-                    <Input
-                      type="number"
-                      className="w-50"
-                      value={product.safetyStock}
-                      onChange={(e) =>
-                        handleChange(product.id, "safetyStock", e.target.value)
+                        handleChange(product.id, "currentStock", e.target.value)
                       }
                     />
                   </TableCell>
 
                   <TableCell>
                     <Checkbox
-                      checked={product.allowPurchase}
+                      checked={product.isFeatured}
                       onCheckedChange={(checked) =>
-                        handleChange(product.id, "allowPurchase", checked)
+                        handleChange(product.id, "isVisible", checked)
+                      }
+                    />
+                  </TableCell>
+
+                  <TableCell>
+                    <Checkbox
+                      checked={product.isFeatured}
+                      onCheckedChange={(checked) =>
+                        handleChange(product.id, "isFeatured", checked)
+                      }
+                    />
+                  </TableCell>
+
+                  <TableCell>
+                    <Checkbox
+                      checked={product.freeShipping}
+                      onCheckedChange={(checked) =>
+                        handleChange(product.id, "freeShipping", checked)
                       }
                     />
                   </TableCell>
