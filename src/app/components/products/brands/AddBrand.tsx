@@ -13,9 +13,11 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { HiQuestionMarkCircle } from "react-icons/hi2";
+import { useRouter } from "next/navigation";
 const AddBrand = () => {
   const [name, setName] = useState("");
   const dispatch = useAppDispatch();
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,7 +31,10 @@ const AddBrand = () => {
 
       if ((resultAction as any).meta.requestStatus === "fulfilled") {
         console.log("✅ Brand added successfully:", result);
-        setName("")
+        setName("");
+        setTimeout(() => {
+          router.push("/manage/products/brands");
+        }, 2000);
       } else {
         console.error("❌ Failed to add brand:", result);
       }
@@ -39,7 +44,7 @@ const AddBrand = () => {
   };
 
   return (
-    <div  >
+    <div>
       <div className="p-10 ">
         <div className="flex flex-col gap-6">
           <h1 className="!font-light">Add Brands</h1>

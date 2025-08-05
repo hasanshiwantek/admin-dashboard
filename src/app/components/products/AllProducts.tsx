@@ -268,8 +268,7 @@ export default function AllProducts() {
         setTimeout(() => {
           refetchProducts(dispatch);
         }, 200);
-        setSelectedProductIds([])
-
+        setSelectedProductIds([]);
       },
     },
     {
@@ -294,8 +293,7 @@ export default function AllProducts() {
         setTimeout(() => {
           refetchProducts(dispatch);
         }, 200);
-        setSelectedProductIds([])
-
+        setSelectedProductIds([]);
       },
     },
     {
@@ -319,8 +317,7 @@ export default function AllProducts() {
         setTimeout(() => {
           refetchProducts(dispatch);
         }, 200);
-        setSelectedProductIds([])
-
+        setSelectedProductIds([]);
       },
     },
     {
@@ -344,8 +341,7 @@ export default function AllProducts() {
         setTimeout(() => {
           refetchProducts(dispatch);
         }, 200);
-        setSelectedProductIds([])
-
+        setSelectedProductIds([]);
       },
     },
     {
@@ -356,8 +352,7 @@ export default function AllProducts() {
         setTimeout(() => {
           refetchProducts(dispatch);
         }, 400);
-        setSelectedProductIds([])
-        
+        setSelectedProductIds([]);
       },
     },
   ];
@@ -544,7 +539,7 @@ export default function AllProducts() {
                 }
               />
               <span className="text-gray-700 !text-xl">
-                {filteredProducts?.length} Products
+                {filteredProducts?.length} of {pagination?.total} Products
               </span>
             </div>
 
@@ -746,7 +741,7 @@ export default function AllProducts() {
                               body: {
                                 products: [
                                   {
-                                    id:[id],
+                                    id: [id],
                                     fields: {
                                       isVisible,
                                     },
