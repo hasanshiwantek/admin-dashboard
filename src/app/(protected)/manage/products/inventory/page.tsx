@@ -54,7 +54,7 @@ export default function EditInventoryPage() {
   const prepareUpdatePayload = (products: Product[]) => {
     return {
       products: products.map((p) => ({
-        id: p.id,
+        id: [p.id],
         fields: {
           price: Number(p.price),
           currentStock: Number(p.currentStock),

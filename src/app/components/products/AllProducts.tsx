@@ -130,7 +130,7 @@ export default function AllProducts() {
             body: {
               products: [
                 {
-                  id: product?.id,
+                  id: [product?.id],
                   fields: {
                     isVisible: false,
                   },
@@ -154,7 +154,7 @@ export default function AllProducts() {
             body: {
               products: [
                 {
-                  id: product?.id,
+                  id: [product?.id],
                   fields: {
                     isVisible: true,
                   },
@@ -177,7 +177,7 @@ export default function AllProducts() {
             body: {
               products: [
                 {
-                  id: product?.id,
+                  id: [product?.id],
                   fields: {
                     isFeatured: true,
                   },
@@ -200,7 +200,7 @@ export default function AllProducts() {
             body: {
               products: [
                 {
-                  id: product?.id,
+                  id: [product?.id],
                   fields: {
                     isFeatured: false,
                   },
@@ -660,7 +660,7 @@ export default function AllProducts() {
                         isFeatured={
                           featuredMap[product.id] ?? product.isFeatured
                         }
-                        onChange={(id, value) => {
+                        onChange={(id: any, value) => {
                           setFeaturedMap((prev) => ({ ...prev, [id]: value }));
 
                           dispatch(
@@ -668,7 +668,7 @@ export default function AllProducts() {
                               body: {
                                 products: [
                                   {
-                                    id,
+                                    id: [id],
                                     fields: {
                                       isFeatured: value,
                                       // categoryIds:[1]
@@ -736,7 +736,7 @@ export default function AllProducts() {
                               body: {
                                 products: [
                                   {
-                                    id,
+                                    id:[id],
                                     fields: {
                                       isVisible,
                                     },

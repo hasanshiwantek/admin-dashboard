@@ -51,7 +51,7 @@ export default function EditStockSheet({ trigger, product }: any) {
           body: {
             products: [
               {
-                id: product?.id,
+                id: [product?.id],
                 fields: {
                   name: values?.name,
                   sku: values?.sku,
