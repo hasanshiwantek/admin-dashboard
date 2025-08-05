@@ -15,6 +15,7 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  DragEndEvent
 } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -26,20 +27,19 @@ import { productCategories as initialCategories } from "@/const/productCategorie
 import { Plus } from "lucide-react";
 import AddCategoryModal from "./AddCategoryModal";
 import CategoryRow from "./CategoryRow";
-import { fetchCategories } from "@/redux/slices/categorySlice";
+import { fetchCategories, updateCategory } from "@/redux/slices/categorySlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 
 export default function ProductCategoriesPage() {
   const methods = useForm();
-  const disptach = useAppDispatch();
-  const allCategories = useAppSelector(
-    (state: any) => state.category.categories
-  );
+  const dispatch = useAppDispatch();
+  const allCategories = useAppSelector((state: any) => state.category.categories);
+  const categories = allCategories?.data || [];
   const { loading, error } = useAppSelector((state) => state.category);
 
-  console.log("All Categories fom frontend", allCategories);
+  console.log("All Categories fom frontend", categories);
 
-  const [categories, setCategories] = useState(initialCategories);
+  // const [categories, setCategories] = useState(initialCategories);
   const [activeId, setActiveId] = useState(null);
 
   const sensors = useSensors(
@@ -72,15 +72,59 @@ export default function ProductCategoriesPage() {
     return [null, tree];
   }
 
-  const handleDragEnd = (event: any) => {
-    const { active, over } = event;
-    if (active.id !== over?.id) {
-      const oldIndex = categories.findIndex((c) => c.id === active.id);
-      const newIndex = categories.findIndex((c) => c.id === over?.id);
-      setCategories(arrayMove(categories, oldIndex, newIndex));
+  const findCategoryById = (list: any[], id: number): any => {
+  for (const item of list) {
+    if (item.id === id) return item;
+    if (item.subcategories?.length) {
+      const found = findCategoryById(item.subcategories, id);
+      if (found) return found;
     }
-    setActiveId(null);
-  };
+  }
+  return null;
+};
+
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const {active, over } = event;
+
+    if (!active || !over || active.id === over.id) return;
+
+    const activeId = Number(active.id);
+    const overId = Number(over.id);
+    const dragged = findCategoryById(categories, activeId);
+    const droppedOn = findCategoryById(categories, overId);
+
+    if (!dragged || !droppedOn) return;
+
+    const newParentId = droppedOn.id;
+
+    try {
+    await dispatch(
+      updateCategory({
+        id: activeId,
+        data: {
+          name: dragged.name,
+          description: dragged.description,
+          parent_id: newParentId,
+        },
+      })
+    ).unwrap();
+
+    console.log(`Category "${dragged.name}" moved successfully.`);
+  } catch (error) {
+    console.error("Failed to move category.");
+  }
+  }
+
+  // const handleDragEnd = (event: any) => {
+  //   const { active, over } = event;
+  //   if (active.id !== over?.id) {
+  //     const oldIndex = categories.findIndex((c) => c.id === active.id);
+  //     const newIndex = categories.findIndex((c) => c.id === over?.id);
+  //     setCategories(arrayMove(categories, oldIndex, newIndex));
+  //   }
+  //   setActiveId(null);
+  // };
   
   // const handleDragEnd = (event: any) => {
   //   const {active, over} = event;
@@ -112,8 +156,8 @@ export default function ProductCategoriesPage() {
   };
 
   useEffect(() => {
-    disptach(fetchCategories());
-  }, [disptach]);
+    dispatch(fetchCategories());
+  }, [dispatch]);
 
   return (
     <>
@@ -161,7 +205,7 @@ export default function ProductCategoriesPage() {
                 strategy={verticalListSortingStrategy}
               >
                 <TableBody>
-                  {categories.map((category) => (
+                  {categories?.map((category: any) => (
                     <CategoryRow key={category.id} category={category} />
                   ))}
                 </TableBody>
