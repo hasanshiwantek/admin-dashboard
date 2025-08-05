@@ -84,21 +84,63 @@ export default function ProductCategoriesPage() {
 };
 
 
-  const handleDragEnd = async (event: DragEndEvent) => {
-    const {active, over } = event;
+//   const handleDragEnd = async (event: DragEndEvent) => {
+//     const {active, over } = event;
 
-    if (!active || !over || active.id === over.id) return;
+//     if (!active || !over || active.id === over.id) return;
 
-    const activeId = Number(active.id);
-    const overId = Number(over.id);
-    const dragged = findCategoryById(categories, activeId);
-    const droppedOn = findCategoryById(categories, overId);
+//     const activeId = Number(active.id);
+//     const overId = Number(over.id);
+//     const dragged = findCategoryById(categories, activeId);
+//     const droppedOn = findCategoryById(categories, overId);
 
-    if (!dragged || !droppedOn) return;
+//     if (!dragged || !droppedOn) return;
 
-    const newParentId = droppedOn.id;
+//     const newParentId = droppedOn.id;
+//     console.log("Dragged:", dragged);
+// console.log("DroppedOn:", droppedOn);
+// console.log("Dispatching update for ID:", activeId);
 
-    try {
+//     try {
+//     await dispatch(
+//       updateCategory({
+//         id: activeId,
+//         data: {
+//           name: dragged.name,
+//           description: dragged.description,
+//           parentId: newParentId,
+//         },
+//       })
+//     ).unwrap();
+
+//     console.log(`Category "${dragged.name}" moved successfully.`);
+//     await dispatch(fetchCategories())
+//   } catch (error) {
+//     console.error("Failed to move category.");
+//   }
+//   }
+
+const handleDragEnd = async (event: DragEndEvent) => {
+  const { active, over } = event;
+  if (!active || !over || active.id === over.id) return;
+
+  const activeId = Number(active.id);
+  const overId = Number(over.id);
+
+  const dragged = findCategoryById(categories, activeId);
+  const droppedOn = findCategoryById(categories, overId);
+
+  if (!dragged || !droppedOn) return;
+
+  const isDraggedParent = dragged.parent_id === null;
+  const isDroppedOnParent = droppedOn.parent_id === null;
+
+  // ❌ Disallow dragging a parent into another parent
+  if (isDraggedParent && !isDroppedOnParent) return;
+
+  const newParentId = isDraggedParent && isDroppedOnParent ? null : droppedOn.id;
+
+  try {
     await dispatch(
       updateCategory({
         id: activeId,
@@ -106,15 +148,18 @@ export default function ProductCategoriesPage() {
           name: dragged.name,
           description: dragged.description,
           parent_id: newParentId,
+          isVisible: dragged.is_visible === 1, // or adjust according to your data
         },
       })
     ).unwrap();
 
     console.log(`Category "${dragged.name}" moved successfully.`);
+    await dispatch(fetchCategories());
   } catch (error) {
     console.error("Failed to move category.");
   }
-  }
+};
+
 
   // const handleDragEnd = (event: any) => {
   //   const { active, over } = event;
