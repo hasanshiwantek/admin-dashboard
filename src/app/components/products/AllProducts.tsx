@@ -268,6 +268,8 @@ export default function AllProducts() {
         setTimeout(() => {
           refetchProducts(dispatch);
         }, 200);
+        setSelectedProductIds([])
+
       },
     },
     {
@@ -292,6 +294,8 @@ export default function AllProducts() {
         setTimeout(() => {
           refetchProducts(dispatch);
         }, 200);
+        setSelectedProductIds([])
+
       },
     },
     {
@@ -315,6 +319,8 @@ export default function AllProducts() {
         setTimeout(() => {
           refetchProducts(dispatch);
         }, 200);
+        setSelectedProductIds([])
+
       },
     },
     {
@@ -328,7 +334,7 @@ export default function AllProducts() {
                 {
                   id: selectedProductIds,
                   fields: {
-                    isFeatured: true,
+                    isFeatured: false,
                   },
                 },
               ],
@@ -338,6 +344,8 @@ export default function AllProducts() {
         setTimeout(() => {
           refetchProducts(dispatch);
         }, 200);
+        setSelectedProductIds([])
+
       },
     },
     {
@@ -348,6 +356,8 @@ export default function AllProducts() {
         setTimeout(() => {
           refetchProducts(dispatch);
         }, 400);
+        setSelectedProductIds([])
+        
       },
     },
   ];

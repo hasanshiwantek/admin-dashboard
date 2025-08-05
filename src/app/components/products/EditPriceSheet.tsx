@@ -41,36 +41,36 @@ export default function EditPriceSheet({ trigger, product }: any) {
     }));
   };
 
-const handleSubmit = async () => {
-  try {
-    const response = await dispatch(
-      updateProduct({
-        body: {
-          products: [
-            {
-              id: [product?.id],
-              fields: {
-                name: values?.name,
-                sku: values?.sku,
-                price: values?.price,
-                salePrice: values?.salePrice,
-                costPrice: values?.costPrice,
-                msrp: values?.msrp,
+  const handleSubmit = async () => {
+    try {
+      const response = await dispatch(
+        updateProduct({
+          body: {
+            products: [
+              {
+                id: [product?.id],
+                fields: {
+                  name: values?.name,
+                  sku: values?.sku,
+                  price: values?.price,
+                  salePrice: values?.salePrice,
+                  costPrice: values?.costPrice,
+                  msrp: values?.msrp,
+                },
               },
-            },
-          ],
-        },
-      })
-    ).unwrap(); // ✅ unwrap for error handling
+            ],
+          },
+        })
+      ).unwrap(); // ✅ unwrap for error handling
 
-    console.log("✅ Product updated:", response);
+      console.log("✅ Product updated:", response);
 
-    // Refetch products after successful update
-    await refetchProducts(dispatch);
-  } catch (err) {
-    console.error("❌ Error Updating:", err);
-  }
-};
+      // Refetch products after successful update
+      await refetchProducts(dispatch);
+    } catch (err) {
+      console.error("❌ Error Updating:", err);
+    }
+  };
 
   const handleSaveAndExit = () => {
     handleSubmit();
@@ -118,6 +118,7 @@ const handleSubmit = async () => {
                 </TableCell>
                 <TableCell className=" align-top">
                   <Input
+                    type="number"
                     className="border border-gray-300"
                     value={values.price}
                     onChange={(e) => handleChange("price", e.target.value)}
@@ -125,6 +126,7 @@ const handleSubmit = async () => {
                 </TableCell>
                 <TableCell className="align-top">
                   <Input
+                    type="number"
                     className="border border-gray-300"
                     value={values.salePrice}
                     onChange={(e) => handleChange("salePrice", e.target.value)}
@@ -132,6 +134,7 @@ const handleSubmit = async () => {
                 </TableCell>
                 <TableCell className="align-top">
                   <Input
+                    type="number"
                     className=" border border-gray-300"
                     value={values.costPrice}
                     onChange={(e) => handleChange("costPrice", e.target.value)}
@@ -139,6 +142,7 @@ const handleSubmit = async () => {
                 </TableCell>
                 <TableCell className="align-top">
                   <Input
+                    type="number"
                     className="border border-gray-300"
                     value={values.msrp}
                     onChange={(e) => handleChange("msrp", e.target.value)}
