@@ -105,7 +105,7 @@ const handleSubmit = async (e: React.FormEvent) => {
 
   // 🔍 Debug: Print FormData values
   console.log("🟡 SUBMITTING BRAND DATA:");
-  for (let [key, value] of formDataToSend.entries()) {
+  for (const [key, value] of formDataToSend.entries()) {
     if (value instanceof File) {
       console.log(`📁 ${key}:`, value.name, `(${value.type}, ${value.size} bytes)`);
     } else {
