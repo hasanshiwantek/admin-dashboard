@@ -34,14 +34,7 @@ export default function ImagePreviewList({
   //   console.log("🧹 Synced after delete:", updated);
   // };
   const syncForm = (updated: PreviewItem[]) => {
-  const cleaned = updated.map((p) => ({
-    ...p,
-    url: p.url.startsWith("blob:") ? p.url.replace("blob:", "") : p.url,
-  }));
-
-  setValue("image", cleaned, { shouldValidate: true });
-
-    setValue("image", cleaned, { shouldValidate: true });
+    setValue("image", updated, { shouldValidate: true });
     console.log("🧹 Synced after delete:", updated);
   };
 
@@ -105,13 +98,13 @@ export default function ImagePreviewList({
           <div className="col-span-2">
             {p.type === "video" ? (
               <video
-                src={p.url}
+                src={p.file ? URL.createObjectURL(p.file) : p.url}
                 controls
                 className="h-22 w-22 rounded border"
               />
             ) : (
               <Image
-                src={p.url}
+                src={p.file ? URL.createObjectURL(p.file) : p.url}
                 alt="preview"
                 width={88}
                 height={88}
@@ -120,6 +113,7 @@ export default function ImagePreviewList({
               />
             )}
           </div>
+
           <div className="col-span-7">
             <input
               type="text"

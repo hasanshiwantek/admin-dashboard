@@ -49,42 +49,37 @@ export default function ImageVideoUploader() {
   // };
 
 const syncFormState = (updatedPreviews: PreviewItem[]) => {
-  const cleaned = updatedPreviews.map((p) => ({
-    ...p,
-    url: p.url.startsWith("blob:") ? p.url.replace("blob:", "") : p.url,
-  }));
-
-  setValue("image", cleaned, { shouldValidate: true });
+  setValue("image", updatedPreviews, { shouldValidate: true });
 
   console.log("🟢 Synced to react-hook-form:");
-  console.log("  → image:", cleaned);
+  console.log("  → image[]:", updatedPreviews);
 };
 
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files) return;
+const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const files = e.target.files;
+  if (!files) return;
 
-    const newFiles = Array.from(files).filter(
-      (file) =>
-        !previews.some(
-          (p) => p.file?.name === file.name && p.file?.size === file.size
-        )
-    );
+  const newFiles = Array.from(files).filter(
+    (file) =>
+      !previews.some(
+        (p) => p.file?.name === file.name && p.file?.size === file.size
+      )
+  );
 
-    const newPreviews: PreviewItem[] = newFiles.map((file) => ({
-      file,
-      url: URL.createObjectURL(file),
-      description: "",
-      selected: false,
-      isThumbnail: false,
-      type: file.type.startsWith("video/") ? "video" : "image",
-    }));
+  const newPreviews: PreviewItem[] = newFiles.map((file) => ({
+    file,
+    url: "", // no need to store blob: URL
+    description: "",
+    selected: false,
+    isThumbnail: false,
+    type: file.type.startsWith("video/") ? "video" : "image",
+  }));
 
-    const updated = [...previews, ...newPreviews];
-    setPreviews(updated);
-    syncFormState(updated);
-  };
+  const updated = [...previews, ...newPreviews];
+  setPreviews(updated);
+  syncFormState(updated);  // ✅ call with full objects
+};
 
   // useEffect(() => {
   //   register("urlImages"); // Register it once

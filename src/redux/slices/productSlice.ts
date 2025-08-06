@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "@/lib/axiosInstance";
+import { headers } from "next/headers";
 
 // 1. Thunk with slight improvement
 export const fetchAllProducts = createAsyncThunk(
@@ -192,7 +193,7 @@ export const updateBrand = createAsyncThunk(
     try {
       const response = await axiosInstance.post(
         `dashboard/brands/update-brand/${id}`,
-        formData,
+        formData
       );
 
       console.log("✅ Update Brand Response:", response.data);
@@ -203,7 +204,6 @@ export const updateBrand = createAsyncThunk(
     }
   }
 );
-
 
 // DELETE BRAND THUNK
 export const deleteBrand = createAsyncThunk(
