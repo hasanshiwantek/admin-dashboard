@@ -22,7 +22,7 @@ import CustomsInformation from "./CustomsInformation";
 import RelatedProducts from "./RelatedProducts";
 import Variations from "./Variations";
 import Customizations from "./Customizations";
-import { addProduct, updateProduct } from "@/redux/slices/productSlice";
+import { addProduct } from "@/redux/slices/productSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
@@ -57,9 +57,7 @@ const onSubmit = methods.handleSubmit(async (data: Record<string, any>) => {
       description: img.description || "",
       isThumbnail: img.isThumbnail ? 1 : 0,
     }));
-
     const {id, ...rest} = data;
-
     const normalizedFields = {
       ...rest,
       image: imageData,
@@ -85,13 +83,13 @@ const onSubmit = methods.handleSubmit(async (data: Record<string, any>) => {
       ? await dispatch(updateProductFormData({ id: product.id, data: formData }))
       : await dispatch(addProduct({ data: formData }));
 
-    if ((isEdit ? updateProduct : addProduct).fulfilled.match(result)) {
+    if ((isEdit ? updateProductFormData : addProduct).fulfilled.match(result)) {
       router.push("/manage/products");
     } else {
-      console.error("❌ Product save failed:", result.error);
+      console.error("Product save failed:", result.error);
     }
   } catch (error) {
-    console.error("🔥 Unexpected error during save:", error);
+    console.error("Unexpected error during save:", error);
   }
 });
 
