@@ -26,8 +26,8 @@ export const updateCategory = createAsyncThunk(
   "categories/updateCategory",
   async ({ data, id }: { data: any; id: number }, thunkAPI) => {
     try {
-      const res = await axiosInstance.post(
-        `ashboard/categories/update-categories/${id}`,
+      const res = await axiosInstance.put(
+        `dashboard/categories/update-category/${id}`,
         data
       );
       console.log("✅ Update Category Response :", res.data);

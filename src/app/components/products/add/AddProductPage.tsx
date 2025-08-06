@@ -26,6 +26,7 @@ import { addProduct, updateProduct } from "@/redux/slices/productSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
+
 export default function AddProductPage() {
   const dispatch = useAppDispatch();
   const router=useRouter()
@@ -110,9 +111,7 @@ export default function AddProductPage() {
             <OpenGraph />
             <div className="flex justify-end  gap-10 items-center fixed w-full bottom-0 right-0  bg-white/90 z-10 shadow-xs border-t  p-4">
               <button className="btn-outline-primary" type="button">Cancel</button>
-              <button className="btn-primary" type="submit">
-                Save Product
-              </button>
+              <button className="btn-primary" type="submit"> Save Product </button>
             </div>
           </form>
         </FormProvider>
