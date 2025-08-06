@@ -111,7 +111,10 @@ export const addProduct = createAsyncThunk(
     try {
       const res = await axiosInstance.post(
         `dashboard/products/add-product`,
-        data
+        data,
+         {
+          headers: { "Content-Type": "multipart/form-data" }
+        }
       );
       console.log("✅ Add Product Response  From Thunk:", res.data);
       return res.data;
