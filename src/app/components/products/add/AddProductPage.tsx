@@ -27,6 +27,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import objectToFormData from "@/lib/formDataUtils";
+import { updateProductFormData } from "@/redux/slices/productSlice";
 
 export default function AddProductPage() {
   const dispatch = useAppDispatch();
@@ -48,52 +49,6 @@ export default function AddProductPage() {
     if (product) reset(product);
   }, [product, reset]);
 
-//   const onSubmit = methods.handleSubmit(async (data: Record<string, any>) => {
-//   try {
-//     const imageData = (data.image || []).map((img: any) => ({
-//       file: img.file || null,
-//       url: img.url || "",
-//       description: img.description || "",
-//       isThumbnail: img.isThumbnail ? 1 : 0,
-//     }));
-//     const formData = objectToFormData({
-//       ...data,
-//       image: imageData,
-//       fixedShippingCost: Number(data.fixedShippingCost || 0),
-//       dimensions: {
-//         width: Number(data.dimensions?.width || 0),
-//         height: Number(data.dimensions?.height || 0),
-//         depth: Number(data.dimensions?.depth || 0),
-//         weight: Number(data.dimensions?.weight || 0),
-//       },
-//       isFeatured: data.isFeatured ? 1 : 0,
-//       relatedProducts: data.relatedProducts ? 1 : 0,
-//       showCondition: data.showCondition ? 1 : 0,
-//       trackInventory: data.trackInventory ? 1 : 0,
-//       freeShipping: data.freeShipping ? 1 : 0,
-//     });
-//     for (const pair of formData.entries()) {
-//       console.log(`${pair[0]}:`, pair[1]);
-//     }
-//     const result = isEdit
-//       ? await dispatch(
-//           updateProduct({data: formData})
-//         )
-//       : await dispatch(addProduct({ data: formData }));
-//     if ((isEdit ? updateProduct : addProduct).fulfilled.match(result)) {
-//       formData.append("products[0][id]", product.id);
-//       console.log("✅ Product Added:", result.payload);
-//       setTimeout(() => {
-//         router.push("/manage/products");
-//       }, 300);
-//     } else {
-//       console.error("❌ Product add failed:", result.error);
-//     }
-//   } catch (error) {
-//     console.error("🔥 Unexpected error during add:", error);
-//   }
-// });
-
 const onSubmit = methods.handleSubmit(async (data: Record<string, any>) => {
   try {
     const imageData = (data.image || []).map((img: any) => ({
@@ -103,8 +58,10 @@ const onSubmit = methods.handleSubmit(async (data: Record<string, any>) => {
       isThumbnail: img.isThumbnail ? 1 : 0,
     }));
 
+    const {id, ...rest} = data;
+
     const normalizedFields = {
-      ...data,
+      ...rest,
       image: imageData,
       fixedShippingCost: Number(data.fixedShippingCost || 0),
       dimensions: {
@@ -118,19 +75,14 @@ const onSubmit = methods.handleSubmit(async (data: Record<string, any>) => {
       showCondition: data.showCondition ? 1 : 0,
       trackInventory: data.trackInventory ? 1 : 0,
       freeShipping: data.freeShipping ? 1 : 0,
+      isVisible: data.isVisible ? 1 : 0,
+      allowPurchase: data.allowPurchase ? 1 : 0,
+      stopProcessingRules: data.stopProcessingRules ? 1 : 0,
     };
-    const payload = {
-  products: [
-    isEdit
-      ? { id: product.id, fields: normalizedFields } // ✅ id here
-      : { ...normalizedFields }
-  ],
-};
+    const payload = normalizedFields
     const formData = objectToFormData(payload);
-    formData.append("products", "1");
-
     const result = isEdit
-      ? await dispatch(updateProduct({ data: formData }))
+      ? await dispatch(updateProductFormData({ id: product.id, data: formData }))
       : await dispatch(addProduct({ data: formData }));
 
     if ((isEdit ? updateProduct : addProduct).fulfilled.match(result)) {
@@ -142,7 +94,6 @@ const onSubmit = methods.handleSubmit(async (data: Record<string, any>) => {
     console.error("🔥 Unexpected error during save:", error);
   }
 });
-
 
   return (
     <div className="my-5">
