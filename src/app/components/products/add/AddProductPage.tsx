@@ -81,7 +81,6 @@ export default function AddProductPage() {
       description: img.description || "",
       isThumbnail: img.isThumbnail ? 1 : 0,
     }));
-
     const formData = objectToFormData({
       ...data,
       image: imageData,
@@ -92,18 +91,15 @@ export default function AddProductPage() {
         depth: Number(data.dimensions?.depth || 0),
         weight: Number(data.dimensions?.weight || 0),
       },
-
       isFeatured: data.isFeatured ? 1 : 0,
       relatedProducts: data.relatedProducts ? 1 : 0,
       showCondition: data.showCondition ? 1 : 0,
       trackInventory: data.trackInventory ? 1 : 0,
       freeShipping: data.freeShipping ? 1 : 0,
     });
-
     for (const pair of formData.entries()) {
       console.log(`${pair[0]}:`, pair[1]);
     }
-
     const result = isEdit
       ? await dispatch(
           updateProduct({
@@ -111,7 +107,6 @@ export default function AddProductPage() {
           })
         )
       : await dispatch(addProduct({ data: formData }));
-
     if ((isEdit ? updateProduct : addProduct).fulfilled.match(result)) {
       console.log("✅ Product Added:", result.payload);
       setTimeout(() => {
