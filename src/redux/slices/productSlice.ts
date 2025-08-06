@@ -45,11 +45,14 @@ export const searchAllProducts = createAsyncThunk(
 //PRODUCT UPDATION THUNK
 export const updateProduct = createAsyncThunk(
   "product/updateProduct",
-  async ({ body }: { body: any }, thunkAPI) => {
+  async ({ data }: { data: FormData }, thunkAPI) => {
     try {
       const res = await axiosInstance.put(
         `dashboard/products/update-product`,
-        body
+        data,
+        {
+          headers: {"Content-Type": "multipart/form-data"}
+        }
       );
       console.log("✅ Updation Product response from thunk:", res.data);
       return res.data;
