@@ -41,7 +41,7 @@ const CategoryRow = ({
   const [expanded, setExpanded] = useState(false);
   const dispatch = useAppDispatch();
   const { register } = useFormContext();
-  const hasChildren = category.children?.length;
+  const hasChildren = category.subcategories?.length;
     const [visibilityMap, setVisibilityMap] = useState<{
     [key: number]: "ENABLED" | "DISABLED";
   }>({});
@@ -152,10 +152,10 @@ const CategoryRow = ({
 
           {expanded && hasChildren && (
               <SortableContext
-                  items={category.children.map((child: any) => child.id)}
+                  items={category.subcategories.map((child: any) => child.id)}
                   strategy={verticalListSortingStrategy}
               >
-                  {category.children.map((child: any) => (
+                  {category.subcategories.map((child: any) => (
                       <CategoryRow key={child.id} category={child} level={level + 1} />
                   ))}
               </SortableContext>
