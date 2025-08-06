@@ -39,6 +39,7 @@ export default function ProductCategoriesPage() {
 
   console.log("All Categories fom frontend", categories);
 
+  const categoryData=allCategories?.data
   // const [categories, setCategories] = useState(initialCategories);
   const [activeId, setActiveId] = useState(null);
 
@@ -259,7 +260,7 @@ const handleDragEnd = async (event: DragEndEvent) => {
           </Table>
         </form>
       </FormProvider>
-      <AddCategoryModal open={open} onOpenChange={setOpen} />
+      <AddCategoryModal open={open} onOpenChange={setOpen} categoryData={categoryData}/>
     </>
   );
 }

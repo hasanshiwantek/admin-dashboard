@@ -5,7 +5,6 @@ import { UseFormSetValue } from "react-hook-form";
 import { PreviewItem } from "@/types/types";
 import Image from "next/image";
 
-
 type Props = {
   previews: PreviewItem[];
   setPreviews: React.Dispatch<React.SetStateAction<PreviewItem[]>>;
@@ -17,13 +16,12 @@ export default function ImagePreviewList({
   setPreviews,
   setValue,
 }: Props) {
-
   // const fileListFromArray = (files: File[]): FileList => {
   //   const dt = new DataTransfer();
   //   files.forEach((file) => dt.items.add(file));
   //   return dt.files;
   // };
-  
+
   // const syncForm = (updated: PreviewItem[]) => {
   //   setValue(
   //     "images",
@@ -35,10 +33,17 @@ export default function ImagePreviewList({
   //   );
   //   console.log("🧹 Synced after delete:", updated);
   // };
-const syncForm = (updated: PreviewItem[]) => {
-  setValue("image", updated, { shouldValidate: true });
-  console.log("🧹 Synced after delete:", updated);
-};
+  const syncForm = (updated: PreviewItem[]) => {
+  const cleaned = updated.map((p) => ({
+    ...p,
+    url: p.url.startsWith("blob:") ? p.url.replace("blob:", "") : p.url,
+  }));
+
+  setValue("image", cleaned, { shouldValidate: true });
+
+    setValue("image", cleaned, { shouldValidate: true });
+    console.log("🧹 Synced after delete:", updated);
+  };
 
   const handleDeleteSelected = () => {
     const updated = previews.filter((p) => !p.selected);
@@ -99,16 +104,20 @@ const syncForm = (updated: PreviewItem[]) => {
           </div>
           <div className="col-span-2">
             {p.type === "video" ? (
-              <video src={p.url} controls className="h-22 w-22 rounded border" />
+              <video
+                src={p.url}
+                controls
+                className="h-22 w-22 rounded border"
+              />
             ) : (
-                <Image
-                  src={p.url}
-                  alt="preview"
-                  width={88}
-                  height={88}
-                  unoptimized
-                  className="rounded border object-cover"
-                />
+              <Image
+                src={p.url}
+                alt="preview"
+                width={88}
+                height={88}
+                unoptimized
+                className="rounded border object-cover"
+              />
             )}
           </div>
           <div className="col-span-7">

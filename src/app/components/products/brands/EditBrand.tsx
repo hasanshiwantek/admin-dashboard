@@ -84,38 +84,56 @@ const EditBrand = () => {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-    const formDataToSend = new FormData();
-    formDataToSend.append("name", formData.name);
-    formDataToSend.append("pageTitle", formData.pageTitle);
-    formDataToSend.append("metaKeywords", formData.metaKeywords);
-    formDataToSend.append("metaDescription", formData.metaDescription);
-    formDataToSend.append("searchKeywords", formData.searchKeywords);
-    formDataToSend.append("brandURL", formData.brandURL);
-    formDataToSend.append("templateLayout", formData.templateLayout);
+  const formDataToSend = new FormData();
 
-    if (formData.logo) {
-      formDataToSend.append("logo", formData.logo);
+  // Append all form fields
+  formDataToSend.append("name", formData.name);
+  formDataToSend.append("pageTitle", formData.pageTitle);
+  formDataToSend.append("metaKeywords", formData.metaKeywords);
+  formDataToSend.append("metaDescription", formData.metaDescription);
+  formDataToSend.append("searchKeywords", formData.searchKeywords);
+  formDataToSend.append("brandURL", formData.brandURL);
+  formDataToSend.append("templateLayout", formData.templateLayout);
+
+  // Append logo if selected
+  if (formData.logo) {
+    formDataToSend.append("logo", formData.logo); // Change to "image" if backend expects that
+  }
+
+  // 🔍 Debug: Print FormData values
+  console.log("🟡 SUBMITTING BRAND DATA:");
+  for (const [key, value] of formDataToSend.entries()) {
+    if (value instanceof File) {
+      console.log(`📁 ${key}:`, value.name, `(${value.type}, ${value.size} bytes)`);
+    } else {
+      console.log(`🔤 ${key}:`, value);
     }
+  }
 
-    try {
-      const resultAction = await dispatch(
-        updateBrand({ id, formData: formDataToSend })
-      );
-      const result = (resultAction as any).payload;
+  try {
+    const resultAction = await dispatch(
+      updateBrand({ id, formData: formDataToSend })
+    );
 
-      if ((resultAction as any).meta.requestStatus === "fulfilled") {
-        console.log("✅ Brand updated successfully:", result);
-        router.push("/manage/products/brands");
-      } else {
-        console.error("❌ Failed to update brand:", result);
-      }
-    } catch (err) {
-      console.error("❌ Unexpected error:", err);
+    // 🔍 Debug response
+    console.log("🟢 DISPATCH RESULT:", resultAction);
+
+    const result = (resultAction as any).payload;
+
+    if ((resultAction as any).meta.requestStatus === "fulfilled") {
+      console.log("✅ Brand updated successfully:", result);
+      router.push("/manage/products/brands");
+    } else {
+      console.error("❌ Failed to update brand:", result);
+      alert(result?.message || "Brand update failed.");
     }
-  };
+  } catch (err) {
+    console.error("❌ Unexpected error during update:", err);
+  }
+};
 
   const formField = (
     label: string,

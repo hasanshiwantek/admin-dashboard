@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-import { useFormContext,UseFormSetValue } from "react-hook-form";
+import { useFormContext, UseFormSetValue } from "react-hook-form";
 import { ImageIcon, UploadCloudIcon, PlusIcon } from "lucide-react";
 import ImagePreviewList from "./ImagePreviewList";
 import AddFromUrlModal from "./AddFromUrlModal";
@@ -48,12 +48,18 @@ export default function ImageVideoUploader() {
   //   console.log("  → URLs :", urlPreviews.map((p) => p.url));
   // };
 
-  const syncFormState = (updatedPreviews: PreviewItem[]) => {
-    setValue("image", updatedPreviews, { shouldValidate: true });
+const syncFormState = (updatedPreviews: PreviewItem[]) => {
+  const cleaned = updatedPreviews.map((p) => ({
+    ...p,
+    url: p.url.startsWith("blob:") ? p.url.replace("blob:", "") : p.url,
+  }));
 
-    console.log("🟢 Synced to react-hook-form:");
-    console.log("  → image:", updatedPreviews);
-  };
+  setValue("image", cleaned, { shouldValidate: true });
+
+  console.log("🟢 Synced to react-hook-form:");
+  console.log("  → image:", cleaned);
+};
+
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -90,14 +96,13 @@ export default function ImageVideoUploader() {
     syncFormState(updated);
   };
 
-useEffect(() => {
-  return () => {
-    previews.forEach((p) => {
-      if (p.file) URL.revokeObjectURL(p.url); // ✅ only revoke object URLs
-    });
-  };
-}, []);
-
+  useEffect(() => {
+    return () => {
+      previews.forEach((p) => {
+        if (p.file) URL.revokeObjectURL(p.url); // ✅ only revoke object URLs
+      });
+    };
+  }, []);
 
   return (
     <div className="p-10 shadow-lg bg-white rounded-md" id="images">
@@ -148,7 +153,11 @@ useEffect(() => {
       </div>
 
       {previews.length > 0 && (
-        <ImagePreviewList previews={previews} setPreviews={setPreviews} setValue={setValue} />
+        <ImagePreviewList
+          previews={previews}
+          setPreviews={setPreviews}
+          setValue={setValue}
+        />
       )}
 
       <div className="mt-8">

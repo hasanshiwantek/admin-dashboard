@@ -15,12 +15,14 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { useRouter } from "next/navigation";
 import { updateProduct } from "@/redux/slices/productSlice";
 import { refetchProducts } from "@/lib/productUtils";
+import CategoryDropdown from "@/app/components/products/categories/CategoryDropdown";
+import CategoryModal from "@/app/components/products/categories/CategoryModal";
 import Link from "next/link";
 type Product = {
   id: number;
   name: string;
-  brand: string;
-  categories: string;
+  brand: any;
+  categories: any;
   sku: string;
   "upc/ean": string;
   defaultPrice: string;
@@ -38,6 +40,10 @@ export default function BulkEdit() {
   );
   const dispatch = useAppDispatch();
   console.log("Edited Seledcted Products From Redux: ", selectedProducts);
+  const [categoryModal, setCategoryModal] = useState<{
+    open: boolean;
+    productId: number | null;
+  }>({ open: false, productId: null });
 
   const [products, setProducts] = useState<Product[]>([]);
   const router = useRouter();
@@ -57,12 +63,15 @@ export default function BulkEdit() {
   const prepareUpdatePayload = (products: Product[]) => {
     return {
       products: products.map((p) => ({
-        id: p.id,
+        id: [p.id],
         fields: {
+          name: p.name,
           price: Number(p.price),
           currentStock: Number(p.currentStock),
           brand: p.brand,
-          categories: p.categories,
+          categories: Array.isArray(p.categories)
+            ? p.categories.map((cat: any) => Number(cat.id))
+            : [],
           sku: p.sku,
           "upc/ean": p["upc/ean"],
           defaultPrice: p.defaultPrice,
@@ -96,9 +105,9 @@ export default function BulkEdit() {
   return (
     <>
       <div className="p-10 bg-muted min-h-screen">
-        <h1 className="mb-6">
+        <h1 className="mb-6 !font-light p-6">
           <Link href={"/manage/products"}>
-            <span>View Products</span>
+            <span className="!mx-5 !text-3xl">View Products /</span>
           </Link>
           Bulk Edit
         </h1>
@@ -125,13 +134,20 @@ export default function BulkEdit() {
               {products.map((product) => (
                 <TableRow key={product.id}>
                   <TableCell className="  !max-w-[500px]">
-                    {product.name}
+                    <Input
+                      type="text"
+                      className="w-96"
+                      value={product.name}
+                      onChange={(e) =>
+                        handleChange(product.id, "name", e.target.value)
+                      }
+                    />
                   </TableCell>
                   <TableCell>
                     <Input
                       type="text"
                       className="w-50"
-                      value={product.brand}
+                      value={product.brand?.name}
                       onChange={(e) =>
                         handleChange(product.id, "brand", e.target.value)
                       }
@@ -139,14 +155,26 @@ export default function BulkEdit() {
                   </TableCell>
 
                   <TableCell>
-                    <Input
-                      type="text"
-                      className="w-50"
-                      value={product.categories}
-                      onChange={(e) =>
-                        handleChange(product.id, "categories", e.target.value)
-                      }
-                    />
+                    <div className="flex items-center gap-2">
+                      <span className="truncate max-w-[150px]">
+                        {Array.isArray(product.categories)
+                          ? product.categories
+                              .map((c: any) => c.name)
+                              .join(", ")
+                          : ""}
+                      </span>
+                      <button
+                        className="text-blue-600 !text-xl underline"
+                        onClick={() =>
+                          setCategoryModal({
+                            open: true,
+                            productId: product.id,
+                          })
+                        }
+                      >
+                        Edit
+                      </button>
+                    </div>
                   </TableCell>
 
                   <TableCell>
@@ -194,16 +222,10 @@ export default function BulkEdit() {
                   </TableCell>
 
                   <TableCell>
-                    <Input
-                      type="text"
-                      className="w-50"
+                    <Checkbox
                       value={product.trackInventory}
-                      onChange={(e) =>
-                        handleChange(
-                          product.id,
-                          "trackInventory",
-                          e.target.value
-                        )
+                      onCheckedChange={(checked) =>
+                        handleChange(product.id, "trackInventory", checked)
                       }
                     />
                   </TableCell>
@@ -221,7 +243,7 @@ export default function BulkEdit() {
 
                   <TableCell>
                     <Checkbox
-                      checked={product.isFeatured}
+                      checked={product.isVisible}
                       onCheckedChange={(checked) =>
                         handleChange(product.id, "isVisible", checked)
                       }
@@ -260,6 +282,24 @@ export default function BulkEdit() {
           Save and exit
         </button>
       </div>
+      {categoryModal.open && (
+        <CategoryModal
+          open={categoryModal.open}
+          onClose={() => setCategoryModal({ open: false, productId: null })}
+          defaultSelectedIds={
+            products
+              .find((p) => p.id === categoryModal.productId)
+              ?.categories?.map((c: any) => c.id.toString()) || []
+          }
+          onApply={(selectedIds) => {
+            const selectedCats = selectedIds.map((id) => ({
+              id,
+              name: "", // Optional – populate from category list if needed
+            }));
+            handleChange(categoryModal.productId!, "categories", selectedCats);
+          }}
+        />
+      )}
     </>
   );
 }
