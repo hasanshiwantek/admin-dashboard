@@ -69,6 +69,13 @@ export default function AddProductPage() {
     if (product) reset(product);
   }, [product, reset]);
 
+  useEffect(() => {
+    if (!id) {
+      setProduct(undefined); // Clear previous product state
+      reset(); // Reset the form to empty/default values
+    }
+  }, [id, reset]);
+
   const onSubmit = methods.handleSubmit(async (data: Record<string, any>) => {
     try {
       const imageData = (data.image || []).map((img: any) => ({
