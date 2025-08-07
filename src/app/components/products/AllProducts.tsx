@@ -689,10 +689,12 @@ export default function AllProducts() {
                     </TableCell>
 
                     <TableCell>{product.sku}</TableCell>
-
                     <TableCell className="whitespace-normal break-words leading-snug max-w-[300px]">
-                      {product.categories.map((cat: any) => cat.name)}
+                      {product?.categories?.find(
+                        (cat: any) => cat.name !== "Uncategorized"
+                      )?.name || "-"}
                     </TableCell>
+
                     <TableCell>
                       <EditStockSheet
                         product={product}

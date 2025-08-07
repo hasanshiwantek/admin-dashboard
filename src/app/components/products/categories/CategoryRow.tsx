@@ -2,22 +2,18 @@
 
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
-import {
-  TableCell,
-  TableRow,
-} from "@/components/ui/table";
+import { TableCell, TableRow } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { 
-  Folder, 
-  ChevronRight, 
-  ChevronDown 
-} from "lucide-react";
+import { Folder, ChevronRight, ChevronDown } from "lucide-react";
 import OrderActionsDropdown from "../../orders/OrderActionsDropdown";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import VisibilityToggle from "../../dropdowns/VisibilityToggle";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { updateCategory } from "@/redux/slices/categorySlice";
@@ -29,60 +25,61 @@ const CategoryRow = ({
   category: any;
   level?: number;
 }) => {
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({
+      id: category.id,
+    });
 
-    const {attributes, listeners, setNodeRef, transform, transition } = useSortable({
-        id: category.id,
-    })
-
-    const style = {
-        transform: CSS.Transform.toString(transform), transition,
-    }
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
 
   const [expanded, setExpanded] = useState(false);
   const dispatch = useAppDispatch();
   const { register } = useFormContext();
   const hasChildren = category.subcategories?.length;
-    const [visibilityMap, setVisibilityMap] = useState<{
+  const [visibilityMap, setVisibilityMap] = useState<{
     [key: number]: "ENABLED" | "DISABLED";
   }>({});
 
   const editdropdownActions = [
-      {
-        label: "Edit",
-      },
-      {
-        label: "Create sub-category",
-      },
-      {
-        label: "Disable visibility",
-      },
-      {
-        label: "View products",
-      },
-      {
-        label: "View in page builder",
-      },
-      {
-        label: "Manage product filters",
-      },
-      {
-        label: "View on storefront",
-      },
-      {
-        label: "Delete",
-      },
-    ];
+    {
+      label: "Edit",
+    },
+    {
+      label: "Create sub-category",
+    },
+    {
+      label: "Disable visibility",
+    },
+    {
+      label: "View products",
+    },
+    {
+      label: "View in page builder",
+    },
+    {
+      label: "Manage product filters",
+    },
+    {
+      label: "View on storefront",
+    },
+    {
+      label: "Delete",
+    },
+  ];
 
   return (
     <>
       <TableRow
-       ref={setNodeRef}
+        ref={setNodeRef}
         style={style}
         {...attributes}
-        {...listeners} 
-      className="group cursor-move bg-white my-8"
+        {...listeners}
+        className="group cursor-move bg-white my-8"
       >
-          <TableCell className="w-[30px]">
+        <TableCell className="w-[30px]">
           <Checkbox
             className="-mt-10"
             id={category.id}
@@ -111,7 +108,7 @@ const CategoryRow = ({
         </TableCell>
         <TableCell className="text-center text-xl">0</TableCell>
         <TableCell className="text-center text-xl">0</TableCell>
-          <TableCell className="relative hover:bg-blue-100 transition-all  ">
+        <TableCell className="relative hover:bg-blue-100 transition-all  ">
           <VisibilityToggle
             productId={category.id}
             value={
@@ -125,10 +122,15 @@ const CategoryRow = ({
                 ...prev,
                 [id]: isVisible,
               }));
+              const name = category?.name;
+              const payload = {
+                name,
+                isVisible,
+              };
               dispatch(
                 updateCategory({
                   id,
-                  data: { isVisible },
+                  data: payload,
                 })
               );
             }}
@@ -147,19 +149,19 @@ const CategoryRow = ({
               </Button>
             }
           />
-              </TableCell>
-          </TableRow>
+        </TableCell>
+      </TableRow>
 
-          {expanded && hasChildren && (
-              <SortableContext
-                  items={category.subcategories.map((child: any) => child.id)}
-                  strategy={verticalListSortingStrategy}
-              >
-                  {category.subcategories.map((child: any) => (
-                      <CategoryRow key={child.id} category={child} level={level + 1} />
-                  ))}
-              </SortableContext>
-          )}
+      {expanded && hasChildren && (
+        <SortableContext
+          items={category.subcategories.map((child: any) => child.id)}
+          strategy={verticalListSortingStrategy}
+        >
+          {category.subcategories.map((child: any) => (
+            <CategoryRow key={child.id} category={child} level={level + 1} />
+          ))}
+        </SortableContext>
+      )}
     </>
   );
 };
