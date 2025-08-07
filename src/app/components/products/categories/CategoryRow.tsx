@@ -122,8 +122,8 @@ const CategoryRow = ({
                 ...prev,
                 [id]: isVisible,
               }));
-              let name = category?.name;
-              let payload = {
+              const name = category?.name;
+              const payload = {
                 name,
                 isVisible,
               };
