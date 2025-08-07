@@ -24,6 +24,22 @@ export const fetchAllProducts = createAsyncThunk(
   }
 );
 
+export const fetchSingleProduct = createAsyncThunk(
+  "product/fetchSingleProduct",
+  async ({ id }: { id: any }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.get(`dashboard/products/product/${id}`);
+      console.log("✅ Product Response Data By Id:", res.data);
+      return res.data;
+    } catch (err: any) {
+      console.error("❌ Error in fetching:", err);
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to fetch product"
+      );
+    }
+  }
+);
+
 //QUERY SEARCH
 export const searchAllProducts = createAsyncThunk(
   "product/searchAllProducts",
@@ -43,7 +59,7 @@ export const searchAllProducts = createAsyncThunk(
   }
 );
 
-//PRODUCT UPDATION THUNK
+
 export const updateProduct = createAsyncThunk(
   "product/updateProduct",
   async ({ body }: { body: any }, thunkAPI) => {
@@ -51,6 +67,29 @@ export const updateProduct = createAsyncThunk(
       const res = await axiosInstance.put(
         `dashboard/products/update-product`,
         body
+      );
+      console.log("✅ Updation Product response from thunk:", res.data);
+      return res.data;
+    } catch (err: any) {
+      console.error("❌ Error Updating Product:", err);
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to update products"
+      );
+    }
+  }
+);
+
+//PRODUCT UPDATION THUNK
+export const updateProductFormData = createAsyncThunk(
+  "product/updateProductFormData",
+  async ({id,formData}:{id:number,formData:FormData}, thunkAPI) => {
+    try {
+      const res = await axiosInstance.post(
+        `dashboard/products/update-single-product/${id}`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
       );
       console.log("✅ Updation Product response from thunk:", res.data);
       return res.data;
@@ -113,8 +152,8 @@ export const addProduct = createAsyncThunk(
       const res = await axiosInstance.post(
         `dashboard/products/add-product`,
         data,
-         {
-          headers: { "Content-Type": "multipart/form-data" }
+        {
+          headers: { "Content-Type": "multipart/form-data" },
         }
       );
       console.log("✅ Add Product Response  From Thunk:", res.data);
@@ -272,6 +311,7 @@ export const exportCsv = createAsyncThunk(
 // 2. Initial State
 const initialState = {
   products: [],
+  singleProduct: [],
   brands: [],
   loading: false,
   error: null as string | null,
@@ -301,6 +341,19 @@ const productSlice = createSlice({
         state.products = action.payload;
       })
       .addCase(fetchAllProducts.rejected, (state, action) => {
+        state.loading = false;
+        state.error =
+          (action.payload as string) || action.error.message || "Failed";
+      })
+      .addCase(fetchSingleProduct.pending, (state) => {
+        state.loading = true;
+        state.error = null; // reset error
+      })
+      .addCase(fetchSingleProduct.fulfilled, (state, action) => {
+        state.loading = false;
+        state.singleProduct = action.payload;
+      })
+      .addCase(fetchSingleProduct.rejected, (state, action) => {
         state.loading = false;
         state.error =
           (action.payload as string) || action.error.message || "Failed";
