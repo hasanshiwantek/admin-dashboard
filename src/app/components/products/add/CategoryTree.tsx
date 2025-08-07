@@ -6,7 +6,7 @@ import { PlusCircle, MinusCircle, Folder } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { fetchCategories } from "@/redux/slices/categorySlice";
-import { toggleCategoryHelper } from "@/lib/toggleCategoryHelper";
+
 type Category = {
   id: number;
   name: string;
@@ -25,20 +25,6 @@ const normalizeCategories = (data: any[]): Category[] => {
     children: item.subcategories ? normalizeCategories(item.subcategories) : [],
   }));
 };
-const findParentId = (
-  childId: number,
-  categories: Category[]
-): number | undefined => {
-  for (const category of categories) {
-    if (category.children?.some((c) => c.id === childId)) {
-      return category.id;
-    }
-    const nested =
-      category.children && findParentId(childId, category.children);
-    if (nested) return nested;
-  }
-  return undefined;
-};
 
 export default function CategoryTree({ name }: CategoryTreeProps) {
   const dispatch = useAppDispatch();
@@ -56,18 +42,16 @@ export default function CategoryTree({ name }: CategoryTreeProps) {
 
   const categories: Category[] = normalizeCategories(categoriesDataRaw);
 
-  const toggleCategory = (id: number, isParent: boolean, parentId?: number) => {
+  const toggleCategory = (id: number) => {
     const selected = getValues(name) || [];
-
-    const newSelected = toggleCategoryHelper({
-      selected,
-      id,
-      isParent,
-      parentId,
-      categories,
-    });
-
-    setValue(name, newSelected);
+    if (selected.includes(id)) {
+      setValue(
+        name,
+        selected.filter((cid: number) => cid !== id)
+      );
+    } else {
+      setValue(name, [...selected, id]);
+    }
   };
 
   const toggleOpen = (id: number) => {
@@ -108,20 +92,11 @@ export default function CategoryTree({ name }: CategoryTreeProps) {
             </span>
             <div className="relative w-6 h-6 flex items-center justify-center">
               <Checkbox
-                id={category.id.toString()}
+                id={category.id.toString()} // ✅ convert number to string
                 checked={selected.includes(category.id)}
-                onCheckedChange={() =>
-                  toggleCategory(
-                    category.id,
-                    !category.children?.length, // isParent: false if has children
-                    level > 0
-                      ? findParentId(category.id, categories)
-                      : undefined
-                  )
-                }
+                onCheckedChange={() => toggleCategory(category.id)}
                 className="rounded border-gray-300 z-10"
               />
-
               <div className="absolute left-full top-1/2 -translate-y-1/2 w-6 h-px bg-indigo-300" />
             </div>
             <Folder
@@ -160,3 +135,7 @@ export default function CategoryTree({ name }: CategoryTreeProps) {
     />
   );
 }
+
+
+
+
