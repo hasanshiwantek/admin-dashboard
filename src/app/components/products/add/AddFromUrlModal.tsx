@@ -102,7 +102,7 @@ export default function AddFromUrlModal({
             onClick={() => {
               addUrlPreview({
                 file: null,
-                url,
+                path: url,
                 description: "",
                 selected: false,
                 isThumbnail: false,

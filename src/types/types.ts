@@ -1,6 +1,6 @@
 export type PreviewItem = {
   file: File | null;
-  url: string;
+  path: string | File;
   description: string;
   selected: boolean;
   isThumbnail: boolean;

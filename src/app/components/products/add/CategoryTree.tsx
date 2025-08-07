@@ -8,7 +8,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { fetchCategories } from "@/redux/slices/categorySlice";
 
 type Category = {
-  id: string;
+  id: number;
   name: string;
   children?: Category[];
 };
@@ -20,7 +20,7 @@ interface CategoryTreeProps {
 // Convert API `subcategories` to `children` recursively
 const normalizeCategories = (data: any[]): Category[] => {
   return data.map((item) => ({
-    id: item.id.toString(),
+    id: Number(item.id),
     name: item.name,
     children: item.subcategories ? normalizeCategories(item.subcategories) : [],
   }));
@@ -28,7 +28,9 @@ const normalizeCategories = (data: any[]): Category[] => {
 
 export default function CategoryTree({ name }: CategoryTreeProps) {
   const dispatch = useAppDispatch();
-  const allCategories = useAppSelector((state: any) => state.category.categories);
+  const allCategories = useAppSelector(
+    (state: any) => state.category.categories
+  );
   const categoriesDataRaw = allCategories?.data || [];
 
   useEffect(() => {
@@ -40,19 +42,19 @@ export default function CategoryTree({ name }: CategoryTreeProps) {
 
   const categories: Category[] = normalizeCategories(categoriesDataRaw);
 
-  const toggleCategory = (id: string) => {
+  const toggleCategory = (id: number) => {
     const selected = getValues(name) || [];
     if (selected.includes(id)) {
       setValue(
         name,
-        selected.filter((cid: string) => cid !== id)
+        selected.filter((cid: number) => cid !== id)
       );
     } else {
       setValue(name, [...selected, id]);
     }
   };
 
-  const toggleOpen = (id: string) => {
+  const toggleOpen = (id: number) => {
     setOpenMap((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
@@ -67,7 +69,10 @@ export default function CategoryTree({ name }: CategoryTreeProps) {
             className="absolute border-l border-dotted border-indigo-300 h-full"
             style={{ left: `${level * 20 + 8}px` }}
           />
-          <div style={{ paddingLeft: `${level * 20}px` }} className="flex items-center gap-3 relative z-10">
+          <div
+            style={{ paddingLeft: `${level * 20}px` }}
+            className="flex items-center gap-3 relative z-10"
+          >
             <span className="w-6 flex justify-center">
               {category.children?.length ? (
                 <button
@@ -87,7 +92,7 @@ export default function CategoryTree({ name }: CategoryTreeProps) {
             </span>
             <div className="relative w-6 h-6 flex items-center justify-center">
               <Checkbox
-                id={category.id}
+                id={category.id.toString()} // ✅ convert number to string
                 checked={selected.includes(category.id)}
                 onCheckedChange={() => toggleCategory(category.id)}
                 className="rounded border-gray-300 z-10"
@@ -99,7 +104,10 @@ export default function CategoryTree({ name }: CategoryTreeProps) {
               fill="lightblue"
               strokeWidth={2}
             />
-            <Label htmlFor={category.id} className="text-gray-500 text-2xl font-light">
+            <Label
+              htmlFor={category.id.toString()} // ✅ match string id
+              className="text-gray-500 text-2xl font-light"
+            >
               {category.name}
             </Label>
           </div>
@@ -127,3 +135,17 @@ export default function CategoryTree({ name }: CategoryTreeProps) {
     />
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

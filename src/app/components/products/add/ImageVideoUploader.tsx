@@ -14,13 +14,37 @@ import { PreviewItem } from "@/types/types";
 //   isThumbnail: boolean;
 // };
 
-export default function ImageVideoUploader() {
+type Props = {
+  initialImages?: any[]; // image[] from backend
+};
+
+export default function ImageVideoUploader({ initialImages }: Props) {
   const { register, setValue } = useFormContext();
   const inputRef = useRef<HTMLInputElement>(null);
   // const imageRegister = register("image");
   const [previews, setPreviews] = useState<PreviewItem[]>([]);
   const [urlImages, setUrlImages] = useState<string[]>([]);
   const [isUrlModalOpen, setIsUrlModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (initialImages && initialImages.length > 0) {
+      const initialPreviews: PreviewItem[] = initialImages.map((img) => ({
+        file: null,
+        path: img.path, // full image URL
+        description: img.altText || "",
+        selected: false,
+        isThumbnail: img.isPrimary === 1,
+        type:
+          img.path.includes(".mp4") || img.path.includes("video")
+            ? "video"
+            : "image",
+      }));
+      setPreviews(initialPreviews);
+      syncFormState(initialPreviews); // ensures react-hook-form gets it too
+    }
+  }, [initialImages]);
+
+  console.log("Image Previews", previews);
 
   const handleUploadClick = () => {
     inputRef.current?.click();
@@ -48,38 +72,37 @@ export default function ImageVideoUploader() {
   //   console.log("  → URLs :", urlPreviews.map((p) => p.url));
   // };
 
-const syncFormState = (updatedPreviews: PreviewItem[]) => {
-  setValue("image", updatedPreviews, { shouldValidate: true });
+  const syncFormState = (updatedPreviews: PreviewItem[]) => {
+    setValue("image", updatedPreviews, { shouldValidate: true });
 
-  console.log("🟢 Synced to react-hook-form:");
-  console.log("  → image[]:", updatedPreviews);
-};
+    console.log("🟢 Synced to react-hook-form:");
+    console.log("  → image[]:", updatedPreviews);
+  };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
 
-const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const files = e.target.files;
-  if (!files) return;
+    const newFiles = Array.from(files).filter(
+      (file) =>
+        !previews.some(
+          (p) => p.file?.name === file.name && p.file?.size === file.size
+        )
+    );
 
-  const newFiles = Array.from(files).filter(
-    (file) =>
-      !previews.some(
-        (p) => p.file?.name === file.name && p.file?.size === file.size
-      )
-  );
+    const newPreviews: PreviewItem[] = newFiles.map((file) => ({
+      file,
+      path: file, // ✅ FIX: this makes preview work
+      description: "",
+      selected: false,
+      isThumbnail: false,
+      type: file.type.startsWith("video/") ? "video" : "image",
+    }));
 
-  const newPreviews: PreviewItem[] = newFiles.map((file) => ({
-    file,
-    url: "", // no need to store blob: URL
-    description: "",
-    selected: false,
-    isThumbnail: false,
-    type: file.type.startsWith("video/") ? "video" : "image",
-  }));
-
-  const updated = [...previews, ...newPreviews];
-  setPreviews(updated);
-  syncFormState(updated);  // ✅ call with full objects
-};
+    const updated = [...previews, ...newPreviews];
+    setPreviews(updated);
+    syncFormState(updated); // ✅ call with full objects
+  };
 
   // useEffect(() => {
   //   register("urlImages"); // Register it once
@@ -93,8 +116,8 @@ const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
   useEffect(() => {
     return () => {
-      previews.forEach((p) => {
-        if (p.file) URL.revokeObjectURL(p.url); // ✅ only revoke object URLs
+      previews.forEach((p:any) => {
+        if (p.file) URL.revokeObjectURL(p.path); // ✅ only revoke object URLs
       });
     };
   }, []);

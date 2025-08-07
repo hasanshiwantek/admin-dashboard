@@ -69,49 +69,53 @@ export default function AddProductPage() {
     if (product) reset(product);
   }, [product, reset]);
 
-const onSubmit = methods.handleSubmit(async (data: Record<string, any>) => {
-  try {
-    const imageData = (data.image || []).map((img: any) => ({
-      file: img.file || null,
-      url: img.url || "",
-      description: img.description || "",
-      isThumbnail: img.isThumbnail ? 1 : 0,
-    }));
-    const {id, ...rest} = data;
-    const normalizedFields = {
-      ...rest,
-      image: imageData,
-      fixedShippingCost: Number(data.fixedShippingCost || 0),
-      dimensions: {
-        width: Number(data.dimensions?.width || 0),
-        height: Number(data.dimensions?.height || 0),
-        depth: Number(data.dimensions?.depth || 0),
-        weight: Number(data.dimensions?.weight || 0),
-      },
-      isFeatured: data.isFeatured ? 1 : 0,
-      relatedProducts: data.relatedProducts ? 1 : 0,
-      showCondition: data.showCondition ? 1 : 0,
-      trackInventory: data.trackInventory ? 1 : 0,
-      freeShipping: data.freeShipping ? 1 : 0,
-      isVisible: data.isVisible ? 1 : 0,
-      allowPurchase: data.allowPurchase ? 1 : 0,
-      stopProcessingRules: data.stopProcessingRules ? 1 : 0,
-    };
-    const payload = normalizedFields
-    const formData = objectToFormData(payload);
-    const result = isEdit
-      ? await dispatch(updateProductFormData({ id: product.id, formData: formData }))
-      : await dispatch(addProduct({ data: formData }));
+  const onSubmit = methods.handleSubmit(async (data: Record<string, any>) => {
+    try {
+      const imageData = (data.image || []).map((img: any) => ({
+        file: img.file || null,
+        url: typeof img.path === "string" ? img.path : "",
+        description: img.description || "",
+        isThumbnail: img.isThumbnail ? 1 : 0,
+      }));
+      const { id, ...rest } = data;
+      const normalizedFields = {
+        ...rest,
+        image: imageData,
+        fixedShippingCost: Number(data.fixedShippingCost || 0),
+        dimensions: {
+          width: Number(data.dimensions?.width || 0),
+          height: Number(data.dimensions?.height || 0),
+          depth: Number(data.dimensions?.depth || 0),
+          weight: Number(data.dimensions?.weight || 0),
+        },
+        isFeatured: data.isFeatured ? 1 : 0,
+        relatedProducts: data.relatedProducts ? 1 : 0,
+        showCondition: data.showCondition ? 1 : 0,
+        trackInventory: data.trackInventory ? 1 : 0,
+        freeShipping: data.freeShipping ? 1 : 0,
+        isVisible: data.isVisible ? 1 : 0,
+        allowPurchase: data.allowPurchase ? 1 : 0,
+        stopProcessingRules: data.stopProcessingRules ? 1 : 0,
+      };
+      const payload = normalizedFields;
+      const formData = objectToFormData(payload);
+      const result = isEdit
+        ? await dispatch(
+            updateProductFormData({ id: product.id, data: formData })
+          )
+        : await dispatch(addProduct({ data: formData }));
 
-    if ((isEdit ? updateProductFormData : addProduct).fulfilled.match(result)) {
-      router.push("/manage/products");
-    } else {
-      console.error("Product save failed:", result.error);
+      if (
+        (isEdit ? updateProductFormData : addProduct).fulfilled.match(result)
+      ) {
+        router.push("/manage/products");
+      } else {
+        console.error("Product save failed:", result.error);
+      }
+    } catch (error) {
+      console.error("Unexpected error during save:", error);
     }
-  } catch (error) {
-    console.error("Unexpected error during save:", error);
-  }
-});
+  });
 
   return (
     <div className="my-5">
@@ -135,7 +139,7 @@ const onSubmit = methods.handleSubmit(async (data: Record<string, any>) => {
           <form onSubmit={onSubmit} className="flex-1  p-6 space-y-8 ">
             <BasicInfoForm />
             <DescriptionEditor />
-            <ImageVideoUploader />
+            <ImageVideoUploader initialImages={product?.image || []} />
             <ProductIdentifiers />
             <Pricing />
             <Inventory />
@@ -155,8 +159,7 @@ const onSubmit = methods.handleSubmit(async (data: Record<string, any>) => {
                 Cancel
               </button>
               <button className="btn-primary" type="submit">
-                {" "}
-                Save Product{" "}
+                Save Product
               </button>
             </div>
           </form>
