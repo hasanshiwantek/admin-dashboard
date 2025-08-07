@@ -34,20 +34,15 @@ export default function ImagePreviewList({
   //   console.log("🧹 Synced after delete:", updated);
   // };
   const syncForm = (updated: PreviewItem[]) => {
-  const cleaned = updated.map((p) => ({
-    ...p,
-    url: p.url.startsWith("blob:") ? p.url.replace("blob:", "") : p.url,
-  }));
-
-  setValue("image", cleaned, { shouldValidate: true });
-
-    setValue("image", cleaned, { shouldValidate: true });
+    setValue("image", updated, { shouldValidate: true });
     console.log("🧹 Synced after delete:", updated);
   };
 
   const handleDeleteSelected = () => {
-    const updated = previews.filter((p) => !p.selected);
-    previews.forEach((p) => p.selected && p.file && URL.revokeObjectURL(p.url));
+    const updated = previews.filter((p:any) => !p.selected);
+    previews.forEach(
+      (p:any) => p.selected && p.path && URL.revokeObjectURL(p.path)
+    );
     setPreviews(updated);
     syncForm(updated);
   };
@@ -86,7 +81,7 @@ export default function ImagePreviewList({
         <div className="col-span-2">Thumbnail</div>
       </div>
 
-      {previews.map((p, index) => (
+      {previews.map((p: any, index) => (
         <div
           key={index}
           className="grid grid-cols-12 gap-2 items-center border-t pt-3"
@@ -105,13 +100,17 @@ export default function ImagePreviewList({
           <div className="col-span-2">
             {p.type === "video" ? (
               <video
-                src={p.url}
+                src={
+                  p.path instanceof File ? URL.createObjectURL(p.path) : p.path
+                }
                 controls
                 className="h-22 w-22 rounded border"
               />
             ) : (
               <Image
-                src={p.url}
+                src={
+                  p.path instanceof File ? URL.createObjectURL(p.path) : p.path
+                }
                 alt="preview"
                 width={88}
                 height={88}
@@ -120,6 +119,7 @@ export default function ImagePreviewList({
               />
             )}
           </div>
+
           <div className="col-span-7">
             <input
               type="text"
@@ -149,7 +149,7 @@ export default function ImagePreviewList({
             <button
               type="button"
               onClick={() => {
-                if (p.file) URL.revokeObjectURL(p.url);
+                if (p.path) URL.revokeObjectURL(p.path);
                 const updated = previews.filter((_, i) => i !== index);
                 setPreviews(updated);
                 syncForm(updated);
