@@ -1,67 +1,89 @@
-// utils/toggleCategoryHelper.ts
+// type Category = {
+//   id: number;
+//   name: string;
+//   children?: Category[];
+// };
 
-type Category = {
-  id: number;
-  name: string;
-  children?: Category[];
-};
+// interface ToggleCategoryParams {
+//   selected: number[];
+//   id: number;
+//   isParent: boolean;
+//   parentId?: number;
+//   categories: Category[];
+// }
 
-interface ToggleCategoryParams {
-  selected: number[];
-  id: number;
-  isParent: boolean;
-  parentId?: number;
-  categories: Category[];
-}
+// function findAllChildIds(category: Category): number[] {
+//   let ids: number[] = [];
+//   if (category.children) {
+//     for (const child of category.children) {
+//       ids.push(child.id, ...findAllChildIds(child));
+//     }
+//   }
+//   return ids;
+// }
 
-export const toggleCategoryHelper = ({
-  selected,
-  id,
-  isParent,
-  parentId,
-  categories,
-}: ToggleCategoryParams): number[] => {
-  if (isParent) {
-    // When a parent is clicked, only that parent should remain selected
-    return [id];
-  }
+// function findCategoryById(categories: Category[], id: number): Category | null {
+//   for (const category of categories) {
+//     if (category.id === id) return category;
+//     if (category.children) {
+//       const found = findCategoryById(category.children, id);
+//       if (found) return found;
+//     }
+//   }
+//   return null;
+// }
 
-  const allParentIds = categories.map((cat) => cat.id);
-  const selectedParent = selected.find((sid) => allParentIds.includes(sid));
-  const currentParent = categories.find((cat) => cat.id === parentId);
-  const currentSiblings = currentParent?.children?.map((c) => c.id) || [];
+// function findParentId(categories: Category[], id: number): number | null {
+//   for (const category of categories) {
+//     if (category.children?.some((child) => child.id === id)) {
+//       return category.id;
+//     }
+//     if (category.children) {
+//       const result = findParentId(category.children, id);
+//       if (result !== null) return result;
+//     }
+//   }
+//   return null;
+// }
 
-  const isOtherParentChildSelected = selected.some(
-    (sid) =>
-      !currentSiblings.includes(sid) &&
-      sid !== parentId &&
-      !allParentIds.includes(sid)
-  );
+// export function toggleCategoryHelper({
+//   selected,
+//   id,
+//   isParent,
+//   parentId,
+//   categories,
+// }: ToggleCategoryParams): number[] {
+//   const newSelected = [...selected];
 
-  const isOtherParentSelected =
-    selectedParent && selectedParent !== parentId;
+//   // Check if it's already selected
+//   const isAlreadyChecked = newSelected.includes(id);
 
-  if (isOtherParentChildSelected || isOtherParentSelected) {
-    // Clear everything and select only this child
-    return [id];
-  }
+//   // ✅ If checkbox is clicked again, uncheck it
+//   if (isAlreadyChecked) {
+//     return newSelected.filter((val) => val !== id);
+//   }
 
-  // Toggle child
-  const updated = selected.includes(id)
-    ? selected.filter((sid) => sid !== id)
-    : [...selected, id];
+//   // ✅ If selecting a parent, uncheck all other parents and children
+//   if (isParent) {
+//     const current = findCategoryById(categories, id);
+//     const childrenIds = current ? findAllChildIds(current) : [];
+//     return [id, ...childrenIds];
+//   }
 
-  const hasSiblings = updated.filter((sid) =>
-    currentSiblings.includes(sid)
-  ).length;
+//   // ✅ If selecting a child or sub-child
+//   if (parentId) {
+//     const currentParent = findCategoryById(categories, parentId);
+//     const childrenIds = currentParent ? findAllChildIds(currentParent) : [];
 
-  if (!updated.includes(parentId!) && !selected.includes(id)) {
-    updated.push(parentId!);
-  }
+//     // ✅ If another parent is already selected, clear all
+//     const allParentIds = categories.map((cat) => cat.id);
+//     const selectedParent = newSelected.find((sid) => allParentIds.includes(sid));
+//     if (selectedParent && selectedParent !== parentId) {
+//       return [id];
+//     }
 
-  if (!hasSiblings) {
-    return updated.filter((sid) => sid !== parentId);
-  }
+//     return Array.from(new Set([...newSelected, id, parentId]));
+//   }
 
-  return updated;
-};
+//   return newSelected;
+// }
