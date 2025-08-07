@@ -79,6 +79,7 @@ export const updateProduct = createAsyncThunk(
   }
 );
 
+<<<<<<< HEAD
 //PRODUCT UPDATION THUNK
 export const updateProductFormData = createAsyncThunk(
   "product/updateProductFormData",
@@ -89,6 +90,17 @@ export const updateProductFormData = createAsyncThunk(
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
+=======
+export const updateProductFormData = createAsyncThunk(
+  "product/updateProductFormData",
+  async ({ id, data }: { id: number; data: FormData }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.post(
+        `dashboard/products/update-single-product/${id}`,
+        data,
+        {
+          headers: {"content-Type": "multipart/form-data"},
+>>>>>>> 7bd5eb3217397a07c7356cd64ba6f4c3eac4a1ef
         }
       );
       console.log("✅ Updation Product response from thunk:", res.data);
@@ -101,7 +113,10 @@ export const updateProductFormData = createAsyncThunk(
     }
   }
 );
+<<<<<<< HEAD
 
+=======
+>>>>>>> 7bd5eb3217397a07c7356cd64ba6f4c3eac4a1ef
 //PROODUCT DELETION THUNK
 export const deleteProduct = createAsyncThunk(
   "product/deleteProduct",

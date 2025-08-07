@@ -19,11 +19,11 @@ export default function ProductIdentifiers() {
                             <Input id="sku" placeholder="THX-1138"  {...register("sku")} />
                         </div>
                          <div>
-                            <Label htmlFor="upc">Product UPC/EAN</Label>
+                            <Label htmlFor="identifiers.upc">Product UPC/EAN</Label>
                             <Input id="upc" placeholder="" {...register("upc")}/>
                         </div>
                          <div>
-                            <Label htmlFor="bpn">Bin Picking Number (BPN)</Label>
+                            <Label htmlFor="identifiers.bpn">Bin Picking Number (BPN)</Label>
                             <Input id="bpn" placeholder="" {...register("bpn")}/>
                         </div>
                     </div>
@@ -31,13 +31,13 @@ export default function ProductIdentifiers() {
                     {/* Right Div */}
                     <div className="space-y-12">
                         <div>
-                            <Label htmlFor="mpn">Manufacturer Part Number (MPN)</Label>
+                            <Label htmlFor="identifiers.mpn">Manufacturer Part Number (MPN)</Label>
                             <Input id="mpn" placeholder="" {...register("mpn")}/>
                         </div>
 
                         <div>
-                            <Label htmlFor="gtin">Global Trade Item Number (GTIN)</Label>
-                            <Input id="gtin" {...register("gtin")}/>
+                            <Label htmlFor="identifiers.gtin">Global Trade Item Number (GTIN)</Label>
+                            <Input id="gtin" {...register("identifiers.gtin")}/>
                         </div>
 
                     </div>
