@@ -50,31 +50,8 @@ export default function ImageVideoUploader({ initialImages }: Props) {
     inputRef.current?.click();
   };
 
-  // const fileListFromArray = (files: File[]): FileList => {
-  //   const dt = new DataTransfer();
-  //   files.forEach((file) => dt.items.add(file));
-  //   return dt.files;
-  // };
-
-  // const syncFormState = (updatedPreviews: PreviewItem[]) => {
-  //   const filePreviews = updatedPreviews.filter((p) => p.file);
-  //   const urlPreviews = updatedPreviews.filter((p) => !p.file);
-
-  //   setValue("images", fileListFromArray(filePreviews.map((p) => p.file!)), {
-  //     shouldValidate: true,
-  //   });
-  //   setValue("urlImages", urlPreviews.map((p) => p.url), {
-  //     shouldValidate: true,
-  //   });
-
-  //   console.log("🟢 Synced to react-hook-form:");
-  //   console.log("  → Files:", filePreviews.map((p) => p.file?.name));
-  //   console.log("  → URLs :", urlPreviews.map((p) => p.url));
-  // };
-
   const syncFormState = (updatedPreviews: PreviewItem[]) => {
     setValue("image", updatedPreviews, { shouldValidate: true });
-
     console.log("🟢 Synced to react-hook-form:");
     console.log("  → image[]:", updatedPreviews);
   };
