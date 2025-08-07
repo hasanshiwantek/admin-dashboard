@@ -62,6 +62,27 @@ export const updateProduct = createAsyncThunk(
   }
 );
 
+export const updateProductFormData = createAsyncThunk(
+  "product/updateProductFormData",
+  async ({ id, data }: { id: number; data: FormData }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.post(
+        `dashboard/products/update-single-product/${id}`,
+        data,
+        {
+          headers: {"content-Type": "multipart/form-data"},
+        }
+      );
+      console.log("✅ Updation Product response from thunk:", res.data);
+      return res.data;
+    } catch (err: any) {
+      console.error("❌ Error Updating Product:", err);
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to update products"
+      );
+    }
+  }
+);
 //PROODUCT DELETION THUNK
 export const deleteProduct = createAsyncThunk(
   "product/deleteProduct",
