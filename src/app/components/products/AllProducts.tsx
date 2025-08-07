@@ -639,8 +639,8 @@ export default function AllProducts() {
                     <TableCell className="flex items-center gap-2 ">
                       <Image
                         src={
-                          product.images?.[1]?.path ||
-                          product.images?.[0]?.path ||
+                          product.image?.[1]?.path ||
+                          product.image?.[0]?.path ||
                           null
                         }
                         alt={product.name}
