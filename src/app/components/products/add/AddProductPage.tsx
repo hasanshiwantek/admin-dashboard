@@ -63,11 +63,20 @@ export default function AddProductPage() {
     if (editProduct?.data) {
       setProduct(editProduct.data);
     }
-  }, [editProduct]);
+  }, [editProduct]);  
+
+  // useEffect(() => {
+  //   if (product) reset(product);
+  // }, [product, reset]);
 
   useEffect(() => {
-    if (product) reset(product);
-  }, [product, reset]);
+  if (product) {
+    reset((prev) => ({
+      ...prev,
+      ...product,
+    }));
+  }
+}, [product, reset]);
 
   const onSubmit = methods.handleSubmit(async (data: Record<string, any>) => {
     try {
