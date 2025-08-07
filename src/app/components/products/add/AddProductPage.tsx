@@ -65,18 +65,18 @@ export default function AddProductPage() {
     }
   }, [editProduct]);  
 
-  // useEffect(() => {
-  //   if (product) reset(product);
-  // }, [product, reset]);
-
   useEffect(() => {
-  if (product) {
-    reset((prev) => ({
-      ...prev,
-      ...product,
-    }));
-  }
-}, [product, reset]);
+    if (product) reset(product);
+  }, [product, reset]);
+
+//   useEffect(() => {
+//   if (product) {
+//     reset((prev) => ({
+//       ...prev,
+//       ...product,
+//     }));
+//   }
+// }, [product, reset]);
 
   useEffect(() => {
     if (!id) {
