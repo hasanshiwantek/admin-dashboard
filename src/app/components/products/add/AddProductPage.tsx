@@ -1,6 +1,6 @@
 "use client";
 // AddProductPage.tsx
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import SidebarNavigation from "./SidebarNavigation";
 import BasicInfoForm from "./BasicInformation";
@@ -37,17 +37,21 @@ import { buildUpdateProductFormData } from "@/lib/formDataUtils";
 export default function AddProductPage() {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const methods = useForm({
-    defaultValues: {
-      price: "35",
-      dimensions: { weight: "0" },
-    },
-  });
+  const defaultValues = useMemo(() => ({
+  price: "35",
+  dimensions: { weight: "0" },  
+}), []); // stable reference
+
+  const methods = useForm({ defaultValues });
   const { reset } = methods;
   const { id } = useParams();
+
   useEffect(() => {
+  if (id) {
     dispatch(fetchSingleProduct({ id }));
-  }, [dispatch, id]);
+  }
+}, [dispatch, id]);
+
   const editProduct = useAppSelector(
     (state: any) => state.product.singleProduct
   );
@@ -81,9 +85,10 @@ export default function AddProductPage() {
   useEffect(() => {
     if (!id) {
       setProduct(undefined); // Clear previous product state
-      reset(); // Reset the form to empty/default values
+      reset();
     }
   }, [id, reset]);
+
 
   const onSubmit = methods.handleSubmit(async (data: Record<string, any>) => {
     try {
