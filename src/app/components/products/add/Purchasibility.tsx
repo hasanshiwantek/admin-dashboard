@@ -21,7 +21,10 @@ export default function Purchasability() {
   const removePreorderDate = watch("removePreorderStatus");
 
   return (
-    <div className="bg-white p-6 border rounded-md space-y-6 scroll-mt-20"  id="purchasability">
+    <div
+      className="bg-white p-6 border rounded-md space-y-6 scroll-mt-20"
+      id="purchasability"
+    >
       <h1>Purchasability</h1>
 
       {/* Radio Group with Controller */}
@@ -211,7 +214,9 @@ export default function Purchasability() {
           </Label>
           <Input
             id="minPurchaseQty"
-            {...register("minPurchaseQuantity", { valueAsNumber: true })}
+            {...register("minPurchaseQuantity")}
+            type="number"
+            required
           />
         </div>
         <div>
@@ -232,7 +237,9 @@ export default function Purchasability() {
           </Label>
           <Input
             id="maxPurchaseQty"
-            {...register("maxPurchaseQuantity", { valueAsNumber: true })}
+            {...register("maxPurchaseQuantity")}
+            type="number"
+            required
           />
         </div>
       </div>

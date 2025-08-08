@@ -63,20 +63,20 @@ export default function AddProductPage() {
     if (editProduct?.data) {
       setProduct(editProduct.data);
     }
-  }, [editProduct]);  
+  }, [editProduct]);
 
   useEffect(() => {
     if (product) reset(product);
   }, [product, reset]);
 
-//   useEffect(() => {
-//   if (product) {
-//     reset((prev) => ({
-//       ...prev,
-//       ...product,
-//     }));
-//   }
-// }, [product, reset]);
+  //   useEffect(() => {
+  //   if (product) {
+  //     reset((prev) => ({
+  //       ...prev,
+  //       ...product,
+  //     }));
+  //   }
+  // }, [product, reset]);
 
   useEffect(() => {
     if (!id) {
@@ -100,6 +100,8 @@ export default function AddProductPage() {
         ...rest,
         image: imageData,
         fixedShippingCost: Number(data.fixedShippingCost || 0),
+        minPurchaseQuantity: Number(data?.minPurchaseQuantity || 0),
+        maxPurchaseQuantity: Number(data?.maxPurchaseQuantity || 0),
         dimensions: {
           width: Number(data.dimensions?.width || 0),
           height: Number(data.dimensions?.height || 0),

@@ -33,12 +33,33 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   (error) => {
-    toast.error(error.response?.data?.message || "Something went wrong!",{
-              style: {
+    // ✅ Show the main message
+    if (error.response?.data?.message) {
+      toast.error(error.response.data.message, {
+        style: {
           fontSize: "12px",
           fontWeight: "bold",
         },
-    });
+      });
+    }
+
+    // ✅ Show each validation error from `errors` object
+    const errors = error.response?.data.errors;
+    if (errors && typeof errors === "object") {
+      Object.values(errors).forEach((fieldErrors) => {
+        if (Array.isArray(fieldErrors)) {
+          fieldErrors.forEach((err) =>
+            toast.error(err, {
+              style: {
+                fontSize: "12px",
+                fontWeight: "bold",
+              },
+            })
+          );
+        }
+      });
+    }
+
     return Promise.reject(error);
   }
 );
