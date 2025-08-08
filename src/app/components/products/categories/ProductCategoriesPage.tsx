@@ -217,8 +217,8 @@ export default function ProductCategoriesPage() {
 
   console.log("Selected Category: ", selectedIds);
   const handleDelete = async () => {
-    let catIds = selectedIds?.map((cat: any) => cat?.id);
-    let ids = {
+    const catIds = selectedIds?.map((cat: any) => cat?.id);
+    const ids = {
       ids: catIds,
     };
 
