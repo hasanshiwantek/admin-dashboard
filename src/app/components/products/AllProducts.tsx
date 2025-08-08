@@ -637,18 +637,15 @@ export default function AllProducts() {
                       />
                     </TableCell>
                     <TableCell className="flex items-center gap-2 ">
-                      <Image
-                        src={
-                          product.image?.[1]?.path ||
-                          product.image?.[0]?.path ||
-                          null
-                        }
-                        alt={product.name}
-                        width={60}
-                        height={60}
-                        className="rounded !border object-contain !border-gray-300 p-2 shrink-0 w-28 h-24"
-                      />
-
+                      {(product.image?.[1]?.path || product.image?.[0]?.path) && (
+                        <Image
+                          src={product.image?.[1]?.path || product.image?.[0]?.path}
+                          alt={product.name}
+                          width={60}
+                          height={60}
+                          className="rounded !border object-contain !border-gray-300 p-2 shrink-0 w-28 h-24"
+                        />
+                      )}
                       <span
                         onClick={() => {
                           router.push(`/manage/products/edit/${product.id}`);
