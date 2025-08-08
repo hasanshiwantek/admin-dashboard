@@ -13,7 +13,8 @@ import {
 
 export default function Dimensions() {
 
-    const { register } = useFormContext();
+    const { register, watch, setValue } = useFormContext();
+    const weight = watch("dimensions.weight")
 
     return (
         <section id="dimensionWeight" className="space-y-4 scroll-mt-20" >
@@ -41,7 +42,7 @@ export default function Dimensions() {
                                     </Tooltip>
                                 </TooltipProvider>
                             </Label>
-                            <Input id="weight" placeholder="0" {...register("dimensions.weight", { valueAsNumber: true})}/> 
+                            <Input value={weight} placeholder="0" onChange={(e) => setValue("dimensions.weight", e.target.value)} /> 
                         </div>
                         <div>
                             <Label htmlFor="dimensions.height">Height (Inches) 

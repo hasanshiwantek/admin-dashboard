@@ -4,7 +4,9 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 
 export default function ProductIdentifiers() {
-  const { register } = useFormContext();
+  const { register, watch, setValue } = useFormContext();
+
+  const sku = watch("sku")
 
   return (
     <div
@@ -17,7 +19,7 @@ export default function ProductIdentifiers() {
         <div className="space-y-12">
           <div>
             <Label htmlFor="sku">SKU</Label>
-            <Input id="sku" placeholder="THX-1138" {...register("sku")} />
+            <Input value={sku} placeholder="THX-1138" onChange={(e) => setValue("sku", e.target.value)} />
           </div>
           <div>
             <Label htmlFor="upc">Product UPC/EAN</Label>

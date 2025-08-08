@@ -24,7 +24,9 @@ import BulkPricing from "./BulkPricing";
 
 export default function Pricing() {
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const { register, control } = useFormContext();
+  const { register, control, watch, setValue } = useFormContext();
+
+  const price = watch("price")
 
   return (
     <div className="bg-white shadow-lg p-10 space-y-8 scroll-mt-20" id="pricing">
@@ -37,9 +39,10 @@ export default function Pricing() {
           <span className="text-sm text-muted-foreground">(excluding tax)</span>
         </Label>
         <Input
-          type="number"
+          // type="number"
           placeholder="$0"
-          {...register("price", { valueAsNumber: true })}
+          value={price}
+          onChange={(e) => setValue("price", e.target.value)}
         />
 
         <div className="space-y-1">
