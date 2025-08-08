@@ -17,6 +17,7 @@ import { Plus } from "lucide-react";
 import CategoryTree from "./CategoryTree";
 import { fetchBrands } from "@/redux/slices/productSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
+
 export default function BasicInfoForm() {
   const { register, setValue, watch } = useFormContext();
   const productType = watch("productType");
