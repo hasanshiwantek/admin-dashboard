@@ -17,6 +17,7 @@ import { Plus } from "lucide-react";
 import CategoryTree from "./CategoryTree";
 import { fetchBrands } from "@/redux/slices/productSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
+import Link from "next/link";
 export default function BasicInfoForm() {
   const { register, setValue, watch } = useFormContext();
   const productType = watch("productType");
@@ -127,9 +128,11 @@ export default function BasicInfoForm() {
 
         <div className="flex justify-between my-5">
           <h1>Categories</h1>
+          <Link href={"/manage/products/categories"}>
           <Button type="button" className="bg-transparent shadow-none text-blue-600 text-xl hover:bg-blue-100 transition-all p-6 cursor-pointer">
             <Plus></Plus> Add Categories
           </Button>
+          </Link>
         </div>
         <CategoryTree name="categoryIds" />
       </div>

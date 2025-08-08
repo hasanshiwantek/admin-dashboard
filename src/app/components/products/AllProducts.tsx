@@ -379,6 +379,7 @@ export default function AllProducts() {
     const selected = filteredProducts.filter((p: any) =>
       selectedProductIds.includes(p.id)
     );
+    localStorage.setItem("selectedProducts", JSON.stringify(selected)); // <-- store here
     dispatch(setSelectedProducts(selected));
     router.push("/manage/products/inventory");
   };
@@ -387,7 +388,8 @@ export default function AllProducts() {
     const selected = filteredProducts.filter((p: any) =>
       selectedProductIds.includes(p.id)
     );
-    dispatch(setSelectedProducts(selected));
+
+    localStorage.setItem("bulkEditProducts", JSON.stringify(selected)); // ✅ save here
     router.push("/manage/products/bulk-edit");
   };
 

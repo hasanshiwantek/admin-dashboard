@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import {
@@ -23,6 +23,11 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 const SearchProduct = () => {
   const { register, control } = useFormContext();
   const { brands } = useAppSelector((state: any) => state.product);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(fetchBrands({ page: 1, pageSize: 50 }));
+  }, [dispatch]);
 
   return (
     <div className="p-10 ">

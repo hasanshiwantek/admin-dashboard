@@ -14,9 +14,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { useRouter } from "next/navigation";
 import { updateProduct } from "@/redux/slices/productSlice";
-import { refetchProducts } from "@/lib/productUtils";
-import CategoryDropdown from "@/app/components/products/categories/CategoryDropdown";
 import CategoryModal from "@/app/components/products/categories/CategoryModal";
+import { fetchCategories } from "@/redux/slices/categorySlice";
+import { setSelectedProducts } from "@/redux/slices/productSlice";
 import Link from "next/link";
 type Product = {
   id: number;
@@ -24,10 +24,10 @@ type Product = {
   brand: any;
   categories: any;
   sku: string;
-  "upc/ean": string;
-  defaultPrice: string;
+  upc: string;
   price: string;
-  trackInventory: string;
+  salePrice: string;
+  trackInventory: boolean;
   currentStock: string;
   isVisible: boolean;
   isFeatured: boolean;
@@ -49,16 +49,29 @@ export default function BulkEdit() {
   const router = useRouter();
 
   useEffect(() => {
-    if (selectedProducts.length > 0) {
-      setProducts(selectedProducts);
+    const stored = localStorage.getItem("bulkEditProducts");
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        setProducts(parsed);
+        dispatch(setSelectedProducts(parsed)); // optional if you want to use redux too
+      } catch (err) {
+        console.error("Error parsing bulkEditProducts:", err);
+      }
     }
-  }, [selectedProducts]);
+  }, []);
 
   const handleChange = (id: number, field: keyof Product, value: any) => {
     setProducts((prev) =>
       prev.map((p) => (p.id === id ? { ...p, [field]: value } : p))
     );
   };
+
+  const categories = useAppSelector((state: any) => state.category.categories);
+  const allCategories = categories?.data;
+  useEffect(() => {
+    dispatch(fetchCategories());
+  }, [dispatch]);
 
   const prepareUpdatePayload = (products: Product[]) => {
     return {
@@ -69,12 +82,12 @@ export default function BulkEdit() {
           price: Number(p.price),
           currentStock: Number(p.currentStock),
           brand: p.brand,
-          categories: Array.isArray(p.categories)
+          categoryIds: Array.isArray(p.categories)
             ? p.categories.map((cat: any) => Number(cat.id))
             : [],
           sku: p.sku,
-          "upc/ean": p["upc/ean"],
-          defaultPrice: p.defaultPrice,
+          upc: p.upc,
+          salePrice: p.salePrice,
           trackInventory: p.trackInventory,
           isVisible: p.isVisible,
           isFeatured: p.isFeatured,
@@ -87,11 +100,11 @@ export default function BulkEdit() {
   const handleSave = async () => {
     try {
       const payload = prepareUpdatePayload(products);
-      console.log("🔼 Sending payload:", payload);
-      const res = await dispatch(updateProduct({ body: payload })).unwrap();
-      console.log("✅ Updated successfully:", res);
+      await dispatch(updateProduct({ body: payload })).unwrap();
+      localStorage.removeItem("bulkEditProducts"); // ✅ clean up
+      console.log("✅ Updated successfully");
     } catch (err) {
-      console.error("❌ Failed to update products:", err);
+      console.error("❌ Failed to update:", err);
     }
   };
 
@@ -192,9 +205,9 @@ export default function BulkEdit() {
                     <Input
                       type="text"
                       className="w-50"
-                      value={product["upc/ean"]}
+                      value={product.upc}
                       onChange={(e) =>
-                        handleChange(product.id, "upc/ean", e.target.value)
+                        handleChange(product.id, "upc", e.target.value)
                       }
                     />
                   </TableCell>
@@ -203,18 +216,7 @@ export default function BulkEdit() {
                     <Input
                       type="number"
                       className="w-50"
-                      value={product.defaultPrice || ""}
-                      onChange={(e) =>
-                        handleChange(product.id, "defaultPrice", e.target.value)
-                      }
-                    />
-                  </TableCell>
-
-                  <TableCell>
-                    <Input
-                      type="number"
-                      className="w-50"
-                      value={product.price}
+                      value={product.price || ""}
                       onChange={(e) =>
                         handleChange(product.id, "price", e.target.value)
                       }
@@ -222,8 +224,19 @@ export default function BulkEdit() {
                   </TableCell>
 
                   <TableCell>
+                    <Input
+                      type="number"
+                      className="w-50"
+                      value={product.salePrice}
+                      onChange={(e) =>
+                        handleChange(product.id, "salePrice", e.target.value)
+                      }
+                    />
+                  </TableCell>
+
+                  <TableCell>
                     <Checkbox
-                      value={product.trackInventory}
+                      checked={product.trackInventory}
                       onCheckedChange={(checked) =>
                         handleChange(product.id, "trackInventory", checked)
                       }
@@ -292,10 +305,16 @@ export default function BulkEdit() {
               ?.categories?.map((c: any) => c.id.toString()) || []
           }
           onApply={(selectedIds) => {
-            const selectedCats = selectedIds.map((id) => ({
-              id,
-              name: "", // Optional – populate from category list if needed
-            }));
+            const selectedCats = selectedIds.map((id) => {
+              const match = allCategories.find(
+                (cat: any) => cat.id.toString() === id
+              );
+              return {
+                id: Number(id),
+                name: match?.name || `Category ${id}`, // fallback just in case
+              };
+            });
+
             handleChange(categoryModal.productId!, "categories", selectedCats);
           }}
         />
