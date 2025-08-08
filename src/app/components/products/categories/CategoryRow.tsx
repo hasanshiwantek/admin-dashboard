@@ -70,7 +70,7 @@ const CategoryRow = ({
           name,
           isVisible: false,
         };
-        let id: number = category?.id;
+        const id: number = category?.id;
         dispatch(
           updateCategory({
             id,
@@ -99,7 +99,7 @@ const CategoryRow = ({
       onClick: () => {
         console.log("Catgeory", category);
 
-        let ids = {
+        const ids = {
           ids: [category?.id],
         };
         try {
