@@ -87,12 +87,14 @@ export default function AddProductPage() {
 
   const onSubmit = methods.handleSubmit(async (data: Record<string, any>) => {
     try {
-      const imageData = (data.image || []).map((img: any) => ({
-        file: img.file || null,
-        url: typeof img.path === "string" ? img.path : "",
-        description: img.description || "",
-        isThumbnail: img.isThumbnail ? 1 : 0,
-      }));
+      const imageData = Array.isArray(data.image)
+        ? data.image.map((img: any) => ({
+            file: img.file || null,
+            url: typeof img.path === "string" ? img.path : "",
+            description: img.description || "",
+            isThumbnail: img.isThumbnail ? 1 : 0,
+          }))
+        : [];
       const { id, ...rest } = data;
       const normalizedFields = {
         ...rest,
