@@ -1,48 +1,47 @@
 // BasicInfoForm.tsx
 import { useFormContext } from "react-hook-form";
-import { Label } from "@/components/ui/label"
+import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 
 export default function ProductIdentifiers() {
+  const { register } = useFormContext();
 
-    const { register } = useFormContext();
+  return (
+    <div
+      id="productIdentifiers"
+      className="p-10 bg-white shadow-lg rounded-sm scroll-mt-20"
+    >
+      <h1>Product Identifiers</h1>
+      <div className="grid grid-cols-2 gap-6 my-4">
+        {/* Left Div */}
+        <div className="space-y-12">
+          <div>
+            <Label htmlFor="sku">SKU</Label>
+            <Input id="sku" placeholder="THX-1138" {...register("sku")} />
+          </div>
+          <div>
+            <Label htmlFor="upc">Product UPC/EAN</Label>
+            <Input id="upc" placeholder="" {...register("upc")} />
+          </div>
+          <div>
+            <Label htmlFor="bpn">Bin Picking Number (BPN)</Label>
+            <Input id="bpn" placeholder="" {...register("bpn")} />
+          </div>
+        </div>
 
-    return (
-           
-            <div id="productIdentifiers" className="p-10 bg-white shadow-lg rounded-sm scroll-mt-20" >
-                <h1 >Product Identifiers</h1>
-                <div className="grid grid-cols-2 gap-6 my-4">
-                    {/* Left Div */}
-                    <div className="space-y-12">
-                        <div>
-                            <Label htmlFor="sku">SKU</Label>
-                            <Input id="sku" placeholder="THX-1138"  {...register("sku")} />
-                        </div>
-                         <div>
-                            <Label htmlFor="identifiers.upc">Product UPC/EAN</Label>
-                            <Input id="upc" placeholder="" {...register("upc")}/>
-                        </div>
-                         <div>
-                            <Label htmlFor="identifiers.bpn">Bin Picking Number (BPN)</Label>
-                            <Input id="bpn" placeholder="" {...register("bpn")}/>
-                        </div>
-                    </div>
+        {/* Right Div */}
+        <div className="space-y-12">
+          <div>
+            <Label htmlFor="mpn">Manufacturer Part Number (MPN)</Label>
+            <Input id="mpn" placeholder="" {...register("mpn")} />
+          </div>
 
-                    {/* Right Div */}
-                    <div className="space-y-12">
-                        <div>
-                            <Label htmlFor="identifiers.mpn">Manufacturer Part Number (MPN)</Label>
-                            <Input id="mpn" placeholder="" {...register("mpn")}/>
-                        </div>
-
-                        <div>
-                            <Label htmlFor="identifiers.gtin">Global Trade Item Number (GTIN)</Label>
-                            <Input id="gtin" {...register("identifiers.gtin")}/>
-                        </div>
-
-                    </div>
-                </div>
-
-            </div>
-    );
+          <div>
+            <Label htmlFor="gtin">Global Trade Item Number (GTIN)</Label>
+            <Input id="gtin" {...register("gtin")} />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
