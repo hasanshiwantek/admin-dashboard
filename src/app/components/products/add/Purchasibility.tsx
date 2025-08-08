@@ -216,7 +216,7 @@ export default function Purchasability() {
             id="minPurchaseQty"
             {...register("minPurchaseQuantity")}
             type="number"
-            required
+            // required
           />
         </div>
         <div>
@@ -239,7 +239,7 @@ export default function Purchasability() {
             id="maxPurchaseQty"
             {...register("maxPurchaseQuantity")}
             type="number"
-            required
+            // required
           />
         </div>
       </div>

@@ -56,6 +56,7 @@ export default function BasicInfoForm() {
                 id="name"
                 placeholder="Sample Product Name"
                 {...register("name")}
+                required
               />
             </div>
 
@@ -100,7 +101,7 @@ export default function BasicInfoForm() {
           <div className="space-y-12">
             <div>
               <Label htmlFor="sku">SKU</Label>
-              <Input id="sku" placeholder="THX-1138" {...register("sku")} />
+              <Input id="sku" placeholder="THX-1138" {...register("sku")}  required/>
             </div>
 
             <div>
@@ -109,6 +110,7 @@ export default function BasicInfoForm() {
                 id="price"
                 placeholder="35"
                 {...register("price", { valueAsNumber: true })}
+                required
               />
             </div>
 
