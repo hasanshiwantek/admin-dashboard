@@ -41,6 +41,29 @@ export const updateCategory = createAsyncThunk(
   }
 );
 
+
+
+// UPDATE CATEGORY THUNK
+export const updateBulkCategory = createAsyncThunk(
+  "categories/updateBulkCategory",
+  async ({ data}: { data: any; }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.put(
+        `dashboard/categories/update-bulk-category`,
+        data
+      );
+      console.log("✅ Bulk Update Category Response :", res.data);
+      return res.data;
+    } catch (err: any) {
+      console.error("❌ Error updating Categories:", err);
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to update Category"
+      );
+    }
+  }
+);
+
+
 // FETCH CATEGORY THUNK
 export const fetchCategories = createAsyncThunk(
   "categories/fetchCategories",

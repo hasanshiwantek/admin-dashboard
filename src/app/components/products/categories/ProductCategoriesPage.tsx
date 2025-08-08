@@ -32,6 +32,7 @@ import {
   fetchCategories,
   updateCategory,
   deleteCategory,
+  updateBulkCategory,
 } from "@/redux/slices/categorySlice";
 import { refetchCategories } from "@/lib/categoryUtils";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
@@ -249,78 +250,74 @@ export default function ProductCategoriesPage() {
   };
 
   const handleEnableVisibilty = async () => {
-    const name = selectedIds?.map((cat: any) => cat?.name);
-    let catIds = selectedIds?.map((cat: any) => cat?.id);
-
-    const payload = {
-      name,
-      isVisible: true,
-    };
-    let id: any = catIds;
-
     if (selectedIds.length === 0) {
       alert("Please select at least one category.");
-      return; // stop here
-    } else {
-      try {
-        const resultAction = await dispatch(
-          updateCategory({
-            id,
-            data: payload,
-          })
-        );
-        const result = (resultAction as any).payload;
+      return;
+    }
 
-        if ((resultAction as any).meta.requestStatus === "fulfilled") {
-          console.log("✅ Category deleted successfully:", result);
-          setSelectedIds([]);
-          setTimeout(() => {
-            refetchCategories(dispatch);
-          }, 700);
-        } else {
-          console.error("❌ Failed to delete Category:", result);
-        }
-      } catch (err) {
-        console.error("❌ Unexpected error:", err);
+    const payload = {
+      categories: selectedIds.map((cat) => {
+        const { is_visible, ...rest } = cat; // ❌ Remove is_visible
+        return {
+          ...rest,
+          isVisible: true, // ✅ Add isVisible
+        };
+      }),
+    };
+
+    try {
+      const resultAction = await dispatch(
+        updateBulkCategory({ data: payload })
+      );
+      const result = (resultAction as any).payload;
+
+      if ((resultAction as any).meta.requestStatus === "fulfilled") {
+        console.log("✅ Categories updated successfully:", result);
+        setSelectedIds([]);
+        setTimeout(() => {
+          refetchCategories(dispatch);
+        }, 700);
+      } else {
+        console.error("❌ Failed to update categories:", result);
       }
+    } catch (err) {
+      console.error("❌ Unexpected error:", err);
     }
   };
 
   const handleDisableVisibilty = async () => {
-    const name = selectedIds?.map((cat: any) => cat?.name);
-    let catIds = selectedIds?.map((cat: any) => cat?.id);
-
-    const payload = {
-      name,
-      isVisible: false,
-    };
-    let id: any = catIds;
-
     if (selectedIds.length === 0) {
       alert("Please select at least one category.");
-      return; // stop here
-    } else {
-      try {
-        const resultAction = await dispatch(
-          updateCategory({
-            id,
-            data: payload,
-          })
-        );
-        const result = (resultAction as any).payload;
+      return;
+    }
 
-        if ((resultAction as any).meta.requestStatus === "fulfilled") {
-          console.log("✅ Category deleted successfully:", result);
-          setSelectedIds([]);
-          setTimeout(() => {
-            refetchCategories(dispatch);
-          }, 700);
-        } else {
-          console.error("❌ Failed to delete Category:", result);
-        }
-      } catch (err) {
-        console.error("❌ Unexpected error:", err);
+    const payload = {
+      categories: selectedIds.map((cat) => {
+        const { is_visible, ...rest } = cat; // ❌ Remove is_visible
+        return {
+          ...rest,
+          isVisible: false, // ✅ Add isVisible
+        };
+      }),
+    };
+
+    try {
+      const resultAction = await dispatch(
+        updateBulkCategory({ data: payload })
+      );
+      const result = (resultAction as any).payload;
+
+      if ((resultAction as any).meta.requestStatus === "fulfilled") {
+        console.log("✅ Categories updated successfully:", result);
+        setSelectedIds([]);
+        setTimeout(() => {
+          refetchCategories(dispatch);
+        }, 700);
+      } else {
+        console.error("❌ Failed to update categories:", result);
       }
+    } catch (err) {
+      console.error("❌ Unexpected error:", err);
     }
   };
   useEffect(() => {
