@@ -60,6 +60,26 @@ export const fetchCategories = createAsyncThunk(
   }
 );
 
+// FETCH CATEGORY THUNK
+export const deleteCategory = createAsyncThunk(
+  "categories/deleteCategory",
+  async (data: any, thunkAPI) => {
+    try {
+      const res = await axiosInstance.delete(
+        `dashboard/categories/delete-categories`,
+        data
+      );
+      console.log("✅ Delete Category Response :", res.data);
+      return res.data;
+    } catch (err: any) {
+      console.error("❌ Error deleting Categories:", err);
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to delete Category"
+      );
+    }
+  }
+);
+
 // 2. Initial State
 const initialState = {
   categories: [],
@@ -86,6 +106,16 @@ const categorySlice = createSlice({
         state.loading = false;
         state.error =
           (action.payload as string) || action.error.message || "Failed";
+      })
+      .addCase(deleteCategory.fulfilled, (state: any, action) => {
+        state.loading = false;
+        const deletedIds = action.payload?.deletedIds || [];
+        state.categories = {
+          ...state.categories,
+          data: state.categories.data.filter(
+            (item: any) => !deletedIds.includes(item.id)
+          ),
+        };
       });
   },
 });

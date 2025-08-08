@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useFormContext } from "react-hook-form";
+import { useFormContext, useForm } from "react-hook-form";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -16,14 +16,18 @@ import {
 } from "@dnd-kit/sortable";
 import VisibilityToggle from "../../dropdowns/VisibilityToggle";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
-import { updateCategory } from "@/redux/slices/categorySlice";
-
+import { updateCategory, deleteCategory } from "@/redux/slices/categorySlice";
+import { refetchCategories } from "@/lib/categoryUtils";
 const CategoryRow = ({
   category,
   level = 0,
+  selectedIds,
+  setSelectedIds,
 }: {
   category: any;
   level?: number;
+  selectedIds: number[];
+  setSelectedIds: React.Dispatch<React.SetStateAction<any[]>>;
 }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({
@@ -37,13 +41,21 @@ const CategoryRow = ({
 
   const [expanded, setExpanded] = useState(false);
   const dispatch = useAppDispatch();
-  const { register } = useFormContext();
+  const { register, watch, setValue } = useFormContext();
+  const isSelected = selectedIds.some((cat: any) => cat === category);
+
+  const handleChange = (checked: any) => {
+    setSelectedIds((prev) =>
+      checked ? [...prev, category] : prev.filter((cat) => cat !== category)
+    );
+  };
+
   const hasChildren = category.subcategories?.length;
   const [visibilityMap, setVisibilityMap] = useState<{
     [key: number]: "ENABLED" | "DISABLED";
   }>({});
 
-  const editdropdownActions = [
+  const editdropdownActions = (category: any) => [
     {
       label: "Edit",
     },
@@ -52,6 +64,23 @@ const CategoryRow = ({
     },
     {
       label: "Disable visibility",
+      onClick: () => {
+        const name = category?.name;
+        const payload = {
+          name,
+          isVisible: false,
+        };
+        let id: number = category?.id;
+        dispatch(
+          updateCategory({
+            id,
+            data: payload,
+          })
+        );
+        setTimeout(() => {
+          refetchCategories(dispatch);
+        }, 2000);
+      },
     },
     {
       label: "View products",
@@ -67,6 +96,21 @@ const CategoryRow = ({
     },
     {
       label: "Delete",
+      onClick: () => {
+        console.log("Catgeory", category);
+
+        let ids = {
+          ids: [category?.id],
+        };
+        try {
+          dispatch(deleteCategory({ data: ids }));
+          setTimeout(() => {
+            refetchCategories(dispatch);
+          }, 2000);
+        } catch (err) {
+          console.log(err, "Error while deleting");
+        }
+      },
     },
   ];
 
@@ -82,8 +126,9 @@ const CategoryRow = ({
         <TableCell className="w-[30px]">
           <Checkbox
             className="-mt-10"
-            id={category.id}
-            {...register(`categories.${category.id}`)}
+            id={String(category.id)}
+            checked={isSelected}
+            onCheckedChange={handleChange}
           />
         </TableCell>
         <TableCell className="w-[30px] ">
@@ -112,7 +157,7 @@ const CategoryRow = ({
           <VisibilityToggle
             productId={category.id}
             value={
-              visibilityMap[category.id] ?? category.isVisible
+              visibilityMap[category.id] ?? category.is_visible
                 ? "ENABLED"
                 : "DISABLED"
             }
@@ -138,7 +183,8 @@ const CategoryRow = ({
         </TableCell>
         <TableCell>
           <OrderActionsDropdown
-            actions={editdropdownActions}
+            // actions={editdropdownActions}
+            actions={editdropdownActions(category)}
             trigger={
               <Button
                 variant="ghost"
@@ -158,7 +204,13 @@ const CategoryRow = ({
           strategy={verticalListSortingStrategy}
         >
           {category.subcategories.map((child: any) => (
-            <CategoryRow key={child.id} category={child} level={level + 1} />
+            <CategoryRow
+              key={child.id}
+              category={child}
+              level={level + 1}
+              selectedIds={selectedIds}
+              setSelectedIds={setSelectedIds}
+            />
           ))}
         </SortableContext>
       )}
