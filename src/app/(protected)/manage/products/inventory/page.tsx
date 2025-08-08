@@ -15,7 +15,12 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { useRouter } from "next/navigation";
 import { updateProduct } from "@/redux/slices/productSlice";
 import { refetchProducts } from "@/lib/productUtils";
-
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 type Product = {
   id: number;
   name: string;
@@ -33,6 +38,9 @@ export default function EditInventoryPage() {
   const selectedProducts = useAppSelector(
     (state) => state.product.selectedProducts
   );
+  const [expandedProductId, setExpandedProductId] = useState<number | null>(
+    null
+  );
   const dispatch = useAppDispatch();
   console.log("Edited Seledcted Products From Redux: ", selectedProducts);
 
@@ -42,6 +50,16 @@ export default function EditInventoryPage() {
   useEffect(() => {
     if (selectedProducts.length > 0) {
       setProducts(selectedProducts);
+    } else {
+      const stored = localStorage.getItem("selectedProducts");
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          setProducts(parsed);
+        } catch (err) {
+          console.error("❌ Failed to parse selected products:", err);
+        }
+      }
     }
   }, [selectedProducts]);
 
@@ -82,6 +100,7 @@ export default function EditInventoryPage() {
   const handleSaveAndExit = () => {
     handleSave();
     // TODO: Navigate back or close modal
+    localStorage.removeItem("selectedProducts");
     router.push("/manage/products");
     console.log("✅ Save and exit clicked");
   };
@@ -109,9 +128,38 @@ export default function EditInventoryPage() {
             <TableBody>
               {products.map((product) => (
                 <TableRow key={product.id}>
-                  <TableCell className="  !max-w-[500px]">
-                    {product.name}
+                  <TableCell
+                    className={`max-w-[300px] cursor-pointer ${
+                      expandedProductId === product.id
+                        ? "whitespace-normal"
+                        : "truncate"
+                    }`}
+                    onClick={() =>
+                      setExpandedProductId((prev) =>
+                        prev === product.id ? null : product.id
+                      )
+                    }
+                  >
+                    <TooltipProvider>
+                      {expandedProductId === product.id ? (
+                        // ❌ No tooltip when expanded
+                        <span>{product.name}</span>
+                      ) : (
+                        // ✅ Tooltip only when collapsed
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span className="block truncate !text-xl">
+                              {product.name}
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent className="max-w-xs">
+                            Click to expand name
+                          </TooltipContent>
+                        </Tooltip>
+                      )}
+                    </TooltipProvider>
                   </TableCell>
+
                   <TableCell>{product.sku}</TableCell>
 
                   <TableCell>
