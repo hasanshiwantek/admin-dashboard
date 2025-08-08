@@ -211,7 +211,7 @@ export default function Purchasability() {
           </Label>
           <Input
             id="minPurchaseQty"
-            {...register("minPurchaseQty", { valueAsNumber: true })}
+            {...register("minPurchaseQuantity", { valueAsNumber: true })}
           />
         </div>
         <div>
@@ -232,7 +232,7 @@ export default function Purchasability() {
           </Label>
           <Input
             id="maxPurchaseQty"
-            {...register("maxPurchaseQty", { valueAsNumber: true })}
+            {...register("maxPurchaseQuantity", { valueAsNumber: true })}
           />
         </div>
       </div>

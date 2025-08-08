@@ -637,9 +637,12 @@ export default function AllProducts() {
                       />
                     </TableCell>
                     <TableCell className="flex items-center gap-2 ">
-                      {(product.image?.[1]?.path || product.image?.[0]?.path) && (
+                      {(product.image?.[1]?.path ||
+                        product.image?.[0]?.path) && (
                         <Image
-                          src={product.image?.[1]?.path || product.image?.[0]?.path}
+                          src={
+                            product.image?.[1]?.path || product.image?.[0]?.path
+                          }
                           alt={product.name}
                           width={60}
                           height={60}
@@ -656,6 +659,7 @@ export default function AllProducts() {
                         {product.name}
                       </span>
                     </TableCell>
+
                     <TableCell className="relative  mx-4 ">
                       <FeaturedToggle
                         productId={product.id}
