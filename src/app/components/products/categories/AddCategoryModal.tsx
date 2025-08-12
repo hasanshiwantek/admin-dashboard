@@ -22,6 +22,7 @@ import { cn } from "@/lib/utils";
 import { addCategory } from "@/redux/slices/categorySlice";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import CategoryDropdown from "./CategoryDropdown";
+import { refetchCategories } from "@/lib/categoryUtils";
 export default function AddCategoryModal({
   open,
   onOpenChange,
@@ -57,7 +58,9 @@ export default function AddCategoryModal({
       await dispatch(addCategory({ data: payload })).unwrap(); // unwrap for error catching
       setParentCategory(null);
       console.log("Add Category Payload: ", payload);
-
+      setTimeout(()=>{
+        refetchCategories(dispatch)
+      },600)
       onOpenChange(false); // close modal on success
     } catch (error) {
       console.error("Failed to create category:", error);
