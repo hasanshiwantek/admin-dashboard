@@ -83,7 +83,7 @@ export default function CategoryDropdown({
       />
 
       {showList && (
-        <div className="absolute z-10 mt-1 max-h-64 w-full overflow-auto rounded-md border bg-white shadow-md">
+        <div className="absolute z-40 mt-1 max-h-64 w-full overflow-auto rounded-md border bg-white shadow-md">
           {filtered.length ? (
             filtered.map((cat) => (
               <div

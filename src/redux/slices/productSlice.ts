@@ -59,7 +59,6 @@ export const searchAllProducts = createAsyncThunk(
   }
 );
 
-
 export const updateProduct = createAsyncThunk(
   "product/updateProduct",
   async ({ body }: { body: any }, thunkAPI) => {
@@ -87,7 +86,7 @@ export const updateProductFormData = createAsyncThunk(
         `dashboard/products/update-single-product/${id}`,
         data,
         {
-          headers: {"content-Type": "multipart/form-data"},
+          headers: { "content-Type": "multipart/form-data" },
         }
       );
       console.log("✅ Updation Product response from thunk:", res.data);
@@ -161,6 +160,25 @@ export const addProduct = createAsyncThunk(
       return thunkAPI.rejectWithValue(
         err.response?.data?.message || "Failed to Add products"
       );
+    }
+  }
+);
+
+//DELETE PRODUCT CATEGORY THUNK
+export const deleteProductCategory = createAsyncThunk(
+  "product/deleteProductCategory",
+  async ({ data }: { data: any }, thunkAPI) => {
+    try {
+      const response = await axiosInstance.delete(
+        `dashboard/products/delete-product/categories`,
+       {data}
+      );
+
+      console.log("✅ Delete Product Category Response:", response.data);
+      return response.data;
+    } catch (error: any) {
+      console.error("❌ Error Deleting Product Category:", error);
+      return thunkAPI.rejectWithValue("Failed to delete Product Category");
     }
   }
 );
@@ -292,20 +310,28 @@ export const exportCsv = createAsyncThunk(
   "product/exportCsv",
   async ({ payload }: { payload: any }, thunkAPI) => {
     try {
-      const response = await axiosInstance.get("dashboard/products/export-csv", {
-        params: payload,
-        responseType: "blob", // 👈 critical for file download
-      });
+      const response = await axiosInstance.get(
+        "dashboard/products/export-csv",
+        {
+          params: payload,
+          responseType: "blob", // 👈 critical for file download
+        }
+      );
 
       // Create a blob URL for the file
-      const blob = new Blob([response.data], { type: response.headers["content-type"] });
+      const blob = new Blob([response.data], {
+        type: response.headers["content-type"],
+      });
       const downloadUrl = URL.createObjectURL(blob);
 
       // Get the file name from content-disposition header (if present)
       const disposition = response.headers["content-disposition"];
       let filename = "products_export.xlsx";
       if (disposition && disposition.includes("filename=")) {
-        filename = disposition.split("filename=")[1].split(";")[0].replace(/"/g, "");
+        filename = disposition
+          .split("filename=")[1]
+          .split(";")[0]
+          .replace(/"/g, "");
       }
 
       // Trigger the download
@@ -323,7 +349,6 @@ export const exportCsv = createAsyncThunk(
     }
   }
 );
-
 
 // 2. Initial State
 const initialState = {

@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useFormContext, useForm } from "react-hook-form";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Folder, ChevronRight, ChevronDown } from "lucide-react";
 import OrderActionsDropdown from "../../orders/OrderActionsDropdown";
@@ -18,6 +17,8 @@ import VisibilityToggle from "../../dropdowns/VisibilityToggle";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { updateCategory, deleteCategory } from "@/redux/slices/categorySlice";
 import { refetchCategories } from "@/lib/categoryUtils";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 const CategoryRow = ({
   category,
   level = 0,
@@ -34,6 +35,7 @@ const CategoryRow = ({
       id: category.id,
     });
 
+  const router = useRouter();
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
@@ -145,10 +147,15 @@ const CategoryRow = ({
         <TableCell className="flex  items-center gap-2 text-blue-600 font-medium text-xl py-6">
           <div
             style={{ marginLeft: `${level * 20}px` }}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 "
           >
             <Folder className="text-indigo-300 w-8 h-8" fill="lightblue" />
-            {category.name}
+            <Link
+              href={`/manage/products/categories/edit/${category?.id}`}
+              className="cursor-pointer hover:text-blue-800"
+            >
+              {category.name}
+            </Link>
           </div>
         </TableCell>
         <TableCell className="text-center text-xl">0</TableCell>

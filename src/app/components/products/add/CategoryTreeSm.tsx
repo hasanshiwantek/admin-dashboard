@@ -33,11 +33,9 @@ export default function CategoryTreeSm({ name }: CategoryTreeProps) {
     dispatch(fetchCategories());
   }, [dispatch]);
 
-
   const { control, setValue, getValues } = useFormContext();
   const [openMap, setOpenMap] = useState<Record<string, boolean>>({});
   const categoriesDataRaw = allCategories?.data || [];
-
 
   const categories: Category[] = normalizeCategories(categoriesDataRaw);
 
@@ -108,9 +106,9 @@ export default function CategoryTreeSm({ name }: CategoryTreeProps) {
 
             {/* Folder icon */}
             <Folder
-              className="text-indigo-300 w-7 h-7"
+              className="text-indigo-300 w-6 h-6 flex-shrink-0"
+              strokeWidth={1.5}
               fill="lightblue"
-              strokeWidth={2}
             />
 
             {/* Category label */}

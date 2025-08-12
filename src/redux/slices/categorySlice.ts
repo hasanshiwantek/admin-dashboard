@@ -41,12 +41,37 @@ export const updateCategory = createAsyncThunk(
   }
 );
 
-
+export const editCategory = createAsyncThunk(
+  "categories/editCategory",
+  async (
+    {
+      id,
+      data,
+      isFormData = false,
+    }: { id: number; data: any; isFormData?: boolean },
+    { rejectWithValue }
+  ) => {
+    try {
+      const res = await axiosInstance.post(
+        `dashboard/categories/update-categorySingle/${id}`,
+        data,
+        {
+          headers: isFormData
+            ? { "Content-Type": "multipart/form-data" }
+            : undefined,
+        }
+      );
+      return res.data;
+    } catch (err: any) {
+      return rejectWithValue(err?.response?.data || err?.message);
+    }
+  }
+);
 
 // UPDATE CATEGORY THUNK
 export const updateBulkCategory = createAsyncThunk(
   "categories/updateBulkCategory",
-  async ({ data}: { data: any; }, thunkAPI) => {
+  async ({ data }: { data: any }, thunkAPI) => {
     try {
       const res = await axiosInstance.put(
         `dashboard/categories/update-bulk-category`,
@@ -62,7 +87,6 @@ export const updateBulkCategory = createAsyncThunk(
     }
   }
 );
-
 
 // FETCH CATEGORY THUNK
 export const fetchCategories = createAsyncThunk(
@@ -83,7 +107,26 @@ export const fetchCategories = createAsyncThunk(
   }
 );
 
-// FETCH CATEGORY THUNK
+// FETCH CATEGORY  BY ID THUNK
+export const fetchCategoryById = createAsyncThunk(
+  "categories/fetchCategoryById",
+  async ({ id }: { id: number }, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.get(
+        `dashboard/categories/category/${id}`
+      );
+      console.log("✅ Fetch Category By Id Response :", res.data);
+      return res.data;
+    } catch (err: any) {
+      console.error("❌ Error fetching Category by id:", err);
+      return rejectWithValue(
+        err?.response?.data?.message || "Failed to fetch Category"
+      );
+    }
+  }
+);
+
+// DELETE CATEGORY THUNK
 export const deleteCategory = createAsyncThunk(
   "categories/deleteCategory",
   async (data: any, thunkAPI) => {
