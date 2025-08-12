@@ -110,8 +110,8 @@ const BrandTable = () => {
           <Link href={"/manage/products/brands/add"}>
             <button className="btn-outline-primary">Add a Brand...</button>
           </Link>
-          <button className="btn-outline-primary">
-            <Trash className="!w-6 !h-6" onClick={deleteBrandHandler} />
+          <button className="btn-outline-primary" onClick={deleteBrandHandler}>
+            <Trash className="!w-6 !h-6" />
           </button>
           <Input type="text" placeholder="Filter by Keyword" />
           <button className="btn-outline-primary">Filter</button>

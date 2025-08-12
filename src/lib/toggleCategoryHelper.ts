@@ -87,3 +87,58 @@
 
 //   return newSelected;
 // }
+
+
+
+
+
+
+
+
+
+// Minimal types you can adjust to your actual shapes
+export type Category = { id: number; name: string };
+export type Product = { id: number; categories?: Category[] };
+
+export const isRealCategory = (c?: Category) =>
+  !!c && c.name !== "Uncategorized";
+
+/** Return category IDs (as strings) for a single product, excluding "Uncategorized". */
+export const getProductCategoryIds = (p: Product): string[] =>
+  (p?.categories || []).filter(isRealCategory).map((c) => String(c.id));
+
+/** Intersection of category IDs across products. */
+export const getCommonCategoryIds = (products: Product[]): string[] => {
+  if (!products.length) return [];
+  const arrays = products.map(getProductCategoryIds);
+  return arrays.reduce((acc, arr) => acc.filter((id) => arr.includes(id)));
+};
+
+/** Union of category IDs across products. */
+export const getUnionCategoryIds = (products: Product[]): string[] => {
+  const set = new Set<string>();
+  products.forEach((p) => getProductCategoryIds(p).forEach((id) => set.add(id)));
+  return Array.from(set);
+};
+
+// 👉 new: numeric version (handy sometimes)
+export const getProductCategoryIdsNum = (p: Product): number[] =>
+  (p?.categories || []).filter(c => c?.name !== "Uncategorized").map(c => Number(c.id));
+
+// small util
+export const unique = <T,>(arr: T[]) => Array.from(new Set(arr));
+
+
+/**
+ * Derive defaults for category modal based on selection.
+ * - single selection: that product’s categories
+ * - multiple selection: intersection (safe/common) by default
+ *   (pass mode "union" if you prefer union)
+ */
+export const deriveDefaultsForSelection = (
+  products: Product[],
+  mode: "intersection" | "union" = "intersection"
+): string[] => {
+  if (products.length <= 1) return products[0] ? getProductCategoryIds(products[0]) : [];
+  return mode === "union" ? getUnionCategoryIds(products) : getCommonCategoryIds(products);
+};

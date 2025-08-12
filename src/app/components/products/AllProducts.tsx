@@ -34,7 +34,12 @@ import Spinner from "../loader/Spinner";
 import { refetchProducts } from "@/lib/productUtils";
 import { useSearchParams } from "next/navigation";
 import { advanceSearchProduct } from "@/redux/slices/productSlice";
-
+import AddToCategories from "./AddToCategories";
+import {
+  deriveDefaultsForSelection,
+  getProductCategoryIds,
+} from "@/lib/toggleCategoryHelper";
+import { deleteProductCategory } from "@/redux/slices/productSlice";
 const filterTabs = [
   "All",
   "Featured",
@@ -51,6 +56,23 @@ export default function AllProducts() {
   const { loading, error } = useAppSelector((state: any) => state.product);
   const [selectedTab, setSelectedTab] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
+
+  const dispatch = useAppDispatch();
+  const [featuredMap, setFeaturedMap] = useState<{ [key: number]: boolean }>(
+    {}
+  );
+  const router = useRouter();
+  const [visibilityMap, setVisibilityMap] = useState<{
+    [key: number]: "ENABLED" | "DISABLED";
+  }>({});
+  const [selectedProductIds, setSelectedProductIds] = useState<number[]>([]);
+  // Category modal state
+  const [categoryModalOpen, setCategoryModalOpen] = useState(false);
+  const [categoryProductIds, setCategoryProductIds] = useState<number[]>([]);
+  const [categoryModalDefaults, setCategoryModalDefaults] = useState<string[]>(
+    []
+  );
+  const [categoryAction, setCategoryAction] = useState<"add" | "delete">("add");
 
   const products = allProducts?.data;
   console.log("All Products data from frontend: ", products);
@@ -94,15 +116,50 @@ export default function AllProducts() {
 
   console.log("Filtered Products: ", filteredProducts);
 
-  const dispatch = useAppDispatch();
-  const [featuredMap, setFeaturedMap] = useState<{ [key: number]: boolean }>(
-    {}
-  );
-  const router = useRouter();
-  const [visibilityMap, setVisibilityMap] = useState<{
-    [key: number]: "ENABLED" | "DISABLED";
-  }>({});
-  const [selectedProductIds, setSelectedProductIds] = useState<number[]>([]);
+  const handleApplyCategories = async (pickedIdsStr: string[]) => {
+    if (categoryAction === "add") {
+      // ✅ keep your existing add logic EXACTLY the same as before
+      dispatch(
+        updateProduct({
+          body: {
+            products: [
+              {
+                id: categoryProductIds,
+                fields: { categoryIds: pickedIdsStr.map(Number) },
+              },
+            ],
+          },
+        })
+      );
+      setTimeout(() => refetchProducts(dispatch), 300);
+    } else if (categoryAction === "delete") {
+      const picked = pickedIdsStr.map(Number);
+      if (!picked.length) return;
+
+      const ok = window.confirm(
+        `This will permanently delete ${picked.length} categor${
+          picked.length > 1 ? "ies" : "y"
+        } for ALL products. Continue?`
+      );
+      if (!ok) return;
+
+      await dispatch(
+        deleteProductCategory({
+          data: { productIds: categoryProductIds, categoryIds: picked },
+        })
+      );
+      // refresh categories (and products if needed)
+      setTimeout(() => {
+        refetchProducts(dispatch);
+      }, 300);
+    }
+
+    // cleanup
+    setCategoryModalOpen(false);
+    setCategoryProductIds([]);
+    setCategoryModalDefaults([]);
+    setSelectedProductIds([]);
+  };
 
   const getDropdownActions = (product: any) => [
     {
@@ -115,11 +172,24 @@ export default function AllProducts() {
     },
     {
       label: "Add to categories",
-      onClick: () => console.log("Add to categories clicked", product),
+      onClick: () => {
+        const defaults = getProductCategoryIds(product); // preselect current of that row
+        setCategoryAction("add");
+        setCategoryProductIds([product.id]);
+        setCategoryModalDefaults(defaults);
+        setCategoryModalOpen(true);
+      },
     },
+
     {
       label: "Remove from categories",
-      onClick: () => console.log("Remove from categories", product),
+      onClick: () => {
+        const defaults = getProductCategoryIds(product); // preselect current categories to delete
+        setCategoryAction("delete");
+        setCategoryProductIds([product.id]); // not used by delete, but harmless
+        setCategoryModalDefaults(defaults);
+        setCategoryModalOpen(true);
+      },
     },
     {
       label: "Enable visibility",
@@ -156,7 +226,7 @@ export default function AllProducts() {
                 {
                   id: [product?.id],
                   fields: {
-                    isVisible: true,
+                    isVisible: false,
                   },
                 },
               ],
@@ -238,13 +308,29 @@ export default function AllProducts() {
     {
       label: "Add to categories",
       onClick: () => {
-        console.log("Add to categories clicked");
+        const selected = filteredProducts.filter((p: any) =>
+          selectedProductIds.includes(p.id)
+        );
+        const defaults = deriveDefaultsForSelection(selected, "intersection"); // safe prefill
+        setCategoryAction("add");
+        setCategoryProductIds(selectedProductIds);
+        setCategoryModalDefaults(defaults);
+        setCategoryModalOpen(true);
       },
     },
+
     {
       label: "Remove from categories",
       onClick: () => {
-        console.log("Remove from categories");
+        const selected = filteredProducts.filter((p: any) =>
+          selectedProductIds.includes(p.id)
+        );
+        // show union so user can see every category used across selection
+        const defaults = deriveDefaultsForSelection(selected, "union");
+        setCategoryAction("delete");
+        setCategoryProductIds(selectedProductIds); // not needed for delete, but fine
+        setCategoryModalDefaults(defaults);
+        setCategoryModalOpen(true);
       },
     },
     {
@@ -467,331 +553,343 @@ export default function AllProducts() {
     );
   }
   return (
-    <div className="">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="!text-5xl !font-extralight !text-gray-600 !my-5">
-          Products
-        </h1>
-        <Link href={"/manage/products/add"}>
-          <Button
-            size="xl"
-            className="!text-2xl btn-primary !flex !justify-start !items-center"
-          >
-            <Plus className="!w-6 !h-6" /> Add new
-          </Button>
-        </Link>
-      </div>
-
-      <div className="bg-white p-4 shadow-md">
-        <div className="flex flex-wrap gap-5 mb-4">
-          {filterTabs.map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setSelectedTab(tab)}
-              className={`!text-2xl px-5 py-2 rounded  cursor-pointer transition hover:bg-blue-100 ${
-                selectedTab === tab
-                  ? "bg-blue-100 border-blue-600 text-blue-600"
-                  : " text-blue-600"
-              }`}
+    <>
+      <div className="">
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="!text-5xl !font-extralight !text-gray-600 !my-5">
+            Products
+          </h1>
+          <Link href={"/manage/products/add"}>
+            <Button
+              size="xl"
+              className="!text-2xl btn-primary !flex !justify-start !items-center"
             >
-              {tab}
-            </button>
-          ))}
+              <Plus className="!w-6 !h-6" /> Add new
+            </Button>
+          </Link>
         </div>
 
-        <div className="flex justify-between gap-10 items-center mb-5">
-          <div
-            className="flex justify-start items-center bg-white text-center !px-4 !py-4 rounded-md 
-                         focus-within:ring-3 focus-within:ring-blue-200 focus-within:border-blue-200 border border-gray-200  transition hover:border-blue-200 w-[80%]"
-          >
-            <i onClick={handleSearchProduct}>
-              <IoSearchOutline
-                size={20}
-                color="gray"
-                className="cursor-pointer"
-              />
-            </i>
-            <input
-              type="text"
-              placeholder=" Search products"
-              className=" !ml-3 bg-transparent !text-xl !font-medium outline-none placeholder:text-gray-400 w-[80%]"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+        <div className="bg-white p-4 shadow-md">
+          <div className="flex flex-wrap gap-5 mb-4">
+            {filterTabs.map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setSelectedTab(tab)}
+                className={`!text-2xl px-5 py-2 rounded  cursor-pointer transition hover:bg-blue-100 ${
+                  selectedTab === tab
+                    ? "bg-blue-100 border-blue-600 text-blue-600"
+                    : " text-blue-600"
+                }`}
+              >
+                {tab}
+              </button>
+            ))}
           </div>
 
-          {/* <Input placeholder="Search products" className="max-w-[80%] !p-7 " /> */}
-          <Link href={"/manage/products/search"}>
-            <button className="btn-outline-primary flex justify-start gap-1 items-center">
-              <Filter className="w-6 h-6" />
-              Add filters
-            </button>
-          </Link>
-          {/* <Checkbox/> */}
-        </div>
-
-        <div className="flex items-center justify-between border-t border-b border-gray-200 px-4 py-2 bg-white text-sm">
-          {/* Left side: checkbox and product count */}
-          <div className="flex items-center space-x-10">
-            <div className="flex justify-start items-center gap-2">
-              <Checkbox
-                checked={isAllSelected}
-                onCheckedChange={(checked: boolean) =>
-                  handleSelectAllChange(checked)
-                }
+          <div className="flex justify-between gap-10 items-center mb-5">
+            <div
+              className="flex justify-start items-center bg-white text-center !px-4 !py-4 rounded-md 
+                         focus-within:ring-3 focus-within:ring-blue-200 focus-within:border-blue-200 border border-gray-200  transition hover:border-blue-200 w-[80%]"
+            >
+              <i onClick={handleSearchProduct}>
+                <IoSearchOutline
+                  size={20}
+                  color="gray"
+                  className="cursor-pointer"
+                />
+              </i>
+              <input
+                type="text"
+                placeholder=" Search products"
+                className=" !ml-3 bg-transparent !text-xl !font-medium outline-none placeholder:text-gray-400 w-[80%]"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
-              <span className="text-gray-700 !text-xl">
-                {filteredProducts?.length} of {pagination?.total} Products
-              </span>
             </div>
 
-            {selectedProductIds.length > 0 && (
-              <div>
-                <button className="btn-outline-primary">Export</button>
-                <button
-                  className="btn-outline-primary"
-                  onClick={handlebulkEdit}
-                >
-                  Bulk edit
-                </button>
-                <button
-                  className="btn-outline-primary"
-                  onClick={handleEditInventory}
-                >
-                  Edit Inventory
-                </button>
-                <OrderActionsDropdown
-                  actions={editdropdownActions}
-                  trigger={
-                    <button className="text-xl cursor-pointer btn-outline-primary">
-                      •••
-                    </button>
+            {/* <Input placeholder="Search products" className="max-w-[80%] !p-7 " /> */}
+            <Link href={"/manage/products/search"}>
+              <button className="btn-outline-primary flex justify-start gap-1 items-center">
+                <Filter className="w-6 h-6" />
+                Add filters
+              </button>
+            </Link>
+            {/* <Checkbox/> */}
+          </div>
+
+          <div className="flex items-center justify-between border-t border-b border-gray-200 px-4 py-2 bg-white text-sm">
+            {/* Left side: checkbox and product count */}
+            <div className="flex items-center space-x-10">
+              <div className="flex justify-start items-center gap-2">
+                <Checkbox
+                  checked={isAllSelected}
+                  onCheckedChange={(checked: boolean) =>
+                    handleSelectAllChange(checked)
                   }
                 />
+                <span className="text-gray-700 !text-xl">
+                  {filteredProducts?.length} of {pagination?.total} Products
+                </span>
               </div>
-            )}
 
-            {/* <div>
+              {selectedProductIds.length > 0 && (
+                <div>
+                  <button className="btn-outline-primary">Export</button>
+                  <button
+                    className="btn-outline-primary"
+                    onClick={handlebulkEdit}
+                  >
+                    Bulk edit
+                  </button>
+                  <button
+                    className="btn-outline-primary"
+                    onClick={handleEditInventory}
+                  >
+                    Edit Inventory
+                  </button>
+                  <OrderActionsDropdown
+                    actions={editdropdownActions}
+                    trigger={
+                      <button className="text-xl cursor-pointer btn-outline-primary">
+                        •••
+                      </button>
+                    }
+                  />
+                </div>
+              )}
+
+              {/* <div>
               <span className="!text-xl !text-blue-600 hover:bg-blue-100 cursor-pointer px-6 py-3 rounded-sm transition-all ">
                 Select all products
               </span>
             </div> */}
-          </div>
+            </div>
 
-          {/* Right side: pagination and controls */}
-          <div className="flex items-center space-x-10 text-gray-700">
-            {/* Settings icon */}
-            {/* <Settings className="w-8 h-8 text-gray-500" /> */}
+            {/* Right side: pagination and controls */}
+            <div className="flex items-center space-x-10 text-gray-700">
+              {/* Settings icon */}
+              {/* <Settings className="w-8 h-8 text-gray-500" /> */}
 
-            <div className="p-6">
-              {/* Pagination */}
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-                perPage={perPage}
-                onPerPageChange={handlePerPageChange}
-              />
+              <div className="p-6">
+                {/* Pagination */}
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                  perPage={perPage}
+                  onPerPageChange={handlePerPageChange}
+                />
+              </div>
             </div>
           </div>
-        </div>
-        <div>
-          <Table>
-            <TableHeader className="h-18">
-              <TableRow>
-                <TableHead></TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead></TableHead>
-                <TableHead>SKU</TableHead>
-                <TableHead>Categories</TableHead>
-                <TableHead>Current stock</TableHead>
-                <TableHead>Price</TableHead>
-                <TableHead>Channels</TableHead>
-                <TableHead>Visibility</TableHead>
-                <TableHead></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {loading ? (
+          <div>
+            <Table>
+              <TableHeader className="h-18">
                 <TableRow>
-                  <TableCell colSpan={10} className="text-center py-10">
-                    <Spinner />
-                  </TableCell>
+                  <TableHead></TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead></TableHead>
+                  <TableHead>SKU</TableHead>
+                  <TableHead>Categories</TableHead>
+                  <TableHead>Current stock</TableHead>
+                  <TableHead>Price</TableHead>
+                  <TableHead>Channels</TableHead>
+                  <TableHead>Visibility</TableHead>
+                  <TableHead></TableHead>
                 </TableRow>
-              ) : filteredProducts?.length === 0 && !loading ? (
-                <TableRow>
-                  <TableCell
-                    colSpan={10}
-                    className="text-center py-10 text-gray-500 text-xl"
-                  >
-                    No products yet.
-                  </TableCell>
-                </TableRow>
-              ) : (
-                filteredProducts?.map((product: any) => (
-                  <TableRow key={product.id}>
-                    <TableCell>
-                      <Checkbox
-                        checked={selectedProductIds.includes(product.id)}
-                        onCheckedChange={(checked: boolean) =>
-                          handleProductCheckboxChange(product.id, checked)
-                        }
-                      />
-                    </TableCell>
-                    <TableCell className="flex items-center gap-2 ">
-                      {(product.image?.[1]?.path ||
-                        product.image?.[0]?.path) && (
-                        <Image
-                          src={
-                            product.image?.[1]?.path || product.image?.[0]?.path
-                          }
-                          alt={product.name}
-                          width={60}
-                          height={60}
-                          className="rounded !border object-contain !border-gray-300 p-2 shrink-0 w-28 h-24"
-                        />
-                      )}
-                      <span
-                        onClick={() => {
-                          router.push(`/manage/products/edit/${product.id}`);
-                          console.log("navigated");
-                        }}
-                        className="!text-blue-600 hover:underline !text-xl !font-medium capitalize  cursor-pointer whitespace-normal break-words leading-snug max-w-[300px]"
-                      >
-                        {product.name}
-                      </span>
-                    </TableCell>
-
-                    <TableCell className="relative  mx-4 ">
-                      <FeaturedToggle
-                        productId={product.id}
-                        isFeatured={
-                          featuredMap[product.id] ?? product.isFeatured
-                        }
-                        onChange={(id: any, value) => {
-                          setFeaturedMap((prev) => ({ ...prev, [id]: value }));
-
-                          dispatch(
-                            updateProduct({
-                              body: {
-                                products: [
-                                  {
-                                    id: [id],
-                                    fields: {
-                                      isFeatured: value,
-                                      // categoryIds:[1]
-                                    },
-                                  },
-                                ],
-                              },
-                            })
-                          );
-                          refetchProducts(dispatch);
-                        }}
-                      />
-                    </TableCell>
-
-                    <TableCell>{product.sku}</TableCell>
-                    <TableCell className="whitespace-normal break-words leading-snug max-w-[300px]">
-                      {product?.categories?.find(
-                        (cat: any) => cat.name !== "Uncategorized"
-                      )?.name || "-"}
-                    </TableCell>
-
-                    <TableCell>
-                      <EditStockSheet
-                        product={product}
-                        trigger={
-                          <div className="group hover:text-blue-600 flex items-center gap-1 hover:bg-blue-100 p-4 rounded-md cursor-pointer transition-colors">
-                            <a className="text-xl group-hover:opacity-100">
-                              {product.currentStock}
-                            </a>
-                            <Pencil className="w-5 h-5 text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
-                          </div>
-                        }
-                      />
-                    </TableCell>
-
-                    <TableCell>
-                      <EditPriceSheet
-                        product={product}
-                        trigger={
-                          <div className="group hover:text-blue-600 flex items-center gap-1 hover:bg-blue-100 p-4 rounded-md cursor-pointer transition-colors">
-                            <a className="text-xl group-hover:opacity-100">
-                              {product.price}
-                            </a>
-                            <Pencil className="w-5 h-5 text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
-                          </div>
-                        }
-                      />
-                    </TableCell>
-
-                    <TableCell>{product.channels}</TableCell>
-                    <TableCell className="relative hover:bg-blue-100 transition-all">
-                      <VisibilityToggle
-                        productId={product.id}
-                        value={
-                          visibilityMap[product.id] ?? product.isVisible
-                            ? "ENABLED"
-                            : "DISABLED"
-                        }
-                        onChange={(id, value) => {
-                          const isVisible = value === "ENABLED";
-                          setVisibilityMap((prev: any) => ({
-                            ...prev,
-                            [id]: isVisible,
-                          }));
-                          dispatch(
-                            updateProduct({
-                              body: {
-                                products: [
-                                  {
-                                    id: [id],
-                                    fields: {
-                                      isVisible,
-                                    },
-                                  },
-                                ],
-                              },
-                            })
-                          );
-                          refetchProducts(dispatch);
-                        }}
-                      />
-                    </TableCell>
-
-                    <TableCell>
-                      <OrderActionsDropdown
-                        actions={getDropdownActions(product)}
-                        trigger={
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="text-xl cursor-pointer"
-                          >
-                            •••
-                          </Button>
-                        }
-                      />
+              </TableHeader>
+              <TableBody>
+                {loading ? (
+                  <TableRow>
+                    <TableCell colSpan={10} className="text-center py-10">
+                      <Spinner />
                     </TableCell>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </div>
+                ) : filteredProducts?.length === 0 && !loading ? (
+                  <TableRow>
+                    <TableCell
+                      colSpan={10}
+                      className="text-center py-10 text-gray-500 text-xl"
+                    >
+                      No products yet.
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredProducts?.map((product: any) => (
+                    <TableRow key={product.id}>
+                      <TableCell>
+                        <Checkbox
+                          checked={selectedProductIds.includes(product.id)}
+                          onCheckedChange={(checked: boolean) =>
+                            handleProductCheckboxChange(product.id, checked)
+                          }
+                        />
+                      </TableCell>
+                      <TableCell className="flex items-center gap-2 ">
+                        {(product.image?.[1]?.path ||
+                          product.image?.[0]?.path) && (
+                          <Image
+                            src={
+                              product.image?.[1]?.path ||
+                              product.image?.[0]?.path
+                            }
+                            alt={product.name}
+                            width={60}
+                            height={60}
+                            className="rounded !border object-contain !border-gray-300 p-2 shrink-0 w-28 h-24"
+                          />
+                        )}
+                        <span
+                          onClick={() => {
+                            router.push(`/manage/products/edit/${product.id}`);
+                            console.log("navigated");
+                          }}
+                          className="!text-blue-600 hover:underline !text-xl !font-medium capitalize  cursor-pointer whitespace-normal break-words leading-snug max-w-[300px]"
+                        >
+                          {product.name}
+                        </span>
+                      </TableCell>
 
-        <div className="flex justify-end my-6">
-          {/* Pagination */}
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-            perPage={perPage}
-            onPerPageChange={handlePerPageChange}
-          />
+                      <TableCell className="relative  mx-4 ">
+                        <FeaturedToggle
+                          productId={product.id}
+                          isFeatured={
+                            featuredMap[product.id] ?? product.isFeatured
+                          }
+                          onChange={(id: any, value) => {
+                            setFeaturedMap((prev) => ({
+                              ...prev,
+                              [id]: value,
+                            }));
+
+                            dispatch(
+                              updateProduct({
+                                body: {
+                                  products: [
+                                    {
+                                      id: [id],
+                                      fields: {
+                                        isFeatured: value,
+                                        // categoryIds:[1]
+                                      },
+                                    },
+                                  ],
+                                },
+                              })
+                            );
+                            refetchProducts(dispatch);
+                          }}
+                        />
+                      </TableCell>
+
+                      <TableCell>{product.sku}</TableCell>
+                      <TableCell className="whitespace-normal break-words leading-snug max-w-[300px]">
+                        {product?.categories?.find(
+                          (cat: any) => cat.name !== "Uncategorized"
+                        )?.name || "-"}
+                      </TableCell>
+
+                      <TableCell>
+                        <EditStockSheet
+                          product={product}
+                          trigger={
+                            <div className="group hover:text-blue-600 flex items-center gap-1 hover:bg-blue-100 p-4 rounded-md cursor-pointer transition-colors">
+                              <a className="text-xl group-hover:opacity-100">
+                                {product.currentStock}
+                              </a>
+                              <Pencil className="w-5 h-5 text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                            </div>
+                          }
+                        />
+                      </TableCell>
+
+                      <TableCell>
+                        <EditPriceSheet
+                          product={product}
+                          trigger={
+                            <div className="group hover:text-blue-600 flex items-center gap-1 hover:bg-blue-100 p-4 rounded-md cursor-pointer transition-colors">
+                              <a className="text-xl group-hover:opacity-100">
+                                {product.price}
+                              </a>
+                              <Pencil className="w-5 h-5 text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                            </div>
+                          }
+                        />
+                      </TableCell>
+
+                      <TableCell>{product.channels}</TableCell>
+                      <TableCell className="relative hover:bg-blue-100 transition-all">
+                        <VisibilityToggle
+                          productId={product.id}
+                          value={
+                            visibilityMap[product.id] ?? product.isVisible
+                              ? "ENABLED"
+                              : "DISABLED"
+                          }
+                          onChange={(id, value) => {
+                            const isVisible = value === "ENABLED";
+                            setVisibilityMap((prev: any) => ({
+                              ...prev,
+                              [id]: isVisible,
+                            }));
+                            dispatch(
+                              updateProduct({
+                                body: {
+                                  products: [
+                                    {
+                                      id: [id],
+                                      fields: {
+                                        isVisible,
+                                      },
+                                    },
+                                  ],
+                                },
+                              })
+                            );
+                            refetchProducts(dispatch);
+                          }}
+                        />
+                      </TableCell>
+
+                      <TableCell>
+                        <OrderActionsDropdown
+                          actions={getDropdownActions(product)}
+                          trigger={
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="text-xl cursor-pointer"
+                            >
+                              •••
+                            </Button>
+                          }
+                        />
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+
+          <div className="flex justify-end my-6">
+            {/* Pagination */}
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+              perPage={perPage}
+              onPerPageChange={handlePerPageChange}
+            />
+          </div>
         </div>
       </div>
-    </div>
+      <AddToCategories
+        open={categoryModalOpen}
+        onClose={() => setCategoryModalOpen(false)}
+        defaultSelectedIds={categoryModalDefaults}
+        onApply={handleApplyCategories}
+      />
+    </>
   );
 }
