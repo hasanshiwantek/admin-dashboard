@@ -44,7 +44,6 @@ export default function Pricing() {
           value={price}
           onChange={(e) => setValue("price", e.target.value)}
         />
-
         <div className="space-y-1">
           <Label>Tax Class</Label>
           <Controller
@@ -67,7 +66,6 @@ export default function Pricing() {
           />
         </div>
       </div>
-
       {/* Advanced Pricing Toggle */}
       <div>
         <button

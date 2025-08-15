@@ -56,9 +56,29 @@ export const updateOrderStatus = createAsyncThunk(
   }
 );
 
+export const fetchAllShipments = createAsyncThunk(
+  "orders/fetchAllShipments",
+  async (
+    { page, perPage }: { page: number; perPage: number | string },
+    thunkAPI
+  )=> {
+    try {
+      const res = await axiosInstance.get(`dashboard/shipments/list-shipment?page=${page}&pageSize=${perPage}`);
+      console.log("✅ Order Response Data:", res.data);
+      return res.data;
+    } catch (err: any) {
+      console.error("❌ Error fetching all shipment:", err);
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to fetch shipments"
+      );
+    }
+  }
+);
+
 // 2. Initial State
 const initialState = {
   orders: [],
+  shipments: [],
   loading: false,
   error: null as string | null,
 };
@@ -97,7 +117,20 @@ const orderSlice = createSlice({
       .addCase(updateOrderStatus.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
-      });
+      })
+      .addCase(fetchAllShipments.pending, (state) => {
+        state.loading = true;
+        state.error = null; // reset error
+      })
+      .addCase(fetchAllShipments.fulfilled, (state, action) => {
+        state.loading = false;
+        state.shipments = action.payload;
+      })
+      .addCase(fetchAllShipments.rejected, (state, action) => {
+        state.loading = false;
+        state.error =
+          (action.payload as string) || action.error.message || "Failed";
+      })
   },
 });
 export default orderSlice.reducer;
