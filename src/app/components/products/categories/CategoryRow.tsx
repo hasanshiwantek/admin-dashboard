@@ -60,6 +60,9 @@ const CategoryRow = ({
   const editdropdownActions = (category: any) => [
     {
       label: "Edit",
+      onClick: () => {
+        router.push(`/manage/products/categories/edit/${category?.id}`);
+      },
     },
     {
       label: "Create sub-category",
@@ -104,13 +107,18 @@ const CategoryRow = ({
         const ids = {
           ids: [category?.id],
         };
-        try {
-          dispatch(deleteCategory({ data: ids }));
-          setTimeout(() => {
-            refetchCategories(dispatch);
-          }, 2000);
-        } catch (err) {
-          console.log(err, "Error while deleting");
+        const confirm = window.confirm("Delete selected category?");
+        if (!confirm) {
+          return;
+        } else {
+          try {
+            dispatch(deleteCategory({ data: ids }));
+            setTimeout(() => {
+              refetchCategories(dispatch);
+            }, 2000);
+          } catch (err) {
+            console.log(err, "Error while deleting");
+          }
         }
       },
     },

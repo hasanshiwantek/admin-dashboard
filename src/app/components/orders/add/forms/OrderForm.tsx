@@ -11,16 +11,42 @@ export default function OrderForm() {
 
   const handleNext = (data: any) => {
     setFormData((prev) => ({ ...prev, ...data }));
-    setStep(step + 1);
   };
 
   return (
-    <div className="  p-10">
-      {/* <h1 className="text-2xl font-bold mb-6">Multi-Step Order Form</h1> */}
-      {step === 1 && <StepOne data={formData} onNext={handleNext} />}
-      {step === 2 && <StepTwo data={formData} onNext={handleNext} />}
-      {step === 3 && <StepThree data={formData} onNext={handleNext} />}
-      {step === 4 && <StepFour data={formData} onNext={() => alert("Order submitted!")} />}
+    <div>
+      {step === 1 && (
+        <StepOne
+          data={formData}
+          onNext={handleNext}
+          step={step}
+          setStep={setStep}
+        />
+      )}
+      {step === 2 && (
+        <StepTwo
+          data={formData}
+          onNext={handleNext}
+          step={step}
+          setStep={setStep}
+        />
+      )}
+      {step === 3 && (
+        <StepThree
+          data={formData}
+          onNext={handleNext}
+          step={step}
+          setStep={setStep}
+        />
+      )}
+      {step === 4 && (
+        <StepFour
+          data={formData}
+          onNext={handleNext}
+          step={step}
+          setStep={setStep}
+        />
+      )}
     </div>
   );
 }
