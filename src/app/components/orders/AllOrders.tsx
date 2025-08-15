@@ -23,6 +23,17 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { fetchAllOrders, updateOrderStatus } from "@/redux/slices/orderSlice";
 import { refetchOrders } from "@/lib/orderUtils";
+import { FaCirclePlus, FaCircleMinus } from "react-icons/fa6";
+import {
+  Globe,
+  Phone,
+  Mail,
+  Clock,
+  Calendar,
+  LocationEdit,
+  DollarSign,
+} from "lucide-react";
+
 import Spinner from "../loader/Spinner";
 import Link from "next/link";
 const AllOrders = () => {
@@ -33,6 +44,11 @@ const AllOrders = () => {
   const [perPage, setPerPage] = useState("50");
   const total = pagination?.total;
   const totalPages = pagination?.totalPages;
+  const [expandedRow, setExpandedRow] = useState<number | null>(null);
+
+  const toggleRow = (id: number) => {
+    setExpandedRow((prev) => (prev === id ? null : id));
+  };
 
   console.log("Orders Pagination: ", pagination);
 
@@ -153,6 +169,9 @@ const AllOrders = () => {
     { label: "View order timeline" },
   ];
 
+  const copyBilling = () => {
+    console.log("Copied");
+  };
   return (
     <div className=" bg-[var(--store-bg)] min-h-screen mt-20">
       {/* Tabs */}
@@ -268,10 +287,7 @@ const AllOrders = () => {
 
           <button className="btn-outline-primary">Confirm</button>
 
-          <Input
-            placeholder="Filter by keyword"
-            className=""
-          />
+          <Input placeholder="Filter by keyword" className="" />
           <button className="btn-outline-primary">Search</button>
         </div>
         {/* Pagination */}
@@ -303,6 +319,8 @@ const AllOrders = () => {
                     }
                   />
                 </TableHead>
+                <TableHead></TableHead>
+
                 <TableHead>Date</TableHead>
                 <TableHead>Order ID</TableHead>
                 <TableHead>Customer</TableHead>
@@ -330,99 +348,313 @@ const AllOrders = () => {
                 </TableRow>
               ) : (
                 filteredOrders?.map((order: any, idx: number) => (
-                  <TableRow key={idx}>
-                    <TableCell>
-                      <Checkbox
-                        checked={selectedOrderIds.includes(order.id)}
-                        onCheckedChange={(checked) =>
-                          handleOrderCheckboxChange(order, checked as boolean)
-                        }
-                      />
-                    </TableCell>
-                    <TableCell>
-                      {new Date(order.createdAt).toLocaleDateString("en-GB", {
-                        day: "2-digit",
-                        month: "short", // or "long" for full month name
-                        year: "numeric",
-                      })}
-                    </TableCell>
+                  <>
+                    <TableRow key={idx}>
+                      <TableCell>
+                        <Checkbox
+                          checked={selectedOrderIds.includes(order.id)}
+                          onCheckedChange={(checked) =>
+                            handleOrderCheckboxChange(order, checked as boolean)
+                          }
+                        />
+                      </TableCell>
 
-                    <TableCell className="text-blue-600">{order.id}</TableCell>
-                    <TableCell>{order.name}</TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        {(() => {
-                          const normalizedStatus = order.status;
+                      <TableCell>
+                        <button onClick={() => toggleRow(order.id)}>
+                          {expandedRow === order.id ? (
+                            <FaCircleMinus className="h-7 w-7 fill-gray-600" />
+                          ) : (
+                            <FaCirclePlus className="h-7 w-7 fill-gray-600" />
+                          )}
+                        </button>
+                      </TableCell>
 
-                          const currentStatus = statusOptions.find(
-                            (option) => option.value === normalizedStatus
-                          );
+                      <TableCell>
+                        {new Date(order.createdAt).toLocaleDateString("en-GB", {
+                          day: "2-digit",
+                          month: "short", // or "long" for full month name
+                          year: "numeric",
+                        })}
+                      </TableCell>
 
-                          return (
-                            <>
-                              <span
-                                className={`w-7 h-9 inline-block rounded-sm ${
-                                  currentStatus?.color || "bg-gray-300"
-                                }`}
-                              />
-                              <Select
-                                defaultValue={normalizedStatus}
-                                onValueChange={(newStatus) => {
-                                  dispatch(
-                                    updateOrderStatus({
-                                      id: order.id,
-                                      status: newStatus,
-                                    })
-                                  );
-                                  setTimeout(() => {
-                                    refetchOrders(dispatch);
-                                  }, 700);
-                                }}
-                              >
-                                <SelectTrigger className="w-[200px] h-8 p-6">
-                                  <SelectValue>
-                                    {currentStatus?.label || "Status"}
-                                  </SelectValue>
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {statusOptions.map((option) => (
-                                    <SelectItem
-                                      key={option.value}
-                                      value={option.value}
+                      <TableCell className="text-blue-600">
+                        {order.id}
+                      </TableCell>
+                      <TableCell>{order.name}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          {(() => {
+                            const normalizedStatus = order.status;
+
+                            const currentStatus = statusOptions.find(
+                              (option) => option.value === normalizedStatus
+                            );
+
+                            return (
+                              <>
+                                <span
+                                  className={`w-7 h-9 inline-block rounded-sm ${
+                                    currentStatus?.color || "bg-gray-300"
+                                  }`}
+                                />
+                                <Select
+                                  defaultValue={normalizedStatus}
+                                  onValueChange={(newStatus) => {
+                                    dispatch(
+                                      updateOrderStatus({
+                                        id: order.id,
+                                        status: newStatus,
+                                      })
+                                    );
+                                    setTimeout(() => {
+                                      refetchOrders(dispatch);
+                                    }, 700);
+                                  }}
+                                >
+                                  <SelectTrigger className="w-[200px] h-8 p-6">
+                                    <SelectValue>
+                                      {currentStatus?.label || "Status"}
+                                    </SelectValue>
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {statusOptions.map((option) => (
+                                      <SelectItem
+                                        key={option.value}
+                                        value={option.value}
+                                      >
+                                        {option.label}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </>
+                            );
+                          })()}
+                        </div>
+                      </TableCell>
+
+                      <TableCell>
+                        {new Intl.NumberFormat("en-US", {
+                          style: "currency",
+                          currency: "USD",
+                        }).format(Number(order.totalAmount))}
+                      </TableCell>
+
+                      <TableCell>
+                        <OrderActionsDropdown
+                          actions={orderActions}
+                          trigger={
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="text-xl cursor-pointer"
+                            >
+                              •••
+                            </Button>
+                          }
+                        />
+                      </TableCell>
+                    </TableRow>
+
+                    {expandedRow === order.id && (
+                      <TableRow>
+                        <TableCell colSpan={11}>
+                          <div className="grid grid-cols-3 gap-4 bg-gray-50 p-4 ">
+                            <div className="flex">
+                              <div className="flex flex-col border-r pr-3 mr-3 space-y-1">
+                                <h4 className="font-semibold">Billing</h4>
+                                <button
+                                  className="!px-2 !py-1 text-blue-500 border-blue-400 border text-base"
+                                  onClick={copyBilling}
+                                >
+                                  Copy
+                                </button>
+                                <div className="flex flex-col gap-3">
+                                  <span className="ml-4">
+                                    <Globe className="w-6 h-6 text-gray-500" />
+                                  </span>
+                                  <span>
+                                    <Phone className="w-6 h-6 text-gray-500 ml-4" />
+                                  </span>
+                                  <span>
+                                    <Mail className="w-6 h-6 text-gray-500 ml-4" />
+                                  </span>
+                                  <span>
+                                    <Clock className="w-6 h-6 text-gray-500 ml-4" />
+                                  </span>
+                                </div>
+                              </div>
+
+                              <div className="flex flex-col space-y-1">
+                                <p>
+                                  {order.name}
+                                  <br />
+                                  {order.address}
+                                </p>
+                                <p>{order?.country || "N/A"}</p>
+                                <p>{order?.phone || "N/A"}</p>
+                                <p>{order.email || "N/A"}</p>
+                                <p>{order.updatedAt}</p>
+                              </div>
+                            </div>
+
+                            <div className="flex">
+                              <div className="flex flex-col border-r pr-3 mr-3 space-y-1">
+                                <h4 className="font-semibold">Shipping</h4>
+                                <button
+                                  className="!px-2 !py-1 text-blue-500 border-blue-400 border text-base"
+                                  onClick={copyBilling}
+                                >
+                                  Copy
+                                </button>
+                                <h4 className="font-semibold">Method</h4>
+                                <div className="flex flex-col gap-2.5 ">
+                                  <span className="ml-4">
+                                    <LocationEdit className="w-6 h-6 text-gray-500 " />
+                                  </span>
+                                  <span>
+                                    <DollarSign className="w-6 h-6 text-gray-500 ml-4" />
+                                  </span>
+
+                                  <span>
+                                    <Mail className="w-6 h-6 text-gray-500 ml-4" />
+                                  </span>
+                                  <span>
+                                    <Calendar className="w-6 h-6 text-gray-500 ml-4" />
+                                  </span>
+
+                                  <h4 className="font-semibold">Contact</h4>
+                                  <span>
+                                    <Phone className="w-6 h-6 text-gray-500 ml-4" />
+                                  </span>
+                                  <span>
+                                    <Mail className="w-6 h-6 text-gray-500 ml-4" />
+                                  </span>
+                                </div>
+                              </div>
+
+                              <div className="flex flex-col space-y-1">
+                                <p>
+                                  {order.name}
+                                  <br />
+                                  {order.address}
+                                </p>
+                                <p>{order?.shippingMethod || "N/A"}</p>
+                                <p>{"Default location"}</p>
+                                <p>{order.shippingCost || "N/A"}</p>
+                                <p>{"N/A"}</p>
+                                <p>{order.updatedAt}</p>
+
+                                <p>{order.name}</p>
+                                <p>{order.phone}</p>
+                                <p>{order.email}</p>
+                              </div>
+                            </div>
+                            <div className="flex flex-wrap max-w-full ">
+                              {/* Left - Item count */}
+                              <div className="flex flex-col border-r pr-3 mr-3 min-w-[100px]">
+                                <h4 className="whitespace-nowrap">
+                                  {order.items.length} items
+                                </h4>
+                              </div>
+
+                              {/* Right - Details */}
+                              <div className="flex flex-col flex-1 min-w-0">
+                                {/* Product list */}
+                                <div className="p-4 border-b space-y-4">
+                                  {order.items.map(
+                                    (item: any, index: number) => (
+                                      <div
+                                        key={index}
+                                        className="flex justify-between gap-4 flex-wrap"
+                                      >
+                                        <div className="text-base leading-5 break-words  min-w-0 overflow-hidden">
+                                          <p className="font-semibold">
+                                            {item.quantity} x{" "}
+                                            <span className="text-blue-600 hover:underline whitespace-normal break-words leading-snug max-w-[300px]">
+                                              {item.product?.name}
+                                            </span>
+                                          </p>
+                                          <p className="text-xs text-gray-500">
+                                            {item.product?.optionSet?.title}
+                                          </p>
+                                          <p className="text-sm mt-1">
+                                            <strong>Model:</strong>{" "}
+                                            {item.product?.sku}
+                                            <br />
+                                            <strong>Brand:</strong>{" "}
+                                            {item.product?.brand || "N/A"}
+                                          </p>
+                                        </div>
+
+                                        {/* <div className="text-sm font-medium whitespace-nowrap">
+                                          £
+                                          {(item.price * item.quantity).toFixed(
+                                            2
+                                          )}
+                                        </div> */}
+                                      </div>
+                                    )
+                                  )}
+
+                                  <button className="flex items-center mt-4 px-3 py-1.5 text-base font-semibold border border-blue-500 text-blue-600 hover:bg-blue-50 rounded w-fit">
+                                    <svg
+                                      className="w-4 h-4 mr-2"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      strokeWidth="2"
+                                      viewBox="0 0 24 24"
                                     >
-                                      {option.label}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </>
-                          );
-                        })()}
-                      </div>
-                    </TableCell>
+                                      <path d="M3 3h2l.4 2M7 13h14l-1.5 8H6L4.5 5H20"></path>
+                                    </svg>
+                                    Ship Items
+                                  </button>
+                                </div>
 
-                    <TableCell>
-                      {new Intl.NumberFormat("en-US", {
-                        style: "currency",
-                        currency: "USD",
-                      }).format(Number(order.totalAmount))}
-                    </TableCell>
-
-                    <TableCell>
-                      <OrderActionsDropdown
-                        actions={orderActions}
-                        trigger={
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="text-xl cursor-pointer"
-                          >
-                            •••
-                          </Button>
-                        }
-                      />
-                    </TableCell>
-                  </TableRow>
+                                {/* Totals */}
+                                <div className="bg-gray-100 p-4 text-sm space-y-2">
+                                  <div className="flex justify-between">
+                                    <span>Subtotal</span>
+                                    <span>
+                                      £
+                                      {order.items
+                                        .reduce(
+                                          (acc: number, item: any) =>
+                                            acc + item.price * item.quantity,
+                                          0
+                                        )
+                                        .toFixed(2)}
+                                    </span>
+                                  </div>
+                                  <div className="flex justify-between">
+                                    <span>Shipping</span>
+                                    <span>
+                                      £
+                                      {Number(order.shippingCost || 0).toFixed(
+                                        2
+                                      )}
+                                    </span>
+                                  </div>
+                                  <div className="flex justify-between">
+                                    <span>VAT / TAX</span>
+                                    <span>
+                                      £{Number(order.tax || 0).toFixed(2)}
+                                    </span>
+                                  </div>
+                                  <div className="flex justify-between font-semibold text-base pt-2 border-t">
+                                    <span>GRAND TOTAL</span>
+                                    <span>
+                                      £{Number(order.totalAmount).toFixed(2)}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </>
                 ))
               )}
             </TableBody>
