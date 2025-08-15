@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 
 export default function AnnouncementBanner() {
   return (
-    <div className="bg-blue-100 border-l-6 border-blue-500 p-4 shadow-sm rounded-md mb-6">
+    <div className="bg-blue-100 border-l-6 border-blue-500 p-10 shadow-sm rounded-md mb-6 ">
       <h2 >
         Now available: new add order experience
       </h2>
