@@ -21,8 +21,11 @@ import { MdDelete } from "react-icons/md";
 import { IoFilterOutline } from "react-icons/io5";
 import { FaCirclePlus, FaCircleMinus } from "react-icons/fa6";
 import Link from "next/link";
+import SearchShipments from "./SearchShipments";
 
-const Shipments = () => {
+type Props = { onSearchModeChange?: (isSearch: boolean) => void };
+
+const Shipments = ({onSearchModeChange}: Props) => {
 
     const [shipments, setShipments] = useState({
   data: [
@@ -146,10 +149,6 @@ Updated: ${b.updatedAt}`;
   // toast.success("Billing copied");
 };
 
-// usage:
-// <button onClick={() => copyBilling(shipment)}>Copy</button>
-
-
     const dispatch = useAppDispatch();
     //   const shipments = useAppSelector((state: any) => state.order.shipments);
     const pagination = shipments?.pagination;
@@ -158,6 +157,8 @@ Updated: ${b.updatedAt}`;
     const [activeTab, setActiveTab] = useState("All shipments");
     const [selectedOrderIds, setSelectedOrderIds] = useState<number[]>([]);
     const [expandedRow, setExpandedRow] = useState<number | null>(null);
+    const [showSearch, setShowSearch] = useState(false);
+
     const total = pagination?.total;
     const totalPages = pagination?.totalPages;
 
@@ -217,9 +218,7 @@ Updated: ${b.updatedAt}`;
         { label: "Print Packaging Slip", onClick: handlePrintInvoice },
     ];
 
-    const handleSearch = () => {
-        console.log("Search Clicked")
-    }
+    const handleSearch = () => {setShowSearch(true); onSearchModeChange?.(true); };
 
     const handleTracking = () => {
         console.log("Tracking saved succesfully. ")
@@ -230,8 +229,11 @@ Updated: ${b.updatedAt}`;
     };
 
     return (
-        <div className=" bg-[var(--store-bg)] min-h-screen mt-20">
-            {/* Tabs */}
+        <div className=" bg-[var(--store-bg)] min-h-screen mt-20 ">
+            {showSearch ? (
+                <SearchShipments />
+            ) : (
+                <>
             <div className="flex space-x-6 border-b pb-2 mb-4 overflow-x-auto">
                 {tabs.map((tab) => (
                     <button
@@ -247,7 +249,6 @@ Updated: ${b.updatedAt}`;
                 ))}
             </div>
 
-            {/* Top Actions */}
             <div className="bg-white p-4 shadow-sm">
                 <div className="flex flex-wrap gap-3 items-center mb-1">
                     <button className="btn-outline-primary">
@@ -267,7 +268,12 @@ Updated: ${b.updatedAt}`;
                         </button>
 
                     </div>
-                    <button className="btn-outline-primary">Search</button>
+                    <button 
+                    className="btn-outline-primary"
+                    onClick={handleSearch}
+                    >
+                        Search
+                    </button>
                 </div>
 
                 {/* Pagination */}
@@ -290,8 +296,8 @@ Updated: ${b.updatedAt}`;
                                     <Checkbox
                                         checked={
                                             filteredOrders?.length > 0 &&
-                                            filteredOrders?.every((order: any) =>
-                                                selectedOrderIds.includes(order.id)
+                                            filteredOrders?.every((shipment: any) =>
+                                                selectedOrderIds.includes(shipment.id)
                                             )
                                         }
                                         onCheckedChange={(checked) =>
@@ -467,7 +473,8 @@ Updated: ${b.updatedAt}`;
                     />
                 </div>
             </div>
-
+            </>
+            )}
         </div>
     );
 };
