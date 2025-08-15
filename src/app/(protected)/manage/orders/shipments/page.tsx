@@ -3,7 +3,7 @@
 import Shipments from '@/app/components/orders/shipments/Shiments'
 import React, {useState} from 'react'
 
-const page = () => {
+const Page = () => {
   const [isSearch, setIsSearch] = useState(false);
 
     return (
@@ -24,4 +24,4 @@ const page = () => {
     )
 }
 
-export default page
+export default Page;
