@@ -466,17 +466,17 @@ Updated: ${billing.updatedAt}`;
 
                                   <div className="flex flex-col">
                                     <p>
-                                      {billing.name}
+                                      {shipment.billing.name}
                                       <br />
-                                      {billing.org}
+                                      {shipment.billing.org}
                                       <br />
-                                      {billing.addr}
+                                      {shipment.billing.addr}
                                     </p>
-                                    <p>{billing.country}</p>
-                                    <p>{billing.phone}</p>
-                                    <p>{billing.email}</p>
-                                    <p>{billing.customerId}</p>
-                                    <p>{billing.updatedAt}</p>
+                                    <p>{shipment.billing.country}</p>
+                                    <p>{shipment.billing.phone}</p>
+                                    <p>{shipment.billing.email}</p>
+                                    <p>{shipment.billing.customerId}</p>
+                                    <p>{shipment.billing.updatedAt}</p>
                                   </div>
                                 </div>
 
@@ -509,18 +509,10 @@ Updated: ${billing.updatedAt}`;
                                   </div>
 
                                   <div className="flex flex-col">
-                                    <p>
-                                      {billing.name}
-                                      <br />
-                                      {billing.org}
-                                      <br />
-                                      {billing.addr}
-                                    </p>
-                                    <p>{billing.country}</p>
-                                    <p>{billing.phone}</p>
-                                    <p>{billing.email}</p>
-                                    <p>{billing.customerId}</p>
-                                    <p>{billing.updatedAt}</p>
+                                    <p>{shipment.shipping.name}</p>
+                                    <p>{shipment.shipping.carrier}</p>
+                                    <p>{shipment.shipping.service}</p>
+                                    <p>{shipment.shipping.address}</p>
                                   </div>
                                 </div>
                                 <div className="flex">
@@ -552,18 +544,9 @@ Updated: ${billing.updatedAt}`;
                                   </div>
 
                                   <div className="flex flex-col">
-                                    <p>
-                                      {billing.name}
-                                      <br />
-                                      {billing.org}
-                                      <br />
-                                      {billing.addr}
-                                    </p>
-                                    <p>{billing.country}</p>
-                                    <p>{billing.phone}</p>
-                                    <p>{billing.email}</p>
-                                    <p>{billing.customerId}</p>
-                                    <p>{billing.updatedAt}</p>
+                                    <p>{shipment.shippedItems.qty}</p>
+                                    <p>{shipment.shippedItems.title}</p>
+                                    <p>{shipment.shippedItems.sku}</p>
                                   </div>
                                 </div>
                               </div>
