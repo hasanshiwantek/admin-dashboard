@@ -1,35 +1,43 @@
-'use client';
+"use client";
 
-import { useFormContext } from 'react-hook-form';
-import { useState, useEffect } from 'react';
-import dynamic from 'next/dynamic';
+import { useEffect } from "react";
+import { useFormContext } from "react-hook-form";
+import dynamic from "next/dynamic";
 
-const JoditEditor = dynamic(() => import('jodit-react'), { ssr: false });
+const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
 
 const DescriptionEditor = () => {
   const { setValue, watch } = useFormContext();
-  const description = watch('description'); // ✅ watches live value
-  const [content, setContent] = useState<string>("");
+  const description = watch("description"); // ✅ Reacts to reset()
 
-  // Sync local editor content whenever form value changes (especially after reset)
+  // ✅ Prevent spacebar scroll
   useEffect(() => {
-    if (description !== undefined) {
-      setContent(description);
-    }
-  }, [description]);
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const active = document.activeElement;
+      if (active && active.closest(".jodit-wysiwyg")) {
+        if (e.code === "Space") {
+          e.stopPropagation();
+        }
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
 
   return (
     <div id="description" className="p-10 bg-white shadow-lg">
       <h1 className="my-5">Description</h1>
       <JoditEditor
-        value={content}
+        value={description || ""}
         config={{
           readonly: false,
           height: 400,
         }}
-        onChange={(newContent) => {
-          setValue('description', newContent, { shouldDirty: true });
-          setContent(newContent);
+        onBlur={(newContent) => {
+          setValue("description", newContent, { shouldDirty: true });
         }}
       />
     </div>
