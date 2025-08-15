@@ -18,6 +18,7 @@ import CategoryTree from "./CategoryTree";
 import { fetchBrands } from "@/redux/slices/productSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import Link from "next/link";
+
 export default function BasicInfoForm() {
   const { register, setValue, watch } = useFormContext();
   const productType = watch("productType");
