@@ -7,15 +7,32 @@ export const fetchAllOrders = createAsyncThunk(
   async (
     { page, perPage }: { page: number; perPage: number | string },
     thunkAPI
-  )=> {
+  ) => {
     try {
-      const res = await axiosInstance.get(`dashboard/orders/list-orders?page=${page}&pageSize=${perPage}`);
+      const res = await axiosInstance.get(
+        `dashboard/orders/list-orders?page=${page}&pageSize=${perPage}`
+      );
       console.log("✅ Order Response Data:", res.data);
       return res.data;
     } catch (err: any) {
       console.error("❌ Error fetching all orders:", err);
       return thunkAPI.rejectWithValue(
         err.response?.data?.message || "Failed to fetch orders"
+      );
+    }
+  }
+);
+
+// ADD ORDER  THUNK
+export const addOrder = createAsyncThunk(
+  "orders/addOrder",
+  async ({ data }: { data: any }, thunkAPI) => {
+    try {
+      const response = await axiosInstance.post(`web/orders/place-order`, data);
+      return response.data;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to add order"
       );
     }
   }

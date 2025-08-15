@@ -14,25 +14,33 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import CustomerSearchDropdown from "./CustomerSearchDropdown";
-export default function StepOne({ data, onNext }: any) {
+import { useRouter } from "next/navigation";
+export default function StepOne({ data, onNext, step, setStep }: any) {
   const { register, handleSubmit, setValue, watch } = useForm({
     defaultValues: data,
   });
-
+  const router = useRouter();
   const onSubmit = (formData: any) => {
     console.log("Step1 data:", formData);
     onNext(formData);
+    setStep(step + 1);
   };
-
+  const handleCancel = () => {
+    if (window.confirm("Are you sure you want to cancel this order?")) {
+      router.push("/manage/orders/");
+    }
+  };
   const country = watch("country");
   const orderType = watch("orderType");
   useEffect(() => {
     setValue("orderType", "existing");
   }, [setValue]);
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <div className="space-y-8 p-10">
+
       {/* Customer Info */}
-      <h1 className="mb-4">Customer information</h1>
+      <h1 className="!text-4xl !font-bold">Customer information</h1>
       <div className="p-6 bg-white rounded-sm shadow-md">
         <div className="flex items-center gap-6 my-4">
           <Label>Order for:</Label>
@@ -136,12 +144,22 @@ export default function StepOne({ data, onNext }: any) {
         <div className="grid grid-cols-2 gap-6">
           <div>
             <Label htmlFor="firstName">First Name</Label>
-            <Input {...register("firstName")} id="firstName" className="mt-1" />
+            <Input
+              {...register("firstName")}
+              id="firstName"
+              className="mt-1"
+              required
+            />
           </div>
 
           <div>
             <Label htmlFor="lastName">Last Name</Label>
-            <Input {...register("lastName")} id="lastName" className="mt-1" />
+            <Input
+              {...register("lastName")}
+              id="lastName"
+              className="mt-1"
+              required
+            />
           </div>
 
           <div>
@@ -170,7 +188,12 @@ export default function StepOne({ data, onNext }: any) {
 
           <div>
             <Label htmlFor="address1">Address Line 1</Label>
-            <Input {...register("address1")} id="address1" className="mt-1" />
+            <Input
+              {...register("address1")}
+              id="address1"
+              className="mt-1"
+              required
+            />
           </div>
 
           <div>
@@ -183,7 +206,7 @@ export default function StepOne({ data, onNext }: any) {
 
           <div>
             <Label htmlFor="city">Suburb/City</Label>
-            <Input {...register("city")} id="city" className="mt-1" />
+            <Input {...register("city")} id="city" className="mt-1" required />
           </div>
 
           <div>
@@ -191,6 +214,7 @@ export default function StepOne({ data, onNext }: any) {
             <Select
               value={country}
               onValueChange={(value) => setValue("country", value)}
+              required
             >
               <SelectTrigger>
                 <SelectValue placeholder="Choose a country" />
@@ -206,7 +230,12 @@ export default function StepOne({ data, onNext }: any) {
 
           <div>
             <Label htmlFor="state">State/Province</Label>
-            <Input {...register("state")} id="state" className="mt-1" />
+            <Input
+              {...register("state")}
+              id="state"
+              className="mt-1"
+              required
+            />
           </div>
 
           <div>
@@ -220,10 +249,20 @@ export default function StepOne({ data, onNext }: any) {
           <Label htmlFor="saveAddress">Save to customer’s address book</Label>
         </div>
       </div>
+      </div>
 
-      <Button type="submit" className="ml-auto block">
-        Next
-      </Button>
+      <div className="sticky bottom-0 w-full border-t p-6 bg-white flex justify-end gap-4">
+        <button
+          type="button"
+          onClick={handleCancel}
+          className="btn-outline-primary"
+        >
+          Cancel
+        </button>
+        <button type="submit" className="btn-primary">
+          Next
+        </button>
+      </div>
     </form>
   );
 }
