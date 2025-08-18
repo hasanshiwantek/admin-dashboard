@@ -247,10 +247,12 @@ Updated: ${billing.updatedAt}`;
     setExpandedRow((prev) => (prev === id ? null : id));
   };
 
+  const closeSearch = () => { setShowSearch(false); onSearchModeChange?.(false); };
+
   return (
     <div className=" bg-[var(--store-bg)] min-h-screen mt-20">
       {showSearch ? (
-        <SearchShipments />
+        <SearchShipments  onClose={closeSearch}/>
       ) : (
         <>
           {/* Tabs */}
