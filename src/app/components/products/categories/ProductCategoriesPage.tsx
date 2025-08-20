@@ -61,7 +61,6 @@ export default function ProductCategoriesPage() {
   const [activeId, setActiveId] = useState(null);
   const [parentId, setParentCategory] = useState<number | null>(null);
 
-
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
