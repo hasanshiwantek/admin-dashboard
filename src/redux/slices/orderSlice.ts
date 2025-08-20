@@ -28,7 +28,7 @@ export const addOrder = createAsyncThunk(
   "orders/addOrder",
   async ({ data }: { data: any }, thunkAPI) => {
     try {
-      const response = await axiosInstance.post(`web/orders/place-order`, data);
+      const response = await axiosInstance.post(`dashboard/orders/add-orders`, data);
       return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
