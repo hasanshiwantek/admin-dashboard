@@ -21,8 +21,18 @@ export default function SingleAddressForm() {
 
   const selectedCustomer = watch("selectedCustomer");
 
-  const { name, company, phone, address, city, country, state, zip } =
-    selectedCustomer || {};
+  const {
+    firstName,
+    lastName,
+    companyName,
+    phone,
+    address,
+    city,
+    country,
+    state,
+    zip,
+  } = selectedCustomer || {};
+
 
   const handleUseThisAddress = () => {
     if (!selectedCustomer) return;
@@ -45,11 +55,11 @@ export default function SingleAddressForm() {
     setIsAddressOverridden(true);
 
     // Now override
-    const [firstName = "", lastName = ""] = name?.split(" ") || [];
+    // const [firstName = "", lastName = ""] = name?.split(" ") || [];
 
     setValue("shipping.firstName", firstName);
     setValue("shipping.lastName", lastName);
-    setValue("shipping.companyName", company || "");
+    setValue("shipping.companyName", companyName || "");
     setValue("shipping.phoneNumber", phone || "");
     setValue("shipping.address1", address || "");
     setValue("shipping.address2", "");
@@ -137,8 +147,10 @@ export default function SingleAddressForm() {
                   className="w-5 h-5 mt-0.5"
                 />
                 <div className="text-gray-800 leading-snug flex flex-col gap-1">
-                  <h3 className="font-semibold">{name}</h3>
-                  {company && <span>{company}</span>}
+                  <h3 className="font-semibold">
+                    {firstName + " " + lastName}
+                  </h3>
+                  {companyName && <span>{companyName}</span>}
                   {phone && <span>{phone}</span>}
                   {address && <span>{address}</span>}
                   {city && <span>{city}</span>}

@@ -3,12 +3,14 @@ import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { User } from "lucide-react";
-
+import { fetchCustomers } from "@/redux/slices/customerSlice";
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 type Customer = {
   id: number;
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
-  company?: string;
+  companyName?: string;
   phone?: string;
   address?: string;
   city?: string;
@@ -33,6 +35,16 @@ export default function CustomerSearchDropdown({
   const [showDropdown, setShowDropdown] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const { customers } = useAppSelector((state: any) => state.customer);
+  console.log("Customers From SearchDropdown: ", customers);
+
+  const allCustomers = customers?.data;
+
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(fetchCustomers({ page: 1, pageSize: 100 }));
+  }, [dispatch, 1, 100]);
+
   useEffect(() => {
     if (query?.length < 1) {
       setResults([]);
@@ -42,60 +54,17 @@ export default function CustomerSearchDropdown({
     const timer = setTimeout(() => {
       setLoading(true);
 
-      const dummyResults: Customer[] = [
-        {
-          id: 1,
-          name: "Justin Patterson",
-          email: "jbpatterson@gmail.com",
-          company: "Liberty Christian Center",
-          phone: "7735452109",
-          zip: "12123",
-          state: "Sindh",
-          address: "Sindhi Muslim Society",
-          city: "Karachi",
-          country: "Pakistan",
-        },
-        {
-          id: 2,
-          name: "Judith Porter",
-          email: "judiport08@comcast.net",
-          company: "Liberty Christian Center",
-          phone: "7735452109",
-          zip: "12123",
-          state: "Sindh",
-          address: "Sindhi Muslim Society",
-          city: "Karachi",
-          country: "Pakistan",
-        },
-        {
-          id: 3,
-          name: "Jonathan Sheldon",
-          email: "buyer@amatteroffax.com",
-          company: "Liberty Christian Center",
-          phone: "7735452109",
-          zip: "12123",
-          state: "Sindh",
-          address: "Sindhi Muslim Society",
-          city: "Karachi",
-          country: "Pakistan",
-        },
-        {
-          id: 4,
-          name: "Mirza Marrero",
-          email: "mmarrero@lccdefenders.org",
-          company: "Liberty Christian Center",
-          phone: "7735452109",
-          zip: "12123",
-          state: "Sindh",
-          address: "Sindhi Muslim Society",
-          city: "Karachi",
-          country: "Pakistan",
-        },
-      ];
-
-      const filtered = dummyResults.filter((c) =>
-        c.name.toLowerCase().includes(query?.toLowerCase())
-      );
+      const filtered = allCustomers.filter((c: any) => {
+        const fullName = `${c.firstName || ""} ${
+          c.lastName || ""
+        }`.toLowerCase();
+        return (
+          fullName.includes(query.toLowerCase()) ||
+          (c.email && c.email.toLowerCase().includes(query.toLowerCase())) ||
+          (c.companyName &&
+            c.companyName.toLowerCase().includes(query.toLowerCase()))
+        );
+      });
 
       setResults(filtered);
       setLoading(false);
@@ -122,46 +91,51 @@ export default function CustomerSearchDropdown({
       />
 
       {showDropdown && query?.length >= 1 && (
-        <div className="absolute z-50 w-full mt-2 rounded-md border bg-white shadow-xl">
-          <ScrollArea className="max-h-64">
+        <div className="absolute z-50  w-full mt-2 rounded-md border bg-white shadow-xl">
+          <ScrollArea className="h-72">
             {loading ? (
               <div className="p-4 text-gray-500 text-sm">Searching...</div>
             ) : results.length > 0 ? (
-              results.map((customer) => (
-                <div
-                  key={customer.id}
-                  onClick={() => {
-                    onSelect(customer);
-                    setQuery(customer.name); // update input text
-                    onChange(customer.name); // update parent form state
-                    setShowDropdown(false);
-                  }}
-                  className="flex items-start gap-4 px-4 py-3 hover:bg-gray-100 cursor-pointer"
-                >
-                  <div className="flex-shrink-0 mt-1">
-                    <User className="w-6 h-6 rounded-full bg-gray-300" />
-                  </div>
-                  <div className="flex-grow  ">
-                    <div className="font-semibold text-lg">{customer.name}</div>
-                    <div className="text-gray-600 text-base">
-                      {customer.email}
+              results.map((customer) => {
+                const name = customer.firstName + " " + customer.lastName;
+                console.log(name);
+
+                return (
+                  <div
+                    key={customer.id}
+                    onClick={() => {
+                      onSelect(customer);
+                      setQuery(name); // update input text
+                      onChange(name); // update parent form state
+                      setShowDropdown(false);
+                    }}
+                    className="flex items-start gap-4 px-4 py-3 hover:bg-gray-100 cursor-pointer"
+                  >
+                    <div className="flex-shrink-0 mt-1">
+                      <User className="w-6 h-6 rounded-full bg-gray-300" />
                     </div>
-                    {customer.company && (
+                    <div className="flex-grow  ">
+                      <div className="font-semibold text-lg">{name}</div>
                       <div className="text-gray-600 text-base">
-                        {customer.company}
+                        {customer.email}
                       </div>
-                    )}
-                    {customer.phone && (
-                      <div className="text-gray-600 text-base">
-                        {customer.phone}
-                      </div>
-                    )}
+                      {customer.companyName && (
+                        <div className="text-gray-600 text-base">
+                          {customer.companyName}
+                        </div>
+                      )}
+                      {customer.phone && (
+                        <div className="text-gray-600 text-base">
+                          {customer.phone}
+                        </div>
+                      )}
+                    </div>
+                    <div className="text-blue-600 whitespace-nowrap mt-1 hover:underline text-base">
+                      View order history
+                    </div>
                   </div>
-                  <div className="text-blue-600 whitespace-nowrap mt-1 hover:underline text-base">
-                    View order history
-                  </div>
-                </div>
-              ))
+                );
+              })
             ) : (
               <div className="p-4 text-gray-800 text-base text-center">
                 No results found
