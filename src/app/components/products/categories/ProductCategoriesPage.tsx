@@ -39,6 +39,8 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import Spinner from "../../loader/Spinner";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import CategoryDropdown from "./CategoryDropdown";
+
 export default function ProductCategoriesPage() {
   const methods = useForm();
   const dispatch = useAppDispatch();
@@ -57,6 +59,8 @@ export default function ProductCategoriesPage() {
   const watchCategories = methods.watch("categories", {});
   // const [categories, setCategories] = useState(initialCategories);
   const [activeId, setActiveId] = useState(null);
+  const [parentId, setParentCategory] = useState<number | null>(null);
+
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -341,11 +345,21 @@ export default function ProductCategoriesPage() {
             </Button>
           </div>
           <div className="flex flex-col  gap-5 p-6 bg-white">
-            <div>
+            <div className="!w-[50rem]">
               <Input
                 type="search"
                 placeholder="Find category in the structure"
               />
+              {/* <CategoryDropdown
+                categoryData={categoryData}
+                value={{
+                  id: parentId ? Number(parentId) : null,
+                  path: "", // optional: use if you want to show prefilled path
+                }}
+                onChange={(val) => {
+                  setParentCategory(val.id); // keep it as number
+                }}
+              /> */}
             </div>
             <div className="flex justify-start items-center  gap-5 ">
               <Checkbox
