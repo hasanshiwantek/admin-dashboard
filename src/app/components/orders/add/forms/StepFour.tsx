@@ -39,7 +39,6 @@ export default function StepFour({ data, onNext, step, setStep }: any) {
 
       if (addOrder.fulfilled.match(resultAction)) {
         console.log("Order placed successfully:", resultAction.payload);
-        alert("Order Submitted. Navigating to All Orders");
 
         setTimeout(() => {
           router.push("/manage/orders/");

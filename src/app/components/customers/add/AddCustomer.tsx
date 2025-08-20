@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -20,7 +20,17 @@ import { Textarea } from "@/components/ui/textarea";
 import { addCustomer } from "@/redux/slices/customerSlice";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { countriesList, statesList } from "@/const/location";
+import { useRouter, useParams } from "next/navigation";
+import {
+  fetchCustomerById,
+  updateCustomer,
+} from "@/redux/slices/customerSlice";
+import Link from "next/link";
 const AddCustomer = () => {
+  const { id } = useParams(); // dynamic route
+  const isEdit = !!id;
+  const [saveAndAddAnother, setSaveAndAddAnother] = useState(false);
+
   const [formData, setFormData] = useState<any>({
     firstName: "",
     lastName: "",
@@ -43,48 +53,103 @@ const AddCustomer = () => {
   });
 
   const dispatch = useAppDispatch();
-
+  const router = useRouter();
   const updateField = (field: any, value: any) => {
     setFormData((prev: any) => ({ ...prev, [field]: value }));
   };
 
+  useEffect(() => {
+    if (isEdit) {
+      dispatch(fetchCustomerById({ id: id })).then((res: any) => {
+        const c = res.payload.data;
+        if (c) {
+          setFormData({
+            firstName: c.firstName || "",
+            lastName: c.lastName || "",
+            companyName: c.companyName || "",
+            email: c.email || "",
+            customerGroup: c.customerGroup || "",
+            phone: c.phone || "",
+            storeCredit: c.storeCredit || "0.00",
+            acsEmail: c.receiveReviewEmails,
+            forceReset: c.forcePasswordReset,
+            taxCode: c.taxExemptCode || "",
+            password: "",
+            confirmPassword: "",
+            analytics: c.analytics || "",
+            functional: c.fuctional || "",
+            targeting: c.targeting || "",
+            address: c.address || "",
+            state: c.state || "",
+            country: c.country || "",
+          });
+        }
+      });
+    }
+  }, [id, isEdit]);
+
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault(); // Prevent form reload
+    e.preventDefault();
+
     const payload = {
-      first_name: formData?.firstName,
-      last_name: formData?.lastName,
-      company_name: formData?.companyName,
-      email: formData?.email,
-      customer_group: formData?.customerGroup,
-      phone: formData?.phone,
-      country: formData?.country,
-      state: formData?.state,
-      address: formData?.address,
-      store_credit: formData?.storeCredit,
-      receive_review_emails: formData?.acsEmail,
-      force_password_reset: formData?.forceReset,
-      tax_exempt_code: formData?.taxCode,
-      password: formData?.password,
-      confirm_password: formData?.confirmPassword,
-      analytics: formData?.analytics,
-      fuctional: formData?.functional,
-      targeting: formData?.targeting,
+      first_name: formData.firstName,
+      last_name: formData.lastName,
+      company_name: formData.companyName,
+      email: formData.email,
+      customer_group: formData.customerGroup,
+      phone: formData.phone,
+      country: formData.country,
+      state: formData.state,
+      address: formData.address,
+      store_credit: formData.storeCredit,
+      receive_review_emails: formData.acsEmail,
+      force_password_reset: formData.forceReset,
+      tax_exempt_code: formData.taxCode,
+      password: formData.password,
+      confirm_password: formData.confirmPassword,
+      analytics: formData.analytics,
+      fuctional: formData.functional,
+      targeting: formData.targeting,
     };
-    console.log("Submitted Data:", payload);
 
     try {
-      const resultAction = await dispatch(addCustomer({ data: payload }));
-
-      if (addCustomer.fulfilled.match(resultAction)) {
-        console.log("Customer added successfully:", resultAction.payload);
+      const resultAction = isEdit
+        ? await dispatch(updateCustomer({ id: id, data: payload }))
+        : await dispatch(addCustomer({ data: payload }));
+      if (resultAction.meta.requestStatus === "fulfilled") {
+        if (saveAndAddAnother && !isEdit) {
+          setFormData({
+            firstName: "",
+            lastName: "",
+            companyName: "",
+            email: "",
+            customerGroup: "",
+            phone: "",
+            storeCredit: "0.00",
+            acsEmail: true,
+            forceReset: false,
+            taxCode: "",
+            password: "",
+            confirmPassword: "",
+            analytics: "",
+            functional: "",
+            targeting: "",
+            address: "",
+            state: "",
+            country: "",
+          });
+          setSaveAndAddAnother(false); // reset flag
+        } else {
+          setTimeout(()=>{
+            router.push("/manage/customers/");
+          },700)
+        }
       } else {
-        // handle rejected case
-        const errorMessage = resultAction.payload || "Order placement failed";
-        console.log(errorMessage);
+        alert("Customer save failed");
       }
     } catch (error) {
-      console.error("Unexpected error:", error);
-      alert("An unexpected error occurred. Please try again.");
+      console.error("Submit error:", error);
+      alert("Unexpected error occurred.");
     }
   };
 
@@ -94,7 +159,9 @@ const AddCustomer = () => {
         <div className="p-10">
           {/* Header */}
           <div className="mb-6">
-            <h1 className=" !font-light">Add customer</h1>
+            <h1 className=" !font-light">
+              {isEdit ? "Update" : "Add"}  customer
+            </h1>
           </div>
 
           {/* Tabs */}
@@ -124,6 +191,7 @@ const AddCustomer = () => {
                   placeholder=""
                   value={formData.firstName}
                   onChange={(e) => updateField("firstName", e.target.value)}
+                  required
                 />
               </div>
 
@@ -134,6 +202,7 @@ const AddCustomer = () => {
                   placeholder=""
                   value={formData.lastName}
                   onChange={(e) => updateField("lastName", e.target.value)}
+                  required
                 />
               </div>
 
@@ -160,6 +229,7 @@ const AddCustomer = () => {
                   placeholder=""
                   value={formData.email}
                   onChange={(e) => updateField("email", e.target.value)}
+                  required
                 />
               </div>
 
@@ -419,6 +489,7 @@ const AddCustomer = () => {
                     type="password"
                     value={formData.password}
                     onChange={(e) => updateField("password", e.target.value)}
+                    required
                   />
                 </div>
 
@@ -444,6 +515,7 @@ const AddCustomer = () => {
                     onChange={(e) =>
                       updateField("confirmPassword", e.target.value)
                     }
+                    required
                   />
                 </div>
               </TooltipProvider>
@@ -452,14 +524,29 @@ const AddCustomer = () => {
         </div>
 
         <div className="sticky bottom-0 w-full border-t p-6 bg-white flex justify-end gap-4">
-          <button className="!text-xl p-4 !text-blue-500" type="button">
-            Cancel
-          </button>
-          <button type="button" className="btn-outline-primary">
+          <Link href={"/manage/customers"}>
+            <button className="!text-xl p-4 !text-blue-500" type="button">
+              Cancel
+            </button>
+          </Link>
+          <button
+            type="button"
+            className="btn-outline-primary"
+            onClick={() => {
+              setSaveAndAddAnother(true);
+              // trigger form submit manually
+              document
+                .querySelector("form")
+                ?.dispatchEvent(
+                  new Event("submit", { cancelable: true, bubbles: true })
+                );
+            }}
+          >
             Save and add another
           </button>
+
           <button type="submit" className="btn-primary">
-            Add customer
+            {isEdit ? "Update" : "Add"} Customer
           </button>
         </div>
       </form>

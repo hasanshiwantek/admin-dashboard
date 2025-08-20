@@ -22,69 +22,41 @@ import { PlusIcon, DownloadIcon, SearchIcon, Trash } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import OrderActionsDropdown from "../../orders/OrderActionsDropdown";
 import Pagination from "@/components/ui/pagination";
-import { fetchCustomers } from "@/redux/slices/customerSlice";
+import { FaCirclePlus, FaCircleMinus } from "react-icons/fa6";
+import {
+  fetchCustomers,
+  deleteCustomer,
+  updateCustomer,
+} from "@/redux/slices/customerSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
+import { refetchCustomers } from "@/lib/customerUtils";
+import Link from "next/link";
+import Spinner from "../../loader/Spinner";
+import { useRouter } from "next/navigation";
 const AllCustomers = () => {
   const dispatch = useAppDispatch();
   const { customers } = useAppSelector((state: any) => state.customer);
-
+  const { loading, error } = useAppSelector((state: any) => state.customer);
+  const router = useRouter();
   console.log("AllCustomers From Frontend: ", customers);
-
   const pagination = customers.pagination;
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage, setPerPage] = useState("50");
+  const total = pagination?.total;
+  const totalPages = Math.ceil(total / pagination?.pageSize);
+  const [selectedCustomers, setSelectedCustomers] = useState<any[]>([]);
+  const [storeCredits, setStoreCredits] = useState<{ [id: number]: string }>(
+    {}
+  );
 
   useEffect(() => {
-    dispatch(fetchCustomers());
-  }, [dispatch]);
-
-  // const customers = [
-  //   {
-  //     name: "Stacy Clark",
-  //     email: "stacy.clark@xylem.com",
-  //     phone: "12244960842",
-  //     joinDate: "19 hours ago",
-  //   },
-  //   {
-  //     name: "jane malaise",
-  //     email: "janembears68@yahoo.com",
-  //     phone: "9795743063",
-  //     joinDate: "21 hours ago",
-  //   },
-  //   {
-  //     name: "Kathleen OMara",
-  //     email: "katieomara63@gmail.com",
-  //     phone: "6462390919",
-  //     joinDate: "22 hours ago",
-  //   },
-  //   {
-  //     name: "David Lebov",
-  //     email: "davidl@sourcecode.com",
-  //     phone: "781-367-9802",
-  //     joinDate: "Tuesday at 04:28pm",
-  //   },
-  //   {
-  //     name: "Tierney Becho",
-  //     email: "tierney.becho@pnnl.gov",
-  //     phone: "509-372-5920",
-  //     joinDate: "Monday at 02:22pm",
-  //   },
-  //   {
-  //     name: "Rena Prato",
-  //     email: "dannyfr22@yahoo.com",
-  //     phone: "2672962223",
-  //     joinDate: "Jul 25th, 2025",
-  //   },
-  //   {
-  //     name: "Elisabeth Koponick",
-  //     email: "elisabeth.koponick@churchofjes...",
-  //     phone: "484-653-9454",
-  //     joinDate: "Jul 24th, 2025",
-  //   },
-  // ];
+    dispatch(fetchCustomers({ page: currentPage, pageSize: perPage }));
+  }, [dispatch, currentPage, perPage]);
 
   const getDropdownActions = (customer: any) => [
     {
       label: "Edit",
-      onClick: () => console.log("Edit clicked", customer),
+      onClick: () => router.push(`/manage/customers/edit/${customer.id}`),
     },
     {
       label: "View Orders",
@@ -100,9 +72,120 @@ const AllCustomers = () => {
     },
   ];
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [perPage, setPerPage] = useState("50");
-  const totalPages = 10;
+  const handleSelectAll = () => {
+    if (selectedCustomers.length === customers?.data?.length) {
+      setSelectedCustomers([]);
+      console.log("Deselected all");
+    } else {
+      setSelectedCustomers(customers?.data);
+      console.log("Selected all customers:", customers?.data);
+    }
+  };
+
+  const handleSelectOne = (customer: any) => {
+    const isAlreadySelected = selectedCustomers.some(
+      (c) => c.id === customer.id
+    );
+
+    const updated = isAlreadySelected
+      ? selectedCustomers.filter((c) => c.id !== customer.id)
+      : [...selectedCustomers, customer];
+
+    setSelectedCustomers(updated);
+    console.log("Updated selected customers:", updated);
+  };
+
+  const deleteCustomerHandler = async () => {
+    if (!selectedCustomers || selectedCustomers.length === 0) {
+      alert("No customers selected for deletion.");
+      return;
+    }
+    const id = selectedCustomers?.map((c) => c?.id);
+    const payload = { ids: id };
+    console.log(payload);
+
+    try {
+      const result = await dispatch(deleteCustomer({ data: payload }));
+
+      if (deleteCustomer.fulfilled.match(result)) {
+        console.log("Customers deleted successfully");
+        setSelectedCustomers([]);
+        // optionally: refresh list or reset selection
+      } else {
+        console.error("Failed to delete customers:", result.payload);
+      }
+    } catch (err) {
+      console.error("Error deleting customers:", err);
+    }
+  };
+
+  const [expandedRow, setExpandedRow] = useState<number | null>(null);
+
+  const toggleRow = (id: number) => {
+    setExpandedRow((prev) => (prev === id ? null : id));
+  };
+  const copyBilling = () => {
+    console.log("Copied");
+  };
+
+  // CUSTOMER UPDATION LOGIC
+  const updateCustomerGroupStatus = async (
+    customerId: number | string,
+    group: string
+  ) => {
+    const payload = {
+      customer_group: group === "none" ? null : group,
+    };
+
+    try {
+      const result = await dispatch(
+        updateCustomer({ id: customerId, data: payload })
+      );
+
+      if (updateCustomer.fulfilled.match(result)) {
+        console.log(`✅ Customer #${customerId} group updated to "${group}"`);
+        // Optionally show toast or refetch
+        setTimeout(() => {
+          refetchCustomers(dispatch);
+        }, 800);
+      } else {
+        console.error("❌ Update failed:", result.payload);
+      }
+    } catch (error) {
+      console.error("🚨 Unexpected error:", error);
+    }
+  };
+
+  const updateCustomerStoreCredit = async (customerId: number) => {
+    const value = storeCredits[customerId];
+
+    if (!value || isNaN(Number(value))) {
+      alert("Please enter a valid number for store credit");
+      return;
+    }
+
+    const payload = {
+      store_credit: value,
+    };
+
+    try {
+      const result = await dispatch(
+        updateCustomer({ id: customerId, data: payload })
+      );
+
+      if (updateCustomer.fulfilled.match(result)) {
+        console.log(`✅ Store credit updated for customer #${customerId}`);
+        // Optionally refetch or toast
+        setTimeout(() => {
+          refetchCustomers(dispatch);
+        }, 800);
+      } else {
+        console.error("❌ Store credit update failed:", result.payload);
+      }
+    } catch (err) {
+      console.error("🚨 Unexpected error updating store credit:", err);
+    }
+  };
 
   return (
     <div className="p-10">
@@ -123,15 +206,18 @@ const AllCustomers = () => {
 
       {/* Actions */}
       <div className="flex flex-wrap  gap-4 mb-6 items-center">
+        <Link href={"/manage/customers/add"}>
+          <Button
+            variant="outline"
+            className="flex items-center gap-2 !p-6 btn-outline-primary"
+          >
+            <PlusIcon className="!w-5 !h-5" /> Add
+          </Button>
+        </Link>
         <Button
           variant="outline"
           className="flex items-center gap-2 !p-6 btn-outline-primary"
-        >
-          <PlusIcon className="!w-5 !h-5" /> Add
-        </Button>
-        <Button
-          variant="outline"
-          className="flex items-center gap-2 !p-6 btn-outline-primary"
+          onClick={deleteCustomerHandler}
         >
           <Trash className="!w-5 !h-5" />
         </Button>
@@ -164,8 +250,12 @@ const AllCustomers = () => {
           <TableHeader className="!bg-gray-50 ">
             <TableRow className="h-18">
               <TableHead>
-                <Checkbox />
+                <Checkbox
+                  checked={selectedCustomers.length === customers?.data?.length}
+                  onCheckedChange={handleSelectAll}
+                />
               </TableHead>
+              <TableHead></TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Phone</TableHead>
@@ -177,70 +267,167 @@ const AllCustomers = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {customers?.data?.map((customer: any, index: number) => (
-              <TableRow key={index} className="h-26 ">
-                <TableCell>
-                  <Checkbox />
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2 text-blue-600 cursor-pointer">
-                    <PlusIcon className="!w-6 !h-6 !bg-blue-500  !rounded-full border !text-white" />
-                    {customer.name}
-                  </div>
-                </TableCell>
-                <TableCell className="text-blue-500">
-                  {customer.email}
-                </TableCell>
-                <TableCell>{customer.phone}</TableCell>
-                <TableCell>
-                  <Select
-                    value={customer.customer_group || "none"} // fallback to "none" if undefined
-                    // onValueChange={(value) =>
-                    //   updateField("customer_group", value)
-                    // } // optional if editable
-                  >
-                    <SelectTrigger className="w-[120px]">
-                      <SelectValue placeholder="No Group" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="none">-- No Group --</SelectItem>
-                      <SelectItem value="vip">VIP</SelectItem>
-                      <SelectItem value="retail">Retail</SelectItem>
-                      <SelectItem value="wholesale">Wholesale</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center">
-                    <span className="mr-1">$</span>
-                    <Input
-                      defaultValue="0.00"
-                      value={customer?.store_credit}
-                      className="w-20"
-                    />
-                    <Button className="ml-2 !h-12 !px-4  btn-primary">
-                      Save
-                    </Button>
-                  </div>
-                </TableCell>
-                <TableCell>1</TableCell>
-                <TableCell>{customer.created_at}</TableCell>
-                <TableCell>
-                  <OrderActionsDropdown
-                    actions={getDropdownActions(customer)}
-                    trigger={
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="text-xl cursor-pointer"
-                      >
-                        •••
-                      </Button>
-                    }
-                  />
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={10} className="text-center py-10">
+                  <Spinner />
                 </TableCell>
               </TableRow>
-            ))}
+            ) : customers?.data?.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={10}
+                  className="text-center py-10 text-gray-500 text-xl"
+                >
+                  No customers found.
+                </TableCell>
+              </TableRow>
+            ) : (
+              customers?.data?.map((customer: any, index: number) => (
+                <>
+                  <TableRow key={index} className="h-26 ">
+                    <TableCell>
+                      <Checkbox
+                        checked={selectedCustomers.some(
+                          (c) => c.id === customer.id
+                        )}
+                        onCheckedChange={() => handleSelectOne(customer)}
+                      />
+                    </TableCell>
+                    <TableCell>
+                    <button onClick={() => toggleRow(customer.id)} className="mt-3">
+                      {expandedRow === customer.id ? (
+                        <FaCircleMinus className="h-7 w-7 fill-blue-500" />
+                      ) : (
+                        <FaCirclePlus className="h-7 w-7 fill-blue-500" />
+                      )}
+                    </button>
+                      </TableCell>
+                    <TableCell>
+                      <div className=" text-blue-600 cursor-pointer hover:underline">
+                        <Link href={`/manage/customers/edit/${customer.id}`}>
+                          {customer.firstName} {customer.lastName}
+                        </Link>
+                      </div>
+                    </TableCell>
+
+                    <TableCell className="text-blue-500">
+                      {customer.email}
+                    </TableCell>
+                    <TableCell>{customer.phone}</TableCell>
+
+                    <TableCell>
+                      <Select
+                        value={customer.customerGroup || "none"}
+                        onValueChange={(value) =>
+                          updateCustomerGroupStatus(customer.id, value)
+                        }
+                      >
+                        <SelectTrigger className="w-[120px]">
+                          <SelectValue placeholder="No Group" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none">-- No Group --</SelectItem>
+                          <SelectItem value="vip">VIP</SelectItem>
+                          <SelectItem value="retail">Retail</SelectItem>
+                          <SelectItem value="wholesale">Wholesale</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </TableCell>
+
+                    <TableCell>
+                      <div className="flex items-center">
+                        <span className="mr-1">$</span>
+                        <Input
+                          className="w-25"
+                          value={
+                            storeCredits[customer.id] ??
+                            customer.storeCredit ??
+                            "0.00"
+                          }
+                          onChange={(e) =>
+                            setStoreCredits((prev) => ({
+                              ...prev,
+                              [customer.id]: e.target.value,
+                            }))
+                          }
+                        />
+                        <Button
+                          className="ml-2 !h-12 !px-4 btn-primary"
+                          onClick={() => updateCustomerStoreCredit(customer.id)}
+                        >
+                          Save
+                        </Button>
+                      </div>
+                    </TableCell>
+
+                    <TableCell>1</TableCell>
+                    <TableCell>{customer.createdAt}</TableCell>
+                    <TableCell>
+                      <OrderActionsDropdown
+                        actions={getDropdownActions(customer)}
+                        trigger={
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="text-xl cursor-pointer"
+                          >
+                            •••
+                          </Button>
+                        }
+                      />
+                    </TableCell>
+                  </TableRow>
+
+                  {expandedRow === customer.id && (
+                    <TableRow>
+                      <TableCell colSpan={11}>
+                        <div className="grid grid-cols-3 gap-2 bg-gray-50 p-4 ">
+                          <div className="flex">
+                            <div className="flex flex-col border-r pr-3 mr-3 space-y-1">
+                              <h4 className="font-semibold">Current Orders</h4>
+                            </div>
+                          </div>
+
+                          <div className="flex">
+                            <div className="flex flex-col border-r pr-3 mr-3 space-y-1">
+                              <h4 className="font-semibold">Order#500041</h4>
+                              <div className="flex flex-col gap-2.5 ">
+                                <span className="ml-4">Status</span>
+                                <span>Order total</span>
+
+                                <span>Date orderd</span>
+                                <span>Notes</span>
+                              </div>
+                            </div>
+
+                            <div className="flex flex-col space-y-1">
+                              <p>.</p>
+                              <p>Awaiting Payment</p>
+                              <p>£1,461.00</p>
+                              <p>Jul 17th, 2025</p>
+                              <p>View Notes</p>
+                            </div>
+                          </div>
+
+                          <div className="flex">
+                            <div className="flex flex-col border-r pr-3 mr-3 space-y-1">
+                              <div className="flex flex-col gap-2.5 ">
+                                <h4 className="font-semibold">Past Orders</h4>
+                              </div>
+                            </div>
+
+                            <div className="flex flex-col space-y-1">
+                              <p>No past orders</p>
+                            </div>
+                          </div>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </>
+              ))
+            )}
           </TableBody>
         </Table>
       </div>
