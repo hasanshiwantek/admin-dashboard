@@ -19,55 +19,67 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { PlusIcon, DownloadIcon, SearchIcon, Trash } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import OrderActionsDropdown from "../../orders/OrderActionsDropdown";
 import Pagination from "@/components/ui/pagination";
-
+import { fetchCustomers } from "@/redux/slices/customerSlice";
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 const AllCustomers = () => {
-  const customers = [
-    {
-      name: "Stacy Clark",
-      email: "stacy.clark@xylem.com",
-      phone: "12244960842",
-      joinDate: "19 hours ago",
-    },
-    {
-      name: "jane malaise",
-      email: "janembears68@yahoo.com",
-      phone: "9795743063",
-      joinDate: "21 hours ago",
-    },
-    {
-      name: "Kathleen OMara",
-      email: "katieomara63@gmail.com",
-      phone: "6462390919",
-      joinDate: "22 hours ago",
-    },
-    {
-      name: "David Lebov",
-      email: "davidl@sourcecode.com",
-      phone: "781-367-9802",
-      joinDate: "Tuesday at 04:28pm",
-    },
-    {
-      name: "Tierney Becho",
-      email: "tierney.becho@pnnl.gov",
-      phone: "509-372-5920",
-      joinDate: "Monday at 02:22pm",
-    },
-    {
-      name: "Rena Prato",
-      email: "dannyfr22@yahoo.com",
-      phone: "2672962223",
-      joinDate: "Jul 25th, 2025",
-    },
-    {
-      name: "Elisabeth Koponick",
-      email: "elisabeth.koponick@churchofjes...",
-      phone: "484-653-9454",
-      joinDate: "Jul 24th, 2025",
-    },
-  ];
+  const dispatch = useAppDispatch();
+  const { customers } = useAppSelector((state: any) => state.customer);
+
+  console.log("AllCustomers From Frontend: ", customers);
+
+  const pagination = customers.pagination;
+
+  useEffect(() => {
+    dispatch(fetchCustomers());
+  }, [dispatch]);
+
+  // const customers = [
+  //   {
+  //     name: "Stacy Clark",
+  //     email: "stacy.clark@xylem.com",
+  //     phone: "12244960842",
+  //     joinDate: "19 hours ago",
+  //   },
+  //   {
+  //     name: "jane malaise",
+  //     email: "janembears68@yahoo.com",
+  //     phone: "9795743063",
+  //     joinDate: "21 hours ago",
+  //   },
+  //   {
+  //     name: "Kathleen OMara",
+  //     email: "katieomara63@gmail.com",
+  //     phone: "6462390919",
+  //     joinDate: "22 hours ago",
+  //   },
+  //   {
+  //     name: "David Lebov",
+  //     email: "davidl@sourcecode.com",
+  //     phone: "781-367-9802",
+  //     joinDate: "Tuesday at 04:28pm",
+  //   },
+  //   {
+  //     name: "Tierney Becho",
+  //     email: "tierney.becho@pnnl.gov",
+  //     phone: "509-372-5920",
+  //     joinDate: "Monday at 02:22pm",
+  //   },
+  //   {
+  //     name: "Rena Prato",
+  //     email: "dannyfr22@yahoo.com",
+  //     phone: "2672962223",
+  //     joinDate: "Jul 25th, 2025",
+  //   },
+  //   {
+  //     name: "Elisabeth Koponick",
+  //     email: "elisabeth.koponick@churchofjes...",
+  //     phone: "484-653-9454",
+  //     joinDate: "Jul 24th, 2025",
+  //   },
+  // ];
 
   const getDropdownActions = (customer: any) => [
     {
@@ -165,7 +177,7 @@ const AllCustomers = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {customers.map((customer, index) => (
+            {customers?.data?.map((customer: any, index: number) => (
               <TableRow key={index} className="h-26 ">
                 <TableCell>
                   <Checkbox />
@@ -181,7 +193,12 @@ const AllCustomers = () => {
                 </TableCell>
                 <TableCell>{customer.phone}</TableCell>
                 <TableCell>
-                  <Select defaultValue="none">
+                  <Select
+                    value={customer.customer_group || "none"} // fallback to "none" if undefined
+                    // onValueChange={(value) =>
+                    //   updateField("customer_group", value)
+                    // } // optional if editable
+                  >
                     <SelectTrigger className="w-[120px]">
                       <SelectValue placeholder="No Group" />
                     </SelectTrigger>
@@ -189,20 +206,25 @@ const AllCustomers = () => {
                       <SelectItem value="none">-- No Group --</SelectItem>
                       <SelectItem value="vip">VIP</SelectItem>
                       <SelectItem value="retail">Retail</SelectItem>
+                      <SelectItem value="wholesale">Wholesale</SelectItem>
                     </SelectContent>
                   </Select>
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center">
                     <span className="mr-1">$</span>
-                    <Input defaultValue="0.00" className="w-20" />
+                    <Input
+                      defaultValue="0.00"
+                      value={customer?.store_credit}
+                      className="w-20"
+                    />
                     <Button className="ml-2 !h-12 !px-4  btn-primary">
                       Save
                     </Button>
                   </div>
                 </TableCell>
                 <TableCell>1</TableCell>
-                <TableCell>{customer.joinDate}</TableCell>
+                <TableCell>{customer.created_at}</TableCell>
                 <TableCell>
                   <OrderActionsDropdown
                     actions={getDropdownActions(customer)}
