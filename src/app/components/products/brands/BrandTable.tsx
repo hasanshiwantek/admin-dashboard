@@ -178,7 +178,7 @@ const BrandTable = () => {
                       {brand.name}
                     </Link>
                   </TableCell>
-                  <TableCell>{brand?.products}</TableCell>
+                  <TableCell>{brand?.productsCount}</TableCell>
                   <TableCell>
                     <OrderActionsDropdown
                       actions={getDropdownActions(brand)}
