@@ -1,5 +1,6 @@
-"use client"
+"use client";
 import Link from "next/link";
+import { useState, useEffect } from "react";
 import {
   SidebarProvider,
   SidebarMenu,
@@ -19,9 +20,18 @@ import { usePathname } from "next/navigation";
 
 export const SideBar = () => {
   const pathname = usePathname();
+  const [openMenus, setOpenMenus] = useState<boolean[]>(
+    sidebarData.map(() => false)
+  );
+  useEffect(() => {
+    const newOpenMenus = sidebarData.map(
+      (item) => item.children?.some((child) => child.url === pathname) || false
+    );
+    setOpenMenus(newOpenMenus);
+  }, [pathname]);
 
   return (
-    <div className="  shrink-0 h-auto  z-20 fixed top-22 w-[26.7rem]  max-h-full overflow-y-auto overflow-x-hidden  bg-[rgb(3,16,51)] text-white border-t-2 border-[#2d3748] custom-scroll">
+    <div className="shrink-0 h-auto  z-20 fixed top-22 w-[26.7rem]  max-h-full overflow-y-auto overflow-x-hidden  bg-[rgb(3,16,51)] text-white border-t-2 border-[#2d3748] custom-scroll">
       <SidebarProvider>
         <SidebarMenu>
           {sidebarData.map((item) =>
@@ -35,7 +45,7 @@ export const SideBar = () => {
                       <ChevronDown className="ml-auto !h-7 !w-7 transition-transform group-data-[state=open]:rotate-180" />
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
-                  <CollapsibleContent >
+                  <CollapsibleContent>
                     <SidebarMenuSub className="ml-16">
                       {item.children.map((child) => (
                         <SidebarMenuSubItem key={child.title}>
@@ -73,4 +83,3 @@ export const SideBar = () => {
     </div>
   );
 };
-``;

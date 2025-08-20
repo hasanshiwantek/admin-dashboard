@@ -4,7 +4,7 @@ import StepOne from "./StepOne";
 import StepTwo from "./StepTwo";
 import StepThree from "./StepThree";
 import StepFour from "./StepFour";
-
+import StepTracker from "./StepTracker";
 export default function OrderForm() {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({});
@@ -15,6 +15,7 @@ export default function OrderForm() {
 
   return (
     <div>
+      <StepTracker currentStep={step} />
       {step === 1 && (
         <StepOne
           data={formData}

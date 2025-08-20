@@ -10,6 +10,11 @@ type Customer = {
   email: string;
   company?: string;
   phone?: string;
+  address?: string;
+  city?: string;
+  country?: string;
+  zip?: string;
+  state?: string;
 };
 
 type Props = {
@@ -29,7 +34,7 @@ export default function CustomerSearchDropdown({
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (query?.length < 2) {
+    if (query?.length < 1) {
       setResults([]);
       return;
     }
@@ -44,6 +49,11 @@ export default function CustomerSearchDropdown({
           email: "jbpatterson@gmail.com",
           company: "Liberty Christian Center",
           phone: "7735452109",
+          zip: "12123",
+          state: "Sindh",
+          address: "Sindhi Muslim Society",
+          city: "Karachi",
+          country: "Pakistan",
         },
         {
           id: 2,
@@ -51,6 +61,11 @@ export default function CustomerSearchDropdown({
           email: "judiport08@comcast.net",
           company: "Liberty Christian Center",
           phone: "7735452109",
+          zip: "12123",
+          state: "Sindh",
+          address: "Sindhi Muslim Society",
+          city: "Karachi",
+          country: "Pakistan",
         },
         {
           id: 3,
@@ -58,6 +73,11 @@ export default function CustomerSearchDropdown({
           email: "buyer@amatteroffax.com",
           company: "Liberty Christian Center",
           phone: "7735452109",
+          zip: "12123",
+          state: "Sindh",
+          address: "Sindhi Muslim Society",
+          city: "Karachi",
+          country: "Pakistan",
         },
         {
           id: 4,
@@ -65,6 +85,11 @@ export default function CustomerSearchDropdown({
           email: "mmarrero@lccdefenders.org",
           company: "Liberty Christian Center",
           phone: "7735452109",
+          zip: "12123",
+          state: "Sindh",
+          address: "Sindhi Muslim Society",
+          city: "Karachi",
+          country: "Pakistan",
         },
       ];
 
@@ -91,12 +116,12 @@ export default function CustomerSearchDropdown({
           onChange(e.target.value);
         }}
         onFocus={() => {
-          if (query?.length >= 2) setShowDropdown(true);
+          if (query?.length >= 1) setShowDropdown(true);
         }}
         onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
       />
 
-      {showDropdown && query?.length >= 2 && (
+      {showDropdown && query?.length >= 1 && (
         <div className="absolute z-50 w-full mt-2 rounded-md border bg-white shadow-xl">
           <ScrollArea className="max-h-64">
             {loading ? (
