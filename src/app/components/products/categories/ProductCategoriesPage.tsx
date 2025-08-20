@@ -345,13 +345,13 @@ export default function ProductCategoriesPage() {
             </Button>
           </div>
           <div className="flex flex-col  gap-5 p-6 bg-white">
-            <div className="!w-[50rem]">
-              <Input
+            <div className="!w-[45rem]">
+              {/* <Input
                 type="search"
                 placeholder="Find category in the structure"
-              />
-              {/* <CategoryDropdown
-                categoryData={categoryData}
+              /> */}
+              <CategoryDropdown
+                categoryData={categoryData ?? []}
                 value={{
                   id: parentId ? Number(parentId) : null,
                   path: "", // optional: use if you want to show prefilled path
@@ -359,7 +359,7 @@ export default function ProductCategoriesPage() {
                 onChange={(val) => {
                   setParentCategory(val.id); // keep it as number
                 }}
-              /> */}
+              />
             </div>
             <div className="flex justify-start items-center  gap-5 ">
               <Checkbox
