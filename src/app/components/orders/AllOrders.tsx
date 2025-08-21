@@ -202,6 +202,14 @@ const AllOrders = () => {
     dispatch(fetchAllOrders({ page: currentPage, perPage }));
   }, [dispatch, currentPage, perPage]);
 
+
+    if (error) {
+    return (
+      <div className="text-center py-10 text-red-500 text-lg">
+        Error: {error}
+      </div>
+    );
+  }
   return (
     <div className=" bg-[var(--store-bg)] min-h-screen mt-20">
       {/* Tabs */}

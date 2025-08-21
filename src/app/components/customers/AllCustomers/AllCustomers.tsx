@@ -213,6 +213,13 @@ const AllCustomers = () => {
     dispatch(fetchCustomers({ page: currentPage, pageSize: perPage }));
   }, [dispatch, currentPage, perPage]);
 
+  if (error) {
+    return (
+      <div className="text-center py-10 text-red-500 text-lg">
+        Error: {error}
+      </div>
+    );
+  }
   return (
     <div className="p-10">
       {/* Header */}
