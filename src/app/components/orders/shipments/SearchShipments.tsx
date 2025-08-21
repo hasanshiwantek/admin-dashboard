@@ -21,7 +21,9 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import LayoutWrapper from "../../layout/LayoutWrapper";
 
-const SearchShipments = () => {
+type SearchShipmentsProps = { onClose: () => void };
+
+const SearchShipments = ({onClose}: SearchShipmentsProps) => {
   const [formData, setFormData] = useState({
     keywords: "",
     status: "",
@@ -239,7 +241,11 @@ const SearchShipments = () => {
 
       {/* SUBMIT BUTTON */}
       <div className="sticky bottom-0 w-full border-t p-6 bg-white flex justify-end gap-4">
-        <button className="btn-outline-primary" type="button">
+        <button 
+        type="button"
+        className="btn-outline-primary"
+        onClick={onClose}
+        > 
           Cancel
         </button>
         <button className="btn-primary" type="submit">
