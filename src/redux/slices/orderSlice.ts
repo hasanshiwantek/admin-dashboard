@@ -23,6 +23,32 @@ export const fetchAllOrders = createAsyncThunk(
   }
 );
 
+// FETCH ORDER BY KEYWORD
+export const fetchOrderByKeyword = createAsyncThunk(
+  "orders/fetchOrderByKeyword ",
+  async (
+    {
+      page,
+      perPage,
+      keyword,
+    }: { page: number; perPage: number | string; keyword: any },
+    thunkAPI
+  ) => {
+    try {
+      const res = await axiosInstance.get(
+        `dashboard/orders/list-orders?page=${page}&pageSize=${perPage}&keyword=${keyword}`
+      );
+      console.log("✅ Search Order Response Data:", res.data);
+      return res.data;
+    } catch (err: any) {
+      console.error("❌ Error fetching all orders:", err);
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to fetch orders"
+      );
+    }
+  }
+);
+
 // ADD ORDER  THUNK
 export const addOrder = createAsyncThunk(
   "orders/addOrder",
@@ -152,6 +178,10 @@ const orderSlice = createSlice({
         state.loading = false;
         state.error =
           (action.payload as string) || action.error.message || "Failed";
+      })
+      .addCase(fetchOrderByKeyword.fulfilled, (state, action) => {
+        state.loading = false;
+        state.orders = action.payload;
       })
       .addCase(updateOrderStatus.pending, (state) => {
         state.loading = true;

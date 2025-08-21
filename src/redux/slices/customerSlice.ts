@@ -43,14 +43,36 @@ export const fetchCustomers = createAsyncThunk(
   }
 );
 
+// FETCH CUSTOMERS THUNK
+export const fetchCustomerByKeyword = createAsyncThunk(
+  "customer/fetchCustomerByKeyword",
+  async (
+    {
+      page,
+      pageSize,
+      search,
+    }: { page: number; pageSize: number | string; search: any },
+    thunkAPI
+  ) => {
+    try {
+      const res = await axiosInstance.get(
+        `dashboard/customers/get-customers?page=${page}&pageSize=${pageSize}&search=${search}`
+      );
+      console.log("✅ Keyword Fetch Customers Response :", res.data);
+      return res.data;
+    } catch (err: any) {
+      console.error("❌ Error fetching Customer:", err);
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to fetch Customer"
+      );
+    }
+  }
+);
 
 // FETCH CUSTOMERS THUNK
 export const fetchCustomerById = createAsyncThunk(
   "customer/fetchCustomerById",
-  async (
-    { id }: { id: any},
-    thunkAPI
-  ) => {
+  async ({ id }: { id: any }, thunkAPI) => {
     try {
       const res = await axiosInstance.get(
         `dashboard/customers/get-customer/${id}`
@@ -66,7 +88,6 @@ export const fetchCustomerById = createAsyncThunk(
   }
 );
 
-
 // DELETE CUSTOMER THUNK
 export const deleteCustomer = createAsyncThunk(
   "customer/deleteCustomer",
@@ -74,7 +95,7 @@ export const deleteCustomer = createAsyncThunk(
     try {
       const res = await axiosInstance.delete(
         `dashboard/customers/delete-customer`,
-        {data}
+        { data }
       );
       console.log("✅ Delete Customer Response :", res.data);
       return res.data;
@@ -132,6 +153,10 @@ const categorySlice = createSlice({
         state.loading = false;
         state.error =
           (action.payload as string) || action.error.message || "Failed";
+      })
+      .addCase(fetchCustomerByKeyword.fulfilled, (state, action) => {
+        state.loading = false;
+        state.customers = action.payload;
       })
       .addCase(deleteCustomer.fulfilled, (state: any, action) => {
         state.loading = false;
