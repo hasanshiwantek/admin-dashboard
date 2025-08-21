@@ -19,16 +19,23 @@ import { updateCategory, deleteCategory } from "@/redux/slices/categorySlice";
 import { refetchCategories } from "@/lib/categoryUtils";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+
 const CategoryRow = ({
   category,
   level = 0,
   selectedIds,
   setSelectedIds,
+  expandedIds,
+  setExpandedIds,
+  highlightId,
 }: {
   category: any;
   level?: number;
   selectedIds: number[];
   setSelectedIds: React.Dispatch<React.SetStateAction<any[]>>;
+  expandedIds: Set<number>;
+  setExpandedIds: React.Dispatch<React.SetStateAction<Set<number>>>;
+  highlightId: number | null;
 }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({
@@ -225,6 +232,9 @@ const CategoryRow = ({
               level={level + 1}
               selectedIds={selectedIds}
               setSelectedIds={setSelectedIds}
+               expandedIds={expandedIds}
+              setExpandedIds={setExpandedIds}
+              highlightId={highlightId}
             />
           ))}
         </SortableContext>
