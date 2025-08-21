@@ -221,12 +221,14 @@ const AllCustomers = () => {
         >
           <Trash className="!w-5 !h-5" />
         </Button>
+        <Link href={"/manage/customers/export"}>
         <Button
           variant="outline"
           className="flex items-center gap-2 !p-6 btn-outline-primary"
-        >
+          >
           <DownloadIcon className="!w-5 !h-5" /> Export all customers
         </Button>
+          </Link>
         <Input placeholder="Filter by keyword" />
         <Button
           variant="default"
@@ -295,14 +297,17 @@ const AllCustomers = () => {
                       />
                     </TableCell>
                     <TableCell>
-                    <button onClick={() => toggleRow(customer.id)} className="mt-3">
-                      {expandedRow === customer.id ? (
-                        <FaCircleMinus className="h-7 w-7 fill-blue-500" />
-                      ) : (
-                        <FaCirclePlus className="h-7 w-7 fill-blue-500" />
-                      )}
-                    </button>
-                      </TableCell>
+                      <button
+                        onClick={() => toggleRow(customer.id)}
+                        className="mt-3"
+                      >
+                        {expandedRow === customer.id ? (
+                          <FaCircleMinus className="h-7 w-7 fill-blue-500" />
+                        ) : (
+                          <FaCirclePlus className="h-7 w-7 fill-blue-500" />
+                        )}
+                      </button>
+                    </TableCell>
                     <TableCell>
                       <div className=" text-blue-600 cursor-pointer hover:underline">
                         <Link href={`/manage/customers/edit/${customer.id}`}>

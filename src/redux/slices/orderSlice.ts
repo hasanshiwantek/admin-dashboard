@@ -28,7 +28,10 @@ export const addOrder = createAsyncThunk(
   "orders/addOrder",
   async ({ data }: { data: any }, thunkAPI) => {
     try {
-      const response = await axiosInstance.post(`dashboard/orders/add-orders`, data);
+      const response = await axiosInstance.post(
+        `dashboard/orders/add-orders`,
+        data
+      );
       return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
@@ -56,14 +59,61 @@ export const updateOrderStatus = createAsyncThunk(
   }
 );
 
+// EXPORT Orders THUNK
+export const exportOrderCsv = createAsyncThunk(
+  "product/exportOrderCsv",
+  async ({ payload }: { payload: any }, thunkAPI) => {
+    try {
+      const response = await axiosInstance.get(
+        "dashboard/orders/export-orders",
+        {
+          params: payload,
+          responseType: "blob", // 👈 critical for file download
+        }
+      );
+
+      // Create a blob URL for the file
+      const blob = new Blob([response.data], {
+        type: response.headers["content-type"],
+      });
+      const downloadUrl = URL.createObjectURL(blob);
+
+      // Get the file name from content-disposition header (if present)
+      const disposition = response.headers["content-disposition"];
+      let filename = "products_export.xlsx";
+      if (disposition && disposition.includes("filename=")) {
+        filename = disposition
+          .split("filename=")[1]
+          .split(";")[0]
+          .replace(/"/g, "");
+      }
+
+      // Trigger the download
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.setAttribute("download", filename);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      return "Export successful";
+    } catch (error: any) {
+      console.error("❌ Error Exporting CSV:", error);
+      return thunkAPI.rejectWithValue("Failed to Export CSV");
+    }
+  }
+);
+
 export const fetchAllShipments = createAsyncThunk(
   "orders/fetchAllShipments",
   async (
     { page, perPage }: { page: number; perPage: number | string },
     thunkAPI
-  )=> {
+  ) => {
     try {
-      const res = await axiosInstance.get(`dashboard/shipments/list-shipment?page=${page}&pageSize=${perPage}`);
+      const res = await axiosInstance.get(
+        `dashboard/shipments/list-shipment?page=${page}&pageSize=${perPage}`
+      );
       console.log("✅ Order Response Data:", res.data);
       return res.data;
     } catch (err: any) {
@@ -130,7 +180,7 @@ const orderSlice = createSlice({
         state.loading = false;
         state.error =
           (action.payload as string) || action.error.message || "Failed";
-      })
+      });
   },
 });
 export default orderSlice.reducer;
