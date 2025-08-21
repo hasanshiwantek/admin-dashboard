@@ -27,6 +27,7 @@ import {
   fetchCustomers,
   deleteCustomer,
   updateCustomer,
+  fetchCustomerByKeyword,
 } from "@/redux/slices/customerSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { refetchCustomers } from "@/lib/customerUtils";
@@ -48,10 +49,6 @@ const AllCustomers = () => {
   const [storeCredits, setStoreCredits] = useState<{ [id: number]: string }>(
     {}
   );
-
-  useEffect(() => {
-    dispatch(fetchCustomers({ page: currentPage, pageSize: perPage }));
-  }, [dispatch, currentPage, perPage]);
 
   const getDropdownActions = (customer: any) => [
     {
@@ -187,6 +184,35 @@ const AllCustomers = () => {
     }
   };
 
+  // SEARCH CUSTOMER LOGIC
+
+  const [keyword, setKeyword] = useState("");
+
+  const filterHandler = async () => {
+    console.log("Keyword: ", keyword);
+    try {
+      const resultAction = await dispatch(
+        fetchCustomerByKeyword({
+          page: currentPage,
+          pageSize: perPage,
+          search: keyword,
+        })
+      );
+      if (fetchCustomerByKeyword.fulfilled.match(resultAction)) {
+        console.log(`✅ Fetch Search Customer Result`);
+        // setKeyword("");
+      } else {
+        console.error("❌ Error fetching Customer");
+      }
+    } catch (err) {
+      console.error("🚨 Unexpected error updating", err);
+    }
+  };
+
+  useEffect(() => {
+    dispatch(fetchCustomers({ page: currentPage, pageSize: perPage }));
+  }, [dispatch, currentPage, perPage]);
+
   return (
     <div className="p-10">
       {/* Header */}
@@ -222,17 +248,22 @@ const AllCustomers = () => {
           <Trash className="!w-5 !h-5" />
         </Button>
         <Link href={"/manage/customers/export"}>
-        <Button
-          variant="outline"
-          className="flex items-center gap-2 !p-6 btn-outline-primary"
+          <Button
+            variant="outline"
+            className="flex items-center gap-2 !p-6 btn-outline-primary"
           >
-          <DownloadIcon className="!w-5 !h-5" /> Export all customers
-        </Button>
-          </Link>
-        <Input placeholder="Filter by keyword" />
+            <DownloadIcon className="!w-5 !h-5" /> Export all customers
+          </Button>
+        </Link>
+        <Input
+          placeholder="Filter by keyword"
+          value={keyword}
+          onChange={(e) => setKeyword(e.target.value)}
+        />
         <Button
           variant="default"
           className="flex items-center gap-2 !p-6 btn-outline-primary"
+          onClick={filterHandler}
         >
           <SearchIcon className="!w-5 !h-5" /> Search
         </Button>

@@ -171,7 +171,7 @@ export const deleteProductCategory = createAsyncThunk(
     try {
       const response = await axiosInstance.delete(
         `dashboard/products/delete-product/categories`,
-       {data}
+        { data }
       );
 
       console.log("✅ Delete Product Category Response:", response.data);
@@ -219,6 +219,31 @@ export const fetchBrands = createAsyncThunk(
         `dashboard/brands/brand-list?page=${page}&pageSize=${pageSize}`
       );
       console.log("✅  Brand Response  From Thunk:", response.data);
+
+      return response.data;
+    } catch (error: any) {
+      console.error("❌ Error fetching  Brand:", error);
+      return thunkAPI.rejectWithValue("Failed to fetch brands");
+    }
+  }
+);
+
+// GET BRAND THUNK
+export const fetchBrandByKeyword = createAsyncThunk(
+  "product/fetchBrandByKeyword",
+  async (
+    {
+      page,
+      pageSize,
+      keyword,
+    }: { page: number; pageSize: number | string ; keyword: any },
+    thunkAPI
+  ) => {
+    try {
+      const response = await axiosInstance.get(
+        `dashboard/brands/brand-list?page=${page}&pageSize=${pageSize}&keyword=${keyword}`
+      );
+      console.log("✅  Search Brand Response  From Thunk:", response.data);
 
       return response.data;
     } catch (error: any) {
@@ -412,6 +437,10 @@ const productSlice = createSlice({
         state.loading = false;
         state.error =
           (action.payload as string) || action.error.message || "Failed";
+      })
+      .addCase(fetchBrandByKeyword.fulfilled, (state, action) => {
+        state.loading = false;
+        state.brands = action.payload;
       })
       .addCase(searchAllProducts.fulfilled, (state, action) => {
         state.loading = false;

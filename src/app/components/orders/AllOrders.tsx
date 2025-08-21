@@ -21,7 +21,11 @@ import Pagination from "@/components/ui/pagination";
 import OrderActionsDropdown from "./OrderActionsDropdown";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
-import { fetchAllOrders, updateOrderStatus } from "@/redux/slices/orderSlice";
+import {
+  fetchAllOrders,
+  updateOrderStatus,
+  fetchOrderByKeyword,
+} from "@/redux/slices/orderSlice";
 import { refetchOrders } from "@/lib/orderUtils";
 import { FaCirclePlus, FaCircleMinus } from "react-icons/fa6";
 import {
@@ -54,10 +58,6 @@ const AllOrders = () => {
 
   const { loading, error } = useAppSelector((state) => state.order);
   console.log("Orders data from frontend: ", orders);
-
-  useEffect(() => {
-    dispatch(fetchAllOrders({ page: currentPage, perPage }));
-  }, [dispatch, currentPage, perPage]);
 
   const [activeTab, setActiveTab] = useState("All orders");
 
@@ -96,9 +96,9 @@ const AllOrders = () => {
   // Handle "Select All" checkbox
   const handleSelectAllChange = (checked: boolean, orders: any[]) => {
     if (checked) {
-      const allIds = orders.map((order) => order.id);
-      setSelectedOrderIds(allIds);
-      console.log("Selected All IDs:", allIds);
+      const allOrders = orders.map((order) => order);
+      setSelectedOrderIds(allOrders);
+      console.log("Selected All Orders", allOrders);
     } else {
       setSelectedOrderIds([]);
       console.log("Deselected All");
@@ -172,6 +172,36 @@ const AllOrders = () => {
   const copyBilling = () => {
     console.log("Copied");
   };
+
+  // SEARCH ORDER LOGIC
+
+  const [keyword, setKeyword] = useState("");
+
+  const filterHandler = async () => {
+    console.log("Keyword: ", keyword);
+    try {
+      const resultAction = await dispatch(
+        fetchOrderByKeyword({
+          page: currentPage,
+          perPage: perPage,
+          keyword: keyword,
+        })
+      );
+      if (fetchOrderByKeyword.fulfilled.match(resultAction)) {
+        console.log(`✅ Fetch Order Result`);
+        // setKeyword("");
+      } else {
+        console.error("❌ Error fetching Order");
+      }
+    } catch (err) {
+      console.error("🚨 Unexpected error updating", err);
+    }
+  };
+
+  useEffect(() => {
+    dispatch(fetchAllOrders({ page: currentPage, perPage }));
+  }, [dispatch, currentPage, perPage]);
+
   return (
     <div className=" bg-[var(--store-bg)] min-h-screen mt-20">
       {/* Tabs */}
@@ -197,7 +227,9 @@ const AllOrders = () => {
           <Link href={"/manage/orders/add"}>
             <button className="btn-outline-primary">Add</button>
           </Link>
-          <button className="btn-outline-primary">Export all</button>
+          <Link href={"/manage/orders/export"}>
+            <button className="btn-outline-primary">Export all</button>
+          </Link>
 
           <Select>
             <SelectTrigger className="w-fit p-6">
@@ -287,8 +319,14 @@ const AllOrders = () => {
 
           <button className="btn-outline-primary">Confirm</button>
 
-          <Input placeholder="Filter by keyword" className="" />
-          <button className="btn-outline-primary">Search</button>
+          <Input
+            placeholder="Filter by keyword"
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
+          />
+          <button className="btn-outline-primary" onClick={filterHandler}>
+            Search
+          </button>
         </div>
         {/* Pagination */}
         <div className="flex items-center justify-end my-2">
