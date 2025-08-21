@@ -34,9 +34,18 @@ export const SideBar = () => {
     <div className="shrink-0 h-auto  z-20 fixed top-22 w-[26.7rem]  max-h-full overflow-y-auto overflow-x-hidden  bg-[rgb(3,16,51)] text-white border-t-2 border-[#2d3748] custom-scroll">
       <SidebarProvider>
         <SidebarMenu>
-          {sidebarData.map((item) =>
+          {sidebarData.map((item, index) =>
             item.children ? (
-              <Collapsible key={item.title} className="group/collapsible">
+              <Collapsible
+                key={item.title}
+                className="group/collapsible"
+                open={openMenus[index]}
+                onOpenChange={(isOpen) => {
+                  const newState = [...openMenus];
+                  newState[index] = isOpen;
+                  setOpenMenus(newState);
+                }}
+              >
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton className="group w-full flex items-center p-8 cursor-pointer text-xl">

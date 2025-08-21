@@ -37,7 +37,6 @@ import {
   LocationEdit,
   DollarSign,
 } from "lucide-react";
-
 import Spinner from "../loader/Spinner";
 import Link from "next/link";
 const AllOrders = () => {
