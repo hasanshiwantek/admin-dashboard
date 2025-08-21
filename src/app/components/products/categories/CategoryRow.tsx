@@ -48,7 +48,6 @@ const CategoryRow = ({
     transition,
   };
 
-  const [expanded, setExpanded] = useState(false);
   const dispatch = useAppDispatch();
   const { register, watch, setValue } = useFormContext();
   const isSelected = selectedIds.some((cat: any) => cat === category);
@@ -131,6 +130,14 @@ const CategoryRow = ({
     },
   ];
 
+  const isExpanded = expandedIds.has(category.id);
+  const toggle = () =>
+  setExpandedIds(prev => {
+    const next = new Set(prev);
+    next.has(category.id) ? next.delete(category.id) : next.add(category.id);
+    return next;
+  });
+
   return (
     <>
       <TableRow
@@ -150,12 +157,10 @@ const CategoryRow = ({
         </TableCell>
         <TableCell className="w-[30px] ">
           {hasChildren && (
-            <button type="button" onClick={() => setExpanded(!expanded)}>
-              {expanded ? (
-                <ChevronDown size={15} />
-              ) : (
-                <ChevronRight size={15} />
-              )}
+            <button 
+            type="button" 
+            onClick={toggle}>
+              {isExpanded ? <ChevronDown size={15} /> : <ChevronRight size={15} />}
             </button>
           )}
         </TableCell>
@@ -220,7 +225,7 @@ const CategoryRow = ({
         </TableCell>
       </TableRow>
 
-      {expanded && hasChildren && (
+      {isExpanded && hasChildren && (
         <SortableContext
           items={category.subcategories.map((child: any) => child.id)}
           strategy={verticalListSortingStrategy}
@@ -232,7 +237,7 @@ const CategoryRow = ({
               level={level + 1}
               selectedIds={selectedIds}
               setSelectedIds={setSelectedIds}
-               expandedIds={expandedIds}
+              expandedIds={expandedIds}
               setExpandedIds={setExpandedIds}
               highlightId={highlightId}
             />
