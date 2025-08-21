@@ -16,7 +16,11 @@ import OrderActionsDropdown from "../../orders/OrderActionsDropdown";
 import { Button } from "@/components/ui/button";
 import Pagination from "@/components/ui/pagination";
 import Link from "next/link";
-import { fetchBrands, deleteBrand } from "@/redux/slices/productSlice";
+import {
+  fetchBrands,
+  deleteBrand,
+  fetchBrandByKeyword,
+} from "@/redux/slices/productSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { useRouter } from "next/navigation";
 import { refetchBrands } from "@/lib/brandUtils";
@@ -92,6 +96,31 @@ const BrandTable = () => {
     }
   };
 
+  // SEARCH KEYWORD LOGIC
+
+  const [keyword, setKeyword] = useState("");
+
+  const filterHandler = async () => {
+    console.log("Keyword: ", keyword);
+    try {
+      const resultAction = await dispatch(
+        fetchBrandByKeyword({
+          page: currentPage,
+          pageSize: perPage,
+          keyword: keyword,
+        })
+      );
+      if (fetchBrandByKeyword.fulfilled.match(resultAction)) {
+        console.log(`✅ Fetch Brand Result`);
+        // setKeyword("");
+      } else {
+        console.error("❌ Error fetching Brand");
+      }
+    } catch (err) {
+      console.error("🚨 Unexpected error updating", err);
+    }
+  };
+
   useEffect(() => {
     dispatch(fetchBrands({ page: currentPage, pageSize: perPage }));
   }, [dispatch, currentPage, perPage]);
@@ -113,8 +142,19 @@ const BrandTable = () => {
           <button className="btn-outline-primary" onClick={deleteBrandHandler}>
             <Trash className="!w-6 !h-6" />
           </button>
-          <Input type="text" placeholder="Filter by Keyword" />
-          <button className="btn-outline-primary">Filter</button>
+          <Input
+            type="text"
+            placeholder="Filter by Keyword"
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
+          />
+          <button
+            className="btn-outline-primary"
+            onClick={filterHandler}
+            type="button"
+          >
+            Filter
+          </button>
         </div>
         <div className="flex justify-end">
           <Pagination

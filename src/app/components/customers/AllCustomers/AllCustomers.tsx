@@ -27,6 +27,7 @@ import {
   fetchCustomers,
   deleteCustomer,
   updateCustomer,
+  fetchCustomerByKeyword,
 } from "@/redux/slices/customerSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { refetchCustomers } from "@/lib/customerUtils";
@@ -48,10 +49,6 @@ const AllCustomers = () => {
   const [storeCredits, setStoreCredits] = useState<{ [id: number]: string }>(
     {}
   );
-
-  useEffect(() => {
-    dispatch(fetchCustomers({ page: currentPage, pageSize: perPage }));
-  }, [dispatch, currentPage, perPage]);
 
   const getDropdownActions = (customer: any) => [
     {
@@ -187,6 +184,42 @@ const AllCustomers = () => {
     }
   };
 
+  // SEARCH CUSTOMER LOGIC
+
+  const [keyword, setKeyword] = useState("");
+
+  const filterHandler = async () => {
+    console.log("Keyword: ", keyword);
+    try {
+      const resultAction = await dispatch(
+        fetchCustomerByKeyword({
+          page: currentPage,
+          pageSize: perPage,
+          search: keyword,
+        })
+      );
+      if (fetchCustomerByKeyword.fulfilled.match(resultAction)) {
+        console.log(`✅ Fetch Search Customer Result`);
+        // setKeyword("");
+      } else {
+        console.error("❌ Error fetching Customer");
+      }
+    } catch (err) {
+      console.error("🚨 Unexpected error updating", err);
+    }
+  };
+
+  useEffect(() => {
+    dispatch(fetchCustomers({ page: currentPage, pageSize: perPage }));
+  }, [dispatch, currentPage, perPage]);
+
+  if (error) {
+    return (
+      <div className="text-center py-10 text-red-500 text-lg">
+        Error: {error}
+      </div>
+    );
+  }
   return (
     <div className="p-10">
       {/* Header */}
@@ -221,16 +254,23 @@ const AllCustomers = () => {
         >
           <Trash className="!w-5 !h-5" />
         </Button>
-        <Button
-          variant="outline"
-          className="flex items-center gap-2 !p-6 btn-outline-primary"
-        >
-          <DownloadIcon className="!w-5 !h-5" /> Export all customers
-        </Button>
-        <Input placeholder="Filter by keyword" />
+        <Link href={"/manage/customers/export"}>
+          <Button
+            variant="outline"
+            className="flex items-center gap-2 !p-6 btn-outline-primary"
+          >
+            <DownloadIcon className="!w-5 !h-5" /> Export all customers
+          </Button>
+        </Link>
+        <Input
+          placeholder="Filter by keyword"
+          value={keyword}
+          onChange={(e) => setKeyword(e.target.value)}
+        />
         <Button
           variant="default"
           className="flex items-center gap-2 !p-6 btn-outline-primary"
+          onClick={filterHandler}
         >
           <SearchIcon className="!w-5 !h-5" /> Search
         </Button>
@@ -295,14 +335,17 @@ const AllCustomers = () => {
                       />
                     </TableCell>
                     <TableCell>
-                    <button onClick={() => toggleRow(customer.id)} className="mt-3">
-                      {expandedRow === customer.id ? (
-                        <FaCircleMinus className="h-7 w-7 fill-blue-500" />
-                      ) : (
-                        <FaCirclePlus className="h-7 w-7 fill-blue-500" />
-                      )}
-                    </button>
-                      </TableCell>
+                      <button
+                        onClick={() => toggleRow(customer.id)}
+                        className="mt-3"
+                      >
+                        {expandedRow === customer.id ? (
+                          <FaCircleMinus className="h-7 w-7 fill-blue-500" />
+                        ) : (
+                          <FaCirclePlus className="h-7 w-7 fill-blue-500" />
+                        )}
+                      </button>
+                    </TableCell>
                     <TableCell>
                       <div className=" text-blue-600 cursor-pointer hover:underline">
                         <Link href={`/manage/customers/edit/${customer.id}`}>
