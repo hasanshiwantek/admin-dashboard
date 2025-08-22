@@ -39,6 +39,8 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import Spinner from "../../loader/Spinner";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import CategoryDropdown from "./CategoryDropdown";
+
 export default function ProductCategoriesPage() {
   const methods = useForm();
   const dispatch = useAppDispatch();
@@ -57,6 +59,9 @@ export default function ProductCategoriesPage() {
   const watchCategories = methods.watch("categories", {});
   // const [categories, setCategories] = useState(initialCategories);
   const [activeId, setActiveId] = useState(null);
+  const [parentId, setParentCategory] = useState<number | null>(null);
+  const [expandedIds, setExpandedIds] = useState<Set<number>>(new Set());
+  const [highlightId, setHighlightId] = useState<number | null>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -163,7 +168,7 @@ export default function ProductCategoriesPage() {
           data: {
             name: dragged.name,
             description: dragged.description,
-            parent_id: newParentId,
+            parentId: newParentId,
             isVisible: dragged.is_visible === 1, // or adjust according to your data
           },
         })
@@ -323,6 +328,29 @@ export default function ProductCategoriesPage() {
   useEffect(() => {
     dispatch(fetchCategories());
   }, [dispatch]);
+
+  // new helpers added by faizan ------------------------------------------------------------->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+const findPathToId = (list: any[], id: number, path: number[] = []): number[] | null => {
+  for (const item of list) {
+    const newPath = [...path, item.id];
+    if (item.id === id) return newPath;
+    if (item.subcategories?.length) {
+      const found = findPathToId(item.subcategories, id, newPath);
+      if (found) return found;
+    }
+  }
+  return null;
+};
+
+const expandPath = (ids: number[]) => {
+  // expand all ancestors (exclude leaf if you only expand parents)
+  setExpandedIds(prev => {
+    const next = new Set(prev);
+    ids.forEach(i => next.add(i));
+    return next;
+  });
+};
+
   return (
     <>
       <FormProvider {...methods}>
@@ -341,10 +369,22 @@ export default function ProductCategoriesPage() {
             </Button>
           </div>
           <div className="flex flex-col  gap-5 p-6 bg-white">
-            <div>
-              <Input
+            <div className="!w-[45rem]">
+              {/* <Input
                 type="search"
                 placeholder="Find category in the structure"
+              /> */}
+              <CategoryDropdown
+                categoryData={categoryData ?? []}
+                value={{ id: parentId ? Number(parentId) : null, path: "", }}
+                // onChange={(val) => { setParentCategory(val.id) }}
+                onChange={(val) => {
+                  setParentCategory(val.id);
+                  const path = findPathToId(categories, val.id) ?? [];
+                  expandPath(path);
+                  setHighlightId(val.id);
+                  setTimeout(() => document.getElementById(`cat-row-${val.id}`)?.scrollIntoView({block: "center"}), 0);
+                }}
               />
             </div>
             <div className="flex justify-start items-center  gap-5 ">
@@ -426,6 +466,9 @@ export default function ProductCategoriesPage() {
                         category={category}
                         selectedIds={selectedIds}
                         setSelectedIds={setSelectedIds}
+                        expandedIds={expandedIds}
+                        setExpandedIds={setExpandedIds}
+                        highlightId={highlightId}
                       />
                     ))
                   )}

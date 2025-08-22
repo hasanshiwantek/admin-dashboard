@@ -36,6 +36,7 @@ import {
   IdCard,
 } from "lucide-react";
 import SearchShipments from "./SearchShipments";
+import ExportShipmentsDialog from "./ExportShipmentsDialog";
 
 type Props = { onSearchModeChange?: (isSearch: boolean) => void };
 const Shipments = ({ onSearchModeChange }: Props) => {
@@ -239,6 +240,7 @@ Updated: ${billing.updatedAt}`;
     setShowSearch(true);
     onSearchModeChange?.(true);
   };
+
   const handleTracking = () => {
     console.log("Tracking saved succesfully. ");
   };
@@ -247,10 +249,50 @@ Updated: ${billing.updatedAt}`;
     setExpandedRow((prev) => (prev === id ? null : id));
   };
 
+  const closeSearch = () => { setShowSearch(false); onSearchModeChange?.(false); };
+
+  const handleExport = (format: 'csv' | 'xml') => {
+  const rows = shipments?.data || [];
+  if (!rows.length) return;
+
+  const download = (content: string, type: string, filename: string) => {
+    const blob = new Blob([content], { type });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename; a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  if (format === 'csv') {
+    const esc = (v: any) => {
+      const s = String(v ?? '');
+      return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+    };
+    const header = ['Shipment ID','Shipped To','Date Shipped','Tracking Number','Order Date'];
+    const lines = rows.map((r: any) =>
+      [r.id, r.shippedTo, r.dateShipped, r.trackingNumber, r.orderDate].map(esc).join(',')
+    );
+    download([header.join(','), ...lines].join('\n'), 'text/csv;charset=utf-8;', 'shipments.csv');
+  } else {
+    const e = (v: any) => String(v ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    const xml = `<?xml version="1.0" encoding="UTF-8"?><shipments>${
+      rows.map((r: any) => `
+        <shipment>
+          <id>${e(r.id)}</id>
+          <shippedTo>${e(r.shippedTo)}</shippedTo>
+          <dateShipped>${e(r.dateShipped)}</dateShipped>
+          <trackingNumber>${e(r.trackingNumber)}</trackingNumber>
+          <orderDate>${e(r.orderDate)}</orderDate>
+        </shipment>`).join('')
+    }</shipments>`;
+    download(xml, 'application/xml', 'shipments.xml');
+  }
+};
+
   return (
     <div className=" bg-[var(--store-bg)] min-h-screen mt-20">
       {showSearch ? (
-        <SearchShipments />
+        <SearchShipments  onClose={closeSearch}/>
       ) : (
         <>
           {/* Tabs */}
@@ -276,7 +318,11 @@ Updated: ${billing.updatedAt}`;
               <button className="btn-outline-primary">
                 <MdDelete className="h-7 w-7" />
               </button>
-              <button className="btn-outline-primary">Export all</button>
+
+              <ExportShipmentsDialog
+                trigger={<button className="btn-outline-primary">Export all</button>}
+                onConfirm={(fmt) => handleExport(fmt)}  // use shipments.data inside
+              />
 
               <div className="flex items-center border rounded">
                 <Input
