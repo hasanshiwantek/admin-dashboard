@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "@/lib/axiosInstance";
+import { AnyARecord } from "node:dns";
 
 // ADD CUSTOMER THUNK
 export const addCustomer = createAsyncThunk(
@@ -42,6 +43,32 @@ export const fetchCustomers = createAsyncThunk(
     }
   }
 );
+
+// FETCH CUSTOMERS THUNK
+export const advanceCustomerSearch = createAsyncThunk(
+  "customer/advanceCustomerSearch",
+  async (
+    { data }: { data: any},
+    thunkAPI
+  ) => {
+    try {
+      const res = await axiosInstance.get(
+        `dashboard/customers/search-advanced`,
+        data
+      );
+      console.log("✅ Advance Search Customers Response :", res.data);
+      return res.data;
+    } catch (err: any) {
+      console.error("❌ Error Searching Customer:", err);
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to Search Customer"
+      );
+    }
+  }
+);
+
+
+
 
 // FETCH CUSTOMERS THUNK
 export const fetchCustomerByKeyword = createAsyncThunk(

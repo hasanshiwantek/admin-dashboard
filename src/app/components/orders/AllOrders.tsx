@@ -242,7 +242,7 @@ const AllOrders = () => {
     }
   };
 
-  // FETCH ORDERS
+  // FETCH ORDERS LOGIC
 
   const searchParams = useSearchParams();
 
@@ -279,10 +279,6 @@ const AllOrders = () => {
       dispatch(fetchAllOrders({ page: currentPage, perPage: pageSize }));
     }
   }, [searchParams]); // reruns whenever URL changes
-
-  // useEffect(() => {
-  //   dispatch(fetchAllOrders({ page: currentPage, perPage }));
-  // }, [dispatch, currentPage, perPage]);
 
   // ERROR LOGIC
   if (error) {

@@ -54,20 +54,6 @@ const OrderSearch = () => {
     }));
   };
 
-  // const handleSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   console.log("Submitted Data:", formData);
-  //   try {
-  //     const result = await dispatch(advanceOrderSearch({ data: formData }));
-  //     if (advanceOrderSearch.fulfilled.match(result)) {
-  //       console.log(`✅ Advance search Order Result`, result);
-  //     } else {
-  //       console.log("❌ Error Searching Orders");
-  //     }
-  //   } catch (err) {
-  //     console.log("Something went wrong", err);
-  //   }
-  // };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -92,23 +92,23 @@ const AddCustomer = () => {
     e.preventDefault();
 
     const payload = {
-      first_name: formData.firstName,
-      last_name: formData.lastName,
-      company_name: formData.companyName,
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      companyName: formData.companyName,
       email: formData.email,
-      customer_group: formData.customerGroup,
+      customerGroup: formData.customerGroup,
       phone: formData.phone,
       country: formData.country,
       state: formData.state,
       address: formData.address,
-      store_credit: formData.storeCredit,
-      receive_review_emails: formData.acsEmail,
-      force_password_reset: formData.forceReset,
-      tax_exempt_code: formData.taxCode,
+      storeCredit: formData.storeCredit,
+      receiveReviewEmails: formData.acsEmail,
+      forcePasswordReset: formData.forceReset,
+      taxExemptCode: formData.taxCode,
       password: formData.password,
       confirm_password: formData.confirmPassword,
       analytics: formData.analytics,
-      fuctional: formData.functional,
+      functional: formData.functional,
       targeting: formData.targeting,
     };
 
@@ -140,9 +140,9 @@ const AddCustomer = () => {
           });
           setSaveAndAddAnother(false); // reset flag
         } else {
-          setTimeout(()=>{
+          setTimeout(() => {
             router.push("/manage/customers/");
-          },700)
+          }, 700);
         }
       } else {
         alert("Customer save failed");
@@ -160,7 +160,7 @@ const AddCustomer = () => {
           {/* Header */}
           <div className="mb-6">
             <h1 className=" !font-light">
-              {isEdit ? "Update" : "Add"}  customer
+              {isEdit ? "Update" : "Add"} customer
             </h1>
           </div>
 
