@@ -106,7 +106,7 @@ const AddCustomer = () => {
       forcePasswordReset: formData.forceReset,
       taxExemptCode: formData.taxCode,
       password: formData.password,
-      confirm_password: formData.confirmPassword,
+      password_confirmation: formData.confirmPassword,
       analytics: formData.analytics,
       functional: formData.functional,
       targeting: formData.targeting,
