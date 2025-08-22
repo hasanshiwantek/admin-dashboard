@@ -52,8 +52,8 @@ export const advanceCustomerSearch = createAsyncThunk(
     thunkAPI
   ) => {
     try {
-      const res = await axiosInstance.get(
-        `dashboard/customers/search-advanced`,
+      const res = await axiosInstance.post(
+        `dashboard/customers/customer-search`,
         data
       );
       console.log("✅ Advance Search Customers Response :", res.data);
@@ -180,6 +180,10 @@ const categorySlice = createSlice({
         state.loading = false;
         state.error =
           (action.payload as string) || action.error.message || "Failed";
+      })
+            .addCase(advanceCustomerSearch.fulfilled, (state, action) => {
+        state.loading = false;
+        state.customers = action.payload;
       })
       .addCase(fetchCustomerByKeyword.fulfilled, (state, action) => {
         state.loading = false;

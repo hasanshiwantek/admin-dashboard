@@ -23,11 +23,14 @@ import React, { useState, useEffect } from "react";
 import OrderActionsDropdown from "../../orders/OrderActionsDropdown";
 import Pagination from "@/components/ui/pagination";
 import { FaCirclePlus, FaCircleMinus } from "react-icons/fa6";
+import { useSearchParams } from "next/navigation";
+
 import {
   fetchCustomers,
   deleteCustomer,
   updateCustomer,
   fetchCustomerByKeyword,
+  advanceCustomerSearch,
 } from "@/redux/slices/customerSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { refetchCustomers } from "@/lib/customerUtils";
@@ -131,7 +134,7 @@ const AllCustomers = () => {
     group: string
   ) => {
     const payload = {
-      customer_group: group === "none" ? null : group,
+      customerGroup: group === "none" ? null : group,
     };
 
     try {
@@ -162,7 +165,7 @@ const AllCustomers = () => {
     }
 
     const payload = {
-      store_credit: value,
+      storeCredit: value,
     };
 
     try {
@@ -209,9 +212,43 @@ const AllCustomers = () => {
     }
   };
 
+  // FETCH CUSTOMER LOGIC
+
+  const searchParams = useSearchParams();
+
+  const queryObject: Record<string, any> = {};
+  searchParams.forEach((value, key) => {
+    if (queryObject[key]) {
+      queryObject[key] = [...queryObject[key], value];
+    } else {
+      queryObject[key] = value;
+    }
+  });
+
   useEffect(() => {
-    dispatch(fetchCustomers({ page: currentPage, pageSize: perPage }));
-  }, [dispatch, currentPage, perPage]);
+    const page = Number(queryObject.page || 1);
+    const pageSize = Number(queryObject.limit || queryObject.pageSize || 50);
+
+    const filterKeys = Object.keys(queryObject).filter(
+      (key) => !["page", "limit", "pageSize"].includes(key)
+    );
+
+    if (filterKeys.length > 0) {
+      // 🔍 Run filtered search if extra filters exist
+      dispatch(
+        advanceCustomerSearch({
+          data: {
+            ...queryObject,
+            page,
+            pageSize: pageSize,
+          },
+        })
+      );
+    } else {
+      // 📦 Default: Fetch all customers
+      dispatch(fetchCustomers({ page: currentPage, pageSize: pageSize }));
+    }
+  }, [searchParams]); // reruns whenever URL changes
 
   if (error) {
     return (
