@@ -25,9 +25,11 @@ import {
   fetchAllOrders,
   updateOrderStatus,
   fetchOrderByKeyword,
+  advanceOrderSearch,
 } from "@/redux/slices/orderSlice";
 import { refetchOrders } from "@/lib/orderUtils";
 import { FaCirclePlus, FaCircleMinus } from "react-icons/fa6";
+import { useSearchParams } from "next/navigation";
 import {
   Globe,
   Phone,
@@ -197,12 +199,93 @@ const AllOrders = () => {
     }
   };
 
+  // UPDATE ORDER STATUS LOGIC
+
+  const [selectedAction, setSelectedAction] = useState("");
+  const handleConfirmClick = () => {
+    if (
+      selectedAction.startsWith("updateMultiOrderStatus:") &&
+      selectedOrderIds.length > 0
+    ) {
+      const statusId = selectedAction.split(":")[1];
+
+      const statusMap: Record<string, string> = {
+        "1": "Pending",
+        "7": "Awaiting Payment",
+        "11": "Awaiting Fulfillment",
+        "9": "Awaiting Shipment",
+        "8": "Awaiting Pickup",
+        "3": "Partially Shipped",
+        "10": "Completed",
+        "2": "Shipped",
+        "5": "Cancelled",
+        "6": "Declined",
+        "4": "Refunded",
+        "13": "Disputed",
+        "12": "Manual Verification Required",
+        "14": "Partially Refunded",
+      };
+
+      const status = statusMap[statusId];
+      if (!status) return;
+
+      selectedOrderIds.forEach((id) => {
+        dispatch(updateOrderStatus({ id, status }));
+      });
+      setTimeout(() => {
+        setSelectedAction("");
+        setSelectedOrderIds([]);
+        refetchOrders(dispatch);
+      }, 700);
+    } else {
+      alert("Please select at least one order and a status update.");
+    }
+  };
+
+  // FETCH ORDERS
+
+  const searchParams = useSearchParams();
+
+  const queryObject: Record<string, any> = {};
+  searchParams.forEach((value, key) => {
+    if (queryObject[key]) {
+      queryObject[key] = [...queryObject[key], value];
+    } else {
+      queryObject[key] = value;
+    }
+  });
+
   useEffect(() => {
-    dispatch(fetchAllOrders({ page: currentPage, perPage }));
-  }, [dispatch, currentPage, perPage]);
+    const page = Number(queryObject.page || 1);
+    const pageSize = Number(queryObject.limit || queryObject.pageSize || 50);
 
+    const filterKeys = Object.keys(queryObject).filter(
+      (key) => !["page", "limit", "pageSize"].includes(key)
+    );
 
-    if (error) {
+    if (filterKeys.length > 0) {
+      // 🔍 Run filtered search if extra filters exist
+      dispatch(
+        advanceOrderSearch({
+          data: {
+            ...queryObject,
+            page,
+            perPage: pageSize,
+          },
+        })
+      );
+    } else {
+      // 📦 Default: Fetch all products
+      dispatch(fetchAllOrders({ page: currentPage, perPage: pageSize }));
+    }
+  }, [searchParams]); // reruns whenever URL changes
+
+  // useEffect(() => {
+  //   dispatch(fetchAllOrders({ page: currentPage, perPage }));
+  // }, [dispatch, currentPage, perPage]);
+
+  // ERROR LOGIC
+  if (error) {
     return (
       <div className="text-center py-10 text-red-500 text-lg">
         Error: {error}
@@ -238,7 +321,7 @@ const AllOrders = () => {
             <button className="btn-outline-primary">Export all</button>
           </Link>
 
-          <Select>
+          <Select onValueChange={setSelectedAction} value={selectedAction}>
             <SelectTrigger className="w-fit p-6">
               <SelectValue placeholder="Choose an action" />
             </SelectTrigger>
@@ -324,7 +407,9 @@ const AllOrders = () => {
             </SelectContent>
           </Select>
 
-          <button className="btn-outline-primary">Confirm</button>
+          <button className="btn-outline-primary" onClick={handleConfirmClick}>
+            Confirm
+          </button>
 
           <Input
             placeholder="Filter by keyword"
@@ -453,6 +538,7 @@ const AllOrders = () => {
                                     );
                                     setTimeout(() => {
                                       refetchOrders(dispatch);
+                                      setSelectedOrderIds([]);
                                     }, 700);
                                   }}
                                 >

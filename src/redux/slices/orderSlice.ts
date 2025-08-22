@@ -85,7 +85,27 @@ export const updateOrderStatus = createAsyncThunk(
   }
 );
 
-// EXPORT Orders THUNK
+// UPDATE ORDER STATUS THUNK
+export const advanceOrderSearch = createAsyncThunk(
+  "orders/advanceOrderSearch",
+  async ({ data }: { data: any }, thunkAPI) => {
+    try {
+      const response = await axiosInstance.post(
+        `dashboard/orders/search-advanced`,
+        data
+      );
+      console.log("Advance Order Search Response: ", response.data);
+
+      return response.data;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to update status"
+      );
+    }
+  }
+);
+
+// EXPORT ORDERS THUNK
 export const exportOrderCsv = createAsyncThunk(
   "product/exportOrderCsv",
   async ({ payload }: { payload: any }, thunkAPI) => {
@@ -180,6 +200,10 @@ const orderSlice = createSlice({
           (action.payload as string) || action.error.message || "Failed";
       })
       .addCase(fetchOrderByKeyword.fulfilled, (state, action) => {
+        state.loading = false;
+        state.orders = action.payload;
+      })
+      .addCase(advanceOrderSearch.fulfilled, (state, action) => {
         state.loading = false;
         state.orders = action.payload;
       })
