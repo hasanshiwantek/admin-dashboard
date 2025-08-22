@@ -16,8 +16,12 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-
+import { advanceCustomerSearch } from "@/redux/slices/customerSlice";
+import { useAppDispatch } from "@/hooks/useReduxHooks";
+import { useRouter } from "next/navigation";
 const SearchCustomer = () => {
+  const dispatch = useAppDispatch();
+  const router = useRouter();
   const [formData, setFormData] = useState({
     // Advanced Search
     searchKeywords: "",
@@ -53,10 +57,46 @@ const SearchCustomer = () => {
     }));
   };
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Submitted Data:", formData);
-    // You can now send formData to your API or backend
+    const filteredData = Object.entries(formData).reduce(
+      (acc, [key, value]) => {
+        const isEmptyArray = Array.isArray(value) && value.length === 0;
+        const isEmpty =
+          value === "" || value === null || value === undefined || isEmptyArray;
+
+        const alwaysInclude = ["page", "pageSize"];
+        if (!isEmpty || alwaysInclude.includes(key)) {
+          acc[key] = value;
+        }
+        return acc;
+      },
+      {} as Record<string, any>
+    );
+
+    try {
+      const result = await dispatch(
+        advanceCustomerSearch({ data: filteredData })
+      );
+
+      if (advanceCustomerSearch.fulfilled.match(result)) {
+        // ✅ Push ALL filters to URL — not just page & limit
+        const queryParams = new URLSearchParams();
+        Object.entries(filteredData).forEach(([key, value]) => {
+          if (Array.isArray(value)) {
+            value.forEach((v) => queryParams.append(key, v));
+          } else {
+            queryParams.set(key, String(value));
+          }
+        });
+
+        router.push(`/manage/customers?${queryParams.toString()}`);
+      } else {
+        console.error("❌ Search Failed:", result.error);
+      }
+    } catch (error) {
+      console.error("🔥 Unexpected Error:", error);
+    }
   };
 
   return (
