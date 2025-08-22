@@ -19,8 +19,12 @@ import {
 import { HiQuestionMarkCircle } from "react-icons/hi2";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
-
+import { advanceOrderSearch } from "@/redux/slices/orderSlice";
+import { useAppDispatch } from "@/hooks/useReduxHooks";
+import { useRouter } from "next/navigation";
 const OrderSearch = () => {
+  const dispatch = useAppDispatch();
+  const router = useRouter();
   const [formData, setFormData] = useState({
     keywords: "",
     status: "",
@@ -50,9 +54,59 @@ const OrderSearch = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   console.log("Submitted Data:", formData);
+  //   try {
+  //     const result = await dispatch(advanceOrderSearch({ data: formData }));
+  //     if (advanceOrderSearch.fulfilled.match(result)) {
+  //       console.log(`✅ Advance search Order Result`, result);
+  //     } else {
+  //       console.log("❌ Error Searching Orders");
+  //     }
+  //   } catch (err) {
+  //     console.log("Something went wrong", err);
+  //   }
+  // };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Submitted Data:", formData);
+    const filteredData = Object.entries(formData).reduce(
+      (acc, [key, value]) => {
+        const isEmptyArray = Array.isArray(value) && value.length === 0;
+        const isEmpty =
+          value === "" || value === null || value === undefined || isEmptyArray;
+
+        const alwaysInclude = ["page", "pageSize"];
+        if (!isEmpty || alwaysInclude.includes(key)) {
+          acc[key] = value;
+        }
+        return acc;
+      },
+      {} as Record<string, any>
+    );
+
+    try {
+      const result = await dispatch(advanceOrderSearch({ data: filteredData }));
+
+      if (advanceOrderSearch.fulfilled.match(result)) {
+        // ✅ Push ALL filters to URL — not just page & limit
+        const queryParams = new URLSearchParams();
+        Object.entries(filteredData).forEach(([key, value]) => {
+          if (Array.isArray(value)) {
+            value.forEach((v) => queryParams.append(key, v));
+          } else {
+            queryParams.set(key, String(value));
+          }
+        });
+
+        router.push(`/manage/orders?${queryParams.toString()}`);
+      } else {
+        console.error("❌ Search Failed:", result.error);
+      }
+    } catch (error) {
+      console.error("🔥 Unexpected Error:", error);
+    }
   };
 
   return (
@@ -120,7 +174,7 @@ const OrderSearch = () => {
               {
                 id: "paymentMethod",
                 label: "Payment Method",
-                options: ["Google pay", "Stripe","Credit Card"],
+                options: ["Google pay", "Stripe", "Credit Card"],
               },
               {
                 id: "shippingProvider",
