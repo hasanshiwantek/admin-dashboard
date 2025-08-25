@@ -18,6 +18,7 @@ import {
   fetchAllOrders,
   fetchAllShipments,
   updateOrderStatus,
+  fetchPackingSlipPdf,
 } from "@/redux/slices/orderSlice";
 import { refetchOrders } from "@/lib/orderUtils";
 import Spinner from "../../loader/Spinner";
@@ -40,111 +41,114 @@ import ExportShipmentsDialog from "./ExportShipmentsDialog";
 
 type Props = { onSearchModeChange?: (isSearch: boolean) => void };
 const Shipments = ({ onSearchModeChange }: Props) => {
-  const [shipments, setShipments] = useState({
-    data: [
-      {
-        id: 20,
-        shippedTo: "Diana Newton",
-        dateShipped: "2025-05-20",
-        trackingNumber: "TQ754407595GB",
-        orderDate: "2025-03-26",
-        billing: {
-          name: "Diana Newton",
-          company: "The National Archives",
-          address: "Kew, Richmond, Surrey TW9 4DU",
-          country: "United Kingdom",
-          phone: "02039089237",
-          email: "diana.newton@tna.gov.uk",
-          customerId: "#500040",
-          updatedAt: "2025-03-26 09:33:58",
-        },
-        shipping: {
-          name: "Diana Newton",
-          carrier: "Royal Mail",
-          service: "Tracked 24",
-          address: "Kew, Richmond, Surrey TW9 4DU, UK",
-        },
-        shippedItems: {
-          qty: 1,
-          title: "PCIe Adapter 9207-41E",
-          sku: "9207-41E",
-        },
-      },
-      {
-        id: 19,
-        shippedTo: "Sam Anthony",
-        dateShipped: "2025-03-27",
-        trackingNumber: "772564564865",
-        orderDate: "2025-03-05",
-        billing: {
-          name: "Sam Anthony",
-          company: "Acme Data Ltd",
-          address: "12 King St, Manchester M2 4WU",
-          country: "United Kingdom",
-          phone: "0161 555 8811",
-          email: "sam@acmedata.co.uk",
-          customerId: "#500041",
-          updatedAt: "2025-03-27 11:02:10",
-        },
-        shipping: {
-          name: "Sam Anthony",
-          carrier: "DPD",
-          service: "Next Day",
-          address: "12 King St, Manchester M2 4WU, UK",
-        },
-        shippedItems: { qty: 1, title: "SSD 2TB NVMe", sku: "SSD-2TB-NV" },
-      },
-      {
-        id: 18,
-        shippedTo: "Jim Smith",
-        dateShipped: "2025-03-04",
-        trackingNumber: "1ZAV27996847025224",
-        orderDate: "2025-02-26",
-        billing: {
-          name: "Jim Smith",
-          company: "Globex Corp",
-          address: "45 Market Rd, Bristol BS1 4QA",
-          country: "United Kingdom",
-          phone: "0117 444 2200",
-          email: "jim.smith@globex.com",
-          customerId: "#500042",
-          updatedAt: "2025-03-04 15:21:03",
-        },
-        shipping: {
-          name: "Jim Smith",
-          carrier: "UPS",
-          service: "Standard",
-          address: "45 Market Rd, Bristol BS1 4QA, UK",
-        },
-        shippedItems: { qty: 3, title: "Cat6 Patch Cable 2m", sku: "CAT6-2M" },
-      },
-      {
-        id: 17,
-        shippedTo: "Dave Anderton",
-        dateShipped: "2025-02-07",
-        trackingNumber: "771835789150",
-        orderDate: "2025-01-28",
-        billing: {
-          name: "Dave Anderton",
-          company: "Wayne Tech",
-          address: "100 Park Ave, London W1A 1AA",
-          country: "United Kingdom",
-          phone: "0207 123 9000",
-          email: "dave@waynetech.com",
-          customerId: "#500043",
-          updatedAt: "2025-02-07 10:05:44",
-        },
-        shipping: {
-          name: "Dave Anderton",
-          carrier: "FedEx",
-          service: "Priority",
-          address: "100 Park Ave, London W1A 1AA, UK",
-        },
-        shippedItems: { qty: 1, title: "Rackmount Kit 1U", sku: "RMK-1U" },
-      },
-    ],
-    pagination: { total: 4, totalPages: 1, page: 1, pageSize: 20 },
-  });
+  // const [shipments, setShipments] = useState({
+  //   data: [
+  //     {
+  //       id: 20,
+  //       shippedTo: "Diana Newton",
+  //       dateShipped: "2025-05-20",
+  //       trackingNumber: "TQ754407595GB",
+  //       orderDate: "2025-03-26",
+  //       billing: {
+  //         name: "Diana Newton",
+  //         company: "The National Archives",
+  //         address: "Kew, Richmond, Surrey TW9 4DU",
+  //         country: "United Kingdom",
+  //         phone: "02039089237",
+  //         email: "diana.newton@tna.gov.uk",
+  //         customerId: "#500040",
+  //         updatedAt: "2025-03-26 09:33:58",
+  //       },
+  //       shipping: {
+  //         name: "Diana Newton",
+  //         carrier: "Royal Mail",
+  //         service: "Tracked 24",
+  //         address: "Kew, Richmond, Surrey TW9 4DU, UK",
+  //       },
+  //       shippedItems: {
+  //         qty: 1,
+  //         title: "PCIe Adapter 9207-41E",
+  //         sku: "9207-41E",
+  //       },
+  //     },
+  //     {
+  //       id: 19,
+  //       shippedTo: "Sam Anthony",
+  //       dateShipped: "2025-03-27",
+  //       trackingNumber: "772564564865",
+  //       orderDate: "2025-03-05",
+  //       billing: {
+  //         name: "Sam Anthony",
+  //         company: "Acme Data Ltd",
+  //         address: "12 King St, Manchester M2 4WU",
+  //         country: "United Kingdom",
+  //         phone: "0161 555 8811",
+  //         email: "sam@acmedata.co.uk",
+  //         customerId: "#500041",
+  //         updatedAt: "2025-03-27 11:02:10",
+  //       },
+  //       shipping: {
+  //         name: "Sam Anthony",
+  //         carrier: "DPD",
+  //         service: "Next Day",
+  //         address: "12 King St, Manchester M2 4WU, UK",
+  //       },
+  //       shippedItems: { qty: 1, title: "SSD 2TB NVMe", sku: "SSD-2TB-NV" },
+  //     },
+  //     {
+  //       id: 18,
+  //       shippedTo: "Jim Smith",
+  //       dateShipped: "2025-03-04",
+  //       trackingNumber: "1ZAV27996847025224",
+  //       orderDate: "2025-02-26",
+  //       billing: {
+  //         name: "Jim Smith",
+  //         company: "Globex Corp",
+  //         address: "45 Market Rd, Bristol BS1 4QA",
+  //         country: "United Kingdom",
+  //         phone: "0117 444 2200",
+  //         email: "jim.smith@globex.com",
+  //         customerId: "#500042",
+  //         updatedAt: "2025-03-04 15:21:03",
+  //       },
+  //       shipping: {
+  //         name: "Jim Smith",
+  //         carrier: "UPS",
+  //         service: "Standard",
+  //         address: "45 Market Rd, Bristol BS1 4QA, UK",
+  //       },
+  //       shippedItems: { qty: 3, title: "Cat6 Patch Cable 2m", sku: "CAT6-2M" },
+  //     },
+  //     {
+  //       id: 17,
+  //       shippedTo: "Dave Anderton",
+  //       dateShipped: "2025-02-07",
+  //       trackingNumber: "771835789150",
+  //       orderDate: "2025-01-28",
+  //       billing: {
+  //         name: "Dave Anderton",
+  //         company: "Wayne Tech",
+  //         address: "100 Park Ave, London W1A 1AA",
+  //         country: "United Kingdom",
+  //         phone: "0207 123 9000",
+  //         email: "dave@waynetech.com",
+  //         customerId: "#500043",
+  //         updatedAt: "2025-02-07 10:05:44",
+  //       },
+  //       shipping: {
+  //         name: "Dave Anderton",
+  //         carrier: "FedEx",
+  //         service: "Priority",
+  //         address: "100 Park Ave, London W1A 1AA, UK",
+  //       },
+  //       shippedItems: { qty: 1, title: "Rackmount Kit 1U", sku: "RMK-1U" },
+  //     },
+  //   ],
+  //   pagination: { total: 4, totalPages: 1, page: 1, pageSize: 20 },
+  // });
+
+  const shipments = useAppSelector((state: any) => state.order.shipments);
+
   const [showSearch, setShowSearch] = useState(false);
 
   // example data for this row
@@ -176,15 +180,14 @@ Updated: ${billing.updatedAt}`;
   const dispatch = useAppDispatch();
   //   const shipments = useAppSelector((state: any) => state.order.shipments);
   const pagination = shipments?.pagination;
+  console.log("Shipments pagination: ", pagination);
+
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState("50");
   const [activeTab, setActiveTab] = useState("All shipments");
   const [selectedOrderIds, setSelectedOrderIds] = useState<number[]>([]);
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
   const total = pagination?.total;
-  const totalPages = pagination?.totalPages;
-
-  console.log("Orders Pagination: ", pagination);
 
   const { loading, error } = useAppSelector((state) => state.order);
   //   console.log("Orders data from frontend: ", orders);
@@ -228,12 +231,33 @@ Updated: ${billing.updatedAt}`;
     }
   };
 
-  const handlePrintInvoice = () => {
-    console.log("Printing invoice...");
-  };
+  const orderActions = (shipment: any) => [
+    {
+      label: "Print Packaging Slip",
+      onClick: async () => {
+        try {
+          const shipmentId = shipment?.id;
+          const resultAction = await dispatch(
+            fetchPackingSlipPdf({ shipmentId })
+          );
+          console.log("Result Action: ",resultAction);
+          
 
-  const orderActions = [
-    { label: "Print Packaging Slip", onClick: handlePrintInvoice },
+          if (fetchPackingSlipPdf.fulfilled.match(resultAction)) {
+            const blob = new Blob([resultAction.payload], {
+              type: "application/pdf",
+            });
+            const url = URL.createObjectURL(blob);
+            window.open(url, "_blank");
+            console.log("SLIP PDF: ",resultAction?.payload)
+          } else {
+            console.error("Packing slip failed to download:", resultAction);
+          }
+        } catch (error) {
+          console.error("Unexpected error:", error);
+        }
+      },
+    },
   ];
 
   const handleSearch = () => {
@@ -249,50 +273,73 @@ Updated: ${billing.updatedAt}`;
     setExpandedRow((prev) => (prev === id ? null : id));
   };
 
-  const closeSearch = () => { setShowSearch(false); onSearchModeChange?.(false); };
-
-  const handleExport = (format: 'csv' | 'xml') => {
-  const rows = shipments?.data || [];
-  if (!rows.length) return;
-
-  const download = (content: string, type: string, filename: string) => {
-    const blob = new Blob([content], { type });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = filename; a.click();
-    URL.revokeObjectURL(url);
+  const closeSearch = () => {
+    setShowSearch(false);
+    onSearchModeChange?.(false);
   };
 
-  if (format === 'csv') {
-    const esc = (v: any) => {
-      const s = String(v ?? '');
-      return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  const handleExport = (format: "csv" | "xml") => {
+    const rows = shipments?.data || [];
+    if (!rows.length) return;
+
+    const download = (content: string, type: string, filename: string) => {
+      const blob = new Blob([content], { type });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
     };
-    const header = ['Shipment ID','Shipped To','Date Shipped','Tracking Number','Order Date'];
-    const lines = rows.map((r: any) =>
-      [r.id, r.shippedTo, r.dateShipped, r.trackingNumber, r.orderDate].map(esc).join(',')
-    );
-    download([header.join(','), ...lines].join('\n'), 'text/csv;charset=utf-8;', 'shipments.csv');
-  } else {
-    const e = (v: any) => String(v ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    const xml = `<?xml version="1.0" encoding="UTF-8"?><shipments>${
-      rows.map((r: any) => `
+
+    if (format === "csv") {
+      const esc = (v: any) => {
+        const s = String(v ?? "");
+        return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+      };
+      const header = [
+        "Shipment ID",
+        "Shipped To",
+        "Date Shipped",
+        "Tracking Number",
+        "Order Date",
+      ];
+      const lines = rows.map((r: any) =>
+        [r.id, r.shippedTo, r.dateShipped, r.trackingNumber, r.orderDate]
+          .map(esc)
+          .join(",")
+      );
+      download(
+        [header.join(","), ...lines].join("\n"),
+        "text/csv;charset=utf-8;",
+        "shipments.csv"
+      );
+    } else {
+      const e = (v: any) =>
+        String(v ?? "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+      const xml = `<?xml version="1.0" encoding="UTF-8"?><shipments>${rows
+        .map(
+          (r: any) => `
         <shipment>
           <id>${e(r.id)}</id>
           <shippedTo>${e(r.shippedTo)}</shippedTo>
           <dateShipped>${e(r.dateShipped)}</dateShipped>
           <trackingNumber>${e(r.trackingNumber)}</trackingNumber>
           <orderDate>${e(r.orderDate)}</orderDate>
-        </shipment>`).join('')
-    }</shipments>`;
-    download(xml, 'application/xml', 'shipments.xml');
-  }
-};
+        </shipment>`
+        )
+        .join("")}</shipments>`;
+      download(xml, "application/xml", "shipments.xml");
+    }
+  };
 
   return (
     <div className=" bg-[var(--store-bg)] min-h-screen mt-20">
       {showSearch ? (
-        <SearchShipments  onClose={closeSearch}/>
+        <SearchShipments onClose={closeSearch} />
       ) : (
         <>
           {/* Tabs */}
@@ -320,8 +367,10 @@ Updated: ${billing.updatedAt}`;
               </button>
 
               <ExportShipmentsDialog
-                trigger={<button className="btn-outline-primary">Export all</button>}
-                onConfirm={(fmt) => handleExport(fmt)}  // use shipments.data inside
+                trigger={
+                  <button className="btn-outline-primary">Export all</button>
+                }
+                onConfirm={(fmt) => handleExport(fmt)} // use shipments.data inside
               />
 
               <div className="flex items-center border rounded">
@@ -344,7 +393,7 @@ Updated: ${billing.updatedAt}`;
             <div className="flex items-center justify-end my-2">
               <Pagination
                 currentPage={currentPage}
-                totalPages={totalPages}
+                totalPages={total}
                 onPageChange={setCurrentPage}
                 perPage={perPage}
                 onPerPageChange={setPerPage}
@@ -433,16 +482,16 @@ Updated: ${billing.updatedAt}`;
                               placeholder=""
                               className=" focus:ring-0"
                               value={shipment.trackingNumber}
-                              onChange={(e) =>
-                                setShipments((prev) => ({
-                                  ...prev,
-                                  data: prev.data.map((s) =>
-                                    s.id === shipment.id
-                                      ? { ...s, trackingNumber: e.target.value }
-                                      : s
-                                  ),
-                                }))
-                              }
+                              // onChange={(e) =>
+                              //   setShipments((prev) => ({
+                              //     ...prev,
+                              //     data: prev.data.map((s) =>
+                              //       s.id === shipment.id
+                              //         ? { ...s, trackingNumber: e.target.value }
+                              //         : s
+                              //     ),
+                              //   }))
+                              // }
                             />
                             <button
                               className="btn-outline-primary"
@@ -465,7 +514,7 @@ Updated: ${billing.updatedAt}`;
 
                           <TableCell>
                             <OrderActionsDropdown
-                              actions={orderActions}
+                              actions={orderActions(shipment)}
                               trigger={
                                 <Button
                                   variant="ghost"
@@ -610,7 +659,7 @@ Updated: ${billing.updatedAt}`;
             <div className="flex items-center justify-end text-sm bg-[#fbfbfc]">
               <Pagination
                 currentPage={currentPage}
-                totalPages={totalPages}
+                totalPages={total}
                 onPageChange={setCurrentPage}
                 perPage={perPage}
                 onPerPageChange={setPerPage}
