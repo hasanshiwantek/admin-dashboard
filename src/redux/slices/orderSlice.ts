@@ -223,7 +223,7 @@ export const fetchShipmentByKeyword = createAsyncThunk(
   ) => {
     try {
       const res = await axiosInstance.get(
-        `dashboard/orders/list-orders?page=${page}&pageSize=${perPage}&keyword=${keyword}`
+        `dashboard/shipments/list-shipment?page=${page}&pageSize=${perPage}&keyword=${keyword}`
       );
       console.log("✅ Search Shipment Response Data:", res.data);
       return res.data;
