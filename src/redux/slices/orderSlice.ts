@@ -160,12 +160,38 @@ export const fetchAllShipments = createAsyncThunk(
       const res = await axiosInstance.get(
         `dashboard/shipments/list-shipment?page=${page}&pageSize=${perPage}`
       );
-      console.log("✅ Order Response Data:", res.data);
+      console.log("✅ Shipments Response Data:", res.data);
       return res.data;
     } catch (err: any) {
-      console.error("❌ Error fetching all shipment:", err);
+      console.error("❌ Error fetching  shipments:", err);
       return thunkAPI.rejectWithValue(
         err.response?.data?.message || "Failed to fetch shipments"
+      );
+    }
+  }
+);
+
+//PRINT PACKAGE SLIP LOGIC
+
+export const fetchPackingSlipPdf = createAsyncThunk(
+  "orders/fetchPackingSlipPdf",
+  async ({ shipmentId }: { shipmentId: number | string }, thunkAPI) => {
+    try {
+      const response = await axiosInstance.get(
+        `/dashboard/shipments/packing-slip/${shipmentId}`,
+        {
+          // ✅✅✅ This must be inside the request config
+          responseType: "blob",
+          headers: {
+            Accept: "application/pdf",
+          },
+        }
+      );
+
+      return response.data; // This will be a Blob
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to download PDF"
       );
     }
   }
@@ -238,3 +264,6 @@ const orderSlice = createSlice({
   },
 });
 export default orderSlice.reducer;
+function rejectWithValue(arg0: any): any {
+  throw new Error("Function not implemented.");
+}
