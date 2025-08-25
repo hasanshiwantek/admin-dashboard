@@ -104,42 +104,6 @@ export default function ProductCategoriesPage() {
     return null;
   };
 
-  //   const handleDragEnd = async (event: DragEndEvent) => {
-  //     const {active, over } = event;
-
-  //     if (!active || !over || active.id === over.id) return;
-
-  //     const activeId = Number(active.id);
-  //     const overId = Number(over.id);
-  //     const dragged = findCategoryById(categories, activeId);
-  //     const droppedOn = findCategoryById(categories, overId);
-
-  //     if (!dragged || !droppedOn) return;
-
-  //     const newParentId = droppedOn.id;
-  //     console.log("Dragged:", dragged);
-  // console.log("DroppedOn:", droppedOn);
-  // console.log("Dispatching update for ID:", activeId);
-
-  //     try {
-  //     await dispatch(
-  //       updateCategory({
-  //         id: activeId,
-  //         data: {
-  //           name: dragged.name,
-  //           description: dragged.description,
-  //           parentId: newParentId,
-  //         },
-  //       })
-  //     ).unwrap();
-
-  //     console.log(`Category "${dragged.name}" moved successfully.`);
-  //     await dispatch(fetchCategories())
-  //   } catch (error) {
-  //     console.error("Failed to move category.");
-  //   }
-  //   }
-
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
     if (!active || !over || active.id === over.id) return;
@@ -180,39 +144,6 @@ export default function ProductCategoriesPage() {
       console.error("Failed to move category.");
     }
   };
-
-  // const handleDragEnd = (event: any) => {
-  //   const { active, over } = event;
-  //   if (active.id !== over?.id) {
-  //     const oldIndex = categories.findIndex((c) => c.id === active.id);
-  //     const newIndex = categories.findIndex((c) => c.id === over?.id);
-  //     setCategories(arrayMove(categories, oldIndex, newIndex));
-  //   }
-  //   setActiveId(null);
-  // };
-
-  // const handleDragEnd = (event: any) => {
-  //   const {active, over} = event;
-  //   if (!over || active.id === over.id) return;
-
-  //   const updated = structuredClone(categories); //deep clone
-  //   const [movedItem, newTree] = removeCategory(updated, active.id);
-
-  //   const insertIntoTree = (tree: any[]) => {
-  //     for (let node of tree) {
-  //       if (node.id === over.id){
-  //         if (!node.children) node.children = [];
-  //         node.children.push(movedItem);
-  //         return true;
-  //       }
-  //       if (node.children && insertIntoTree(node.children)) return true;
-  //     }
-  //     return false
-  //   };
-  //   insertIntoTree(newTree)
-  //   setCategories(newTree);
-  //   setActiveId(null);
-  // }
 
   const [open, setOpen] = useState(false);
 
