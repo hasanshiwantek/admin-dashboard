@@ -16,11 +16,14 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import {
   fetchAllOrders,
+  deleteShipment,
   fetchAllShipments,
   updateOrder,
   fetchPackingSlipPdf,
+  advanceShipmentSearch,
 } from "@/redux/slices/orderSlice";
-import { refetchOrders } from "@/lib/orderUtils";
+import { useSearchParams } from "next/navigation";
+import { refetchOrders ,refetchShipments} from "@/lib/orderUtils";
 import Spinner from "../../loader/Spinner";
 import { MdDelete } from "react-icons/md";
 import { IoFilterOutline } from "react-icons/io5";
@@ -39,8 +42,7 @@ import {
 import SearchShipments from "./SearchShipments";
 import ExportShipmentsDialog from "./ExportShipmentsDialog";
 
-type Props = { onSearchModeChange?: (isSearch: boolean) => void };
-const Shipments = ({ onSearchModeChange }: Props) => {
+const Shipments = () => {
   const shipments = useAppSelector((state: any) => state.order.shipments);
   const [myShipments, setShipments] = useState({
     data: shipments?.data,
@@ -88,15 +90,12 @@ Updated: ${billing.updatedAt}`;
   const [selectedOrderIds, setSelectedOrderIds] = useState<number[]>([]);
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
   const total = pagination?.total;
+  const totalPages = Math.ceil(pagination?.total / pagination?.pageSize || 1);
 
   const { loading, error } = useAppSelector((state) => state.order);
   //   console.log("Orders data from frontend: ", orders);
 
   console.log("Shipments data from backend", shipments);
-
-  useEffect(() => {
-    dispatch(fetchAllShipments({ page: currentPage, perPage }));
-  }, [dispatch, currentPage, perPage]);
 
   //   const filteredOrders = shipments?.data?.filter((order: any) => {
   //     if (activeTab === "All orders") return true;
@@ -165,10 +164,7 @@ Updated: ${billing.updatedAt}`;
     },
   ];
 
-  const handleSearch = () => {
-    setShowSearch(true);
-    onSearchModeChange?.(true);
-  };
+  const handleSearch = () => {};
 
   const handleTracking = () => {
     console.log("Tracking saved succesfully. ");
@@ -178,10 +174,7 @@ Updated: ${billing.updatedAt}`;
     setExpandedRow((prev) => (prev === id ? null : id));
   };
 
-  const closeSearch = () => {
-    setShowSearch(false);
-    onSearchModeChange?.(false);
-  };
+  const closeSearch = () => {};
 
   const handleExport = (format: "csv" | "xml") => {
     const rows = shipments?.data || [];
@@ -241,352 +234,433 @@ Updated: ${billing.updatedAt}`;
     }
   };
 
+  const handleShipmentDelete = async () => {
+    if (selectedOrderIds.length <= 0) {
+      alert("Please select shipment to delete");
+      return;
+    }
+    const confirm = window.confirm("Delete Selected Shipments");
+    if (!confirm) {
+      return;
+    } else {
+      try {
+        const result = await dispatch(deleteShipment({ ids: selectedOrderIds}));
+        if (deleteShipment.fulfilled.match(result)) {
+          console.log("Shipments Deleted");
+          setTimeout(() => {
+            refetchShipments(dispatch)
+          }, 700);
+        } else {
+          console.log("Error Deleting Shipments: ", result.payload);
+        }
+      } catch (err) {
+        console.log("Something went wrong: ", err);
+      }
+    }
+  };
+
+  // FETCH SHIPMENTS LOGIC
+
+  const searchParams = useSearchParams();
+
+  const queryObject: Record<string, any> = {};
+  searchParams.forEach((value, key) => {
+    if (queryObject[key]) {
+      queryObject[key] = [...queryObject[key], value];
+    } else {
+      queryObject[key] = value;
+    }
+  });
+
+  useEffect(() => {
+    const page = Number(queryObject.page || 1);
+    const pageSize = Number(queryObject.limit || queryObject.pageSize || 50);
+
+    const filterKeys = Object.keys(queryObject).filter(
+      (key) => !["page", "limit", "pageSize"].includes(key)
+    );
+
+    if (filterKeys.length > 0) {
+      // 🔍 Run filtered search if extra filters exist
+      dispatch(
+        advanceShipmentSearch({
+          data: {
+            ...queryObject,
+            page,
+            perPage: pageSize,
+          },
+        })
+      );
+    } else {
+      // 📦 Default: Fetch all products
+      dispatch(fetchAllShipments({ page: currentPage, perPage: perPage }));
+    }
+  }, [searchParams]); // reruns whenever URL changes
+
+  // ERROR LOGIC
+  if (error) {
+    return (
+      <div className="text-center py-10 text-red-500 text-lg">
+        Error: {error}
+      </div>
+    );
+  }
+
   return (
-    <div className=" bg-[var(--store-bg)] min-h-screen mt-20">
-      {showSearch ? (
-        <SearchShipments onClose={closeSearch} />
-      ) : (
-        <>
-          {/* Tabs */}
-          <div className="flex space-x-6 border-b pb-2 mb-4 overflow-x-auto">
-            {tabs.map((tab) => (
-              <button
-                key={tab}
-                className={`!text-2xl pb-1 border-b-2 whitespace-nowrap ${
-                  activeTab === tab
-                    ? "border-blue-600 text-blue-600 font-semibold"
-                    : "border-transparent text-gray-500 hover:text-black"
-                }`}
-                onClick={() => setActiveTab(tab)}
-              >
-                {tab}
-              </button>
-            ))}
-          </div>
+    <>
+      <div className=" bg-[var(--store-bg)] ">
+        <div className="my-5">
+          <h1 className="!text-5xl !font-extralight !text-gray-600 !my-10">
+            View Shipments
+          </h1>
+          <p>
+            Shipments created from your orders are shown below. Click the plus
+            icon next to a shipment to see its complete details.
+          </p>
+        </div>
 
-          {/* Top Actions */}
-          <div className="bg-white p-4 shadow-sm">
-            <div className="flex flex-wrap gap-3 items-center mb-1">
-              <button className="btn-outline-primary">
-                <MdDelete className="h-7 w-7" />
-              </button>
+        {/* Tabs */}
+        <div className="flex space-x-6 border-b pb-2 mb-4 overflow-x-auto">
+          {tabs.map((tab) => (
+            <button
+              key={tab}
+              className={`!text-2xl pb-1 border-b-2 whitespace-nowrap ${
+                activeTab === tab
+                  ? "border-blue-600 text-blue-600 font-semibold"
+                  : "border-transparent text-gray-500 hover:text-black"
+              }`}
+              onClick={() => setActiveTab(tab)}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
 
-              <ExportShipmentsDialog
-                trigger={
-                  <button className="btn-outline-primary">Export all</button>
-                }
-                onConfirm={(fmt) => handleExport(fmt)} // use shipments.data inside
+        {/* Top Actions */}
+        <div className="bg-white p-4 shadow-sm">
+          <div className="flex flex-wrap gap-3 items-center mb-1">
+            <button
+              className="btn-outline-primary"
+              onClick={handleShipmentDelete}
+            >
+              <MdDelete className="h-7 w-7" />
+            </button>
+
+            <ExportShipmentsDialog
+              trigger={
+                <button className="btn-outline-primary">Export all</button>
+              }
+              onConfirm={(fmt) => handleExport(fmt)} // use shipments.data inside
+            />
+
+            <div className="flex items-center border rounded">
+              <Input
+                placeholder="Filter by keyword"
+                className="border-0 focus:ring-0"
+                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
               />
-
-              <div className="flex items-center border rounded">
-                <Input
-                  placeholder="Filter by keyword"
-                  className="border-0 focus:ring-0"
-                  onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                />
-                <button className="btn-outline-primary" onClick={handleSearch}>
-                  <IoFilterOutline />
-                </button>
-              </div>
-
+              <button className="btn-outline-primary" onClick={handleSearch}>
+                <IoFilterOutline />
+              </button>
+            </div>
+            <Link href={"/manage/orders/shipments/search-shipments"}>
               <button className="btn-outline-primary" onClick={handleSearch}>
                 Search
               </button>
-            </div>
+            </Link>
+          </div>
 
-            {/* Pagination */}
-            <div className="flex items-center justify-end my-2">
-              <Pagination
-                currentPage={currentPage}
-                totalPages={total}
-                onPageChange={setCurrentPage}
-                perPage={perPage}
-                onPerPageChange={setPerPage}
-              />
-            </div>
+          {/* Pagination */}
+          <div className="flex items-center justify-end my-2">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+              perPage={perPage}
+              onPerPageChange={setPerPage}
+            />
+          </div>
 
-            {/* Table */}
-            <div className="overflow-x-auto  rounded-md shadow">
-              <Table>
-                <TableHeader>
+          {/* Table */}
+          <div className="overflow-x-auto  rounded-md shadow">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[50px]">
+                    <Checkbox
+                      checked={
+                        filteredOrders?.length > 0 &&
+                        filteredOrders?.every((order: any) =>
+                          selectedOrderIds.includes(order.id)
+                        )
+                      }
+                      onCheckedChange={(checked) =>
+                        handleSelectAllChange(
+                          checked as boolean,
+                          filteredOrders
+                        )
+                      }
+                    />
+                  </TableHead>
+                  <TableHead> </TableHead>
+                  <TableHead>Shipment ID</TableHead>
+                  <TableHead>Shipped to</TableHead>
+                  <TableHead>Date shipped</TableHead>
+                  <TableHead>Shipping tracking number</TableHead>
+                  <TableHead>Order Date</TableHead>
+                  <TableHead>Action</TableHead>
+                </TableRow>
+              </TableHeader>
+
+              <TableBody>
+                {loading ? (
                   <TableRow>
-                    <TableHead className="w-[50px]">
-                      <Checkbox
-                        checked={
-                          filteredOrders?.length > 0 &&
-                          filteredOrders?.every((order: any) =>
-                            selectedOrderIds.includes(order.id)
-                          )
-                        }
-                        onCheckedChange={(checked) =>
-                          handleSelectAllChange(
-                            checked as boolean,
-                            filteredOrders
-                          )
-                        }
-                      />
-                    </TableHead>
-                    <TableHead> </TableHead>
-                    <TableHead>Shipment ID</TableHead>
-                    <TableHead>Shipped to</TableHead>
-                    <TableHead>Date shipped</TableHead>
-                    <TableHead>Shipping tracking number</TableHead>
-                    <TableHead>Order Date</TableHead>
-                    <TableHead>Action</TableHead>
+                    <TableCell colSpan={10} className="text-center py-10">
+                      <Spinner />
+                    </TableCell>
                   </TableRow>
-                </TableHeader>
-
-                <TableBody>
-                  {loading ? (
-                    <TableRow>
-                      <TableCell colSpan={10} className="text-center py-10">
-                        <Spinner />
-                      </TableCell>
-                    </TableRow>
-                  ) : filteredOrders?.length === 0 ? (
-                    <TableRow>
-                      <TableCell
-                        colSpan={10}
-                        className="text-center py-10 text-gray-500 text-xl"
-                      >
-                        No Shipment Found.
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    filteredOrders?.map((shipment: any, idx: number) => (
-                      <>
-                        <TableRow key={idx}>
-                          <TableCell>
-                            <Checkbox
-                              checked={selectedOrderIds.includes(shipment.id)}
-                              onCheckedChange={(checked) =>
-                                handleOrderCheckboxChange(
-                                  shipment,
-                                  checked as boolean
-                                )
-                              }
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <button onClick={() => toggleRow(shipment.id)}>
-                              {expandedRow === shipment.id ? (
-                                <FaCircleMinus className="h-7 w-7 fill-gray-600" />
-                              ) : (
-                                <FaCirclePlus className="h-7 w-7 fill-gray-600" />
-                              )}
-                            </button>
-                          </TableCell>
-                          <TableCell>{shipment.id}</TableCell>
-
-                          <TableCell className="text-blue-600">
-                            {shipment.shippedTo}
-                          </TableCell>
-                          <TableCell>{shipment.dateShipped}</TableCell>
-                          <TableCell>
-                            <Input
-                              placeholder=""
-                              value={
-                                trackingChanges[shipment.id] !== undefined
-                                  ? trackingChanges[shipment.id]
-                                  : shipment.trackingNumber
-                              }
-                              onChange={(e) => {
-                                const newValue = e.target.value;
-                                setTrackingChanges((prev) => ({
-                                  ...prev,
-                                  [shipment.id]: newValue,
-                                }));
-                              }}
-                            />
-
-                            <button
-                              className="btn-outline-primary"
-                              onClick={() => {
-                                const updatedValue =
-                                  trackingChanges[shipment.id];
-
-                                if (updatedValue !== undefined) {
-                                  dispatch(
-                                    updateOrder({
-                                      id: shipment.orderId,
-                                      data: updatedValue,
-                                    })
-                                  );
-                                }
-                              }}
-                            >
-                              Save
-                            </button>
-                          </TableCell>
-
-                          <TableCell>
-                            {new Date(shipment.orderDate).toLocaleDateString(
-                              "en-GB",
-                              {
-                                day: "2-digit",
-                                month: "short",
-                                year: "numeric",
-                              }
+                ) : filteredOrders?.length === 0 ? (
+                  <TableRow>
+                    <TableCell
+                      colSpan={10}
+                      className="text-center py-10 text-gray-500 text-xl"
+                    >
+                      No Shipment Found.
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredOrders?.map((shipment: any, idx: number) => (
+                    <>
+                      <TableRow key={idx}>
+                        <TableCell>
+                          <Checkbox
+                            checked={selectedOrderIds.includes(shipment.id)}
+                            onCheckedChange={(checked) =>
+                              handleOrderCheckboxChange(
+                                shipment,
+                                checked as boolean
+                              )
+                            }
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <button onClick={() => toggleRow(shipment.id)}>
+                            {expandedRow === shipment.id ? (
+                              <FaCircleMinus className="h-7 w-7 fill-gray-600" />
+                            ) : (
+                              <FaCirclePlus className="h-7 w-7 fill-gray-600" />
                             )}
-                          </TableCell>
+                          </button>
+                        </TableCell>
+                        <TableCell>{shipment.id}</TableCell>
 
-                          <TableCell>
-                            <OrderActionsDropdown
-                              actions={orderActions(shipment)}
-                              trigger={
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className="text-xl cursor-pointer"
-                                >
-                                  •••
-                                </Button>
+                        <TableCell className="text-blue-600">
+                          {shipment.shippedTo}
+                        </TableCell>
+                        <TableCell>{shipment.dateShipped}</TableCell>
+                        <TableCell>
+                          <Input
+                            placeholder=""
+                            value={
+                              trackingChanges[shipment.id] !== undefined
+                                ? trackingChanges[shipment.id]
+                                : shipment.trackingNumber
+                            }
+                            onChange={(e) => {
+                              const newValue = e.target.value;
+                              setTrackingChanges((prev) => ({
+                                ...prev,
+                                [shipment.id]: newValue,
+                              }));
+                            }}
+                          />
+
+                          <button
+                            className="btn-outline-primary"
+                            onClick={() => {
+                              const updatedValue = trackingChanges[shipment.id];
+
+                              if (updatedValue !== undefined) {
+                                dispatch(
+                                  updateOrder({
+                                    id: shipment.orderId,
+                                    data: updatedValue,
+                                  })
+                                );
                               }
-                            />
-                          </TableCell>
-                        </TableRow>
-                        {expandedRow === shipment.id && (
-                          <TableRow>
-                            <TableCell colSpan={11}>
-                              <div className="grid grid-cols-3 gap-4 bg-gray-50 p-4">
-                                <div className="flex">
-                                  <div className="flex flex-col border-r pr-3 mr-3">
-                                    <h4 className="font-bold">Billing</h4>
-                                    <button
-                                      className="btn-outline-primary text-sm"
-                                      onClick={copyBilling}
-                                    >
-                                      Copy
-                                    </button>
-                                    <div className="flex flex-col gap-2.5">
-                                      <span className="ml-4">
-                                        <Globe className="w-6 h-6 text-gray-500" />
-                                      </span>
-                                      <span>
-                                        <Phone className="w-6 h-6 text-gray-500 ml-4" />
-                                      </span>
-                                      <span>
-                                        <Mail className="w-6 h-6 text-gray-500 ml-4" />
-                                      </span>
-                                      <span>
-                                        <IdCard className="w-6 h-6 text-gray-500 ml-4" />
-                                      </span>
-                                      <span>
-                                        <Clock className="w-6 h-6 text-gray-500 ml-4" />
-                                      </span>
-                                    </div>
-                                  </div>
+                            }}
+                          >
+                            Save
+                          </button>
+                        </TableCell>
 
-                                  <div className="flex flex-col">
-                                    <p>
-                                      {shipment?.billing?.name}
-                                      <br />
-                                      {shipment?.billing?.org}
-                                      <br />
-                                      {shipment?.billing?.addr}
-                                    </p>
-                                    <p>{shipment?.billing?.country}</p>
-                                    <p>{shipment?.billing?.phone}</p>
-                                    <p>{shipment?.billing?.email}</p>
-                                    <p>{shipment?.billing?.customerId}</p>
-                                    <p>{shipment?.billing?.updatedAt}</p>
+                        <TableCell>
+                          {new Date(shipment.orderDate).toLocaleDateString(
+                            "en-GB",
+                            {
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                            }
+                          )}
+                        </TableCell>
+
+                        <TableCell>
+                          <OrderActionsDropdown
+                            actions={orderActions(shipment)}
+                            trigger={
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="text-xl cursor-pointer"
+                              >
+                                •••
+                              </Button>
+                            }
+                          />
+                        </TableCell>
+                      </TableRow>
+                      {expandedRow === shipment.id && (
+                        <TableRow>
+                          <TableCell colSpan={11}>
+                            <div className="grid grid-cols-3 gap-4 bg-gray-50 p-4">
+                              <div className="flex">
+                                <div className="flex flex-col border-r pr-3 mr-3">
+                                  <h4 className="font-bold">Billing</h4>
+                                  <button
+                                    className="btn-outline-primary text-sm"
+                                    onClick={copyBilling}
+                                  >
+                                    Copy
+                                  </button>
+                                  <div className="flex flex-col gap-2.5">
+                                    <span className="ml-4">
+                                      <Globe className="w-6 h-6 text-gray-500" />
+                                    </span>
+                                    <span>
+                                      <Phone className="w-6 h-6 text-gray-500 ml-4" />
+                                    </span>
+                                    <span>
+                                      <Mail className="w-6 h-6 text-gray-500 ml-4" />
+                                    </span>
+                                    <span>
+                                      <IdCard className="w-6 h-6 text-gray-500 ml-4" />
+                                    </span>
+                                    <span>
+                                      <Clock className="w-6 h-6 text-gray-500 ml-4" />
+                                    </span>
                                   </div>
                                 </div>
 
-                                <div className="flex">
-                                  <div className="flex flex-col border-r pr-3 mr-3">
-                                    <h4 className="font-bold">Shipping</h4>
-                                    <button
-                                      className="btn-outline-primary text-sm"
-                                      onClick={copyBilling}
-                                    >
-                                      Copy
-                                    </button>
-                                    <div className="flex flex-col gap-2.5">
-                                      <span className="ml-4">
-                                        <Globe className="w-6 h-6 text-gray-500" />
-                                      </span>
-                                      <span>
-                                        <Phone className="w-6 h-6 text-gray-500 ml-4" />
-                                      </span>
-                                      <span>
-                                        <Mail className="w-6 h-6 text-gray-500 ml-4" />
-                                      </span>
-                                      <span>
-                                        <IdCard className="w-6 h-6 text-gray-500 ml-4" />
-                                      </span>
-                                      <span>
-                                        <Clock className="w-6 h-6 text-gray-500 ml-4" />
-                                      </span>
-                                    </div>
-                                  </div>
-
-                                  <div className="flex flex-col">
-                                    <p>{shipment?.shipping?.name}</p>
-                                    <p>{shipment?.shipping?.carrier}</p>
-                                    <p>{shipment?.shipping?.service}</p>
-                                    <p>{shipment?.shipping?.address}</p>
-                                  </div>
-                                </div>
-                                <div className="flex">
-                                  <div className="flex flex-col border-r pr-3 mr-3">
-                                    <h4 className="font-bold">Shipped</h4>
-                                    <button
-                                      className="btn-outline-primary text-sm"
-                                      onClick={copyBilling}
-                                    >
-                                      Copy
-                                    </button>
-                                    <div className="flex flex-col gap-2.5">
-                                      <span className="ml-4">
-                                        <Globe className="w-6 h-6 text-gray-500" />
-                                      </span>
-                                      <span>
-                                        <Phone className="w-6 h-6 text-gray-500 ml-4" />
-                                      </span>
-                                      <span>
-                                        <Mail className="w-6 h-6 text-gray-500 ml-4" />
-                                      </span>
-                                      <span>
-                                        <IdCard className="w-6 h-6 text-gray-500 ml-4" />
-                                      </span>
-                                      <span>
-                                        <Clock className="w-6 h-6 text-gray-500 ml-4" />
-                                      </span>
-                                    </div>
-                                  </div>
-
-                                  <div className="flex flex-col">
-                                    <p>{shipment?.shippedItems?.qty}</p>
-                                    <p>{shipment?.shippedItems?.title}</p>
-                                    <p>{shipment?.shippedItems?.sku}</p>
-                                  </div>
+                                <div className="flex flex-col">
+                                  <p>
+                                    {shipment?.billing?.name}
+                                    <br />
+                                    {shipment?.billing?.org}
+                                    <br />
+                                    {shipment?.billing?.addr}
+                                  </p>
+                                  <p>{shipment?.billing?.country}</p>
+                                  <p>{shipment?.billing?.phone}</p>
+                                  <p>{shipment?.billing?.email}</p>
+                                  <p>{shipment?.billing?.customerId}</p>
+                                  <p>{shipment?.billing?.updatedAt}</p>
                                 </div>
                               </div>
-                            </TableCell>
-                          </TableRow>
-                        )}
-                      </>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
-            </div>
 
-            {/* Pagination */}
-            <div className="flex items-center justify-end text-sm bg-[#fbfbfc]">
-              <Pagination
-                currentPage={currentPage}
-                totalPages={total}
-                onPageChange={setCurrentPage}
-                perPage={perPage}
-                onPerPageChange={setPerPage}
-              />
-            </div>
+                              <div className="flex">
+                                <div className="flex flex-col border-r pr-3 mr-3">
+                                  <h4 className="font-bold">Shipping</h4>
+                                  <button
+                                    className="btn-outline-primary text-sm"
+                                    onClick={copyBilling}
+                                  >
+                                    Copy
+                                  </button>
+                                  <div className="flex flex-col gap-2.5">
+                                    <span className="ml-4">
+                                      <Globe className="w-6 h-6 text-gray-500" />
+                                    </span>
+                                    <span>
+                                      <Phone className="w-6 h-6 text-gray-500 ml-4" />
+                                    </span>
+                                    <span>
+                                      <Mail className="w-6 h-6 text-gray-500 ml-4" />
+                                    </span>
+                                    <span>
+                                      <IdCard className="w-6 h-6 text-gray-500 ml-4" />
+                                    </span>
+                                    <span>
+                                      <Clock className="w-6 h-6 text-gray-500 ml-4" />
+                                    </span>
+                                  </div>
+                                </div>
+
+                                <div className="flex flex-col">
+                                  <p>{shipment?.shipping?.name}</p>
+                                  <p>{shipment?.shipping?.carrier}</p>
+                                  <p>{shipment?.shipping?.service}</p>
+                                  <p>{shipment?.shipping?.address}</p>
+                                </div>
+                              </div>
+                              <div className="flex">
+                                <div className="flex flex-col border-r pr-3 mr-3">
+                                  <h4 className="font-bold">Shipped</h4>
+                                  <button
+                                    className="btn-outline-primary text-sm"
+                                    onClick={copyBilling}
+                                  >
+                                    Copy
+                                  </button>
+                                  <div className="flex flex-col gap-2.5">
+                                    <span className="ml-4">
+                                      <Globe className="w-6 h-6 text-gray-500" />
+                                    </span>
+                                    <span>
+                                      <Phone className="w-6 h-6 text-gray-500 ml-4" />
+                                    </span>
+                                    <span>
+                                      <Mail className="w-6 h-6 text-gray-500 ml-4" />
+                                    </span>
+                                    <span>
+                                      <IdCard className="w-6 h-6 text-gray-500 ml-4" />
+                                    </span>
+                                    <span>
+                                      <Clock className="w-6 h-6 text-gray-500 ml-4" />
+                                    </span>
+                                  </div>
+                                </div>
+
+                                <div className="flex flex-col">
+                                  <p>{shipment?.shippedItems?.qty}</p>
+                                  <p>{shipment?.shippedItems?.title}</p>
+                                  <p>{shipment?.shippedItems?.sku}</p>
+                                </div>
+                              </div>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </>
+                  ))
+                )}
+              </TableBody>
+            </Table>
           </div>
-        </>
-      )}
-    </div>
+
+          {/* Pagination */}
+          <div className="flex items-center justify-end text-sm bg-[#fbfbfc]">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+              perPage={perPage}
+              onPerPageChange={setPerPage}
+            />
+          </div>
+        </div>
+      </div>
+    </>
   );
 };
 

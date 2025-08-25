@@ -94,7 +94,7 @@ export const updateOrder = createAsyncThunk(
         `dashboard/orders/update-order/${id}`,
         { data }
       );
-         console.log("✅ Updtate Order Response Data:", response.data);
+      console.log("✅ Updtate Order Response Data:", response.data);
       return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
@@ -104,7 +104,7 @@ export const updateOrder = createAsyncThunk(
   }
 );
 
-// UPDATE ORDER STATUS THUNK
+// ADVANCE ORDER SEARCH THUNK
 export const advanceOrderSearch = createAsyncThunk(
   "orders/advanceOrderSearch",
   async ({ data }: { data: any }, thunkAPI) => {
@@ -185,6 +185,48 @@ export const fetchAllShipments = createAsyncThunk(
       console.error("❌ Error fetching  shipments:", err);
       return thunkAPI.rejectWithValue(
         err.response?.data?.message || "Failed to fetch shipments"
+      );
+    }
+  }
+);
+
+// ADVANCE SEARCH SHIPMENT THUNK
+export const advanceShipmentSearch = createAsyncThunk(
+  "orders/advanceShipmentSearch",
+  async ({ data }: { data: any }, thunkAPI) => {
+    try {
+      const response = await axiosInstance.post(
+        `dashboard/shipments/advanced-search`,
+        data
+      );
+      console.log("Advance Shipment Search Response: ", response.data);
+
+      return response.data;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed in advancing search"
+      );
+    }
+  }
+);
+
+// DELETE SHIPMENT THUNK
+export const deleteShipment = createAsyncThunk(
+  "order/deleteShipment",
+  async ({ ids }: { ids: any }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.delete(
+        `dashboard/shipments/destroy-shipment`,
+        {
+          data: { ids }, // ✅ this wraps your array inside an object
+        }
+      );
+      console.log("✅ Shipment Deletion response from thunk:", res.data);
+      return res.data;
+    } catch (err: any) {
+      console.error("❌ Error deleting shipment:", err);
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to delete shipments"
       );
     }
   }
@@ -279,7 +321,11 @@ const orderSlice = createSlice({
         state.loading = false;
         state.error =
           (action.payload as string) || action.error.message || "Failed";
-      });
+      })
+      .addCase(advanceShipmentSearch.fulfilled, (state, action) => {
+        state.loading = false;
+        state.shipments = action.payload;
+      })
   },
 });
 export default orderSlice.reducer;
