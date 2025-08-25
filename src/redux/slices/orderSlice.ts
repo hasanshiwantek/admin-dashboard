@@ -210,6 +210,32 @@ export const advanceShipmentSearch = createAsyncThunk(
   }
 );
 
+// FETCH ORDER BY KEYWORD
+export const fetchShipmentByKeyword = createAsyncThunk(
+  "orders/fetchShipmentByKeyword",
+  async (
+    {
+      page,
+      perPage,
+      keyword,
+    }: { page: number; perPage: number | string; keyword: any },
+    thunkAPI
+  ) => {
+    try {
+      const res = await axiosInstance.get(
+        `dashboard/orders/list-orders?page=${page}&pageSize=${perPage}&keyword=${keyword}`
+      );
+      console.log("✅ Search Shipment Response Data:", res.data);
+      return res.data;
+    } catch (err: any) {
+      console.error("❌ Error fetching shipments:", err);
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to fetch shipments"
+      );
+    }
+  }
+);
+
 // DELETE SHIPMENT THUNK
 export const deleteShipment = createAsyncThunk(
   "order/deleteShipment",
@@ -326,6 +352,10 @@ const orderSlice = createSlice({
         state.loading = false;
         state.shipments = action.payload;
       })
+      .addCase(fetchShipmentByKeyword.fulfilled, (state, action) => {
+        state.loading = false;
+        state.shipments = action.payload;
+      });
   },
 });
 export default orderSlice.reducer;

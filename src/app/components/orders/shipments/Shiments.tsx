@@ -21,9 +21,10 @@ import {
   updateOrder,
   fetchPackingSlipPdf,
   advanceShipmentSearch,
+  fetchShipmentByKeyword,
 } from "@/redux/slices/orderSlice";
 import { useSearchParams } from "next/navigation";
-import { refetchOrders ,refetchShipments} from "@/lib/orderUtils";
+import { refetchOrders, refetchShipments } from "@/lib/orderUtils";
 import Spinner from "../../loader/Spinner";
 import { MdDelete } from "react-icons/md";
 import { IoFilterOutline } from "react-icons/io5";
@@ -164,8 +165,6 @@ Updated: ${billing.updatedAt}`;
     },
   ];
 
-  const handleSearch = () => {};
-
   const handleTracking = () => {
     console.log("Tracking saved succesfully. ");
   };
@@ -173,8 +172,6 @@ Updated: ${billing.updatedAt}`;
   const toggleRow = (id: number) => {
     setExpandedRow((prev) => (prev === id ? null : id));
   };
-
-  const closeSearch = () => {};
 
   const handleExport = (format: "csv" | "xml") => {
     const rows = shipments?.data || [];
@@ -244,11 +241,13 @@ Updated: ${billing.updatedAt}`;
       return;
     } else {
       try {
-        const result = await dispatch(deleteShipment({ ids: selectedOrderIds}));
+        const result = await dispatch(
+          deleteShipment({ ids: selectedOrderIds })
+        );
         if (deleteShipment.fulfilled.match(result)) {
           console.log("Shipments Deleted");
           setTimeout(() => {
-            refetchShipments(dispatch)
+            refetchShipments(dispatch);
           }, 700);
         } else {
           console.log("Error Deleting Shipments: ", result.payload);
@@ -256,6 +255,35 @@ Updated: ${billing.updatedAt}`;
       } catch (err) {
         console.log("Something went wrong: ", err);
       }
+    }
+  };
+
+  // KEYWORD SEARCH LOGIC
+
+  const [keyword, setKeyword] = useState("");
+
+  const handleSearch = async () => {
+    if (keyword === "") {
+      refetchShipments(dispatch);
+      return;
+    }
+
+    try {
+      const resultAction = await dispatch(
+        fetchShipmentByKeyword({
+          page: currentPage,
+          perPage: perPage,
+          keyword: keyword,
+        })
+      );
+      if (fetchShipmentByKeyword.fulfilled.match(resultAction)) {
+        console.log(`✅ Fetch Shipments Result ${resultAction.payload}`);
+        // setKeyword("");
+      } else {
+        console.error("❌ Error fetching Shipments");
+      }
+    } catch (err) {
+      console.error("🚨 Unexpected error updating", err);
     }
   };
 
@@ -358,15 +386,15 @@ Updated: ${billing.updatedAt}`;
                 placeholder="Filter by keyword"
                 className="border-0 focus:ring-0"
                 onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                value={keyword}
+                onChange={(e) => setKeyword(e.target.value)}
               />
               <button className="btn-outline-primary" onClick={handleSearch}>
                 <IoFilterOutline />
               </button>
             </div>
             <Link href={"/manage/orders/shipments/search-shipments"}>
-              <button className="btn-outline-primary" onClick={handleSearch}>
-                Search
-              </button>
+              <button className="btn-outline-primary">Search</button>
             </Link>
           </div>
 
