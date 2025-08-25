@@ -85,6 +85,25 @@ export const updateOrderStatus = createAsyncThunk(
   }
 );
 
+// UPDATE ORDER  THUNK
+export const updateOrder = createAsyncThunk(
+  "orders/updateOrder",
+  async ({ id, data }: { id: number | string; data: any }, thunkAPI) => {
+    try {
+      const response = await axiosInstance.put(
+        `dashboard/orders/update-order/${id}`,
+        { data }
+      );
+         console.log("✅ Updtate Order Response Data:", response.data);
+      return response.data;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to update order"
+      );
+    }
+  }
+);
+
 // UPDATE ORDER STATUS THUNK
 export const advanceOrderSearch = createAsyncThunk(
   "orders/advanceOrderSearch",

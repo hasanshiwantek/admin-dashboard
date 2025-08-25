@@ -17,7 +17,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import {
   fetchAllOrders,
   fetchAllShipments,
-  updateOrderStatus,
+  updateOrder,
   fetchPackingSlipPdf,
 } from "@/redux/slices/orderSlice";
 import { refetchOrders } from "@/lib/orderUtils";
@@ -41,115 +41,15 @@ import ExportShipmentsDialog from "./ExportShipmentsDialog";
 
 type Props = { onSearchModeChange?: (isSearch: boolean) => void };
 const Shipments = ({ onSearchModeChange }: Props) => {
-  // const [shipments, setShipments] = useState({
-  //   data: [
-  //     {
-  //       id: 20,
-  //       shippedTo: "Diana Newton",
-  //       dateShipped: "2025-05-20",
-  //       trackingNumber: "TQ754407595GB",
-  //       orderDate: "2025-03-26",
-  //       billing: {
-  //         name: "Diana Newton",
-  //         company: "The National Archives",
-  //         address: "Kew, Richmond, Surrey TW9 4DU",
-  //         country: "United Kingdom",
-  //         phone: "02039089237",
-  //         email: "diana.newton@tna.gov.uk",
-  //         customerId: "#500040",
-  //         updatedAt: "2025-03-26 09:33:58",
-  //       },
-  //       shipping: {
-  //         name: "Diana Newton",
-  //         carrier: "Royal Mail",
-  //         service: "Tracked 24",
-  //         address: "Kew, Richmond, Surrey TW9 4DU, UK",
-  //       },
-  //       shippedItems: {
-  //         qty: 1,
-  //         title: "PCIe Adapter 9207-41E",
-  //         sku: "9207-41E",
-  //       },
-  //     },
-  //     {
-  //       id: 19,
-  //       shippedTo: "Sam Anthony",
-  //       dateShipped: "2025-03-27",
-  //       trackingNumber: "772564564865",
-  //       orderDate: "2025-03-05",
-  //       billing: {
-  //         name: "Sam Anthony",
-  //         company: "Acme Data Ltd",
-  //         address: "12 King St, Manchester M2 4WU",
-  //         country: "United Kingdom",
-  //         phone: "0161 555 8811",
-  //         email: "sam@acmedata.co.uk",
-  //         customerId: "#500041",
-  //         updatedAt: "2025-03-27 11:02:10",
-  //       },
-  //       shipping: {
-  //         name: "Sam Anthony",
-  //         carrier: "DPD",
-  //         service: "Next Day",
-  //         address: "12 King St, Manchester M2 4WU, UK",
-  //       },
-  //       shippedItems: { qty: 1, title: "SSD 2TB NVMe", sku: "SSD-2TB-NV" },
-  //     },
-  //     {
-  //       id: 18,
-  //       shippedTo: "Jim Smith",
-  //       dateShipped: "2025-03-04",
-  //       trackingNumber: "1ZAV27996847025224",
-  //       orderDate: "2025-02-26",
-  //       billing: {
-  //         name: "Jim Smith",
-  //         company: "Globex Corp",
-  //         address: "45 Market Rd, Bristol BS1 4QA",
-  //         country: "United Kingdom",
-  //         phone: "0117 444 2200",
-  //         email: "jim.smith@globex.com",
-  //         customerId: "#500042",
-  //         updatedAt: "2025-03-04 15:21:03",
-  //       },
-  //       shipping: {
-  //         name: "Jim Smith",
-  //         carrier: "UPS",
-  //         service: "Standard",
-  //         address: "45 Market Rd, Bristol BS1 4QA, UK",
-  //       },
-  //       shippedItems: { qty: 3, title: "Cat6 Patch Cable 2m", sku: "CAT6-2M" },
-  //     },
-  //     {
-  //       id: 17,
-  //       shippedTo: "Dave Anderton",
-  //       dateShipped: "2025-02-07",
-  //       trackingNumber: "771835789150",
-  //       orderDate: "2025-01-28",
-  //       billing: {
-  //         name: "Dave Anderton",
-  //         company: "Wayne Tech",
-  //         address: "100 Park Ave, London W1A 1AA",
-  //         country: "United Kingdom",
-  //         phone: "0207 123 9000",
-  //         email: "dave@waynetech.com",
-  //         customerId: "#500043",
-  //         updatedAt: "2025-02-07 10:05:44",
-  //       },
-  //       shipping: {
-  //         name: "Dave Anderton",
-  //         carrier: "FedEx",
-  //         service: "Priority",
-  //         address: "100 Park Ave, London W1A 1AA, UK",
-  //       },
-  //       shippedItems: { qty: 1, title: "Rackmount Kit 1U", sku: "RMK-1U" },
-  //     },
-  //   ],
-  //   pagination: { total: 4, totalPages: 1, page: 1, pageSize: 20 },
-  // });
-
   const shipments = useAppSelector((state: any) => state.order.shipments);
-
+  const [myShipments, setShipments] = useState({
+    data: shipments?.data,
+    pagination: { total: 4, totalPages: 1, page: 1, pageSize: 20 },
+  });
   const [showSearch, setShowSearch] = useState(false);
+  const [trackingChanges, setTrackingChanges] = useState<
+    Record<number, string>
+  >({});
 
   // example data for this row
   const billing = {
@@ -203,7 +103,13 @@ Updated: ${billing.updatedAt}`;
   //     return order.status === activeTab;
   //   });
 
-  const filteredOrders = shipments.data;
+  const [filteredOrders, setFilteredOrders] = useState<any[]>([]); // ✅ default to []
+  useEffect(() => {
+    if (shipments?.data?.length) {
+      setFilteredOrders(shipments.data);
+    }
+  }, [shipments]);
+
   console.log("Filtered Orders: ", filteredOrders);
 
   const tabs = ["All shipments", "Custom Views"];
@@ -240,8 +146,7 @@ Updated: ${billing.updatedAt}`;
           const resultAction = await dispatch(
             fetchPackingSlipPdf({ shipmentId })
           );
-          console.log("Result Action: ",resultAction);
-          
+          console.log("Result Action: ", resultAction);
 
           if (fetchPackingSlipPdf.fulfilled.match(resultAction)) {
             const blob = new Blob([resultAction.payload], {
@@ -249,7 +154,7 @@ Updated: ${billing.updatedAt}`;
             });
             const url = URL.createObjectURL(blob);
             window.open(url, "_blank");
-            console.log("SLIP PDF: ",resultAction?.payload)
+            console.log("SLIP PDF: ", resultAction?.payload);
           } else {
             console.error("Packing slip failed to download:", resultAction);
           }
@@ -480,22 +385,35 @@ Updated: ${billing.updatedAt}`;
                           <TableCell>
                             <Input
                               placeholder=""
-                              className=" focus:ring-0"
-                              value={shipment.trackingNumber}
-                              // onChange={(e) =>
-                              //   setShipments((prev) => ({
-                              //     ...prev,
-                              //     data: prev.data.map((s) =>
-                              //       s.id === shipment.id
-                              //         ? { ...s, trackingNumber: e.target.value }
-                              //         : s
-                              //     ),
-                              //   }))
-                              // }
+                              value={
+                                trackingChanges[shipment.id] !== undefined
+                                  ? trackingChanges[shipment.id]
+                                  : shipment.trackingNumber
+                              }
+                              onChange={(e) => {
+                                const newValue = e.target.value;
+                                setTrackingChanges((prev) => ({
+                                  ...prev,
+                                  [shipment.id]: newValue,
+                                }));
+                              }}
                             />
+
                             <button
                               className="btn-outline-primary"
-                              onClick={handleTracking}
+                              onClick={() => {
+                                const updatedValue =
+                                  trackingChanges[shipment.id];
+
+                                if (updatedValue !== undefined) {
+                                  dispatch(
+                                    updateOrder({
+                                      id: shipment.orderId,
+                                      data: updatedValue,
+                                    })
+                                  );
+                                }
+                              }}
                             >
                               Save
                             </button>
@@ -561,23 +479,23 @@ Updated: ${billing.updatedAt}`;
 
                                   <div className="flex flex-col">
                                     <p>
-                                      {shipment.billing.name}
+                                      {shipment?.billing?.name}
                                       <br />
-                                      {shipment.billing.org}
+                                      {shipment?.billing?.org}
                                       <br />
-                                      {shipment.billing.addr}
+                                      {shipment?.billing?.addr}
                                     </p>
-                                    <p>{shipment.billing.country}</p>
-                                    <p>{shipment.billing.phone}</p>
-                                    <p>{shipment.billing.email}</p>
-                                    <p>{shipment.billing.customerId}</p>
-                                    <p>{shipment.billing.updatedAt}</p>
+                                    <p>{shipment?.billing?.country}</p>
+                                    <p>{shipment?.billing?.phone}</p>
+                                    <p>{shipment?.billing?.email}</p>
+                                    <p>{shipment?.billing?.customerId}</p>
+                                    <p>{shipment?.billing?.updatedAt}</p>
                                   </div>
                                 </div>
 
                                 <div className="flex">
                                   <div className="flex flex-col border-r pr-3 mr-3">
-                                    <h4 className="font-bold">Billing</h4>
+                                    <h4 className="font-bold">Shipping</h4>
                                     <button
                                       className="btn-outline-primary text-sm"
                                       onClick={copyBilling}
@@ -604,15 +522,15 @@ Updated: ${billing.updatedAt}`;
                                   </div>
 
                                   <div className="flex flex-col">
-                                    <p>{shipment.shipping.name}</p>
-                                    <p>{shipment.shipping.carrier}</p>
-                                    <p>{shipment.shipping.service}</p>
-                                    <p>{shipment.shipping.address}</p>
+                                    <p>{shipment?.shipping?.name}</p>
+                                    <p>{shipment?.shipping?.carrier}</p>
+                                    <p>{shipment?.shipping?.service}</p>
+                                    <p>{shipment?.shipping?.address}</p>
                                   </div>
                                 </div>
                                 <div className="flex">
                                   <div className="flex flex-col border-r pr-3 mr-3">
-                                    <h4 className="font-bold">Billing</h4>
+                                    <h4 className="font-bold">Shipped</h4>
                                     <button
                                       className="btn-outline-primary text-sm"
                                       onClick={copyBilling}
@@ -639,9 +557,9 @@ Updated: ${billing.updatedAt}`;
                                   </div>
 
                                   <div className="flex flex-col">
-                                    <p>{shipment.shippedItems.qty}</p>
-                                    <p>{shipment.shippedItems.title}</p>
-                                    <p>{shipment.shippedItems.sku}</p>
+                                    <p>{shipment?.shippedItems?.qty}</p>
+                                    <p>{shipment?.shippedItems?.title}</p>
+                                    <p>{shipment?.shippedItems?.sku}</p>
                                   </div>
                                 </div>
                               </div>
