@@ -23,19 +23,32 @@ export default function StepFour({ data, onNext, step, setStep }: any) {
       router.push("/manage/orders/");
     }
   };
-  // const handleSave = () => {
-  //   const draft = methods.getValues();
-  //   console.log("Saving draft:", draft);
-  //   alert("Order Submitted Navigating to All Orders");
-  //   setTimeout(() => {
-  //      router.push("/manage/orders/");
-  //   }, 700);
-  // };
+
   const onSubmit = async (values: any) => {
     console.log("Final submitted data:", values);
+    const finalPayload = {
+      customerId: values.selectedCustomer?.id,
+      address: {
+        addressLine1: values.shipping?.address1 || "",
+        addressLine2: values.shipping?.address2 || "",
+        city: values.shipping?.city || "",
+        state: values.shipping?.state || "",
+        zip: values.shipping?.zip || "",
+        country: values.shipping?.country || "",
+      },
+      shippingMethod: values.shippingMethod?.provider || "none",
+      paymentMethod: values.paymentMethod || "",
+      comments: values.customerComments || "",
+      staffNotes: values.staffNotes || "",
+      products:
+        values.selectedProducts?.map((product: any) => ({
+          productId: product.id,
+          quantity: product.quantity || 1, // Default to 1 if quantity isn't set
+        })) || [],
+    };
 
     try {
-      const resultAction = await dispatch(addOrder({ data: values }));
+      const resultAction = await dispatch(addOrder({ data: finalPayload }));
 
       if (addOrder.fulfilled.match(resultAction)) {
         console.log("Order placed successfully:", resultAction.payload);

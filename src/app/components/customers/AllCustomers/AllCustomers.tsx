@@ -104,18 +104,23 @@ const AllCustomers = () => {
     const payload = { ids: id };
     console.log(payload);
 
-    try {
-      const result = await dispatch(deleteCustomer({ data: payload }));
+    const confirm = window.confirm("Delete Selected Customer");
+    if (!confirm) {
+      return;
+    } else {
+      try {
+        const result = await dispatch(deleteCustomer({ data: payload }));
 
-      if (deleteCustomer.fulfilled.match(result)) {
-        console.log("Customers deleted successfully");
-        setSelectedCustomers([]);
-        // optionally: refresh list or reset selection
-      } else {
-        console.error("Failed to delete customers:", result.payload);
+        if (deleteCustomer.fulfilled.match(result)) {
+          console.log("Customers deleted successfully");
+          setSelectedCustomers([]);
+          // optionally: refresh list or reset selection
+        } else {
+          console.error("Failed to delete customers:", result.payload);
+        }
+      } catch (err) {
+        console.error("Error deleting customers:", err);
       }
-    } catch (err) {
-      console.error("Error deleting customers:", err);
     }
   };
 

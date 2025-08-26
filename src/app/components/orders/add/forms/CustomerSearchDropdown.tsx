@@ -54,7 +54,7 @@ export default function CustomerSearchDropdown({
     const timer = setTimeout(() => {
       setLoading(true);
 
-      const filtered = allCustomers.filter((c: any) => {
+      const filtered = allCustomers?.filter((c: any) => {
         const fullName = `${c.firstName || ""} ${
           c.lastName || ""
         }`.toLowerCase();
@@ -95,8 +95,8 @@ export default function CustomerSearchDropdown({
           <ScrollArea className="h-72">
             {loading ? (
               <div className="p-4 text-gray-500 text-sm">Searching...</div>
-            ) : results.length > 0 ? (
-              results.map((customer) => {
+            ) : results?.length > 0 ? (
+              results?.map((customer) => {
                 const name = customer.firstName + " " + customer.lastName;
                 console.log(name);
 

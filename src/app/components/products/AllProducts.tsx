@@ -288,10 +288,15 @@ export default function AllProducts() {
       label: "Delete",
       onClick: () => {
         console.log("Delete", product);
-        dispatch(deleteProduct({ ids: [product.id] }));
-        setTimeout(() => {
-          refetchProducts(dispatch);
-        }, 400);
+        const confirm = window.confirm("Delete Product?");
+        if (!confirm) {
+          return;
+        } else {
+          dispatch(deleteProduct({ ids: [product.id] }));
+          setTimeout(() => {
+            refetchProducts(dispatch);
+          }, 400);
+        }
       },
     },
   ];
