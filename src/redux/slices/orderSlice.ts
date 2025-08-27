@@ -158,12 +158,33 @@ export const resendInvoice = createAsyncThunk(
       return response.data; // This will be a Blob
     } catch (err: any) {
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to download PDF"
+        err.response?.data?.message || "Failed to resend invoice"
       );
     }
   }
 );
 
+
+
+
+//ORDER TIMELINE THUNK
+
+export const orderTimeline = createAsyncThunk(
+  "orders/orderTimeline",
+  async ({ orderId }: { orderId: number | string }, thunkAPI) => {
+    try {
+      const response = await axiosInstance.get(
+        `dashboard/orders/timeline/${orderId}`
+      );
+
+      return response.data; // This will be a Blob
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to send orderTimeline"
+      );
+    }
+  }
+);
 
 
 // EXPORT ORDERS THUNK
