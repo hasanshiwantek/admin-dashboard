@@ -124,6 +124,48 @@ export const advanceOrderSearch = createAsyncThunk(
   }
 );
 
+//PAYMENT INVOICE THUNK
+
+export const printPaymentInvoice = createAsyncThunk(
+  "orders/printPaymentInvoice",
+  async ({ orderId }: { orderId: number | string }, thunkAPI) => {
+    try {
+      const response = await axiosInstance.get(
+        `dashboard/orders/send-payment-invoice/${orderId}`
+      );
+
+      return response.data; // This will be a Blob
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to download PDF"
+      );
+    }
+  }
+);
+
+
+
+//RESEND INVOICE THUNK
+
+export const resendInvoice = createAsyncThunk(
+  "orders/resendInvoice",
+  async ({ orderId }: { orderId: number | string }, thunkAPI) => {
+    try {
+      const response = await axiosInstance.post(
+        `dashboard/orders/resend-invoice/${orderId}`
+      );
+
+      return response.data; // This will be a Blob
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to download PDF"
+      );
+    }
+  }
+);
+
+
+
 // EXPORT ORDERS THUNK
 export const exportOrderCsv = createAsyncThunk(
   "product/exportOrderCsv",
