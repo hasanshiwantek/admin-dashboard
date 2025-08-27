@@ -520,7 +520,7 @@ const AllOrders = () => {
                               <>
                                 <span
                                   className={`w-7 h-9 inline-block rounded-sm ${
-                                    currentStatus?.color || "bg-gray-300"
+                                    currentStatus?.color || "bg-gray-400"
                                   }`}
                                 />
                                 <Select
@@ -540,7 +540,7 @@ const AllOrders = () => {
                                 >
                                   <SelectTrigger className="w-[200px] h-8 p-6">
                                     <SelectValue>
-                                      {currentStatus?.label || "Status"}
+                                      {currentStatus?.label || "Pending"}
                                     </SelectValue>
                                   </SelectTrigger>
                                   <SelectContent>
