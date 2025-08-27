@@ -28,6 +28,7 @@ import {
   advanceOrderSearch,
   printPaymentInvoice,
   resendInvoice,
+  orderTimeline,
 } from "@/redux/slices/orderSlice";
 import { refetchOrders } from "@/lib/orderUtils";
 import { FaCirclePlus, FaCircleMinus } from "react-icons/fa6";
@@ -203,7 +204,24 @@ const AllOrders = () => {
     { label: "View notes" },
     { label: "View shipments" },
     { label: "Refund", onClick: handleRefund },
-    { label: "View order timeline" },
+    {
+      label: "View order timeline",
+      onClick: async () => {
+        try {
+          const orderId = order?.id;
+          const resultAction = await dispatch(orderTimeline({ orderId }));
+          console.log("Result Action: ", resultAction);
+
+          if (orderTimeline.fulfilled.match(resultAction)) {
+            console.log("OrderTimeline response: ", resultAction?.payload);
+          } else {
+            console.error("Error:", resultAction);
+          }
+        } catch (error) {
+          console.error("Unexpected error:", error);
+        }
+      },
+    },
   ];
 
   const copyBilling = () => {

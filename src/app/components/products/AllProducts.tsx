@@ -35,6 +35,7 @@ import { refetchProducts } from "@/lib/productUtils";
 import { useSearchParams } from "next/navigation";
 import { advanceSearchProduct } from "@/redux/slices/productSlice";
 import AddToCategories from "./AddToCategories";
+import defaultImage from "../../../../public/default-product-image.svg";
 import {
   deriveDefaultsForSelection,
   getProductCategoryIds,
@@ -731,12 +732,14 @@ export default function AllProducts() {
                         />
                       </TableCell>
                       <TableCell className="flex items-center gap-2 ">
-                        {(product.image?.[1]?.path ||
+                        {(product.image ||
+                          product.image?.[1]?.path ||
                           product.image?.[0]?.path) && (
                           <Image
                             src={
                               product.image?.[1]?.path ||
-                              product.image?.[0]?.path
+                              product.image?.[0]?.path ||
+                              "/default-product-image.svg"
                             }
                             alt={product.name}
                             width={60}
