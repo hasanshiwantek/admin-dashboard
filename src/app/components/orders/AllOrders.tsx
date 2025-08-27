@@ -26,6 +26,8 @@ import {
   updateOrderStatus,
   fetchOrderByKeyword,
   advanceOrderSearch,
+  printPaymentInvoice,
+  resendInvoice,
 } from "@/redux/slices/orderSlice";
 import { refetchOrders } from "@/lib/orderUtils";
 import { FaCirclePlus, FaCircleMinus } from "react-icons/fa6";
@@ -159,11 +161,45 @@ const AllOrders = () => {
     console.log("Processing refund...");
   };
 
-  const orderActions = [
+  const orderActions = (order: any) => [
     { label: "Edit order", onClick: () => console.log("Edit order clicked") },
-    { label: "Print invoice", onClick: handlePrintInvoice },
+    {
+      label: "Print invoice",
+      onClick: async () => {
+        try {
+          const orderId = order?.id;
+          const resultAction = await dispatch(printPaymentInvoice({ orderId }));
+          console.log("Result Action: ", resultAction);
+
+          if (printPaymentInvoice.fulfilled.match(resultAction)) {
+            console.log("Invoice send: ", resultAction?.payload);
+          } else {
+            console.error("Invoice failed to send:", resultAction);
+          }
+        } catch (error) {
+          console.error("Unexpected error:", error);
+        }
+      },
+    },
     { label: "Print packing slip" },
-    { label: "Resend invoice" },
+    {
+      label: "Resend invoice",
+      onClick: async () => {
+        try {
+          const orderId = order?.id;
+          const resultAction = await dispatch(resendInvoice({ orderId }));
+          console.log("Result Action: ", resultAction);
+
+          if (resendInvoice.fulfilled.match(resultAction)) {
+            console.log("Invoice send: ", resultAction?.payload);
+          } else {
+            console.error("Invoice failed to download:", resultAction);
+          }
+        } catch (error) {
+          console.error("Unexpected error:", error);
+        }
+      },
+    },
     { label: "View notes" },
     { label: "View shipments" },
     { label: "Refund", onClick: handleRefund },
@@ -569,7 +605,7 @@ const AllOrders = () => {
 
                       <TableCell>
                         <OrderActionsDropdown
-                          actions={orderActions}
+                          actions={orderActions(order)}
                           trigger={
                             <Button
                               variant="ghost"
