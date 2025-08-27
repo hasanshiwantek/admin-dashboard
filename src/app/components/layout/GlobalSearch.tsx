@@ -128,10 +128,10 @@ const GlobalSearchBar = () => {
       {showDropdown && (
         <div className="absolute top-full left-0 right-0 z-50 mt-2 bg-[#1e2a3f] border border-blue-300 rounded-md shadow-lg max-h-80 overflow-y-auto">
           {loading && (
-            <div className="text-white text-sm p-3">Searching...</div>
+            <div className="text-white text-base p-3">Searching...</div>
           )}
           {!loading && results.length === 0 && (
-            <div className="text-white text-sm p-3">No results found.</div>
+            <div className="text-white text-base p-3">No results found.</div>
           )}
           {!loading &&
             results.map((item) => (
