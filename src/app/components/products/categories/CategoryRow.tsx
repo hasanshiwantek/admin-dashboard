@@ -156,13 +156,13 @@ const CategoryRow = ({
           />
         </TableCell>
         <TableCell className="w-[30px] ">
-          {hasChildren && (
+          {hasChildren ? (
             <button 
             type="button" 
             onClick={toggle}>
               {isExpanded ? <ChevronDown size={15} /> : <ChevronRight size={15} />}
             </button>
-          )}
+          ): null}
         </TableCell>
         <TableCell className="flex  items-center gap-2 text-blue-600 font-medium text-xl py-6">
           <div
