@@ -15,10 +15,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { countriesList } from "@/const/location";
 import CustomerSearchDropdown from "./CustomerSearchDropdown";
 import { useRouter } from "next/navigation";
-export default function StepOne({ data, onNext, step, setStep }: any) {
-  const { register, handleSubmit, setValue, watch } = useForm({
-    defaultValues: data,
-  });
+import { useFormContext } from "react-hook-form";
+export default function StepOne({ data, onNext, step, setStep,isEditMode }: any) {
+const { register, handleSubmit, setValue, watch } = useFormContext();
+
   const router = useRouter();
   const onSubmit = (formData: any) => {
     console.log("Step1 data:", formData);
@@ -147,7 +147,9 @@ export default function StepOne({ data, onNext, step, setStep }: any) {
                 {...register("firstName")}
                 id="firstName"
                 className="mt-1"
-                required
+                required={
+                  !isEditMode
+                }
               />
             </div>
 
@@ -157,7 +159,9 @@ export default function StepOne({ data, onNext, step, setStep }: any) {
                 {...register("lastName")}
                 id="lastName"
                 className="mt-1"
-                required
+                   required={
+                  !isEditMode
+                }
               />
             </div>
 
@@ -191,7 +195,9 @@ export default function StepOne({ data, onNext, step, setStep }: any) {
                 {...register("address1")}
                 id="address1"
                 className="mt-1"
-                required
+                     required={
+                  !isEditMode
+                }
               />
             </div>
 
@@ -209,7 +215,9 @@ export default function StepOne({ data, onNext, step, setStep }: any) {
                 {...register("city")}
                 id="city"
                 className="mt-1"
-                required
+                required={
+                  !isEditMode
+                }
               />
             </div>
 
@@ -218,7 +226,9 @@ export default function StepOne({ data, onNext, step, setStep }: any) {
               <Select
                 value={country}
                 onValueChange={(value) => setValue("country", value)}
-                required
+                     required={
+                  !isEditMode
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Choose a country" />
@@ -239,7 +249,9 @@ export default function StepOne({ data, onNext, step, setStep }: any) {
                 {...register("state")}
                 id="state"
                 className="mt-1"
-                required
+                     required={
+                  !isEditMode
+                }
               />
             </div>
 

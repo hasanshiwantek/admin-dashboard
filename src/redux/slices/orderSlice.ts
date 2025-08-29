@@ -23,6 +23,25 @@ export const fetchAllOrders = createAsyncThunk(
   }
 );
 
+// FETCH ORDER BY ID
+export const fetchOrderById = createAsyncThunk(
+  "orders/fetchOrderById",
+  async ({ orderId }: { orderId: any }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.get(
+        `dashboard/orders/show-order/${orderId}`
+      );
+      console.log("✅ Order Response Data By ID:", res.data);
+      return res?.data;
+    } catch (err: any) {
+      console.error("❌ Error fetching order by id:", err);
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to fetch order"
+      );
+    }
+  }
+);
+
 // FETCH ORDER BY KEYWORD
 export const fetchOrderByKeyword = createAsyncThunk(
   "orders/fetchOrderByKeyword ",
@@ -88,11 +107,11 @@ export const updateOrderStatus = createAsyncThunk(
 // UPDATE ORDER  THUNK
 export const updateOrder = createAsyncThunk(
   "orders/updateOrder",
-  async ({ id, data }: { id: number | string; data: any }, thunkAPI) => {
+  async ({ id, data }: { id: any; data: any }, thunkAPI) => {
     try {
       const response = await axiosInstance.put(
         `dashboard/orders/update-order/${id}`,
-        { data }
+        data
       );
       console.log("✅ Updtate Order Response Data:", response.data);
       return response.data;
@@ -143,7 +162,32 @@ export const printPaymentInvoice = createAsyncThunk(
   }
 );
 
+//PAYMENT INVOICE THUNK
 
+export const printInvoicePdf = createAsyncThunk(
+  "orders/printPaymentInvoicePdf",
+  async ({ orderId }: { orderId: number | string }, thunkAPI) => {
+    try {
+      const response = await axiosInstance.get(
+        `dashboard/orders/invoice/${orderId}`,
+
+        {
+          // ✅✅✅ This must be inside the request config
+          responseType: "blob",
+          headers: {
+            Accept: "application/pdf",
+          },
+        }
+      );
+
+      return response.data; // This will be a Blob
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to download PDF"
+      );
+    }
+  }
+);
 
 //RESEND INVOICE THUNK
 
@@ -164,14 +208,11 @@ export const resendInvoice = createAsyncThunk(
   }
 );
 
-
-
-
 //ORDER TIMELINE THUNK
 
 export const orderTimeline = createAsyncThunk(
   "orders/orderTimeline",
-  async ({ orderId }: { orderId: number | string }, thunkAPI) => {
+  async ({ orderId }: { orderId: any }, thunkAPI) => {
     try {
       const response = await axiosInstance.get(
         `dashboard/orders/timeline/${orderId}`
@@ -185,7 +226,6 @@ export const orderTimeline = createAsyncThunk(
     }
   }
 );
-
 
 // EXPORT ORDERS THUNK
 export const exportOrderCsv = createAsyncThunk(
@@ -248,6 +288,26 @@ export const fetchAllShipments = createAsyncThunk(
       console.error("❌ Error fetching  shipments:", err);
       return thunkAPI.rejectWithValue(
         err.response?.data?.message || "Failed to fetch shipments"
+      );
+    }
+  }
+);
+
+// ADD SHIPMENT ORDER
+export const addShipmentOrder = createAsyncThunk(
+  "orders/addShipmentOrder",
+  async ({ data }: { data: any }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.post(
+        `dashboard/shipments/add-shipment`,
+        data
+      );
+      console.log("✅ Add Shipment Response Data:", res.data);
+      return res.data;
+    } catch (err: any) {
+      console.error("❌ Error adding shipment:", err);
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to add shipments"
       );
     }
   }
@@ -351,6 +411,7 @@ export const fetchPackingSlipPdf = createAsyncThunk(
 const initialState = {
   orders: [],
   shipments: [],
+  singleOrder: null,
   loading: false,
   error: null as string | null,
 };
@@ -374,6 +435,11 @@ const orderSlice = createSlice({
         state.loading = false;
         state.error =
           (action.payload as string) || action.error.message || "Failed";
+      })
+      .addCase(fetchOrderById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.singleOrder = action.payload.data;
+        console.log("Fulfilled response: ", state.singleOrder);
       })
       .addCase(fetchOrderByKeyword.fulfilled, (state, action) => {
         state.loading = false;

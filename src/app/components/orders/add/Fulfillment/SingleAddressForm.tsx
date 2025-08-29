@@ -20,7 +20,7 @@ export default function SingleAddressForm() {
   const [isAddressOverridden, setIsAddressOverridden] = useState(false);
 
   const selectedCustomer = watch("selectedCustomer");
-
+  console.log("Selected Customer from step 3: ",selectedCustomer);
   const {
     firstName,
     lastName,
@@ -204,3 +204,12 @@ export default function SingleAddressForm() {
     </div>
   );
 }
+
+
+
+
+
+
+
+
+

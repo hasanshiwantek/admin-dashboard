@@ -90,8 +90,8 @@ export default function BasicInfoForm() {
                 </SelectTrigger>
                 <SelectContent>
                   {brands?.data?.map((brand: any) => (
-                    <SelectItem key={brand.id} value={String(brand.id)}>
-                      {brand.name}
+                    <SelectItem key={brand?.brand?.id} value={String(brand.brand?.id)}>
+                      {brand.brand?.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
