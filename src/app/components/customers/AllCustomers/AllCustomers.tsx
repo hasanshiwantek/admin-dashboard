@@ -70,7 +70,7 @@ const AllCustomers = () => {
     {
       label: "View Notes",
       onClick: () => {
-        let customerId = customer?.id;
+        const customerId = customer?.id;
         setSelectedCustomerId(customerId);
         setShowCustomerNotes(true);
       },
