@@ -11,12 +11,13 @@ import { Label } from "@/components/ui/label";
 import AddCustomProductModal from "../AddCustomProductModal";
 import ProductSelectModal from "../ProductSelectModal";
 import { useRouter } from "next/navigation";
+import { useFormContext } from "react-hook-form";
 
 export default function StepTwo({ data, onNext, step, setStep }: any) {
   const dispatch = useAppDispatch();
   const Products = useAppSelector((state: any) => state.product.products);
   const allProducts = Products?.data;
-  const { register, handleSubmit, watch } = useForm({ defaultValues: data });
+ const { register, setValue, handleSubmit } = useFormContext();
   const [showModal, setShowModal] = useState(false);
   const router = useRouter();
 
@@ -51,21 +52,33 @@ export default function StepTwo({ data, onNext, step, setStep }: any) {
     setSelectedProducts((prev) => [...prev, product]);
   };
 
-  useEffect(() => {
-    if (data?.selectedProducts?.length) {
-      setSelectedProducts(data.selectedProducts);
-    }
-  }, [data?.selectedProducts]);
+useEffect(() => {
+  if (data?.selectedProducts?.length) {
+    console.log("📦 Pre-filling selected products:", data.selectedProducts);
+    setSelectedProducts(data.selectedProducts);
+    setValue("selectedProducts", data.selectedProducts); // ✅ Important
+  }
+}, [data?.selectedProducts, setValue]);
+useEffect(() => {
+  setValue("selectedProducts", selectedProducts);
+}, [selectedProducts, setValue]);
 
-  const onSubmit = (formData: any) => {
-    const finalData = {
-      ...formData,
-      selectedProducts, // should reference latest state if onSubmit is re-declared each render
-    };
-    console.log("Step2 data:", finalData);
-    onNext(finalData);
-    setStep(step + 1);
-  };
+
+  // const onSubmit = (formData: any) => {
+  //   const finalData = {
+  //     ...formData,
+  //     selectedProducts, // should reference latest state if onSubmit is re-declared each render
+  //   };
+  //   console.log("Step2 data:", finalData);
+  //   onNext(finalData);
+  //   setStep(step + 1);
+  // };
+const onSubmit = (formData:any) => {
+     console.log("Step2 data:", formData);
+  setValue("selectedProducts", selectedProducts);
+  console.log("✅ Submitting StepTwo with:", { selectedProducts });
+  setStep(step + 1);
+};
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>

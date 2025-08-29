@@ -29,10 +29,13 @@ import {
   printPaymentInvoice,
   resendInvoice,
   orderTimeline,
+  printInvoicePdf,
+  addShipmentOrder,
 } from "@/redux/slices/orderSlice";
 import { refetchOrders } from "@/lib/orderUtils";
 import { FaCirclePlus, FaCircleMinus } from "react-icons/fa6";
 import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import {
   Globe,
   Phone,
@@ -40,10 +43,13 @@ import {
   Clock,
   Calendar,
   LocationEdit,
+  Ship,
   DollarSign,
 } from "lucide-react";
 import Spinner from "../loader/Spinner";
 import Link from "next/link";
+import OrderNotesModal from "./edit/OrderNotesModal";
+import { ShipmentModal } from "./edit/ShipmentModal";
 const AllOrders = () => {
   const dispatch = useAppDispatch();
   const orders = useAppSelector((state: any) => state.order.orders);
@@ -53,7 +59,9 @@ const AllOrders = () => {
   const total = pagination?.total;
   const totalPages = pagination?.totalPages;
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
-
+  const [showNotes, setShowNotes] = useState(false);
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const router = useRouter();
   const toggleRow = (id: number) => {
     setExpandedRow((prev) => (prev === id ? null : id));
   };
@@ -84,29 +92,34 @@ const AllOrders = () => {
     "Custom views",
   ];
 
-  const [selectedOrderIds, setSelectedOrderIds] = useState<number[]>([]);
-
+  const [selectedOrderIds, setSelectedOrderIds] = useState<any[]>([]);
+  const [selectedOrder, setSelectedOrder] = useState();
+  const [showShipmentModal, setShowShipmentModal] = useState(false);
   // Handle single row checkbox change
   const handleOrderCheckboxChange = (order: any, checked: boolean) => {
+    let updated;
+
     if (checked) {
-      setSelectedOrderIds((prev) => [...prev, order.id]);
-      console.log("Selected Order:", order);
+      updated = [...selectedOrderIds, order];
     } else {
-      setSelectedOrderIds((prev) => prev.filter((id) => id !== order.id));
-      console.log("Unselected Order ID:", order.id);
+      updated = selectedOrderIds.filter((o) => o.id !== order.id);
     }
+
+    setSelectedOrderIds(updated);
+    console.log("🟦 Toggled Single Order:", order);
   };
 
   // Handle "Select All" checkbox
-  const handleSelectAllChange = (checked: boolean, orders: any[]) => {
-    if (checked) {
-      const allOrders = orders.map((order) => order);
-      setSelectedOrderIds(allOrders);
-      console.log("Selected All Orders", allOrders);
-    } else {
-      setSelectedOrderIds([]);
-      console.log("Deselected All");
-    }
+  const isAllSelected =
+    filteredOrders?.length > 0 &&
+    filteredOrders?.every((order: any) =>
+      selectedOrderIds.some((sel) => sel.id === order.id)
+    );
+
+  const handleSelectAllChange = (checked: boolean) => {
+    const updated = checked ? filteredOrders : [];
+    setSelectedOrderIds(updated);
+    console.log("✅ Selected All Orders:", updated); // full objects
   };
 
   const statusOptions = [
@@ -154,28 +167,34 @@ const AllOrders = () => {
     },
   ];
 
-  const handlePrintInvoice = () => {
-    console.log("Printing invoice...");
-  };
-
   const handleRefund = () => {
     console.log("Processing refund...");
   };
 
   const orderActions = (order: any) => [
-    { label: "Edit order", onClick: () => console.log("Edit order clicked") },
+    {
+      label: "Edit order",
+      onClick: () => {
+        router.push(`/manage/orders/edit/${order.id}`);
+      },
+    },
     {
       label: "Print invoice",
       onClick: async () => {
         try {
           const orderId = order?.id;
-          const resultAction = await dispatch(printPaymentInvoice({ orderId }));
+          const resultAction = await dispatch(printInvoicePdf({ orderId }));
           console.log("Result Action: ", resultAction);
 
-          if (printPaymentInvoice.fulfilled.match(resultAction)) {
-            console.log("Invoice send: ", resultAction?.payload);
+          if (printInvoicePdf.fulfilled.match(resultAction)) {
+            const blob = new Blob([resultAction.payload], {
+              type: "application/pdf",
+            });
+            const url = URL.createObjectURL(blob);
+            window.open(url, "_blank");
+            console.log("SLIP PDF: ", resultAction?.payload);
           } else {
-            console.error("Invoice failed to send:", resultAction);
+            console.error("Invoice slip failed to download:", resultAction);
           }
         } catch (error) {
           console.error("Unexpected error:", error);
@@ -201,25 +220,26 @@ const AllOrders = () => {
         }
       },
     },
-    { label: "View notes" },
+    {
+      label: "View notes",
+      onClick: () => {
+        setSelectedOrderId(order.id);
+        setShowNotes(true);
+      },
+    },
     { label: "View shipments" },
+    {
+      label: "Ship items",
+      onClick: () => {
+        setSelectedOrder(order); // store in state
+        setShowShipmentModal(true);
+      },
+    },
     { label: "Refund", onClick: handleRefund },
     {
       label: "View order timeline",
-      onClick: async () => {
-        try {
-          const orderId = order?.id;
-          const resultAction = await dispatch(orderTimeline({ orderId }));
-          console.log("Result Action: ", resultAction);
-
-          if (orderTimeline.fulfilled.match(resultAction)) {
-            console.log("OrderTimeline response: ", resultAction?.payload);
-          } else {
-            console.error("Error:", resultAction);
-          }
-        } catch (error) {
-          console.error("Unexpected error:", error);
-        }
+      onClick: () => {
+        router.push(`/manage/orders/order-timeline/${order?.id}`);
       },
     },
   ];
@@ -256,7 +276,8 @@ const AllOrders = () => {
   // UPDATE ORDER STATUS LOGIC
 
   const [selectedAction, setSelectedAction] = useState("");
-  const handleConfirmClick = () => {
+
+  const handleConfirmClick = async () => {
     if (
       selectedAction.startsWith("updateMultiOrderStatus:") &&
       selectedOrderIds.length > 0
@@ -284,16 +305,84 @@ const AllOrders = () => {
       if (!status) return;
 
       selectedOrderIds.forEach((id) => {
-        dispatch(updateOrderStatus({ id, status }));
+        dispatch(updateOrderStatus({ id: id?.id, status }));
       });
       setTimeout(() => {
         setSelectedAction("");
         setSelectedOrderIds([]);
         refetchOrders(dispatch);
       }, 700);
-    } else {
-      alert("Please select at least one order and a status update.");
+      return;
     }
+
+    // 🧾 PRINT INVOICES
+    if (selectedAction === "printMultiOrderInvoices") {
+      try {
+        const printResults = await Promise.all(
+          selectedOrderIds.map((id) =>
+            dispatch(printInvoicePdf({ orderId: id?.id }))
+          )
+        );
+
+        printResults.forEach((resultAction) => {
+          if (printInvoicePdf.fulfilled.match(resultAction)) {
+            const blob = new Blob([resultAction.payload], {
+              type: "application/pdf",
+            });
+            const url = URL.createObjectURL(blob);
+            window.open(url, "_blank");
+          } else {
+            console.error(
+              "Failed to generate invoice PDF for order:",
+              resultAction.meta.arg.orderId
+            );
+          }
+        });
+
+        setSelectedAction("");
+        setSelectedOrderIds([]);
+      } catch (error) {
+        console.error("Unexpected error during invoice PDF generation:", error);
+      }
+
+      return;
+    }
+    // 📦 PRINT PACKING SLIPS
+    // if (selectedAction === "printOrderPackingSlips") {
+    //   dispatch(printPackingSlipsForOrders({ orderIds: selectedOrderIds }));
+    //   return;
+    // }
+
+    // 📧 RESEND INVOICES
+    if (selectedAction === "resendOrderInvoices") {
+      selectedOrderIds.forEach((id) => {
+        console.log("Order id for resend invoice: ", id?.id);
+
+        dispatch(resendInvoice({ orderId: id?.id }));
+      });
+
+      setSelectedAction("");
+      setSelectedOrderIds([]);
+      return;
+    }
+
+    // 💳 CAPTURE FUNDS
+    // if (selectedAction === "bulkCapture") {
+    //   dispatch(captureFundsForOrders({ orderIds: selectedOrderIds }));
+    //   return;
+    // }
+
+    // 📤 EXPORT ORDERS
+    // if (selectedAction === "startExport") {
+    //   dispatch(exportSelectedOrders({ orderIds: selectedOrderIds }));
+    //   return;
+    // }
+
+    // 🗑 ARCHIVE ORDERS
+    // if (selectedAction === "deleteOrders") {
+    //   dispatch(archiveOrders({ orderIds: selectedOrderIds }));
+    //   return;
+    // }
   };
 
   // FETCH ORDERS LOGIC
@@ -488,17 +577,13 @@ const AllOrders = () => {
               <TableRow>
                 <TableHead className="w-[50px]">
                   <Checkbox
-                    checked={
-                      filteredOrders?.length > 0 &&
-                      filteredOrders?.every((order: any) =>
-                        selectedOrderIds.includes(order.id)
-                      )
-                    }
-                    onCheckedChange={(checked) =>
-                      handleSelectAllChange(checked as boolean, filteredOrders)
+                    checked={isAllSelected}
+                    onCheckedChange={(checked: boolean) =>
+                      handleSelectAllChange(checked as boolean)
                     }
                   />
                 </TableHead>
+
                 <TableHead></TableHead>
 
                 <TableHead>Date</TableHead>
@@ -532,8 +617,10 @@ const AllOrders = () => {
                     <TableRow key={idx}>
                       <TableCell>
                         <Checkbox
-                          checked={selectedOrderIds.includes(order.id)}
-                          onCheckedChange={(checked) =>
+                          checked={selectedOrderIds.some(
+                            (o) => o.id === order.id
+                          )}
+                          onCheckedChange={(checked: boolean) =>
                             handleOrderCheckboxChange(order, checked as boolean)
                           }
                         />
@@ -560,7 +647,9 @@ const AllOrders = () => {
                       <TableCell className="text-blue-600">
                         {order.id}
                       </TableCell>
-                      <TableCell>{order.name}</TableCell>
+                      <TableCell>
+                        {order.customer?.firstName} {order.customer?.lastName}
+                      </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
                           {(() => {
@@ -637,12 +726,13 @@ const AllOrders = () => {
                       </TableCell>
                     </TableRow>
 
-                    {expandedRow === order.id && (
+                    {expandedRow === order?.id && (
                       <TableRow>
                         <TableCell colSpan={11}>
                           <div className="grid grid-cols-3 gap-4 bg-gray-50 p-4 ">
                             <div className="flex">
-                              <div className="flex flex-col border-r pr-3 mr-3 space-y-1">
+                              {/* Left Side: Billing Title & Copy Button */}
+                              <div className="flex flex-col border-r pr-3 mr-3 space-y-2">
                                 <h4 className="font-semibold">Billing</h4>
                                 <button
                                   className="!px-2 !py-1 text-blue-500 border-blue-400 border text-base"
@@ -650,37 +740,47 @@ const AllOrders = () => {
                                 >
                                   Copy
                                 </button>
-                                <div className="flex flex-col gap-3">
-                                  <span className="ml-4">
-                                    <Globe className="w-6 h-6 text-gray-500" />
-                                  </span>
+                              </div>
+
+                              {/* Right Side: Customer Info with Icons */}
+                              <div className="flex flex-col space-y-2">
+                                <p>
+                                  {order?.customer?.firstName}{" "}
+                                  {order?.customer?.lastName}
+                                  <br />
+                                  {order?.customer?.address}
+                                  <br />
+                                  {order?.customer?.state}
+                                </p>
+
+                                <div className="flex items-center gap-2">
+                                  <Globe className="w-5 h-5 text-gray-500" />
                                   <span>
-                                    <Phone className="w-6 h-6 text-gray-500 ml-4" />
+                                    {order?.customer?.country || "N/A"}
                                   </span>
+                                </div>
+
+                                <div className="flex items-center gap-2">
+                                  <Phone className="w-5 h-5 text-gray-500" />
+                                  <span>{order?.customer?.phone || "N/A"}</span>
+                                </div>
+
+                                <div className="flex items-center gap-2">
+                                  <Mail className="w-5 h-5 text-gray-500" />
+                                  <span>{order?.customer?.email || "N/A"}</span>
+                                </div>
+
+                                <div className="flex items-center gap-2">
+                                  <Clock className="w-5 h-5 text-gray-500" />
                                   <span>
-                                    <Mail className="w-6 h-6 text-gray-500 ml-4" />
-                                  </span>
-                                  <span>
-                                    <Clock className="w-6 h-6 text-gray-500 ml-4" />
+                                    {order?.customer?.updatedAt || "N/A"}
                                   </span>
                                 </div>
                               </div>
-
-                              <div className="flex flex-col space-y-1">
-                                <p>
-                                  {order.name}
-                                  <br />
-                                  {order.address}
-                                </p>
-                                <p>{order?.country || "N/A"}</p>
-                                <p>{order?.phone || "N/A"}</p>
-                                <p>{order.email || "N/A"}</p>
-                                <p>{order.updatedAt}</p>
-                              </div>
                             </div>
-
                             <div className="flex">
-                              <div className="flex flex-col border-r pr-3 mr-3 space-y-1">
+                              {/* Left Side: Shipping Title & Copy Button */}
+                              <div className="flex flex-col border-r pr-3 mr-3 space-y-2">
                                 <h4 className="font-semibold">Shipping</h4>
                                 <button
                                   className="!px-2 !py-1 text-blue-500 border-blue-400 border text-base"
@@ -688,54 +788,67 @@ const AllOrders = () => {
                                 >
                                   Copy
                                 </button>
+                              </div>
+
+                              {/* Right Side: Shipping Info with Icons */}
+                              <div className="flex flex-col space-y-2">
+                                {/* Customer Info */}
+                                <p>
+                                  {order?.customer?.firstName}{" "}
+                                  {order?.customer?.lastName}
+                                  <br />
+                                  {order?.customer?.address}
+                                  <br />
+                                  {order?.customer?.state}
+                                </p>
+
+                                {/* Method Section */}
                                 <h4 className="font-semibold">Method</h4>
-                                <div className="flex flex-col gap-2.5 ">
-                                  <span className="ml-4">
-                                    <LocationEdit className="w-6 h-6 text-gray-500 " />
-                                  </span>
-                                  <span>
-                                    <DollarSign className="w-6 h-6 text-gray-500 ml-4" />
-                                  </span>
 
-                                  <span>
-                                    <Mail className="w-6 h-6 text-gray-500 ml-4" />
-                                  </span>
-                                  <span>
-                                    <Calendar className="w-6 h-6 text-gray-500 ml-4" />
-                                  </span>
+                                <div className="flex items-center gap-2">
+                                  <Ship className="w-5 h-5 text-gray-500" />
+                                  <span>{order?.shippingMethod || "N/A"}</span>
+                                </div>
 
-                                  <h4 className="font-semibold">Contact</h4>
+                                <div className="flex items-center gap-2">
+                                  <DollarSign className="w-5 h-5 text-gray-500" />
                                   <span>
-                                    <Phone className="w-6 h-6 text-gray-500 ml-4" />
-                                  </span>
-                                  <span>
-                                    <Mail className="w-6 h-6 text-gray-500 ml-4" />
+                                    {order?.shippingCost
+                                      ? `$${order.shippingCost}`
+                                      : "N/A"}
                                   </span>
                                 </div>
-                              </div>
 
-                              <div className="flex flex-col space-y-1">
-                                <p>
-                                  {order.name}
-                                  <br />
-                                  {order.address}
-                                </p>
-                                <p>{order?.shippingMethod || "N/A"}</p>
-                                <p>{"Default location"}</p>
-                                <p>{order.shippingCost || "N/A"}</p>
-                                <p>{"N/A"}</p>
-                                <p>{order.updatedAt}</p>
+                                <div className="flex items-center gap-2">
+                                  <Mail className="w-5 h-5 text-gray-500" />
+                                  <span>{order?.paymentMethod || "N/A"}</span>
+                                </div>
 
-                                <p>{order.name}</p>
-                                <p>{order.phone}</p>
-                                <p>{order.email}</p>
+                                <div className="flex items-center gap-2">
+                                  <Calendar className="w-5 h-5 text-gray-500" />
+                                  <span>{order?.shippedAt || "N/A"}</span>
+                                </div>
+
+                                {/* Contact Section */}
+                                <h4 className="font-semibold">Contact</h4>
+
+                                <div className="flex items-center gap-2">
+                                  <Phone className="w-5 h-5 text-gray-500" />
+                                  <span>{order?.customer?.phone || "N/A"}</span>
+                                </div>
+
+                                <div className="flex items-center gap-2">
+                                  <Mail className="w-5 h-5 text-gray-500" />
+                                  <span>{order?.customer?.email || "N/A"}</span>
+                                </div>
                               </div>
                             </div>
+
                             <div className="flex flex-wrap max-w-full ">
                               {/* Left - Item count */}
                               <div className="flex flex-col border-r pr-3 mr-3 min-w-[100px]">
                                 <h4 className="whitespace-nowrap">
-                                  {order.items.length} items
+                                  {order?.products?.length} items
                                 </h4>
                               </div>
 
@@ -743,7 +856,7 @@ const AllOrders = () => {
                               <div className="flex flex-col flex-1 min-w-0">
                                 {/* Product list */}
                                 <div className="p-4 border-b space-y-4">
-                                  {order.items.map(
+                                  {order?.products?.map(
                                     (item: any, index: number) => (
                                       <div
                                         key={index}
@@ -751,20 +864,20 @@ const AllOrders = () => {
                                       >
                                         <div className="text-base leading-5 break-words  min-w-0 overflow-hidden">
                                           <p className="font-semibold">
-                                            {item.quantity} x{" "}
+                                            {item?.quantity} x{" "}
                                             <span className="text-blue-600 hover:underline whitespace-normal break-words leading-snug max-w-[300px]">
-                                              {item.product?.name}
+                                              {item?.product?.name}
                                             </span>
                                           </p>
                                           <p className="text-xs text-gray-500">
-                                            {item.product?.optionSet?.title}
+                                            {item?.product?.optionSet?.title}
                                           </p>
                                           <p className="text-sm mt-1">
                                             <strong>Model:</strong>{" "}
-                                            {item.product?.sku}
+                                            {item?.product?.sku}
                                             <br />
                                             <strong>Brand:</strong>{" "}
-                                            {item.product?.brand || "N/A"}
+                                            {item?.product?.brand || "N/A"}
                                           </p>
                                         </div>
 
@@ -798,7 +911,7 @@ const AllOrders = () => {
                                     <span>Subtotal</span>
                                     <span>
                                       £
-                                      {order.items
+                                      {order?.products
                                         .reduce(
                                           (acc: number, item: any) =>
                                             acc + item.price * item.quantity,
@@ -811,7 +924,7 @@ const AllOrders = () => {
                                     <span>Shipping</span>
                                     <span>
                                       £
-                                      {Number(order.shippingCost || 0).toFixed(
+                                      {Number(order?.shippingCost || 0).toFixed(
                                         2
                                       )}
                                     </span>
@@ -819,13 +932,13 @@ const AllOrders = () => {
                                   <div className="flex justify-between">
                                     <span>VAT / TAX</span>
                                     <span>
-                                      £{Number(order.tax || 0).toFixed(2)}
+                                      £{Number(order?.tax || 0).toFixed(2)}
                                     </span>
                                   </div>
                                   <div className="flex justify-between font-semibold text-base pt-2 border-t">
                                     <span>GRAND TOTAL</span>
                                     <span>
-                                      £{Number(order.totalAmount).toFixed(2)}
+                                      £{Number(order?.totalAmount).toFixed(2)}
                                     </span>
                                   </div>
                                 </div>
@@ -853,6 +966,24 @@ const AllOrders = () => {
           />
         </div>
       </div>
+      {showNotes && selectedOrderId && (
+        <OrderNotesModal
+          open={showNotes}
+          onClose={() => setShowNotes(false)}
+          orderId={selectedOrderId}
+        />
+      )}
+      {showShipmentModal && selectedOrder && (
+        <ShipmentModal
+          open={showShipmentModal}
+          order={selectedOrder}
+          onClose={() => setShowShipmentModal(false)}
+          onSubmit={(data) => {
+            console.log("Shipment Data:", data);
+            dispatch(addShipmentOrder({ data }));
+          }}
+        />
+      )}
     </div>
   );
 };

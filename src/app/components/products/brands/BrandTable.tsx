@@ -205,23 +205,23 @@ const BrandTable = () => {
                 <TableRow key={index} className="!h-20 ">
                   <TableCell className="w-1/6">
                     <Checkbox
-                      checked={selectedIds.includes(brand.id)}
-                      onCheckedChange={() => toggleSelectOne(brand.id)}
-                      aria-label={`Select ${brand.name}`}
+                      checked={selectedIds.includes(brand.brand?.id)}
+                      onCheckedChange={() => toggleSelectOne(brand.brand?.id)}
+                      aria-label={`Select ${brand.brand?.name}`}
                     />
                   </TableCell>
                   <TableCell>
                     <Link
-                      href={`/manage/products/brands/edit/${brand.id}`}
+                      href={`/manage/products/brands/edit/${brand.brand?.id}`}
                       className="text-blue-600 hover:border-b-blue-600 hover:border-b-2"
                     >
-                      {brand.name}
+                      {brand.brand?.name}
                     </Link>
                   </TableCell>
                   <TableCell>{brand?.productsCount}</TableCell>
                   <TableCell>
                     <OrderActionsDropdown
-                      actions={getDropdownActions(brand)}
+                      actions={getDropdownActions(brand?.brand)}
                       trigger={
                         <Button
                           variant="ghost"

@@ -489,7 +489,8 @@ const AddCustomer = () => {
                     type="password"
                     value={formData.password}
                     onChange={(e) => updateField("password", e.target.value)}
-                    required
+                    required={!isEdit}
+                    disabled={isEdit}
                   />
                 </div>
 
@@ -515,7 +516,8 @@ const AddCustomer = () => {
                     onChange={(e) =>
                       updateField("confirmPassword", e.target.value)
                     }
-                    required
+                    required={!isEdit}
+                    disabled={isEdit}
                   />
                 </div>
               </TooltipProvider>
