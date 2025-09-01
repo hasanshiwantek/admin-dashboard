@@ -8,7 +8,7 @@ import StepTracker from "./StepTracker";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { fetchOrderById } from "@/redux/slices/orderSlice"; // ← create this thunk
 import { useForm, FormProvider } from "react-hook-form";
-export default function OrderForm({ orderId }: { orderId?: string }) {
+export default function OrderForm({ orderId }: { orderId:any}) {
   const methods = useForm(); // ⬅️ this controls ALL steps
     const { reset } = methods;
   const [step, setStep] = useState(1);
