@@ -78,7 +78,7 @@ export default function ProductTable({
                 <Input
                   type="number"
                   min={1}
-                  value={product.qty}
+                  value={product.quantity}
                   onChange={(e) =>
                     onQtyChange(product.id, parseInt(e.target.value) || 1)
                   }

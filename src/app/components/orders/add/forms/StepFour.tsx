@@ -8,36 +8,9 @@ import { addOrder } from "@/redux/slices/orderSlice";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { updateOrder } from "@/redux/slices/orderSlice";
 import { useFormContext } from "react-hook-form";
-export default function StepFour({
-  data,
-  onNext,
-  step,
-  setStep,
-  isEditMode,
-  orderId,
-}: any) {
-  const methods = useForm({
-    defaultValues: {
-      ...data,
-      paymentMethod: "",
-      customerComments: "",
-      staffNotes: "",
-    },
-  });
+export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
   const dispatch = useAppDispatch();
-const { handleSubmit, getValues } = useFormContext();
-  const { reset } = methods;
-  // ⚠️ This effect ensures that the form updates when data changes
-  useEffect(() => {
-    if (data) {
-      reset({
-        ...data,
-        paymentMethod: data.paymentMethod || "",
-        customerComments: data.customerComments || "",
-        staffNotes: data.staffNotes || "",
-      });
-    }
-  }, [data, reset]);
+  const { handleSubmit, getValues } = useFormContext();
   const router = useRouter();
   const handleCancel = () => {
     if (window.confirm("Are you sure you want to cancel this order?")) {
@@ -46,22 +19,22 @@ const { handleSubmit, getValues } = useFormContext();
   };
 
   const onSubmit = async () => {
-      const values = getValues(); // ✅ collect all step data
+    const values = getValues(); // ✅ collect all step data
     console.log("Final submitted data:", values);
     const finalPayload = {
       customerId: values.selectedCustomer?.id,
       billingInformation: {
-        firstName: values.shipping?.firstName || "",
-        lastName: values.shipping?.lastName || "",
+        firstName: values?.firstName || "",
+        lastName: values?.lastName || "",
         email: values?.selectedCustomer?.email || "",
-        phone: values.shipping?.phoneNumber || "",
-        companyName: values.shipping?.companyName || "",
-        addressLine1: values.shipping?.address1 || "",
-        addressLine2: values.shipping?.address2 || "",
-        city: values.shipping?.city || "",
-        state: values.shipping?.state || "",
-        zip: values.shipping?.zip || "",
-        country: values.shipping?.country || "",
+        phone: values?.phoneNumber || "",
+        companyName: values?.companyName || "",
+        addressLine1: values?.address1 || "",
+        addressLine2: values?.address2 || "",
+        city: values?.city || "",
+        state: values?.state || "",
+        zip: values?.zip || "",
+        country: values?.country || "",
         paymentMethod: values.paymentMethod || "",
         shippingMethod: values.shippingMethod?.provider || "none",
       },
@@ -103,34 +76,34 @@ const { handleSubmit, getValues } = useFormContext();
 
   return (
     // <FormProvider {...methods}>
-      <form  onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div className="p-10">
-          <OrderReview />
-        </div>
-        <div className="sticky bottom-0 w-full border-t p-6 bg-white flex justify-end gap-4">
-          <button
-            type="button"
-            className="btn-outline-primary"
-            onClick={() => setStep(step - 1)}
-          >
-            Back
-          </button>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <div className="p-10">
+        <OrderReview />
+      </div>
+      <div className="sticky bottom-0 w-full border-t p-6 bg-white flex justify-end gap-4">
+        <button
+          type="button"
+          className="btn-outline-primary"
+          onClick={() => setStep(step - 1)}
+        >
+          Back
+        </button>
 
-          <button
-            type="button"
-            onClick={handleCancel}
-            className="btn-outline-primary"
-          >
-            Cancel
-          </button>
+        <button
+          type="button"
+          onClick={handleCancel}
+          className="btn-outline-primary"
+        >
+          Cancel
+        </button>
 
-          <div className="flex gap-4">
-            <button type="submit" className="btn-primary">
-              {isEditMode ? "Update Order" : "Save"}
-            </button>
-          </div>
+        <div className="flex gap-4">
+          <button type="submit" className="btn-primary">
+            {isEditMode ? "Update Order" : "Save"}
+          </button>
         </div>
-      </form>
+      </div>
+    </form>
     // </FormProvider>
   );
 }

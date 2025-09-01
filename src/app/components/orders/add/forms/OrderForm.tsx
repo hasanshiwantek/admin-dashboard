@@ -44,11 +44,11 @@ export default function OrderForm({ orderId }: { orderId:string}) {
             country: order.billingInformation?.country || "",
             selectedProducts: order.products.map((p: any) => ({
               id: p.id,
-              quantity: p.qty,
+              quantity: p.qty || p.quantity,
               name: p.name,
               sku: p.sku,
               price:p.price,
-              // qty: p.qty, 
+              image:p.image
             })),
             shippingMethod: {
               provider: order.billingInformation?.shippingMethod || "none",
@@ -66,48 +66,13 @@ export default function OrderForm({ orderId }: { orderId:string}) {
 
   return (
     <div>
-      <FormProvider  {...methods}>
-
-   
+          <FormProvider {...methods}>
       <StepTracker currentStep={step} />
-      {step === 1 && (
-        <StepOne
-          data={formData}
-          onNext={handleNext}
-          step={step}
-          setStep={setStep}
-          isEditMode={isEditMode}
-        />
-      )}
-      {step === 2 && (
-        <StepTwo
-          data={formData}
-          onNext={handleNext}
-          step={step}
-          setStep={setStep}
-          isEditMode={isEditMode}
-        />
-      )}
-      {step === 3 && (
-        <StepThree
-          data={formData}
-          onNext={handleNext}
-          step={step}
-          setStep={setStep}
-          isEditMode={isEditMode}
-        />
-      )}
-      {step === 4 && (
-        <StepFour
-          data={formData}
-          onNext={handleNext}
-          step={step}
-          setStep={setStep}
-          isEditMode={isEditMode}
-          orderId={orderId}
-        />
-      )}
-         </FormProvider>
+      {step === 1 && <StepOne step={step} setStep={setStep} isEditMode={isEditMode} />}
+      {step === 2 && <StepTwo step={step} setStep={setStep} />}
+      {step === 3 && <StepThree step={step} setStep={setStep} />}
+      {step === 4 && <StepFour step={step} setStep={setStep} isEditMode={isEditMode} orderId={orderId} />}
+    </FormProvider>
     </div>
   );
 }

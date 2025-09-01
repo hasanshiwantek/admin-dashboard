@@ -9,6 +9,13 @@ import {
   TableHead,
   TableCell,
 } from "@/components/ui/table";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
@@ -17,6 +24,8 @@ import { updateProduct } from "@/redux/slices/productSlice";
 import CategoryModal from "@/app/components/products/categories/CategoryModal";
 import { fetchCategories } from "@/redux/slices/categorySlice";
 import { setSelectedProducts } from "@/redux/slices/productSlice";
+
+import { fetchBrands } from "@/redux/slices/productSlice";
 import Link from "next/link";
 type Product = {
   id: number;
@@ -61,12 +70,17 @@ export default function BulkEdit() {
     }
   }, []);
 
+  useEffect(() => {
+    dispatch(fetchBrands({ page: 1, pageSize: 50 }));
+  }, [dispatch]);
+
   const handleChange = (id: number, field: keyof Product, value: any) => {
     setProducts((prev) =>
       prev.map((p) => (p.id === id ? { ...p, [field]: value } : p))
     );
   };
 
+  const { brands } = useAppSelector((state: any) => state.product);
   const categories = useAppSelector((state: any) => state.category.categories);
   const allCategories = categories?.data;
   useEffect(() => {
@@ -81,7 +95,7 @@ export default function BulkEdit() {
           name: p.name,
           price: Number(p.price),
           currentStock: Number(p.currentStock),
-          brand: p.brand,
+          brandId: p.brand?.id,
           categoryIds: Array.isArray(p.categories)
             ? p.categories.map((cat: any) => Number(cat.id))
             : [],
@@ -157,14 +171,29 @@ export default function BulkEdit() {
                     />
                   </TableCell>
                   <TableCell>
-                    <Input
-                      type="text"
-                      className="w-50"
-                      value={product.brand?.name}
-                      onChange={(e) =>
-                        handleChange(product.id, "brand", e.target.value)
-                      }
-                    />
+                    <Select
+                      value={String(product.brand?.id || "")}
+                      onValueChange={(value) => {
+                        const selectedBrand = brands?.data.find(
+                          (b: any) => String(b.brand?.id) === value
+                        );
+                        handleChange(product.id, "brand", selectedBrand?.brand);
+                      }}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select brand" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {brands?.data?.map((b: any) => (
+                          <SelectItem
+                            key={b.brand.id}
+                            value={String(b.brand.id)}
+                          >
+                            {b.brand.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </TableCell>
 
                   <TableCell>
