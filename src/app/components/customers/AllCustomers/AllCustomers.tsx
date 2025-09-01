@@ -77,7 +77,7 @@ const AllCustomers = () => {
     },
     {
       label: "Login",
-      onClick: () => console.log("Login clicked", customer),
+      onClick: () => console.log("Login Customer clicked", customer),
     },
   ];
 
