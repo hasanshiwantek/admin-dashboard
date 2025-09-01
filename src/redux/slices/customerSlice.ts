@@ -31,7 +31,7 @@ export const fetchCustomers = createAsyncThunk(
   ) => {
     try {
       const res = await axiosInstance.get(
-        `dashboard/customers/get-customers?page=${page}&pageSize${pageSize}`
+        `dashboard/customers/get-customers?page=${page}&pageSize=${pageSize}`
       );
       console.log("✅ Fetch Customers Response :", res.data);
       return res.data;

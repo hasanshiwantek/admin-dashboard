@@ -37,6 +37,7 @@ import { refetchCustomers } from "@/lib/customerUtils";
 import Link from "next/link";
 import Spinner from "../../loader/Spinner";
 import { useRouter } from "next/navigation";
+import CustomerNotesModal from "../edit/CustomerNotesModal";
 const AllCustomers = () => {
   const dispatch = useAppDispatch();
   const { customers } = useAppSelector((state: any) => state.customer);
@@ -52,6 +53,10 @@ const AllCustomers = () => {
   const [storeCredits, setStoreCredits] = useState<{ [id: number]: string }>(
     {}
   );
+  const [showCustomerNotes, setShowCustomerNotes] = useState(false);
+  const [selectedCustomerId, setSelectedCustomerId] = useState<number | null>(
+    null
+  );
 
   const getDropdownActions = (customer: any) => [
     {
@@ -64,11 +69,15 @@ const AllCustomers = () => {
     },
     {
       label: "View Notes",
-      onClick: () => console.log("View Notes", customer),
+      onClick: () => {
+        const customerId = customer?.id;
+        setSelectedCustomerId(customerId);
+        setShowCustomerNotes(true);
+      },
     },
     {
       label: "Login",
-      onClick: () => console.log("Login clicked", customer),
+      onClick: () => console.log("Login Customer clicked", customer),
     },
   ];
 
@@ -525,6 +534,12 @@ const AllCustomers = () => {
           onPerPageChange={setPerPage}
         />
       </div>
+
+      <CustomerNotesModal
+        open={showCustomerNotes}
+        onClose={() => setShowCustomerNotes(false)}
+        customerId={selectedCustomerId}
+      />
     </div>
   );
 };

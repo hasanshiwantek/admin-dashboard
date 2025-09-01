@@ -22,7 +22,7 @@ const Stats = () => {
     {
       label: "Categories",
       value: data?.totalCategories,
-      link: "/manage/categories",
+      link: "/manage/products/categories",
     },
   ];
 

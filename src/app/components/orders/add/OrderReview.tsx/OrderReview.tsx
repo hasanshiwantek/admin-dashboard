@@ -22,10 +22,15 @@ import {
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 export default function OrderReview() {
-  const { watch, register, setValue } = useFormContext();
+  const { watch, register, setValue ,getValues} = useFormContext();
   const shipping = watch("shipping");
-  const billing = watch();
+const allValues=getValues()  
+console.log("...............",allValues);
 
+  console.log("Shipping Details from step 4: ",shipping);
+  
+  const billing = watch();
+ console.log("Billing Details from step 4: ",billing);
   const selectedProducts = watch("selectedProducts") || [];
   const paymentMethod = watch("paymentMethod");
   const subtotal = selectedProducts.reduce(
