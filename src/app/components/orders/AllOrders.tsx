@@ -45,6 +45,7 @@ import {
   LocationEdit,
   Ship,
   DollarSign,
+  CreditCard,
 } from "lucide-react";
 import Spinner from "../loader/Spinner";
 import Link from "next/link";
@@ -54,8 +55,8 @@ const AllOrders = () => {
   const dispatch = useAppDispatch();
   const orders = useAppSelector((state: any) => state.order.orders);
   const pagination = orders?.pagination;
-  const [currentPage, setCurrentPage] = useState(1);
-  const [perPage, setPerPage] = useState("50");
+  // const [currentPage, setCurrentPage] = useState(1);
+  // const [perPage, setPerPage] = useState("50");
   const total = pagination?.total;
   const totalPages = pagination?.totalPages;
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
@@ -398,30 +399,40 @@ const AllOrders = () => {
     }
   });
 
-  useEffect(() => {
-    const page = Number(queryObject.page || 1);
-    const pageSize = Number(queryObject.limit || queryObject.pageSize || 50);
+  const currentPage = Number(queryObject.page || 1);
+  const perPage = Number(queryObject.limit || queryObject.pageSize || 50);
 
+  useEffect(() => {
     const filterKeys = Object.keys(queryObject).filter(
       (key) => !["page", "limit", "pageSize"].includes(key)
     );
 
     if (filterKeys.length > 0) {
-      // 🔍 Run filtered search if extra filters exist
       dispatch(
         advanceOrderSearch({
           data: {
             ...queryObject,
-            page,
-            perPage: pageSize,
+            page: currentPage,
+            perPage,
           },
         })
       );
     } else {
-      // 📦 Default: Fetch all products
-      dispatch(fetchAllOrders({ page: currentPage, perPage: pageSize }));
+      dispatch(fetchAllOrders({ page: currentPage, perPage }));
     }
-  }, [searchParams]); // reruns whenever URL changes
+  }, [searchParams]); // ✅ triggers when URL changes
+  const handlePageChange = (page: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("page", page.toString());
+    router.push(`?${params.toString()}`);
+  };
+
+  const handlePerPageChange = (limit: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("page", "1"); // reset page on limit change
+    params.set("limit", limit);
+    router.push(`?${params.toString()}`);
+  };
 
   // ERROR LOGIC
   if (error) {
@@ -564,9 +575,9 @@ const AllOrders = () => {
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
-            onPageChange={setCurrentPage}
-            perPage={perPage}
-            onPerPageChange={setPerPage}
+            onPageChange={handlePageChange}
+            perPage={perPage.toString()}
+            onPerPageChange={handlePerPageChange}
           />
         </div>
 
@@ -745,29 +756,44 @@ const AllOrders = () => {
                               {/* Right Side: Customer Info with Icons */}
                               <div className="flex flex-col space-y-2">
                                 <p>
-                                  {order?.customer?.firstName}{" "}
-                                  {order?.customer?.lastName}
+                                  {order?.billingInformation?.firstName}{" "}
+                                  {order?.billingInformation?.lastName}
                                   <br />
-                                  {order?.customer?.address}
+                                  {order?.billingInformation?.addressLine1}{" "}
+                                  {order?.billingInformation?.addressLine2}
                                   <br />
-                                  {order?.customer?.state}
+                                  {order?.billingInformation?.state}
                                 </p>
 
                                 <div className="flex items-center gap-2">
                                   <Globe className="w-5 h-5 text-gray-500" />
                                   <span>
-                                    {order?.customer?.country || "N/A"}
+                                    {order?.billingInformation?.country ||
+                                      "N/A"}
                                   </span>
                                 </div>
 
                                 <div className="flex items-center gap-2">
                                   <Phone className="w-5 h-5 text-gray-500" />
-                                  <span>{order?.customer?.phone || "N/A"}</span>
+                                  <span>
+                                    {order?.billingInformation?.phone || "N/A"}
+                                  </span>
                                 </div>
 
                                 <div className="flex items-center gap-2">
                                   <Mail className="w-5 h-5 text-gray-500" />
-                                  <span>{order?.customer?.email || "N/A"}</span>
+                                  <span>
+                                    {order?.billingInformation?.email || "N/A"}
+                                  </span>
+                                </div>
+
+                                <div className="flex items-center gap-2">
+                                  <CreditCard className="w-5 h-5 text-gray-500" />
+                                  <span>
+                                    Payment Method{" "}
+                                    {order?.billingInformation?.paymentMethod ||
+                                      "N/A"}
+                                  </span>
                                 </div>
 
                                 <div className="flex items-center gap-2">
@@ -778,6 +804,7 @@ const AllOrders = () => {
                                 </div>
                               </div>
                             </div>
+
                             <div className="flex">
                               {/* Left Side: Shipping Title & Copy Button */}
                               <div className="flex flex-col border-r pr-3 mr-3 space-y-2">
@@ -807,7 +834,10 @@ const AllOrders = () => {
 
                                 <div className="flex items-center gap-2">
                                   <Ship className="w-5 h-5 text-gray-500" />
-                                  <span>{order?.shippingMethod || "N/A"}</span>
+                                  <span>
+                                    {order?.billingInformation.shippingMethod ||
+                                      "N/A"}
+                                  </span>
                                 </div>
 
                                 <div className="flex items-center gap-2">
@@ -821,7 +851,7 @@ const AllOrders = () => {
 
                                 <div className="flex items-center gap-2">
                                   <Mail className="w-5 h-5 text-gray-500" />
-                                  <span>{order?.paymentMethod || "N/A"}</span>
+                                  <span>{order?.customer?.email || "N/A"}</span>
                                 </div>
 
                                 <div className="flex items-center gap-2">
@@ -960,9 +990,9 @@ const AllOrders = () => {
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
-            onPageChange={setCurrentPage}
-            perPage={perPage}
-            onPerPageChange={setPerPage}
+            onPageChange={handlePageChange}
+            perPage={perPage.toString()}
+            onPerPageChange={handlePerPageChange}
           />
         </div>
       </div>

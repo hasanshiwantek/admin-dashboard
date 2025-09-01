@@ -16,13 +16,12 @@ import { countriesList } from "@/const/location";
 import CustomerSearchDropdown from "./CustomerSearchDropdown";
 import { useRouter } from "next/navigation";
 import { useFormContext } from "react-hook-form";
-export default function StepOne({ data, onNext, step, setStep,isEditMode }: any) {
+export default function StepOne({  step, setStep,isEditMode }: any) {
 const { register, handleSubmit, setValue, watch } = useFormContext();
 
   const router = useRouter();
   const onSubmit = (formData: any) => {
-    console.log("Step1 data:", formData);
-    onNext(formData);
+    console.log("Step 1 Submitted:", formData);
     setStep(step + 1);
   };
   const handleCancel = () => {
