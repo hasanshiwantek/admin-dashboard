@@ -31,6 +31,7 @@ import {
   orderTimeline,
   printInvoicePdf,
   addShipmentOrder,
+  refundOrder,
 } from "@/redux/slices/orderSlice";
 import { refetchOrders } from "@/lib/orderUtils";
 import { FaCirclePlus, FaCircleMinus } from "react-icons/fa6";
@@ -168,10 +169,6 @@ const AllOrders = () => {
     },
   ];
 
-  const handleRefund = () => {
-    console.log("Processing refund...");
-  };
-
   const orderActions = (order: any) => [
     {
       label: "Edit order",
@@ -236,7 +233,22 @@ const AllOrders = () => {
         setShowShipmentModal(true);
       },
     },
-    { label: "Refund", onClick: handleRefund },
+    {
+      label: "Refund",
+      onClick: async () => {
+        const orderId = order?.id;
+        try {
+          const resulAction = await dispatch(refundOrder({ orderId }));
+          if (refundOrder.fulfilled.match(resulAction)) {
+            console.log("Order Refunded: ", resulAction?.payload);
+          } else {
+            console.log("Error Refunding Order: ", resulAction?.payload);
+          }
+        } catch (err) {
+          console.error("Something went wrong", err);
+        }
+      },
+    },
     {
       label: "View order timeline",
       onClick: () => {

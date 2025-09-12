@@ -189,6 +189,26 @@ export const printInvoicePdf = createAsyncThunk(
   }
 );
 
+//PAYMENT INVOICE THUNK
+
+export const refundOrder = createAsyncThunk(
+  "orders/refundOrder",
+  async ({ orderId }: { orderId: number | string }, thunkAPI) => {
+    try {
+      const response = await axiosInstance.post(
+        `dashboard/orders/refund/${orderId}`
+      );
+
+      console.log("Order refund Response: ", response?.data);
+      return response.data;
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to Refund Order"
+      );
+    }
+  }
+);
+
 //RESEND INVOICE THUNK
 
 export const resendInvoice = createAsyncThunk(
