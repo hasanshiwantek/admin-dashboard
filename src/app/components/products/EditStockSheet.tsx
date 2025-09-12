@@ -174,7 +174,7 @@ export default function EditStockSheet({ trigger, product }: any) {
                   <Checkbox
                     checked={values.allowPurchase}
                     onCheckedChange={(checked: boolean) =>
-                      handleChange("availability", checked)
+                      handleChange("allowPurchase", checked)
                     }
                   />
                 </TableCell>

@@ -45,8 +45,8 @@ const AllCustomers = () => {
   const router = useRouter();
   console.log("AllCustomers From Frontend: ", customers);
   const pagination = customers.pagination;
-  const [currentPage, setCurrentPage] = useState(1);
-  const [perPage, setPerPage] = useState("50");
+  // const [currentPage, setCurrentPage] = useState(1);
+  // const [perPage, setPerPage] = useState("50");
   const total = pagination?.total;
   const totalPages = Math.ceil(total / pagination?.pageSize);
   const [selectedCustomers, setSelectedCustomers] = useState<any[]>([]);
@@ -239,30 +239,39 @@ const AllCustomers = () => {
     }
   });
 
+  const currentPage = Number(queryObject.page || 1);
+  const perPage = Number(queryObject.limit || queryObject.pageSize || 50);
   useEffect(() => {
-    const page = Number(queryObject.page || 1);
-    const pageSize = Number(queryObject.limit || queryObject.pageSize || 50);
-
     const filterKeys = Object.keys(queryObject).filter(
       (key) => !["page", "limit", "pageSize"].includes(key)
     );
 
     if (filterKeys.length > 0) {
-      // 🔍 Run filtered search if extra filters exist
       dispatch(
         advanceCustomerSearch({
           data: {
             ...queryObject,
-            page,
-            pageSize: pageSize,
+            page: currentPage,
+            pageSize: perPage,
           },
         })
       );
     } else {
-      // 📦 Default: Fetch all customers
-      dispatch(fetchCustomers({ page: currentPage, pageSize: pageSize }));
+      dispatch(fetchCustomers({ page: currentPage, pageSize: perPage }));
     }
-  }, [searchParams]); // reruns whenever URL changes
+  }, [searchParams]);
+  const handlePageChange = (page: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("page", page.toString());
+    router.push(`?${params.toString()}`);
+  };
+
+  const handlePerPageChange = (limit: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("page", "1"); // Reset page on limit change
+    params.set("limit", limit);
+    router.push(`?${params.toString()}`);
+  };
 
   if (error) {
     return (
@@ -330,9 +339,9 @@ const AllCustomers = () => {
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
-          onPageChange={setCurrentPage}
-          perPage={perPage}
-          onPerPageChange={setPerPage}
+          onPageChange={handlePageChange}
+          perPage={perPage.toString()}
+          onPerPageChange={handlePerPageChange}
         />
       </div>
       {/* Table */}
@@ -529,9 +538,9 @@ const AllCustomers = () => {
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
-          onPageChange={setCurrentPage}
-          perPage={perPage}
-          onPerPageChange={setPerPage}
+          onPageChange={handlePageChange}
+          perPage={perPage.toString()}
+          onPerPageChange={handlePerPageChange}
         />
       </div>
 

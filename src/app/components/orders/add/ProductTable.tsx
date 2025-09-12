@@ -24,10 +24,10 @@ export default function ProductTable({
   onDelete,
 }: {
   products: any[];
-  onQtyChange: (id: number, qty: number) => void;
+  onQtyChange: (id: number, quantity: number) => void;
   onDelete: (id: number) => void;
 }) {
-  const getTotal = (p: any) => parseFloat(p.price || "0") * (p.qty || 1);
+  const getTotal = (p: any) => parseFloat(p.price || "0") * (p.quantity || 1);
 
   const subtotal = products.reduce((sum, p) => sum + getTotal(p), 0);
 

@@ -7,7 +7,7 @@ import { useState, useEffect } from "react";
 import { mappingFields } from "@/const/ImportExportData";
 import { importCsv } from "@/redux/slices/productSlice";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
-
+import { useRouter } from "next/navigation";
 const ImportCsv = () => {
   const methods = useForm({
     defaultValues: {
@@ -25,6 +25,7 @@ const ImportCsv = () => {
 
   const dispatch = useAppDispatch();
   const [step, setStep] = useState(1);
+  const router=useRouter()
 
   const handleFinalSubmit = async (data: Record<string, any>) => {
     const {
@@ -66,6 +67,9 @@ const ImportCsv = () => {
 
       if ((resultAction as any).meta.requestStatus === "fulfilled") {
         console.log("✅ CSV imported successfully:", result);
+        setTimeout(()=>{
+          router.push("/manage/products/")
+        },2000)
       } else {
         console.error("❌ Failed to import CSV:", result);
       }

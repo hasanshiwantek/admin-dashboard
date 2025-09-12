@@ -76,10 +76,10 @@ export default function StepTwo({ step, setStep }: any) {
     setSelectedProducts((prev) => [...prev, product]);
   };
 
-  const handleQtyChange = (id: number, qty: number) => {
+  const handleQtyChange = (id: number, quantity: number) => {
     setSelectedProducts((prev) =>
       prev.map((p) =>
-        p.id === id ? { ...p, quantity: Math.max(qty, 1) } : p
+        p.id === id ? { ...p, quantity: Math.max(quantity, 1) } : p
       )
     );
   };
