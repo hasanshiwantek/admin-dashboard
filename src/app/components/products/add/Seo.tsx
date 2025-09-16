@@ -65,7 +65,7 @@ export default function Seo() {
               </TooltipProvider>
             </Label>
             <Input id="ProductUrl" placeholder="" {...register("productUrl")} />
-            <button className="btn-outline-primary">Reset</button>
+            <button className="btn-outline-primary" type="button">Reset</button>
           </div>
         </div>
 

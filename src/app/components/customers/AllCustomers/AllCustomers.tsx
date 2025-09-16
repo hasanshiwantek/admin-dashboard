@@ -465,7 +465,13 @@ const AllCustomers = () => {
                     </TableCell>
 
                     <TableCell>1</TableCell>
-                    <TableCell>{customer.createdAt}</TableCell>
+                    <TableCell>
+                      {new Date(customer.createdAt).toLocaleString("en-US", {
+                        dateStyle: "medium",
+                        timeStyle: "short",
+                      })}
+                    </TableCell>
+
                     <TableCell>
                       <OrderActionsDropdown
                         actions={getDropdownActions(customer)}

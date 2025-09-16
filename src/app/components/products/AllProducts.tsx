@@ -296,7 +296,7 @@ export default function AllProducts() {
           dispatch(deleteProduct({ ids: [product.id] }));
           setTimeout(() => {
             refetchProducts(dispatch);
-          }, 400);
+          }, 600);
         }
       },
     },
@@ -440,11 +440,16 @@ export default function AllProducts() {
       label: "Delete",
       onClick: () => {
         console.log("Delete", selectedProductIds);
-        dispatch(deleteProduct({ ids: selectedProductIds }));
-        setTimeout(() => {
-          refetchProducts(dispatch);
-        }, 400);
-        setSelectedProductIds([]);
+        const confirm = window.confirm("Delete Selecred Products?");
+        if (!confirm) {
+          return;
+        } else {
+          dispatch(deleteProduct({ ids: selectedProductIds }));
+          setTimeout(() => {
+            refetchProducts(dispatch);
+          }, 600);
+          setSelectedProductIds([]);
+        }
       },
     },
   ];

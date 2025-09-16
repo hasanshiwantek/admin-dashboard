@@ -71,3 +71,43 @@ export const mappingFields: MappingField[] = [
     type: "dropdown" as const,
   })),
 ];
+
+
+
+
+
+
+
+
+export const CustomerMappingFields: MappingField[] = [
+  {
+    label: "Customer Group",
+    type: "radio-dropdown",
+    options: [
+      "All customers in this file belong to the same group",
+      "Each customer has their group specified in a column",
+    ],
+  },
+  ...[
+    "First Name",
+    "Last Name",
+    "Email",
+    "Company",
+    "Phone",
+    "Street 1",
+    "Street 2",
+    "City",
+    "State",
+    "Zip",
+    "Country",
+    "Store Credit",
+    "Tax Exempt Category",
+    "Notes",
+    "Accepts Marketing Emails",
+    "Customer Group",
+    "Form Field Data",
+  ].map((label) => ({
+    label,
+    type: "dropdown" as const,
+  })),
+];
