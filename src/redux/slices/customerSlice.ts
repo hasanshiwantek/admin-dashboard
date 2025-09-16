@@ -172,6 +172,48 @@ export const importCustomerCsv = createAsyncThunk(
   }
 );
 
+// EXPORT CSV THUNK
+export const exportCustomerCsv = createAsyncThunk(
+  "customer/exportCustomerCsv",
+  async ({ payload }: { payload: any }, thunkAPI) => {
+    try {
+      const response = await axiosInstance.get("dashboard/customers/export", {
+        params: payload,
+        responseType: "blob", // 👈 critical for file download
+      });
+
+      // Create a blob URL for the file
+      const blob = new Blob([response.data], {
+        type: response.headers["content-type"],
+      });
+      const downloadUrl = URL.createObjectURL(blob);
+
+      // Get the file name from content-disposition header (if present)
+      const disposition = response.headers["content-disposition"];
+      let filename = "customer_export.xlsx";
+      if (disposition && disposition.includes("filename=")) {
+        filename = disposition
+          .split("filename=")[1]
+          .split(";")[0]
+          .replace(/"/g, "");
+      }
+
+      // Trigger the download
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.setAttribute("download", filename);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      return "Export successful";
+    } catch (error: any) {
+      console.error("❌ Error Exporting CSV:", error);
+      return thunkAPI.rejectWithValue("Failed to Export CSV");
+    }
+  }
+);
+
 // 2. Initial State
 const initialState = {
   customers: [],
