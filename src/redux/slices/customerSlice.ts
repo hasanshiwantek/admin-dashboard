@@ -47,10 +47,7 @@ export const fetchCustomers = createAsyncThunk(
 // FETCH CUSTOMERS THUNK
 export const advanceCustomerSearch = createAsyncThunk(
   "customer/advanceCustomerSearch",
-  async (
-    { data }: { data: any},
-    thunkAPI
-  ) => {
+  async ({ data }: { data: any }, thunkAPI) => {
     try {
       const res = await axiosInstance.post(
         `dashboard/customers/customer-search`,
@@ -66,9 +63,6 @@ export const advanceCustomerSearch = createAsyncThunk(
     }
   }
 );
-
-
-
 
 // FETCH CUSTOMERS THUNK
 export const fetchCustomerByKeyword = createAsyncThunk(
@@ -154,6 +148,30 @@ export const updateCustomer = createAsyncThunk(
   }
 );
 
+// IMPORT CSV THUNK
+export const importCustomerCsv = createAsyncThunk(
+  "customer/importCustomerCsv",
+  async (formData: FormData, thunkAPI) => {
+    try {
+      const response = await axiosInstance.post(
+        "dashboard/customers/import",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      console.log("✅ Import Csv Response  From Thunk:", response.data);
+
+      return response.data;
+    } catch (error: any) {
+      console.error("❌ Error Importing CSV:", error);
+      return thunkAPI.rejectWithValue("Failed to import CSV");
+    }
+  }
+);
+
 // 2. Initial State
 const initialState = {
   customers: [],
@@ -181,7 +199,7 @@ const categorySlice = createSlice({
         state.error =
           (action.payload as string) || action.error.message || "Failed";
       })
-            .addCase(advanceCustomerSearch.fulfilled, (state, action) => {
+      .addCase(advanceCustomerSearch.fulfilled, (state, action) => {
         state.loading = false;
         state.customers = action.payload;
       })
