@@ -5,6 +5,7 @@ import CustomerExportOptions from "./CustomerExportOptions";
 import CustomerExportPreview from "./CustomerExportPreview";
 import { exportCsv } from "@/redux/slices/productSlice";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
+import { exportCustomerCsv } from "@/redux/slices/customerSlice";
 export default function CustomerExportPage() {
   const form = useForm({
     defaultValues: {
@@ -22,19 +23,19 @@ export default function CustomerExportPage() {
   const onSubmit = async (data: any) => {
     console.log("📤 Export Data:", data);
 
-    // try {
-    //   const resultAction = await dispatch(exportCsv({payload:data}));
-    //   const result = (resultAction as any).payload;
+    try {
+      const resultAction = await dispatch(exportCustomerCsv({ payload: data }));
+      const result = (resultAction as any).payload;
 
-    //   if ((resultAction as any).meta.requestStatus === "fulfilled") {
-    //     console.log("✅ Export Successful:", result);
-    //     // You can trigger a file download here or redirect
-    //   } else {
-    //     console.error("❌ Export Failed:", result);
-    //   }
-    // } catch (error) {
-    //   console.error("❌ Unexpected Export Error:", error);
-    // }
+      if ((resultAction as any).meta.requestStatus === "fulfilled") {
+        console.log("✅ Export Successful:", result);
+        // You can trigger a file download here or redirect
+      } else {
+        console.error("❌ Export Failed:", result);
+      }
+    } catch (error) {
+      console.error("❌ Unexpected Export Error:", error);
+    }
   };
 
   return (
@@ -45,7 +46,8 @@ export default function CustomerExportPage() {
           <div className="border-b border-gray-200">
             <h1 className="!font-extralight">Export customers</h1>
             <p className="my-5">
-      Select an export template for your customers export or create a new export template.
+              Select an export template for your customers export or create a
+              new export template.
             </p>
 
             <nav className="flex space-x-4 mt-5">
@@ -85,7 +87,7 @@ export default function CustomerExportPage() {
 
           {/* Tab Content */}
           <div className="p-20">
-            {activeTab === "exportOptions" && <CustomerExportOptions/>}
+            {activeTab === "exportOptions" && <CustomerExportOptions />}
             {activeTab === "exportPreview" && <CustomerExportPreview />}
           </div>
         </form>
