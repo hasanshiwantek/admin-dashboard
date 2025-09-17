@@ -105,7 +105,7 @@ export default function AddFromUrlModal({
                 path: url,
                 description: "",
                 selected: false,
-                isThumbnail: false,
+                isPrimary: false,
                 type: "image",
               });
               onOpenChange(false);

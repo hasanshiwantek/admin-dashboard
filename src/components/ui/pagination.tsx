@@ -60,6 +60,7 @@ const Pagination = ({
             </span>
           ) : (
             <Button
+              type="button"
               key={i}
               variant={currentPage === page ? "secondary" : "ghost"}
               size="lg"
@@ -74,6 +75,7 @@ const Pagination = ({
         )}
         {currentPage < totalPages && (
           <button
+            type="button"
             onClick={() => onPageChange(currentPage + 1)}
             className="text-blue-600 mx-4 text-xl"
           >

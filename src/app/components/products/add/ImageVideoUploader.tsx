@@ -31,9 +31,9 @@ export default function ImageVideoUploader({ initialImages }: Props) {
       const initialPreviews: PreviewItem[] = initialImages.map((img) => ({
         file: null,
         path: img.path, // full image URL
-        description: img.altText || "",
+        description: img.altText || img.description || "",
         selected: false,
-        isThumbnail: img.isPrimary === 1,
+        isPrimary: img.isPrimary === 1,
         type:
           img.path.includes(".mp4") || img.path.includes("video")
             ? "video"
@@ -72,7 +72,7 @@ export default function ImageVideoUploader({ initialImages }: Props) {
       path: file, // ✅ FIX: this makes preview work
       description: "",
       selected: false,
-      isThumbnail: false,
+      isPrimary: false,
       type: file.type.startsWith("video/") ? "video" : "image",
     }));
 
@@ -93,7 +93,7 @@ export default function ImageVideoUploader({ initialImages }: Props) {
 
   useEffect(() => {
     return () => {
-      previews.forEach((p:any) => {
+      previews.forEach((p: any) => {
         if (p.file) URL.revokeObjectURL(p.path); // ✅ only revoke object URLs
       });
     };

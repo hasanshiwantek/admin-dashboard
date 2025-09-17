@@ -3,7 +3,7 @@ export type PreviewItem = {
   path: string | File;
   description: string;
   selected: boolean;
-  isThumbnail: boolean;
+  isPrimary: boolean;
   type: "image" | "video";
 };
 
