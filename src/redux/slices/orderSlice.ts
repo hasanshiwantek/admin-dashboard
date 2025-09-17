@@ -10,7 +10,7 @@ export const fetchAllOrders = createAsyncThunk(
   ) => {
     try {
       const res = await axiosInstance.get(
-        `dashboard/orders/list-orders?page=${page}&pageSize=${perPage}`
+        `dashboard/orders/list-orders?page=${page}&perPage=${perPage}`
       );
       console.log("✅ Order Response Data:", res.data);
       return res.data;

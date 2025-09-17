@@ -847,7 +847,7 @@ const AllOrders = () => {
                                 <div className="flex items-center gap-2">
                                   <Ship className="w-5 h-5 text-gray-500" />
                                   <span>
-                                    {order?.billingInformation.shippingMethod ||
+                                    {order?.billingInformation?.shippingMethod ||
                                       "N/A"}
                                   </span>
                                 </div>

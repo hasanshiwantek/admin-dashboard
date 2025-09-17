@@ -24,7 +24,7 @@ const SearchCustomer = () => {
   const router = useRouter();
   const [formData, setFormData] = useState({
     // Advanced Search
-    searchKeywords: "",
+    searchKeywords: '',
     startsWith: "",
     phone: "",
     country: "",
