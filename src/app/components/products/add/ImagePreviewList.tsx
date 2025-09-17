@@ -137,11 +137,11 @@ export default function ImagePreviewList({
             <input
               type="radio"
               name="thumbnail"
-              checked={p.isThumbnail}
+              checked={p.isPrimary}
               onChange={() => {
                 const updated = previews.map((img, i) => ({
                   ...img,
-                  isThumbnail: i === index,
+                  isPrimary: i === index,
                 }));
                 setPreviews(updated);
               }}

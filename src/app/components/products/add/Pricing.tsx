@@ -26,10 +26,13 @@ export default function Pricing() {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const { register, control, watch, setValue } = useFormContext();
 
-  const price = watch("price")
+  const price = watch("price");
 
   return (
-    <div className="bg-white shadow-lg p-10 space-y-8 scroll-mt-20" id="pricing">
+    <div
+      className="bg-white shadow-lg p-10 space-y-8 scroll-mt-20"
+      id="pricing"
+    >
       <h1 className="text-xl font-semibold">Pricing</h1>
 
       {/* Default Price and Tax Class */}
@@ -89,7 +92,9 @@ export default function Pricing() {
                 <Input
                   type="number"
                   placeholder="$0"
-                  {...register("costPrice", { valueAsNumber: true })}
+                  {...register("costPrice", {
+                    setValueAs: (v) => (v === "" ? 0 : parseFloat(v)),
+                  })}
                 />
               </div>
               <div>
@@ -97,7 +102,9 @@ export default function Pricing() {
                 <Input
                   type="number"
                   placeholder="$0"
-                  {...register("msrp", { valueAsNumber: true })}
+                  {...register("msrp", {
+                    setValueAs: (v) => (v === "" ? 0 : parseFloat(v)),
+                  })}
                 />
               </div>
               <div>
@@ -105,7 +112,9 @@ export default function Pricing() {
                 <Input
                   type="number"
                   placeholder="$0"
-                  {...register("salePrice", { valueAsNumber: true })}
+                  {...register("salePrice", {
+                    setValueAs: (v) => (v === "" ? 0 : parseFloat(v)),
+                  })}
                 />
               </div>
             </div>

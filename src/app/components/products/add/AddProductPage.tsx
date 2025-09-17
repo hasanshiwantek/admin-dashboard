@@ -97,7 +97,7 @@ export default function AddProductPage() {
             file: img.file || null,
             url: typeof img.path === "string" ? img.path : "",
             description: img.description || "",
-            isThumbnail: img.isThumbnail ? 1 : 0,
+            isPrimary: img.isPrimary ? 1 : 0,
           }))
         : [];
       const { id, ...rest } = data;
