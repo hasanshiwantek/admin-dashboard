@@ -25,8 +25,8 @@ import { advanceShipmentSearch } from "@/redux/slices/orderSlice";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import Link from "next/link";
 const SearchShipments = () => {
-  const [formData, setFormData] = useState({
-    keywords: "",
+  const [formData, setFormData] = useState<any>({
+    keywords: null,
     // status: "",
     // paymentMethod: "",
     // shippingProvider: "",
@@ -49,7 +49,7 @@ const SearchShipments = () => {
   const dispatch = useAppDispatch();
 
   const handleChange = (key: string, value: any) => {
-    setFormData((prev) => ({
+    setFormData((prev: any) => ({
       ...prev,
       [key]: value,
     }));
@@ -120,7 +120,7 @@ const SearchShipments = () => {
                 </Label>
                 <Input
                   placeholder="0"
-                  value={formData.keywords}
+                  value={formData.keywords || null}
                   onChange={(e) => handleChange("keywords", e.target.value)}
                 />
                 <TooltipProvider>
@@ -303,9 +303,9 @@ const SearchShipments = () => {
       {/* SUBMIT BUTTON */}
       <div className="sticky bottom-0 w-full border-t p-6 bg-white flex justify-end gap-4">
         <Link href="/manage/orders/shipments">
-        <button type="button" className="btn-outline-primary">
-          Cancel
-        </button>
+          <button type="button" className="btn-outline-primary">
+            Cancel
+          </button>
         </Link>
         <button className="btn-primary" type="submit">
           Search
