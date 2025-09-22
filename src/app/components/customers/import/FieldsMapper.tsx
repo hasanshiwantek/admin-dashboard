@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  useFormContext,
-  Controller,
-} from "react-hook-form";
+import { useFormContext, Controller } from "react-hook-form";
 import {
   Select,
   SelectTrigger,
@@ -11,10 +8,7 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  RadioGroup,
-  RadioGroupItem,
-} from "@/components/ui/radio-group";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { MappingField } from "@/types/types";
 
@@ -35,7 +29,7 @@ export default function FieldsMapper({ fields, columnOptions }: Props) {
   return (
     <div className="space-y-10 p-10">
       {fields.map((field, index) => {
-        const defaultMatch = columnOptions.find(col =>
+        const defaultMatch = columnOptions.find((col) =>
           col.toLowerCase().includes(field.label.toLowerCase())
         );
         const radioValue = watch(`${field.label}_mode`);
@@ -57,8 +51,13 @@ export default function FieldsMapper({ fields, columnOptions }: Props) {
                     >
                       {field.options?.map((option, idx) => (
                         <div key={idx} className="flex items-center space-x-2">
-                          <RadioGroupItem value={option} id={`${field.label}-${idx}`} />
-                          <Label htmlFor={`${field.label}-${idx}`}>{option}</Label>
+                          <RadioGroupItem
+                            value={option}
+                            id={`${field.label}-${idx}`}
+                          />
+                          <Label htmlFor={`${field.label}-${idx}`}>
+                            {option}
+                          </Label>
                         </div>
                       ))}
                     </RadioGroup>
@@ -71,11 +70,15 @@ export default function FieldsMapper({ fields, columnOptions }: Props) {
                     name={field.label}
                     defaultValue={defaultMatch || ""}
                     render={({ field }) => (
-                      <Select value={field.value} onValueChange={field.onChange}>
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
                         <SelectTrigger>
                           <SelectValue placeholder="Select column" />
                         </SelectTrigger>
                         <SelectContent>
+                          <SelectItem value="__ignore__">Ignore</SelectItem>
                           {columnOptions.map((col) => (
                             <SelectItem key={col} value={col}>
                               {col}
@@ -98,6 +101,7 @@ export default function FieldsMapper({ fields, columnOptions }: Props) {
                       <SelectValue placeholder="Select column" />
                     </SelectTrigger>
                     <SelectContent>
+                      <SelectItem value="__ignore__">Ignore</SelectItem>
                       {columnOptions.map((col) => (
                         <SelectItem key={col} value={col}>
                           {col}

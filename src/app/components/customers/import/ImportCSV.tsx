@@ -29,6 +29,57 @@ const ImportCsv = () => {
   const [step, setStep] = useState(1);
   const router = useRouter();
 
+  // const handleFinalSubmit = async (data: Record<string, any>) => {
+  //   const {
+  //     file,
+  //     importSource,
+  //     detectCategories,
+  //     ignoreBlanks,
+  //     optionType,
+  //     hasHeader,
+  //     separator,
+  //     enclosure,
+  //     bulkTemplate,
+  //     overwrite,
+  //   } = data;
+
+  //   const formData = new FormData();
+  //   if (file && file.length > 0) {
+  //     formData.append("file", file[0]); // ✅ file is usually a FileList
+  //   }
+
+  //   // formData.append("importSource", importSource);
+  //   // formData.append("detectCategories", detectCategories ? "1" : "0");
+  //   // formData.append("ignoreBlanks", ignoreBlanks ? "1" : "0");
+  //   // formData.append("optionType", optionType);
+  //   formData.append("hasHeader", hasHeader ? "1" : "0");
+  //   // formData.append("separator", separator);
+  //   // formData.append("enclosure", enclosure);
+  //   formData.append("bulkTemplate", bulkTemplate ? "1" : "0");
+  //   formData.append("overwrite", overwrite ? "1" : "0");
+
+  //   console.log("📦 Final FormData:");
+  //   for (const [key, value] of formData.entries()) {
+  //     console.log(`${key}:`, value);
+  //   }
+
+  //   try {
+  //     const resultAction = await dispatch(importCustomerCsv(formData)); // ✅ pass formData directly
+  //     const result = (resultAction as any).payload;
+
+  //     if ((resultAction as any).meta.requestStatus === "fulfilled") {
+  //       console.log("✅ CSV imported successfully:", result);
+  //       setTimeout(() => {
+  //         router.push("/manage/customers");
+  //       }, 2000);
+  //     } else {
+  //       console.error("❌ Failed to import CSV:", result);
+  //     }
+  //   } catch (err) {
+  //     console.error("❌ Unexpected error:", err);
+  //   }
+  // };
+
   const handleFinalSubmit = async (data: Record<string, any>) => {
     const {
       file,
@@ -43,6 +94,30 @@ const ImportCsv = () => {
       overwrite,
     } = data;
 
+    // ✅ Step 1: Print all field mappings including ignored ones
+    const configKeys = [
+      "file",
+      "importSource",
+      "detectCategories",
+      "ignoreBlanks",
+      "optionType",
+      "hasHeader",
+      "separator",
+      "enclosure",
+      "bulkTemplate",
+      "overwrite",
+    ];
+
+    console.log("🧾 Submitted Field Mappings:");
+    Object.entries(data).forEach(([key, value]) => {
+      if (!configKeys.includes(key)) {
+        if (value === "__ignore__") {
+          console.log(`${key}: ❌ Ignored`);
+        } else {
+          console.log(`${key}: ✅ ${value}`);
+        }
+      }
+    });
     const formData = new FormData();
     if (file && file.length > 0) {
       formData.append("file", file[0]); // ✅ file is usually a FileList
@@ -62,10 +137,11 @@ const ImportCsv = () => {
     for (const [key, value] of formData.entries()) {
       console.log(`${key}:`, value);
     }
-
+    // ✅ Step 3: Dispatch stays unchanged
     try {
-      const resultAction = await dispatch(importCustomerCsv(formData)); // ✅ pass formData directly
+      const resultAction = await dispatch(importCustomerCsv(formData));
       const result = (resultAction as any).payload;
+      console.log("Final Payload: ", resultAction);
 
       if ((resultAction as any).meta.requestStatus === "fulfilled") {
         console.log("✅ CSV imported successfully:", result);

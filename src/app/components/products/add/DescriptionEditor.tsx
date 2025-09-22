@@ -45,6 +45,8 @@
 // };
 
 // export default DescriptionEditor;
+
+
 "use client";
 
 import { Editor } from "@tinymce/tinymce-react";
@@ -60,7 +62,7 @@ export default function DescriptionEditor() {
     <div className="p-10 bg-white shadow-lg">
       <h1 className="my-5">Description</h1>
       <Editor
-      apiKey="d2z6pu70qtywhkzox051ga0czhas02dp55gl9bxijefs4vxo"
+        apiKey="d2z6pu70qtywhkzox051ga0czhas02dp55gl9bxijefs4vxo"
         onInit={(evt, editor) => (editorRef.current = editor)}
         value={description || ""}
         onEditorChange={(content) => {
@@ -71,13 +73,30 @@ export default function DescriptionEditor() {
           menubar: true,
           directionality: "ltr", // ✅ fix RTL issue
           plugins: [
-            "advlist", "autolink", "lists", "link", "image", "charmap", "preview",
-            "anchor", "searchreplace", "visualblocks", "code", "fullscreen",
-            "insertdatetime", "media", "table", "code", "help", "wordcount",
-            "emoticons", "hr", "pagebreak", "print"
+            "advlist",
+            "autolink",
+            "lists",
+            "link",
+            "image",
+            "charmap",
+            "preview",
+            "anchor",
+            "searchreplace",
+            "visualblocks",
+            "code",
+            "fullscreen",
+            "insertdatetime",
+            "media",
+            "table",
+            "code",
+            "help",
+            "wordcount",
+            "emoticons",
+            "hr",
+            "pagebreak",
+            "print",
           ],
-          toolbar:
-            `undo redo | blocks fontfamily fontsize | bold italic underline strikethrough forecolor backcolor | 
+          toolbar: `undo redo | blocks fontfamily fontsize | bold italic underline strikethrough forecolor backcolor | 
              alignleft aligncenter alignright alignjustify | 
              outdent indent | numlist bullist | link image media table hr emoticons | 
              code fullscreen preview print | removeformat`,
