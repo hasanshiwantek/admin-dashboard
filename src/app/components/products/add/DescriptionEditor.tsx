@@ -59,7 +59,7 @@ export default function DescriptionEditor() {
   const editorRef = useRef(null);
 
   return (
-    <div className="p-10 bg-white shadow-lg">
+    <div className="p-10 bg-white shadow-lg" id="description">
       <h1 className="my-5">Description</h1>
       <Editor
         apiKey="d2z6pu70qtywhkzox051ga0czhas02dp55gl9bxijefs4vxo"
