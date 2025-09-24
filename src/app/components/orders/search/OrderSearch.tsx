@@ -190,7 +190,7 @@ const OrderSearch = () => {
                   </SelectTrigger>
                   <SelectContent>
                     {options.map((opt) => (
-                      <SelectItem key={opt} value={opt}>
+                      <SelectItem key={opt} value={opt.toLowerCase()}>
                         {opt}
                       </SelectItem>
                     ))}
