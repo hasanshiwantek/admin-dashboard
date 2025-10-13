@@ -24,6 +24,7 @@ const SearchProduct = () => {
   const { register, control } = useFormContext();
   const { brands } = useAppSelector((state: any) => state.product);
   const dispatch = useAppDispatch();
+  console.log("Brands data from frontend: ", brands);
 
   useEffect(() => {
     dispatch(fetchBrands({ page: 1, pageSize: 50 }));
@@ -77,9 +78,12 @@ const SearchProduct = () => {
                     <SelectValue placeholder="All Brand Names" />
                   </SelectTrigger>
                   <SelectContent>
-                    {brands?.data?.map((brand: any) => (
-                      <SelectItem key={brand.id} value={String(brand.id)}>
-                        {brand.name}
+                    {brands?.data?.map((brand: any, ) => (
+                      <SelectItem
+                        key={brand?.brand?.id}
+                        value={String(brand.brand?.id)}
+                      >
+                        {brand.brand?.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
