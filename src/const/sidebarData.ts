@@ -1,4 +1,16 @@
-import { Home, ShoppingCart, Users, Store, LineChart, Gift, Settings, AppWindow, Layers, Banknote, Megaphone } from "lucide-react";
+import {
+  Home,
+  ShoppingCart,
+  Users,
+  Store,
+  LineChart,
+  Gift,
+  Settings,
+  AppWindow,
+  Layers,
+  Banknote,
+  Megaphone,
+} from "lucide-react";
 
 export const sidebarData = [
   {
@@ -56,15 +68,18 @@ export const sidebarData = [
     title: "Storefront",
     icon: Store,
     children: [
-      { title: "Themes", url: "/storefront/themes" },
-      { title: "Themes MarketPlace", url: "/storefront/themes-marketplace" },
-      { title: "Logo", url: "/storefront/logo" },
-      { title: "Home Page Carousel", url: "/storefront/carousel" },
-      { title: "Social Media Links", url: "/storefront/social-media" },
-      { title: "Script Manager", url: "/storefront/scripts" },
-      { title: "Web Pages", url: "/storefront/web-pages" },
-      { title: "Blog", url: "/storefront/blog" },
-      { title: "Image Manager", url: "/storefront/images" },
+      { title: "Themes", url: "/manage/storefront/themes" },
+      {
+        title: "Themes MarketPlace",
+        url: "/manage/storefront/themes-marketplace",
+      },
+      { title: "Logo", url: "/manage/storefront/logo" },
+      { title: "Home Page Carousel", url: "/manage/storefront/carousel" },
+      { title: "Social Media Links", url: "/manage/storefront/social-media" },
+      { title: "Script Manager", url: "/manage/storefront/scripts" },
+      { title: "Web Pages", url: "/manage/storefront/web-pages" },
+      { title: "Blog", url: "/manage/storefront/blog" },
+      { title: "Image Manager", url: "/manage/storefront/images" },
     ],
   },
   { title: "Marketing", icon: Megaphone, url: "/marketing" },
