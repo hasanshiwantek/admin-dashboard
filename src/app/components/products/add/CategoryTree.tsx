@@ -39,7 +39,6 @@ export default function CategoryTree({ name }: CategoryTreeProps) {
 
   const { control, setValue, getValues } = useFormContext();
   const [openMap, setOpenMap] = useState<Record<string, boolean>>({});
-
   const categories: Category[] = normalizeCategories(categoriesDataRaw);
 
   const toggleCategory = (id: number) => {
@@ -135,7 +134,3 @@ export default function CategoryTree({ name }: CategoryTreeProps) {
     />
   );
 }
-
-
-
-
