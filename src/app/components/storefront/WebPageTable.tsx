@@ -16,70 +16,34 @@ import OrderActionsDropdown from "../orders/OrderActionsDropdown";
 import { Button } from "@/components/ui/button";
 import Pagination from "@/components/ui/pagination";
 import Link from "next/link";
-import {
-  fetchBrands,
-  deleteBrand,
-  fetchBrandByKeyword,
-} from "@/redux/slices/productSlice";
+import { getWebPages, deleteWebPage } from "@/redux/slices/storefrontSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { useRouter } from "next/navigation";
-import { refetchBrands } from "@/lib/brandUtils";
+import { refetchWebpages } from "@/lib/storeFrontUtils";
 import Spinner from "../loader/Spinner";
-
-// Example array of pages
-const pages = [
-  {
-    id: 1,
-    name: "About Us",
-    type: "Content",
-    visibility: true,
-    actions: ["edit", "delete"],
-  },
-  {
-    id: 2,
-    name: "Contact Us",
-    type: "Form",
-    visibility: true,
-    actions: ["edit", "delete"],
-  },
-  {
-    id: 3,
-    name: "Blog",
-    type: "Content",
-    visibility: false,
-    actions: ["edit", "delete"],
-  },
-];
-
+import { Check, X } from "lucide-react";
 const WebPageTable = () => {
   const router = useRouter();
 
-  const getDropdownActions = (brand: any) => [
+  const getDropdownActions = (page: any) => [
     {
       label: "Edit",
-      //   onClick: () \=> router.push(`/manage/products/brands/edit/${brand.id}`),
+      onClick: () =>
+        router.push(`/manage/storefront/web-pages/edit/${page.id}`),
     },
   ];
   const dispatch = useAppDispatch();
-  const brands = useAppSelector((state: any) => state.product.brands);
-  const loading = useAppSelector((state: any) => state.product.loading);
-
-  const brandData = brands?.data;
-  const pagination = brands?.pagination;
-  const [currentPage, setCurrentPage] = useState(1);
-  const [perPage, setPerPage] = useState("50");
-  const totalCount = pagination?.totalCount;
-  const totalPages = pagination?.totalPages;
-  console.log("Pagination", pagination);
+  const webPages = useAppSelector((state: any) => state.storefront.webPages);
+  const loading = useAppSelector((state: any) => state.storefront.loading);
 
   const [selectedIds, setSelectedIds] = useState<any[]>([]);
 
-  const isAllSelected = selectedIds.length === brandData?.length;
+  const isAllSelected = selectedIds.length === webPages?.length;
 
   const toggleSelectAll = () => {
     const newSelected = isAllSelected
       ? []
-      : brandData.map((brand: any) => brand.id);
+      : webPages.map((brand: any) => brand.id);
     setSelectedIds(newSelected);
     console.log("Selected IDs:", newSelected);
   };
@@ -92,29 +56,29 @@ const WebPageTable = () => {
     console.log("Selected IDs:", newSelected);
   };
 
-  // BRAND DELETION LOGIC
+  // Webpage DELETION LOGIC
 
-  const deleteBrandHandler = async () => {
+  const deleteWebpageHandler = async () => {
     if (selectedIds.length === 0) {
-      alert("Please select at least one brand before deleting.");
+      alert("Please select at least one Webpage before deleting.");
       return; // stop here
     }
-    const confirm = window.confirm("Delete Brand?");
+    const confirm = window.confirm("Delete Webpage?");
     if (!confirm) {
       return;
     } else {
       try {
-        const resultAction = await dispatch(deleteBrand({ id: selectedIds }));
+        const resultAction = await dispatch(deleteWebPage({ id: selectedIds }));
         const result = (resultAction as any).payload;
 
         if ((resultAction as any).meta.requestStatus === "fulfilled") {
-          console.log("✅ Brand deleted successfully:", result);
+          console.log("✅ Webpage deleted successfully:", result);
           setSelectedIds([]);
           setTimeout(() => {
-            refetchBrands(dispatch);
+            refetchWebpages(dispatch);
           }, 700);
         } else {
-          console.error("❌ Failed to delete brand:", result);
+          console.error("❌ Failed to delete webpage:", result);
         }
       } catch (err) {
         console.error("❌ Unexpected error:", err);
@@ -122,34 +86,9 @@ const WebPageTable = () => {
     }
   };
 
-  // SEARCH KEYWORD LOGIC
-
-  const [keyword, setKeyword] = useState("");
-
-  const filterHandler = async () => {
-    console.log("Keyword: ", keyword);
-    try {
-      const resultAction = await dispatch(
-        fetchBrandByKeyword({
-          page: currentPage,
-          pageSize: perPage,
-          keyword: keyword,
-        })
-      );
-      if (fetchBrandByKeyword.fulfilled.match(resultAction)) {
-        console.log(`✅ Fetch Brand Result`);
-        // setKeyword("");
-      } else {
-        console.error("❌ Error fetching Brand");
-      }
-    } catch (err) {
-      console.error("🚨 Unexpected error updating", err);
-    }
-  };
-
   useEffect(() => {
-    dispatch(fetchBrands({ page: currentPage, pageSize: perPage }));
-  }, [dispatch, currentPage, perPage]);
+    dispatch(getWebPages());
+  }, [dispatch]);
 
   return (
     <div className="p-5">
@@ -165,18 +104,12 @@ const WebPageTable = () => {
           <Link href={"/manage/storefront/web-pages/add"}>
             <button className="btn-outline-primary">Create a Web Page</button>
           </Link>
-          <button className="btn-outline-primary" onClick={deleteBrandHandler}>
+          <button
+            className="btn-outline-primary"
+            onClick={deleteWebpageHandler}
+          >
             <Trash className="!w-6 !h-6" />
           </button>
-        </div>
-        <div className="flex justify-end">
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={setCurrentPage}
-            perPage={perPage}
-            onPerPageChange={setPerPage}
-          />
         </div>
       </div>
 
@@ -205,7 +138,7 @@ const WebPageTable = () => {
                   <Spinner />
                 </TableCell>
               </TableRow>
-            ) : pages.length === 0 ? (
+            ) : webPages.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={10}
@@ -215,13 +148,13 @@ const WebPageTable = () => {
                 </TableCell>
               </TableRow>
             ) : (
-              pages.map((page) => (
+              webPages.map((page: any) => (
                 <TableRow key={page.id} className="!h-20">
                   <TableCell className="w-1/6">
                     <Checkbox
                       checked={selectedIds.includes(page.id)}
                       onCheckedChange={() => toggleSelectOne(page.id)}
-                      aria-label={`Select ${page.name}`}
+                      aria-label={`Select ${page.pageName}`}
                     />
                   </TableCell>
                   <TableCell>
@@ -229,14 +162,21 @@ const WebPageTable = () => {
                       href={`/manage/storefront/web-pages/edit/${page.id}`}
                       className="text-blue-600 hover:border-b-blue-600 hover:border-b-2"
                     >
-                      {page.name}
+                      {page.pageName}
                     </Link>
                   </TableCell>
-                  <TableCell>{page.type}</TableCell>
-                  <TableCell>{page.visibility ? "✅" : "❌"}</TableCell>
+                  <TableCell>{page.pageType}</TableCell>
+
+                  <TableCell>
+                    {page.showInNavigation ? (
+                      <Check className="text-green-500 w-8 h-8" />
+                    ) : (
+                      <X className="text-red-500 w-8 h-8" />
+                    )}
+                  </TableCell>
                   <TableCell>
                     <OrderActionsDropdown
-                      actions={getDropdownActions(page?.name)}
+                      actions={getDropdownActions(page)}
                       trigger={
                         <Button
                           variant="ghost"
@@ -253,15 +193,6 @@ const WebPageTable = () => {
             )}
           </TableBody>
         </Table>
-      </div>
-      <div className="flex justify-end my-4">
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={setCurrentPage}
-          perPage={perPage}
-          onPerPageChange={setPerPage}
-        />
       </div>
     </div>
   );

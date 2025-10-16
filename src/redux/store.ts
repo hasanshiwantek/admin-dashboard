@@ -1,20 +1,23 @@
-import { configureStore } from '@reduxjs/toolkit';
-import homeReducer from './slices/homeSlice';
-import authReducer from './slices/authSlice'
-import configReducer from './slices/configSlice'
-import productReducer from "./slices/productSlice"
-import orderReducer from "./slices/orderSlice"
-import categoryReducer from "./slices/categorySlice"
-import customerReducer from "./slices/customerSlice"
+import { configureStore } from "@reduxjs/toolkit";
+import homeReducer from "./slices/homeSlice";
+import authReducer from "./slices/authSlice";
+import configReducer from "./slices/configSlice";
+import productReducer from "./slices/productSlice";
+import orderReducer from "./slices/orderSlice";
+import categoryReducer from "./slices/categorySlice";
+import customerReducer from "./slices/customerSlice";
+import storeReducer from "./slices/storefrontSlice";
+
 export const store = configureStore({
   reducer: {
     home: homeReducer,
     auth: authReducer,
     config: configReducer,
-    product:productReducer,
-    order:orderReducer,
-    category:categoryReducer,
-    customer:customerReducer,
+    product: productReducer,
+    order: orderReducer,
+    category: categoryReducer,
+    customer: customerReducer,
+    storefront: storeReducer,
   },
 });
 
