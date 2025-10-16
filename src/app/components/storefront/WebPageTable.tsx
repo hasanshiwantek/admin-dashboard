@@ -162,7 +162,7 @@ const WebPageTable = () => {
           </p>
         </div>
         <div className="flex items-center gap-5 ">
-          <Link href={"/manage/storefront/webpages"}>
+          <Link href={"/manage/storefront/web-pages/add"}>
             <button className="btn-outline-primary">Create a Web Page</button>
           </Link>
           <button className="btn-outline-primary" onClick={deleteBrandHandler}>
