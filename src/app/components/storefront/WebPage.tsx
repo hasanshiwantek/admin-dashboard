@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   useForm,
   FormProvider,
@@ -20,7 +20,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
+import {
+  createWebpage,
+  getWebPageById,
+  updateWebPage,
+} from "@/redux/slices/storefrontSlice";
+import { useRouter, useParams } from "next/navigation";
 const templates = [
   { label: "-- No Parent Page --", value: "" },
   { label: "Product Condition", value: "172" },
@@ -79,7 +85,7 @@ type FormValues = {
   templateLayoutFile: string;
   displayAsHomePage: boolean;
   restrictToCustomersOnly: boolean;
-  sortOrder: number;
+  sortOrder: string | number;
 };
 
 const WebPage = () => {
@@ -100,6 +106,12 @@ const WebPage = () => {
   const selected = watch("template");
   const pageContent = watch("pageContent");
   const editorRef = useRef<any>(null);
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+  const { id } = useParams();
+  console.log("Id For Edit: ", id);
+
+  const isEdit = !!id;
 
   const options = [
     {
@@ -114,17 +126,56 @@ const WebPage = () => {
     { id: "rawHtml", label: "Contain raw HTML entered in the text area below" },
   ];
 
+  // Fetch page data if editing
+  useEffect(() => {
+    if (isEdit && id) {
+      const fetchPage = async () => {
+        try {
+          const result = await dispatch(getWebPageById({ id: id }));
+          if (getWebPageById.fulfilled.match(result)) {
+            reset(result?.payload?.data);
+            console.log("Web page by id: ", result?.payload);
+          } else {
+            console.error("Failed to fetch page:", result.payload);
+          }
+        } catch (err) {
+          console.error("Error fetching page:", err);
+        }
+      };
+      fetchPage();
+    }
+  }, [isEdit, id, dispatch, reset]);
+
   // Submission handler
-  const onSubmit: SubmitHandler<FormValues> = (data) => {
-    console.log("Form Submitted:", data);
-    // Add your API call or form submission logic here
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    console.log(isEdit ? "Editing page" : "Creating page", data);
+
+    try {
+      let result;
+      if (isEdit && id) {
+        result = await dispatch(updateWebPage({ id, data }));
+      } else {
+        result = await dispatch(createWebpage({ data }));
+      }
+
+      if ((isEdit ? updateWebPage : createWebpage).fulfilled.match(result)) {
+        console.log("Success:", result.payload?.message);
+        router.push("/manage/storefront/web-pages");
+        reset();
+      } else {
+        console.error("Error:", result.payload);
+      }
+    } catch (err) {
+      console.error("Something went wrong!", err);
+    }
   };
 
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="p-5 space-y-5">
-          <div className="flex flex-col space-y-5">
+          <div className="flex flex-col space-y-5 mt-10">
+
             <h1 className="!font-extralight">Edit a Web Page</h1>
             <p>
               To create a web page (such as an "About Us" page or a contact
@@ -245,7 +296,6 @@ const WebPage = () => {
             </div>
           </div>
 
-          {/* NAVIGATION MENU */}
           {/* NAVIGATION MENU */}
           <div className="space-y-4 mt-10">
             <h1 className="!font-semibold text-lg">Navigation Menu Options</h1>
@@ -456,19 +506,19 @@ const WebPage = () => {
             <button
               type="button"
               className="btn-outline-primary"
-              onClick={() => reset()}
+             onClick={()=>router.push("/manage/storefront/web-pages")}
             >
               Cancel
             </button>
             <button type="submit" className="btn-primary">
-              Save and Exit
+              {isEdit ? "Update Page" : "Save and Exit"}
             </button>
             <button
               type="submit"
               className="btn-primary"
-              onClick={() => console.log("Save and Add Another")}
+              onClick={() => router.push("/manage/storefront/web-pages")}
             >
-              Save and Add Another
+              {isEdit ? "Update Page and Add Another" : "Save and Add Another"}
             </button>
           </div>
         </div>
