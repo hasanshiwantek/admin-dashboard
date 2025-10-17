@@ -4,7 +4,6 @@ import "./globals.css";
 import Providers from "./components/Providers";
 import { Source_Sans_3 } from "next/font/google";
 import ProtectedLayout from "@/auth/ProtectedLayout";
-
 const sourceSans = Source_Sans_3({
   subsets: ["latin"],
   weight: ["400", "600", "700"],

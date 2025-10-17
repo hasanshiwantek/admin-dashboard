@@ -125,7 +125,7 @@ const WebPageTable = () => {
                   aria-label="Select all"
                 />
               </TableHead>
-              <TableHead className="text-left">Page Name</TableHead>
+              <TableHead className="text-left ">Page Name</TableHead>
               <TableHead className="text-left">Page Type</TableHead>
               <TableHead className="text-left">Visible</TableHead>
               <TableHead className="text-left">Action</TableHead>
@@ -157,7 +157,7 @@ const WebPageTable = () => {
                       aria-label={`Select ${page.pageName}`}
                     />
                   </TableCell>
-                  <TableCell>
+                  <TableCell >
                     <Link
                       href={`/manage/storefront/web-pages/edit/${page.id}`}
                       className="text-blue-600 hover:border-b-blue-600 hover:border-b-2"
