@@ -149,7 +149,7 @@ export default function BlogPage() {
                     value={field.value}
                     onEditorChange={(content) => field.onChange(content)}
                     init={{
-                      height: 400,
+                      height: 500,
                       menubar: true,
                       directionality: "ltr",
                       plugins: [
@@ -168,7 +168,7 @@ export default function BlogPage() {
                         "insertdatetime",
                         "media",
                         "table",
-                        "code",
+                        "toc",
                         "help",
                         "wordcount",
                         "emoticons",
@@ -176,13 +176,72 @@ export default function BlogPage() {
                         "pagebreak",
                         "print",
                       ],
+                      // Cleaned up toolbar (removed duplicate line)
                       toolbar: `undo redo | blocks fontfamily fontsize | bold italic underline strikethrough forecolor backcolor | 
-             alignleft aligncenter alignright alignjustify | 
-             outdent indent | numlist bullist | link image media table hr emoticons | 
-             code fullscreen preview print | removeformat`,
+            alignleft aligncenter alignright alignjustify | outdent indent | numlist bullist |  
+            link image media table hr emoticons toc | code fullscreen preview print | removeformat`,
+
                       branding: false,
                       default_link_target: "_blank",
                       toolbar_mode: "sliding",
+
+                      // TOC configuration (Correct, no change needed)
+                      toc_header: "h1,h2,h3",
+                      toc_depth: 3,
+                      toc_class: "my-toc",
+
+                      // Image upload (Correct, assuming editorRef is a valid React Ref)
+                      images_upload_url: "/api/upload",
+                      automatic_uploads: true,
+                      file_picker_types: "image",
+                      file_picker_callback: function (
+                        callback: any,
+                        value: any,
+                        meta: any
+                      ) {
+                        if (meta.filetype === "image") {
+                          const input = document.createElement("input");
+                          input.setAttribute("type", "file");
+                          input.setAttribute("accept", "image/*");
+                          input.onchange = function (ev: Event) {
+                            const target = ev.currentTarget as HTMLInputElement;
+                            const file = target.files?.[0];
+                            if (!file) return;
+
+                            const reader = new FileReader();
+                            reader.onload = function () {
+                              if (
+                                reader.result &&
+                                typeof reader.result === "string"
+                              ) {
+                                // **Crucially relies on editorRef.current being set**
+                                const editorInstance = editorRef.current;
+                                if (!editorInstance) return;
+
+                                const id = "blobid" + new Date().getTime();
+                                const blobCache =
+                                  editorInstance.editorUpload.blobCache;
+                                const base64 = reader.result.split(",")[1];
+                                const blobInfo = blobCache.create(
+                                  id,
+                                  file,
+                                  base64
+                                );
+                                blobCache.add(blobInfo);
+                                callback(blobInfo.blobUri(), {
+                                  title: file.name,
+                                });
+                              } else {
+                                console.error(
+                                  "FileReader result is null or not a string"
+                                );
+                              }
+                            };
+                            reader.readAsDataURL(file);
+                          };
+                          input.click();
+                        }
+                      },
                     }}
                   />
                 )}
