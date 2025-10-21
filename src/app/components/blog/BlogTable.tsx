@@ -59,6 +59,7 @@ export default function BlogTable() {
   const editdropdownActions = (post: any) => [
     {
       label: "View",
+         onClick: () => router.push(`/manage/storefront/blog/edit/${post.id}`),
     },
     {
       label: "Edit",
