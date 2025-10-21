@@ -19,12 +19,13 @@ import {
 import { advanceCustomerSearch } from "@/redux/slices/customerSlice";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { useRouter } from "next/navigation";
+import { countriesList } from "@/const/location";
 const SearchCustomer = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const [formData, setFormData] = useState({
     // Advanced Search
-    searchKeywords: '',
+    searchKeywords: "",
     startsWith: "",
     phone: "",
     country: "",
@@ -167,6 +168,7 @@ const SearchCustomer = () => {
                   {/* Country */}
                   <div className="space-y-1">
                     <Label htmlFor="country">Country</Label>
+
                     <Select
                       name="country"
                       value={formData?.country || ""}
@@ -178,9 +180,11 @@ const SearchCustomer = () => {
                         <SelectValue placeholder="-- Choose a country --" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="usa">United States</SelectItem>
-                        <SelectItem value="canada">Canada</SelectItem>
-                        <SelectItem value="uk">United Kingdom</SelectItem>
+                        {countriesList?.map((c, index) => (
+                          <SelectItem key={index} value={c.value}>
+                            {c.label}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>

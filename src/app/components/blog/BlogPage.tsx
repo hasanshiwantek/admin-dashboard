@@ -9,6 +9,13 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Upload } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
+import { useRouter, useParams } from "next/navigation";
+import {
+  createBlog,
+  fetchBlogbyId,
+  updateBlog,
+} from "@/redux/slices/storefrontSlice";
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 export default function BlogPage() {
   type FormValues = {
     title: string;
@@ -20,19 +27,24 @@ export default function BlogPage() {
     thumbnail?: FileList;
   };
 
-  const { register, handleSubmit, control, watch } = useForm<FormValues>({
-    defaultValues: {
-      title: "",
-      body: "",
-      author: "",
-      tags: "",
-      postUrl: "",
-      metaDescription: "",
-    },
-  });
+  const { register, handleSubmit, control, watch, setValue } =
+    useForm<FormValues>({
+      defaultValues: {
+        title: "",
+        body: "",
+        author: "",
+        tags: "",
+        postUrl: "",
+        metaDescription: "",
+      },
+    });
+  const params = useParams();
+  const id = params?.id; // will be undefined if it's a "create" page
 
   const editorRef = useRef<any>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const router = useRouter();
+  const dispatch = useAppDispatch();
   // Watch file input
   const fileList = watch("thumbnail");
 
@@ -46,14 +58,67 @@ export default function BlogPage() {
     }
   }, [fileList]);
 
-  const onSubmit = (data: FormValues) => {
-    console.log("Form Data:", data);
-    // You can send data + file to backend here
+  const onSubmit = async (data: FormValues) => {
+    const formData = new FormData();
+    formData.append("title", data.title);
+    formData.append("body", data.body);
+    formData.append("author", data.author);
+    formData.append("tags", data.tags);
+    formData.append("postUrl", data.postUrl);
+    formData.append("metaDescription", data.metaDescription);
+
+    if (data.thumbnail && data.thumbnail.length > 0) {
+      formData.append("thumbnail", data.thumbnail[0]);
+    }
+
+    try {
+      const resultAction = id
+        ? await dispatch(updateBlog({ id, data: formData }))
+        : await dispatch(createBlog({ data: formData }));
+
+      if (
+        (id && updateBlog.fulfilled.match(resultAction)) ||
+        (!id && createBlog.fulfilled.match(resultAction))
+      ) {
+        console.log("✅ Blog saved successfully:", resultAction.payload);
+        setTimeout(() => {
+          router.push("/manage/storefront/blog");
+        }, 2000);
+      } else {
+        console.error("❌ Blog save failed:", resultAction.payload);
+      }
+    } catch (err) {
+      console.error("🔥 Error dispatching:", err);
+    }
+  };
+
+  useEffect(() => {
+    if (id) {
+      dispatch(fetchBlogbyId({ id }))
+        .unwrap()
+        .then((res) => {
+          const blog = res?.data || res?.data?.data; // depends on backend response structure
+          setValue("title", blog.title);
+          setValue("body", blog.body);
+          setValue("author", blog.author);
+          setValue("tags", blog.tags);
+          setValue("postUrl", blog.postUrl);
+          setValue("metaDescription", blog.metaDescription);
+          if (blog.thumbnail) setPreview(blog.thumbnail);
+        })
+        .catch((err) => console.error("Failed to load blog:", err));
+    }
+  }, [id, dispatch, setValue]);
+
+  const handleDraftSave = () => {
+    alert("Saved to draft");
   };
 
   return (
     <div className="">
-      <h1 className="!font-light my-5">New Blog Post</h1>
+      <h1 className="!font-light my-5">
+        {id ? "Edit Blog Post" : "New Blog Post"}
+      </h1>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="  bg-white p-10 rounded-sm shadow-md">
@@ -143,7 +208,7 @@ export default function BlogPage() {
               />
             </div>
             {/* File Upload */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 relative">
               <Label className="w-[100px]">
                 Summary Thumbnail Image (optional)
               </Label>
@@ -159,12 +224,30 @@ export default function BlogPage() {
               >
                 <Upload className="h-8 w-8" /> Choose File
               </label>
+
+              {/* Preview */}
               {preview && (
-                <img
-                  src={preview}
-                  alt="Preview"
-                  className="h-40 w-40 object-cover rounded-md"
-                />
+                <div className="relative">
+                  <img
+                    src={preview}
+                    alt="Preview"
+                    className="h-40 w-40 object-cover rounded-xs"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPreview(null);
+                      // Clear the file input manually
+                      const input = document.getElementById(
+                        "thumbnail"
+                      ) as HTMLInputElement;
+                      if (input) input.value = "";
+                    }}
+                    className="absolute top-1 right-1 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-full w-8 h-8 flex items-center justify-center text-3xl font-bold shadow"
+                  >
+                    ×
+                  </button>
+                </div>
               )}
             </div>
           </div>
@@ -175,7 +258,7 @@ export default function BlogPage() {
         {/* SEO Section */}
         <div className="mb-30">
           <div className="  bg-white p-10 rounded-sm shadow-md ">
-            <h1 className="!font-light my-5">SEO (optional)</h1>
+            <h1 className="!font-bold my-5">SEO (optional)</h1>
             <div className="ml-30 flex flex-col gap-10">
               <div className="flex items-center gap-4">
                 <Label htmlFor="Your post URL" className="w-[100px]">
@@ -199,14 +282,22 @@ export default function BlogPage() {
 
         {/* FORM ACTION BUTTONS */}
         <div className="flex justify-end gap-4 items-center fixed w-full bottom-0 right-0 bg-white/90 z-10 shadow-xs border-t p-4 ">
-          <button type="button" className="btn-outline-primary">
+          <button
+            type="button"
+            className="btn-outline-primary"
+            onClick={() => router.push("/manage/storefront/blog/")}
+          >
             Cancel
           </button>
-          <button type="submit" className="btn-outline-primary">
+          <button
+            type="button"
+            className="btn-outline-primary"
+            onClick={handleDraftSave}
+          >
             Save Draft
           </button>
           <button type="submit" className="btn-primary">
-            Publish
+            {id ? "Update" : "Publish"}
           </button>
         </div>
       </form>

@@ -91,11 +91,103 @@ export const deleteWebPage = createAsyncThunk(
   }
 );
 
+// ADD BLOG
+export const createBlog = createAsyncThunk(
+  "storefront/createBlog",
+  async ({ data }: { data: any }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.post(`dashboard/blogs/add-blog`, data);
+      console.log("Add blog Response: ", res?.data);
+      return res.data;
+    } catch (err: any) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to create blog post"
+      );
+    }
+  }
+);
+
+// ADD BLOG
+export const fetchBlogs = createAsyncThunk(
+  "storefront/fetchBlogs",
+  async (_, thunkAPI) => {
+    try {
+      const res = await axiosInstance.get(`dashboard/blogs/get-blog`);
+      console.log("Fetch blog Response: ", res?.data);
+      return res.data;
+    } catch (err: any) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to fetch blog post"
+      );
+    }
+  }
+);
+
+// FETCH BLOG BY ID
+export const fetchBlogbyId = createAsyncThunk(
+  "storefront/fetchBlogbyId",
+  async ({ id }: { id: any }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.get(
+        `dashboard/blogs/get-blogSingle/${id}`
+      );
+      console.log("Fetch blog Response by id: ", res?.data);
+      return res.data;
+    } catch (err: any) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to fetch blog post by id"
+      );
+    }
+  }
+);
+
+// UPDATE BLOG
+export const updateBlog = createAsyncThunk(
+  "storefront/updateBlog",
+  async ({ id, data }: { id: any; data: any }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.post(
+        `dashboard/blogs/update-blog/${id}`,
+        data
+      );
+      console.log("Update blog Response by id: ", res?.data);
+      return res?.data;
+    } catch (err: any) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to update blog"
+      );
+    }
+  }
+);
+
+export const deleteBlog = createAsyncThunk(
+  "storefront/deleteBlog",
+  async ({ id }: { id: any }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.delete(
+        `dashboard/blogs/delete-blog/${id}`
+      );
+      console.log("Delete blog Response by id: ", res?.data);
+      return res?.data;
+    } catch (err: any) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to delete blog"
+      );
+    }
+  }
+);
+
 // 2. Initial State
 const initialState = {
   loading: false,
   error: null as string | null,
   webPages: [],
+  blogs: [],
 };
 
 // 3. Slice
@@ -124,6 +216,17 @@ const homeSlice = createSlice({
         state.webPages = action?.payload;
       })
       .addCase(getWebPages.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "Failed to  webpage";
+      })
+      .addCase(fetchBlogs.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchBlogs.fulfilled, (state, action) => {
+        state.loading = false;
+        state.blogs = action?.payload;
+      })
+      .addCase(fetchBlogs.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || "Failed to  webpage";
       });
