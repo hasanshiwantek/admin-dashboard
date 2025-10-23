@@ -3,6 +3,7 @@ import React, { useState, useRef } from "react";
 import { Settings, HelpCircle, Save, X, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import Link from "next/link";
 // Slide ki structure (dikhane ke liye)
 interface Slide {
   id: number;
@@ -89,7 +90,7 @@ const Carousel = () => {
 
     const remainingSlides = slides.filter((slide) => slide.id !== id);
 
-    let newActiveId = remainingSlides[0].id; // Bachche hue slides mein pehli slide ko active bana do
+    const newActiveId = remainingSlides[0].id; // Bachche hue slides mein pehli slide ko active bana do
 
     setSlides(remainingSlides);
     setActiveSlideId(newActiveId);
