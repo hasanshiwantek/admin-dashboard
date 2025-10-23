@@ -25,6 +25,7 @@ export default function BlogPage() {
     postUrl: string;
     metaDescription: string;
     thumbnail?: FileList;
+    isDraft?: boolean;
   };
 
   const { register, handleSubmit, control, watch, setValue } =
@@ -36,6 +37,7 @@ export default function BlogPage() {
         tags: "",
         postUrl: "",
         metaDescription: "",
+        isDraft: false,
       },
     });
   const params = useParams();
@@ -47,6 +49,7 @@ export default function BlogPage() {
   const dispatch = useAppDispatch();
   // Watch file input
   const fileList = watch("thumbnail");
+  const [isDraft, setIsDraft] = useState(false); // 👈 state for draft toggle
 
   useEffect(() => {
     if (fileList && fileList.length > 0) {
@@ -66,6 +69,7 @@ export default function BlogPage() {
     formData.append("tags", data.tags);
     formData.append("postUrl", data.postUrl);
     formData.append("metaDescription", data.metaDescription);
+    formData.append("isDraft", isDraft ? "true" : "false"); // 👈 add draft flag
 
     if (data.thumbnail && data.thumbnail.length > 0) {
       formData.append("thumbnail", data.thumbnail[0]);
@@ -110,8 +114,18 @@ export default function BlogPage() {
     }
   }, [id, dispatch, setValue]);
 
+  // 👇 Save draft triggers submit with draft = true
   const handleDraftSave = () => {
-    alert("Saved to draft");
+    console.log("Draft clicked",isDraft);
+    
+    setIsDraft(true);
+    handleSubmit(onSubmit)();
+  };
+
+  // 👇 Publish triggers submit with draft = false
+  const handlePublish = () => {
+    setIsDraft(false);
+    handleSubmit(onSubmit)();
   };
 
   return (
@@ -355,7 +369,7 @@ export default function BlogPage() {
           >
             Save Draft
           </button>
-          <button type="submit" className="btn-primary">
+          <button type="button" className="btn-primary" onClick={handlePublish}>
             {id ? "Update" : "Publish"}
           </button>
         </div>
