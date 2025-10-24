@@ -267,6 +267,24 @@ export const fetchCarousal = createAsyncThunk(
   }
 );
 
+export const deleteCarousal = createAsyncThunk(
+  "storefront/deleteCarousal",
+  async (id: any, thunkAPI) => {
+    try {
+      const res = await axiosInstance.delete(
+        `dashboard/carousels/delete-carousel/${id}`
+      );
+      console.log("delete Carousal Response: ", res?.data);
+      return res.data;
+    } catch (err: any) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to delete Carousal"
+      );
+    }
+  }
+);
+
 // 2. Initial State
 const initialState = {
   loading: false,

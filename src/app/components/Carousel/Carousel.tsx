@@ -4,7 +4,11 @@ import { Settings, HelpCircle, Save, X, Plus } from "lucide-react";
 import { useForm, Controller } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
-import { addCarousel, fetchCarousal } from "@/redux/slices/storefrontSlice";
+import {
+  addCarousel,
+  fetchCarousal,
+  deleteCarousal,
+} from "@/redux/slices/storefrontSlice";
 import Spinner from "../loader/Spinner";
 
 interface Slide {
@@ -112,16 +116,44 @@ const Carousel = () => {
     setActiveSlideId(newId);
   };
 
-  const handleDeleteSlide = (e: React.MouseEvent, id: number) => {
+  const handleDeleteSlide = async (e: React.MouseEvent, id: number) => {
     e.stopPropagation();
-    if (slides.length <= 1) {
-      alert("Aap aakhri slide delete nahi kar sakte.");
+
+    if (slides.length < 1) {
+      alert("You cannot delete the last remaining slide.");
       return;
     }
 
-    const remainingSlides = slides.filter((slide) => slide.id !== id);
-    setSlides(remainingSlides);
-    setActiveSlideId(remainingSlides[0].id);
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this slide?"
+    );
+    if (!confirmed) return;
+
+    try {
+      const response = await dispatch(deleteCarousal(id));
+      if (deleteCarousal.fulfilled.match(response)) {
+        setTimeout(async () => {
+          await dispatch(fetchCarousal());
+        }, 2000);
+
+        const updatedSlides = slides.filter((slide) => slide.id !== id);
+        setSlides(updatedSlides);
+
+        if (updatedSlides.length > 0) {
+          setActiveSlideId(updatedSlides[0].id);
+        } else {
+          setActiveSlideId(0);
+        }
+
+        console.log("✅ Slide deleted successfully");
+      } else {
+        console.error("❌ Failed to delete slide");
+        alert("Failed to delete the slide from the server.");
+      }
+    } catch (err) {
+      console.error("❌ Error deleting slide:", err);
+      alert("An error occurred while deleting the slide.");
+    }
   };
 
   const triggerImageUpload = () => {
@@ -195,6 +227,9 @@ const Carousel = () => {
 
       const response = await dispatch(addCarousel({ data: formData }));
       if (addCarousel.fulfilled.match(response)) {
+        setTimeout(async () => {
+          await dispatch(fetchCarousal());
+        }, 2000);
         console.log("✅ Carousel added successfully");
       } else {
         console.log("❌ Failed adding carousel");
@@ -359,13 +394,7 @@ const Carousel = () => {
             <div className="flex-1 max-w-[200px] flex flex-col">
               <Label className="w-24">Link</Label>
               <input
-                {...register("link", {
-                  required: "Link is required",
-                  pattern: {
-                    value: /^https?:\/\//,
-                    message: "Link must start with http or https",
-                  },
-                })}
+                {...register("link")}
                 value={activeSlide.link}
                 onChange={(e) => {
                   const val = e.target.value;
