@@ -1,12 +1,12 @@
 "use client";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import { Settings, HelpCircle, Save, X, Plus } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { useForm, Controller } from "react-hook-form";
 import { Label } from "@/components/ui/label";
-import Link from "next/link";
-import { addCarousel } from "@/redux/slices/storefrontSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
-// Slide ki structure (dikhane ke liye)
+import { addCarousel, fetchCarousal } from "@/redux/slices/storefrontSlice";
+import Spinner from "../loader/Spinner";
+
 interface Slide {
   id: number;
   heading: string;
@@ -17,7 +17,6 @@ interface Slide {
   altText: string;
 }
 
-// Shuruaati (initial) slides: AB KHAALI HAI
 const initialSlides: Slide[] = [];
 
 const defaultNewSlide: Slide = {
@@ -27,37 +26,68 @@ const defaultNewSlide: Slide = {
   buttonText: "",
   link: "",
   imageUrl:
-    "https://via.placeholder.com/800x400/CCCCCC/666666?text=Add+your+first+image", // Default placeholder for a new empty slide
+    "https://via.placeholder.com/800x400/CCCCCC/666666?text=Add+your+first+image",
   altText: "",
 };
 
 const Carousel = () => {
-  // Shuruaat mein slides khaali hain
   const [slides, setSlides] = useState<Slide[]>(initialSlides);
-  // Jab koi slide nahi hai, toh activeId 0 (ya null) hoga
   const [activeSlideId, setActiveSlideId] = useState<number>(0);
-
   const [settings, setSettings] = useState({ swapInterval: 5 });
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const dispatch = useAppDispatch();
+  const { carouselData, loading } =
+    useAppSelector((state: any) => state.storefront) || {};
+  const logo = carouselData?.data;
 
-  // Active Slide ka data nikalna. Agar koi slide nahi hai, toh default empty data use karein.
+  const {
+    register,
+    handleSubmit,
+    reset,
+    control,
+    formState: { errors },
+  } = useForm<Slide>({
+    mode: "onChange",
+    defaultValues: defaultNewSlide,
+  });
+
+  useEffect(() => {
+    dispatch(fetchCarousal());
+  }, [dispatch]);
+
+  // Memoize carousel slides
+  const memoizedSlides = useMemo(() => {
+    if (!carouselData?.slides) return [];
+    return carouselData.slides.map((s: any) => ({
+      id: s.id,
+      heading: s.heading || "",
+      text: s.text || "",
+      buttonText: s.buttonText || "",
+      link: s.link || "#",
+      imageUrl:
+        s.image ||
+        "https://via.placeholder.com/800x400/CCCCCC/666666?text=Add+Image",
+      altText: s.altText || "",
+    }));
+  }, [carouselData]);
+  console.log("dddddddddddddddd", memoizedSlides);
+
+  useEffect(() => {
+    if (memoizedSlides.length > 0) {
+      setSlides((prevSlides) => {
+        const existingIds = prevSlides.map((s) => s.id);
+        const newSlides = memoizedSlides.filter(
+          (s: any) => !existingIds.includes(s.id)
+        );
+        return [...prevSlides, ...newSlides];
+      });
+
+      setActiveSlideId((prev) => (prev === 0 ? memoizedSlides[0].id : prev));
+    }
+  }, [memoizedSlides]);
+
   const activeSlide =
     slides.find((slide) => slide.id === activeSlideId) || defaultNewSlide;
-  const dispatch = useAppDispatch();
-
-  // --- Handlers ---
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    // Sirf tab update karo jab koi slide active ho (activeSlideId > 0)
-    if (activeSlideId > 0) {
-      setSlides((prevSlides) =>
-        prevSlides.map((slide) =>
-          slide.id === activeSlideId ? { ...slide, [name]: value } : slide
-        )
-      );
-    }
-  };
 
   const handleSettingsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSettings({
@@ -66,7 +96,6 @@ const Carousel = () => {
     });
   };
 
-  // Nayi slide add karna
   const handleAddSlide = () => {
     const newId =
       slides.length > 0 ? Math.max(...slides.map((s) => s.id), 0) + 1 : 1;
@@ -83,7 +112,6 @@ const Carousel = () => {
     setActiveSlideId(newId);
   };
 
-  // Slide delete karna
   const handleDeleteSlide = (e: React.MouseEvent, id: number) => {
     e.stopPropagation();
     if (slides.length <= 1) {
@@ -92,14 +120,10 @@ const Carousel = () => {
     }
 
     const remainingSlides = slides.filter((slide) => slide.id !== id);
-
-    const newActiveId = remainingSlides[0].id; // Bachche hue slides mein pehli slide ko active bana do
-
     setSlides(remainingSlides);
-    setActiveSlideId(newActiveId);
+    setActiveSlideId(remainingSlides[0].id);
   };
 
-  // Image upload trigger karna (Browse button)
   const triggerImageUpload = () => {
     if (activeSlideId > 0) {
       fileInputRef.current?.click();
@@ -108,7 +132,6 @@ const Carousel = () => {
     }
   };
 
-  // File select hone par image ko base64 mein convert karke state mein save karna
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file && activeSlideId > 0) {
@@ -127,21 +150,7 @@ const Carousel = () => {
     }
   };
 
-  //   const handleSave = () => {
-  //     if (slides.length === 0) {
-  //       alert("Please add at least one slide to save the carousel.");
-  //       return;
-  //     }
-  //     console.log("Final Carousel Data:", { settings, slides });
-
-  //     alert("All carousel data saved successfully!");
-
-  //     setSlides(initialSlides);
-  //     setActiveSlideId(0);
-  //     setSettings({ swapInterval: 5 });
-  //   };
-
-  const handleSave = async () => {
+  const onSubmit = async () => {
     if (slides.length === 0) {
       alert("Please add at least one slide to save the carousel.");
       return;
@@ -149,14 +158,11 @@ const Carousel = () => {
 
     try {
       const formData = new FormData();
-
-      // Append settings
       formData.append(
         "settings[swapInterval]",
         settings.swapInterval.toString()
       );
 
-      // Append each slide data
       slides.forEach((slide, index) => {
         formData.append(`slides[${index}][id]`, slide.id.toString());
         formData.append(`slides[${index}][heading]`, slide.heading);
@@ -165,7 +171,6 @@ const Carousel = () => {
         formData.append(`slides[${index}][link]`, slide.link);
         formData.append(`slides[${index}][altText]`, slide.altText);
 
-        // Handle image (if it’s base64, convert to blob)
         if (slide.imageUrl.startsWith("data:image")) {
           const byteString = atob(slide.imageUrl.split(",")[1]);
           const mimeString = slide.imageUrl
@@ -184,25 +189,17 @@ const Carousel = () => {
             `slide-${slide.id}.png`
           );
         } else {
-          // If it's a URL, just send the string
           formData.append(`slides[${index}][imageUrl]`, slide.imageUrl);
         }
       });
 
-      // Debug preview of FormData
-      console.log("📦 FormData Preview:");
-      for (const [key, value] of formData.entries()) {
-        console.log(`${key}:`, value);
-      }
-
-      // --- Example API call ---
       const response = await dispatch(addCarousel({ data: formData }));
       if (addCarousel.fulfilled.match(response)) {
-        console.log("Carousel added successfully✅", response?.payload.message);
+        console.log("✅ Carousel added successfully");
       } else {
-        console.log("Failed adding carousel❌", response?.payload);
+        console.log("❌ Failed adding carousel");
       }
-      // Reset form after save
+
       setSlides(initialSlides);
       setActiveSlideId(0);
       setSettings({ swapInterval: 5 });
@@ -212,37 +209,46 @@ const Carousel = () => {
     }
   };
 
-  const renderSlideAltTexts = () => (
-    <div className="flex justify-start gap-3 mt-1 text-xs">
-      {slides.map((slide) => (
-        <div key={`alt-${slide.id}`} className="w-[100px] text-center">
-          <input
-            type="text"
-            placeholder="Alt Text"
-            value={slide.altText}
-            name="altText"
-            onChange={(e) => {
-              const { value } = e.target;
-              setSlides((prevSlides) =>
-                prevSlides.map((s) =>
-                  s.id === slide.id ? { ...s, altText: value } : s
-                )
-              );
-            }}
-            className="w-full border-b border-gray-300 focus:border-blue-500 outline-none text-center p-1"
-          />
-        </div>
-      ))}
-      <div className="w-[100px]"></div>
-    </div>
-  );
+  const handleAltTextChange = (index: number, value: string) => {
+    const updatedSlides = [...slides];
+    updatedSlides[index].altText = value;
+    setSlides(updatedSlides);
+  };
+  const renderSlideAltTexts = () => {
+    if (!slides || slides.length === 0) return null;
+
+    return (
+      <div className="mt-4 space-y-2">
+        {slides.map((slide, index) => (
+          <div key={index} className="flex flex-col">
+            <label className="text-sm font-medium text-gray-700">
+              Alt Text for Slide {index + 1}
+            </label>
+            <input
+              type="text"
+              value={slide.altText || ""}
+              onChange={(e) => handleAltTextChange(index, e.target.value)}
+              className="mt-1 p-2 border rounded-md"
+              placeholder="Enter alt text for accessibility..."
+            />
+          </div>
+        ))}
+      </div>
+    );
+  };
 
   return (
-    <div>
-      <div className=" pb-20">
-        {/* Header (No change) */}
-        <div className="flex justify-between items-center p-6  ">
-          <h1 className="!font-semibold ">Homepage carousel</h1>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <div className="p-4">
+        {loading && (
+          <div className="fixed inset-0 flex items-center justify-center bg-white/70 z-50">
+            <Spinner />
+          </div>
+        )}
+      </div>
+      <div className="pb-20">
+        <div className="flex justify-between items-center p-6">
+          <h1 className="!font-semibold">Homepage carousel</h1>
           <a
             href="#"
             className="text-sm text-blue-600 hover:text-blue-800 flex items-center"
@@ -252,7 +258,6 @@ const Carousel = () => {
         </div>
 
         <div className="p-6">
-          {/* Hidden File Input */}
           <input
             type="file"
             ref={fileInputRef}
@@ -261,77 +266,138 @@ const Carousel = () => {
             className="hidden"
           />
 
-          {/* --- Input Fields (Active Slide Data) --- */}
+          {/* Active Slide Fields */}
+
           <div
-            className={`flex flex-wrap gap-4 items-end mb-6 bg-white p-4 rounded-lg shadow-sm border ${
-              activeSlideId === 0 ? "opacity-60 pointer-events-none" : ""
-            }`}
+            className={`flex flex-wrap gap-4 ${
+              errors.heading || errors.text || errors.buttonText || errors.link
+                ? "items-center"
+                : "items-end"
+            }
+ mb-6 bg-white p-4 rounded-lg shadow-sm border ${
+   activeSlideId === 0 ? "opacity-60 pointer-events-none" : ""
+ }`}
           >
             {/* HEADING FIELD */}
             <div className="flex-1 max-w-[200px] flex flex-col mr-5">
-              <div className="flex items-center gap-3">
-                <Label className=" w-24">Heading</Label>
-                <input
-                  name="heading"
-                  type="text"
-                  value={activeSlide.heading}
-                  onChange={handleChange}
-                  className="p-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500 flex-1"
-                />
-              </div>
+              <Label className="w-24">Heading</Label>
+              <input
+                {...register("heading", { required: "Heading is required" })}
+                value={activeSlide.heading}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setSlides((prev) =>
+                    prev.map((s) =>
+                      s.id === activeSlideId ? { ...s, heading: val } : s
+                    )
+                  );
+                }}
+                className={`p-2 border rounded w-full min-h-[38px] ${
+                  errors.heading ? "border-red-500" : "border-gray-300"
+                } focus:ring-blue-500 focus:border-blue-500`}
+              />
+              {errors.heading && (
+                <p className="text-xs text-red-500 mt-1">
+                  {errors.heading.message}
+                </p>
+              )}
             </div>
 
             {/* TEXT FIELD */}
             <div className="flex-1 max-w-[200px] flex flex-col">
-              <div className="flex items-center gap-1">
-                <Label className="w-24">Text</Label>
-                <input
-                  name="text"
-                  type="text"
-                  value={activeSlide.text}
-                  onChange={handleChange}
-                  className="p-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500 flex-1"
-                />
-              </div>
+              <Label className="w-24">Text</Label>
+              <input
+                {...register("text", { required: "Text is required" })}
+                value={activeSlide.text}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setSlides((prev) =>
+                    prev.map((s) =>
+                      s.id === activeSlideId ? { ...s, text: val } : s
+                    )
+                  );
+                }}
+                className={`p-2 border rounded w-full min-h-[38px] ${
+                  errors.text ? "border-red-500" : "border-gray-300"
+                } focus:ring-blue-500 focus:border-blue-500`}
+              />
+              {errors.text && (
+                <p className="text-xs text-red-500 mt-1">
+                  {errors.text.message}
+                </p>
+              )}
             </div>
 
             {/* BUTTON TEXT FIELD */}
             <div className="flex-1 max-w-[220px] flex flex-col">
-              <div className="flex items-center gap-3">
-                <Label className="w-24 whitespace-nowrap">Button Text</Label>
-                <input
-                  name="buttonText"
-                  type="text"
-                  value={activeSlide.buttonText}
-                  onChange={handleChange}
-                  className="p-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500 flex-1"
-                />
-              </div>
+              <Label className="w-24 whitespace-nowrap">Button Text</Label>
+              <input
+                {...register("buttonText", {
+                  required: "Button text is required",
+                })}
+                value={activeSlide.buttonText}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setSlides((prev) =>
+                    prev.map((s) =>
+                      s.id === activeSlideId ? { ...s, buttonText: val } : s
+                    )
+                  );
+                }}
+                className={`p-2 border rounded w-full min-h-[38px] ${
+                  errors.buttonText ? "border-red-500" : "border-gray-300"
+                } focus:ring-blue-500 focus:border-blue-500`}
+              />
+              {errors.buttonText && (
+                <p className="text-xs text-red-500 mt-1">
+                  {errors.buttonText.message}
+                </p>
+              )}
             </div>
 
             {/* LINK FIELD */}
             <div className="flex-1 max-w-[200px] flex flex-col">
-              <div className="flex items-center gap-3">
-                <Label className=" w-24">Link</Label>
-                <input
-                  name="link"
-                  type="text"
-                  value={activeSlide.link}
-                  onChange={handleChange}
-                  placeholder="Enter destination link"
-                  className="p-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500 flex-1"
-                />
-              </div>
+              <Label className="w-24">Link</Label>
+              <input
+                {...register("link", {
+                  required: "Link is required",
+                  pattern: {
+                    value: /^https?:\/\//,
+                    message: "Link must start with http or https",
+                  },
+                })}
+                value={activeSlide.link}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setSlides((prev) =>
+                    prev.map((s) =>
+                      s.id === activeSlideId ? { ...s, link: val } : s
+                    )
+                  );
+                }}
+                placeholder="Enter destination link"
+                className={`p-2 border rounded w-full min-h-[38px] ${
+                  errors.link ? "border-red-500" : "border-gray-300"
+                } focus:ring-blue-500 focus:border-blue-500`}
+              />
+              {errors.link && (
+                <p className="text-xs text-red-500 mt-1">
+                  {errors.link.message}
+                </p>
+              )}
             </div>
 
-            {/* BROWSE Button */}
-            <button
-              onClick={triggerImageUpload}
-              className="h-[42px] px-4 py-2 bg-gray-100 border border-gray-300 text-blue-600 rounded hover:bg-gray-200 transition self-end font-medium"
-              disabled={activeSlideId === 0} // Agar koi slide nahi toh disabled
-            >
-              Browse Image
-            </button>
+            {/* BROWSE IMAGE BUTTON */}
+            <div className="flex-1 justify-center items-center">
+              <button
+                type="button"
+                onClick={triggerImageUpload}
+                className="h-[42px] px-4 py-2 bg-gray-100 border border-gray-300 text-blue-600 rounded hover:bg-gray-200 transition self-end font-medium"
+                disabled={activeSlideId === 0}
+              >
+                Browse Image
+              </button>
+            </div>
           </div>
 
           {/* --- Main Content: Preview & Settings --- */}
@@ -468,16 +534,15 @@ const Carousel = () => {
         </div>
       </div>
 
-      {/* FORM ACTION BUTTONS */}
       <div className="flex justify-end gap-4 items-center fixed w-full bottom-0 right-0 bg-white/90 z-10 shadow-xs border-t p-4">
         <button type="button" className="btn-outline-primary">
           Cancel
         </button>
-        <button type="submit" onClick={handleSave} className="btn-primary">
+        <button type="submit" className="btn-primary">
           Save
         </button>
       </div>
-    </div>
+    </form>
   );
 };
 

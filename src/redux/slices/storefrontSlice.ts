@@ -214,6 +214,24 @@ export const fetchLogo = createAsyncThunk(
   }
 );
 
+export const deleteLogo = createAsyncThunk(
+  "storefront/deleteLogo",
+  async ({ id }: { id: any }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.delete(
+        `dashboard/logos/delete-logo/${id}`
+      );
+      console.log("Delete logo Response by id: ", res?.data);
+      return res?.data;
+    } catch (err: any) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to delete logo"
+      );
+    }
+  }
+);
+
 export const addCarousel = createAsyncThunk(
   "storefront/addCarousel",
   async ({ data }: { data: any }, thunkAPI) => {
@@ -233,6 +251,22 @@ export const addCarousel = createAsyncThunk(
   }
 );
 
+export const fetchCarousal = createAsyncThunk(
+  "storefront/fetchCarousal",
+  async (_, thunkAPI) => {
+    try {
+      const res = await axiosInstance.get(`dashboard/carousels/get-crousel`);
+      console.log("Fetch Carousal Response: ", res?.data);
+      return res.data;
+    } catch (err: any) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to fetch Carousal"
+      );
+    }
+  }
+);
+
 // 2. Initial State
 const initialState = {
   loading: false,
@@ -240,6 +274,7 @@ const initialState = {
   webPages: [],
   blogs: [],
   logoData: [],
+  carouselData: [],
 };
 
 // 3. Slice
@@ -292,6 +327,17 @@ const homeSlice = createSlice({
       .addCase(fetchLogo.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || "Failed to  fetch logo";
+      })
+      .addCase(fetchCarousal.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchCarousal.fulfilled, (state, action) => {
+        state.loading = false;
+        state.carouselData = action.payload;
+      })
+      .addCase(fetchCarousal.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action?.error?.message || "Failed to  fetch Carousal";
       });
   },
 });
