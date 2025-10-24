@@ -4,6 +4,8 @@ import { Settings, HelpCircle, Save, X, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
+import { addCarousel } from "@/redux/slices/storefrontSlice";
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 // Slide ki structure (dikhane ke liye)
 interface Slide {
   id: number;
@@ -41,6 +43,7 @@ const Carousel = () => {
   // Active Slide ka data nikalna. Agar koi slide nahi hai, toh default empty data use karein.
   const activeSlide =
     slides.find((slide) => slide.id === activeSlideId) || defaultNewSlide;
+  const dispatch = useAppDispatch();
 
   // --- Handlers ---
 
@@ -124,18 +127,89 @@ const Carousel = () => {
     }
   };
 
-  const handleSave = () => {
+  //   const handleSave = () => {
+  //     if (slides.length === 0) {
+  //       alert("Please add at least one slide to save the carousel.");
+  //       return;
+  //     }
+  //     console.log("Final Carousel Data:", { settings, slides });
+
+  //     alert("All carousel data saved successfully!");
+
+  //     setSlides(initialSlides);
+  //     setActiveSlideId(0);
+  //     setSettings({ swapInterval: 5 });
+  //   };
+
+  const handleSave = async () => {
     if (slides.length === 0) {
       alert("Please add at least one slide to save the carousel.");
       return;
     }
-    console.log("Final Carousel Data:", { settings, slides });
 
-    alert("All carousel data saved successfully!");
+    try {
+      const formData = new FormData();
 
-    setSlides(initialSlides);
-    setActiveSlideId(0);
-    setSettings({ swapInterval: 5 });
+      // Append settings
+      formData.append(
+        "settings[swapInterval]",
+        settings.swapInterval.toString()
+      );
+
+      // Append each slide data
+      slides.forEach((slide, index) => {
+        formData.append(`slides[${index}][id]`, slide.id.toString());
+        formData.append(`slides[${index}][heading]`, slide.heading);
+        formData.append(`slides[${index}][text]`, slide.text);
+        formData.append(`slides[${index}][buttonText]`, slide.buttonText);
+        formData.append(`slides[${index}][link]`, slide.link);
+        formData.append(`slides[${index}][altText]`, slide.altText);
+
+        // Handle image (if it’s base64, convert to blob)
+        if (slide.imageUrl.startsWith("data:image")) {
+          const byteString = atob(slide.imageUrl.split(",")[1]);
+          const mimeString = slide.imageUrl
+            .split(",")[0]
+            .split(":")[1]
+            .split(";")[0];
+          const ab = new ArrayBuffer(byteString.length);
+          const ia = new Uint8Array(ab);
+          for (let i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+          }
+          const blob = new Blob([ab], { type: mimeString });
+          formData.append(
+            `slides[${index}][image]`,
+            blob,
+            `slide-${slide.id}.png`
+          );
+        } else {
+          // If it's a URL, just send the string
+          formData.append(`slides[${index}][imageUrl]`, slide.imageUrl);
+        }
+      });
+
+      // Debug preview of FormData
+      console.log("📦 FormData Preview:");
+      for (const [key, value] of formData.entries()) {
+        console.log(`${key}:`, value);
+      }
+
+      // --- Example API call ---
+      const response = await dispatch(addCarousel({ data: formData }));
+      if (addCarousel.fulfilled.match(response)) {
+        console.log("Carousel added successfully✅", response?.payload.message);
+      } else {
+        console.log("Failed adding carousel❌", response?.payload);
+      }
+      // Reset form after save
+      setSlides(initialSlides);
+      setActiveSlideId(0);
+      setSettings({ swapInterval: 5 });
+    } catch (err) {
+      console.error("❌ Error saving carousel:", err);
+      alert("⚠️ Failed to save carousel data.");
+    }
   };
 
   const renderSlideAltTexts = () => (
