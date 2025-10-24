@@ -182,12 +182,64 @@ export const deleteBlog = createAsyncThunk(
   }
 );
 
+export const createLogo = createAsyncThunk(
+  "storefront/createLogo",
+  async ({ data }: { data: any }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.post(`dashboard/logos/add-logo`, data);
+      console.log("Add logo Response: ", res?.data);
+      return res.data;
+    } catch (err: any) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to add logo"
+      );
+    }
+  }
+);
+
+export const fetchLogo = createAsyncThunk(
+  "storefront/fetchLogo",
+  async (_, thunkAPI) => {
+    try {
+      const res = await axiosInstance.get(`dashboard/logos/get-logos`);
+      console.log("Fetch logo Response: ", res?.data);
+      return res.data;
+    } catch (err: any) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to fetch logo"
+      );
+    }
+  }
+);
+
+export const addCarousel = createAsyncThunk(
+  "storefront/addCarousel",
+  async ({ data }: { data: any }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.post(
+        `dashboard/carousels/add-crousel`,
+        data
+      );
+      console.log("Add Carousel Response: ", res?.data);
+      return res.data;
+    } catch (err: any) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to add carousel"
+      );
+    }
+  }
+);
+
 // 2. Initial State
 const initialState = {
   loading: false,
   error: null as string | null,
   webPages: [],
   blogs: [],
+  logoData: [],
 };
 
 // 3. Slice
@@ -228,7 +280,18 @@ const homeSlice = createSlice({
       })
       .addCase(fetchBlogs.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || "Failed to  webpage";
+        state.error = action.error.message || "Failed to  fetch blogs";
+      })
+      .addCase(fetchLogo.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchLogo.fulfilled, (state, action) => {
+        state.loading = false;
+        state.logoData = action?.payload;
+      })
+      .addCase(fetchLogo.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "Failed to  fetch logo";
       });
   },
 });
