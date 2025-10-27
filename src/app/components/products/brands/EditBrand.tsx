@@ -32,7 +32,7 @@ const EditBrand = () => {
     brandURL: "",
     templateLayout: "default",
   });
-
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
   // Fetch brand by ID on mount
   useEffect(() => {
     const fetchBrand = async () => {
@@ -51,6 +51,14 @@ const EditBrand = () => {
             brandURL: data.brandURL || "",
             templateLayout: data.templateLayout || "default",
           });
+          // Set preview if brand already has an image
+          if (data.logo) {
+            setPreviewImage(
+              data.logo.startsWith("http")
+                ? data.logo
+                : `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL || ""}${data.logo}`
+            );
+          }
         }
       } catch (err) {
         console.error("❌ Failed to fetch brand:", err);
@@ -71,10 +79,17 @@ const EditBrand = () => {
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev: any) => ({
-      ...prev,
-      logo: e.target.files?.[0] || null,
-    }));
+    const file = e.target.files?.[0] || null;
+    setFormData((prev: any) => ({ ...prev, logo: file }));
+
+    // Set preview for selected image
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setPreviewImage(event.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSelectChange = (value: string) => {
@@ -84,56 +99,60 @@ const EditBrand = () => {
     }));
   };
 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-  const formDataToSend = new FormData();
+    const formDataToSend = new FormData();
 
-  // Append all form fields
-  formDataToSend.append("name", formData.name);
-  formDataToSend.append("pageTitle", formData.pageTitle);
-  formDataToSend.append("metaKeywords", formData.metaKeywords);
-  formDataToSend.append("metaDescription", formData.metaDescription);
-  formDataToSend.append("searchKeywords", formData.searchKeywords);
-  formDataToSend.append("brandURL", formData.brandURL);
-  formDataToSend.append("templateLayout", formData.templateLayout);
+    // Append all form fields
+    formDataToSend.append("name", formData.name);
+    formDataToSend.append("pageTitle", formData.pageTitle);
+    formDataToSend.append("metaKeywords", formData.metaKeywords);
+    formDataToSend.append("metaDescription", formData.metaDescription);
+    formDataToSend.append("searchKeywords", formData.searchKeywords);
+    formDataToSend.append("brandURL", formData.brandURL);
+    formDataToSend.append("templateLayout", formData.templateLayout);
 
-  // Append logo if selected
-  if (formData.logo) {
-    formDataToSend.append("logo", formData.logo); // Change to "image" if backend expects that
-  }
-
-  // 🔍 Debug: Print FormData values
-  console.log("🟡 SUBMITTING BRAND DATA:");
-  for (const [key, value] of formDataToSend.entries()) {
-    if (value instanceof File) {
-      console.log(`📁 ${key}:`, value.name, `(${value.type}, ${value.size} bytes)`);
-    } else {
-      console.log(`🔤 ${key}:`, value);
+    // Append logo if selected
+    if (formData.logo) {
+      formDataToSend.append("logo", formData.logo); // Change to "image" if backend expects that
     }
-  }
 
-  try {
-    const resultAction = await dispatch(
-      updateBrand({ id, formData: formDataToSend })
-    );
-
-    // 🔍 Debug response
-    console.log("🟢 DISPATCH RESULT:", resultAction);
-
-    const result = (resultAction as any).payload;
-
-    if ((resultAction as any).meta.requestStatus === "fulfilled") {
-      console.log("✅ Brand updated successfully:", result);
-      router.push("/manage/products/brands");
-    } else {
-      console.error("❌ Failed to update brand:", result);
-      alert(result?.message || "Brand update failed.");
+    // 🔍 Debug: Print FormData values
+    console.log("🟡 SUBMITTING BRAND DATA:");
+    for (const [key, value] of formDataToSend.entries()) {
+      if (value instanceof File) {
+        console.log(
+          `📁 ${key}:`,
+          value.name,
+          `(${value.type}, ${value.size} bytes)`
+        );
+      } else {
+        console.log(`🔤 ${key}:`, value);
+      }
     }
-  } catch (err) {
-    console.error("❌ Unexpected error during update:", err);
-  }
-};
+
+    try {
+      const resultAction = await dispatch(
+        updateBrand({ id, formData: formDataToSend })
+      );
+
+      // 🔍 Debug response
+      console.log("🟢 DISPATCH RESULT:", resultAction);
+
+      const result = (resultAction as any).payload;
+
+      if ((resultAction as any).meta.requestStatus === "fulfilled") {
+        console.log("✅ Brand updated successfully:", result);
+        router.push("/manage/products/brands");
+      } else {
+        console.error("❌ Failed to update brand:", result);
+        alert(result?.message || "Brand update failed.");
+      }
+    } catch (err) {
+      console.error("❌ Unexpected error during update:", err);
+    }
+  };
 
   const formField = (
     label: string,
@@ -181,17 +200,33 @@ const handleSubmit = async (e: React.FormEvent) => {
             {formField("Meta Description", "metaDescription", true, true)}
             {formField("Search Keywords", "searchKeywords")}
 
+            {/* Image upload with preview */}
             <div className="space-y-1">
               <Label className="flex items-center gap-1">
                 Brand Image
-                <span className="text-sm text-muted-foreground">(optional)</span>
+                <span className="text-sm text-muted-foreground">
+                  (optional)
+                </span>
                 <HelpCircle className="w-5 h-5 text-muted-foreground" />
               </Label>
               <p className="text-sm text-muted-foreground mb-1">
                 Maximum file size: 8MB
               </p>
+
+              {previewImage && (
+                <div className="mb-3">
+                  <p className="text-sm mb-1 text-gray-600">Preview:</p>
+                  <img
+                    src={previewImage}
+                    alt="Brand preview"
+                    className="h-32 w-auto rounded-md border object-contain"
+                  />
+                </div>
+              )}
+
               <Input
                 type="file"
+                accept="image/*"
                 onChange={handleImageChange}
                 className="bg-gray-50"
               />
@@ -202,7 +237,9 @@ const handleSubmit = async (e: React.FormEvent) => {
             <div className="space-y-1">
               <Label className="flex items-center gap-1">
                 Template Layout File
-                <span className="text-sm text-muted-foreground">(optional)</span>
+                <span className="text-sm text-muted-foreground">
+                  (optional)
+                </span>
                 <HelpCircle className="w-5 h-5 text-muted-foreground" />
               </Label>
               <Select
