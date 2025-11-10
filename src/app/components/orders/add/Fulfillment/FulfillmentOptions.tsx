@@ -1,4 +1,5 @@
 "use client";
+import { useEffect } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
 import BillingAddressForm from "./BillingAddressForm";
 import SingleAddressForm from "./SingleAddressForm";
@@ -37,6 +38,25 @@ export default function FulfillmentOptions() {
     // Now switch type
     setValue("destinationType", val, { shouldDirty: true });
   };
+
+  useEffect(() => {
+    const values = getValues();
+
+    // Only set if shipping is empty
+    const shipping = values.shipping || {};
+    if (!shipping.firstName) {
+      setValue("shipping.firstName", values.firstName || "");
+      setValue("shipping.lastName", values.lastName || "");
+      setValue("shipping.companyName", values.companyName || "");
+      setValue("shipping.phoneNumber", values.phoneNumber || "");
+      setValue("shipping.address1", values.address1 || "");
+      setValue("shipping.address2", values.address2 || "");
+      setValue("shipping.city", values.city || "");
+      setValue("shipping.state", values.state || "");
+      setValue("shipping.zip", values.zip || "");
+      setValue("shipping.country", values.country || "");
+    }
+  }, []);
 
   return (
     <div className="space-y-10 bg-white shadow-sm rounded-sm p-10">

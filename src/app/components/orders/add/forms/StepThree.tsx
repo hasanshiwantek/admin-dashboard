@@ -89,7 +89,7 @@ export default function StepThree({ step, setStep }: any) {
           : [values.destinationForm],
     };
 
-    console.log("🚀 Final Payload to Submit:", payload);
+    console.log("🚀 Final Step3 Payload to Submit:", payload);
 
     setStep(step + 1);
   };
