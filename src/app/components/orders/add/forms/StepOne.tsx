@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,13 +13,17 @@ import {
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { countriesList } from "@/const/location";
-import CustomerSearchDropdown from "./CustomerSearchDropdown";
+import CustomerSearchDropdown, { Customer } from "./CustomerSearchDropdown";
 import { useRouter } from "next/navigation";
 import { useFormContext } from "react-hook-form";
-export default function StepOne({  step, setStep,isEditMode }: any) {
-const { register, handleSubmit, setValue, watch } = useFormContext();
-
+export default function StepOne({ step, setStep, isEditMode }: any) {
+  const { register, handleSubmit, setValue, watch } = useFormContext();
   const router = useRouter();
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(
+    null
+  );
+  console.log("Selected Customer from Dropdown: ", selectedCustomer);
+
   const onSubmit = (formData: any) => {
     console.log("Step 1 Submitted:", formData);
     setStep(step + 1);
@@ -64,7 +68,14 @@ const { register, handleSubmit, setValue, watch } = useFormContext();
                 value={watch("search")}
                 onChange={(val) => setValue("search", val)}
                 onSelect={(customer) => {
-                  setValue("selectedCustomer", customer); // save selected customer
+                  // Always deep-clone or pick fields to avoid proxy issues
+                  const safeCustomer = JSON.parse(JSON.stringify(customer));
+
+                  // Store safely in local state
+                  setSelectedCustomer(safeCustomer);
+
+                  // Only save the customer ID or minimal info in form state
+                  setValue("selectedCustomer", safeCustomer || "");
                 }}
               />
             </div>
@@ -90,11 +101,13 @@ const { register, handleSubmit, setValue, watch } = useFormContext();
                 </div>
 
                 <div>
-                  <Label htmlFor="confirmPassword">Confirm Password</Label>
+                  <Label htmlFor="password_confirmation">
+                    Confirm Password
+                  </Label>
                   <Input
                     type="password"
-                    {...register("confirmPassword")}
-                    id="confirmPassword"
+                    {...register("password_confirmation")}
+                    id="password_confirmation"
                   />
                   <p className="!text-sm !text-gray-500 mt-1">
                     Adding a password will create a new customer account, not
@@ -139,124 +152,174 @@ const { register, handleSubmit, setValue, watch } = useFormContext();
         {/* Billing Info */}
         <h1 className="mb-6">Billing Information</h1>
         <div className=" p-6 bg-white rounded-sm shadow-md">
-          <div className="grid grid-cols-2 gap-6">
-            <div>
-              <Label htmlFor="firstName">First Name</Label>
-              <Input
-                {...register("firstName")}
-                id="firstName"
-                className="mt-1"
-                required={
-                  !isEditMode
-                }
-              />
+          <div className="flex-1 justify-around grid grid-cols-2 gap-6">
+            <div className="flex flex-col gap-5">
+              <div>
+                <Label htmlFor="firstName">First Name</Label>
+                <Input
+                  {...register("firstName")}
+                  id="firstName"
+                  className="mt-1"
+                  required={!isEditMode}
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="lastName">Last Name</Label>
+                <Input
+                  {...register("lastName")}
+                  id="lastName"
+                  className="mt-1"
+                  required={!isEditMode}
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="companyName">
+                  Company Name{" "}
+                  <span className="text-gray-400 text-xs">(Optional)</span>
+                </Label>
+                <Input
+                  {...register("companyName")}
+                  id="companyName"
+                  className="mt-1"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="phoneNumber">
+                  Phone Number{" "}
+                  <span className="text-gray-400 text-xs">(Optional)</span>
+                </Label>
+                <Input
+                  {...register("phoneNumber")}
+                  id="phoneNumber"
+                  className="mt-1"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="address1">Address Line 1</Label>
+                <Input
+                  {...register("address1")}
+                  id="address1"
+                  className="mt-1"
+                  required={!isEditMode}
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="address2">
+                  Address Line 2{" "}
+                  <span className="text-gray-400 text-xs">(Optional)</span>
+                </Label>
+                <Input
+                  {...register("address2")}
+                  id="address2"
+                  className="mt-1"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="city">Suburb/City</Label>
+                <Input
+                  {...register("city")}
+                  id="city"
+                  className="mt-1"
+                  required={!isEditMode}
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="country">Country</Label>
+                <Select
+                  value={country}
+                  onValueChange={(value) => setValue("country", value)}
+                  required={!isEditMode}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choose a country" />
+                  </SelectTrigger>
+                  <SelectContent className="overflow-y-scroll h-96">
+                    {countriesList.map((c) => (
+                      <SelectItem key={c.value} value={c.value}>
+                        {c.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label htmlFor="state">State/Province</Label>
+                <Input
+                  {...register("state")}
+                  id="state"
+                  className="mt-1"
+                  required={!isEditMode}
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="zip">Zip/Postcode</Label>
+                <Input {...register("zip")} id="zip" className="mt-1" />
+              </div>
             </div>
 
             <div>
-              <Label htmlFor="lastName">Last Name</Label>
-              <Input
-                {...register("lastName")}
-                id="lastName"
-                className="mt-1"
-                   required={
-                  !isEditMode
-                }
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="companyName">
-                Company Name{" "}
-                <span className="text-gray-400 text-xs">(Optional)</span>
-              </Label>
-              <Input
-                {...register("companyName")}
-                id="companyName"
-                className="mt-1"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="phoneNumber">
-                Phone Number{" "}
-                <span className="text-gray-400 text-xs">(Optional)</span>
-              </Label>
-              <Input
-                {...register("phoneNumber")}
-                id="phoneNumber"
-                className="mt-1"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="address1">Address Line 1</Label>
-              <Input
-                {...register("address1")}
-                id="address1"
-                className="mt-1"
-                     required={
-                  !isEditMode
-                }
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="address2">
-                Address Line 2{" "}
-                <span className="text-gray-400 text-xs">(Optional)</span>
-              </Label>
-              <Input {...register("address2")} id="address2" className="mt-1" />
-            </div>
-
-            <div>
-              <Label htmlFor="city">Suburb/City</Label>
-              <Input
-                {...register("city")}
-                id="city"
-                className="mt-1"
-                required={
-                  !isEditMode
-                }
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="country">Country</Label>
-              <Select
-                value={country}
-                onValueChange={(value) => setValue("country", value)}
-                     required={
-                  !isEditMode
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Choose a country" />
-                </SelectTrigger>
-                <SelectContent className="overflow-y-scroll h-96">
-                  {countriesList.map((c) => (
-                    <SelectItem key={c.value} value={c.value}>
-                      {c.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label htmlFor="state">State/Province</Label>
-              <Input
-                {...register("state")}
-                id="state"
-                className="mt-1"
-                     required={
-                  !isEditMode
-                }
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="zip">Zip/Postcode</Label>
-              <Input {...register("zip")} id="zip" className="mt-1" />
+              {/* Right side: Selected Customer Box */}
+              {selectedCustomer && (
+                <div className="w-96 text-center border p-4 bg-gray-100 rounded-md  flex flex-col justify-between">
+                  <div className=" flex flex-col gap-2">
+                    <div className="font-semibold text-2xl">
+                      {selectedCustomer.firstName} {selectedCustomer.lastName}
+                    </div>
+                    <div className="text-gray-800  text-xl">
+                      {selectedCustomer.email}
+                    </div>
+                    {selectedCustomer.phone && (
+                      <div className="text-gray-800 text-xl">
+                        {selectedCustomer.phone}
+                      </div>
+                    )}
+                    {selectedCustomer.companyName && (
+                      <div className="text-gray-800 text-xl">
+                        {selectedCustomer.companyName}
+                      </div>
+                    )}
+                    {selectedCustomer.address && (
+                      <div className="text-gray-800 text-xl">
+                        {selectedCustomer.address}
+                      </div>
+                    )}
+                    {selectedCustomer.state && (
+                      <div className="text-gray-800 text-xl">
+                        {selectedCustomer.state}
+                      </div>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    className="btn-primary mt-4"
+                    onClick={() => {
+                      setValue("firstName", selectedCustomer.firstName);
+                      setValue("lastName", selectedCustomer.lastName);
+                      setValue(
+                        "companyName",
+                        selectedCustomer.companyName || ""
+                      );
+                      setValue("phoneNumber", selectedCustomer.phone || "");
+                      setValue("address1", selectedCustomer.address || "");
+                      setValue("city", selectedCustomer.city || "");
+                      setValue("state", selectedCustomer.state || "");
+                      setValue("zip", selectedCustomer.zip || "");
+                      setValue("country", selectedCustomer.country || "");
+                    }}
+                  >
+                    Use this address
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
