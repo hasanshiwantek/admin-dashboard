@@ -4,7 +4,9 @@ import { useFormContext } from "react-hook-form";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox"; // Added Checkbox component
 import {
+  // Added Select components
   Select,
   SelectTrigger,
   SelectValue,
@@ -21,16 +23,36 @@ import {
 } from "@/components/ui/table";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-export default function OrderReview() {
-  const { watch, register, setValue ,getValues} = useFormContext();
-  const shipping = watch("shipping");
-const allValues=getValues()  
-console.log("...............",allValues);
 
-  console.log("Shipping Details from step 4: ",shipping);
-  
+// Utility arrays for Select options
+const cardTypes = ["Visa", "Mastercard", "American Express", "Discover"];
+const months = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
+const currentYear = new Date().getFullYear();
+const years = Array.from({ length: 10 }, (_, i) => currentYear + i);
+
+export default function OrderReview() {
+  const { watch, register, setValue, getValues } = useFormContext();
+  const shipping = watch("shipping");
+  const allValues = getValues();
+  console.log("FINAL STEP 4 Values✅✅", allValues);
+
+  console.log("Shipping Details from step 4: ", shipping);
+
   const billing = watch();
- console.log("Billing Details from step 4: ",billing);
+  console.log("Billing Details from step 4: ", billing);
   const selectedProducts = watch("selectedProducts") || [];
   const paymentMethod = watch("paymentMethod");
   const subtotal = selectedProducts.reduce(
@@ -39,6 +61,146 @@ console.log("...............",allValues);
   );
   const shippingCost = 0;
   const total = subtotal + shippingCost;
+
+  // Function to render specific payment fields based on the selected method
+  const renderPaymentFields = () => {
+    const customerEmail = billing.email || "customer@example.com"; // Use the actual email from the form data
+
+    switch (paymentMethod) {
+      case "stripe":
+      case "card": // Assuming "card" also uses the credit card form like Stripe
+        return (
+          <div className="space-y-4">
+            {/* Payment Method Dropdown (already handled outside, but shown in image) */}
+            <Label htmlFor="stripeCardType">Card Type:</Label>
+            <Select
+              defaultValue="American Express"
+              onValueChange={(val) => setValue("cardType", val)}
+            >
+              <SelectTrigger id="stripeCardType">
+                <SelectValue placeholder="Select Card Type" />
+              </SelectTrigger>
+              <SelectContent>
+                {cardTypes.map((type) => (
+                  <SelectItem key={type} value={type}>
+                    {type}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Label htmlFor="cardholderName">Cardholder's Name:</Label>
+            <Input
+              id="cardholderName"
+              placeholder=""
+              {...register("cardholderName")}
+            />
+
+            <Label htmlFor="creditCardNo">Credit Card No:</Label>
+            <Input
+              id="creditCardNo"
+              placeholder=""
+              {...register("creditCardNo")}
+            />
+
+            <Label htmlFor="ccv2Value">CCV2 Value:</Label>
+            <Input
+              id="ccv2Value"
+              placeholder=""
+              {...register("ccv2Value")}
+              className="max-w-xs"
+            />
+
+            <div className="flex gap-4 items-center">
+              <div className="flex-1 items-center">
+                <Label htmlFor="expirationMonth">Expiration Date:</Label>
+                <Select
+                  defaultValue={months[0]}
+                  onValueChange={(val) => setValue("expirationMonth", val)}
+                >
+                  <SelectTrigger id="expirationMonth">
+                    <SelectValue placeholder="Month" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {months.map((month) => (
+                      <SelectItem key={month} value={month}>
+                        {month}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex-1 mt-9">
+                <Select
+                  defaultValue={currentYear.toString()}
+                  onValueChange={(val) => setValue("expirationYear", val)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Year" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {years.map((year) => (
+                      <SelectItem key={year} value={year.toString()}>
+                        {year}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-2 pt-4">
+              <Checkbox id="emailInvoice" defaultChecked />
+              <Label
+                htmlFor="emailInvoice"
+                className=""
+              >
+                Email invoice to customer
+                <span className="ml-1 ">
+                  ({customerEmail})
+                </span>
+              </Label>
+            </div>
+          </div>
+        );
+
+      case "cash":
+      case "bank": // Assuming "bank" also uses the manual payment form like "cash"
+        return (
+          <div className="space-y-4">
+            <Label htmlFor="paymentDescription">Description:</Label>
+            <Input
+              id="paymentDescription"
+              placeholder=""
+              {...register("paymentDescription")}
+            />
+            <div className="flex items-center space-x-2 pt-4">
+              <Checkbox id="emailInvoiceManual" defaultChecked />
+              <label
+                htmlFor="emailInvoiceManual"
+                className=""
+              >
+                Email invoice to customer
+                <span className="ml-1 ">
+                  ({customerEmail})
+                </span>
+              </label>
+            </div>
+          </div>
+        );
+
+      default: // For other methods like "Create draft order" or if no method is selected
+        // Based on the image showing "Create draft order" with no extra fields
+        return (
+          <div className="space-y-4">
+            <div className="text-sm text-gray-500">
+              No further payment details are required for the selected method.
+            </div>
+          </div>
+        );
+    }
+  };
 
   return (
     <div className="space-y-8">
@@ -144,8 +306,7 @@ console.log("...............",allValues);
                     const quantity = p.quantity || 1;
                     const price = parseFloat(p.price || 0);
                     const total = (price * quantity).toFixed(2);
-                    const imagePath =
-                      p.image?.[1]?.path || p.image?.[0]?.path;
+                    const imagePath = p.image?.[1]?.path || p.image?.[0]?.path;
 
                     return (
                       <TableRow key={idx}>
@@ -209,7 +370,7 @@ console.log("...............",allValues);
 
         <div>
           {/* Payment + Summary */}
-          <div className="flex flex-col  justify-between gap-6 ">
+          <div className="flex flex-col  justify-between gap-6 ">
             {/* Payment */}
             <h1 className="!text-4xl !font-bold">Payment</h1>
 
@@ -222,12 +383,20 @@ console.log("...............",allValues);
                   <SelectValue placeholder="Select..." />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="cash">Cash</SelectItem>
+                  <SelectItem value="cash">Manual payment</SelectItem>{" "}
+                  {/* Renamed for image clarity */}
                   <SelectItem value="stripe">Stripe</SelectItem>
-                  <SelectItem value="bank">Bank Transfer</SelectItem>
-                  <SelectItem value="card">Credit Card</SelectItem>
+                  <SelectItem value="bank">Bank Transfer</SelectItem>{" "}
+                  {/* Grouped with manual payment for field display */}
+                  <SelectItem value="card">Credit Card</SelectItem>{" "}
+                  {/* Grouped with Stripe for field display */}
+                  <SelectItem value="draft">Create draft order</SelectItem>{" "}
+                  {/* Added option for draft order */}
                 </SelectContent>
               </Select>
+
+              {/* Conditional Payment Fields */}
+              <div className="mt-4">{renderPaymentFields()}</div>
             </div>
 
             {/* Summary */}

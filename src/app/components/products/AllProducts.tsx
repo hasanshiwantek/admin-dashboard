@@ -203,7 +203,7 @@ export default function AllProducts() {
                 {
                   id: [product?.id],
                   fields: {
-                    isVisible: false,
+                    isVisible: true,
                   },
                 },
               ],
@@ -212,7 +212,7 @@ export default function AllProducts() {
         );
         setTimeout(() => {
           refetchProducts(dispatch);
-        }, 200);
+        }, 3000);
       },
     },
     {
@@ -236,7 +236,7 @@ export default function AllProducts() {
         );
         setTimeout(() => {
           refetchProducts(dispatch);
-        }, 200);
+        }, 3000);
       },
     },
     {

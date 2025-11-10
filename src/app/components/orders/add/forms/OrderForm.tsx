@@ -8,9 +8,9 @@ import StepTracker from "./StepTracker";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { fetchOrderById } from "@/redux/slices/orderSlice"; // ← create this thunk
 import { useForm, FormProvider } from "react-hook-form";
-export default function OrderForm({ orderId }: { orderId:string}) {
+export default function OrderForm({ orderId }: { orderId: string }) {
   const methods = useForm(); // ⬅️ this controls ALL steps
-    const { reset } = methods;
+  const { reset } = methods;
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({});
   const [isEditMode, setIsEditMode] = useState(false);
@@ -25,8 +25,7 @@ export default function OrderForm({ orderId }: { orderId:string}) {
       dispatch(fetchOrderById({ orderId })).then((res) => {
         if (res.payload) {
           const order = res.payload.data;
-          console.log("Selected Order Details: ",order);
-          
+          console.log("Selected Order Details: ", order);
 
           // Transform API response to match your form structure
           const transformed = {
@@ -47,8 +46,8 @@ export default function OrderForm({ orderId }: { orderId:string}) {
               quantity: p.qty || p.quantity,
               name: p.name,
               sku: p.sku,
-              price:p.price,
-              image:p.image
+              price: p.price,
+              image: p.image,
             })),
             shippingMethod: {
               provider: order.billingInformation?.shippingMethod || "none",
@@ -66,13 +65,22 @@ export default function OrderForm({ orderId }: { orderId:string}) {
 
   return (
     <div>
-          <FormProvider {...methods}>
-      <StepTracker currentStep={step} />
-      {step === 1 && <StepOne step={step} setStep={setStep} isEditMode={isEditMode} />}
-      {step === 2 && <StepTwo step={step} setStep={setStep} />}
-      {step === 3 && <StepThree step={step} setStep={setStep} />}
-      {step === 4 && <StepFour step={step} setStep={setStep} isEditMode={isEditMode} orderId={orderId} />}
-    </FormProvider>
+      <FormProvider {...methods}>
+        <StepTracker currentStep={step} />
+        {step === 1 && (
+          <StepOne step={step} setStep={setStep} isEditMode={isEditMode} />
+        )}
+        {step === 2 && <StepTwo step={step} setStep={setStep} />}
+        {step === 3 && <StepThree step={step} setStep={setStep} />}
+        {step === 4 && (
+          <StepFour
+            step={step}
+            setStep={setStep}
+            isEditMode={isEditMode}
+            orderId={orderId}
+          />
+        )}
+      </FormProvider>
     </div>
   );
 }

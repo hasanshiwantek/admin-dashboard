@@ -5,7 +5,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { User } from "lucide-react";
 import { fetchCustomers } from "@/redux/slices/customerSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
-type Customer = {
+export type Customer = {
   id: number;
   firstName: string;
   lastName: string;
