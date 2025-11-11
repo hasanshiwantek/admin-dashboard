@@ -275,27 +275,27 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
 
     console.log("Final payload data: ", finalPayload);
 
-    // try {
-    //   let resultAction;
-    //   if (isEditMode && orderId) {
-    //     resultAction = await dispatch(
-    //       updateOrder({ id: orderId, data: finalPayload })
-    //     );
-    //   } else {
-    //     resultAction = await dispatch(addOrder({ data: finalPayload }));
-    //   }
+    try {
+      let resultAction;
+      if (isEditMode && orderId) {
+        resultAction = await dispatch(
+          updateOrder({ id: orderId, data: finalPayload })
+        );
+      } else {
+        resultAction = await dispatch(addOrder({ data: finalPayload }));
+      }
 
-    //   if (
-    //     addOrder.fulfilled.match(resultAction) ||
-    //     updateOrder.fulfilled.match(resultAction)
-    //   ) {
-    //     router.push("/manage/orders/");
-    //   } else {
-    //     alert(resultAction.payload || "Order failed");
-    //   }
-    // } catch (error) {
-    //   alert("Unexpected error. Please try again.");
-    // }
+      if (
+        addOrder.fulfilled.match(resultAction) ||
+        updateOrder.fulfilled.match(resultAction)
+      ) {
+        router.push("/manage/orders/");
+      } else {
+        alert(resultAction.payload || "Order failed");
+      }
+    } catch (error) {
+      alert("Unexpected error. Please try again.");
+    }
   };
 
   return (
