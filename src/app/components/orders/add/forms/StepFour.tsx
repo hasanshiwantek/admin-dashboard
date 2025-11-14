@@ -150,7 +150,7 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
 
           comments: values.customerComments || "",
           staffNotes: values.staffNotes || "",
-
+          shippingMethod: values.shippingMethod,
           // Main products
           products:
             values.selectedProducts?.map((product: any) => ({
