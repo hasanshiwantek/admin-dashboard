@@ -160,10 +160,6 @@ const FilterSettingsPage: React.FC<FilterSettingsPageProps> = ({
 }) => {
   const config = filterConfigs[filterName as keyof typeof filterConfigs];
 
-  if (!config) {
-    return <div>Filter configuration not found</div>;
-  }
-
   // Initialize state with default values or provided initial values
   const [formData, setFormData] = useState(() => {
     const initialData: Record<string, any> = {};
@@ -173,6 +169,10 @@ const FilterSettingsPage: React.FC<FilterSettingsPageProps> = ({
     });
     return initialData;
   });
+
+  if (!config) {
+    return <div>Filter configuration not found</div>;
+  }
 
   const handleInputChange = (fieldId: string, value: any) => {
     setFormData((prev) => ({
