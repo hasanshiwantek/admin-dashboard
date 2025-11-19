@@ -32,23 +32,55 @@ export function ShipmentModal({
   onClose: () => void;
   onSubmit: (data: any) => void;
 }) {
+  // State for all dynamic form fields
+  const [quantity, setQuantity] = useState(5);
+  const [weightLbs, setWeightLbs] = useState(5);
+  const [weightOz, setWeightOz] = useState(0);
+  const [width, setWidth] = useState("");
+  const [height, setHeight] = useState("");
+  const [depth, setDepth] = useState("");
+  const [packingSlipNotes, setPackingSlipNotes] = useState("");
+  const [shippingMethod, setShippingMethod] = useState("other");
+  const [trackingCarrier, setTrackingCarrier] = useState("");
   const [trackingId, setTrackingId] = useState("");
+  const [shippingMethodDescription, setShippingMethodDescription] =
+    useState("Free Shipping");
+  const [updateStatusAndNotify, setUpdateStatusAndNotify] = useState(true);
+
+  console.log("Selected Order: ", order);
 
   const handleSubmit = () => {
     const payload = {
       orderId: order?.id,
-      quantity: 5,
-      weight: { lbs: 5, oz: 0 },
-      dimensions: { width: 0, height: 0, depth: 0 },
-      trackingId,
-      shippingMethod: "Free Shipping",
+      quantity: quantity,
+      weight: {
+        lbs: weightLbs,
+        oz: weightOz,
+      },
+      dimensions: {
+        width: parseFloat(width) || 0,
+        height: parseFloat(height) || 0,
+        depth: parseFloat(depth) || 0,
+      },
+      trackingId: trackingId,
+      trackingCarrier: trackingCarrier,
+      shippingMethod: shippingMethodDescription,
+      dateShipped: new Date().toISOString().split("T")[0], // Current date in YYYY-MM-DD format
+      packingSlipNotes: packingSlipNotes,
+      updateStatusAndNotify: updateStatusAndNotify,
       shipTo: {
-        name: "David Gold",
-        company: "Vishay Newport Ltd",
-        address:
-          "Vishay Newport Ltd, Cardiff Road, Newport, NP10 8YJ, United Kingdom",
+        name: `${order.billingInformation.firstName} ${order.billingInformation.lastName}`,
+        company: order.billingInformation.company || "",
+        addressLine1: order.billingInformation.addressLine1 || "",
+        addressLine2: order.billingInformation.addressLine2 || "",
+        city: order.billingInformation.city || "",
+        state: order.billingInformation.state || "",
+        country: order.billingInformation.country || "",
+        postalCode: order.billingInformation.postalCode || "",
       },
     };
+
+    console.log("Shipment Payload:", payload);
     onSubmit(payload);
     onClose(); // Close the modal after submit
   };
@@ -61,10 +93,8 @@ export function ShipmentModal({
       <DialogContent className="sm:max-w-[90rem]">
         <DialogHeader>
           <DialogTitle>
-            <h2>
-            Create a shipment
-            </h2>
-            </DialogTitle>
+            <h2>Create a shipment</h2>
+          </DialogTitle>
         </DialogHeader>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Left Side */}
@@ -72,7 +102,12 @@ export function ShipmentModal({
             <div>
               <Label>Quantity to ship</Label>
               <div className="flex items-center gap-2 mt-1">
-                <Input defaultValue={5} className="w-16" />
+                <Input
+                  type="number"
+                  value={quantity}
+                  onChange={(e) => setQuantity(parseInt(e.target.value) || 0)}
+                  className="w-20"
+                />
                 <p className="text-sm text-muted-foreground">
                   LE180A - Black Box 10BASE-T to AUI RJ-45 Connector Transceiver
                   Module
@@ -84,8 +119,24 @@ export function ShipmentModal({
               <div>
                 <Label>Package Weight</Label>
                 <div className="flex gap-2 items-center">
-                  <Input defaultValue={5} className="w-16" /> <span>lbs</span>
-                  <Input defaultValue={0} className="w-16" /> <span>oz</span>
+                  <Input
+                    type="number"
+                    value={weightLbs}
+                    onChange={(e) =>
+                      setWeightLbs(parseFloat(e.target.value) || 0)
+                    }
+                    className="w-20"
+                  />
+                  <span>lbs</span>
+                  <Input
+                    type="number"
+                    value={weightOz}
+                    onChange={(e) =>
+                      setWeightOz(parseFloat(e.target.value) || 0)
+                    }
+                    className="w-20"
+                  />
+                  <span>oz</span>
                 </div>
               </div>
             </div>
@@ -93,42 +144,69 @@ export function ShipmentModal({
             <div>
               <Label>Dimensions (inches)</Label>
               <div className="flex gap-2">
-                <Input placeholder="Width" className="w-30" />
-                <Input placeholder="Height" className="w-30" />
-                <Input placeholder="Depth" className="w-30" />
+                <Input
+                  type="number"
+                  placeholder="Width"
+                  value={width}
+                  onChange={(e) => setWidth(e.target.value)}
+                  className="w-30"
+                />
+                <Input
+                  type="number"
+                  placeholder="Height"
+                  value={height}
+                  onChange={(e) => setHeight(e.target.value)}
+                  className="w-30"
+                />
+                <Input
+                  type="number"
+                  placeholder="Depth"
+                  value={depth}
+                  onChange={(e) => setDepth(e.target.value)}
+                  className="w-30"
+                />
               </div>
             </div>
 
             <div>
               <Label>Shipping to</Label>
               <p className="text-sm mt-1 leading-5">
-                <strong>David Gold</strong>
+                <strong>
+                  {order.billingInformation.firstName}{" "}
+                  {order.billingInformation.lastName}
+                </strong>
                 <br />
-                Vishay Newport Ltd
+                {order.billingInformation.addressLine1 || "N/A"}
                 <br />
-                Cardiff Road
+                {order.billingInformation.addressLine2 || "N/A"}
                 <br />
-                Newport, NP10 8YJ
+                {order.billingInformation.city || "N/A"} /{" "}
+                {order.billingInformation.state || "N/A"}
                 <br />
-                United Kingdom
+                {order.billingInformation.country || "N/A"}
               </p>
             </div>
 
             <div>
-              <Label>Packing Slip Notes</Label> 
-              <Textarea placeholder="Enter your notes" className="h-[70px]" />
+              <Label>Packing Slip Notes</Label>
+              <Textarea
+                placeholder="Enter your notes"
+                className="h-[70px]"
+                value={packingSlipNotes}
+                onChange={(e) => setPackingSlipNotes(e.target.value)}
+              />
             </div>
           </div>
 
           {/* Right Side */}
           <div className="space-y-4">
             <p>
-              Customer paid <strong>£0.00</strong> for shipping
+              Customer paid <strong>$10.00</strong> for shipping
             </p>
 
             <div>
               <Label>How would you like to ship?</Label>
-              <Select defaultValue="other">
+              <Select value={shippingMethod} onValueChange={setShippingMethod}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select method" />
                 </SelectTrigger>
@@ -136,13 +214,19 @@ export function ShipmentModal({
                   <SelectItem value="other">Other</SelectItem>
                   <SelectItem value="fedex">FedEx</SelectItem>
                   <SelectItem value="ups">UPS</SelectItem>
+                  <SelectItem value="usps">USPS</SelectItem>
+                  <SelectItem value="dhl">DHL</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div>
               <Label>Other Tracking Carrier Options</Label>
-              <Input placeholder="Type to find a carrier..." />
+              <Input
+                placeholder="Type to find a carrier..."
+                value={trackingCarrier}
+                onChange={(e) => setTrackingCarrier(e.target.value)}
+              />
             </div>
 
             <div>
@@ -156,11 +240,20 @@ export function ShipmentModal({
 
             <div>
               <Label>Shipping Method Description</Label>
-              <Input defaultValue="Free Shipping" />
+              <Input
+                value={shippingMethodDescription}
+                onChange={(e) => setShippingMethodDescription(e.target.value)}
+              />
             </div>
 
             <div className="flex items-center space-x-2">
-              <Checkbox defaultChecked id="status-update" />
+              <Checkbox
+                checked={updateStatusAndNotify}
+                onCheckedChange={(checked) =>
+                  setUpdateStatusAndNotify(checked as boolean)
+                }
+                id="status-update"
+              />
               <Label htmlFor="status-update">
                 Update status to Shipped & notify customer
               </Label>

@@ -74,7 +74,7 @@ export const addOrder = createAsyncThunk(
   async ({ data }: { data: any }, thunkAPI) => {
     try {
       const response = await axiosInstance.post(
-        `dashboard/orders/add-orders`,
+        `dashboard/orders/existing-customer`,
         data
       );
       return response.data;
@@ -85,6 +85,29 @@ export const addOrder = createAsyncThunk(
     }
   }
 );
+
+
+
+
+
+// ADD ORDER FOR NEW CUSTOMER  THUNK
+export const addOrderForNewCustomer = createAsyncThunk(
+  "orders/addOrderForNewCustomer",
+  async ({ data }: { data: any }, thunkAPI) => {
+    try {
+      const response = await axiosInstance.post(
+        `dashboard/orders/new-customer`,
+        data
+      );
+      return response.data;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to add order"
+      );
+    }
+  }
+);
+
 
 // UPDATE ORDER STATUS THUNK
 export const updateOrderStatus = createAsyncThunk(

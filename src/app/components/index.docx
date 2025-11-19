@@ -1,0 +1,76 @@
+// ============================
+// MERGE SORT
+// ============================
+
+// Main function to sort array A from index LEFT to RIGHT
+FUNCTION MERGE_SORT(A, LEFT, RIGHT)
+// Base case: if the segment has 1 or 0 elements, it is already sorted
+IF LEFT >= RIGHT
+RETURN
+
+    // Step 1: Find the middle point
+    MID = (LEFT + RIGHT) / 2
+
+    // Step 2: Recursively sort the left half
+    CALL MERGE_SORT(A, LEFT, MID)
+
+    // Step 3: Recursively sort the right half
+    CALL MERGE_SORT(A, MID + 1, RIGHT)
+
+    // Step 4: Merge the two sorted halves
+    CALL MERGE(A, LEFT, MID, RIGHT)
+
+// Function to merge two sorted halves of array A
+FUNCTION MERGE(A, LEFT, MID, RIGHT)
+// Create temporary arrays for left and right halves
+L = A[LEFT .. MID]
+R = A[MID+1 .. RIGHT]
+
+    I = 0      // pointer for left array L
+    J = 0      // pointer for right array R
+    K = LEFT   // pointer for original array A
+
+    // Step 1: Compare elements from L and R, copy smaller into A
+    WHILE I < LENGTH(L) AND J < LENGTH(R)
+        IF L[I] <= R[J]
+            A[K] = L[I]
+            I = I + 1
+        ELSE
+            A[K] = R[J]
+            J = J + 1
+        K = K + 1
+
+    // Step 2: Copy remaining elements of L (if any)
+    WHILE I < LENGTH(L)
+        A[K] = L[I]
+        I = I + 1
+        K = K + 1
+
+    // Step 3: Copy remaining elements of R (if any)
+    WHILE J < LENGTH(R)
+        A[K] = R[J]
+        J = J + 1
+        K = K + 1
+
+
+
+
+
+
+// ============================
+// INSERTION SORT
+// ============================
+
+// Sort array A of length n
+FUNCTION INSERTION_SORT(A, n)
+FOR i = 1 TO n-1
+key = A[i] // element to insert
+j = i - 1
+
+        // Move elements of A[0..i-1] that are greater than key
+        // to one position ahead of their current position
+        WHILE j >= 0 AND A[j] > key
+            A[j + 1] = A[j]
+            j = j - 1
+
+        A[j + 1] = key          // place key in correct position
