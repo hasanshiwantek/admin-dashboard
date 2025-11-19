@@ -53,14 +53,11 @@ export const ImportProgressModal: React.FC<ImportProgressModalProps> = ({
   useEffect(() => {
     if (!isOpen || !progressKey) return;
 
-    let intervalId: NodeJS.Timeout;
-
     const pollProgress = async () => {
       try {
         const response = await axiosInstance.get(
           `dashboard/products/import-progress/${progressKey}`
         );
-
         const data = response.data;
 
         setProgress({
@@ -79,7 +76,6 @@ export const ImportProgressModal: React.FC<ImportProgressModalProps> = ({
 
         setIsLoading(false);
 
-        // Stop polling if import is finished or canceled
         if (
           data.status === "completed" ||
           data.status === "finished" ||
@@ -98,7 +94,7 @@ export const ImportProgressModal: React.FC<ImportProgressModalProps> = ({
     };
 
     pollProgress();
-    intervalId = setInterval(pollProgress, 2000);
+    const intervalId = setInterval(pollProgress, 2000); // ✅ use const
 
     return () => clearInterval(intervalId);
   }, [isOpen, progressKey, onComplete]);
@@ -116,16 +112,16 @@ export const ImportProgressModal: React.FC<ImportProgressModalProps> = ({
     //   console.log("Cancel Response:", response.data);
     //   toast.success(response.data.message || "Import canceled successfully");
 
-      setProgress((prev) => ({ ...prev, status: "canceled" }));
-      setIsCanceling(false);
-      onClose();
-    } 
-    // catch (error) {
-    //   console.error("Failed to cancel import:", error);
-    //   toast.error("Failed to cancel import. Try again.");
-    //   setIsCanceling(false);
-    // }
-//   };
+    setProgress((prev) => ({ ...prev, status: "canceled" }));
+    setIsCanceling(false);
+    onClose();
+  };
+  // catch (error) {
+  //   console.error("Failed to cancel import:", error);
+  //   toast.error("Failed to cancel import. Try again.");
+  //   setIsCanceling(false);
+  // }
+  //   };
 
   if (!isOpen) return null;
 
@@ -151,8 +147,8 @@ export const ImportProgressModal: React.FC<ImportProgressModalProps> = ({
         </div>
 
         <p className="text-sm text-gray-600 mb-6">
-          You can hide this window and your products will continue importing
-          in the background.
+          You can hide this window and your products will continue importing in
+          the background.
         </p>
 
         {/* Progress Bar */}
@@ -166,9 +162,7 @@ export const ImportProgressModal: React.FC<ImportProgressModalProps> = ({
           <div className="w-full bg-gray-200 rounded-full h-6 overflow-hidden shadow-inner">
             <div
               className={`h-full transition-all duration-500 ease-out flex items-center justify-center ${
-                progress.status === "canceled"
-                  ? "bg-red-500"
-                  : "bg-green-500"
+                progress.status === "canceled" ? "bg-red-500" : "bg-green-500"
               }`}
               style={{ width: `${percentage}%` }}
             >
@@ -233,17 +227,20 @@ export const ImportProgressModal: React.FC<ImportProgressModalProps> = ({
             Hide
           </button>
 
-          {progress.status !== "completed" && progress.status !== "canceled" && (
-            <button
-              onClick={handleCancelImport}
-              disabled={isCanceling}
-              className={`px-4 py-2 rounded-lg font-medium text-white transition-colors text-lg  ${
-                isCanceling ? "bg-red-400 cursor-not-allowed" : "bg-red-600 hover:bg-red-700"
-              }`}
-            >
-              {isCanceling ? "Canceling..." : "Cancel Import"}
-            </button>
-          )}
+          {progress.status !== "completed" &&
+            progress.status !== "canceled" && (
+              <button
+                onClick={handleCancelImport}
+                disabled={isCanceling}
+                className={`px-4 py-2 rounded-lg font-medium text-white transition-colors text-lg  ${
+                  isCanceling
+                    ? "bg-red-400 cursor-not-allowed"
+                    : "bg-red-600 hover:bg-red-700"
+                }`}
+              >
+                {isCanceling ? "Canceling..." : "Cancel Import"}
+              </button>
+            )}
 
           {progress.status === "completed" && (
             <button
