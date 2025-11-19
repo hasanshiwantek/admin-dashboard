@@ -87,5 +87,5 @@ export const sidebarData = [
   { title: "Apps", icon: AppWindow, url: "/apps" },
   { title: "Channels", icon: Layers, url: "/channels" },
   { title: "Financing", icon: Banknote, url: "/financing" },
-  { title: "Settings", icon: Settings, url: "/settings" },
+  { title: "Settings", icon: Settings, url: "/manage/settings" },
 ];

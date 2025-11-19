@@ -19,7 +19,7 @@ interface AuthState {
   loading: boolean;
   error: string | null;
   isAuthenticated: boolean;
-  stores: {storeId: number; name?: string}[];
+  stores: { storeId: number; name?: string }[];
 }
 
 const initialState: AuthState = {
@@ -41,8 +41,8 @@ export const loginUser = createAsyncThunk(
     try {
       const res = await axiosInstance.post("user/login", { email, password });
       return res.data;
-    } // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      catch (err: any) {
+    } catch (err: any) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return thunkAPI.rejectWithValue(
         err.response?.data?.message || "Login failed"
       );
@@ -57,8 +57,8 @@ export const registerUser = createAsyncThunk(
     try {
       const res = await axiosInstance.post("/auth/register", formData);
       return res.data;
-    } // eslint-disable-next-line @typescript-eslint/no-explicit-any 
-    catch (err: any) {
+    } catch (err: any) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return thunkAPI.rejectWithValue(
         err.response?.data?.message || "Registration failed"
       );
@@ -66,9 +66,49 @@ export const registerUser = createAsyncThunk(
   }
 );
 
+// Update Profile thunk
+export const updateUserPofile = createAsyncThunk(
+  "auth/updateUserPofile",
+  async (
+    { firstName, lastName }: { firstName: any; lastName: any },
+    thunkAPI
+  ) => {
+    try {
+      const res = await axiosInstance.post("dashboard/profile/update-name", {
+        firstName,
+        lastName,
+      });
+      return res.data;
+    } catch (err: any) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Updation failed"
+      );
+    }
+  }
+);
 
-
-
+//Change Email Thunk
+export const updateUserEmail = createAsyncThunk(
+  "auth/updateUserPofile",
+  async (
+    { newEmail, password }: { newEmail: any; password: any },
+    thunkAPI
+  ) => {
+    try {
+      const res = await axiosInstance.post("dashboard/profile/update-email", {
+        newEmail,
+        password,
+      });
+      return res.data;
+    } catch (err: any) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Updation failed"
+      );
+    }
+  }
+);
 
 // Slice
 const authSlice = createSlice({
@@ -81,7 +121,7 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       localStorage.removeItem("token");
       localStorage.removeItem("storeId");
-         localStorage.removeItem("user");
+      localStorage.removeItem("user");
     },
   },
   extraReducers: (builder) => {
@@ -109,7 +149,10 @@ const authSlice = createSlice({
 
         localStorage.setItem("token", action.payload.token);
         if (action.payload.stores?.length === 1) {
-          localStorage.setItem("storeId", action.payload.stores[0].id.toString());
+          localStorage.setItem(
+            "storeId",
+            action.payload.stores[0].id.toString()
+          );
         }
       })
 
