@@ -1,7 +1,8 @@
-"use client"
-import React, { useState ,useEffect} from "react";
+"use client";
+import React, { useState, useEffect } from "react";
 import { Save } from "lucide-react";
-
+import { useAppDispatch } from "@/hooks/useReduxHooks";
+import { updateUserEmail } from "@/redux/slices/authSlice";
 // --- SHADCN/UI Imports ---
 // Assuming standard import paths for your styled components
 import { Button } from "@/components/ui/button";
@@ -12,25 +13,31 @@ import { Label } from "@/components/ui/label";
 const Page = () => {
   const [newEmail, setNewEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [parsedUser, setParsedUser] = useState<any>(null);
 
-const [parsedUser, setParsedUser] = useState<any>(null);
-
-useEffect(() => {
-  if (typeof window !== "undefined") {
-    const storedUser = localStorage.getItem("user");
-    setParsedUser(storedUser ? JSON.parse(storedUser) : null);
-  }
-}, []);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedUser = localStorage.getItem("user");
+      setParsedUser(storedUser ? JSON.parse(storedUser) : null);
+    }
+  }, []);
 
   const currentEmail = parsedUser?.email; // Mock data for current email
-
-  const handleChangeEmail = () => {
+  const dispatch = useAppDispatch();
+  const handleChangeEmail = async () => {
     if (newEmail && password) {
       console.log("Attempting to change email:", { newEmail, password });
       // In a real app, this would be an API call
-      alert(
-        "Email change process initiated! Check your inbox for verification."
-      );
+      const result = await dispatch(updateUserEmail({ newEmail, password }));
+      try {
+        if (updateUserEmail.fulfilled.match(result)) {
+          console.log("Profile updation  response✅", result?.payload);
+        } else {
+          console.log("Error Updating Profile: ", result?.payload);
+        }
+      } catch (err) {
+        console.log("Something went wrong: ", err);
+      }
     } else {
       alert("Please enter a new email address and verify your password.");
     }

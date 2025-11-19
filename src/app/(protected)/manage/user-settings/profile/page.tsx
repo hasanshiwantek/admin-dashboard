@@ -20,7 +20,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
+import { updateUserPofile } from "@/redux/slices/authSlice";
+import { useAppDispatch } from "@/hooks/useReduxHooks";
 const languageOptions = [
   { value: "en", label: "English (English)" },
   { value: "es-es", label: "Español (Castellano) (Spanish/Castilian)" },
@@ -36,9 +37,19 @@ const Page = () => {
   const [lastName, setLastName] = useState("");
   const [selectedLanguage, setSelectedLanguage] = useState("en");
 
-  const handleSave = () => {
+  const dispatch = useAppDispatch();
+  const handleSave = async () => {
     console.log("Profile Saved:", { firstName, lastName, selectedLanguage });
-    // In a real application, you'd send this data to a backend.
+    const result = await dispatch(updateUserPofile({ firstName, lastName }));
+    try {
+      if (updateUserPofile.fulfilled.match(result)) {
+        console.log("Profile updation  response✅", result?.payload);
+      } else {
+        console.log("Error Updating Profile: ", result?.payload);
+      }
+    } catch (err) {
+      console.log("Something went wrong: ", err);
+    }
   };
 
   const handleCancel = () => {
@@ -132,7 +143,10 @@ const Page = () => {
             <button onClick={handleCancel} className="btn-outline-primary">
               Cancel
             </button>
-            <button onClick={handleSave} className="btn-primary flex items-center">
+            <button
+              onClick={handleSave}
+              className="btn-primary flex items-center"
+            >
               <Save className="mr-1 -mt-1 h-5 w-5" />
               Save
             </button>
