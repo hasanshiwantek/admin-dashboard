@@ -9,7 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-const page = () => {
+const Page = () => {
   const [newEmail, setNewEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -107,4 +107,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

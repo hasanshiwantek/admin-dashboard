@@ -31,7 +31,7 @@ const languageOptions = [
   { value: "de", label: "Deutsch (German)" },
 ];
 
-const page = () => {
+const Page = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [selectedLanguage, setSelectedLanguage] = useState("en");
@@ -143,4 +143,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

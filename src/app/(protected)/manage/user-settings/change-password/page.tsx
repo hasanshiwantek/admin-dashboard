@@ -32,7 +32,7 @@ const RequirementItem = ({ text, isMet }: { text: any; isMet: any }) => (
   </div>
 );
 
-const page = () => {
+const Page = () => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -241,4 +241,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
