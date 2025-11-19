@@ -33,6 +33,7 @@ import {
   addShipmentOrder,
   refundOrder,
 } from "@/redux/slices/orderSlice";
+import { MoreHorizontal } from "lucide-react";
 import { refetchOrders } from "@/lib/orderUtils";
 import { FaCirclePlus, FaCircleMinus } from "react-icons/fa6";
 import { useSearchParams } from "next/navigation";
@@ -737,13 +738,9 @@ const AllOrders = () => {
                         <OrderActionsDropdown
                           actions={orderActions(order)}
                           trigger={
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="text-xl cursor-pointer"
-                            >
-                              •••
-                            </Button>
+                            <button className="text-xl cursor-pointer">
+                              <MoreHorizontal className="!w-8 !h-8" />
+                            </button>
                           }
                         />
                       </TableCell>
@@ -847,8 +844,8 @@ const AllOrders = () => {
                                 <div className="flex items-center gap-2">
                                   <Ship className="w-5 h-5 text-gray-500" />
                                   <span>
-                                    {order?.billingInformation?.shippingMethod ||
-                                      "N/A"}
+                                    {order?.billingInformation
+                                      ?.shippingMethod || "N/A"}
                                   </span>
                                 </div>
 

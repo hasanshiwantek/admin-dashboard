@@ -4,7 +4,7 @@ import { useForm, FormProvider } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import OrderReview from "../OrderReview.tsx/OrderReview";
 import { useRouter } from "next/navigation";
-import { addOrder } from "@/redux/slices/orderSlice";
+import { addOrder, addOrderForNewCustomer } from "@/redux/slices/orderSlice";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { updateOrder } from "@/redux/slices/orderSlice";
 import { useFormContext } from "react-hook-form";
@@ -21,8 +21,11 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
   const onSubmit = async () => {
     const values = getValues(); // ✅ collect all step data
     console.log("Final submitted data:", values);
-    // Build the paymentData object
-    const paymentMethod = (() => {
+
+    const isNewCustomer = !values.selectedCustomer?.id;
+
+    // Build payment method object
+    const buildPaymentMethod = () => {
       const baseData = { method: values.paymentMethod || null };
       if (!values.paymentMethod) return baseData;
 
@@ -39,7 +42,6 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
             expirationYear: values.expirationYear,
             emailInvoice: values.emailInvoice ?? true,
           };
-
         case "cash":
         case "bank":
           return {
@@ -47,47 +49,15 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
             description: values.paymentDescription,
             emailInvoice: values.emailInvoiceManual ?? true,
           };
-
         case "draft":
         default:
-          return baseData; // No extra fields
+          return baseData;
       }
-    })();
-    // const finalPayload = {
-    //   customerId: values.selectedCustomer?.id || null,
-    //   billingInformation: {
-    //     firstName: values?.firstName || "",
-    //     lastName: values?.lastName || "",
-    //     email: values?.selectedCustomer?.email || "",
-    //     phone: values?.phoneNumber || "",
-    //     companyName: values?.companyName || "",
-    //     addressLine1: values?.address1 || "",
-    //     addressLine2: values?.address2 || "",
-    //     city: values?.city || "",
-    //     state: values?.state || "",
-    //     zip: values?.zip || "",
-    //     country: values?.country || "",
-    //     paymentMethod: values.paymentMethod || "",
-    //     shippingMethod: values.shippingMethod?.provider || "none",
-    //   },
-    //   paymentMethod,
-    //   customerGroup: values.selectedCustomer?.customerGroup || "",
-    //   receiveOffers: values.selectedCustomer?.receiveMarketingEmails || false,
-    //   comments: values.customerComments || "",
-    //   staffNotes: values.staffNotes || "",
+    };
 
-    //   products:
-    //     values.selectedProducts?.map((product: any) => ({
-    //       productId: product.id,
-    //       quantity: product.quantity || 1,
-    //     })) || [],
-    // };
-
+    // Main payload function (keeps payload exactly as original)
     const finalPayload = (() => {
-      const isNewCustomer = !values.selectedCustomer?.id;
-
       if (isNewCustomer) {
-        // Payload for a new customer
         return {
           customerId: null,
           email: values.email || "",
@@ -115,50 +85,18 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
             shippingMethod: values.shippingMethod?.provider || "none",
           },
 
-          // Payment details (for card/stripe)
-          paymentMethod: (() => {
-            const baseData = { method: values.paymentMethod || null };
-            if (!values.paymentMethod) return baseData;
-
-            switch (values.paymentMethod) {
-              case "stripe":
-              case "card":
-                return {
-                  ...baseData,
-                  cardType: values.cardType || "",
-                  cardholderName: values.cardholderName || "",
-                  creditCardNo: values.creditCardNo || "",
-                  ccv2Value: values.ccv2Value || "",
-                  expirationMonth: values.expirationMonth || "",
-                  expirationYear: values.expirationYear || "",
-                  emailInvoice: values.emailInvoice ?? true,
-                };
-
-              case "cash":
-              case "bank":
-                return {
-                  ...baseData,
-                  description: values.paymentDescription || "",
-                  emailInvoice: values.emailInvoiceManual ?? true,
-                };
-
-              case "draft":
-              default:
-                return baseData;
-            }
-          })(),
+          paymentMethod: buildPaymentMethod(),
 
           comments: values.customerComments || "",
           staffNotes: values.staffNotes || "",
           shippingMethod: values.shippingMethod,
-          // Main products
+
           products:
             values.selectedProducts?.map((product: any) => ({
               productId: product.id,
               quantity: product.quantity || 1,
             })) || [],
 
-          // Shipping destinations (for multiple addresses)
           shippingDestinations:
             values.shippingDestinations?.map((dest: any) => ({
               address: {
@@ -187,7 +125,6 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
             })) || [],
         };
       } else {
-        // Existing customer payload
         return {
           customerId: values.selectedCustomer?.id || null,
           billingInformation: {
@@ -205,50 +142,18 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
             paymentMethod: values.paymentMethod || "",
             shippingMethod: values.shippingMethod?.provider || "none",
           },
-          paymentMethod: (() => {
-            const baseData = { method: values.paymentMethod || null };
-            if (!values.paymentMethod) return baseData;
-
-            switch (values.paymentMethod) {
-              case "stripe":
-              case "card":
-                return {
-                  ...baseData,
-                  cardType: values.cardType || "",
-                  cardholderName: values.cardholderName || "",
-                  creditCardNo: values.creditCardNo || "",
-                  ccv2Value: values.ccv2Value || "",
-                  expirationMonth: values.expirationMonth || "",
-                  expirationYear: values.expirationYear || "",
-                  emailInvoice: values.emailInvoice ?? true,
-                };
-
-              case "cash":
-              case "bank":
-                return {
-                  ...baseData,
-                  description: values.paymentDescription || "",
-                  emailInvoice: values.emailInvoiceManual ?? true,
-                };
-
-              case "draft":
-              default:
-                return baseData;
-            }
-          })(),
+          paymentMethod: buildPaymentMethod(),
           customerGroup: values.selectedCustomer?.customerGroup || "",
           receiveOffers:
             values.selectedCustomer?.receiveMarketingEmails || false,
           comments: values.customerComments || "",
           staffNotes: values.staffNotes || "",
           shippingMethod: values.shippingMethod,
-
           products:
             values.selectedProducts?.map((product: any) => ({
               productId: product.id,
               quantity: product.quantity || 1,
             })) || [],
-
           shippingDestinations:
             values.shippingDestinations?.map((dest: any) => ({
               address: {
@@ -277,9 +182,14 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
 
     try {
       let resultAction;
+
       if (isEditMode && orderId) {
         resultAction = await dispatch(
           updateOrder({ id: orderId, data: finalPayload })
+        );
+      } else if (isNewCustomer) {
+        resultAction = await dispatch(
+          addOrderForNewCustomer({ data: finalPayload })
         );
       } else {
         resultAction = await dispatch(addOrder({ data: finalPayload }));
@@ -287,7 +197,8 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
 
       if (
         addOrder.fulfilled.match(resultAction) ||
-        updateOrder.fulfilled.match(resultAction)
+        updateOrder.fulfilled.match(resultAction) ||
+        addOrderForNewCustomer.fulfilled.match(resultAction)
       ) {
         router.push("/manage/orders/");
       } else {

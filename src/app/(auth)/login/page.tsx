@@ -16,26 +16,32 @@ export default function LoginPage() {
   const dispatch = useDispatch<AppDispatch>();
   const { loading, error } = useSelector((state: RootState) => state.auth);
   const [formData, setFormData] = useState({
-  email: "",
-  password: "",
-  showPassword: false,
+    email: "",
+    password: "",
+    showPassword: false,
   });
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const result = await dispatch(loginUser({ email: formData.email, password: formData.password }));
+    const result = await dispatch(
+      loginUser({ email: formData.email, password: formData.password })
+    );
 
     if (loginUser.fulfilled.match(result)) {
-      const { token, stores, expireAt } = result.payload;
+      const { token, stores, expireAt, user } = result.payload;
       Cookies.set("token", token, { expires: 7 });
       localStorage.setItem("token", token);
-      localStorage.setItem("tokenExpiry", new Date(expireAt).getTime().toString());
-
+      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem(
+        "tokenExpiry",
+        new Date(expireAt).getTime().toString()
+      );
 
       if (stores.length === 1) {
         localStorage.setItem("storeId", stores[0].id.toString());
         dispatch(setStoreId(stores[0].id));
-        router.push("/manage/dashboard");``
+        router.push("/manage/dashboard");
+        ``;
       } else {
         // Multiple stores – let user select
         localStorage.setItem("availableStores", JSON.stringify(stores));
@@ -52,12 +58,12 @@ export default function LoginPage() {
   const toggleShowPassword = () =>
     setFormData((prev) => ({ ...prev, showPassword: !prev.showPassword }));
 
-  useEffect (() => {
-    const token = localStorage.getItem("token")
+  useEffect(() => {
+    const token = localStorage.getItem("token");
     if (token) {
-      router.replace('/manage/dashboard')
+      router.replace("/manage/dashboard");
     }
-  }, [])
+  }, []);
 
   return (
     <div className="flex flex-col min-h-screen items-center justify-center bg-black">
@@ -96,7 +102,7 @@ export default function LoginPage() {
             >
               {formData.showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
-          </div> 
+          </div>
           <Button
             type="submit"
             variant="default"

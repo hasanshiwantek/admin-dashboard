@@ -66,6 +66,10 @@ export const registerUser = createAsyncThunk(
   }
 );
 
+
+
+
+
 // Slice
 const authSlice = createSlice({
   name: "auth",
@@ -77,6 +81,7 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       localStorage.removeItem("token");
       localStorage.removeItem("storeId");
+         localStorage.removeItem("user");
     },
   },
   extraReducers: (builder) => {
