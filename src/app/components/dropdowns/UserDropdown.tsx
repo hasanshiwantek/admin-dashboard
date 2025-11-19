@@ -15,9 +15,17 @@ export default function UserDropdown() {
   const dispatch = useAppDispatch();
   const router = useRouter();
 
-  const storedUser = localStorage.getItem("user");
-  const parsedUser = storedUser ? JSON.parse(storedUser) : null;
-  console.log(parsedUser); // Now it’s the original object
+
+
+const [parsedUser, setParsedUser] = useState<any>(null);
+
+useEffect(() => {
+  if (typeof window !== "undefined") {
+    const storedUser = localStorage.getItem("user");
+    setParsedUser(storedUser ? JSON.parse(storedUser) : null);
+  }
+}, []);
+
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

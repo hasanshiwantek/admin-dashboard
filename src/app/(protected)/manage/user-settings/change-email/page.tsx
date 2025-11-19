@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from "react";
+import React, { useState ,useEffect} from "react";
 import { Save } from "lucide-react";
 
 // --- SHADCN/UI Imports ---
@@ -13,9 +13,14 @@ const Page = () => {
   const [newEmail, setNewEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const storedUser = localStorage.getItem("user");
-  const parsedUser = storedUser ? JSON.parse(storedUser) : null;
-  console.log(parsedUser); // Now it’s the original object
+const [parsedUser, setParsedUser] = useState<any>(null);
+
+useEffect(() => {
+  if (typeof window !== "undefined") {
+    const storedUser = localStorage.getItem("user");
+    setParsedUser(storedUser ? JSON.parse(storedUser) : null);
+  }
+}, []);
 
   const currentEmail = parsedUser?.email; // Mock data for current email
 
