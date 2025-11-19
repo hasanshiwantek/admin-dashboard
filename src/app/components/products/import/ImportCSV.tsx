@@ -8,6 +8,7 @@ import { mappingFields } from "@/const/ImportExportData";
 import { importCsv } from "@/redux/slices/productSlice";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { useRouter } from "next/navigation";
+import { ImportProgressModal } from "./ImportProgressModal";
 const ImportCsv = () => {
   const methods = useForm({
     defaultValues: {
@@ -26,57 +27,9 @@ const ImportCsv = () => {
   const dispatch = useAppDispatch();
   const [step, setStep] = useState(1);
   const router = useRouter();
-
-  // const handleFinalSubmit = async (data: Record<string, any>) => {
-  //   const {
-  //     file,
-  //     importSource,
-  //     detectCategories,
-  //     ignoreBlanks,
-  //     optionType,
-  //     hasHeader,
-  //     separator,
-  //     enclosure,
-  //     bulkTemplate,
-  //     overwrite,
-  //   } = data;
-
-  //   const formData = new FormData();
-  //   if (file && file.length > 0) {
-  //     formData.append("file", file[0]); // ✅ file is usually a FileList
-  //   }
-
-  //   formData.append("importSource", importSource);
-  //   formData.append("detectCategories", detectCategories ? "1" : "0");
-  //   formData.append("ignoreBlanks", ignoreBlanks ? "1" : "0");
-  //   formData.append("optionType", optionType);
-  //   formData.append("hasHeader", hasHeader ? "1" : "0");
-  //   formData.append("separator", separator);
-  //   formData.append("enclosure", enclosure);
-  //   formData.append("bulkTemplate", bulkTemplate ? "1" : "0");
-  //   formData.append("overwrite", overwrite ? "1" : "0");
-
-  //   console.log("📦 Final FormData:");
-  //   for (const [key, value] of formData.entries()) {
-  //     console.log(`${key}:`, value);
-  //   }
-
-  //   try {
-  //     const resultAction = await dispatch(importCsv(formData)); // ✅ pass formData directly
-  //     const result = (resultAction as any).payload;
-  //     console.log("Final Payload: ",resultAction);
-  //     if ((resultAction as any).meta.requestStatus === "fulfilled") {
-  //       console.log("✅ CSV imported successfully:", result);
-  //       setTimeout(()=>{
-  //         router.push("/manage/products/")
-  //       },2000)
-  //     } else {
-  //       console.error("❌ Failed to import CSV:", result);
-  //     }
-  //   } catch (err) {
-  //     console.error("❌ Unexpected error:", err);
-  //   }
-  // };
+  // Progress modal state
+  const [showProgressModal, setShowProgressModal] = useState(false);
+  const [progressKey, setProgressKey] = useState("");
 
   const handleFinalSubmit = async (data: Record<string, any>) => {
     const {
@@ -142,21 +95,37 @@ const ImportCsv = () => {
     try {
       const resultAction = await dispatch(importCsv(formData));
       const result = (resultAction as any).payload;
-      console.log("Final Payload: ", resultAction);
+
+      console.log("📥 Full Response Payload:", result);
 
       if ((resultAction as any).meta.requestStatus === "fulfilled") {
-        console.log("✅ CSV imported successfully:", result);
-        setTimeout(() => {
-          router.push("/manage/products/");
-        }, 2000);
+        console.log("✅ CSV import queued successfully");
+
+        // Extract progress_key from the response
+        const key = result?.progress_key;
+
+        if (key) {
+          console.log("🔑 Progress Key:", key);
+          setProgressKey(key);
+          setShowProgressModal(true);
+        } else {
+          console.error("❌ No progress_key found in response:", result);
+          alert("Import started but progress tracking unavailable");
+        }
       } else {
         console.error("❌ Failed to import CSV:", result);
+        alert("Failed to start import. Please try again.");
       }
     } catch (err) {
       console.error("❌ Unexpected error:", err);
+      alert("An unexpected error occurred. Please try again.");
     }
   };
 
+  const handleImportComplete = () => {
+    setShowProgressModal(false);
+    router.push("/manage/products/");
+  };
   return (
     <>
       <div>
@@ -201,6 +170,13 @@ const ImportCsv = () => {
             </div>
           </form>
         </FormProvider>
+        {/* Progress Modal */}
+        <ImportProgressModal
+          isOpen={showProgressModal}
+          onClose={() => setShowProgressModal(false)}
+          progressKey={progressKey}
+          onComplete={handleImportComplete}
+        />
       </div>
     </>
   );

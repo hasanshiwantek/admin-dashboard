@@ -9,6 +9,7 @@ import BellDropdown from "../dropdowns/BellDropdown";
 import UserDropdown from "../dropdowns/UserDropdown";
 import Image from "next/image";
 import GlobalSearchBar from "./GlobalSearch";
+import Link from "next/link";
 const Header: React.FC = () => {
   const [companyOpen, setCompanyOpen] = useState<boolean>(false);
   const companyRef = useRef<HTMLDivElement>(null);
@@ -91,15 +92,15 @@ const Header: React.FC = () => {
           </div>
         </div>
         <div className="!p-1 hover:bg-[#2d3748] cursor-pointer text-white">
-          <a
-            href="#"
+          <Link
+            href="https://newtownspares.advertsedge.com/" target="_blank"
             className="!text-xl font-medium hover:underline flex items-center gap-1  h-[5rem] !px-3 border-l-2 border-[#2d3748]"
           >
             View storefront
             <span>
               <FaExternalLinkAlt size={15} color="gray" className="!ml-1" />
             </span>
-          </a>
+          </Link>
         </div>
       </div>
     </header>
