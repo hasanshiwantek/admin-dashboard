@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Plus, Pencil, Filter } from "lucide-react";
+import { Plus, Pencil, Filter ,Ellipsis} from "lucide-react";
 import { IoSearchOutline } from "react-icons/io5";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -497,7 +497,7 @@ export default function AllProducts() {
   const totalPages = pagination?.lastPage;
   const [currentPage, setCurrentPage] = useState(pagination?.page || 1);
   const [perPage, setPerPage] = useState(
-    pagination?.pageSize?.toString() || "50"
+    pagination?.pageSize?.toString() || "20"
   );
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -523,7 +523,7 @@ export default function AllProducts() {
 
   useEffect(() => {
     const page = Number(queryObject.page || 1);
-    const pageSize = Number(queryObject.limit || queryObject.pageSize || 50);
+    const pageSize = Number(queryObject.limit || queryObject.pageSize || 20);
 
     const filterKeys = Object.keys(queryObject).filter(
       (key) => !["page", "limit", "pageSize"].includes(key)
@@ -873,7 +873,7 @@ export default function AllProducts() {
                               size="icon"
                               className="text-xl cursor-pointer"
                             >
-                              •••
+                              <Ellipsis className="!w-7 !h-7"/>
                             </Button>
                           }
                         />

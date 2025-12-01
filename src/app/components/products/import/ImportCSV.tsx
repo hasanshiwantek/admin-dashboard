@@ -109,7 +109,7 @@ const ImportCsv = () => {
           setProgressKey(key);
           setShowProgressModal(true);
         } else {
-          console.error("❌ No progress_key found in response:", result);
+          console.error("❌ No progress_key found in response:s", result);
           alert("Import started but progress tracking unavailable");
         }
       } else {
