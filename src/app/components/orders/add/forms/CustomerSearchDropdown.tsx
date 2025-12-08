@@ -130,9 +130,9 @@ export default function CustomerSearchDropdown({
                         </div>
                       )}
                     </div>
-                    <div className="text-blue-600 whitespace-nowrap mt-1 hover:underline text-base">
+                    {/* <div className="text-blue-600 whitespace-nowrap mt-1 hover:underline text-base">
                       View order history
-                    </div>
+                    </div> */}
                   </div>
                 );
               })

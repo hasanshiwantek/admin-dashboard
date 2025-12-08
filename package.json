@@ -43,7 +43,7 @@
     "js-cookie": "^3.0.5",
     "lodash.debounce": "^4.0.8",
     "lucide-react": "^0.525.0",
-    "next": "15.4.1",
+    "next": "^15.5.7",
     "quill": "^2.0.3",
     "react": "19.1.0",
     "react-day-picker": "^9.8.0",

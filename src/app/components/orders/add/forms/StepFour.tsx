@@ -213,7 +213,7 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
     // <FormProvider {...methods}>
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="p-10">
-        <OrderReview />
+        <OrderReview step={step} setStep={setStep} />
       </div>
       <div className="sticky bottom-0 w-full border-t p-6 bg-white flex justify-end gap-4">
         <button

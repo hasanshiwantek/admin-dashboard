@@ -17,7 +17,13 @@ import CustomerSearchDropdown, { Customer } from "./CustomerSearchDropdown";
 import { useRouter } from "next/navigation";
 import { useFormContext } from "react-hook-form";
 export default function StepOne({ step, setStep, isEditMode }: any) {
-  const { register, handleSubmit, setValue, watch } = useFormContext();
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useFormContext();
   const router = useRouter();
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(
     null
@@ -95,20 +101,45 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
                   <Label htmlFor="password">Password</Label>
                   <Input
                     type="password"
-                    {...register("password")}
+                    {...register("password", {
+                      required:
+                        orderType === "new" ? "Password is required" : false,
+                      minLength: {
+                        value: 6,
+                        message: "Password must be at least 6 characters",
+                      },
+                    })}
                     id="password"
                   />
+                  {typeof errors.password?.message === "string" && (
+                    <p className="!text-red-500 text-sm">
+                      {errors.password.message}
+                    </p>
+                  )}
                 </div>
-
                 <div>
                   <Label htmlFor="password_confirmation">
                     Confirm Password
                   </Label>
                   <Input
                     type="password"
-                    {...register("password_confirmation")}
+                    {...register("password_confirmation", {
+                      required:
+                        orderType === "new"
+                          ? "Confirm password is required"
+                          : false,
+                      validate: (value) =>
+                        value === watch("password") || "Passwords do not match",
+                    })}
                     id="password_confirmation"
                   />
+                  {typeof errors.password_confirmation?.message ===
+                    "string" && (
+                    <p className="!text-red-500 text-sm">
+                      {errors.password_confirmation.message}
+                    </p>
+                  )}
+
                   <p className="!text-sm !text-gray-500 mt-1">
                     Adding a password will create a new customer account, not
                     applicable to Draft Order.

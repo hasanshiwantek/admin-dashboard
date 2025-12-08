@@ -33,7 +33,7 @@ import {
   addShipmentOrder,
   refundOrder,
 } from "@/redux/slices/orderSlice";
-import { MoreHorizontal } from "lucide-react";
+import { Ellipsis, MoreHorizontal } from "lucide-react";
 import { refetchOrders } from "@/lib/orderUtils";
 import { FaCirclePlus, FaCircleMinus } from "react-icons/fa6";
 import { useSearchParams } from "next/navigation";
@@ -735,12 +735,25 @@ const AllOrders = () => {
                       </TableCell>
 
                       <TableCell>
-                        <OrderActionsDropdown
+                        {/* <OrderActionsDropdown
                           actions={orderActions(order)}
                           trigger={
                             <button className="text-xl cursor-pointer">
-                              <MoreHorizontal className="!w-8 !h-8" />
+                              •••
                             </button>
+                          }
+                        /> */}
+
+                        <OrderActionsDropdown
+                          actions={orderActions(order)}
+                          trigger={
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="text-xl cursor-pointer"
+                            >
+                              <Ellipsis className="!w-7 !h-7" />
+                            </Button>
                           }
                         />
                       </TableCell>
