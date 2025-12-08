@@ -52,10 +52,10 @@ const Pagination = ({
   return (
     <div className="flex items-center justify-start gap-5 px-2 text-lg ">
       {/* Page numbers */}
-      <div className="flex items-center space-x-1">
+      <div className="flex items-center space-x-3">
         {getVisiblePages().map((page, i) =>
           page === "..." ? (
-            <span key={`ellipsis-${i}`} className="text-gray-500 px-1">
+            <span key={`ellipsis-${i}`} className="text-gray-500 px-2">
               ...
             </span>
           ) : (
@@ -64,7 +64,7 @@ const Pagination = ({
               key={i}
               variant={currentPage === page ? "secondary" : "ghost"}
               size="lg"
-              className={`h-7 w-7 p-2 text-blue-600 font-medium text-xl cursor-pointer hover:text-gray-400 hover:border ${
+              className={`h-7 w-7  px-6 py-2 text-blue-600 font-medium text-xl cursor-pointer hover:text-gray-400 hover:border ${
                 currentPage === page && "bg-gray-400 text-white"
               }`}
               onClick={() => onPageChange(Number(page))}
