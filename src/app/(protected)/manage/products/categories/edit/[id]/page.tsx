@@ -314,7 +314,7 @@ export default function EditCategoryPage() {
           </Link>
           <div className="flex items-center justify-between">
             <h1 className="!font-light">Edit category</h1>
-            <div className="text-2xl">•••</div>
+            {/* <div className="text-2xl">•••</div> */}
           </div>
           <a className="border-blue-600 border-b-4 w-fit !text-2xl">Details</a>
         </div>

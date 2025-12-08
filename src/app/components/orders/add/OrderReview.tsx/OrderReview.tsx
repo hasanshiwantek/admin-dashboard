@@ -43,7 +43,7 @@ const months = [
 const currentYear = new Date().getFullYear();
 const years = Array.from({ length: 10 }, (_, i) => currentYear + i);
 
-export default function OrderReview() {
+export default function OrderReview({step,setStep}:any) {
   const { watch, register, setValue, getValues } = useFormContext();
   const shipping = watch("shipping");
   const allValues = getValues();
@@ -215,6 +215,7 @@ export default function OrderReview() {
               <button
                 type="button"
                 className="text-blue-600 text-xl hover:underline"
+                 onClick={() => setStep(step - 3)}
               >
                 Change
               </button>
@@ -254,6 +255,7 @@ export default function OrderReview() {
               <button
                 type="button"
                 className="text-blue-600 text-xl hover:underline"
+                  onClick={() => setStep(step - 1)}
               >
                 Change
               </button>
@@ -283,7 +285,7 @@ export default function OrderReview() {
               <div>{billing?.shippingMethod?.provider ?? "None"}</div>
 
               <div className="font-medium">Shipping cost</div>
-              <div>£0.00</div>
+              <div>$0.00</div>
             </div>
 
             {/* Product Table */}
@@ -327,10 +329,10 @@ export default function OrderReview() {
                           {quantity}
                         </TableCell>
                         <TableCell className="text-center align-top">
-                          £{price.toFixed(2)}
+                          ${price.toFixed(2)}
                         </TableCell>
                         <TableCell className="text-center align-top">
-                          £{total}
+                          ${total}
                         </TableCell>
                       </TableRow>
                     );
@@ -404,15 +406,15 @@ export default function OrderReview() {
             <div className=" border p-5 rounded-md bg-white space-y-6 text-lg">
               <div className="flex justify-between border-b pb-1">
                 <span>Subtotal</span>
-                <span>£{subtotal.toFixed(2)}</span>
+                <span>${subtotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between border-b pb-1">
                 <span>Shipping</span>
-                <span>£{shippingCost.toFixed(2)}</span>
+                <span>${shippingCost.toFixed(2)}</span>
               </div>
               <div className="flex justify-between font-bold">
                 <span>Grand total</span>
-                <span>£{total.toFixed(2)}</span>
+                <span>${total.toFixed(2)}</span>
               </div>
 
               {/* Discount input */}

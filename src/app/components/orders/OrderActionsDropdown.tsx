@@ -20,13 +20,24 @@ const OrderActionsDropdown: React.FC<OrderActionsDropdownProps> = ({
 }) => {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        {trigger}
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger asChild>{trigger}</DropdownMenuTrigger>
 
-      <DropdownMenuContent className="w-52 space-y-2">
+      <DropdownMenuContent
+        className="w-52 space-y-2 z-50"
+        align="end"
+        sideOffset={5}
+        // Prevents clicks from closing prematurely
+        onCloseAutoFocus={(e) => e.preventDefault()}
+      >
         {actions.map((action, index) => (
-          <DropdownMenuItem key={index} onClick={action.onClick}>
+          <DropdownMenuItem
+            key={index}
+            onClick={(e) => {
+              e.stopPropagation();
+              action.onClick?.();
+            }}
+            className="cursor-pointer"
+          >
             {action.label}
           </DropdownMenuItem>
         ))}

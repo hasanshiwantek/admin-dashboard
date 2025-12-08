@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Plus, Pencil, Filter ,Ellipsis} from "lucide-react";
+import { Plus, Pencil, Filter, Ellipsis } from "lucide-react";
 import { IoSearchOutline } from "react-icons/io5";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -645,7 +645,9 @@ export default function AllProducts() {
 
               {selectedProductIds.length > 0 && (
                 <div>
-                  <button className="btn-outline-primary">Export</button>
+                  <Link href={"/manage/products/export"}>
+                    <button className="btn-outline-primary">Export</button>
+                  </Link>
                   <button
                     className="btn-outline-primary"
                     onClick={handlebulkEdit}
@@ -873,7 +875,7 @@ export default function AllProducts() {
                               size="icon"
                               className="text-xl cursor-pointer"
                             >
-                              <Ellipsis className="!w-7 !h-7"/>
+                              <Ellipsis className="!w-7 !h-7" />
                             </Button>
                           }
                         />

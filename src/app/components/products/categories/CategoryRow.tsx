@@ -72,6 +72,9 @@ const CategoryRow = ({
     },
     {
       label: "Create sub-category",
+      onClick: () => {
+        router.push(`/manage/products/categories/edit/${category?.id}`);
+      },
     },
     {
       label: "Disable visibility",
@@ -95,6 +98,9 @@ const CategoryRow = ({
     },
     {
       label: "View products",
+      onClick: () => {
+        router.push(`/manage/products`);
+      },
     },
     {
       label: "View in page builder",
@@ -104,6 +110,12 @@ const CategoryRow = ({
     },
     {
       label: "View on storefront",
+      onClick: () => {
+        window.open(
+          `https://newtownspares.advertsedge.com/category/${category?.slug}`,
+          "_blank"
+        );
+      },
     },
     {
       label: "Delete",
@@ -132,11 +144,11 @@ const CategoryRow = ({
 
   const isExpanded = expandedIds.has(category.id);
   const toggle = () =>
-  setExpandedIds(prev => {
-    const next = new Set(prev);
-    next.has(category.id) ? next.delete(category.id) : next.add(category.id);
-    return next;
-  });
+    setExpandedIds((prev) => {
+      const next = new Set(prev);
+      next.has(category.id) ? next.delete(category.id) : next.add(category.id);
+      return next;
+    });
 
   return (
     <>
@@ -157,12 +169,14 @@ const CategoryRow = ({
         </TableCell>
         <TableCell className="w-[30px] ">
           {hasChildren ? (
-            <button 
-            type="button" 
-            onClick={toggle}>
-              {isExpanded ? <ChevronDown size={15} /> : <ChevronRight size={15} />}
+            <button type="button" onClick={toggle}>
+              {isExpanded ? (
+                <ChevronDown size={15} />
+              ) : (
+                <ChevronRight size={15} />
+              )}
             </button>
-          ): null}
+          ) : null}
         </TableCell>
         <TableCell className="flex  items-center gap-2 text-blue-600 font-medium text-xl py-6">
           <div

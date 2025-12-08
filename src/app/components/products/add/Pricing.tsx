@@ -91,6 +91,7 @@ export default function Pricing() {
                 <Label>Cost</Label>
                 <Input
                   type="number"
+                  step="any"
                   placeholder="$0"
                   {...register("costPrice", {
                     setValueAs: (v) => (v === "" ? 0 : parseFloat(v)),
@@ -101,6 +102,7 @@ export default function Pricing() {
                 <Label>MSRP</Label>
                 <Input
                   type="number"
+                  step="any"
                   placeholder="$0"
                   {...register("msrp", {
                     setValueAs: (v) => (v === "" ? 0 : parseFloat(v)),
@@ -111,6 +113,7 @@ export default function Pricing() {
                 <Label>Sale Price</Label>
                 <Input
                   type="number"
+                  step="any"
                   placeholder="$0"
                   {...register("salePrice", {
                     setValueAs: (v) => (v === "" ? 0 : parseFloat(v)),

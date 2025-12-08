@@ -86,11 +86,11 @@ export default function ProductTable({
               </TableCell>
 
               {/* Price */}
-              <TableCell>£{parseFloat(product.price).toFixed(2)}</TableCell>
+              <TableCell>${parseFloat(product.price).toFixed(2)}</TableCell>
 
               {/* Total */}
               <TableCell className="font-medium">
-                £{getTotal(product).toFixed(2)}
+                ${getTotal(product).toFixed(2)}
               </TableCell>
               {/* Dropdown Action */}
               <TableCell className="text-center">
