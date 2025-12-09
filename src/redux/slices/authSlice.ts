@@ -74,7 +74,7 @@ export const updateUserPofile = createAsyncThunk(
     thunkAPI
   ) => {
     try {
-      const res = await axiosInstance.post("dashboard/profile/update-name", {
+      const res = await axiosInstance.put("dashboard/profile/update-name", {
         firstName,
         lastName,
       });

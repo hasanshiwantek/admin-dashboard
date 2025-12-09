@@ -31,6 +31,32 @@ const ImportCsv = () => {
   const [showProgressModal, setShowProgressModal] = useState(false);
   const [progressKey, setProgressKey] = useState("");
 
+  // Check for ongoing import on mount AND when component becomes visible
+  useEffect(() => {
+    const checkOngoingImport = () => {
+      const storedKey = localStorage.getItem("ongoingImportKey");
+
+      // 🔥 If import is running, always show the modal
+      if (storedKey) {
+        setProgressKey(storedKey);
+        setShowProgressModal(true);
+      }
+    };
+
+    checkOngoingImport();
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        checkOngoingImport();
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
+
   const handleFinalSubmit = async (data: Record<string, any>) => {
     const {
       file,
@@ -108,6 +134,8 @@ const ImportCsv = () => {
           console.log("🔑 Progress Key:", key);
           setProgressKey(key);
           setShowProgressModal(true);
+          localStorage.setItem("ongoingImportKey", key);
+          localStorage.setItem("importModalHidden", "false");
         } else {
           console.error("❌ No progress_key found in response:s", result);
           alert("Import started but progress tracking unavailable");
@@ -124,8 +152,11 @@ const ImportCsv = () => {
 
   const handleImportComplete = () => {
     setShowProgressModal(false);
+    localStorage.removeItem("ongoingImportKey");
+    localStorage.removeItem("importModalHidden");
     router.push("/manage/products/");
   };
+
   return (
     <>
       <div>

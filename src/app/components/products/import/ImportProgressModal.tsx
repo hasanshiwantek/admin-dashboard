@@ -99,29 +99,48 @@ export const ImportProgressModal: React.FC<ImportProgressModalProps> = ({
     return () => clearInterval(intervalId);
   }, [isOpen, progressKey, onComplete]);
 
+  // Handle Cancel Function
   const handleCancelImport = async () => {
     if (!progressKey) return;
     setIsCanceling(true);
 
-    // try {
-    //   const response = await axiosInstance.post(
-    //     `dashboard/products/cancel-import`,
-    //     { progress_key: progressKey }
-    //   );
+    const confirm = window.confirm(
+      "Are you sure you want to cancel product uploading?"
+    );
+    if (!confirm) {
+      return;
+    } else {
+      try {
+        const response = await axiosInstance.post(
+          `dashboard/products/cancel-import`,
+          { progress_key: progressKey }
+        );
 
-    //   console.log("Cancel Response:", response.data);
-    //   toast.success(response.data.message || "Import canceled successfully");
+        console.log("Cancel Response:", response.data);
+        toast.success(response.data.message || "Import canceled successfully");
 
-    setProgress((prev) => ({ ...prev, status: "canceled" }));
-    setIsCanceling(false);
+        setProgress((prev) => ({ ...prev, status: "canceled" }));
+        setIsCanceling(false);
+        onClose();
+      } catch (error) {
+        console.error("Failed to cancel import:", error);
+        toast.error("Failed to cancel import. Try again.");
+        setIsCanceling(false);
+      }
+    }
+  };
+
+  const handleHide = () => {
+    if (progressKey) localStorage.setItem("importModalHidden", "true");
     onClose();
   };
-  // catch (error) {
-  //   console.error("Failed to cancel import:", error);
-  //   toast.error("Failed to cancel import. Try again.");
-  //   setIsCanceling(false);
-  // }
-  //   };
+
+  useEffect(() => {
+    if (progress.status === "completed" || progress.status === "canceled") {
+      localStorage.removeItem("ongoingImportKey");
+      localStorage.removeItem("importModalHidden");
+    }
+  }, [progress.status]);
 
   if (!isOpen) return null;
 
@@ -138,7 +157,7 @@ export const ImportProgressModal: React.FC<ImportProgressModalProps> = ({
             Product Import
           </h2>
           <button
-            onClick={onClose}
+            onClick={handleHide}
             className="text-gray-400 hover:text-gray-600 transition-colors"
             title="Hide (import will continue in background)"
           >
@@ -221,7 +240,7 @@ export const ImportProgressModal: React.FC<ImportProgressModalProps> = ({
         {/* Action Buttons */}
         <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-200">
           <button
-            onClick={onClose}
+            onClick={handleHide}
             className="px-4 py-2 text-blue-600 hover:text-blue-700 font-medium transition-colors text-xl"
           >
             Hide
