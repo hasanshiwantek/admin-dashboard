@@ -175,14 +175,26 @@ const ImportCsv = () => {
           <form
             onSubmit={methods.handleSubmit((data: any) => {
               if (step === 1) {
+                const existingImport = localStorage.getItem("ongoingImportKey");
+
+                // 🔒 Block new upload if import is running
+                if (existingImport) {
+                  alert(
+                    "An import is already running. Please wait until it finishes."
+                  );
+                  return;
+                }
+
                 const file = data.file;
                 if (!file || file.length === 0) {
                   alert("Please upload a file before proceeding.");
                   return;
                 }
+
                 setStep(2);
                 return;
               }
+
               handleFinalSubmit(data);
             })}
           >
