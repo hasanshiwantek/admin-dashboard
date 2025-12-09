@@ -288,6 +288,9 @@ export default function EditCategoryPage() {
       }
 
       await dispatch(editCategory({ id: categoryId, data: fd })).unwrap();
+      setTimeout(()=>{
+        router.push("/manage/products/categories")
+      },2000)
       dispatch(fetchCategories());
     } catch (e) {
       console.error(e);
@@ -446,7 +449,6 @@ export default function EditCategoryPage() {
             />
           </div>
 
-          {/* Category image */}
           {/* Category image */}
           <div className="mb-2">
             <Label className="mb-2 block">Category Image</Label>
