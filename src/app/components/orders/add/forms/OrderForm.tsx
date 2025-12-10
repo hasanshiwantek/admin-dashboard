@@ -20,47 +20,75 @@ export default function OrderForm({ orderId }: { orderId: string }) {
   };
 
   useEffect(() => {
-    if (orderId) {
-      setIsEditMode(true);
-      dispatch(fetchOrderById({ orderId })).then((res) => {
-        if (res.payload) {
-          const order = res.payload.data;
-          console.log("Selected Order Details: ", order);
+    if (!orderId) return;
 
-          // Transform API response to match your form structure
-          const transformed = {
-            selectedCustomer: order.customer,
-            email: order.customer.email,
-            firstName: order.billingInformation?.firstName || "",
-            lastName: order.billingInformation?.lastName || "",
-            companyName: order.billingInformation?.companyName || "",
-            phoneNumber: order.billingInformation?.phone || "",
-            address1: order.billingInformation?.addressLine1 || "",
-            address2: order.billingInformation?.addressLine2 || "",
-            city: order.billingInformation?.city || "",
-            state: order.billingInformation?.state || "",
-            zip: order.billingInformation?.zip || "",
-            country: order.billingInformation?.country || "",
-            selectedProducts: order.products.map((p: any) => ({
-              id: p.id,
-              quantity: p.qty || p.quantity,
-              name: p.name,
-              sku: p.sku,
-              price: p.price,
-              image: p.image,
-            })),
-            shippingMethod: {
-              provider: order.billingInformation?.shippingMethod || "none",
-            },
-            paymentMethod: order.billingInformation?.paymentMethod || "",
-            customerComments: order.comments || "",
-            staffNotes: order.staffNotes || "",
-          };
+    setIsEditMode(true);
 
-          reset(transformed); // ⬅️ populate form for all steps
+    dispatch(fetchOrderById({ orderId }))
+      .then((res) => {
+        if (!res.payload) {
+          console.warn("fetchOrderById returned no payload", res);
+          return;
         }
+
+        // orders might be an array (e.g. [ { ... } ]) or a single object.
+        let order = res.payload.orders;
+
+        if (Array.isArray(order)) {
+          if (order.length === 0) {
+            console.warn("fetchOrderById returned an empty orders array", res);
+            return;
+          }
+          order = order[0];
+        }
+
+        console.log("Selected Order Details: ", order);
+
+        // Transform API response to match your form structure
+        const transformed = {
+          selectedCustomer: order.customer,
+          email: order.customer?.email || "",
+          firstName: order.billingInformation?.firstName || "",
+          lastName: order.billingInformation?.lastName || "",
+          companyName: order.billingInformation?.companyName || "",
+          phoneNumber: order.billingInformation?.phone || "",
+          address1: order.billingInformation?.addressLine1 || "",
+          address2: order.billingInformation?.addressLine2 || "",
+          city: order.billingInformation?.city || "",
+          state: order.billingInformation?.state || "",
+          zip: order.billingInformation?.zip || "",
+          country: order.billingInformation?.country || "",
+          selectedProducts: (order.products || []).map((p: any) => ({
+            id: p.id,
+            quantity: p.qty ?? p.quantity ?? 1,
+            name: p.name,
+            sku: p.sku,
+            price: p.price,
+            image: p.image,
+          })),
+          // shipping/payment are on the root order object (not billingInformation)
+          shippingMethod: order.shippingMethod || {
+            provider: null,
+            method: null,
+            cost: "0.00",
+          },
+          paymentMethod: order.paymentMethod?.method || "",
+          cardType: order.paymentMethod?.cardType || "",
+          cardholderName: order.paymentMethod?.cardholderName || "",
+          creditCardNo: order.paymentMethod?.creditCardNo || "",
+          ccv2Value: order.paymentMethod?.ccv2Value || "",
+          expirationMonth: order.paymentMethod?.expirationMonth || "",
+          expirationYear: order.paymentMethod?.expirationYear || "",
+          emailInvoice: order.paymentMethod?.emailInvoice ?? true,
+          customerComments: order.comments || "",
+          staffNotes: order.staffNotes || "",
+        };
+
+        reset(transformed); // populate form for all steps
+      })
+      .catch((err) => {
+        console.error("Error fetching order by id:", err);
       });
-    }
   }, [orderId]);
 
   return (

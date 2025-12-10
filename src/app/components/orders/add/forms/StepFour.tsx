@@ -139,16 +139,19 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
             state: values.state || "",
             zip: values.zip || "",
             country: values.country || "",
-            paymentMethod: values.paymentMethod || "",
-            shippingMethod: values.shippingMethod?.provider || "none",
+
+            customerGroup: values.selectedCustomer?.customerGroup || "",
+            receiveOffers:
+              values.selectedCustomer?.receiveMarketingEmails || false,
+            comments: values.customerComments || "",
+            staffNotes: values.staffNotes || "",
           },
           paymentMethod: buildPaymentMethod(),
-          customerGroup: values.selectedCustomer?.customerGroup || "",
-          receiveOffers:
-            values.selectedCustomer?.receiveMarketingEmails || false,
-          comments: values.customerComments || "",
-          staffNotes: values.staffNotes || "",
-          shippingMethod: values.shippingMethod,
+          shippingMethod: {
+            provider: values.shippingMethod?.provider || "",
+            method: values.shippingMethod?.method || "",
+            cost: values.shippingMethod?.cost || "0.00",
+          },
           products:
             values.selectedProducts?.map((product: any) => ({
               productId: product.id,
@@ -200,7 +203,9 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
         updateOrder.fulfilled.match(resultAction) ||
         addOrderForNewCustomer.fulfilled.match(resultAction)
       ) {
-        router.push("/manage/orders/");
+        setTimeout(() => {
+          router.push("/manage/orders/");
+        }, 2000);
       } else {
         alert(resultAction.payload || "Order failed");
       }
