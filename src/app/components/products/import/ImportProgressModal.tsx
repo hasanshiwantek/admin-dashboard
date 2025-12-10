@@ -49,7 +49,6 @@ export const ImportProgressModal: React.FC<ImportProgressModalProps> = ({
 
   const [isLoading, setIsLoading] = useState(true);
   const [isCanceling, setIsCanceling] = useState(false);
-
   useEffect(() => {
     if (!isOpen || !progressKey) return;
 
@@ -60,30 +59,32 @@ export const ImportProgressModal: React.FC<ImportProgressModalProps> = ({
         );
         const data = response.data;
 
-        setProgress({
-          current: data.current || 0,
-          total: data.total || 0,
-          status: data.status || "processing",
-        });
+        // Convert numeric strings to numbers
+        const current = Number(data.current) || 0;
+        const total = Number(data.total) || 0;
+        const status = data.status || "processing";
+
+        setProgress({ current, total, status });
 
         setDetails({
-          imported: data.imported || 0,
-          notImported: data.not_imported || 0,
-          duplicate: data.duplicate || 0,
-          updated: data.updated || 0,
-          notUpdated: data.not_updated || 0,
+          imported: Number(data.imported) || 0,
+          notImported: Number(data.not_imported) || 0,
+          duplicate: Number(data.duplicate) || 0,
+          updated: Number(data.updated) || 0,
+          notUpdated: Number(data.not_updated) || 0,
         });
 
         setIsLoading(false);
 
+        // Stop polling if completed or canceled
         if (
-          data.status === "completed" ||
-          data.status === "finished" ||
-          data.status === "canceled" ||
-          (data.total > 0 && data.current >= data.total)
+          status === "completed" ||
+          status === "canceled" ||
+          (total > 0 && current >= total)
         ) {
           clearInterval(intervalId);
-          if (data.status === "completed") {
+
+          if (status === "completed") {
             setTimeout(onComplete, 1500);
           }
         }
@@ -93,8 +94,11 @@ export const ImportProgressModal: React.FC<ImportProgressModalProps> = ({
       }
     };
 
+    // Poll immediately
     pollProgress();
-    const intervalId = setInterval(pollProgress, 2000); // ✅ use const
+
+    // ✅ Use const here instead of let
+    const intervalId = setInterval(pollProgress, 2000);
 
     return () => clearInterval(intervalId);
   }, [isOpen, progressKey, onComplete]);

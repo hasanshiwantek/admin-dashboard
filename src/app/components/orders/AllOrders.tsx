@@ -672,7 +672,7 @@ const AllOrders = () => {
                         {order.id}
                       </TableCell>
                       <TableCell>
-                        {order.customer?.firstName} {order.customer?.lastName}
+                        {order.billingInformation?.firstName} {order.billingInformation?.lastName}
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
