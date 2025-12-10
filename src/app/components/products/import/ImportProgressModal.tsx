@@ -52,8 +52,6 @@ export const ImportProgressModal: React.FC<ImportProgressModalProps> = ({
   useEffect(() => {
     if (!isOpen || !progressKey) return;
 
-    let intervalId: NodeJS.Timeout;
-
     const pollProgress = async () => {
       try {
         const response = await axiosInstance.get(
@@ -86,7 +84,6 @@ export const ImportProgressModal: React.FC<ImportProgressModalProps> = ({
         ) {
           clearInterval(intervalId);
 
-          // Trigger completion callback if finished successfully
           if (status === "completed") {
             setTimeout(onComplete, 1500);
           }
@@ -97,11 +94,11 @@ export const ImportProgressModal: React.FC<ImportProgressModalProps> = ({
       }
     };
 
-    // Initial poll immediately
+    // Poll immediately
     pollProgress();
 
-    // Poll every 2 seconds
-    intervalId = setInterval(pollProgress, 2000);
+    // ✅ Use const here instead of let
+    const intervalId = setInterval(pollProgress, 2000);
 
     return () => clearInterval(intervalId);
   }, [isOpen, progressKey, onComplete]);
