@@ -31,7 +31,7 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
 
       switch (values.paymentMethod) {
         case "stripe":
-        case "card":
+        case "credit_card":
           return {
             ...baseData,
             cardType: values.cardType,
