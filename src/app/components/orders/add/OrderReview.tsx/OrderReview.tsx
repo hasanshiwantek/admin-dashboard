@@ -68,7 +68,7 @@ export default function OrderReview({step,setStep}:any) {
 
     switch (paymentMethod) {
       case "stripe":
-      case "card": // Assuming "card" also uses the credit card form like Stripe
+      case "credit_card": // Assuming "card" also uses the credit card form like Stripe
         return (
           <div className="space-y-4">
             {/* Payment Method Dropdown (already handled outside, but shown in image) */}
@@ -390,7 +390,7 @@ export default function OrderReview({step,setStep}:any) {
                   <SelectItem value="stripe">Stripe</SelectItem>
                   <SelectItem value="bank">Bank Transfer</SelectItem>{" "}
                   {/* Grouped with manual payment for field display */}
-                  <SelectItem value="card">Credit Card</SelectItem>{" "}
+                  <SelectItem value="credit_card">Credit Card</SelectItem>{" "}
                   {/* Grouped with Stripe for field display */}
                   <SelectItem value="draft">Create draft order</SelectItem>{" "}
                   {/* Added option for draft order */}
