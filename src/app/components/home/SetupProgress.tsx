@@ -1,40 +1,42 @@
 import styles from "@/styles/Home.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheckCircle, faCircle } from "@fortawesome/free-solid-svg-icons";
-
+import Link from "next/link";
 const steps = [
   {
     title: "Add Products",
     desc: "Keep adding products to your store.",
     btn: "Add products",
     done: true,
+    href: "/manage/products",
   },
   {
     title: "Shipping configured",
     desc: "Modify your rates or add new shipping regions.",
     btn: "Shipping settings",
     done: true,
+    href: "/manage/settings",
   },
   {
     title: "Payments configured",
     desc: "Customers can make purchases and you will receive payouts.",
     btn: "Payment settings",
     done: true,
+    href: "/manage/settings",
   },
   {
     title: "Set up your tax rates",
     desc: "Automatically calculate taxes at checkout.",
     btn: "Set up taxes",
     done: false,
+    href: "/manage/settings",
   },
 ];
 
 const SetupProgress = () => {
   return (
     <div>
-      <h1 className="my-5">
-        Get started guides
-      </h1>
+      <h1 className="my-5">Get started guides</h1>
       <div className={`${styles.cardBox}`}>
         <h2 className="mb-3 uppercase ">Start Accepting Orders</h2>
         <hr className=" border-[1px] my-4 w-92" />
@@ -61,7 +63,9 @@ const SetupProgress = () => {
                   idx + 1
                 }. ${step.title}`}</h3>
                 <p className="!font-medium  !text-gray-500">{step.desc}</p>
-                <button className="btn-outline-primary">{step.btn}</button>
+                <Link href={step?.href}>
+                  <button className="btn-outline-primary">{step.btn}</button>
+                </Link>
               </div>
             </div>
           ))}
