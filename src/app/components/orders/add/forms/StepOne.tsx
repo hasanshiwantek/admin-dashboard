@@ -31,9 +31,15 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
   console.log("Selected Customer from Dropdown: ", selectedCustomer);
 
   const onSubmit = (formData: any) => {
+    if (orderType === "existing" && !selectedCustomer) {
+      alert("Please select an customer before proceeding.");
+      return;
+    }
+
     console.log("Step 1 Submitted:", formData);
     setStep(step + 1);
   };
+
   const handleCancel = () => {
     if (window.confirm("Are you sure you want to cancel this order?")) {
       router.push("/manage/orders/");
