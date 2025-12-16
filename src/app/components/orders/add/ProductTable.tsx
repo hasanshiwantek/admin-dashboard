@@ -121,7 +121,7 @@ export default function ProductTable({
           {/* Subtotal */}
       <div className="flex justify-end font-semibold my-5 items-center bg-gray-700 text-white p-4 text-xl w-fit rounded-md">
         Subtotal:
-        <span className="ml-2 !text-xl font-semibold !text-white">£{subtotal.toFixed(2)}</span>
+        <span className="ml-2 !text-xl font-semibold !text-white">${subtotal.toFixed(2)}</span>
       </div>
     </div>
 

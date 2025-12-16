@@ -38,12 +38,12 @@ export default function ShippingMethod() {
 
       {/* --- Provider selection --- */}
       <div className="space-y-3">
-        <div className="flex items-center gap-3 ">
+        {/* <div className="flex items-center gap-3 ">
           <span className="text-muted-foreground">Choose a provider</span>
           <Link href="#" className="text-blue-600 hover:underline">
             Fetch shipping quotes
           </Link>
-        </div>
+        </div> */}
 
         <div className="max-w-[250px]">
           <Select
