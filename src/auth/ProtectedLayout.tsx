@@ -24,7 +24,7 @@ const ProtectedLayout = ({ children }: Props) => {
       if (timeLeft > 0) {
         setIsAuthenticated(true);
 
-        // Auto-logout after expiry
+        // Auto-logout after expirysss
         const timer = setTimeout(() => {
           localStorage.removeItem("token");
           localStorage.removeItem("tokenExpiry");
