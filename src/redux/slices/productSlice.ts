@@ -236,7 +236,7 @@ export const fetchBrandByKeyword = createAsyncThunk(
       page,
       pageSize,
       keyword,
-    }: { page: number; pageSize: number | string ; keyword: any },
+    }: { page: number; pageSize: number | string; keyword: any },
     thunkAPI
   ) => {
     try {
@@ -412,6 +412,18 @@ const productSlice = createSlice({
         state.error =
           (action.payload as string) || action.error.message || "Failed";
       })
+
+      .addCase(searchAllProducts.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(searchAllProducts.fulfilled, (state, action) => {
+        state.loading = false;
+        state.products = action.payload;
+      })
+      .addCase(searchAllProducts.rejected, (state, action) => {
+        state.loading = false;
+      })
+
       .addCase(fetchSingleProduct.pending, (state) => {
         state.loading = true;
         state.error = null; // reset error
@@ -441,10 +453,6 @@ const productSlice = createSlice({
       .addCase(fetchBrandByKeyword.fulfilled, (state, action) => {
         state.loading = false;
         state.brands = action.payload;
-      })
-      .addCase(searchAllProducts.fulfilled, (state, action) => {
-        state.loading = false;
-        state.products = action.payload;
       })
       .addCase(deleteProduct.fulfilled, (state: any, action) => {
         state.loading = false;
