@@ -99,7 +99,7 @@ const GlobalSearchBar = () => {
   }, []);
 
   return (
-    <div ref={containerRef} className="relative w-[42rem]">
+    <div ref={containerRef} className="relative w-[45rem]">
       {/* Search Input Container */}
       <div
         className="flex justify-start items-center bg-[#1e2a3f] text-center !px-4 !py-3 rounded-md
