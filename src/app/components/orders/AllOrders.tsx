@@ -33,7 +33,7 @@ import {
   addShipmentOrder,
   refundOrder,
 } from "@/redux/slices/orderSlice";
-import { Ellipsis, MoreHorizontal } from "lucide-react";
+import { Ellipsis, MoreHorizontal, BadgeCheck, Flag } from "lucide-react";
 import { refetchOrders } from "@/lib/orderUtils";
 import { FaCirclePlus, FaCircleMinus } from "react-icons/fa6";
 import { useSearchParams } from "next/navigation";
@@ -672,7 +672,27 @@ const AllOrders = () => {
                         {order.id}
                       </TableCell>
                       <TableCell>
-                        {order.billingInformation?.firstName} {order.billingInformation?.lastName}
+                        <div className="flex items-center gap-2">
+                          {/* Verification Badge Icon */}
+                          <BadgeCheck className="w-8 h-8 text-white fill-green-500 " />
+
+                          {/* Country Flag Icon */}
+                          {/* <span className="text-lg">
+                            {order.billingInformation?.country === "US"
+                              ? "🇺🇸"
+                              : "🏳️"}
+                          </span> */}
+                          <span>
+                            {order.billingInformation?.firstName}{" "}
+                            {order.billingInformation?.lastName}
+                          </span>
+
+                          {/* Payment Method Icon */}
+                          {order.billingInformation?.paymentMethod ===
+                            "credit_card" && (
+                            <CreditCard className="w-7 h-7 text-gray-500" />
+                          )}
+                        </div>
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
@@ -728,10 +748,24 @@ const AllOrders = () => {
                       </TableCell>
 
                       <TableCell>
-                        {new Intl.NumberFormat("en-US", {
-                          style: "currency",
-                          currency: "USD",
-                        }).format(Number(order.totalAmount))}
+                        <div className="flex justify-between items-center gap-2">
+                          {new Intl.NumberFormat("en-US", {
+                            style: "currency",
+                            currency: "USD",
+                          }).format(Number(order.totalAmount))}
+                          {/* Order Timeline Icon */}
+                          <button
+                            onClick={() =>
+                              router.push(
+                                `/manage/orders/order-timeline/${order?.id}`
+                              )
+                            }
+                            className="text-gray-500 hover:text-gray-700 "
+                            title="View Order Timeline"
+                          >
+                            <Clock className="w-5 h-5" />
+                          </button>
+                        </div>
                       </TableCell>
 
                       <TableCell>
