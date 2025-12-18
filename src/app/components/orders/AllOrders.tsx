@@ -399,6 +399,17 @@ const AllOrders = () => {
     // }
   };
 
+  // ✅ Enhanced close handler
+  const handleCloseNotes = () => {
+    setShowNotes(false);
+    setSelectedOrderId(null);
+
+    // ✅ Clean up any stuck states
+    setTimeout(() => {
+      document.body.style.pointerEvents = "";
+    }, 100);
+  };
+
   // FETCH ORDERS LOGIC
 
   const searchParams = useSearchParams();
@@ -607,9 +618,7 @@ const AllOrders = () => {
                     }
                   />
                 </TableHead>
-
                 <TableHead></TableHead>
-
                 <TableHead>Date</TableHead>
                 <TableHead>Order ID</TableHead>
                 <TableHead>Customer</TableHead>
@@ -1055,7 +1064,7 @@ const AllOrders = () => {
       {showNotes && selectedOrderId && (
         <OrderNotesModal
           open={showNotes}
-          onClose={() => setShowNotes(false)}
+          onClose={handleCloseNotes}
           orderId={selectedOrderId}
         />
       )}

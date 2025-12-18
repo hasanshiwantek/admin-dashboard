@@ -10,9 +10,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
-import { useParams } from "next/navigation";
 import { fetchOrderById, updateOrder } from "@/redux/slices/orderSlice";
 import { Label } from "@/components/ui/label";
+
 interface OrderNotesModalProps {
   open: boolean;
   onClose: () => void;
@@ -30,21 +30,16 @@ export default function OrderNotesModal({
     (state: any) => state.order || {}
   );
 
-  console.log("Single order data from frontend: ", singleOrder);
-
   const order = singleOrder;
   const [comments, setComments] = useState("");
   const [staffNotes, setStaffNotes] = useState("");
-  console.log("Single Order Data: ", order);
-  console.log("Staff Notes: ", staffNotes);
-  console.log("Selected Order id: ", orderId);
 
   // Fetch order notes when modal opens
   useEffect(() => {
-    if (orderId) {
+    if (orderId && open) {
       dispatch(fetchOrderById({ orderId }));
     }
-  }, [orderId, dispatch]);
+  }, [orderId, open, dispatch]);
 
   // Set form values when order data loads
   useEffect(() => {
@@ -57,15 +52,38 @@ export default function OrderNotesModal({
   const handleSave = () => {
     const payload = {
       staff_notes: staffNotes,
-      comments:comments
+      comments: comments,
     };
-    dispatch(updateOrder({ id: orderId, data: payload}));
+    dispatch(updateOrder({ id: orderId, data: payload }));
+    handleClose();
+  };
+
+  // ✅ Enhanced close handler
+  const handleClose = () => {
+    // Reset form state
+    setComments("");
+    setStaffNotes("");
+    
+    // Close modal
     onClose();
+    
+    // ✅ Force remove any lingering overlays
+    setTimeout(() => {
+      document.body.style.pointerEvents = "";
+      const overlay = document.querySelector('[data-radix-portal]');
+      if (overlay) {
+        overlay.remove();
+      }
+    }, 100);
   };
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-3xl">
+    <Dialog open={open} onOpenChange={handleClose}>
+      <DialogContent 
+        className="sm:max-w-3xl"
+        onEscapeKeyDown={handleClose}
+        onPointerDownOutside={handleClose}
+      >
         <DialogHeader>
           <DialogTitle>Order Comments and Notes</DialogTitle>
         </DialogHeader>
@@ -90,7 +108,7 @@ export default function OrderNotesModal({
           </div>
 
           <div>
-            <Label className="block  mb-1">Staff Notes</Label>
+            <Label className="block mb-1">Staff Notes</Label>
             <Textarea
               rows={5}
               placeholder="Staff notes are internal and not visible to customers."
@@ -103,7 +121,7 @@ export default function OrderNotesModal({
         </div>
 
         <DialogFooter className="pt-6">
-          <Button variant="outline" onClick={onClose} className="!text-lg !p-6">
+          <Button variant="outline" onClick={handleClose} className="!text-lg !p-6">
             Cancel
           </Button>
           <Button onClick={handleSave} className="!text-lg !p-6">
