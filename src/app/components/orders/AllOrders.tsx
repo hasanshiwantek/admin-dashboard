@@ -458,13 +458,13 @@ const AllOrders = () => {
   return (
     <div className=" bg-[var(--store-bg)] min-h-screen mt-20">
       {/* Tabs */}
-      <div className="flex space-x-6 border-b pb-2 mb-4 overflow-x-auto">
+      <div className="flex space-x-9 border-b mb-4 overflow-x-auto">
         {tabs.map((tab) => (
           <button
             key={tab}
-            className={`!text-2xl pb-1 border-b-2 whitespace-nowrap ${
+            className={`!text-2xl pb-3 border-b-3 whitespace-nowrap ${
               activeTab === tab
-                ? "border-blue-600 text-blue-600 font-semibold"
+                ? "border-blue-600 font-semibold"
                 : "border-transparent text-gray-500 hover:text-black"
             }`}
             onClick={() => setActiveTab(tab)}
