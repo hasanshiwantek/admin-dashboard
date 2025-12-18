@@ -86,10 +86,6 @@ export const addOrder = createAsyncThunk(
   }
 );
 
-
-
-
-
 // ADD ORDER FOR NEW CUSTOMER  THUNK
 export const addOrderForNewCustomer = createAsyncThunk(
   "orders/addOrderForNewCustomer",
@@ -107,7 +103,6 @@ export const addOrderForNewCustomer = createAsyncThunk(
     }
   }
 );
-
 
 // UPDATE ORDER STATUS THUNK
 export const updateOrderStatus = createAsyncThunk(
@@ -484,9 +479,15 @@ const orderSlice = createSlice({
         state.singleOrder = action.payload.data;
         console.log("Fulfilled response: ", state.singleOrder);
       })
+      .addCase(fetchOrderByKeyword.pending, (state) => {
+        state.loading = true;
+      })
       .addCase(fetchOrderByKeyword.fulfilled, (state, action) => {
         state.loading = false;
         state.orders = action.payload;
+      })
+      .addCase(fetchOrderByKeyword.rejected, (state, action) => {
+        state.loading = false;
       })
       .addCase(advanceOrderSearch.fulfilled, (state, action) => {
         state.loading = false;
