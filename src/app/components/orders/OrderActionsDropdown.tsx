@@ -4,7 +4,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 
 interface OrderActionsDropdownProps {
   actions: {
@@ -18,23 +18,29 @@ const OrderActionsDropdown: React.FC<OrderActionsDropdownProps> = ({
   actions,
   trigger,
 }) => {
+  const [open, setOpen] = useState(false);
+
   return (
-    <DropdownMenu>
+    <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>{trigger}</DropdownMenuTrigger>
 
       <DropdownMenuContent
         className="w-52 space-y-2 z-50"
         align="end"
         sideOffset={5}
-        // Prevents clicks from closing prematurely
-        onCloseAutoFocus={(e) => e.preventDefault()}
       >
         {actions.map((action, index) => (
           <DropdownMenuItem
             key={index}
             onClick={(e) => {
+              e.preventDefault();
               e.stopPropagation();
-              action.onClick?.();
+              setOpen(false); // ✅ Close dropdown immediately
+
+              // ✅ Delay action execution slightly
+              setTimeout(() => {
+                action.onClick?.();
+              }, 100);
             }}
             className="cursor-pointer"
           >
