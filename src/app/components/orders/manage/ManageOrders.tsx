@@ -240,7 +240,7 @@ const ManageOrders = () => {
                           </div>
 
                           <div className="flex items-start gap-2 w-2/4">
-                            <label className="!text-xl text-black w-1/3">
+                            <label className="!text-xl text-black w-1/4">
                               Customer Comments
                             </label>
                             <textarea
