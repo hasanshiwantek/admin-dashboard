@@ -36,7 +36,7 @@ const steps = [
 const SetupProgress = () => {
   return (
     <div>
-      <h1 className="my-5">Get started guides</h1>
+      <h1 className="my-5 !text-[2.4rem]">Get started guides</h1>
       <div className={`${styles.cardBox}`}>
         <h2 className="mb-3 uppercase ">Start Accepting Orders</h2>
         <hr className=" border-[1px] my-4 w-92" />
