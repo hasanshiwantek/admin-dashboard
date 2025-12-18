@@ -27,7 +27,7 @@ export default function StorePerformanceChart() {
 
   return (
     <div>
-      <h1 className="my-5">Store Performance</h1>
+      <h1 className="my-5 !text-[2.4rem]">Store Performance</h1>
       <div className="w-full h-100% p-4 bg-white rounded shadow">
         {/* Summary Cards */}
         <div className="grid grid-cols-4 gap-4 mb-6">
@@ -64,10 +64,10 @@ export default function StorePerformanceChart() {
                 key={metric.key}
                 className="p-4 bg-gray-50 border rounded shadow-sm"
               >
-                <div className="text-xl font-medium text-gray-600">
+                <div className="text-xl lg:text-2xl font-medium text-gray-600">
                   {metric.label}
                 </div>
-                <div className={`text-[2rem] font-semibold ${metric.color}`}>
+                <div className={`text-[2rem] lg:text-[3rem] font-semibold ${metric.color}`}>
                   {metric.prefix || ""}
                   {metric.suffix ? total.toFixed(2) : Math.round(total)}
                   {metric.suffix || ""}
