@@ -469,7 +469,7 @@ const AllOrders = () => {
   return (
     <div className=" bg-[var(--store-bg)] min-h-screen mt-20">
       {/* Tabs */}
-      <div className="flex space-x-9 border-b mb-4 overflow-x-auto">
+      <div className="flex 2xl:space-x-9 space-x-6 border-b mb-4 overflow-x-auto">
         {tabs.map((tab) => (
           <button
             key={tab}
