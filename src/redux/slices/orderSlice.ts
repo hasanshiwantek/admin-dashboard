@@ -445,6 +445,30 @@ export const fetchPackingSlipPdf = createAsyncThunk(
   }
 );
 
+// IMPORT CSV THUNK
+export const importTrackingNumbers = createAsyncThunk(
+  "orders/importTrackingNumbers",
+  async (formData: FormData, thunkAPI) => {
+    try {
+      const response = await axiosInstance.post(
+        "dashboard/tracking/import",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      console.log("✅ Import Csv Response  From Thunk:", response.data);
+
+      return response.data;
+    } catch (error: any) {
+      console.error("❌ Error Importing CSV:", error);
+      return thunkAPI.rejectWithValue("Failed to import CSV");
+    }
+  }
+);
+
 // 2. Initial State
 const initialState = {
   orders: [],

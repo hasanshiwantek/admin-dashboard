@@ -31,6 +31,17 @@ export interface OrderProduct {
   price: string;
   quantity: number;
 }
+export interface BillingInformation {
+  firstName: string;
+  lastName?: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  zipCode?: string;
+  country?: string;
+}
 
 export interface OrderItem {
   id: number;
@@ -46,6 +57,8 @@ export interface OrderItem {
   paymentMethod: string;
   createdAt: string;
   items: OrderProduct[];
+  key: string;
+   billingInformation?: BillingInformation; 
 }
 
 export interface OrderListResponse {
@@ -59,6 +72,7 @@ export interface OrderListResponse {
     currentPage: number;
     totalPages: number;
   };
+    key: string;
 }
 
 export interface MappingField  {

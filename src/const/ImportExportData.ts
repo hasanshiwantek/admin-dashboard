@@ -72,13 +72,6 @@ export const mappingFields: MappingField[] = [
   })),
 ];
 
-
-
-
-
-
-
-
 export const CustomerMappingFields: MappingField[] = [
   {
     label: "Customer Group",
@@ -106,6 +99,23 @@ export const CustomerMappingFields: MappingField[] = [
     "Accepts Marketing Emails",
     "Customer Group",
     "Form Field Data",
+  ].map((label) => ({
+    label,
+    type: "dropdown" as const,
+  })),
+];
+
+export const TrackingMappingFields: MappingField[] = [
+  ...[
+    "Order ID",
+    "Order Number",
+    "Tracking Number",
+    "Tracking URL",
+    "Shipping Carrier",
+    "Shipping Method",
+    "Ship Date",
+    "Estimated Delivery",
+    "Notes",
   ].map((label) => ({
     label,
     type: "dropdown" as const,

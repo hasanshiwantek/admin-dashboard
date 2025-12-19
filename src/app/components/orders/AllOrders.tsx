@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -647,8 +647,8 @@ const AllOrders = () => {
                 </TableRow>
               ) : (
                 filteredOrders?.map((order: any, idx: number) => (
-                  <>
-                    <TableRow key={idx}>
+                  <Fragment key={order?.id}>
+                    <TableRow key={order?.id}>
                       <TableCell>
                         <Checkbox
                           checked={selectedOrderIds.some(
@@ -1044,7 +1044,7 @@ const AllOrders = () => {
                         </TableCell>
                       </TableRow>
                     )}
-                  </>
+                  </Fragment>
                 ))
               )}
             </TableBody>
