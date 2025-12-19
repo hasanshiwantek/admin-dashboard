@@ -53,25 +53,35 @@ import { Editor } from "@tinymce/tinymce-react";
 import { useFormContext } from "react-hook-form";
 import { useRef } from "react";
 
-export default function DescriptionEditor() {
+interface DescriptionEditorProps {
+  fieldName?: string;
+  label?: string;
+  height?: number;
+}
+
+export default function DescriptionEditor({ 
+  fieldName = "description",
+  label = "Description",
+  height = 400 
+}: DescriptionEditorProps) {
   const { setValue, watch } = useFormContext();
-  const description = watch("description");
+  const value = watch(fieldName);
   const editorRef = useRef(null);
 
   return (
-    <div className="p-10 bg-white shadow-lg" id="description">
-      <h1 className="my-5">Description</h1>
+    <div className="p-10 bg-white shadow-lg" id={fieldName}>
+      <h1 className="my-5">{label}</h1>
       <Editor
         apiKey="d2z6pu70qtywhkzox051ga0czhas02dp55gl9bxijefs4vxo"
         onInit={(evt, editor) => (editorRef.current = editor)}
-        value={description || ""}
+        value={value || ""}
         onEditorChange={(content) => {
-          setValue("description", content, { shouldDirty: true });
+          setValue(fieldName, content, { shouldDirty: true });
         }}
         init={{
-          height: 400,
+          height: height,
           menubar: true,
-          directionality: "ltr", // ✅ fix RTL issue
+          directionality: "ltr",
           plugins: [
             "advlist",
             "autolink",

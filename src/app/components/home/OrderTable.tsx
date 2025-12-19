@@ -24,7 +24,7 @@ const OrderTable = () => {
 
   // Fetch all orders on mount
   useEffect(() => {
-    dispatch(fetchAllOrders({ page: 1, perPage: 50 }));
+    dispatch(fetchAllOrders({ page: 1, perPage: 20 }));
   }, [dispatch]);
 
   // Filter orders based on active tab
@@ -132,14 +132,19 @@ const OrderTable = () => {
                     {order.status}
                   </span>
                 </div>
-                <div className="w-1/3 text-xl lg:text-2xl text-blue-600 hover:underline cursor-pointer">
-                  Order #{order.id} - {order.name}
-                </div>
+                <Link href={`/manage/orders/edit/${order?.id}`}>
+                  <div className=" text-xl lg:text-2xl text-blue-600 hover:underline cursor-pointer">
+                    Order #{order.id} - {order.billingInformation?.firstName}{" "}
+                    {order.billingInformation?.lastName}
+                  </div>
+                </Link>
                 <div className="w-1/3 flex justify-between text-right text-gray-700">
                   <div className="font-semibold text-xl lg:text-2xl text-gray-500">
                     ${parseFloat(order.totalAmount).toFixed(2)}
                   </div>
-                  <div className="text-xl lg:text-2xl text-gray-500">{formattedDate}</div>
+                  <div className="text-xl lg:text-2xl text-gray-500">
+                    {formattedDate}
+                  </div>
                 </div>
               </div>
             );
