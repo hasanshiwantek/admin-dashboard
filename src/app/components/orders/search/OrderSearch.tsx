@@ -99,19 +99,19 @@ const OrderSearch = () => {
     <form onSubmit={handleSubmit}>
       <div className="p-10">
         <div className="flex flex-col space-y-5">
-          <h1 className="!font-extralight">Search Products</h1>
-          <p>
+          <h1 className="!font-extralight 2xl:!text-5xl">Search Products</h1>
+          <p className="2xl:!text-2xl">
             Search for specific products using the advanced search options
             below.
           </p>
         </div>
 
         <div className="my-10">
-          <h1 className="my-5">Advanced Search</h1>
+          <h1 className="my-5 2xl:!text-[2.4rem]">Advanced Search</h1>
           <div className="bg-white shadow-md p-10 space-y-10">
             {/* Search Keywords */}
             <div className="flex items-center gap-4">
-              <Label htmlFor="searchKeywords" className="w-[120px] text-right">
+              <Label  htmlFor="searchKeywords" className="w-[140px] text-right 2xl:!text-2xl">
                 Search Keywords:
                 <TooltipProvider>
                   <Tooltip>
@@ -179,7 +179,7 @@ const OrderSearch = () => {
               },
             ].map(({ id, label, options }) => (
               <div key={id} className="flex items-center gap-4">
-                <Label htmlFor={id} className="w-[120px] text-right">
+                <Label htmlFor={id} className="w-[140px] text-right 2xl:!text-2xl">
                   {label}:
                 </Label>
                 <Select onValueChange={(val) => handleChange(id, val)}>
@@ -201,7 +201,7 @@ const OrderSearch = () => {
 
             {/* Coupon code with tooltip */}
             <div className="flex items-center gap-4">
-              <Label htmlFor="coupon" className="w-[120px]">
+              <Label htmlFor="coupon" className="w-[140px] 2xl:!text-2xl">
                 Coupon code
               </Label>
               <Input
@@ -224,27 +224,27 @@ const OrderSearch = () => {
             </div>
 
             {/* Guest checkbox */}
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-3">
               <Checkbox
                 id="guest"
                 checked={formData.guest}
                 onCheckedChange={(val) => handleChange("guest", val)}
               />
-              <Label htmlFor="guest">
+              <Label className="2xl:!text-2xl" htmlFor="guest">
                 Guest orders which match emails of registered accounts
               </Label>
             </div>
 
             {/* Pre-orders checkboxes */}
             <div className="space-y-2">
-              <Label>Pre-orders</Label>
+              <Label className="2xl:!text-2xl">Pre-orders</Label>
               <div className="flex items-center space-x-2">
                 <Checkbox
                   id="no-preorder"
                   checked={formData.preorderNo}
                   onCheckedChange={(val) => handleChange("preorderNo", val)}
                 />
-                <Label htmlFor="no-preorder">
+                <Label className="2xl:!text-2xl" htmlFor="no-preorder">
                   Include orders that do not contain pre-order products
                 </Label>
               </div>
@@ -254,7 +254,7 @@ const OrderSearch = () => {
                   checked={formData.preorderYes}
                   onCheckedChange={(val) => handleChange("preorderYes", val)}
                 />
-                <Label htmlFor="with-preorder">
+                <Label className="2xl:!text-2xl" htmlFor="with-preorder">
                   Include orders that contain pre-order products
                 </Label>
               </div>
@@ -262,7 +262,7 @@ const OrderSearch = () => {
 
             {/* Deleted orders */}
             <div className="space-y-2">
-              <Label>Deleted orders</Label>
+              <Label className="2xl:!text-2xl">Deleted orders</Label>
               <RadioGroup
                 defaultValue={formData.deletedOrder}
                 onValueChange={(val) => handleChange("deletedOrder", val)}
@@ -277,7 +277,7 @@ const OrderSearch = () => {
                 ].map(({ value, label }) => (
                   <div key={value} className="flex items-center space-x-2">
                     <RadioGroupItem value={value} id={value} />
-                    <Label htmlFor={value}>{label}</Label>
+                    <Label className="2xl:!text-2xl" htmlFor={value}>{label}</Label>
                   </div>
                 ))}
               </RadioGroup>
@@ -286,13 +286,13 @@ const OrderSearch = () => {
 
           {/* SEARCH BY RANGE */}
           <div className="my-10">
-            <h1 className="my-5">Search by Range</h1>
+            <h1 className="my-5 2xl:!text-[2.4rem]">Search by Range</h1>
             <div className="bg-white shadow-md p-10 space-y-10">
               <div className="flex items-center gap-4">
-                <Label htmlFor="orderIdFrom" className="w-[90px] text-right">
+                <Label  htmlFor="orderIdFrom" className="w-[100px] text-right 2xl:!text-2xl">
                   Order Id:
                 </Label>
-                <span className="text-sm text-gray-600">From </span>
+                <span className="text-sm text-gray-600 2xl:!text-2xl">From </span>
                 <Input
                   id="orderIdFrom"
                   type="number"
@@ -300,7 +300,7 @@ const OrderSearch = () => {
                   value={formData.orderIdFrom}
                   onChange={(e) => handleChange("orderIdFrom", e.target.value)}
                 />
-                <span className="text-sm text-gray-600">to </span>
+                <span className="text-sm text-gray-600 2xl:!text-2xl">to </span>
                 <Input
                   id="orderIdTo"
                   type="number"
@@ -311,10 +311,10 @@ const OrderSearch = () => {
               </div>
 
               <div className="flex items-center gap-4">
-                <Label htmlFor="orderTotalFrom" className="w-[80px] text-right">
+                <Label htmlFor="orderTotalFrom" className="w-[90px] text-right 2xl:!text-2xl">
                   Order total:
                 </Label>
-                <span className="text-sm text-gray-600">From$</span>
+                <span className="text-sm text-gray-600 2xl:!text-2xl">From$</span>
                 <Input
                   id="orderTotalFrom"
                   type="number"
@@ -324,7 +324,7 @@ const OrderSearch = () => {
                     handleChange("orderTotalFrom", e.target.value)
                   }
                 />
-                <span className="text-sm text-gray-600 ml-4">to$</span>
+                <span className="text-sm text-gray-600 ml-4 2xl:!text-2xl">to$</span>
                 <Input
                   id="orderTotalTo"
                   type="number"
@@ -338,10 +338,10 @@ const OrderSearch = () => {
 
           {/* SEARCH BY DATE */}
           <div>
-            <h1 className="my-5">Search by date</h1>
+            <h1 className="my-5 2xl:!text-[2.4rem]">Search by date</h1>
             <div className="bg-white shadow-md p-10 space-y-10">
               <div className="space-y-2">
-                <Label htmlFor="date-range">Date range</Label>
+                <Label className="2xl:!text-2xl" htmlFor="date-range">Date range</Label>
                 <Select onValueChange={(val) => handleChange("dateRange", val)}>
                   <SelectTrigger id="date-range" className="w-full">
                     <SelectValue placeholder="-- Choose an order date --" />
@@ -366,22 +366,22 @@ const OrderSearch = () => {
               </div>
 
               <div className="space-y-2">
-                <Label>Date type</Label>
+                <Label className="2xl:!text-2xl">Date type</Label>
                 <RadioGroup
                   defaultValue={formData.dateType}
                   onValueChange={(val) => handleChange("dateType", val)}
                 >
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="order-date" id="order-date" />
-                    <Label htmlFor="order-date">Order date</Label>
+                    <Label className="2xl:!text-2xl" htmlFor="order-date">Order date</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="delivery-date" id="delivery-date" />
-                    <Label htmlFor="delivery-date">Delivery/Event date</Label>
+                    <Label className="2xl:!text-2xl" htmlFor="delivery-date">Delivery/Event date</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="both" id="both" />
-                    <Label htmlFor="both">Order and delivery/event date</Label>
+                    <Label className="2xl:!text-2xl" htmlFor="both">Order and delivery/event date</Label>
                   </div>
                 </RadioGroup>
               </div>
@@ -390,10 +390,10 @@ const OrderSearch = () => {
 
           {/* SORT ORDER */}
           <div className="my-10">
-            <h1 className="my-5">Sort Order</h1>
+            <h1 className="my-5 2xl:!text-[2.4rem]">Sort Order</h1>
             <div className="bg-white shadow-md p-10 space-y-10">
               <div className="flex items-center gap-4">
-                <Label htmlFor="sortBy" className="w-[140px] text-right">
+                <Label  htmlFor="sortBy" className="w-[140px] text-right 2xl:!text-2xl">
                   Sort Order:
                 </Label>
                 <Select onValueChange={(val) => handleChange("sortBy", val)}>
