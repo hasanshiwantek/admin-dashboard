@@ -489,14 +489,14 @@ const AllOrders = () => {
       <div className="bg-white p-4 shadow-sm">
         <div className="flex flex-wrap gap-3 items-center mb-1">
           <Link href={"/manage/orders/add"}>
-            <button className="btn-outline-primary">Add</button>
+            <button className="btn-outline-primary 2xl:!text-2xl">Add</button>
           </Link>
           <Link href={"/manage/orders/export"}>
-            <button className="btn-outline-primary">Export all</button>
+            <button className="btn-outline-primary 2xl:!text-2xl">Export all</button>
           </Link>
 
           <Select onValueChange={setSelectedAction} value={selectedAction}>
-            <SelectTrigger className="w-fit p-6">
+            <SelectTrigger className="w-fit px-6 py-6 2xl:py-[1.8rem]">
               <SelectValue placeholder="Choose an action" />
             </SelectTrigger>
 
@@ -581,16 +581,17 @@ const AllOrders = () => {
             </SelectContent>
           </Select>
 
-          <button className="btn-outline-primary" onClick={handleConfirmClick}>
+          <button className="btn-outline-primary 2xl:!text-2xl" onClick={handleConfirmClick}>
             Confirm
           </button>
 
-          <Input
+          <Input 
+            className="2xl:py-[1.8rem]"
             placeholder="Filter by keyword"
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
           />
-          <button className="btn-outline-primary" onClick={filterHandler}>
+          <button className="btn-outline-primary 2xl:!text-2xl" onClick={filterHandler}>
             Search
           </button>
         </div>
@@ -669,7 +670,7 @@ const AllOrders = () => {
                         </button>
                       </TableCell>
 
-                      <TableCell>
+                      <TableCell className="2xl:!text-2xl">
                         {new Date(order.createdAt).toLocaleDateString("en-GB", {
                           day: "2-digit",
                           month: "short", // or "long" for full month name
@@ -677,7 +678,7 @@ const AllOrders = () => {
                         })}
                       </TableCell>
 
-                      <TableCell className="text-blue-600">
+                      <TableCell className="text-blue-600 2xl:!text-2xl">
                         {order.id}
                       </TableCell>
                       <TableCell>
@@ -691,7 +692,7 @@ const AllOrders = () => {
                               ? "🇺🇸"
                               : "🏳️"}
                           </span> */}
-                          <span>
+                          <span className="2xl:!text-2xl">
                             {order.billingInformation?.firstName}{" "}
                             {order.billingInformation?.lastName}
                           </span>
@@ -757,7 +758,7 @@ const AllOrders = () => {
                       </TableCell>
 
                       <TableCell>
-                        <div className="flex justify-between items-center gap-2">
+                        <div className="flex justify-between items-center gap-2 2xl:!text-2xl">
                           {new Intl.NumberFormat("en-US", {
                             style: "currency",
                             currency: "USD",

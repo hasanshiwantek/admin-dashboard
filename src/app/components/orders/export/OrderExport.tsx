@@ -43,7 +43,7 @@ export default function OrderExport() {
         <form onSubmit={form.handleSubmit(onSubmit)}>
           {/* Tabs */}
           <div className="border-b border-gray-200">
-            <h1 className="!font-extralight">Export orders</h1>
+            <h1 className="!font-extralight 2xl:!text-5xl">Export orders</h1>
             <p className="my-5">
               Select an export template or create a new one.
             </p>
