@@ -37,20 +37,23 @@ import { buildUpdateProductFormData } from "@/lib/formDataUtils";
 export default function AddProductPage() {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const defaultValues = useMemo(() => ({
-  price: "35",
-  dimensions: { weight: "0" },  
-}), []); // stable reference
+  const defaultValues = useMemo(
+    () => ({
+      price: "35",
+      dimensions: { weight: "0" },
+    }),
+    []
+  ); // stable reference
 
   const methods = useForm({ defaultValues });
   const { reset } = methods;
   const { id } = useParams();
 
   useEffect(() => {
-  if (id) {
-    dispatch(fetchSingleProduct({ id }));
-  }
-}, [dispatch, id]);
+    if (id) {
+      dispatch(fetchSingleProduct({ id }));
+    }
+  }, [dispatch, id]);
 
   const editProduct = useAppSelector(
     (state: any) => state.product.singleProduct
@@ -88,7 +91,6 @@ export default function AddProductPage() {
       reset();
     }
   }, [id, reset]);
-
 
   const onSubmit = methods.handleSubmit(async (data: Record<string, any>) => {
     try {
@@ -164,6 +166,8 @@ export default function AddProductPage() {
           <form onSubmit={onSubmit} className="flex-1  p-6 space-y-8 ">
             <BasicInfoForm />
             <DescriptionEditor />
+            {/* FAQ section */}
+            <DescriptionEditor fieldName="faq" label="FAQ" height={300} />
             <ImageVideoUploader initialImages={product?.image || []} />
             <ProductIdentifiers />
             <Pricing />
@@ -180,11 +184,11 @@ export default function AddProductPage() {
             <Seo />
             <OpenGraph />
             <div className="flex justify-end  gap-10 items-center fixed w-full bottom-0 right-0  bg-white/90 z-10 shadow-xs border-t  p-4">
-            <Link href={"/manage/products"}>
-              <button className="btn-outline-primary" type="button">
-                Cancel
-              </button>
-            </Link>
+              <Link href={"/manage/products"}>
+                <button className="btn-outline-primary" type="button">
+                  Cancel
+                </button>
+              </Link>
               <button className="btn-primary" type="submit">
                 Save Product
               </button>
