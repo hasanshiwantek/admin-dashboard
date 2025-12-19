@@ -16,14 +16,14 @@ export default function OrderExportOptions() {
 
   return (
     <div>
-      <h1 className="my-5">Template and File format options</h1>
+      <h1 className="my-5 2xl:!text-[2.4rem]">Template and File format options</h1>
       <div className="bg-white border p-10 rounded-md shadow-sm space-y-6">
         <div className="space-y-4">
           {/* Template */}
 
           <div className="flex justify-start gap-5 items-start">
-            <Label className="pt-1">Template</Label>
-            <div className="w-[500px] border rounded-md overflow-y-auto h-[180px] bg-white text-xl">
+            <Label className="pt-1 2xl:!text-2xl">Template</Label>
+            <div className="w-[500px] border rounded-md overflow-y-auto h-[180px] bg-white text-xl 2xl:!text-2xl">
               <div className="border-b px-3 py-1 font-semibold text-gray-600">
                 Built-in templates
               </div>
@@ -40,7 +40,7 @@ export default function OrderExportOptions() {
                       )
                     }
                     className={cn(
-                      "cursor-pointer px-3 py-1 ",
+                      "cursor-pointer px-3 py-1  ",
                       isSelected && "bg-blue-600 text-white"
                     )}
                   >
@@ -56,7 +56,7 @@ export default function OrderExportOptions() {
             {/* File Format */}
             <div>
               <div className="flex  justify-start gap-5">
-                <Label className=" mb-2">File format</Label>
+                <Label className="2xl:!text-2xl mb-2">File format</Label>
                 <Controller
                   control={control}
                   name="fileFormat"
@@ -70,11 +70,11 @@ export default function OrderExportOptions() {
                       <div className="flex flex-col mt-10 space-y-4">
                         <div className="flex items-center space-x-2">
                           <RadioGroupItem value="csv" id="csv" />
-                          <Label htmlFor="csv">Export as CSV</Label>
+                          <Label className="2xl:!text-2xl" htmlFor="csv">Export as CSV</Label>
                         </div>
                         <div className="flex items-center space-x-2">
                           <RadioGroupItem value="xml" id="xml" />
-                          <Label htmlFor="xml">Export as XML</Label>
+                          <Label className="2xl:!text-2xl" htmlFor="xml">Export as XML</Label>
                         </div>
                       </div>
                     </RadioGroup>
@@ -84,7 +84,7 @@ export default function OrderExportOptions() {
               {/* Save export checkbox */}
               <div className="flex items-center space-x-2 pt-2 mt-10">
                 <Checkbox id="saveExport" {...register("saveExport")} />
-                <Label htmlFor="saveExport">
+                <Label className="2xl:!text-2xl" htmlFor="saveExport">
                   Save export to the server for later download
                 </Label>
               </div>
