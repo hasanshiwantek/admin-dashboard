@@ -60,10 +60,10 @@ export default function ImportTrackingCsvForm() {
     <div className="p-10 space-y-8 bg-gray-50">
       {/* Header */}
       <div className="space-y-2">
-        <h1 className="text-2xl font-normal text-gray-800">
+        <h1 className="text-2xl font-normal text-gray-800 2xl:!text-5xl">
           Import tracking numbers
         </h1>
-        <p className="text-gray-600">
+        <p className="text-gray-600 2xl:!text-2xl">
           You can import tracking numbers to your store from a csv file on your
           computer or server.
         </p>
@@ -71,14 +71,14 @@ export default function ImportTrackingCsvForm() {
 
       {/* Order Status Details */}
       <div className="space-y-4">
-        <h2 className="text-lg font-semibold text-gray-800">
+        <h2 className="text-lg font-semibold text-gray-800 2xl:!text-[2.4rem]">
           Order status details
         </h2>
         <div className="bg-white border rounded-md p-8">
           <div className="flex items-center gap-4">
-            <Label className="w-48 text-gray-700">Update order status to</Label>
+            <Label className="w-48 2xl:w-64 text-gray-700 2xl:!text-2xl">Update order status to</Label>
             <div className="flex items-center gap-2 flex-1">
-              <Select
+              <Select 
                 onValueChange={(value) => setValue("orderStatus", value)}
                 defaultValue="Shipped"
               >
@@ -93,7 +93,7 @@ export default function ImportTrackingCsvForm() {
                   ))}
                 </SelectContent>
               </Select>
-              <FaCircleQuestion className="text-gray-400" />
+              <FaCircleQuestion className="text-gray-400 w-6 h-6" />
             </div>
           </div>
         </div>
@@ -101,10 +101,10 @@ export default function ImportTrackingCsvForm() {
 
       {/* Import Details */}
       <div className="space-y-4">
-        <h2 className="text-lg font-semibold text-gray-800">Import details</h2>
+        <h2 className="text-lg font-semibold text-gray-800 2xl:!text-[2.4rem]">Import details</h2>
         <div className="bg-white border rounded-md p-8">
           <div className="flex items-center gap-4">
-            <Label className="w-48 text-gray-700">
+            <Label className="w-48 2xl:w-64 text-gray-700 2xl:!text-2xl">
               Override existing details
             </Label>
             <div className="flex items-center gap-2">
@@ -114,11 +114,11 @@ export default function ImportTrackingCsvForm() {
               />
               <Label
                 htmlFor="overrideExisting"
-                className="font-normal cursor-pointer"
+                className="font-normal cursor-pointer 2xl:!text-2xl"
               >
                 Yes, override existing records
               </Label>
-              <FaCircleQuestion className="text-gray-400" />
+              <FaCircleQuestion className="text-gray-400 w-6 h-6" />
             </div>
           </div>
         </div>
@@ -126,12 +126,12 @@ export default function ImportTrackingCsvForm() {
 
       {/* File Details */}
       <div className="space-y-4">
-        <h2 className="text-lg font-semibold text-gray-800">File details</h2>
+        <h2 className="text-lg font-semibold text-gray-800 2xl:!text-[2.4rem]">File details</h2>
         <div className="bg-white border rounded-md p-8 space-y-6">
           {/* Import File */}
           <div className="space-y-3">
             <div className="flex items-start gap-4">
-              <Label className="w-48 text-gray-700 pt-2">Import file</Label>
+              <Label className="w-48  2xl:w-80 text-gray-700 2xl:!text-2xl pt-2">Import file</Label>
               <RadioGroup
                 defaultValue="upload"
                 onValueChange={(value) => setValue("fileSource", value)}
@@ -142,7 +142,7 @@ export default function ImportTrackingCsvForm() {
                     <RadioGroupItem value="upload" id="upload" />
                     <Label
                       htmlFor="upload"
-                      className="font-normal cursor-pointer"
+                      className="font-normal cursor-pointer 2xl:!text-2xl"
                     >
                       Upload a csv file from my computer (512 MB size limit)
                     </Label>
@@ -153,7 +153,7 @@ export default function ImportTrackingCsvForm() {
                       accept=".csv"
                       {...register("file")}
                       onChange={handleFileParse}
-                      className="cursor-pointer max-w-md"
+                      className="cursor-pointer max-w-md 2xl:!text-2xl"
                     />
                   </div>
                 </div>
@@ -162,11 +162,11 @@ export default function ImportTrackingCsvForm() {
                   <RadioGroupItem value="server" id="server" />
                   <Label
                     htmlFor="server"
-                    className="font-normal cursor-pointer"
+                    className="font-normal cursor-pointer 2xl:!text-2xl"
                   >
                     Use a file already on the server
                   </Label>
-                  <FaCircleQuestion className="text-gray-400" />
+                  <FaCircleQuestion className="text-gray-400 w-6 h-6" />
                 </div>
               </RadioGroup>
             </div>
@@ -174,7 +174,7 @@ export default function ImportTrackingCsvForm() {
 
           {/* Contains Headers */}
           <div className="flex items-center gap-4">
-            <Label className="w-48 text-gray-700">
+            <Label className="w-52 2xl:w-80 text-gray-700 2xl:!text-2xl">
               Import file contains headers
             </Label>
             <div className="flex items-center gap-2">
@@ -183,13 +183,13 @@ export default function ImportTrackingCsvForm() {
                 defaultChecked
                 {...register("hasHeader")}
               />
-              <FaCircleQuestion className="text-gray-400" />
+              <FaCircleQuestion className="text-gray-400 w-6 h-6" />
             </div>
           </div>
 
           {/* Field Separator */}
           <div className="flex items-center gap-4">
-            <Label htmlFor="separator" className="w-48 text-gray-700">
+            <Label htmlFor="separator" className="w-48  2xl:w-80 text-gray-700 2xl:!text-2xl">
               Field separator
             </Label>
             <div className="flex items-center gap-2">
@@ -200,7 +200,7 @@ export default function ImportTrackingCsvForm() {
                 {...register("separator", { required: true })}
                 className="max-w-xs"
               />
-              <FaCircleQuestion className="text-gray-400" />
+              <FaCircleQuestion className="text-gray-400 w-6 h-6" />
             </div>
           </div>
 
