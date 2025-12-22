@@ -27,7 +27,7 @@ export type ImportFormValues = {
 
 export default function ImportTrackingCsvForm() {
   const { register, setValue, watch } = useFormContext();
-
+  const selectedFile = watch("file");
   const orderStatuses = [
     "Pending",
     "Awaiting Payment",
@@ -147,7 +147,7 @@ export default function ImportTrackingCsvForm() {
                       Upload a csv file from my computer (512 MB size limit)
                     </Label>
                   </div>
-                  <div className="ml-6">
+                  <div className="ml-6 space-y-2">
                     <Input
                       type="file"
                       accept=".csv"
@@ -155,6 +155,12 @@ export default function ImportTrackingCsvForm() {
                       onChange={handleFileParse}
                       className="cursor-pointer max-w-md 2xl:!text-2xl"
                     />
+                    {selectedFile && selectedFile.length > 0 && (
+                      <p className="text-green-600 flex items-center gap-2">
+                        <span className="inline-block w-2 h-2 bg-green-600 rounded-full"></span>
+                        Selected: {selectedFile[0].name}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -217,7 +223,6 @@ export default function ImportTrackingCsvForm() {
                 {...register("enclosure", { required: true })}
                 className="max-w-xs"
               />
-              <FaCircleQuestion className="text-gray-400" />
             </div>
           </div>
         </div>

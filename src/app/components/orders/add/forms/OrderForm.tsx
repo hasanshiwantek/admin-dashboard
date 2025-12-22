@@ -44,9 +44,26 @@ export default function OrderForm({ orderId }: { orderId: string }) {
 
         console.log("Selected Order Details: ", order);
 
+
+
+      // Create a customer object from billing information
+      const customerFromBilling = order.customer || {
+        firstName: order.billingInformation?.firstName,
+        lastName: order.billingInformation?.lastName,
+        email: order.billingInformation?.email,
+        phone: order.billingInformation?.phone,
+        companyName: order.billingInformation?.companyName,
+        address: order.billingInformation?.addressLine1,
+        city: order.billingInformation?.city,
+        state: order.billingInformation?.state,
+        zip: order.billingInformation?.zip,
+        country: order.billingInformation?.country,
+      };
+
         // Transform API response to match your form structure
         const transformed = {
           selectedCustomer: order.customer,
+          selectedBillingCustomer: customerFromBilling,
           email: order.customer?.email || "",
           firstName: order.billingInformation?.firstName || "",
           lastName: order.billingInformation?.lastName || "",
