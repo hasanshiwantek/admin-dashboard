@@ -107,7 +107,7 @@ export const addOrderForNewCustomer = createAsyncThunk(
 // UPDATE ORDER STATUS THUNK
 export const updateOrderStatus = createAsyncThunk(
   "orders/updateOrderStatus",
-  async ({ id, status }: { id: number; status: string }, thunkAPI) => {
+  async ({ id, status }: { id: any; status: string }, thunkAPI) => {
     try {
       const response = await axiosInstance.patch(
         `/dashboard/orders/update-status/${id}`,

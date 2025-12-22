@@ -63,7 +63,7 @@ const AllOrders = () => {
   const totalPages = pagination?.totalPages;
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
   const [showNotes, setShowNotes] = useState(false);
-  const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const [selectedOrderId, setSelectedOrderId] = useState<any>(null);
   const router = useRouter();
   const toggleRow = (id: number) => {
     setExpandedRow((prev) => (prev === id ? null : id));
@@ -96,7 +96,7 @@ const AllOrders = () => {
   ];
 
   const [selectedOrderIds, setSelectedOrderIds] = useState<any[]>([]);
-  const [selectedOrder, setSelectedOrder] = useState();
+  const [selectedOrder, setSelectedOrder] = useState<any>();
   const [showShipmentModal, setShowShipmentModal] = useState(false);
   // Handle single row checkbox change
   const handleOrderCheckboxChange = (order: any, checked: boolean) => {
@@ -226,12 +226,36 @@ const AllOrders = () => {
         setShowNotes(true);
       },
     },
-    { label: "View shipments" },
+    {
+      label: "View shipments",
+      onClick: () => {
+        router.push("/manage/orders/shipments");
+      },
+    },
     {
       label: "Ship items",
       onClick: () => {
         setSelectedOrder(order); // store in state
         setShowShipmentModal(true);
+      },
+    },
+    {
+      label: "Void",
+      onClick: async () => {
+        try {
+          await dispatch(
+            updateOrderStatus({
+              id: order.id,
+              status: "Cancelled",
+            })
+          );
+          // Only refetch once after all operations
+          setTimeout(() => {
+            refetchOrders(dispatch);
+          }, 700);
+        } catch (error) {
+          console.error("Error:", error);
+        }
       },
     },
     {
@@ -492,7 +516,9 @@ const AllOrders = () => {
             <button className="btn-outline-primary 2xl:!text-2xl">Add</button>
           </Link>
           <Link href={"/manage/orders/export"}>
-            <button className="btn-outline-primary 2xl:!text-2xl">Export all</button>
+            <button className="btn-outline-primary 2xl:!text-2xl">
+              Export all
+            </button>
           </Link>
 
           <Select onValueChange={setSelectedAction} value={selectedAction}>
@@ -581,17 +607,23 @@ const AllOrders = () => {
             </SelectContent>
           </Select>
 
-          <button className="btn-outline-primary 2xl:!text-2xl" onClick={handleConfirmClick}>
+          <button
+            className="btn-outline-primary 2xl:!text-2xl"
+            onClick={handleConfirmClick}
+          >
             Confirm
           </button>
 
-          <Input 
+          <Input
             className="2xl:py-[1.8rem]"
             placeholder="Filter by keyword"
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
           />
-          <button className="btn-outline-primary 2xl:!text-2xl" onClick={filterHandler}>
+          <button
+            className="btn-outline-primary 2xl:!text-2xl"
+            onClick={filterHandler}
+          >
             Search
           </button>
         </div>
@@ -737,7 +769,8 @@ const AllOrders = () => {
                                 >
                                   <SelectTrigger className="w-[200px] h-8 p-6">
                                     <SelectValue>
-                                      {currentStatus?.label || "Pending"}
+                                      {currentStatus?.label ||
+                                        "Awaiting Payment"}
                                     </SelectValue>
                                   </SelectTrigger>
                                   <SelectContent>
@@ -1074,9 +1107,29 @@ const AllOrders = () => {
           open={showShipmentModal}
           order={selectedOrder}
           onClose={() => setShowShipmentModal(false)}
-          onSubmit={(data) => {
+          onSubmit={async (data) => {
             console.log("Shipment Data:", data);
-            dispatch(addShipmentOrder({ data }));
+
+            try {
+              // First, add the shipment
+              await dispatch(addShipmentOrder({ data }));
+
+              // Then, update the order status to "Shipped" if checkbox is checked
+              if (data.updateStatusAndNotify) {
+                await dispatch(
+                  updateOrderStatus({
+                    id: selectedOrder.id,
+                    status: "Shipped",
+                  })
+                );
+              }
+
+              // Only refetch once after all operations
+              await refetchOrders(dispatch);
+              setShowShipmentModal(false);
+            } catch (error) {
+              console.error("Error:", error);
+            }
           }}
         />
       )}
