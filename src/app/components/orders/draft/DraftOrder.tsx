@@ -38,8 +38,8 @@ const DraftOrder = () => {
     <div className="p-10 max-w-full ">
       {/* Header Section */}
       <div className="flex justify-between items-center mb-6">
-        <h1 className="">Draft orders</h1>
-        <button className="btn-primary flex items-center  gap-2">
+        <h1 className="2xl:!text-5xl">Draft orders</h1>
+        <button className="btn-primary flex items-center 2xl:!text-2xl  gap-2">
           <Plus className="h-6 w-6" /> Add new
         </button>
       </div>
@@ -49,19 +49,19 @@ const DraftOrder = () => {
         <Table>
           <TableHeader className="h-18">
             <TableRow>
-              <TableHead className="">Date</TableHead>
-              <TableHead className="">Customer</TableHead>
-              <TableHead className="">URL</TableHead>
+              <TableHead className="2xl:!text-[1.6rem]">Date</TableHead>
+              <TableHead className="2xl:!text-[1.6rem]">Customer</TableHead>
+              <TableHead className="2xl:!text-[1.6rem]">URL</TableHead>
               <TableHead className=" text-center">Channel</TableHead>
-              <TableHead className="">Total</TableHead>
-              <TableHead className=" text-right pr-10">Action</TableHead>
+              <TableHead className="2xl:!text-[1.6rem]">Total</TableHead>
+              <TableHead className=" text-right pr-10 2xl:!text-[1.6rem]">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="h-18 ">
             {data.map((row, index) => (
               <TableRow key={index}>
-                <TableCell className="">{row.date}</TableCell>
-                <TableCell className="">{row.customer}</TableCell>
+                <TableCell className="2xl:!text-2xl">{row.date}</TableCell>
+                <TableCell className="2xl:!text-2xl">{row.customer}</TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
                     <Input value={row.url} className="h-12 w-[220px]" />
@@ -79,10 +79,10 @@ const DraftOrder = () => {
                     <div className="w-5 h-5 bg-[#312e81] rounded flex items-center justify-center text-[10px] text-white font-bold">
                       B
                     </div>
-                    <span className="text-slate-700">{row.channel}</span>
+                    <span className="text-slate-700 2xl:!text-2xl">{row.channel}</span>
                   </div>
                 </TableCell>
-                <TableCell className="">{row.total}</TableCell>
+                <TableCell className="2xl:!text-2xl">{row.total}</TableCell>
                 <TableCell className="text-right pr-10">
                   <OrderActionsDropdown
                     actions={getDropdownActions(row)}

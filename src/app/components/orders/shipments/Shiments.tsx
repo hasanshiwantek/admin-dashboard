@@ -341,7 +341,7 @@ Updated: ${billing.updatedAt}`;
           <h1 className="!text-5xl !font-extralight !text-gray-600 !my-10">
             View Shipments
           </h1>
-          <p>
+          <p className="2xl:!text-2xl">
             Shipments created from your orders are shown below. Click the plus
             icon next to a shipment to see its complete details.
           </p>
@@ -352,9 +352,9 @@ Updated: ${billing.updatedAt}`;
           {tabs.map((tab) => (
             <button
               key={tab}
-              className={`!text-2xl pb-1 border-b-2 whitespace-nowrap ${
+              className={`!text-2xl pb-1 border-b-3 whitespace-nowrap ${
                 activeTab === tab
-                  ? "border-blue-600 text-blue-600 font-semibold"
+                  ? "border-blue-600"
                   : "border-transparent text-gray-500 hover:text-black"
               }`}
               onClick={() => setActiveTab(tab)}
@@ -371,30 +371,30 @@ Updated: ${billing.updatedAt}`;
               className="btn-outline-primary"
               onClick={handleShipmentDelete}
             >
-              <MdDelete className="h-7 w-7" />
+              <MdDelete className="w-7 h-7 2xl:h-9 2xl:w-10" />
             </button>
 
             <ExportShipmentsDialog
               trigger={
-                <button className="btn-outline-primary">Export all</button>
+                <button className="btn-outline-primary 2xl:!text-2xl">Export all</button>
               }
               onConfirm={(fmt) => handleExport(fmt)} // use shipments.data inside
             />
 
-            <div className="flex items-center border rounded">
+            <div className="flex items-center border rounded 2xl:h-[37.98px]">
               <Input
                 placeholder="Filter by keyword"
-                className="border-0 focus:ring-0"
+                className="border-0 focus:ring-0 2xl:!text-2xl"
                 onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
               />
-              <button className="btn-outline-primary" onClick={handleSearch}>
+              <button className="btn-outline-primary h-full" onClick={handleSearch}>
                 <IoFilterOutline />
               </button>
             </div>
             <Link href={"/manage/orders/shipments/search-shipments"}>
-              <button className="btn-outline-primary">Search</button>
+              <button className="btn-outline-primary 2xl:!text-2xl">Search</button>
             </Link>
           </div>
 
@@ -431,12 +431,12 @@ Updated: ${billing.updatedAt}`;
                     />
                   </TableHead>
                   <TableHead> </TableHead>
-                  <TableHead>Shipment ID</TableHead>
-                  <TableHead>Shipped to</TableHead>
-                  <TableHead>Date shipped</TableHead>
-                  <TableHead>Shipping tracking number</TableHead>
-                  <TableHead>Order Date</TableHead>
-                  <TableHead>Action</TableHead>
+                  <TableHead >Shipment ID</TableHead>
+                  <TableHead >Shipped to</TableHead>
+                  <TableHead >Date shipped</TableHead>
+                  <TableHead >Shipping tracking number</TableHead>
+                  <TableHead >Order Date</TableHead>
+                  <TableHead >Action</TableHead>
                 </TableRow>
               </TableHeader>
 
@@ -480,12 +480,12 @@ Updated: ${billing.updatedAt}`;
                             )}
                           </button>
                         </TableCell>
-                        <TableCell>{shipment.id}</TableCell>
+                        <TableCell className="2xl:!text-2xl">{shipment.id}</TableCell>
 
-                        <TableCell className="text-blue-600">
+                        <TableCell className="text-blue-600 2xl:!text-2xl">
                           {shipment.shippedTo}
                         </TableCell>
-                        <TableCell>{shipment.dateShipped}</TableCell>
+                        <TableCell className="2xl:!text-2xl">{shipment.dateShipped}</TableCell>
                         <TableCell>
                           <Input
                             placeholder=""
@@ -504,7 +504,7 @@ Updated: ${billing.updatedAt}`;
                           />
 
                           <button
-                            className="btn-outline-primary"
+                            className="btn-outline-primary 2xl:h-[32.5px]"
                             onClick={() => {
                               const updatedValue = trackingChanges[shipment.id];
 
@@ -522,7 +522,7 @@ Updated: ${billing.updatedAt}`;
                           </button>
                         </TableCell>
 
-                        <TableCell>
+                        <TableCell className="2xl:!text-2xl">
                           {new Date(shipment.orderDate).toLocaleDateString(
                             "en-GB",
                             {
