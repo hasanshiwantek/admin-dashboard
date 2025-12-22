@@ -77,7 +77,7 @@ export default function OrderExportPreview() {
 
   return (
     <div>
-      <p className=" text-muted-foreground">31 orders ready for export.</p>
+      <p className=" text-muted-foreground 2xl:!text-2xl">31 orders ready for export.</p>
       <div className="bg-white p-6 rounded-md border shadow-sm space-y-4">
         <div className="flex justify-end my-2">
           {/* Pagination */}
@@ -104,12 +104,12 @@ export default function OrderExportPreview() {
             <TableBody>
               {previewData.map((item, index) => (
                 <TableRow key={index}>
-                  <TableCell>{item.id}</TableCell>
-                  <TableCell>{item.customer}</TableCell>
-                  <TableCell>{item.date}</TableCell>
-                  <TableCell>{item.status}</TableCell>
-                  <TableCell>{item.merchant_defined_status}</TableCell>
-                  <TableCell>{item.total}</TableCell>
+                  <TableCell className="2xl:!text-2xl">{item.id}</TableCell>
+                  <TableCell className="2xl:!text-2xl">{item.customer}</TableCell>
+                  <TableCell className="2xl:!text-2xl">{item.date}</TableCell>
+                  <TableCell className="2xl:!text-2xl">{item.status}</TableCell>
+                  <TableCell className="2xl:!text-2xl">{item.merchant_defined_status}</TableCell>
+                  <TableCell className="2xl:!text-2xl">{item.total}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

@@ -174,20 +174,20 @@ const ManageOrders = () => {
                       )}
                     </button>
                   </TableCell>
-                  <TableCell>{ret.returnId}</TableCell>
-                  <TableCell className="text-[#6F8DFD]">
+                  <TableCell className="2xl:!text-2xl">{ret.returnId}</TableCell>
+                  <TableCell className="text-[#6F8DFD] 2xl:!text-2xl">
                     {ret.returnedItem}
                   </TableCell>
-                  <TableCell className="text-[#6F8DFD]">
+                  <TableCell className="text-[#6F8DFD] 2xl:!text-2xl">
                     {ret.orderNumber}
                   </TableCell>
-                  <TableCell className="text-[#6F8DFD]">
+                  <TableCell className="text-[#6F8DFD] 2xl:!text-2xl">
                     {ret.customer}
                   </TableCell>
-                  <TableCell>{ret.date}</TableCell>
+                  <TableCell className="2xl:!text-2xl">{ret.date}</TableCell>
                   <TableCell>
                     <Select defaultValue={ret.status}>
-                      <SelectTrigger className="w-[120px] !h-10">
+                      <SelectTrigger className="w-[120px] !h-10 2xl:!text-2xl">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>

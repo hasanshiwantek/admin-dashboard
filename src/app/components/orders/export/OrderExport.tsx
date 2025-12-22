@@ -44,7 +44,7 @@ export default function OrderExport() {
           {/* Tabs */}
           <div className="border-b border-gray-200">
             <h1 className="!font-extralight 2xl:!text-5xl">Export orders</h1>
-            <p className="my-5">
+            <p className="my-5 2xl:!text-2xl">
               Select an export template or create a new one.
             </p>
 
@@ -52,7 +52,7 @@ export default function OrderExport() {
               <button
                 type="button"
                 onClick={() => setActiveTab("exportOptions")}
-                className={`px-4 py-2 text-xl  border-b-4 transition-colors ${
+                className={`px-4 py-2 text-xl  border-b-4 transition-colors 2xl:!text-2xl ${
                   activeTab === "exportOptions"
                     ? "border-blue-600 text-blue-600"
                     : "border-transparent text-gray-500 hover:text-gray-700"
@@ -63,7 +63,7 @@ export default function OrderExport() {
               <button
                 type="button"
                 onClick={() => setActiveTab("exportPreview")}
-                className={`px-4 py-2 text-xl border-b-4 transition-colors ${
+                className={`px-4 py-2 text-xl border-b-4 transition-colors 2xl:!text-2xl ${
                   activeTab === "exportPreview"
                     ? "border-blue-600 text-blue-600"
                     : "border-transparent text-gray-500 hover:text-gray-700"
