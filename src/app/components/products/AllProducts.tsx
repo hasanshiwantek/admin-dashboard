@@ -567,13 +567,13 @@ export default function AllProducts() {
     <>
       <div className="">
         <div className="flex justify-between items-center mb-4">
-          <h1 className="!text-5xl !font-extralight !text-gray-600 !my-5">
-            Products
+          <h1 className="!text-5xl 2xl:!text-[3.2rem] !font-extralight !text-gray-600 !my-5">
+           All Products
           </h1>
           <Link href={"/manage/products/add"}>
             <Button
               size="xl"
-              className="!text-2xl btn-primary !flex !justify-start !items-center"
+              className="!text-2xl 2xl:!text-[1.6rem] btn-primary !flex !justify-start !items-center"
             >
               <Plus className="!w-6 !h-6" /> Add new
             </Button>
@@ -586,7 +586,7 @@ export default function AllProducts() {
               <button
                 key={tab}
                 onClick={() => setSelectedTab(tab)}
-                className={`!text-2xl px-5 py-2 rounded  cursor-pointer transition hover:bg-blue-100 ${
+                className={`!text-2xl 2xl:!text-[1.6rem] px-5 py-2 rounded  cursor-pointer transition hover:bg-blue-100 ${
                   selectedTab === tab
                     ? "bg-blue-100 border-blue-600 text-blue-600"
                     : " text-blue-600"
@@ -612,7 +612,7 @@ export default function AllProducts() {
               <input
                 type="text"
                 placeholder=" Search products"
-                className=" !ml-3 bg-transparent !text-xl !font-medium outline-none placeholder:text-gray-400 w-[80%]"
+                className=" !ml-3 bg-transparent !text-xl 2xl:!text-[1.6rem] !font-medium outline-none placeholder:text-gray-400 w-[80%]"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -620,7 +620,7 @@ export default function AllProducts() {
 
             {/* <Input placeholder="Search products" className="max-w-[80%] !p-7 " /> */}
             <Link href={"/manage/products/search"}>
-              <button className="btn-outline-primary flex justify-start gap-1 items-center">
+              <button className="btn-outline-primary flex justify-start gap-1 items-center 2xl:!text-[1.6rem]">
                 <Filter className="w-6 h-6" />
                 Add filters
               </button>
@@ -638,7 +638,7 @@ export default function AllProducts() {
                     handleSelectAllChange(checked)
                   }
                 />
-                <span className="text-gray-700 !text-xl">
+                <span className="text-gray-700 !text-xl 2xl:!text-[1.6rem]">
                   {filteredProducts?.length} of {pagination?.total} Products
                 </span>
               </div>
@@ -672,7 +672,7 @@ export default function AllProducts() {
               )}
 
               {/* <div>
-              <span className="!text-xl !text-blue-600 hover:bg-blue-100 cursor-pointer px-6 py-3 rounded-sm transition-all ">
+              <span className="!text-xl 2xl:!text-[1.6rem] !text-blue-600 hover:bg-blue-100 cursor-pointer px-6 py-3 rounded-sm transition-all ">
                 Select all products
               </span>
             </div> */}
@@ -700,15 +700,15 @@ export default function AllProducts() {
               <TableHeader className="h-18">
                 <TableRow>
                   <TableHead></TableHead>
-                  <TableHead>Name</TableHead>
+                  <TableHead className="2xl:!text-[1.6rem]">Name</TableHead>
                   <TableHead></TableHead>
-                  <TableHead>SKU</TableHead>
-                  <TableHead>Categories</TableHead>
-                  <TableHead>Current stock</TableHead>
-                  <TableHead>Price</TableHead>
-                  <TableHead>Channels</TableHead>
-                  <TableHead>Visibility</TableHead>
-                  <TableHead></TableHead>
+                  <TableHead className="2xl:!text-[1.6rem]">SKU</TableHead>
+                  <TableHead className="2xl:!text-[1.6rem]">Categories</TableHead>
+                  <TableHead className="2xl:!text-[1.6rem]">Current stock</TableHead>
+                  <TableHead className="2xl:!text-[1.6rem]">Price</TableHead>
+                  <TableHead className="2xl:!text-[1.6rem]">Channels</TableHead>
+                  <TableHead className="2xl:!text-[1.6rem]">Visibility</TableHead>
+                  <TableHead className="2xl:!text-[1.6rem]"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -759,7 +759,7 @@ export default function AllProducts() {
                             router.push(`/manage/products/edit/${product.id}`);
                             console.log("navigated");
                           }}
-                          className="!text-blue-600 hover:underline !text-xl !font-medium capitalize  cursor-pointer whitespace-normal break-words leading-snug max-w-[300px]"
+                          className="!text-blue-600 hover:underline !text-xl 2xl:!text-[1.6rem] !font-medium capitalize  cursor-pointer whitespace-normal break-words leading-snug max-w-[350px]"
                         >
                           {product.name}
                         </span>
@@ -797,8 +797,8 @@ export default function AllProducts() {
                         />
                       </TableCell>
 
-                      <TableCell>{product.sku}</TableCell>
-                      <TableCell className="whitespace-normal break-words leading-snug max-w-[300px]">
+                      <TableCell className="2xl:!text-[1.6rem]">{product.sku}</TableCell>
+                      <TableCell className="whitespace-normal break-words leading-snug 2xl:!text-[1.6rem] max-w-[300px]">
                         {product?.categoryIds?.find(
                           (cat: any) => cat.name !== "Uncategorized"
                         )?.name || "-"}
@@ -809,7 +809,7 @@ export default function AllProducts() {
                           product={product}
                           trigger={
                             <div className="group hover:text-blue-600 flex items-center gap-1 hover:bg-blue-100 p-4 rounded-md cursor-pointer transition-colors">
-                              <a className="text-xl group-hover:opacity-100">
+                              <a className="text-xl group-hover:opacity-100 2xl:!text-[1.6rem]">
                                 {product.currentStock}
                               </a>
                               <Pencil className="w-5 h-5 text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -823,7 +823,7 @@ export default function AllProducts() {
                           product={product}
                           trigger={
                             <div className="group hover:text-blue-600 flex items-center gap-1 hover:bg-blue-100 p-4 rounded-md cursor-pointer transition-colors">
-                              <a className="text-xl group-hover:opacity-100">
+                              <a className="text-xl group-hover:opacity-100 2xl:!text-[1.6rem]">
                                 {product.price}
                               </a>
                               <Pencil className="w-5 h-5 text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -832,7 +832,7 @@ export default function AllProducts() {
                         />
                       </TableCell>
 
-                      <TableCell>{product.channels}</TableCell>
+                      <TableCell className="2xl:!text-[1.6rem]">{product.channels}</TableCell>
                       <TableCell className="relative hover:bg-blue-100 transition-all">
                         <VisibilityToggle
                           productId={product.id}

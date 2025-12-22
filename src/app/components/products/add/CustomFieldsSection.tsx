@@ -26,16 +26,17 @@ export default function CustomFields() {
 
   return (
     <div className="bg-white p-10 shadow-lg space-y-6" id="customFields">
-        <h1>Custom Fields</h1>
-        <p >
+        <h1 className="2xl:!text-[2.4rem]">Custom Fields</h1>
+        <p className="text-muted-foreground 2xl:!text-2xl">
          Custom fields allow you to specify additional information that will appear on the products page. Custom fields appear automatically in the product's details if they are defined on the product. If you don't want to show any custom fields, simply remove them from the product. 
         </p>
 
       {fields.map((field, index) => (
         <div key={field.id} className="flex items-end gap-4">
           <div className="w-1/2">
-            <Label htmlFor={`customFields.${index}.name`}>Custom Field Name <span className="!text-red-500">*</span></Label>
+            <Label className="2xl:!text-2xl" htmlFor={`customFields.${index}.name`}>Custom Field Name <span className="!text-red-500">*</span></Label>
             <Input
+                           className="!max-w-[90%] w-full"
               id={`customFields.${index}.name`}
               placeholder="e.g. Wine Vintage"
               {...register(`customFields.${index}.name` as const)}
@@ -48,8 +49,9 @@ export default function CustomFields() {
           </div>
 
           <div className="w-1/2">
-            <Label htmlFor={`customFields.${index}.value`}>Custom Field Value <span className="!text-red-500">*</span></Label>
+            <Label className="2xl:!text-2xl" htmlFor={`customFields.${index}.value`}>Custom Field Value <span className="!text-red-500">*</span></Label>
             <Input
+                            className="!max-w-[90%] w-full"
               id={`customFields.${index}.value`}
               placeholder="1998"
               {...register(`customFields.${index}.value` as const)}
@@ -76,7 +78,7 @@ export default function CustomFields() {
         type="button"
         variant="link"
         onClick={() => append({ name: "", value: "" })}
-        className="text-xl text-blue-600 cursor-pointer"
+        className="text-xl text-blue-600 cursor-pointer 2xl:!text-2xl"
       >
         + Add Custom Fields
       </Button>

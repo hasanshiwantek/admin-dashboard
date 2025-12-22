@@ -17,7 +17,7 @@ export default function RelatedProducts() {
  
     return (
         <div id="relatedProducts" className="p-10 bg-white shadow-lg rounded-sm ">
-            <h1 >Related Products</h1>
+            <h1 className="2xl:!text-[2.4rem]">Related Products</h1>
             <Controller
                 control={control}
                 name="relatedProducts"
@@ -29,7 +29,7 @@ export default function RelatedProducts() {
                             checked={field.value}
                             onCheckedChange={(val) => field.onChange(val === true)}
                         />
-                        <Label htmlFor="relatedProducts">
+                        <Label className="2xl:!text-2xl" htmlFor="relatedProducts">
                             Automatically show related products on my storefront
                             <TooltipProvider>
                                 <Tooltip>
