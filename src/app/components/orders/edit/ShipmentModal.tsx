@@ -32,27 +32,52 @@ export function ShipmentModal({
   onClose: () => void;
   onSubmit: (data: any) => void;
 }) {
-  // State for all dynamic form fields
-  const [quantity, setQuantity] = useState(5);
-  const [weightLbs, setWeightLbs] = useState(5);
+  // Initialize product quantities from order
+  const [productQuantities, setProductQuantities] = useState<any>(
+    order?.products?.reduce((acc: any, product: any, index: number) => {
+      acc[index] = product.quantity || 1;
+      return acc;
+    }, {}) || {}
+  );
+
+  const [weightLbs, setWeightLbs] = useState(12);
   const [weightOz, setWeightOz] = useState(0);
-  const [width, setWidth] = useState("");
-  const [height, setHeight] = useState("");
-  const [depth, setDepth] = useState("");
+  const [width, setWidth] = useState("0");
+  const [height, setHeight] = useState("0");
+  const [depth, setDepth] = useState("0");
   const [packingSlipNotes, setPackingSlipNotes] = useState("");
-  const [shippingMethod, setShippingMethod] = useState("other");
+  const [shippingMethod, setShippingMethod] = useState("Other");
   const [trackingCarrier, setTrackingCarrier] = useState("");
   const [trackingId, setTrackingId] = useState("");
-  const [shippingMethodDescription, setShippingMethodDescription] =
-    useState("Free Shipping");
+  const [shippingMethodDescription, setShippingMethodDescription] = useState(
+    "I will provide the shipping label/others (Mentions the detai"
+  );
   const [updateStatusAndNotify, setUpdateStatusAndNotify] = useState(true);
 
   console.log("Selected Order: ", order);
 
+  // Calculate total left to ship
+  const totalLeftToShip =
+    order?.products?.reduce((total: number, product: any, index: number) => {
+      return total + (productQuantities[index] || 0);
+    }, 0) || 0;
+
+  const handleQuantityChange = (index: number, value: number) => {
+    setProductQuantities((prev: any) => ({
+      ...prev,
+      [index]: value,
+    }));
+  };
+
   const handleSubmit = () => {
     const payload = {
       orderId: order?.id,
-      quantity: quantity,
+      products: order?.products?.map((product: any, index: number) => ({
+        productId: product.id,
+        sku: product.sku,
+        name: product.name,
+        quantity: productQuantities[index] || 0,
+      })),
       weight: {
         lbs: weightLbs,
         oz: weightOz,
@@ -65,24 +90,26 @@ export function ShipmentModal({
       trackingId: trackingId,
       trackingCarrier: trackingCarrier,
       shippingMethod: shippingMethodDescription,
-      dateShipped: new Date().toISOString().split("T")[0], // Current date in YYYY-MM-DD format
-      packingSlipNotes: packingSlipNotes,
+      dateShipped: new Date().toISOString().split("T")[0],
+      packingSlipNotes: order?.staffNotes,
       updateStatusAndNotify: updateStatusAndNotify,
       shipTo: {
-        name: `${order.billingInformation.firstName} ${order.billingInformation.lastName}`,
-        company: order.billingInformation.company || "",
-        addressLine1: order.billingInformation.addressLine1 || "",
-        addressLine2: order.billingInformation.addressLine2 || "",
-        city: order.billingInformation.city || "",
-        state: order.billingInformation.state || "",
-        country: order.billingInformation.country || "",
-        postalCode: order.billingInformation.postalCode || "",
+        name: `${order?.billingInformation?.firstName || ""} ${
+          order?.billingInformation?.lastName || ""
+        }`,
+        company: order?.billingInformation?.company || "",
+        addressLine1: order?.billingInformation?.addressLine1 || "",
+        addressLine2: order?.billingInformation?.addressLine2 || "",
+        city: order?.billingInformation?.city || "",
+        state: order?.billingInformation?.state || "",
+        country: order?.billingInformation?.country || "",
+        postalCode: order?.billingInformation?.postalCode || "",
       },
     };
 
     console.log("Shipment Payload:", payload);
     onSubmit(payload);
-    onClose(); // Close the modal after submit
+    onClose();
   };
 
   return (
@@ -90,138 +117,208 @@ export function ShipmentModal({
       <DialogTrigger asChild>
         <Button variant="outline">Create shipment</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[90rem]">
-        <DialogHeader>
-          <DialogTitle>
-            <h2>Create a shipment</h2>
+      <DialogContent className="sm:max-w-[1200px] max-h-[90vh] overflow-y-auto">
+        <DialogHeader className="border-b pb-4">
+          <DialogTitle className="text-xl font-semibold">
+            Create a shipment
           </DialogTitle>
         </DialogHeader>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Left Side */}
+
+        <div className="grid grid-cols-2 gap-8 py-4">
+          {/* Left Column */}
           <div className="space-y-6">
-            <div>
-              <Label>Quantity to ship</Label>
-              <div className="flex items-center gap-2 mt-1">
-                <Input
-                  type="number"
-                  value={quantity}
-                  onChange={(e) => setQuantity(parseInt(e.target.value) || 0)}
-                  className="w-20"
-                />
-                <p className="text-sm text-muted-foreground">
-                  LE180A - Black Box 10BASE-T to AUI RJ-45 Connector Transceiver
-                  Module
-                </p>
-              </div>
-            </div>
-
-            <div className="flex gap-4">
-              <div>
-                <Label>Package Weight</Label>
-                <div className="flex gap-2 items-center">
+            {/* Quantity to ship - Handle multiple products */}
+            <div className="space-y-3">
+              <Label className="font-medium">Quantity to ship</Label>
+              {order?.products?.map((product: any, index: number) => (
+                <div
+                  key={product.id || index}
+                  className="flex items-center gap-3"
+                >
                   <Input
                     type="number"
-                    value={weightLbs}
+                    value={productQuantities[index] || 0}
                     onChange={(e) =>
-                      setWeightLbs(parseFloat(e.target.value) || 0)
+                      handleQuantityChange(index, parseInt(e.target.value) || 0)
                     }
-                    className="w-20"
+                    min={0}
+                    max={product.quantity}
+                    className="w-20 text-center"
                   />
-                  <span>lbs</span>
-                  <Input
-                    type="number"
-                    value={weightOz}
-                    onChange={(e) =>
-                      setWeightOz(parseFloat(e.target.value) || 0)
-                    }
-                    className="w-20"
-                  />
-                  <span>oz</span>
+                  <p className="text-gray-600 flex-1 text-sm">
+                    {product.sku} - {product.name}
+                  </p>
                 </div>
+              ))}
+            </div>
+
+            {/* Package Weight */}
+            <div className="space-y-2">
+              <Label className="font-medium">Package weight</Label>
+              <div className="flex items-center gap-3">
+                <Input
+                  type="number"
+                  value={weightLbs}
+                  onChange={(e) =>
+                    setWeightLbs(parseFloat(e.target.value) || 0)
+                  }
+                  className="w-20 text-center"
+                />
+                <span className="text-sm">lbs</span>
+                <Input
+                  type="number"
+                  value={weightOz}
+                  onChange={(e) => setWeightOz(parseFloat(e.target.value) || 0)}
+                  className="w-20 text-center"
+                />
+                <span className="text-sm">oz</span>
               </div>
             </div>
 
-            <div>
-              <Label>Dimensions (inches)</Label>
-              <div className="flex gap-2">
+            {/* Dimensions */}
+            <div className="space-y-2">
+              <Label className="font-medium">Dimensions (Inches)</Label>
+              <div className="flex items-center gap-3">
                 <Input
                   type="number"
-                  placeholder="Width"
                   value={width}
                   onChange={(e) => setWidth(e.target.value)}
-                  className="w-30"
+                  className="w-20 text-center"
                 />
+                <span className="text-sm">Width</span>
                 <Input
                   type="number"
-                  placeholder="Height"
                   value={height}
                   onChange={(e) => setHeight(e.target.value)}
-                  className="w-30"
+                  className="w-20 text-center"
                 />
+                <span className="text-sm">Height</span>
                 <Input
                   type="number"
-                  placeholder="Depth"
                   value={depth}
                   onChange={(e) => setDepth(e.target.value)}
-                  className="w-30"
+                  className="w-20 text-center"
                 />
+                <span className="text-sm">Depth</span>
               </div>
             </div>
 
-            <div>
-              <Label>Shipping to</Label>
-              <p className="text-sm mt-1 leading-5">
-                <strong>
-                  {order.billingInformation.firstName}{" "}
-                  {order.billingInformation.lastName}
-                </strong>
-                <br />
-                {order.billingInformation.addressLine1 || "N/A"}
-                <br />
-                {order.billingInformation.addressLine2 || "N/A"}
-                <br />
-                {order.billingInformation.city || "N/A"} /{" "}
-                {order.billingInformation.state || "N/A"}
-                <br />
-                {order.billingInformation.country || "N/A"}
-              </p>
+            {/* Shipping to */}
+            <div className="space-y-2">
+              <Label className="font-medium">Shipping to</Label>
+              <div className="text-xl text-gray-700 leading-relaxed">
+                <div className="font-semibold">
+                  {order?.billingInformation?.firstName || ""}{" "}
+                  {order?.billingInformation?.lastName || ""}
+                </div>
+                {order?.billingInformation?.addressLine1 && (
+                  <div>{order.billingInformation.addressLine1}</div>
+                )}
+                {order?.billingInformation?.addressLine2 && (
+                  <div>{order.billingInformation.addressLine2}</div>
+                )}
+                <div>
+                  {order?.billingInformation?.city || ""},{" "}
+                  {order?.billingInformation?.postalCode || ""}
+                </div>
+                <div>{order?.billingInformation?.country || ""}</div>
+              </div>
             </div>
 
-            <div>
-              <Label>Packing Slip Notes</Label>
+            {/* Packing Slip Notes */}
+            <div className="space-y-2">
+              <Label className="font-medium">Packing Slip Notes</Label>
               <Textarea
                 placeholder="Enter your notes"
-                className="h-[70px]"
                 value={packingSlipNotes}
                 onChange={(e) => setPackingSlipNotes(e.target.value)}
+                className="min-h-[100px] resize-none"
               />
             </div>
           </div>
 
-          {/* Right Side */}
-          <div className="space-y-4">
-            <p>
-              Customer paid <strong>$10.00</strong> for shipping
-            </p>
+          {/* Right Column */}
+          <div className="space-y-6">
+            {/* Left to ship header */}
+            <div className="text-center">
+              <Label className="font-medium">Left to ship</Label>
+              <div className="text-2xl font-semibold mt-1">
+                {totalLeftToShip}
+              </div>
+            </div>
 
-            <div>
-              <Label>How would you like to ship?</Label>
+            {/* Customer paid info */}
+            <div className="text-xl">
+              Customer paid{" "}
+              <span className="font-semibold">
+                ${parseFloat(order?.shippingCost || "0").toFixed(2)}
+              </span>{" "}
+              for shipping
+            </div>
+
+            {/* How would you like to ship */}
+            <div className="space-y-2">
+              <Label className="font-medium">How would you like to ship?</Label>
               <Select value={shippingMethod} onValueChange={setShippingMethod}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select method" />
+                <SelectTrigger className="w-full">
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="other">Other</SelectItem>
-                  <SelectItem value="fedex">FedEx</SelectItem>
-                  <SelectItem value="ups">UPS</SelectItem>
-                  <SelectItem value="usps">USPS</SelectItem>
-                  <SelectItem value="dhl">DHL</SelectItem>
+                  <SelectItem value="Other">Other</SelectItem>
+                  <SelectItem value="USPS Priority Mail">
+                    Print a USPS Priority Mail International Label
+                  </SelectItem>
+                  <SelectItem value="3-5 days Express — Flat Rate Envelope">
+                    3-5 days Express — Flat Rate Envelope
+                  </SelectItem>
+                  <SelectItem value="3-5 days Express — Flat Rate Legal Envelope">
+                    3-5 days Express — Flat Rate Legal Envelope
+                  </SelectItem>
+                  <SelectItem value="3-5 days Express — Flat Rate Padded Envelope">
+                    3-5 days Express — Flat Rate Padded Envelope
+                  </SelectItem>
+                  <SelectItem value="3-5 days Express — Parcel">
+                    3-5 days Express — Parcel
+                  </SelectItem>
+                  <SelectItem value="6-10 days — Flat Rate Envelope">
+                    6-10 days — Flat Rate Envelope
+                  </SelectItem>
+                  <SelectItem value="6-10 days — Flat Rate Legal Envelope">
+                    6-10 days — Flat Rate Legal Envelope
+                  </SelectItem>
+                  <SelectItem value="6-10 days — Flat Rate Padded Envelope">
+                    6-10 days — Flat Rate Padded Envelope
+                  </SelectItem>
+                  <SelectItem value="6-10 days — Flat Rate Box Small">
+                    6-10 days — Flat Rate Box Small
+                  </SelectItem>
+                  <SelectItem value="6-10 days — Flat Rate Box Medium">
+                    6-10 days — Flat Rate Box Medium
+                  </SelectItem>
+                  <SelectItem value="6-10 days — Flat Rate Box Large">
+                    6-10 days — Flat Rate Box Large
+                  </SelectItem>
+                  <SelectItem value="6-10 days — Parcel">
+                    6-10 days — Parcel
+                  </SelectItem>
+                  <SelectItem value="USPS International Label (Misc)">
+                    Print a USPS International Label (Misc)
+                  </SelectItem>
+                  <SelectItem value="First Class Package / Parcel International">
+                    First Class Package / Parcel International
+                  </SelectItem>
+                  <SelectItem value="FedEx">FedEx</SelectItem>
+                  <SelectItem value="UPS">UPS®</SelectItem>
+                  <SelectItem value="USPS Other">USPS Other</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
-            <div>
-              <Label>Other Tracking Carrier Options</Label>
+            {/* Other Tracking Carrier Options */}
+            <div className="space-y-2">
+              <Label className="font-medium">
+                Other Tracking Carrier options
+              </Label>
               <Input
                 placeholder="Type to find a carrier..."
                 value={trackingCarrier}
@@ -229,8 +326,9 @@ export function ShipmentModal({
               />
             </div>
 
-            <div>
-              <Label>Tracking ID</Label>
+            {/* Tracking ID */}
+            <div className="space-y-2">
+              <Label className="font-medium">Tracking ID</Label>
               <Input
                 placeholder="Enter tracking number"
                 value={trackingId}
@@ -238,38 +336,56 @@ export function ShipmentModal({
               />
             </div>
 
-            <div>
-              <Label>Shipping Method Description</Label>
+            {/* Shipping Method Description */}
+            <div className="space-y-2">
+              <Label className="font-medium">Shipping Method Description</Label>
               <Input
                 value={shippingMethodDescription}
                 onChange={(e) => setShippingMethodDescription(e.target.value)}
               />
             </div>
 
-            <div className="flex items-center space-x-2">
+            {/* Update status checkbox */}
+            <div className="flex items-center gap-5 pt-2">
               <Checkbox
                 checked={updateStatusAndNotify}
                 onCheckedChange={(checked) =>
                   setUpdateStatusAndNotify(checked as boolean)
                 }
                 id="status-update"
+                className="mt-1"
               />
-              <Label htmlFor="status-update">
-                Update status to Shipped & notify customer
-              </Label>
+              <div className="flex-1">
+                <Label
+                  htmlFor="status-update"
+                  className="font-normal cursor-pointer leading-relaxed"
+                >
+                  Update the order status to Shipped, and notify the customer
+                  via email.
+                </Label>
+                <a
+                  href="#"
+                  className="text-sm text-blue-600 hover:underline block mt-1"
+                >
+                  Order status email settings
+                </a>
+              </div>
             </div>
           </div>
         </div>
 
-        <DialogFooter>
+        <DialogFooter className="border-t pt-4">
           <Button
-            variant="secondary"
+            variant="outline"
             onClick={onClose}
-            className="!p-6 !text-lg"
+            className=" !p-5 !text-xl"
           >
             Cancel
           </Button>
-          <Button onClick={handleSubmit} className="!p-6 !text-lg">
+          <Button
+            onClick={handleSubmit}
+            className="!p-5 !text-xl bg-blue-600 hover:bg-blue-700"
+          >
             Create shipment
           </Button>
         </DialogFooter>
