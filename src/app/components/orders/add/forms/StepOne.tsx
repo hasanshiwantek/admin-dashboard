@@ -50,11 +50,21 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
   useEffect(() => {
     setValue("orderType", "existing");
   }, [setValue]);
+
+  // Add this useEffect in StepOne component
+  useEffect(() => {
+    const formCustomer = watch("selectedBillingCustomer");
+    if (formCustomer && isEditMode) {
+      setSelectedCustomer(formCustomer);
+    }
+  }, [watch("selectedBillingCustomer"), isEditMode]);
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="space-y-8 p-10">
         {/* Customer Info */}
-        <h1 className="!text-4xl 2xl:!text-[2.4rem] !font-bold">Customer information</h1>
+        <h1 className="!text-4xl 2xl:!text-[2.4rem] !font-bold">
+          Customer information
+        </h1>
         <div className="p-6 bg-white rounded-sm shadow-md">
           <div className="flex items-center gap-6 my-4">
             <Label className="2xl:!text-2xl">Order for:</Label>
@@ -65,17 +75,23 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="existing" id="existing" />
-                <Label className="2xl:!text-2xl" htmlFor="existing">Existing customer</Label>
+                <Label className="2xl:!text-2xl" htmlFor="existing">
+                  Existing customer
+                </Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="new" id="new" />
-                <Label className="2xl:!text-2xl" htmlFor="new">New customer</Label>
+                <Label className="2xl:!text-2xl" htmlFor="new">
+                  New customer
+                </Label>
               </div>
             </RadioGroup>
           </div>
           {orderType === "existing" && (
             <div className="flex flex-col gap-2 my-4">
-              <Label className="2xl:!text-2xl" htmlFor="search">Search</Label>
+              <Label className="2xl:!text-2xl" htmlFor="search">
+                Search
+              </Label>
               <CustomerSearchDropdown
                 value={watch("search")}
                 onChange={(val) => setValue("search", val)}
@@ -95,16 +111,22 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
 
           {orderType === "new" && (
             <div className="space-y-4">
-              <Label className="block font-medium 2xl:!text-2xl">Account details</Label>
+              <Label className="block font-medium 2xl:!text-2xl">
+                Account details
+              </Label>
 
               <div className="ml-40 space-y-10">
                 <div>
-                  <Label className="2xl:!text-2xl" htmlFor="email">Email Address</Label>
+                  <Label className="2xl:!text-2xl" htmlFor="email">
+                    Email Address
+                  </Label>
                   <Input {...register("email")} id="email" />
                 </div>
 
                 <div>
-                  <Label className="2xl:!text-2xl" htmlFor="password">Password</Label>
+                  <Label className="2xl:!text-2xl" htmlFor="password">
+                    Password
+                  </Label>
                   <Input
                     type="password"
                     {...register("password", {
@@ -124,7 +146,10 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
                   )}
                 </div>
                 <div>
-                  <Label className="2xl:!text-2xl" htmlFor="password_confirmation">
+                  <Label
+                    className="2xl:!text-2xl"
+                    htmlFor="password_confirmation"
+                  >
                     Confirm Password
                   </Label>
                   <Input
@@ -163,7 +188,9 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
                 </div>
 
                 <div>
-                  <Label className="2xl:!text-2xl" htmlFor="customerGroup">Customer group</Label>
+                  <Label className="2xl:!text-2xl" htmlFor="customerGroup">
+                    Customer group
+                  </Label>
                   <Select
                     onValueChange={(value) => setValue("customerGroup", value)}
                     defaultValue="none"
@@ -181,8 +208,25 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
               </div>
             </div>
           )}
-          <div className=" mt-4">
-            <span className="2xl:!text-2xl">Selected customer</span> – {/* Placeholder */}
+          <div className="mt-4">
+            <span className="2xl:!text-2xl font-medium">
+              Selected customer:{" "}
+            </span>
+            {orderType === "existing" ? (
+              selectedCustomer ? (
+                <span className="text-blue-600 2xl:!text-2xl">
+                  {selectedCustomer.firstName} {selectedCustomer.lastName}
+                </span>
+              ) : (
+                <span className="text-gray-400 2xl:!text-2xl">None</span>
+              )
+            ) : watch("firstName") && watch("lastName") ? (
+              <span className="text-green-600 2xl:!text-2xl">
+                {watch("firstName")} {watch("lastName")} 
+              </span>
+            ) : (
+              <span className="text-gray-400 2xl:!text-2xl">None</span>
+            )}
           </div>
         </div>
 
@@ -192,7 +236,9 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
           <div className="flex-1 justify-around grid grid-cols-2 gap-6">
             <div className="flex flex-col gap-5">
               <div>
-                <Label className="2xl:!text-2xl" htmlFor="firstName">First Name</Label>
+                <Label className="2xl:!text-2xl" htmlFor="firstName">
+                  First Name
+                </Label>
                 <Input
                   {...register("firstName")}
                   id="firstName"
@@ -202,7 +248,9 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
               </div>
 
               <div>
-                <Label className="2xl:!text-2xl" htmlFor="lastName">Last Name</Label>
+                <Label className="2xl:!text-2xl" htmlFor="lastName">
+                  Last Name
+                </Label>
                 <Input
                   {...register("lastName")}
                   id="lastName"
@@ -236,7 +284,9 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
               </div>
 
               <div>
-                <Label className="2xl:!text-2xl" htmlFor="address1">Address Line 1</Label>
+                <Label className="2xl:!text-2xl" htmlFor="address1">
+                  Address Line 1
+                </Label>
                 <Input
                   {...register("address1")}
                   id="address1"
@@ -258,7 +308,9 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
               </div>
 
               <div>
-                <Label className="2xl:!text-2xl" htmlFor="city">Suburb/City</Label>
+                <Label className="2xl:!text-2xl" htmlFor="city">
+                  Suburb/City
+                </Label>
                 <Input
                   {...register("city")}
                   id="city"
@@ -268,7 +320,9 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
               </div>
 
               <div>
-                <Label className="2xl:!text-2xl" htmlFor="country">Country</Label>
+                <Label className="2xl:!text-2xl" htmlFor="country">
+                  Country
+                </Label>
                 <Select
                   value={country}
                   onValueChange={(value) => setValue("country", value)}
@@ -288,7 +342,9 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
               </div>
 
               <div>
-                <Label className="2xl:!text-2xl" htmlFor="state">State/Province</Label>
+                <Label className="2xl:!text-2xl" htmlFor="state">
+                  State/Province
+                </Label>
                 <Input
                   {...register("state")}
                   id="state"
@@ -298,7 +354,9 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
               </div>
 
               <div>
-                <Label className="2xl:!text-2xl" htmlFor="zip">Zip/Postcode</Label>
+                <Label className="2xl:!text-2xl" htmlFor="zip">
+                  Zip/Postcode
+                </Label>
                 <Input {...register("zip")} id="zip" className="mt-1" />
               </div>
             </div>
@@ -362,7 +420,9 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
 
           <div className="flex items-center space-x-2 mt-4">
             <Checkbox id="saveAddress" defaultChecked />
-            <Label className="2xl:!text-2xl" htmlFor="saveAddress">Save to customer’s address book</Label>
+            <Label className="2xl:!text-2xl" htmlFor="saveAddress">
+              Save to customer’s address book
+            </Label>
           </div>
         </div>
       </div>
