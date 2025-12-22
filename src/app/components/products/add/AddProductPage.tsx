@@ -152,9 +152,9 @@ export default function AddProductPage() {
           className="flex items-center justify-start gap-2 text-gray-500"
         >
           <FaArrowLeftLong size={18} />
-          <h2 className="!text-gray-500">VIEW PRODUCTS</h2>
+          <h2 className="!text-gray-500 2xl:!text-2xl">VIEW PRODUCTS</h2>
         </Link>
-        <h1 className="!text-5xl !font-extralight !text-gray-600 !my-5">
+        <h1 className="!text-5xl 2xl:!text-[3.2rem] !font-extralight !text-gray-600 !my-5">
           Add Product
         </h1>
         <hr className="my-5" />

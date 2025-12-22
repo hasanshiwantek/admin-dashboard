@@ -70,7 +70,7 @@ export default function DescriptionEditor({
 
   return (
     <div className="p-10 bg-white shadow-lg" id={fieldName}>
-      <h1 className="my-5">{label}</h1>
+      <h1 className="my-5 2xl:!text-[2.4rem]">{label}</h1>
       <Editor
         apiKey="d2z6pu70qtywhkzox051ga0czhas02dp55gl9bxijefs4vxo"
         onInit={(evt, editor) => (editorRef.current = editor)}

@@ -33,29 +33,30 @@ export default function Pricing() {
       className="bg-white shadow-lg p-10 space-y-8 scroll-mt-20"
       id="pricing"
     >
-      <h1 className="text-xl font-semibold">Pricing</h1>
+      <h1 className="text-xl font-semibold 2xl:!text-[2.4rem]">Pricing</h1>
 
       {/* Default Price and Tax Class */}
       <div className="space-y-4">
-        <Label>
+        <Label className="2xl:!text-2xl">
           Default Price
           <span className="text-sm text-muted-foreground">(excluding tax)</span>
         </Label>
         <Input
+          className="!max-w-[90%] w-full"
           // type="number"
           placeholder="$0"
           value={price}
           onChange={(e) => setValue("price", e.target.value)}
         />
         <div className="space-y-1">
-          <Label>Tax Class</Label>
+          <Label className="2xl:!text-2xl">Tax Class</Label>
           <Controller
             name="taxClass"
             control={control}
             defaultValue="non-taxable"
             render={({ field }) => (
               <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="!max-w-[90%] w-full">
                   <SelectValue placeholder="Select a tax class" />
                 </SelectTrigger>
                 <SelectContent>
@@ -74,7 +75,7 @@ export default function Pricing() {
         <button
           type="button"
           onClick={() => setShowAdvanced(!showAdvanced)}
-          className="text-blue-600 hover:underline !text-xl cursor-pointer flex items-center"
+          className="text-blue-600 hover:underline !text-xl cursor-pointer flex items-center 2xl:!text-2xl"
         >
           {showAdvanced ? (
             <ChevronUp className="mr-1 w-6 h-6" />
@@ -88,8 +89,9 @@ export default function Pricing() {
           <div>
             <div className="grid grid-cols-2 gap-6 mt-4">
               <div>
-                <Label>Cost</Label>
+                <Label className="2xl:!text-2xl">Cost</Label>
                 <Input
+                              className="!max-w-[90%] w-full"
                   type="number"
                   step="any"
                   placeholder="$0"
@@ -99,8 +101,9 @@ export default function Pricing() {
                 />
               </div>
               <div>
-                <Label>MSRP</Label>
+                <Label className="2xl:!text-2xl">MSRP</Label>
                 <Input
+                              className="!max-w-[90%] w-full"
                   type="number"
                   step="any"
                   placeholder="$0"
@@ -110,8 +113,9 @@ export default function Pricing() {
                 />
               </div>
               <div>
-                <Label>Sale Price</Label>
+                <Label className="2xl:!text-2xl">Sale Price</Label>
                 <Input
+                              className="!max-w-[90%] w-full"
                   type="number"
                   step="any"
                   placeholder="$0"
@@ -123,12 +127,12 @@ export default function Pricing() {
             </div>
 
             <div className="my-8">
-              <h1 className="my-6">Tax Configuration</h1>
-              <p className="my-10">
+              <h1 className="my-6 2xl:!text-[2rem]">Tax Configuration</h1>
+              <p className="my-10 2xl:!text-2xl">
                 Map the tax codes defined by your external tax provider...
               </p>
               <div>
-                <Label>
+                <Label className="2xl:!text-2xl">
                   Tax Provider Tax Code
                   <TooltipProvider>
                     <Tooltip>
@@ -142,6 +146,7 @@ export default function Pricing() {
                   </TooltipProvider>
                 </Label>
                 <Input
+                              className="!max-w-[90%] w-full"
                   type="text"
                   placeholder="Enter tax code"
                   {...register("taxCode")}

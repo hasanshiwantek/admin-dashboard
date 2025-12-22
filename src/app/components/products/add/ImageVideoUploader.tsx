@@ -102,11 +102,11 @@ export default function ImageVideoUploader({ initialImages }: Props) {
   return (
     <div className="p-10 shadow-lg bg-white rounded-md" id="images">
       <div className="flex items-center justify-between mb-2">
-        <h1 className="my-5 text-xl font-semibold">Images & Videos</h1>
+        <h1 className="my-5 text-xl font-semibold 2xl:!text-[2.4rem]">Images & Videos</h1>
         <div className="flex space-x-4">
           <button
             type="button"
-            className="btn-outline-primary flex items-center border border-gray-300 px-4 py-2 rounded-md text-sm"
+            className="btn-outline-primary flex items-center border border-gray-300 px-4 py-2 rounded-md text-sm 2xl:!text-2xl"
             onClick={() => setIsUrlModalOpen(true)}
           >
             <PlusIcon className="w-5 h-5 mr-2" />
@@ -115,7 +115,7 @@ export default function ImageVideoUploader({ initialImages }: Props) {
           <button
             type="button"
             onClick={handleUploadClick}
-            className="btn-outline-primary flex items-center border border-gray-300 px-4 py-2 rounded-md text-sm"
+            className="btn-outline-primary flex items-center border border-gray-300 px-4 py-2 rounded-md text-sm 2xl:!text-2xl" 
           >
             <UploadCloudIcon className="w-5 h-5 mr-2" />
             Upload Images
@@ -123,7 +123,7 @@ export default function ImageVideoUploader({ initialImages }: Props) {
         </div>
       </div>
 
-      <p className="mb-4 text-sm text-gray-500">
+      <p className="mb-4 text-sm text-gray-500 2xl:!text-2xl">
         Add images and videos of your product to engage customers.
       </p>
 
@@ -156,8 +156,8 @@ export default function ImageVideoUploader({ initialImages }: Props) {
       )}
 
       <div className="mt-8">
-        <h2 className="text-base font-medium mb-2">Videos</h2>
-        <p className="text-sm text-muted-foreground">
+        <h2 className="text-base font-medium mb-2 2xl:!text-[2rem]">Videos</h2>
+        <p className="text-sm text-muted-foreground 2xl:!text-2xl">
           No videos have been added yet.
         </p>
       </div>

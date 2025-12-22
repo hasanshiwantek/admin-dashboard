@@ -40,21 +40,21 @@ export default function BulkPricing() {
 
   return (
     <div className="space-y-4">
-      <h1>Bulk Pricing</h1>
-      <p className=" text-muted-foreground">
+      <h1 className="2xl:!text-[2rem]">Bulk Pricing</h1>
+      <p className=" text-muted-foreground 2xl:!text-2xl">
         Create bulk pricing rules to offer price discounts based on quantity
         breaks.
       </p>
 
       <div>
-        <Label>Discount Type</Label>
+        <Label className="2xl:!text-2xl">Discount Type</Label>
         <Controller
           control={control}
           name="discountType"
           defaultValue="fixed"
           render={({ field }) => (
             <Select value={field.value} onValueChange={field.onChange}>
-              <SelectTrigger>
+              <SelectTrigger className="!max-w-[90%] w-full">
                 <SelectValue placeholder="Select Discount Type" />
               </SelectTrigger>
               <SelectContent>
