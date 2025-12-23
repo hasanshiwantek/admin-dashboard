@@ -19,17 +19,17 @@ export default function Dimensions() {
     return (
         <section id="dimensionWeight" className="space-y-4 scroll-mt-20" >
             <div className="flex justify-center items-center flex-col">
-            <h1>Fulfillment</h1>
-            <p>Setup shipping and inventory details for this product.</p>
+            <h1 className="2xl:!text-[2.4rem]">Fulfillment</h1>
+            <p className="text-muted-foreground 2xl:!text-2xl">Setup shipping and inventory details for this product.</p>
             </div>
             <div className="p-10 bg-white shadow-lg rounded-sm ">
-                <h1 >Dimensions & Weight</h1>
-                <p>Enter the dimensions and weight of this product to help calculate shipping rate. These measurements are for the product's shipping container. They are used to help calculate shipping price and do not show up on your storefront.</p>
+                <h1 className="2xl:!text-[2.4rem]">Dimensions & Weight</h1>
+                <p className="text-muted-foreground 2xl:!text-2xl">Enter the dimensions and weight of this product to help calculate shipping rate. These measurements are for the product's shipping container. They are used to help calculate shipping price and do not show up on your storefront.</p>
                 <div className="grid grid-cols-2 gap-6 my-4">
                     {/* Left Div */}
                     <div className="space-y-12">
                         <div>
-                            <Label htmlFor="dimensions.weight">Weight (LBS) <span className="!text-red-500">*</span>
+                            <Label className="2xl:!text-2xl" htmlFor="dimensions.weight">Weight (LBS) <span className="!text-red-500">*</span>
                                 <TooltipProvider>
                                     <Tooltip>
                                         <TooltipTrigger asChild>
@@ -42,10 +42,10 @@ export default function Dimensions() {
                                     </Tooltip>
                                 </TooltipProvider>
                             </Label>
-                            <Input value={weight} placeholder="0" onChange={(e) => setValue("dimensions.weight", e.target.value)} /> 
+                            <Input              className="!max-w-[90%] w-full" value={weight} placeholder="0" onChange={(e) => setValue("dimensions.weight", e.target.value)} /> 
                         </div>
                         <div>
-                            <Label htmlFor="dimensions.height">Height (Inches) 
+                            <Label className="2xl:!text-2xl" htmlFor="dimensions.height">Height (Inches) 
                                 <span className="!text-red-500">*</span>
                                 <TooltipProvider>
                                     <Tooltip>
@@ -59,7 +59,7 @@ export default function Dimensions() {
                                     </Tooltip>
                                 </TooltipProvider>
                             </Label>
-                            <Input id="height" {...register("dimensions.height", { valueAsNumber: true })}/>
+                            <Input              className="!max-w-[90%] w-full" id="height" {...register("dimensions.height", { valueAsNumber: true })}/>
                         </div>
 
                     </div>
@@ -67,7 +67,7 @@ export default function Dimensions() {
                     {/* Right Div */}
                     <div className="space-y-12">
                         <div>
-                            <Label htmlFor="dimensions.width">Width (Inches)
+                            <Label className="2xl:!text-2xl" htmlFor="dimensions.width">Width (Inches)
                                 <span className="!text-red-500">*</span>
                                 <TooltipProvider>
                                     <Tooltip>
@@ -81,11 +81,11 @@ export default function Dimensions() {
                                     </Tooltip>
                                 </TooltipProvider>
                             </Label>
-                            <Input id="width" placeholder="" {...register("dimensions.width", {valueAsNumber: true})}/>
+                            <Input  id="width" placeholder="" {...register("dimensions.width", {valueAsNumber: true})}/>
                         </div>
 
                         <div>
-                            <Label htmlFor="dimensions.depth">Depth (Inches) 
+                            <Label className="2xl:!text-2xl" htmlFor="dimensions.depth">Depth (Inches) 
                                 <span className="!text-red-500">*</span>
                                 <TooltipProvider>
                                     <Tooltip>
@@ -99,7 +99,7 @@ export default function Dimensions() {
                                     </Tooltip>
                                 </TooltipProvider>
                             </Label>
-                            <Input id="depth" {...register("dimensions.depth", {valueAsNumber: true})}/>
+                            <Input             className="!max-w-[90%] w-full"   id="depth" {...register("dimensions.depth", {valueAsNumber: true})}/>
                         </div>
                     </div>
                 </div>

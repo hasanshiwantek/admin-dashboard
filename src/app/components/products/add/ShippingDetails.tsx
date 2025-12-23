@@ -17,14 +17,14 @@ export default function ShippingDetails() {
 
   return (
     <div className="bg-white shadow p-6 space-y-4 scroll-mt-20" id="shippingDetails">
-      <h1>Shipping Details</h1>
+      <h1 className="2xl:!text-[2.4rem]">Shipping Details</h1>
 
       <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
         {/* Fixed Shipping Price */}
         <div className="flex flex-col space-y-1 w-full max-w-md">
           <Label
             htmlFor="fixedShippingPrice"
-            className="flex items-center gap-1"
+            className="flex items-center gap-1 2xl:!text-2xl"
           >
             Fixed Shipping Price
             <TooltipProvider>
@@ -44,6 +44,7 @@ export default function ShippingDetails() {
             </TooltipProvider>
           </Label>
           <Input
+            className="!max-w-[90%] w-full"
             id="fixedShippingPrice"
             type="number"
             step="0.01"
@@ -65,7 +66,7 @@ export default function ShippingDetails() {
                 checked={field.value}
                 onCheckedChange={(val) => field.onChange(val === true)}
               />
-              <Label htmlFor="freeShipping">Free Shipping</Label>
+              <Label className="2xl:!text-2xl" htmlFor="freeShipping">Free Shipping</Label>
             </div>
           )}
         />

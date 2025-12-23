@@ -37,7 +37,7 @@ export default function SidebarNavigation() {
             <Button
               key={sec.id}
               variant="ghost"
-              className="w-full justify-start text-[1.3rem] hover:text-blue-600 hover:bg-blue-100 transition-all cursor-pointer  py-5 text-gray-600"
+              className="w-full justify-start text-[1.6rem] hover:text-blue-600 hover:bg-blue-100 transition-all cursor-pointer  py-5 text-gray-600"
               onClick={() => scrollTo(sec.id)}
             >
               {sec.label}

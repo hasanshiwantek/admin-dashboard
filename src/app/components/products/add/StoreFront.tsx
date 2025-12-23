@@ -25,13 +25,13 @@ const StoreFront = () => {
   return (
     <div>
       <div className="flex justify-center items-center flex-col my-5" id="storefrontDetails">
-        <h1>Storefront</h1>
-        <p className="text-muted-foreground">
+        <h1 className="2xl:!text-[2.4rem]">Storefront</h1>
+        <p className="text-muted-foreground 2xl:!text-2xl">
           Setup what customers will see on the storefront.
         </p>
       </div>
       <div className="bg-white p-10 shadow-md space-y-8 ">
-        <h1>Storefront Details</h1>
+        <h1 className="2xl:!text-[2.4rem]">Storefront Details</h1>
         <div className="space-y-6">
           {/* Featured Checkbox */}
           <div className="flex items-center space-x-5">
@@ -47,7 +47,7 @@ const StoreFront = () => {
                 />
               )}
             />
-            <Label htmlFor="isFeatured">
+            <Label className="2xl:!text-2xl" htmlFor="isFeatured">
               Set as a Featured Product on my Storefront
             </Label>
             <Tooltip>
@@ -64,7 +64,7 @@ const StoreFront = () => {
           {/* Search Keywords */}
 
           <div className="space-y-4">
-            <Label htmlFor="searchKeywords">
+            <Label className="2xl:!text-2xl" htmlFor="searchKeywords">
               Search Keywords
               <Tooltip>
                 <TooltipTrigger>
@@ -91,7 +91,7 @@ const StoreFront = () => {
           {/* Sort Order and Template Layout File */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
-              <Label htmlFor="sortOrder">
+              <Label className="2xl:!text-2xl" htmlFor="sortOrder">
                 Sort Order
                 <Tooltip>
                   <TooltipTrigger>
@@ -105,6 +105,7 @@ const StoreFront = () => {
                 </Tooltip>
               </Label>
               <Input
+                className="!max-w-[90%] w-full"
                 id="sortOrder"
                 type="number"
                 defaultValue={0}
@@ -112,7 +113,7 @@ const StoreFront = () => {
               />
             </div>
             <div className="space-y-4">
-              <Label htmlFor="templateLayout">
+              <Label className="2xl:!text-2xl" htmlFor="templateLayout">
                 Template Layout File
                 <Tooltip>
                   <TooltipTrigger>
@@ -130,7 +131,7 @@ const StoreFront = () => {
                 defaultValue="default"
                 render={({ field }) => (
                   <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger>
+                    <SelectTrigger className="!max-w-[90%] w-full">
                       <SelectValue placeholder="Select layout" />
                     </SelectTrigger>
                     <SelectContent>
@@ -144,7 +145,7 @@ const StoreFront = () => {
 
           {/* Warranty Information */}
           <div className="space-y-4">
-            <Label htmlFor="warranty">
+            <Label className="2xl:!text-2xl" htmlFor="warranty">
               Warranty Information
               <Tooltip>
                 <TooltipTrigger>
@@ -166,7 +167,7 @@ const StoreFront = () => {
 
           {/* Availability Text */}
           <div className="space-y-4">
-            <Label htmlFor="availabilityText">
+            <Label className="2xl:!text-2xl" htmlFor="availabilityText">
               Availability Text
               <Tooltip>
                 <TooltipTrigger>
@@ -179,6 +180,7 @@ const StoreFront = () => {
               </Tooltip>
             </Label>
             <Input
+              className="!max-w-[90%] w-full"
               id="availabilityText"
               placeholder="Usually ships in 24 hours."
               {...register("availabilityText")}
@@ -188,7 +190,7 @@ const StoreFront = () => {
           {/* Condition + Checkbox */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
             <div className="space-y-4">
-              <Label htmlFor="condition">
+              <Label className="2xl:!text-2xl" htmlFor="condition">
                 Condition
                 <Tooltip>
                   <TooltipTrigger>
@@ -207,7 +209,7 @@ const StoreFront = () => {
                 defaultValue="new"
                 render={({ field }) => (
                   <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger>
+                    <SelectTrigger className="!max-w-[90%] w-full">
                       <SelectValue placeholder="Select condition" />
                     </SelectTrigger>
                     <SelectContent>
@@ -232,7 +234,7 @@ const StoreFront = () => {
                   />
                 )}
               />
-              <Label htmlFor="showCondition">
+              <Label className="2xl:!text-2xl" htmlFor="showCondition">
                 Show condition on storefront
               </Label>
             </div>
