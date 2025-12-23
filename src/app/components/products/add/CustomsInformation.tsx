@@ -58,8 +58,8 @@ export default function CustomsInformation() {
       id="customsInformation"
       className="space-y-6 bg-white rounded-md p-10 shadow-sm"
     >
-      <h1>Customs Information</h1>
-      <p>
+      <h1 className="2xl:!text-[2.4rem]">Customs Information</h1>
+      <p className="text-muted-foreground 2xl:!text-[1.6rem]" >
         Provide customs information for this product to assist border officers
         to calculate customs duties and fees when shipping internationally. Will
         be used by installed apps that require this information.
@@ -72,7 +72,7 @@ export default function CustomsInformation() {
           checked={manageCustoms}
           onCheckedChange={toggleCheckbox}
         />
-        <Label htmlFor="manageCustoms">Manage customs information</Label>
+        <Label className="2xl:!text-2xl" htmlFor="manageCustoms">Manage customs information</Label>
       </div>
 
       {/* Conditional fields */}
@@ -80,7 +80,7 @@ export default function CustomsInformation() {
         <div className="space-y-5">
           {/* Country of origin */}
           <div className="space-y-2">
-            <Label htmlFor="countryOfOrigin">
+            <Label className="2xl:!text-2xl" htmlFor="countryOfOrigin">
               Country of origin{" "}
               <span className="text-muted-foreground">(optional)</span>
             </Label>
@@ -99,7 +99,7 @@ export default function CustomsInformation() {
                 ))}
               </SelectContent>
             </Select>
-            <span>
+            <span className="text-muted-foreground 2xl:!text-2xl">
               Usually this is the country where this product was manufactured or
               produced.
             </span>
@@ -107,7 +107,7 @@ export default function CustomsInformation() {
 
           {/* Commodity Description */}
           <div className="space-y-2">
-            <Label htmlFor="commodityDescription">
+            <Label className="2xl:!text-2xl" htmlFor="commodityDescription">
               Commodity description <span>(optional)</span>
             </Label>
             <Textarea
@@ -115,7 +115,7 @@ export default function CustomsInformation() {
               placeholder="Enter a description to help identify this product"
               className="w-full max-w-full h-32"
             />
-            <span>
+            <span className="text-muted-foreground 2xl:!text-2xl">
               A succinct and precise description for border officers to identify
               and verify this product.
             </span>
@@ -123,13 +123,13 @@ export default function CustomsInformation() {
 
           {/* HS Codes Section */}
           <div className="space-y-2">
-            <h2>HS codes</h2>
-            <p className="mb-2">
+            <h2 className="2xl:!text-[1.6rem]">HS codes</h2>
+            <p className="mb-2 2xl:!text-2xl">
               Assists border officers to classify this product.
             </p>
 
             {fields.map((field, index) => (
-              <div key={field.id} className="flex items-center gap-4 mb-3">
+              <div key={field.id} className="flex items-center flex-col 2xl:flex-row gap-4 mb-3">
                 {/* Country Select */}
                 <Select
                   onValueChange={(val) =>
@@ -138,7 +138,7 @@ export default function CustomsInformation() {
                   defaultValue={field?.country}
                   
                 >
-                  <SelectTrigger className="w-60 ">
+                  <SelectTrigger  className="!max-w-[100%] 2xl:!max-w-[90%] w-full">
                     <SelectValue placeholder="Select country" />
                   </SelectTrigger>
                   <SelectContent className="overflow-y-scroll h-96">
@@ -151,10 +151,11 @@ export default function CustomsInformation() {
                 </Select>
 
                 {/* HS Code Input */}
-                <Input
+                <Input 
+                   className="!max-w-[100%] 2xl:!max-w-[90%] w-full"
                   placeholder="HS Code"
                   {...register(`hsCodes.${index}.code`)}
-                  className="w-60"
+                  // className="w-60"
                 />
 
                 {/* Delete */}
@@ -164,7 +165,7 @@ export default function CustomsInformation() {
                   size="icon"
                   onClick={() => remove(index)}
                 >
-                  <Trash2 className="text-destructive !w-6 !h-6" />
+                  <Trash2 className="text-destructive !w-8 !h-8" />
                 </Button>
               </div>
             ))}
@@ -173,7 +174,7 @@ export default function CustomsInformation() {
             <Button
               type="button"
               variant="link"
-              className="text-blue-600 pl-0 text-xl cursor-pointer"
+              className="text-blue-600 pl-0 text-xl cursor-pointer 2xl:!text-2xl"
               onClick={() => append({ country: "", code: "" })}
             >
               + HS code

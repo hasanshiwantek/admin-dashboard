@@ -287,7 +287,7 @@ const expandPath = (ids: number[]) => {
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)} className="p-10">
           <div className="flex justify-between items-center mb-6">
-            <h1 className="text-5xl font-extralight text-gray-600">
+            <h1 className="text-5xl font-extralight text-gray-600 2xl:!text-[3.2rem]">
               Product Categories
             </h1>
             <Button
@@ -296,7 +296,7 @@ const expandPath = (ids: number[]) => {
               onClick={() => setOpen(true)}
               type="button"
             >
-              <Plus className="!w-6 !h-6" /> Add new
+              <Plus className="!w-6 !h-6 2xl:!text-[1.6rem]" /> Add new
             </Button>
           </div>
           <div className="flex flex-col  gap-5 p-6 bg-white">

@@ -25,7 +25,7 @@ export default function Dimensions() {
             <div className="p-10 bg-white shadow-lg rounded-sm ">
                 <h1 className="2xl:!text-[2.4rem]">Dimensions & Weight</h1>
                 <p className="text-muted-foreground 2xl:!text-2xl">Enter the dimensions and weight of this product to help calculate shipping rate. These measurements are for the product's shipping container. They are used to help calculate shipping price and do not show up on your storefront.</p>
-                <div className="grid grid-cols-2 gap-6 my-4">
+                <div className="grid grid-col-1 2xl:grid-cols-2 gap-6 my-4">
                     {/* Left Div */}
                     <div className="space-y-12">
                         <div>
@@ -81,7 +81,7 @@ export default function Dimensions() {
                                     </Tooltip>
                                 </TooltipProvider>
                             </Label>
-                            <Input  id="width" placeholder="" {...register("dimensions.width", {valueAsNumber: true})}/>
+                            <Input  className="!max-w-[90%] w-full"  id="width" placeholder="" {...register("dimensions.width", {valueAsNumber: true})}/>
                         </div>
 
                         <div>

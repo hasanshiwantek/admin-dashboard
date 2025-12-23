@@ -89,7 +89,7 @@ const StoreFront = () => {
           </div>
 
           {/* Sort Order and Template Layout File */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 2xl:grid-cols-2 gap-6">
             <div className="space-y-4">
               <Label className="2xl:!text-2xl" htmlFor="sortOrder">
                 Sort Order
@@ -105,7 +105,7 @@ const StoreFront = () => {
                 </Tooltip>
               </Label>
               <Input
-                className="!max-w-[90%] w-full"
+                className="!max-w-[100%] 2xl!max-w-[90%] w-full"
                 id="sortOrder"
                 type="number"
                 defaultValue={0}
@@ -131,7 +131,7 @@ const StoreFront = () => {
                 defaultValue="default"
                 render={({ field }) => (
                   <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger className="!max-w-[90%] w-full">
+                    <SelectTrigger className="!max-w-[100%] 2xl!max-w-[90%] w-full">
                       <SelectValue placeholder="Select layout" />
                     </SelectTrigger>
                     <SelectContent>
@@ -180,7 +180,7 @@ const StoreFront = () => {
               </Tooltip>
             </Label>
             <Input
-              className="!max-w-[90%] w-full"
+              className="!max-w-[100%] w-full"
               id="availabilityText"
               placeholder="Usually ships in 24 hours."
               {...register("availabilityText")}
@@ -188,7 +188,7 @@ const StoreFront = () => {
           </div>
 
           {/* Condition + Checkbox */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+          <div className="grid grid-cols-1 2xl:grid-cols-2 gap-6 items-center">
             <div className="space-y-4">
               <Label className="2xl:!text-2xl" htmlFor="condition">
                 Condition
@@ -209,7 +209,7 @@ const StoreFront = () => {
                 defaultValue="new"
                 render={({ field }) => (
                   <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger className="!max-w-[90%] w-full">
+                    <SelectTrigger className="!max-w-[100%] 2xl!max-w-[90%] w-full">
                       <SelectValue placeholder="Select condition" />
                     </SelectTrigger>
                     <SelectContent>

@@ -42,7 +42,7 @@ export default function Pricing() {
           <span className="text-sm text-muted-foreground">(excluding tax)</span>
         </Label>
         <Input
-          className="!max-w-[90%] w-full"
+          className="!max-w-[100%] w-full"
           // type="number"
           placeholder="$0"
           value={price}
@@ -56,7 +56,7 @@ export default function Pricing() {
             defaultValue="non-taxable"
             render={({ field }) => (
               <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger className="!max-w-[90%] w-full">
+                <SelectTrigger className="!max-w-[100%] w-full">
                   <SelectValue placeholder="Select a tax class" />
                 </SelectTrigger>
                 <SelectContent>

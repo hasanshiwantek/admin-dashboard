@@ -19,14 +19,14 @@ export default function Seo() {
   return (
     <section id="seo" className="space-y-4 scroll-mt-20">
       <div className="flex justify-center items-center flex-col my-5">
-        <h1>SEO & Sharing</h1>
-        <p>Boost traffic to your online business.</p>
+        <h1 className="2xl:!text-[2.4rem]">SEO & Sharing</h1>
+        <p className="2xl:!text-2xl">Boost traffic to your online business.</p>
       </div>
       <div className="p-10 bg-white shadow-lg rounded-sm ">
-        <h1>Search Engine Optimization</h1>
-        <div className="grid grid-cols-2 items-center gap-6 my-4">
+        <h1 className="2xl:!text-[2.4rem]">Search Engine Optimization</h1>
+        <div className="grid grid-cols-1 2xl:grid-cols-2 items-center gap-6 my-4">
           <div>
-            <Label htmlFor="pageTitle">
+            <Label className="2xl:!text-2xl" htmlFor="pageTitle">
               Page Title
               <TooltipProvider>
                 <Tooltip>
@@ -41,11 +41,11 @@ export default function Seo() {
                 </Tooltip>
               </TooltipProvider>
             </Label>
-            <Input id="pageTitle" placeholder="" {...register("pageTitle")} />
+            <Input className="!max-w-[85%] w-full" id="pageTitle" placeholder="" {...register("pageTitle")} />
           </div>
 
           <div className="space-x-6">
-            <Label htmlFor="productUrl">
+            <Label className="2xl:!text-2xl" htmlFor="productUrl">
               Product URL <span className="!text-red-500">*</span>{" "}
               <TooltipProvider>
                 <Tooltip>
@@ -64,13 +64,13 @@ export default function Seo() {
                 </Tooltip>
               </TooltipProvider>
             </Label>
-            <Input id="ProductUrl" placeholder="" {...register("productUrl")} />
-            <button className="btn-outline-primary" type="button">Reset</button>
+            <Input className="!max-w-[85%] w-full" id="ProductUrl" placeholder="" {...register("productUrl")} />
+            <button className="btn-outline-primary !py-2" type="button">Reset</button>
           </div>
         </div>
 
         <div>
-          <Label htmlFor="metaDescription">
+          <Label className="2xl:!text-2xl" htmlFor="metaDescription">
             Meta Description{" "}
             <TooltipProvider>
               <Tooltip>
@@ -86,10 +86,11 @@ export default function Seo() {
             </TooltipProvider>
           </Label>
           <Input
+          className="!max-w-[85%] 2xl:!max-w-[100%] w-full"
             id="metaDescription"
             placeholder=""
             {...register("metaDescription")}
-            className="!min-w-[75rem]"
+            // className="!min-w-[75rem]"
           />
         </div>
       </div>

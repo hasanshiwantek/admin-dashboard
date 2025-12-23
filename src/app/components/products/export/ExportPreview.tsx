@@ -111,7 +111,7 @@ export default function ExportPreview() {
 
   return (
     <div>
-      <p className=" text-muted-foreground">
+      <p className=" text-muted-foreground 2xl:!text-2xl">
         The <strong>{totalItems.toLocaleString()}</strong> products shown below
         will be exported when you click the continue button.
       </p>
@@ -141,12 +141,12 @@ export default function ExportPreview() {
             <TableBody>
               {previewData.map((item, index) => (
                 <TableRow key={index}>
-                  <TableCell>{item.id}</TableCell>
-                  <TableCell>{item.sku}</TableCell>
-                  <TableCell>{item.name}</TableCell>
-                  <TableCell>{item.price}</TableCell>
-                  <TableCell>{item.visible}</TableCell>
-                  <TableCell>{item.featured}</TableCell>
+                  <TableCell className="2xl:!text-2xl">{item.id}</TableCell>
+                  <TableCell className="2xl:!text-2xl">{item.sku}</TableCell>
+                  <TableCell className="2xl:!text-2xl">{item.name}</TableCell>
+                  <TableCell className="2xl:!text-2xl">{item.price}</TableCell>
+                  <TableCell className="2xl:!text-2xl">{item.visible}</TableCell>
+                  <TableCell className="2xl:!text-2xl">{item.featured}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
