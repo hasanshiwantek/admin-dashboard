@@ -469,6 +469,30 @@ export const importTrackingNumbers = createAsyncThunk(
   }
 );
 
+
+
+// ADVANCE RETURN ORDER SEARCH THUNK
+export const advanceReturnOrderSearch = createAsyncThunk(
+  "orders/advanceReturnOrderSearch",
+  async ({ data }: { data: any }, thunkAPI) => {
+    try {
+      const response = await axiosInstance.post(
+        `dashboard/tracking/search-advanced`,
+        data
+      );
+      console.log("Advance Order Search Response: ", response.data);
+
+      return response.data;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to update status"
+      );
+    }
+  }
+);
+
+
+
 // 2. Initial State
 const initialState = {
   orders: [],
