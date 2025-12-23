@@ -60,11 +60,11 @@ export default function InventorySection() {
 
           {/* Conditional Inputs */}
           {inventoryLevel === "product" ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+            <div className="grid grid-cols-1 2xl:grid-cols-2 gap-4 pt-4">
               <div>
                 <Label className="2xl:!text-2xl" htmlFor="currentStock">Current Stock</Label>
                 <Input
-                  className="!max-w-[90%] w-full"
+                  className="!max-w-[100%] 2xl!max-w-[90%] w-full"
                   id="currentStock"
                   type="number"
                   placeholder="0"
@@ -74,7 +74,7 @@ export default function InventorySection() {
               <div>
                 <Label className="2xl:!text-2xl" htmlFor="lowStock">Low Stock</Label>
                 <Input
-                  className="!max-w-[90%] w-full"
+                  className="!max-w-[100%] 2xl!max-w-[90%] w-full"
                   id="lowStock"
                   type="number"
                   placeholder="0"

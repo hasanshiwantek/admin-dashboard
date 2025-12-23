@@ -162,8 +162,8 @@ const ImportCsv = () => {
       <div>
         <div className="p-10">
           <div className="flex flex-col space-y-5">
-            <h1 className="!font-extralight">Import Products</h1>
-            <p>
+            <h1 className="!font-extralight 2xl:!text-5xl">Import Products</h1>
+            <p className="2xl:!text-2xl">
               You can import products to your store from a CSV file. We
               recommend exporting any existing products before running an
               import.

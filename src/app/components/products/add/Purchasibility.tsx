@@ -25,7 +25,7 @@ export default function Purchasability() {
       className="bg-white p-6 border rounded-md space-y-6 scroll-mt-20"
       id="purchasability"
     >
-      <h1>Purchasability</h1>
+      <h1 className="2xl:!text-[2.4rem]">Purchasability</h1>
 
       {/* Radio Group with Controller */}
       <Controller
@@ -40,7 +40,7 @@ export default function Purchasability() {
           >
             <div className="flex items-start gap-2">
               <RadioGroupItem value="available" id="available" />
-              <Label htmlFor="available">
+              <Label className="2xl:!text-2xl" htmlFor="available">
                 This product can be purchased in my online store
               </Label>
             </div>
@@ -48,15 +48,15 @@ export default function Purchasability() {
             <div className="flex flex-col gap-2">
               <div className="flex items-start gap-2">
                 <RadioGroupItem value="preorder" id="preorder" />
-                <Label htmlFor="preorder">
+                <Label className="2xl:!text-2xl" htmlFor="preorder">
                   This product is coming soon but I want to take pre-orders
                 </Label>
               </div>
 
               {field.value === "preorder" && (
-                <div className="grid grid-cols-3 gap-4 mt-2 ml-6">
+                <div className="grid grid-cols-1 2xl:grid-cols-3 gap-4 ml-6">
                   <div>
-                    <Label className="mb-1 " htmlFor="preorderMessage">
+                    <Label  className="mb-1 2xl:!text-2xl" htmlFor="preorderMessage">
                       Message
                       <TooltipProvider>
                         <Tooltip>
@@ -84,7 +84,7 @@ export default function Purchasability() {
                     />
                   </div>
                   <div className="mt-1">
-                    <Label className="mb-1 block">Release Date</Label>
+                    <Label className="mb-1 block 2xl:!text-2xl">Release Date</Label>
                     <Controller
                       name="releaseDate"
                       control={control}
@@ -99,7 +99,7 @@ export default function Purchasability() {
                   </div>
 
                   <div>
-                    <Label className="mb-1 " htmlFor="preOrder">
+                    <Label className="mb-1 2xl:!text-2xl" htmlFor="preOrder">
                       Remove pre-order status on this date
                       <TooltipProvider>
                         <Tooltip>
@@ -149,7 +149,7 @@ export default function Purchasability() {
             <div className="flex flex-col gap-2">
               <div className="flex items-start gap-2">
                 <RadioGroupItem value="notAvailable" id="notAvailable" />
-                <Label htmlFor="notAvailable">
+                <Label className="2xl:!text-2xl" htmlFor="notAvailable">
                   This product cannot be purchased in my online store
                 </Label>
               </div>
@@ -169,14 +169,14 @@ export default function Purchasability() {
                         />
                       )}
                     />
-                    <Label htmlFor="callForPricing">
+                    <Label className="2xl:!text-2xl" htmlFor="callForPricing">
                       Show “Call for pricing” message instead of the price
                     </Label>
                   </div>
 
                   {callForPricing && (
                     <div>
-                      <Label htmlFor="callForPricingLabel">
+                      <Label className="2xl:!text-2xl" htmlFor="callForPricingLabel">
                         Call for pricing label
                       </Label>
                       <Input
@@ -195,9 +195,9 @@ export default function Purchasability() {
       />
 
       {/* Min/Max Purchase Quantity */}
-      <div className="grid grid-cols-2 gap-4 pt-6">
+      <div className="grid grid-cols-1 2xl:grid-cols-2 gap-4 pt-6">
         <div>
-          <Label htmlFor="minPurchaseQty">
+          <Label className="2xl:!text-2xl" htmlFor="minPurchaseQty">
             Minimum Purchase Quantity
             <TooltipProvider>
               <Tooltip>
@@ -213,6 +213,7 @@ export default function Purchasability() {
             </TooltipProvider>
           </Label>
           <Input
+            className="!max-w-[90%] w-full"
             id="minPurchaseQty"
             {...register("minPurchaseQuantity")}
             type="number"
@@ -220,7 +221,7 @@ export default function Purchasability() {
           />
         </div>
         <div>
-          <Label htmlFor="maxPurchaseQty">
+          <Label className="2xl:!text-2xl" htmlFor="maxPurchaseQty">
             Maximum Purchase Quantity
             <TooltipProvider>
               <Tooltip>
@@ -236,6 +237,7 @@ export default function Purchasability() {
             </TooltipProvider>
           </Label>
           <Input
+            className="!max-w-[90%] w-full"
             id="maxPurchaseQty"
             {...register("maxPurchaseQuantity")}
             type="number"

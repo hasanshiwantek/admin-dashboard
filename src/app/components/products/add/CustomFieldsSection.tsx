@@ -32,7 +32,7 @@ export default function CustomFields() {
         </p>
 
       {fields.map((field, index) => (
-        <div key={field.id} className="flex items-end gap-4">
+        <div key={field.id} className="flex flex-col 2xl:flex-row items-start 2xl:items-end gap-4">
           <div className="w-1/2">
             <Label className="2xl:!text-2xl" htmlFor={`customFields.${index}.name`}>Custom Field Name <span className="!text-red-500">*</span></Label>
             <Input

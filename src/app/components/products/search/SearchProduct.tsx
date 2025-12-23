@@ -33,18 +33,18 @@ const SearchProduct = () => {
   return (
     <div className="p-10 ">
       <div className="flex flex-col space-y-5">
-        <h1 className="!font-extralight">Search Products</h1>
-        <p>
+        <h1 className="!font-extralight 2xl:!text-[2.4rem]">Search</h1>
+        <p className="2xl:!text-2xl">
           Search for specific products using the advanced search options below.
         </p>
       </div>
 
       {/* ADVANCED SEARCH */}
       <div className="my-10">
-        <h1 className="my-5 ">Advanced Search</h1>
+        <h1 className="my-5 2xl:!text-[2.4rem]">Advanced Search</h1>
         <div className="bg-white shadow-md p-10 space-y-10">
           <div className="flex items-center gap-4">
-            <Label htmlFor="searchKeywords" className="w-[120px] text-right">
+            <Label htmlFor="searchKeywords" className="w-[150px] text-right 2xl:!text-2xl">
               Search Keywords:
               <TooltipProvider>
                 <Tooltip>
@@ -66,7 +66,7 @@ const SearchProduct = () => {
           </div>
 
           <div className="flex items-center gap-4">
-            <Label htmlFor="brandName" className="w-[120px] text-right">
+            <Label htmlFor="brandName" className="w-[150px] text-right 2xl:!text-2xl">
               Brand Name:
             </Label>
             <Controller
@@ -93,7 +93,7 @@ const SearchProduct = () => {
           </div>
 
           <div className="flex gap-4 items-start">
-            <Label htmlFor="categoryIds" className="w-[120px] text-right">
+            <Label htmlFor="categoryIds" className="w-[150px] text-right 2xl:!text-2xl">
               Categories
             </Label>
             <CategoryTreeSm name="categoryIds" />
@@ -103,20 +103,20 @@ const SearchProduct = () => {
 
       {/* SEARCH BY RANGE */}
       <div className="my-10">
-        <h1 className="my-5">Search by Range</h1>
+        <h1 className="my-5 2xl:!text-[2.4rem]">Search by Range</h1>
         <div className="bg-white shadow-md p-10 space-y-10">
           <div className="flex items-center gap-4">
-            <Label htmlFor="priceMin" className="w-[90px] text-right">
+            <Label htmlFor="priceMin" className="w-[120px] text-right 2xl:!text-2xl">
               Price Range:
             </Label>
-            <span className="text-sm text-gray-600">From $</span>
+            <span className="text-sm text-gray-600 2xl:!text-2xl">From $</span>
             <Input
               id="priceMin"
               type="number"
               className="w-[100px]"
               {...register("priceMin")}
             />
-            <span className="text-sm text-gray-600">to $</span>
+            <span className="text-sm text-gray-600 2xl:!text-2xl">to $</span>
             <Input
               id="priceMax"
               type="number"
@@ -126,17 +126,17 @@ const SearchProduct = () => {
           </div>
 
           <div className="flex items-center gap-4">
-            <Label htmlFor="qtyFrom" className="w-[100px] text-right">
+            <Label htmlFor="qtyFrom" className="w-[120px] text-right 2xl:!text-2xl">
               Quantity Sold:
             </Label>
-            <span className="text-sm text-gray-600">From</span>
+            <span className="text-sm text-gray-600 2xl:!text-2xl">From</span>
             <Input
               id="qtyFrom"
               type="number"
               className="w-[100px]"
               {...register("qtyFrom")}
             />
-            <span className="text-sm text-gray-600 ml-4">to</span>
+            <span className="text-sm text-gray-600 2xl:!text-2xl ml-4">to</span>
             <Input
               id="qtyTo"
               type="number"
@@ -146,17 +146,17 @@ const SearchProduct = () => {
           </div>
 
           <div className="flex items-center gap-4">
-            <Label htmlFor="invFrom" className="w-[100px] text-right">
+            <Label htmlFor="invFrom" className="w-[120px] text-right 2xl:!text-2xl">
               Inventory Level:
             </Label>
-            <span className="text-sm text-gray-600">From</span>
+            <span className="text-sm text-gray-600 2xl:!text-2xl">From</span>
             <Input
               id="invFrom"
               type="number"
               className="w-[100px]"
               {...register("invFrom")}
             />
-            <span className="text-sm text-gray-600 ml-4">to</span>
+            <span className="text-sm text-gray-600 2xl:!text-2xl ml-4">to</span>
             <Input
               id="invTo"
               type="number"
@@ -169,7 +169,7 @@ const SearchProduct = () => {
 
       {/* SEARCH BY SETTING */}
       <div className="my-10">
-        <h1 className="my-5 ">Search by Setting</h1>
+        <h1 className="my-5 2xl:!text-[2.4rem]">Search by Setting</h1>
         <div className="bg-white shadow-md p-10 space-y-10">
           {[
             { label: "Product Visibility", name: "isVisible" },
@@ -178,7 +178,7 @@ const SearchProduct = () => {
             { label: "Status", name: "status" },
           ].map(({ label, name }) => (
             <div className="flex items-center gap-4" key={name}>
-              <Label htmlFor={name} className="w-[140px] text-right">
+              <Label htmlFor={name} className="w-[140px] text-right 2xl:!text-2xl">
                 {label}:
               </Label>
               <Controller
@@ -234,10 +234,10 @@ const SearchProduct = () => {
 
       {/* SEARCH BY SORTING */}
       <div className="my-10">
-        <h1 className="my-5 ">Sort Order</h1>
+        <h1 className="my-5 2xl:!text-[2.4rem]">Sort Order</h1>
         <div className="bg-white shadow-md p-10 space-y-10">
           <div className="flex items-center gap-4">
-            <Label htmlFor="sortBy" className="w-[140px] text-right">
+            <Label htmlFor="sortBy" className="w-[140px] text-right 2xl:!text-2xl">
               Sort Order:
             </Label>
 

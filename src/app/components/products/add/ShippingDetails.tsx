@@ -19,7 +19,7 @@ export default function ShippingDetails() {
     <div className="bg-white shadow p-6 space-y-4 scroll-mt-20" id="shippingDetails">
       <h1 className="2xl:!text-[2.4rem]">Shipping Details</h1>
 
-      <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
+      <div className="flex flex-col 2xl:flex-row items-start 2xl:items-center gap-4">
         {/* Fixed Shipping Price */}
         <div className="flex flex-col space-y-1 w-full max-w-md">
           <Label

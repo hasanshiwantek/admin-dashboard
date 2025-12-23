@@ -46,7 +46,7 @@ export default function ImportCsvForm() {
     <div className="p-15">
       {/* Import Source */}
       <div className="mt-2 ">
-        <h1 className="mb-4">Import Products via CSV</h1>
+        <h1 className="mb-4 2xl:!text-[2.4rem]">Import Products via CSV</h1>
         <div className="bg-white shadow-sm rounded-sm p-10">
           <Controller
             control={control}
@@ -59,11 +59,11 @@ export default function ImportCsvForm() {
               >
                 <div className="flex items-center space-x-3">
                   <RadioGroupItem value="upload" id="upload" />
-                  <Label htmlFor="upload">
+                  <Label className="2xl:!text-2xl" htmlFor="upload">
                     Upload a CSV file from my computer (20 MB size limit)
                   </Label>
                 </div>
-                <div className="ml-7">
+                <div className="ml-7 2xl:ml-10">
                   <Input
                     type="file"
                     {...register("file")}
@@ -73,7 +73,7 @@ export default function ImportCsvForm() {
                 </div>
                 <div className="flex items-center space-x-3">
                   <RadioGroupItem value="server" id="server" />
-                  <Label htmlFor="server">
+                  <Label className="2xl:!text-2xl" htmlFor="server">
                     Use a file already on the server
                   </Label>
                 </div>
@@ -85,7 +85,7 @@ export default function ImportCsvForm() {
        {/* Import Options */}
       <div className=" mt-5 space-y-4">
         <div className="mt-5 space-y-4">
-          <h1>Import Options</h1>
+          <h1 className="2xl:!text-[2.4rem]">Import Options</h1>
           <div className="bg-white shadow-sm rounded-sm p-10 space-y-10">
             {[
               {
@@ -114,14 +114,14 @@ export default function ImportCsvForm() {
                       checked={field.value}
                       onCheckedChange={field.onChange}
                     />
-                    <Label htmlFor={name}>{label}</Label>
+                    <Label className="2xl:!text-2xl" htmlFor={name}>{label}</Label>
                   </div>
                 )}
               />
             ))}
 
             <div className="flex items-center space-x-1">
-              <Label htmlFor="optionType" className="w-52">
+              <Label  htmlFor="optionType" className="w-52 2xl:!text-2xl">
                 Default Option Type
               </Label>
               <Controller
@@ -147,7 +147,7 @@ export default function ImportCsvForm() {
             </div>
 
             <div className="flex items-center space-x-3">
-              <Label htmlFor="separator" className="w-56">
+              <Label  htmlFor="separator" className="w-56 2xl:!text-2xl">
                 Field Separator
               </Label>
               <Input
@@ -158,7 +158,7 @@ export default function ImportCsvForm() {
             </div>
 
             <div className="flex items-center space-x-3">
-              <Label htmlFor="enclosure" className="w-56">
+              <Label  htmlFor="enclosure" className="w-56 2xl:!text-2xl">
                 Field Enclosure
               </Label>
               <Input
