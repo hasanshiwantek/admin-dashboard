@@ -21,7 +21,7 @@ import { advanceReturnOrderSearch } from "@/redux/slices/orderSlice";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { useRouter } from "next/navigation";
 
-const page = () => {
+const Page = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const [formData, setFormData] = useState({
@@ -283,4 +283,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
