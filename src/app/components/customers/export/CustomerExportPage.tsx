@@ -44,8 +44,8 @@ export default function CustomerExportPage() {
         <form onSubmit={form.handleSubmit(onSubmit)}>
           {/* Tabs */}
           <div className="border-b border-gray-200">
-            <h1 className="!font-extralight">Export customers</h1>
-            <p className="my-5">
+            <h1 className="!font-extralight 2xl:!text-5xl">Export customers</h1>
+            <p className="my-5 2xl:!text-2xl">
               Select an export template for your customers export or create a
               new export template.
             </p>
@@ -54,7 +54,7 @@ export default function CustomerExportPage() {
               <button
                 type="button"
                 onClick={() => setActiveTab("exportOptions")}
-                className={`px-4 py-2 text-xl  border-b-4 transition-colors ${
+                className={`px-4 py-2 text-xl  border-b-4 transition-colors 2xl:!text-2xl ${
                   activeTab === "exportOptions"
                     ? "border-blue-600 text-blue-600"
                     : "border-transparent text-gray-500 hover:text-gray-700"
@@ -65,7 +65,7 @@ export default function CustomerExportPage() {
               <button
                 type="button"
                 onClick={() => setActiveTab("exportPreview")}
-                className={`px-4 py-2 text-xl border-b-4 transition-colors ${
+                className={`px-4 py-2 text-xl border-b-4 transition-colors 2xl:!text-2xl ${
                   activeTab === "exportPreview"
                     ? "border-blue-600 text-blue-600"
                     : "border-transparent text-gray-500 hover:text-gray-700"

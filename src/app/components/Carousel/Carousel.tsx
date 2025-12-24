@@ -74,7 +74,6 @@ const Carousel = () => {
       altText: s.altText || "",
     }));
   }, [carouselData]);
-  console.log("dddddddddddddddd", memoizedSlides);
 
   useEffect(() => {
     if (memoizedSlides.length > 0) {
@@ -283,10 +282,10 @@ const Carousel = () => {
       </div>
       <div className="pb-20">
         <div className="flex justify-between items-center p-6">
-          <h1 className="!font-semibold">Homepage carousel</h1>
+          <h1 className="!font-semibold 2xl:!text-[2.4rem]">Homepage carousel</h1>
           <a
             href="#"
-            className="text-sm text-blue-600 hover:text-blue-800 flex items-center"
+            className="text-sm text-blue-600 hover:text-blue-800 flex items-center 2xl:!text-2xl"
           >
             Learn more about using the Carousel builder
           </a>
@@ -314,8 +313,8 @@ const Carousel = () => {
  }`}
           >
             {/* HEADING FIELD */}
-            <div className="flex-1 max-w-[200px] flex flex-col mr-5">
-              <Label className="w-24">Heading</Label>
+            <div className="flex-1 max-w-[200px] flex flex-col 2xl:flex-row mr-5 2xl:gap-6">
+              <Label className="w-24 2xl:!text-2xl">Heading</Label>
               <input
                 {...register("heading", { required: "Heading is required" })}
                 value={activeSlide.heading}
@@ -339,8 +338,8 @@ const Carousel = () => {
             </div>
 
             {/* TEXT FIELD */}
-            <div className="flex-1 max-w-[200px] flex flex-col">
-              <Label className="w-24">Text</Label>
+            <div className="flex-1 max-w-[200px] flex flex-col 2xl:flex-row  2xl:gap-3">
+              <Label className="w-24 2xl:!text-2xl">Text</Label>
               <input
                 {...register("text", { required: "Text is required" })}
                 value={activeSlide.text}
@@ -364,8 +363,8 @@ const Carousel = () => {
             </div>
 
             {/* BUTTON TEXT FIELD */}
-            <div className="flex-1 max-w-[220px] flex flex-col">
-              <Label className="w-24 whitespace-nowrap">Button Text</Label>
+            <div className="flex-1 max-w-[220px] flex flex-col 2xl:flex-row 2xl:gap-8">
+              <Label className="w-24 whitespace-nowrap 2xl:!text-2xl">Button Text</Label>
               <input
                 {...register("buttonText", {
                   required: "Button text is required",
@@ -391,8 +390,8 @@ const Carousel = () => {
             </div>
 
             {/* LINK FIELD */}
-            <div className="flex-1 max-w-[200px] flex flex-col">
-              <Label className="w-24">Link</Label>
+            <div className="flex-1 max-w-[200px] flex flex-col 2xl:flex-row 2xl:gap-16">
+              <Label className="w-24 2xl:!text-2xl">Link</Label>
               <input
                 {...register("link")}
                 value={activeSlide.link}
@@ -421,17 +420,17 @@ const Carousel = () => {
               <button
                 type="button"
                 onClick={triggerImageUpload}
-                className="h-[42px] px-4 py-2 bg-gray-100 border border-gray-300 text-blue-600 rounded hover:bg-gray-200 transition self-end font-medium"
+                className="h-[42px] px-4 text-blue-600 rounded hover:bg-gray-200 transition self-end font-medium 2xl:!text-2xl"
                 disabled={activeSlideId === 0}
               >
-                Browse Image
+                Browse
               </button>
             </div>
           </div>
 
           {/* --- Main Content: Preview & Settings --- */}
-          <div className="flex gap-6">
-            <div className="flex-3 w-3/4">
+          <div className="flex flex-col lg:flex-row gap-6">
+            <div className="flex-3 w-full lg:w-3/4">
               {/* Preview Container */}
               <div className="bg-white border border-gray-200 rounded-lg shadow-md mb-6 relative">
                 {slides.length === 0 ? (
@@ -442,7 +441,7 @@ const Carousel = () => {
                 ) : (
                   // Jab slide ho toh preview dikhao
                   <div
-                    className="relative w-full h-96  bg-black flex flex-col items-center justify-center   text-white p-6 rounded-t-lg overflow-hidden bg-cover bg-center"
+                    className="relative w-full h-[40rem] bg-black flex flex-col items-center justify-center   text-white p-6 rounded-t-lg overflow-hidden bg-cover bg-center"
                     style={{ backgroundImage: `url(${activeSlide.imageUrl})` }}
                   >
                     <div className="absolute inset-0 bg-black opacity-40"></div>
@@ -455,7 +454,7 @@ const Carousel = () => {
                         </h2>
                       )}
                       {activeSlide.text && (
-                        <p className="text-xl mb-6">{activeSlide.text}</p>
+                        <p className="text-xl mb-">{activeSlide.text}</p>
                       )}
                       {activeSlide.buttonText && activeSlide.link && (
                         <button className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md transition">
@@ -475,7 +474,7 @@ const Carousel = () => {
 
               {/* --- Slide Management Thumbnails --- */}
               <div className="bg-white p-4 rounded-lg shadow-sm border">
-                <div className="flex justify-end text-base text-gray-500 italic mb-2">
+                <div className="flex justify-end text-base text-gray-500 italic mb-2 2xl:!text-2xl">
                   Click a slide to edit. Drag to reorder (Drag functionality is
                   visual only in this mock).
                 </div>
@@ -497,7 +496,7 @@ const Carousel = () => {
                     >
                       <div className="absolute inset-0 bg-black/40"></div>
 
-                      <span className="absolute top-1 left-2 font-semibold text-white z-10">
+                      <span className="absolute top-1 left-2 font-semibold text-white z-10 2xl:!text-2xl">
                         Slide {index + 1}
                       </span>
 
@@ -528,22 +527,22 @@ const Carousel = () => {
             </div>
 
             {/* --- Right Panel: Settings --- */}
-            <div className="flex-1 w-1/4 bg-white p-6 rounded-lg shadow-md border h-fit">
+            <div className="flex-1 lg:w-1/4 bg-white p-6 rounded-lg shadow-md border h-fit">
               <a
                 href="#"
-                className="text-blue-600 text-sm flex items-center mb-4 hover:underline"
+                className="text-blue-600 text-sm flex items-center mb-4 hover:underline 2xl:!text-2xl"
               >
                 Why does this preview look different to my storefront?{" "}
                 <HelpCircle size={14} className="ml-1" />
               </a>
               <hr className="mb-4" />
-              <h3 className="text-lg font-semibold mb-3 flex items-center text-gray-700">
+              <h3 className="text-lg font-semibold mb-3 flex items-center text-gray-700 2xl:!text-[1.6rem]">
                 Settings
               </h3>
               <div className="flex items-center gap-2">
                 <label
                   htmlFor="swapInterval"
-                  className="text-sm whitespace-nowrap"
+                  className="text-sm whitespace-nowrap 2xl:!text-2xl"
                 >
                   Swap Every:
                 </label>
@@ -556,7 +555,7 @@ const Carousel = () => {
                   onChange={handleSettingsChange}
                   className="w-16 p-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500 text-center"
                 />
-                <span className="text-sm">Seconds</span>
+                <span className="text-sm 2xl:!text-2xl">Seconds</span>
               </div>
             </div>
           </div>

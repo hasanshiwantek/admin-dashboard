@@ -130,17 +130,17 @@ export default function BlogPage() {
 
   return (
     <div className="">
-      <h1 className="!font-light my-5">
+      <h1 className="!font-light my-5 2xl:!text-5xl">
         {id ? "Edit Blog Post" : "New Blog Post"}
       </h1>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="  bg-white p-10 rounded-sm shadow-md">
-          <h1 className="!font-bold mb-5">Content</h1>
+          <h1 className="!font-bold mb-5 2xl:!text-[2.4rem]">Content</h1>
           {/* Title */}
           <div className="ml-30 flex flex-col gap-10">
             <div className="flex items-center gap-4">
-              <Label htmlFor="title " className="w-[100px]">
+              <Label htmlFor="title " className="w-[100px] 2xl:!text-2xl">
                 Title
               </Label>
               <Input
@@ -151,7 +151,7 @@ export default function BlogPage() {
 
             {/* TinyMCE Editor integrated with react-hook-form */}
             <div className="flex items-start gap-4">
-              <Label className="w-[100px]">Body</Label>
+              <Label className="w-[100px] 2xl:!text-2xl">Body</Label>
               <Controller
                 name="body"
                 control={control}
@@ -264,7 +264,7 @@ export default function BlogPage() {
 
             {/* Author */}
             <div className="flex items-center gap-4">
-              <Label htmlFor="author" className="w-[100px]">
+              <Label htmlFor="author" className="w-[100px] 2xl:!text-2xl">
                 Author
               </Label>
               <Input placeholder="Author name" {...register("author")} />
@@ -272,17 +272,17 @@ export default function BlogPage() {
 
             {/* Tags */}
             <div className="flex items-center gap-4">
-              <Label htmlFor="tags" className="w-[110px]">
+              <Label htmlFor="tags" className="w-[100px] 2xl:!text-2xl">
                 Tags
               </Label>
-              <Textarea
+              <Input
                 placeholder="Hit enter to add multiple tags"
                 {...register("tags")}
               />
             </div>
             {/* File Upload */}
             <div className="flex items-center gap-4 relative">
-              <Label className="w-[100px]">
+              <Label className="w-[160px] 2xl:!text-2xl">
                 Summary Thumbnail Image (optional)
               </Label>
               <input
@@ -331,17 +331,17 @@ export default function BlogPage() {
         {/* SEO Section */}
         <div className="mb-30">
           <div className="  bg-white p-10 rounded-sm shadow-md ">
-            <h1 className="!font-bold my-5">SEO (optional)</h1>
+            <h1 className="!font-bold my-5 2xl:!text-[2.4rem]">SEO (optional)</h1>
             <div className="ml-30 flex flex-col gap-10">
               <div className="flex items-center gap-4">
-                <Label htmlFor="Your post URL" className="w-[100px]">
+                <Label htmlFor="Your post URL" className="w-[120px] 2xl:!text-2xl">
                   Post URL
                 </Label>
                 <Input placeholder="Your post URL" {...register("postUrl")} />
               </div>
 
               <div className="flex items-center gap-4">
-                <Label htmlFor=" Meta description" className="w-[100px]">
+                <Label htmlFor=" Meta description" className="w-[120px] 2xl:!text-2xl">
                   Meta description
                 </Label>
                 <Input

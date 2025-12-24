@@ -284,15 +284,15 @@ const AllCustomers = () => {
     <div className="p-10">
       {/* Header */}
       <div className="mb-6">
-        <h1 className=" !font-light">View customers</h1>
+        <h1 className=" !font-light 2xl:!text-5xl">View customers</h1>
       </div>
 
       {/* Tabs */}
       <div className="flex gap-6 border-b mb-6">
-        <button className="pb-2 text-xl font-medium border-b-2 border-blue-500">
+        <button className="pb-2 text-xl font-medium border-b-2 border-blue-500 2xl:!text-2xl">
           All customers
         </button>
-        <button className="pb-2 text-xl font-medium text-gray-500">
+        <button className="pb-2 text-xl font-medium text-gray-500 hover:text-gray-700 2xl:!text-2xl">
           Custom views
         </button>
       </div>
@@ -302,7 +302,7 @@ const AllCustomers = () => {
         <Link href={"/manage/customers/add"}>
           <Button
             variant="outline"
-            className="flex items-center gap-2 !p-6 btn-outline-primary"
+            className="flex items-center gap-2 !p-6 btn-outline-primary 2xl:!text-2xl"
           >
             <PlusIcon className="!w-5 !h-5" /> Add
           </Button>
@@ -317,7 +317,7 @@ const AllCustomers = () => {
         <Link href={"/manage/customers/export"}>
           <Button
             variant="outline"
-            className="flex items-center gap-2 !p-6 btn-outline-primary"
+            className="flex items-center gap-2 !p-6 btn-outline-primary 2xl:!text-2xl"
           >
             <DownloadIcon className="!w-5 !h-5" /> Export all customers
           </Button>
@@ -329,7 +329,7 @@ const AllCustomers = () => {
         />
         <Button
           variant="default"
-          className="flex items-center gap-2 !p-6 btn-outline-primary"
+          className="flex items-center gap-2 !p-6 btn-outline-primary 2xl:!text-2xl"
           onClick={filterHandler}
         >
           <SearchIcon className="!w-5 !h-5" /> Search
@@ -356,14 +356,14 @@ const AllCustomers = () => {
                 />
               </TableHead>
               <TableHead></TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Phone</TableHead>
-              <TableHead>Group</TableHead>
-              <TableHead>Store credit</TableHead>
-              <TableHead>Orders</TableHead>
-              <TableHead>Join date</TableHead>
-              <TableHead>Action</TableHead>
+              <TableHead className="2xl:!text-[1.6rem]">Name</TableHead>
+              <TableHead className="2xl:!text-[1.6rem]">Email</TableHead>
+              <TableHead className="2xl:!text-[1.6rem]">Phone</TableHead>
+              <TableHead className="2xl:!text-[1.6rem]">Group</TableHead>
+              <TableHead className="2xl:!text-[1.6rem]">Store credit</TableHead>
+              <TableHead className="2xl:!text-[1.6rem]">Orders</TableHead>
+              <TableHead className="2xl:!text-[1.6rem]">Join date</TableHead>
+              <TableHead className="2xl:!text-[1.6rem]">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -408,16 +408,16 @@ const AllCustomers = () => {
                     </TableCell>
                     <TableCell>
                       <div className=" text-blue-600 cursor-pointer hover:underline">
-                        <Link href={`/manage/customers/edit/${customer.id}`}>
+                        <Link className="2xl:!text-2xl" href={`/manage/customers/edit/${customer.id}`}>
                           {customer.firstName} {customer.lastName}
                         </Link>
                       </div>
                     </TableCell>
 
-                    <TableCell className="text-blue-500">
+                    <TableCell className="text-blue-500 2xl:!text-2xl">
                       {customer.email}
                     </TableCell>
-                    <TableCell>{customer.phone}</TableCell>
+                    <TableCell className="2xl:!text-2xl">{customer.phone}</TableCell>
 
                     <TableCell>
                       <Select
@@ -440,9 +440,9 @@ const AllCustomers = () => {
 
                     <TableCell>
                       <div className="flex items-center">
-                        <span className="mr-1">$</span>
+                        <span className="mr-1 2xl:!text-2xl">$</span>
                         <Input
-                          className="w-25"
+                          className="w-25 2xl:!text-[1.6rem]"
                           value={
                             storeCredits[customer.id] ??
                             customer.storeCredit ??
@@ -456,7 +456,7 @@ const AllCustomers = () => {
                           }
                         />
                         <Button
-                          className="ml-2 !h-12 !px-4 btn-primary"
+                          className="ml-2 !h-12 !px-4 btn-primary 2xl:!text-2xl"
                           onClick={() => updateCustomerStoreCredit(customer.id)}
                         >
                           Save
@@ -464,8 +464,8 @@ const AllCustomers = () => {
                       </div>
                     </TableCell>
 
-                    <TableCell>1</TableCell>
-                    <TableCell>
+                    <TableCell className="2xl:!text-2xl">1</TableCell>
+                    <TableCell className="2xl:!text-2xl">
                       {new Date(customer.createdAt).toLocaleString("en-US", {
                         dateStyle: "medium",
                         timeStyle: "short",
@@ -494,39 +494,39 @@ const AllCustomers = () => {
                         <div className="grid grid-cols-3 gap-2 bg-gray-50 p-4 ">
                           <div className="flex">
                             <div className="flex flex-col border-r pr-3 mr-3 space-y-1">
-                              <h4 className="font-semibold">Current Orders</h4>
+                              <h4 className="font-semibold 2xl:!text-[2rem]">Current Orders</h4>
                             </div>
                           </div>
 
                           <div className="flex">
                             <div className="flex flex-col border-r pr-3 mr-3 space-y-1">
-                              <h4 className="font-semibold">Order#500041</h4>
+                              <h4 className="font-semibold 2xl:!text-[1.8rem]">Order#500041</h4>
                               <div className="flex flex-col gap-2.5 ">
-                                <span className="ml-4">Status</span>
-                                <span>Order total</span>
+                                <span className="ml-4 2xl:!text-2xl">Status</span>
+                                <span className="2xl:!text-2xl">Order total</span>
 
-                                <span>Date orderd</span>
-                                <span>Notes</span>
+                                <span className="2xl:!text-2xl">Date orderd</span>
+                                <span className="2xl:!text-2xl">Notes</span>
                               </div>
                             </div>
 
                             <div className="flex flex-col space-y-1">
                               <p>.</p>
-                              <p>Awaiting Payment</p>
-                              <p>£1,461.00</p>
-                              <p>Jul 17th, 2025</p>
-                              <p>View Notes</p>
+                              <p className="2xl:!text-2xl">Awaiting Payment</p>
+                              <p className="2xl:!text-2xl">£1,461.00</p>
+                              <p className="2xl:!text-2xl">Jul 17th, 2025</p>
+                              <p className="2xl:!text-2xl">View Notes</p>
                             </div>
                           </div>
 
                           <div className="flex">
                             <div className="flex flex-col border-r pr-3 mr-3 space-y-1">
                               <div className="flex flex-col gap-2.5 ">
-                                <h4 className="font-semibold">Past Orders</h4>
+                                <h4 className="font-semibold 2xl:!text-[2rem]">Past Orders</h4>
                               </div>
                             </div>
 
-                            <div className="flex flex-col space-y-1">
+                            <div className="flex flex-col space-y-1 2xl:!text-2xl">
                               <p>No past orders</p>
                             </div>
                           </div>

@@ -66,7 +66,7 @@ export default function CustomerExportPreview() {
 
   return (
     <div>
-      <p className=" text-muted-foreground">
+      <p className=" text-muted-foreground 2xl:!text-2xl">
         The <strong>{totalItems.toLocaleString()}</strong> customers shown below
         will be exported when you click the continue button.
       </p>
@@ -85,21 +85,21 @@ export default function CustomerExportPreview() {
           <Table>
             <TableHeader className="bg-gray-100">
               <TableRow>
-                <TableHead>ID</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Phone</TableHead>
-                <TableHead>Date Joined</TableHead>
+                <TableHead className="2xl:!text-[1.6rem] !py-4">ID</TableHead>
+                <TableHead className="2xl:!text-[1.6rem] !py-4">Name</TableHead>
+                <TableHead className="2xl:!text-[1.6rem] !py-4">Email</TableHead>
+                <TableHead className="2xl:!text-[1.6rem] !py-4">Phone</TableHead>
+                <TableHead className="2xl:!text-[1.6rem] !py-4">Date Joined</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {customers.map((item, index) => (
                 <TableRow key={index}>
-                  <TableCell>{index}</TableCell>
-                  <TableCell>{item.name}</TableCell>
-                  <TableCell>{item.email}</TableCell>
-                  <TableCell>{item.phone}</TableCell>
-                  <TableCell>{item.joinDate}</TableCell>
+                  <TableCell className="2xl:!text-[1.6rem] !py-4">{index}</TableCell>
+                  <TableCell className="2xl:!text-[1.6rem] !py-4">{item.name}</TableCell>
+                  <TableCell className="2xl:!text-[1.6rem] !py-4">{item.email}</TableCell>
+                  <TableCell className="2xl:!text-[1.6rem] !py-4">{item.phone}</TableCell>
+                  <TableCell className="2xl:!text-[1.6rem] !py-4">{item.joinDate}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

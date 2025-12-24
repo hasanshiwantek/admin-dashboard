@@ -176,8 +176,8 @@ const WebPage = () => {
         <div className="p-5 space-y-5">
           <div className="flex flex-col space-y-5 mt-10">
 
-            <h1 className="!font-extralight">Edit a Web Page</h1>
-            <p>
+            <h1 className="!font-extralight 2xl:!text-5xl">{isEdit ? "Edit" : "Create"} a Web Page</h1>
+            <p className="2xl:!text-2xl"> 
               To create a web page (such as an "About Us" page or a contact
               form), start by choosing the type of page you want and then fill
               in the other details.
@@ -185,7 +185,7 @@ const WebPage = () => {
           </div>
           {/* PAGE TYPE */}
           <div className="space-y-4 mt-10">
-            <h1 className="!font-semibold text-lg">Page Type</h1>
+            <h1 className="!font-semibold text-lg 2xl:!text-[2.4rem]">Page Type</h1>
             <div className="bg-white shadow-md p-10">
               <Controller
                 name="pageType" // must exist in FormValues
@@ -203,7 +203,7 @@ const WebPage = () => {
                         className="flex items-start space-x-3 ml-60"
                       >
                         <RadioGroupItem id={opt.id} value={opt.id} />
-                        <Label htmlFor={opt.id}>{opt.label}</Label>
+                        <Label className="2xl:!text-2xl" htmlFor={opt.id}>{opt.label}</Label>
                       </div>
                     ))}
                   </RadioGroup>
@@ -214,14 +214,14 @@ const WebPage = () => {
 
           {/* WEB PAGE DETAILS */}
           <div className="space-y-4 mt-10">
-            <h1 className="!font-semibold text-lg">Web Page Details</h1>
+            <h1 className="!font-semibold text-lg 2xl:!text-[2.4rem]">Web Page Details</h1>
             <div className="bg-white shadow-md p-10 space-y-5">
               {[
                 { label: "Page Name", name: "pageName" },
                 { label: "Page URL", name: "pageUrl" },
               ].map(({ label, name }) => (
                 <div className="flex items-center gap-4" key={name}>
-                  <Label htmlFor={name} className="w-[140px] text-right">
+                  <Label htmlFor={name} className="w-[140px] text-right 2xl:!text-2xl">
                     {label}:
                   </Label>
                   <Controller
@@ -247,7 +247,7 @@ const WebPage = () => {
               ))}
 
               <div className="flex items-start justify-start gap-4">
-                <Label className="w-[140px] text-right">Page Content:</Label>
+                <Label className="w-[140px] text-right 2xl:!text-2xl">Page Content:</Label>
                 <Editor
                   apiKey="d2z6pu70qtywhkzox051ga0czhas02dp55gl9bxijefs4vxo"
                   onInit={(evt, editor) => (editorRef.current = editor)}
@@ -298,7 +298,7 @@ const WebPage = () => {
 
           {/* NAVIGATION MENU */}
           <div className="space-y-4 mt-10">
-            <h1 className="!font-semibold text-lg">Navigation Menu Options</h1>
+            <h1 className="!font-semibold text-lg 2xl:!text-[2.4rem]">Navigation Menu Options</h1>
             <div className="bg-white shadow-md p-10 space-y-5">
               <div className="ml-20">
                 {/* Navigation Menu Checkbox */}
@@ -310,7 +310,7 @@ const WebPage = () => {
                     <div className="flex items-center gap-4">
                       <Label
                         htmlFor="showInNavigation"
-                        className="cursor-pointer"
+                        className="cursor-pointer 2xl:!text-2xl"
                       >
                         Navigation Menu
                       </Label>
@@ -322,7 +322,7 @@ const WebPage = () => {
                       />
                       <Label
                         htmlFor="showInNavigation"
-                        className="cursor-pointer"
+                        className="cursor-pointer 2xl:!text-2xl"
                       >
                         Yes, show this web page on the navigation menu
                       </Label>
@@ -332,7 +332,7 @@ const WebPage = () => {
 
                 {/* Parent Page */}
                 <div className="flex justify-start gap-15 items-start mt-4">
-                  <Label className="pt-1">Parent Page</Label>
+                  <Label className="pt-1 2xl:!text-2xl">Parent Page</Label>
                   <div className="w-[300px] border rounded-md overflow-y-auto h-[180px] bg-white text-xl">
                     {templates.map((tpl) => {
                       const isSelected = watch("parentPage") === tpl.label;
@@ -366,7 +366,7 @@ const WebPage = () => {
 
           {/* ADVANCED OPTIONS */}
           <div className="space-y-4 mt-10">
-            <h1 className="!font-semibold text-lg">Advanced Options</h1>
+            <h1 className="!font-semibold text-lg 2xl:!text-[2.4rem]">Advanced Options</h1>
             <div className="bg-white shadow-md p-10 space-y-5">
               {[
                 { label: "Page Title", name: "pageTitle" },
@@ -375,7 +375,7 @@ const WebPage = () => {
                 { label: "Search Keywords", name: "searchKeywords" },
               ].map(({ label, name }) => (
                 <div className="flex items-center gap-4 ml-20" key={name}>
-                  <Label htmlFor={name} className="w-[160px] text-right">
+                  <Label htmlFor={name} className="w-[190px] text-right 2xl:!text-2xl">
                     {label} (Optional):
                   </Label>
                   <Controller
@@ -396,7 +396,7 @@ const WebPage = () => {
               <div className="flex items-center gap-4 ml-20">
                 <Label
                   htmlFor="templateLayoutFile"
-                  className="w-[160px] text-right"
+                  className="w-[190px] text-right 2xl:!text-2xl"
                 >
                   Template Layout File:
                 </Label>
@@ -429,7 +429,7 @@ const WebPage = () => {
                   control={control}
                   render={({ field: { value, onChange, ...field } }) => (
                     <div className="flex items-center gap-8">
-                      <Label className="w-[160px] text-right">
+                      <Label className="w-[180px] text-right 2xl:!text-2xl">
                         Display as Home Page
                       </Label>
                       <div className="flex items-center">
@@ -442,7 +442,7 @@ const WebPage = () => {
                         />
                         <Label
                           htmlFor="displayAsHomePage"
-                          className="cursor-pointer"
+                          className="cursor-pointer 2xl:!text-2xl"
                         >
                           Yes, display this page as the home page of my store
                         </Label>
@@ -456,7 +456,7 @@ const WebPage = () => {
                   control={control}
                   render={({ field: { value, onChange, ...field } }) => (
                     <div className="flex items-center gap-8">
-                      <Label className="w-[160px] text-right">
+                      <Label className="w-[180px] text-right 2xl:!text-2xl">
                         Restrict to Customers Only
                       </Label>
                       <div className="flex items-center">
@@ -469,7 +469,7 @@ const WebPage = () => {
                         />
                         <Label
                           htmlFor="restrictToCustomersOnly"
-                          className="cursor-pointer"
+                          className="cursor-pointer 2xl:!text-2xl"
                         >
                           Yes, only allow customers who've logged in to view
                           this page
@@ -482,7 +482,7 @@ const WebPage = () => {
 
               {/* Sort Order */}
               <div className="flex items-start gap-4 pt-4 ml-20">
-                <Label htmlFor="sortOrder" className="w-[160px] text-right">
+                <Label htmlFor="sortOrder" className="w-[190px] text-right 2xl:!text-2xl">
                   Sort Order (Optional):
                 </Label>
                 <Controller

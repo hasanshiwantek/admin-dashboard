@@ -104,10 +104,10 @@ const SearchCustomer = () => {
     <div>
       <form onSubmit={handleSubmit}>
         <div className="p-10">
-          <h1 className="!font-light my-4">Search customers</h1>
+          <h1 className="!font-light !my-4 2xl:!text-5xl">Search customers</h1>
           <div>
             <div className="p-6 bg-muted/40">
-              <h1 className="!font-semibold my-6">
+              <h1 className="!font-semibold my-6 2xl:!text-[2.4rem]">
                 Advanced search (optional)
               </h1>
               <div className="bg-white p-6 border rounded-md space-y-7">
@@ -115,7 +115,7 @@ const SearchCustomer = () => {
                   {/* Search Keywords */}
                   <div className="space-y-1">
                     <div className="flex items-center gap-1">
-                      <Label htmlFor="searchKeywords">Search keywords</Label>
+                      <Label className="2xl:!text-2xl" htmlFor="searchKeywords">Search keywords</Label>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Info className="w-4 h-4 text-muted-foreground cursor-pointer" />
@@ -136,7 +136,7 @@ const SearchCustomer = () => {
                   {/* Starts With */}
                   <div className="space-y-1">
                     <div className="flex items-center gap-1">
-                      <Label htmlFor="startsWith">Starts with</Label>
+                      <Label className="2xl:!text-2xl" htmlFor="startsWith">Starts with</Label>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Info className="w-4 h-4 text-muted-foreground cursor-pointer" />
@@ -156,7 +156,7 @@ const SearchCustomer = () => {
 
                   {/* Phone */}
                   <div className="space-y-1">
-                    <Label htmlFor="phone">Phone</Label>
+                    <Label className="2xl:!text-2xl" htmlFor="phone">Phone</Label>
                     <Input
                       id="phone"
                       name="phone"
@@ -167,7 +167,7 @@ const SearchCustomer = () => {
 
                   {/* Country */}
                   <div className="space-y-1">
-                    <Label htmlFor="country">Country</Label>
+                    <Label className="2xl:!text-2xl" htmlFor="country">Country</Label>
 
                     <Select
                       name="country"
@@ -191,7 +191,7 @@ const SearchCustomer = () => {
 
                   {/* State / Province */}
                   <div className="space-y-1">
-                    <Label htmlFor="stateProvince">State/Province</Label>
+                    <Label className="2xl:!text-2xl" htmlFor="stateProvince">State/Province</Label>
                     <Input
                       id="stateProvince"
                       name="stateProvince"
@@ -205,12 +205,12 @@ const SearchCustomer = () => {
           </div>
 
           <div className=" p-6 bg-muted/40">
-            <h1 className="!font-semibold mb-4">Search by range (optional)</h1>
+            <h1 className="!font-semibold mb-4 2xl:!text-[2.4rem]">Search by range (optional)</h1>
 
             <div className="bg-white p-6 border rounded-md space-y-6 ">
               {/* Customer ID */}
               <div>
-                <Label className="block mb-2">Customer ID</Label>
+                <Label className="block mb-2 2xl:!text-2xl">Customer ID</Label>
                 <div className="grid grid-cols-2 gap-4 max-w-md">
                   <Input
                     placeholder="From"
@@ -229,7 +229,7 @@ const SearchCustomer = () => {
 
               {/* Number of Orders */}
               <div>
-                <Label className="block mb-2">Number of orders</Label>
+                <Label className="block mb-2 2xl:!text-2xl">Number of orders</Label>
                 <div className="grid grid-cols-2 gap-4 max-w-md">
                   <Input
                     placeholder="From"
@@ -248,7 +248,7 @@ const SearchCustomer = () => {
 
               {/* Store Credit */}
               <div>
-                <Label className="block mb-2">Store credit</Label>
+                <Label className="block mb-2 2xl:!text-2xl">Store credit</Label>
                 <div className="grid grid-cols-2 gap-4 max-w-md">
                   <Input
                     placeholder="From $"
@@ -270,10 +270,10 @@ const SearchCustomer = () => {
           <div className="p-6 bg-muted/40 space-y-10">
             {/* Search by Date */}
             <div>
-              <h1 className="!font-semibold mb-4">Search by date (optional)</h1>
+              <h1 className="!font-semibold mb-4 2xl:!text-[2.4rem]">Search by date (optional)</h1>
               <div className="bg-white p-6 border rounded-md ">
                 <div className="space-y-1">
-                  <Label>Date joined</Label>
+                  <Label className="2xl:!text-2xl">Date joined</Label>
                   <Select
                     name="dateJoined"
                     value={formData?.dateJoined || ""}
@@ -303,10 +303,10 @@ const SearchCustomer = () => {
 
             {/* Search by Group */}
             <div>
-              <h1 className="!font-semibold mb-4">Search by group(optional)</h1>
+              <h1 className="!font-semibold mb-4 2xl:!text-[2.4rem]">Search by group(optional)</h1>
               <div className="bg-white p-6 border rounded-md ">
                 <div className="space-y-1">
-                  <Label>Customer group</Label>
+                  <Label className="2xl:!text-2xl">Customer group</Label>
                   <Select
                     name="customerGroup"
                     value={formData?.customerGroup || ""}
@@ -329,11 +329,11 @@ const SearchCustomer = () => {
 
             {/* Sort Order */}
             <div>
-              <h1 className="!font-semibold mb-4">Sort order</h1>
+              <h1 className="!font-semibold mb-4 2xl:!text-[2.4rem]">Sort order</h1>
               <div className="bg-white p-6 border rounded-md ">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <Label>Customer</Label>
+                    <Label className="2xl:!text-2xl">Customer</Label>
                     <Select
                       name="sortBy"
                       value={formData?.sortBy || ""}
@@ -354,7 +354,7 @@ const SearchCustomer = () => {
                   </div>
 
                   <div className="space-y-1">
-                    <Label>in</Label>
+                    <Label className="2xl:!text-2xl">in</Label>
                     <Select
                       name="sortOrder"
                       value={formData?.sortOrder || ""}
