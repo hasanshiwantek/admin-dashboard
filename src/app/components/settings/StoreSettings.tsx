@@ -31,7 +31,7 @@ export const FormField = ({
   hasInfo?: boolean; // make optional
 }) => (
   <div className="flex items-start gap-4 py-3">
-    <Label className="w-48 text-right  pt-2">{label}</Label>
+    <Label className="w-56 text-right 2xl:!text-2xl  pt-2">{label}</Label>
     <div className="flex-1 flex items-center gap-2">
       {children}
       {hasInfo && <Info className="w-4 h-4 text-gray-400 flex-shrink-0" />}
@@ -529,11 +529,11 @@ Disallow: /search.php`,
           className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4"
         >
           <ArrowLeft className="w-6 h-6" />
-          <span className="text-sm">Settings</span>
+          <span className="text-sm 2xl:!text-2xl">Settings</span>
         </button>
 
-        <h1 className=" mb-2 !font-extralight">Store Settings</h1>
-        <p className=" mb-6">
+        <h1 className=" mb-2 !font-extralight 2xl:!text-5xl">Store Settings</h1>
+        <p className=" mb-6 2xl:!text-2xl">
           Update the settings in the form below and click "Save", or click
           "Cancel" to keep the current settings.
         </p>

@@ -103,11 +103,11 @@ export default function BlogTable() {
     <div className="p-10">
       {/* Header */}
       <div className="flex justify-between items-center mb-6 border-b border-gray-200 pb-3">
-        <h1 className="!font-light">Blog</h1>
+        <h1 className="!font-light 2xl:!text-5xl">Blog</h1>
         <Link
           href="https://nts-ecommerce.vercel.app/blogs"
           target="_blank"
-          className="flex items-center text-blue-600 hover:text-blue-800 text-sm font-medium"
+          className="flex items-center text-blue-600 hover:text-blue-800 text-sm font-medium 2xl:!text-2xl"
         >
           View blog <ExternalLink className="ml-1 h-4 w-4" />
         </Link>
@@ -119,9 +119,9 @@ export default function BlogTable() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`pb-3 px-4 text-xl font-medium transition-colors ${
+              className={`pb-3 px-4 text-xl 2xl:!text-2xl font-medium transition-colors ${
                 activeTab === tab
-                  ? "text-blue-600 border-b-2 border-blue-600"
+                  ? "text-blue-600 border-b-4 border-blue-600"
                   : "text-gray-500 hover:text-gray-700"
               }`}
             >
@@ -135,14 +135,14 @@ export default function BlogTable() {
           <div className="flex items-center gap-2">
             <Link href={"/manage/storefront/blog/add"}>
               <button title="New Post" className="btn-outline-primary">
-                <Plus className="h-6 w-6" />
+                <Plus className="h-7 w-7" />
               </button>
             </Link>
             <button title="More Actions" className="btn-outline-primary">
-              <MoreHorizontal className="h-6 w-6" />
+              <MoreHorizontal className="h-7 w-7" />
             </button>
             <div className="flex items-center gap-2 ml-4">
-              <span className="text-sm font-medium text-gray-700">
+              <span className="text-sm font-medium text-gray-700 2xl:!text-2xl">
                 Blog visibility
               </span>
               <Switch
@@ -197,15 +197,15 @@ export default function BlogTable() {
                   <TableCell className="font-medium">
                     <Link
                       href={`/manage/storefront/blog/edit/${post.id}`}
-                      className="text-blue-600 hover:border-b capitalize"
+                      className="text-blue-600 hover:border-b capitalize 2xl:!text-2xl"
                     >
                       {post.title || "Untitled"}
                     </Link>
                   </TableCell>
 
-                  <TableCell>{post.author || "—"}</TableCell>
+                  <TableCell className="2xl:!text-2xl">{post.author || "—"}</TableCell>
 
-                  <TableCell>
+                  <TableCell className="2xl:!text-2xl">
                     {post.createdAt
                       ? new Date(post.createdAt).toLocaleString("en-US", {
                           dateStyle: "medium",
