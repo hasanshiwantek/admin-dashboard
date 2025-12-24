@@ -313,10 +313,10 @@ export default function EditCategoryPage() {
         {/* Header breadcrumb + pager mimic */}
         <div className="flex flex-col gap-10 mb-6">
           <Link href="/manage/products/categories">
-            <h2>Categories</h2>
+            <h2 className="2xl:!text-[1.6rem]">Categories</h2>
           </Link>
           <div className="flex items-center justify-between">
-            <h1 className="!font-light">Edit category</h1>
+            <h1 className="!font-light 2xl:!text-[3.2rem]">Edit category</h1>
             {/* <div className="text-2xl">•••</div> */}
           </div>
           <a className="border-blue-600 border-b-4 w-fit !text-2xl">Details</a>
@@ -324,40 +324,47 @@ export default function EditCategoryPage() {
 
         {/* DETAILS CARD */}
         <div className="bg-white rounded-sm shadow-sm border p-6 mb-8 ">
-          <h1 className="mb-6">Category details</h1>
+          <h1 className="mb-6 2xl:!text-[2.4rem]">Category details</h1>
 
           {/* Display name */}
           <div className="mb-8">
-            <Label className="mb-2 block">Display name</Label>
+            <Label className="mb-2 block 2xl:!text-[1.6rem]">Display name</Label>
             <Input placeholder="Category display name" {...register("name")} />
           </div>
 
           {/* URL + Reset */}
-          <div className="mb-8">
-            <div className="flex items-center justify-start gap-20">
-              <Label className="mb-2 block">URL</Label>
-              <button
-                type="button"
-                className="text-xl text-blue-600 hover:underline"
-                onClick={onResetSlug}
-              >
-                Reset
-              </button>
-            </div>
-            <Input
-              placeholder="/audio-video-devices-1/"
-              {...register("slug")}
-              value={slugVal}
-              onChange={(e) =>
-                setValue("slug", e.target.value, { shouldDirty: true })
-              }
-              className="!text-lg"
-            />
-          </div>
+         <div className="mb-8">
+  {/* Row 1: Label */}
+  <Label className="mb-2 block 2xl:!text-[1.6rem]">
+    URL
+  </Label>
+
+  {/* Row 2: Input + Reset */}
+  <div className="flex items-center gap-4">
+    <Input
+      placeholder="/audio-video-devices-1/"
+      {...register("slug")}
+      value={slugVal}
+      onChange={(e) =>
+        setValue("slug", e.target.value, { shouldDirty: true })
+      }
+      className="!text-lg flex-1"
+    />
+
+    <button
+      type="button"
+      className="text-xl text-blue-600 hover:underline 2xl:!text-[1.6rem]"
+      onClick={onResetSlug}
+    >
+      Reset
+    </button>
+  </div>
+</div>
+
 
           {/* Description (simple textarea; swap with your rich editor if needed) */}
           <div className="mb-8">
-            <Label className="mb-2 block">Description</Label>
+            <Label className="mb-2 block 2xl:!text-[1.6rem]">Description</Label>
             <Textarea
               rows={6}
               placeholder="Write a description…"
@@ -368,13 +375,13 @@ export default function EditCategoryPage() {
 
           {/* Channel (disabled) */}
           <div className="mb-8">
-            <Label className="mb-2 block">Channel</Label>
+            <Label className="mb-2 block 2xl:!text-[1.6rem]">Channel</Label>
             <Input disabled value="New Town Spares UK Ltd" />
           </div>
 
           {/* Parent category (searchable) */}
           <div className="mb-5 !w-full !max-w-md">
-            <Label className="mb-2 block">Parent category</Label>
+            <Label className="mb-2 block 2xl:!text-[1.6rem]">Parent category</Label>
             <p className="text-xs text-muted-foreground mb-2">
               Leave empty to add to the root category
             </p>
@@ -390,7 +397,7 @@ export default function EditCategoryPage() {
 
           {/* Template layout */}
           <div className="mb-8">
-            <Label className="mb-2 block">Template layout file</Label>
+            <Label className="mb-2 block 2xl:!text-[1.6rem]">Template layout file</Label>
             <Controller
               control={control}
               name="template_layout"
@@ -421,7 +428,7 @@ export default function EditCategoryPage() {
 
           {/* Default product sort */}
           <div className="mb-8">
-            <Label className="mb-2 block">Default product sort</Label>
+            <Label className="mb-2 block 2xl:!text-[1.6rem]">Default product sort</Label>
             <Controller
               control={control}
               name="default_product_sort"
@@ -451,7 +458,7 @@ export default function EditCategoryPage() {
 
           {/* Category image */}
           <div className="mb-2">
-            <Label className="mb-2 block">Category Image</Label>
+            <Label className="mb-2 block 2xl:!text-[1.6rem]">Category Image</Label>
 
             {imagePreview ? (
               <div className="flex items-start gap-4">
@@ -489,7 +496,7 @@ export default function EditCategoryPage() {
                 onDrop={onDrop}
                 onDragOver={onDragOver}
               >
-                <p className="mb-2">Drag & drop image here or</p>
+                <p className="mb-2 2xl:!text-[1.6rem]">Drag & drop image here or</p>
                 <Button
                   type="button"
                   onClick={() =>
@@ -498,7 +505,7 @@ export default function EditCategoryPage() {
                 >
                   Choose File
                 </Button>
-                <p className="text-xs text-muted-foreground mt-2">
+                <p className="text-xs text-muted-foreground mt-2 2xl:!text-[1.6rem]">
                   File types: ICO, JPG, GIF, PNG, maximum 8MB.
                 </p>
               </div>
@@ -516,17 +523,17 @@ export default function EditCategoryPage() {
 
         {/* SEO CARD */}
         <div className="bg-white rounded-lg shadow-sm border p-6">
-          <h2 className="text-xl font-medium mb-6">
+          <h2 className="text-xl font-medium mb-6 2xl:!text-[2.4rem]">
             Search engine optimization
           </h2>
 
           <div className="mb-8">
-            <Label className="mb-2 block">Home page title (Optional)</Label>
+            <Label className="mb-2 block 2xl:!text-[1.6rem]">Home page title (Optional)</Label>
             <Input {...register("seo_home_title")} />
           </div>
 
           <div className="mb-8">
-            <Label className="mb-2 block">Meta keywords (Optional)</Label>
+            <Label className="mb-2 block 2xl:!text-[1.6rem]">Meta keywords (Optional)</Label>
             <Input
               placeholder="comma,separated,keywords"
               {...register("seo_meta_keywords")}
@@ -534,12 +541,12 @@ export default function EditCategoryPage() {
           </div>
 
           <div className="mb-8">
-            <Label className="mb-2 block">Meta description (Optional)</Label>
-            <Textarea rows={4} {...register("seo_meta_description")} />
+            <Label className="mb-2 block 2xl:!text-[1.6rem]">Meta description (Optional)</Label>
+            <Input  {...register("seo_meta_description")} />
           </div>
 
           <div className="mb-8">
-            <Label className="mb-2 block">Search keywords (Optional)</Label>
+            <Label className="mb-2 block 2xl:!text-[1.6rem]">Search keywords (Optional)</Label>
             <Input
               placeholder="comma,separated,keywords"
               {...register("seo_search_keywords")}

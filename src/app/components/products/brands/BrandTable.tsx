@@ -129,27 +129,28 @@ const BrandTable = () => {
     <div className="p-5">
       <div className="flex flex-col space-y-5">
         <div className="flex flex-col   gap-6 ">
-          <h1 className="!font-light">View Brands</h1>
-          <p>
+          <h1 className="!font-light 2xl:!text-5xl">View Brands</h1>
+          <p className="2xl:!text-2xl">
             Brands can be associated with products, allowing your customers to
             shop by browsing their favorite brands.
           </p>
         </div>
         <div className="flex items-center gap-5 ">
           <Link href={"/manage/products/brands/add"}>
-            <button className="btn-outline-primary">Add a Brand...</button>
+            <button className="btn-outline-primary 2xl:!text-2xl">Add a Brand...</button>
           </Link>
           <button className="btn-outline-primary" onClick={deleteBrandHandler}>
-            <Trash className="!w-6 !h-6" />
+            <Trash className="!w-6 !h-6 2xl:!h-8" />
           </button>
           <Input
+            className="2xl:!text-2xl 2xl:!h-[37.98px]" 
             type="text"
             placeholder="Filter by Keyword"
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
           />
           <button
-            className="btn-outline-primary"
+            className="btn-outline-primary 2xl:!text-2xl"
             onClick={filterHandler}
             type="button"
           >
@@ -179,9 +180,9 @@ const BrandTable = () => {
                   aria-label="Select all"
                 />
               </TableHead>
-              <TableHead className="text-left">Brand Name</TableHead>
-              <TableHead className="text-left">Products</TableHead>
-              <TableHead className="text-left">Action</TableHead>
+              <TableHead className="text-left 2xl:!text-[1.6rem]">Brand Name</TableHead>
+              <TableHead className="text-left 2xl:!text-[1.6rem]">Products</TableHead>
+              <TableHead className="text-left 2xl:!text-[1.6rem]">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -213,12 +214,12 @@ const BrandTable = () => {
                   <TableCell>
                     <Link
                       href={`/manage/products/brands/edit/${brand.brand?.id}`}
-                      className="text-blue-600 hover:border-b-blue-600 hover:border-b-2"
+                      className="text-blue-600 hover:border-b-blue-600 hover:border-b-2 2xl:!text-2xl"
                     >
                       {brand.brand?.name}
                     </Link>
                   </TableCell>
-                  <TableCell>{brand?.productsCount}</TableCell>
+                  <TableCell className="2xl:!text-2xl">{brand?.productsCount}</TableCell>
                   <TableCell>
                     <OrderActionsDropdown
                       actions={getDropdownActions(brand?.brand)}

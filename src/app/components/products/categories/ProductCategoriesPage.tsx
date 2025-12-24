@@ -292,11 +292,11 @@ const expandPath = (ids: number[]) => {
             </h1>
             <Button
               size="xl"
-              className=" flex items-center gap-2 btn-primary"
+              className=" flex items-center gap-2 btn-primary 2xl:!text-[1.6rem]"
               onClick={() => setOpen(true)}
               type="button"
             >
-              <Plus className="!w-6 !h-6 2xl:!text-[1.6rem]" /> Add new
+              <Plus className="!w-6 !h-6" /> Add new
             </Button>
           </div>
           <div className="flex flex-col  gap-5 p-6 bg-white">
@@ -334,7 +334,7 @@ const expandPath = (ids: number[]) => {
                 }}
               />
 
-              <p>{categories?.length} categories</p>
+              <p className="2xl:!text-[1.6rem]">{categories?.length} categories</p>
               <div className="flex justify-start items-center ">
                 <button
                   className="btn-outline-primary"
@@ -360,17 +360,17 @@ const expandPath = (ids: number[]) => {
               <TableRow className="border-t ">
                 <TableHead className="w-[30px]" />
                 <TableHead className="w-[30px]" />
-                <TableHead>Name</TableHead>
-                <TableHead className="text-center w-[100px]">
+                <TableHead className="2xl:!text-[1.6rem]">Name</TableHead>
+                <TableHead className="text-center 2xl:!text-[1.6rem] w-[100px]">
                   Products
                 </TableHead>
-                <TableHead className="text-center w-[150px]">
+                <TableHead className="text-center 2xl:!text-[1.6rem] w-[150px]">
                   In subcategories
                 </TableHead>
-                <TableHead className="text-center w-[100px]">
+                <TableHead className="text-center 2xl:!text-[1.6rem] w-[100px]">
                   Visibility
                 </TableHead>
-                <TableHead className="text-center w-[100px]"></TableHead>
+                <TableHead className="text-center 2xl:!text-[1.6rem] w-[100px]"></TableHead>
               </TableRow>
             </TableHeader>
             <DndContext

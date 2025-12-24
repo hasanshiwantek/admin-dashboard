@@ -47,18 +47,18 @@ const AddBrand = () => {
     <div>
       <div className="p-10 ">
         <div className="flex flex-col gap-6">
-          <h1 className="!font-light">Add Brands</h1>
-          <p>
+          <h1 className="!font-light 2xl:!text-5xl">Add Brands</h1>
+          <p className="2xl:!text-2xl">
             Brands can be associated with products, allowing your customers to
             shop by browsing their favorite brands. Add brands by typing them
             into the text box, one brand per line.{" "}
           </p>
         </div>
         <div className="bg-white p-5 shadow-md my-6">
-          <h1>Brand Details</h1>
+          <h1 className="2xl:!text-[2.4rem]">Brand Details</h1>
           <form onSubmit={handleSubmit} className="max-w-3xl p-6 space-y-6">
             <div className="space-y-1">
-              <Label className="flex items-center gap-1">
+              <Label className="flex items-center gap-1 2xl:!text-2xl">
                 Brand Name
                 <TooltipProvider>
                   <Tooltip>
@@ -83,6 +83,7 @@ const AddBrand = () => {
               </Label>
               <Textarea
                 name="name"
+                cols={6}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
