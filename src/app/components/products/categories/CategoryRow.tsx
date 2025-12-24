@@ -186,14 +186,14 @@ const CategoryRow = ({
             <Folder className="text-indigo-300 w-8 h-8" fill="lightblue" />
             <Link
               href={`/manage/products/categories/edit/${category?.id}`}
-              className="cursor-pointer hover:text-blue-800"
+              className="cursor-pointer hover:text-blue-800 2xl:!text-[1.6rem]"
             >
               {category.name}
             </Link>
           </div>
         </TableCell>
-        <TableCell className="text-center text-xl">{category?.total_products}</TableCell>
-        <TableCell className="text-center text-xl">{category?.in_subcategories}</TableCell>
+        <TableCell className="text-center text-xl 2xl:!text-[1.6rem]">{category?.total_products}</TableCell>
+        <TableCell className="text-center text-xl 2xl:!text-[1.6rem]">{category?.in_subcategories}</TableCell>
         <TableCell className="relative hover:bg-blue-100 transition-all  ">
           <VisibilityToggle
             productId={category.id}
