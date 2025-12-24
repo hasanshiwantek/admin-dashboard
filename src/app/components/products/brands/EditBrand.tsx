@@ -161,7 +161,7 @@ const EditBrand = () => {
     textarea = false
   ) => (
     <div className="space-y-1">
-      <Label className="flex items-center gap-1">
+      <Label className="flex items-center gap-1 2xl:!text-2xl">
         {label}
         {optional && (
           <span className="text-sm text-muted-foreground">(optional)</span>
@@ -189,33 +189,33 @@ const EditBrand = () => {
     <div>
       <div className="p-10">
         <div className="flex flex-col gap-6">
-          <h1 className="!font-light">Edit Brand</h1>
-          <p>Modify the details of the brand below and click "Save".</p>
+          <h1 className="!font-light 2xl:!text-5xl">Edit Brand</h1>
+          <p className="2xl:!text-2xl">Modify the details of the brand below and click "Save".</p>
         </div>
         <div className="bg-white p-5 shadow-md my-6">
           <form onSubmit={handleSubmit} className="max-w-3xl p-6 space-y-6">
             {formField("Brand Name", "name", false)}
             {formField("Page Title", "pageTitle")}
             {formField("Meta Keywords", "metaKeywords")}
-            {formField("Meta Description", "metaDescription", true, true)}
+            {formField("Meta Description", "metaDescription", true)}
             {formField("Search Keywords", "searchKeywords")}
 
             {/* Image upload with preview */}
             <div className="space-y-1">
-              <Label className="flex items-center gap-1">
+              <Label className="flex items-center gap-1 2xl:!text-2xl">
                 Brand Image
                 <span className="text-sm text-muted-foreground">
                   (optional)
                 </span>
                 <HelpCircle className="w-5 h-5 text-muted-foreground" />
               </Label>
-              <p className="text-sm text-muted-foreground mb-1">
+              <p className="text-sm text-muted-foreground mb-1 2xl:!text-2xl">
                 Maximum file size: 8MB
               </p>
 
               {previewImage && (
                 <div className="mb-3">
-                  <p className="text-sm mb-1 text-gray-600">Preview:</p>
+                  <p className="text-sm mb-1 text-gray-600 2xl:!text-2xl">Preview:</p>
                   <img
                     src={previewImage}
                     alt="Brand preview"
@@ -235,7 +235,7 @@ const EditBrand = () => {
             {formField("Brand URL", "brandURL")}
 
             <div className="space-y-1">
-              <Label className="flex items-center gap-1">
+              <Label className="flex items-center gap-1 2xl:!text-2xl">
                 Template Layout File
                 <span className="text-sm text-muted-foreground">
                   (optional)
