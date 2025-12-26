@@ -33,14 +33,14 @@ export const MiscellaneousSettings = ({
     <div className="space-y-8">
       {/* 1. Email Settings */}
       <div className="bg-white rounded-sm border border-gray-200 p-6">
-        <h2 className="!font-semibold mb-6">Email Settings</h2>
+        <h2 className="!font-semibold mb-6 2xl:!text-[2.4rem]">Email Settings</h2>
 
-        <div className="flex items-start gap-4 py-3">
-          <Label className="w-48 text-right pr-4 pt-2">
+        <div className="flex flex-col lg:flex-row items-start gap-4 py-3">
+          <Label className="w-full lg:w-72 text-right pr-4 pt-2 2xl:!text-2xl">
             Product Review Emails
           </Label>
           <div className="flex-1 flex flex-col gap-2">
-            <p className="text-sm text-gray-700">
+            <p className="text-sm text-gray-700 2xl:!text-2xl">
               Send emails to customers asking them to review products whey have
               purchased (preview and control status of these emails in{" "}
               <a href="#" className="text-blue-600 hover:underline">
@@ -48,7 +48,7 @@ export const MiscellaneousSettings = ({
               </a>
               )
             </p>
-            <div className="flex items-center space-x-2">
+            <div className="flex flex-col lg:flex-row items-start lg:items-center space-x-2">
               <Input
                 type="number"
                 value={settings.reviewEmailDays}
@@ -71,7 +71,7 @@ export const MiscellaneousSettings = ({
               />
               <Label
                 htmlFor="send-review-email-guests"
-                className="font-normal text-sm"
+                className="font-normal text-lg 2xl:!text-2xl"
               >
                 Yes, send product review emails to guest customers
               </Label>
@@ -80,6 +80,7 @@ export const MiscellaneousSettings = ({
         </div>
 
         <CheckboxField
+           className="w-full lg:w-72"
           label="Forward Order Invoices"
           checked={settings.forwardOrderInvoices}
           onCheckedChange={(checked) =>
@@ -87,7 +88,8 @@ export const MiscellaneousSettings = ({
           }
           infoText="Yes, forward order invoice emails to"
         />
-        <Input
+        <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4 lg:ml-75">
+          <Input
           value={settings.invoiceEmailRecipient}
           onChange={(e) =>
             updateSetting("invoiceEmailRecipient", e.target.value)
@@ -95,11 +97,13 @@ export const MiscellaneousSettings = ({
           className="w-64"
           placeholder="sales@ctspoint.com, info@ctspoint.cc"
         />
-        <span className="text-sm text-gray-700">
+        <span className="text-sm text-gray-700 2xl:!text-2xl">
           Type the email addresses, separated by commas.
         </span>
+        </div>
 
         <RadioGroupField
+          className="w-full lg:w-72"
           title="Use SMTP Server"
           name="smtp-server"
           value={settings.smtpServerOption}
@@ -113,7 +117,7 @@ export const MiscellaneousSettings = ({
           ]}
         />
 
-        <FormField label="Administrator's Email">
+        <FormField className="w-full lg:w-72" label="Administrator's Email">
           <Input
             value={settings.administratorEmail}
             onChange={(e) =>
@@ -125,6 +129,7 @@ export const MiscellaneousSettings = ({
         </FormField>
 
         <CheckboxField
+          className="w-full lg:w-72"
           label="Require Consent"
           checked={settings.requireMarketingConsent}
           onCheckedChange={(checked) =>
@@ -134,6 +139,7 @@ export const MiscellaneousSettings = ({
         />
 
         <CheckboxField
+          className="w-full lg:w-72"
           label="Abandoned Cart Emails"
           checked={settings.enableAbandonedCartEmails}
           onCheckedChange={(checked) =>
@@ -143,9 +149,16 @@ export const MiscellaneousSettings = ({
         />
 
         {settings.enableAbandonedCartEmails && (
-          <div className="pl-48 space-y-2">
-            <div className="flex items-center space-x-2">
-              <span className="text-sm text-gray-700">Email me every time</span>
+          <div className="lg:pl-75 space-y-2">
+            <div className="flex flex-col lg:flex-row items-start lg:items-center space-x-2">
+                <Checkbox
+                id="email-every-cart"
+                checked={settings.emailEveryAbandonedCart}
+                onCheckedChange={(checked) =>
+                  updateSetting("emailEveryAbandonedCart", checked)
+                }
+              />
+              <span className="text-sm text-gray-700 2xl:!text-2xl">Email me every time</span>
               <Input
                 type="number"
                 value={settings.abandonedCartThreshold}
@@ -154,7 +167,7 @@ export const MiscellaneousSettings = ({
                 }
                 className="w-20"
               />
-              <span className="text-sm text-gray-700">carts are abandoned</span>
+              <span className="text-sm text-gray-700 2xl:!text-2xl">carts are abandoned</span>
             </div>
             <div className="flex items-center space-x-2">
               <Checkbox
@@ -164,7 +177,7 @@ export const MiscellaneousSettings = ({
                   updateSetting("emailEveryAbandonedCart", checked)
                 }
               />
-              <Label htmlFor="email-every-cart" className="font-normal text-sm">
+              <Label htmlFor="email-every-cart" className="font-normal text-lg 2xl:!text-2xl">
                 Email me every time a cart is abandoned
               </Label>
             </div>
@@ -178,7 +191,7 @@ export const MiscellaneousSettings = ({
               />
               <Label
                 htmlFor="stop-email-complete"
-                className="font-normal text-sm"
+                className="font-normal text-lg 2xl:!text-2xl"
               >
                 Stop sending when the shopper clicks the "Complete Order" link
                 in the email
@@ -188,6 +201,7 @@ export const MiscellaneousSettings = ({
         )}
 
         <CheckboxField
+          className="w-full 2xl:w-72"
           label="Converted Cart Emails"
           checked={settings.enableConvertedCartEmails}
           onCheckedChange={(checked) =>
@@ -196,7 +210,7 @@ export const MiscellaneousSettings = ({
           infoText="Email me when an abandoned cart is saved and results in an order"
         />
 
-        <FormField label="Send Emails To (Optional)">
+        <FormField className="w-full lg:w-72" label="Send Emails To (Optional)">
           <Input
             value={settings.convertedCartRecipient}
             onChange={(e) =>
@@ -210,8 +224,9 @@ export const MiscellaneousSettings = ({
 
       {/* 2. Advanced Store Settings */}
       <div className="bg-white rounded-sm border border-gray-200 p-6">
-        <h2 className="!font-semibold mb-6">Advanced Store Settings</h2>
-        <CheckboxField
+        <h2 className="!font-semibold mb-6 2xl:!text-[2.4rem]">Advanced Store Settings</h2>
+        <CheckboxField 
+          className="w-full lg:w-72"
           label="Allow Purchasing?"
           checked={settings.allowPurchasing}
           onCheckedChange={(checked) =>
@@ -223,14 +238,14 @@ export const MiscellaneousSettings = ({
 
       {/* 3. Order Settings */}
       <div className="bg-white rounded-sm border border-gray-200 p-6">
-        <h2 className="!font-semibold mb-4">Order Settings</h2>
+        <h2 className="!font-semibold mb-4 2xl:!text-[2.4rem]">Order Settings</h2>
         <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-4">
-          <p className="text-sm text-gray-700">
+          <p className="text-sm text-gray-700 2xl:!text-2xl">
             Once your store starts receiving orders this number can only ever be
             increased.
           </p>
         </div>
-        <FormField label="Starting Order Number (Optional)">
+        <FormField className="w-full lg:w-72" label="Starting Order Number (Optional)">
           <Input
             type="number"
             value={settings.startingOrderNumber}
@@ -244,8 +259,9 @@ export const MiscellaneousSettings = ({
 
       {/* 4. Throttler */}
       <div className="bg-white rounded-sm border border-gray-200 p-6">
-        <h2 className="!font-semibold mb-6">Throttler</h2>
+        <h2 className="!font-semibold mb-6 2xl:!text-[2.4rem]">Throttler</h2>
         <CheckboxField
+          className="w-full lg:w-72"
           label="Enable Throttler"
           checked={settings.enableThrottler}
           onCheckedChange={(checked) =>
@@ -254,11 +270,11 @@ export const MiscellaneousSettings = ({
           infoText="Yes, turn on throttler in my store"
         />
         {settings.enableThrottler && (
-          <div className="flex items-start gap-4 py-3">
-            <Label className="w-48 text-right pr-4 pt-2">
+          <div className="flex flex-col lg:flex-row items-start gap-4 py-3">
+            <Label className="w-full lg:w-72 text-right pr-4 pt-2 2xl:!text-2xl">
               Allow (Optional)
             </Label>
-            <div className="flex-1 flex items-center space-x-2">
+            <div className="flex-1 flex flex-col lg:flex-row items-start lg:items-center space-y-2 lg:space-y-0 lg:space-x-2">
               <Input
                 type="number"
                 value={settings.throttleReviewsPerPeriod}
@@ -268,7 +284,7 @@ export const MiscellaneousSettings = ({
                 className="w-20"
                 placeholder="1"
               />
-              <span className="text-sm text-gray-700">
+              <span className="text-sm text-gray-700 2xl:!text-2xl">
                 reviews to be posted every
               </span>
               <Input

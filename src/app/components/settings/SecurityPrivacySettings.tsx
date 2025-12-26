@@ -31,9 +31,10 @@ export const SecurityPrivacySettings = ({
     <div className="space-y-8">
       {/* 1. Shopper Security Section (from image_b08be9.png) */}
       <div className="bg-white rounded-sm border border-gray-200 p-6">
-        <h2 className="!font-semibold mb-6">Security</h2>
+        <h2 className="!font-semibold mb-6 2xl:!text-[2.4rem]">Security</h2>
 
-        <CheckboxField
+        <CheckboxField 
+          className="w-full lg:w-80"
           label="Configure complexity of the shoppers password?"
           checked={settings.enforcePasswordComplexity}
           onCheckedChange={(checked) =>
@@ -41,9 +42,12 @@ export const SecurityPrivacySettings = ({
           }
           infoText="Yes, I would like to enforce complexity rules for shopper passwords"
         />
+      </div>
 
-        <div className="mt-8">
-          <p className="text-sm text-gray-600 mb-4">
+      {/* 2nd Section */}
+      <div className="bg-white rounded-sm border border-gray-200 p-6">
+              <div className="2xl:!text-2xl">
+          <p className="text-sm text-gray-600 mb-4 2xl:!text-2xl">
             For advanced users only, this section allows you to configure the
             automatic logout duration for inactive shoppers.{" "}
             <a href="#" className="text-blue-600 hover:underline">
@@ -52,6 +56,7 @@ export const SecurityPrivacySettings = ({
           </p>
 
           <RadioGroupField
+            className="w-full lg:w-80"
             title="Inactive shopper logout"
             name="inactive-logout"
             value={settings.inactiveShopperLogout}
@@ -65,7 +70,7 @@ export const SecurityPrivacySettings = ({
           />
 
           {settings.inactiveShopperLogout === "custom" && (
-            <FormField label="Custom Inactive Duration" hasInfo={false}>
+            <FormField className="w-full lg:w-80" label="Custom Inactive Duration" hasInfo={false}>
               <Input
                 value={settings.customLogoutDuration}
                 onChange={(e) =>
@@ -92,6 +97,7 @@ export const SecurityPrivacySettings = ({
           )}
 
           <CheckboxField
+            className="w-full lg:w-80"
             label="Shopper activity extends logout duration"
             checked={settings.shopperActivityExtendsLogout}
             onCheckedChange={(checked) =>
@@ -100,10 +106,12 @@ export const SecurityPrivacySettings = ({
             infoText="Yes, extend my shoppers logout duration while they are active"
           />
         </div>
+      </div>
 
-        <hr className="my-6" />
 
-        <FormField label="Control Panel Inactivity Timeout">
+      {/* 3. Privacy and Storefront Security Section (from image_b08c23.png) */}
+      <div className="bg-white rounded-sm border border-gray-200 p-6">
+        <FormField className="w-full lg:w-80" label="Control Panel Inactivity Timeout">
           <Select
             value={settings.controlPanelTimeout}
             onValueChange={(value) =>
@@ -123,6 +131,7 @@ export const SecurityPrivacySettings = ({
         </FormField>
 
         <CheckboxField
+           className="w-full lg:w-80"
           label="Enable reCAPTCHA on storefront?"
           checked={settings.enableRecaptchaStorefront}
           onCheckedChange={(checked) =>
@@ -133,7 +142,7 @@ export const SecurityPrivacySettings = ({
 
         {settings.enableRecaptchaStorefront && (
           <div className="space-y-3 pl-48">
-            <FormField label="reCAPTCHA Site Key" hasInfo={true}>
+            <FormField className="w-full lg:w-80" label="reCAPTCHA Site Key" hasInfo={true}>
               <Input
                 value={settings.recaptchaSiteKey}
                 onChange={(e) =>
@@ -143,7 +152,7 @@ export const SecurityPrivacySettings = ({
                 placeholder="(Site Key)"
               />
             </FormField>
-            <FormField label="reCAPTCHA Secret Key" hasInfo={true}>
+            <FormField className="w-full lg:w-80" label="reCAPTCHA Secret Key" hasInfo={true}>
               <Input
                 value={settings.recaptchaSecretKey}
                 onChange={(e) =>
@@ -156,7 +165,7 @@ export const SecurityPrivacySettings = ({
           </div>
         )}
 
-        <FormField label="Failed Login Lockout">
+        <FormField className="w-full lg:w-80" label="Failed Login Lockout">
           <Input
             type="number"
             value={settings.failedLoginLockout}
@@ -168,6 +177,7 @@ export const SecurityPrivacySettings = ({
         </FormField>
 
         <CheckboxField
+          className="w-full lg:w-80"
           label="Enable reCAPTCHA on a storefront pre-launch login page?"
           checked={settings.enableRecaptchaPrelaunch}
           onCheckedChange={(checked) =>
@@ -177,10 +187,10 @@ export const SecurityPrivacySettings = ({
         />
       </div>
 
-      {/* 2. Privacy and Storefront Security Section (from image_b08c23.png) */}
+      {/* 4. Privacy and Storefront Security Section (from image_b08c23.png) */}
       <div className="border border-gray-200">
         <div className="bg-white  p-6 rounded-sm ">
-          <h2 className="!font-semibold mb-6">Your customers' privacy</h2>
+          <h2 className="!font-semibold mb-6 2xl:!text-[2.4rem]">Your customers' privacy</h2>
           <p className="text-sm text-gray-600 mb-4">
             <a href="#" className="text-blue-600 hover:underline">
               Learn more
@@ -188,6 +198,7 @@ export const SecurityPrivacySettings = ({
           </p>
 
           <CheckboxField
+            className="w-full lg:w-80"
             label="Cookie consent tracking"
             checked={settings.enableCookieConsent}
             onCheckedChange={(checked) =>
@@ -196,7 +207,7 @@ export const SecurityPrivacySettings = ({
             infoText="Yes, turn on the cookie consent banner on my store."
           />
 
-          <FormField label="Privacy Policy URL" hasInfo={true}>
+          <FormField className="w-full lg:w-80" label="Privacy Policy URL" hasInfo={true}>
             <Input
               value={settings.privacyPolicyUrl}
               onChange={(e) =>
@@ -208,6 +219,7 @@ export const SecurityPrivacySettings = ({
           </FormField>
 
           <RadioGroupField
+            className="w-full lg:w-80"
             title="Collect data for my business"
             name="data-collection-limit"
             value={settings.dataCollectionLimit}
@@ -231,8 +243,8 @@ export const SecurityPrivacySettings = ({
         <hr className="my-6" />
 
         <div className="bg-white  p-6 rounded-sm ">
-          <h2 className="!font-semibold mb-4">Storefront</h2>
-          <p className="text-sm text-gray-600 mb-4">
+          <h2 className="!font-semibold mb-4 2xl:!text-[2.4rem]">Storefront</h2>
+          <p className="text-sm text-gray-600 mb-4 2xl:!text-2xl">
             For advanced users only, this section allows you to configure
             advanced security policies for your storefront.{" "}
             <a href="#" className="text-blue-600 hover:underline">
@@ -240,7 +252,7 @@ export const SecurityPrivacySettings = ({
             </a>
           </p>
           <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-4">
-            <p className="text-sm text-gray-700">
+            <p className="text-sm text-gray-700 2xl:!text-2xl">
               Changing these settings can have serious consequences for your
               storefront if done incorrectly. Please consult the documentation
               before making any changes. It is recommended to not modify these
@@ -249,30 +261,30 @@ export const SecurityPrivacySettings = ({
           </div>
 
           {/* HSTS Settings */}
-          <div className="flex items-start gap-4 py-3">
-            <Label className="w-48 text-right pr-4 pt-2">HSTS Settings</Label>
-            <div className="flex-1 flex flex-col gap-2">
-              <p className="text-sm text-gray-700">
+          <div className="flex flex-col lg:flex-row items-start gap-4 py-3">
+            <Label className="w-48 text-right pr-4 pt-2 2xl:!text-2xl">HSTS Settings</Label>
+            <div className="flex-1 flex  gap-2">
+              <p className="text-sm text-gray-700 2xl:!text-2xl">
                 HSTS is enforced for all stores with HTTPS only enabled. To
                 disable the effects of HSTS set the "Max-Age" to 0 (not
                 recommended).
               </p>
-              <Checkbox
+              {/* <Checkbox
                 id="enable-hsts"
                 checked={settings.enableHsts}
                 onCheckedChange={(checked) =>
                   updateSetting("enableHsts", checked)
                 }
               />
-              <Label htmlFor="enable-hsts" className="font-normal ml-2">
+              <Label htmlFor="enable-hsts" className="font-normal ml-2 2xl:!text-2xl">
                 Set Max-Age Header (max-age) to:
-              </Label>
+              </Label> */}
             </div>
             <Info className="w-4 h-4 text-gray-400 flex-shrink-0 mt-2" />
           </div>
-          {settings.enableHsts && (
             <HstsSettings settings={settings} updateSetting={updateSetting} />
-          )}
+          {/* {settings.enableHsts && ( */}
+          {/* )} */}
 
           <hr className="my-6" />
 
@@ -282,6 +294,7 @@ export const SecurityPrivacySettings = ({
           <hr className="my-6" />
 
           <CheckboxField
+            className="w-full lg:w-56"
             label="Enable Nonce-Based Script Security"
             checked={settings.enableNonceSecurity}
             onCheckedChange={(checked) =>

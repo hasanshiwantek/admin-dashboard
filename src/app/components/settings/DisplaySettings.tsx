@@ -30,9 +30,9 @@ export const DisplaySettings = ({
     <div className="space-y-8">
       {/* Display Settings Section */}
       <div className="bg-white rounded-sm border border-gray-200 p-6">
-        <h2 className="mb-6 !font-semibold">Display Settings</h2>
+        <h2 className="mb-6 !font-semibold 2xl:!text-[2.4rem]">Display Settings</h2>
 
-        <FormField label="Product Breadcrumbs">
+        <FormField className="w-full lg:w-96" label="Product Breadcrumbs">
           <Select
             value={settings.productBreadcrumbs}
             onValueChange={(value) =>
@@ -50,6 +50,7 @@ export const DisplaySettings = ({
         </FormField>
 
         <CheckboxField
+          className="w-full lg:w-96"
           label="Show Quantity Box for Products"
           checked={settings.showQuantityBox}
           onCheckedChange={(checked) =>
@@ -59,6 +60,7 @@ export const DisplaySettings = ({
         />
 
         <CheckboxField
+          className="w-full lg:w-96"
           label="Enable Search Suggest"
           checked={settings.enableSearchSuggest}
           onCheckedChange={(checked) =>
@@ -68,6 +70,7 @@ export const DisplaySettings = ({
         />
 
         <CheckboxField
+          className="w-full lg:w-96"
           label="Auto Approve Reviews"
           checked={settings.autoApproveReviews}
           onCheckedChange={(checked) =>
@@ -77,6 +80,7 @@ export const DisplaySettings = ({
         />
 
         <CheckboxField
+          className="w-full lg:w-96"
           label="Enable Wishlist"
           checked={settings.enableWishlist}
           onCheckedChange={(checked) =>
@@ -86,6 +90,7 @@ export const DisplaySettings = ({
         />
 
         <CheckboxField
+          className="w-full lg:w-96"
           label="Enable Product Comparisons"
           checked={settings.enableProductComparisons}
           onCheckedChange={(checked) =>
@@ -95,6 +100,7 @@ export const DisplaySettings = ({
         />
 
         <CheckboxField
+          className="w-full lg:w-96"
           label="Enable Account Creation?"
           checked={settings.enableAccountCreation}
           onCheckedChange={(checked) =>
@@ -106,9 +112,10 @@ export const DisplaySettings = ({
 
       {/* Control Panel Section */}
       <div className="bg-white rounded-sm border border-gray-200 p-6">
-        <h2 className="!font-semibold mb-6">Control Panel</h2>
+        <h2 className="!font-semibold mb-6 2xl:!text-[2.4rem]">Control Panel</h2>
 
         <CheckboxField
+          className="w-full lg:w-96"
           label="Use WYSIWYG Editor"
           checked={settings.useWysiwygEditor}
           onCheckedChange={(checked) =>
@@ -118,6 +125,7 @@ export const DisplaySettings = ({
         />
 
         <CheckboxField
+          className="w-full lg:w-96"
           label="Show Product Thumbnails"
           checked={settings.showProductThumbnails}
           onCheckedChange={(checked) =>
@@ -130,9 +138,10 @@ export const DisplaySettings = ({
       {/* Category Settings Section (Only the heading from the image) */}
       {/* 3. Category Settings Section (From image_a207e8.png) */}
       <div className="bg-white rounded-sm border border-gray-200 p-6">
-        <h2 className="!font-semibold mb-4">Category Settings</h2>
+        <h2 className="!font-semibold mb-4 2xl:!text-[2.4rem]">Category Settings</h2>
 
         <RadioField
+          className="w-full lg:w-96"
           label="Category Product List"
           value={settings.categoryProductList}
           onValueChange={(value) => updateSetting("categoryProductList", value)}
@@ -153,7 +162,7 @@ export const DisplaySettings = ({
           ]}
         />
 
-        <FormField label="Default Product Sort">
+        <FormField className="w-full lg:w-96" label="Default Product Sort">
           <Select
             value={settings.defaultProductSort}
             onValueChange={(value) =>
@@ -175,7 +184,7 @@ export const DisplaySettings = ({
           </Select>
         </FormField>
 
-        <FormField label="Menu Display Depth" hasInfo={true}>
+        <FormField className="w-full lg:w-96" label="Menu Display Depth" hasInfo={true}>
           <div className="flex items-center gap-2">
             <Input
               type="number"
@@ -193,9 +202,10 @@ export const DisplaySettings = ({
 
       {/* 4. Product Settings Section (From image_a207e8.png) */}
       <div className="bg-white rounded-sm border border-gray-200 p-6">
-        <h2 className="!font-semibold mb-4">Product Settings</h2>
+        <h2 className="!font-semibold mb-4 2xl:!text-[2.4rem]">Product Settings</h2>
 
         <CheckboxField
+          className="w-full lg:w-96"
           label="Show Product's Price?"
           checked={settings.showProductPrice}
           onCheckedChange={(checked) =>
@@ -205,8 +215,8 @@ export const DisplaySettings = ({
         />
 
         {/* Price Display on Detail Page */}
-        <div className="flex items-start gap-4 py-3">
-          <Label className="w-48 text-right  pt-2">
+        <div className="flex flex-col lg:flex-row items-start gap-4 py-3">
+          <Label className="w-full lg:w-96 flex justify-start lg:justify-end pt-2 2xl:!text-2xl">
             Price to display on the product details page when product selections
             don't map to a price
           </Label>
@@ -237,8 +247,8 @@ export const DisplaySettings = ({
         </div>
 
         {/* Price Display on List Page */}
-        <div className="flex items-start gap-4 py-3">
-          <Label className="w-48 text-right  pt-2">
+        <div className="flex flex-col lg:flex-row items-start gap-4 py-3">
+          <Label className="w-full lg:w-96 flex justify-start lg:justify-end pt-2 2xl:!text-2xl">
             Price to display on the product list page when unselected options
             don't map to a price
           </Label>
@@ -268,7 +278,8 @@ export const DisplaySettings = ({
           </div>
         </div>
 
-        <CheckboxField
+        <CheckboxField 
+          className="w-full lg:w-96"
           label="Hide Product's Price from Guests?"
           checked={settings.hidePriceFromGuests}
           onCheckedChange={(checked) =>
@@ -278,6 +289,7 @@ export const DisplaySettings = ({
         />
 
         <CheckboxField
+          className="w-full lg:w-96"
           label="Show Product's SKU?"
           checked={settings.showProductSku}
           onCheckedChange={(checked) =>
@@ -287,6 +299,7 @@ export const DisplaySettings = ({
         />
 
         <CheckboxField
+          className="w-full lg:w-96"
           label="Show Product's Weight?"
           checked={settings.showProductWeight}
           onCheckedChange={(checked) =>
@@ -296,6 +309,7 @@ export const DisplaySettings = ({
         />
 
         <CheckboxField
+          className="w-full lg:w-96"
           label="Show Product's Brand?"
           checked={settings.showProductBrand}
           onCheckedChange={(checked) =>
@@ -305,6 +319,7 @@ export const DisplaySettings = ({
         />
 
         <CheckboxField
+          className="w-full lg:w-96"
           label="Show Product's Shipping Cost?"
           checked={settings.showProductShippingCost}
           onCheckedChange={(checked) =>
@@ -314,6 +329,7 @@ export const DisplaySettings = ({
         />
 
         <CheckboxField
+          className="w-full lg:w-96"
           label="Show Product's Rating?"
           checked={settings.showProductRating}
           onCheckedChange={(checked) =>
@@ -323,6 +339,7 @@ export const DisplaySettings = ({
         />
 
         <CheckboxField
+          className="w-full lg:w-96"
           label="Show Add to Cart Link?"
           checked={settings.showAddToCartLink}
           onCheckedChange={(checked) =>
@@ -331,7 +348,7 @@ export const DisplaySettings = ({
           infoText="Yes, show the “Add to Cart” link in all the small product boxes"
         />
 
-        <FormField label="Default Pre-Order Message">
+        <FormField className="w-full lg:w-96" label="Default Pre-Order Message">
           <Input
             value={settings.defaultPreOrderMessage}
             onChange={(e) =>
