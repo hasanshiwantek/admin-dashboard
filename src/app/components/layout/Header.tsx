@@ -10,7 +10,11 @@ import UserDropdown from "../dropdowns/UserDropdown";
 import Image from "next/image";
 import GlobalSearchBar from "./GlobalSearch";
 import Link from "next/link";
-const Header: React.FC = () => {
+interface HeaderProps {
+  onMenuClick?: () => void;
+}
+
+const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const [companyOpen, setCompanyOpen] = useState<boolean>(false);
   const companyRef = useRef<HTMLDivElement>(null);
 
@@ -28,11 +32,18 @@ const Header: React.FC = () => {
   }, []);
 
   return (
-    <header className="w-full fixed h-22 px-4 flex items-center justify-between z-40  bg-[var(--header-bg)]">
+    <header className="w-full fixed h-22 px-4 flex items-center justify-start md:justify-between z-40  bg-[var(--header-bg)]">
       {/* Left: Logo & Company Name */}
-      <div className="flex items-center gap-2 !ml-10 ">
+      <div className="flex items-center gap-2 lg:!ml-10 2xl:!ml-5 ">
+            {/* ☰ Mobile Sidebar Button */}
+    <button
+      onClick={onMenuClick}
+      className="md:hidden text-white p-2 hover:bg-[#2d3748]"
+    >
+      ☰
+    </button>
         <div className="flex justify-start items-center gap-10  ">
-          <div className="!p-2 hover:bg-[#2d3748] cursor-pointer">
+          <div className="lg:!p-2 hover:bg-[#2d3748] cursor-pointer">
             <Image
               src="/logo.svg"
               alt="Logo"
@@ -44,10 +55,10 @@ const Header: React.FC = () => {
           <div ref={companyRef} className="relative">
             {/* Toggle Button */}
             <div
-              className=" relative flex justify-between gap-[62px] !px-4 items-center border-r-2 border-l-2 border-[#2d3748] h-[5rem] cursor-pointer hover:bg-[#2d3748]"
+              className=" relative flex justify-between gap-4 lg:gap-[62px] lg:!px-4 items-center lg:border-r-2 lg:border-l-2 border-[#2d3748] h-[5rem] cursor-pointer hover:bg-[#2d3748]"
               onClick={() => setCompanyOpen(!companyOpen)}
             >
-              <button className="text-white text-xl font-medium py-1 rounded-md cursor-pointer">
+              <button className="text-white text-xl font-medium py-1 rounded-md cursor-pointer 2xl:!text-2xl text-nowrap">
                 CTS Point Inc
               </button>
               <IoIosArrowDown
@@ -61,7 +72,7 @@ const Header: React.FC = () => {
 
             {/* Dropdown Menu */}
             {companyOpen && (
-              <div className="absolute left-0 mt-2 w-[300px] bg-white rounded-md shadow-lg z-60 !p-5">
+              <div className="absolute left-0 mt-2 w-[300px] bg-white rounded-md shadow-lg z-50 !p-5">
                 <div className="p-4 !my-5">
                   <p className="!text-2xl !text-black">CTS Point Inc</p>
                   <p className="!text-xl !text-gray-500">Pro Plan Store</p>
@@ -94,7 +105,7 @@ const Header: React.FC = () => {
         <div className="!p-1 hover:bg-[#2d3748] cursor-pointer text-white">
           <Link
             href="https://newtownspares.advertsedge.com/" target="_blank"
-            className="!text-xl font-medium hover:underline flex items-center gap-1  h-[5rem] !px-3 border-l-2 border-[#2d3748]"
+            className="!text-xl font-medium hover:underline flex items-center gap-1  h-[5rem] !px-3 border-l-2 border-[#2d3748] 2xl:!text-2xl"
           >
             View storefront
             <span>

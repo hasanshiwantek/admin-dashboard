@@ -99,12 +99,12 @@ const GlobalSearchBar = () => {
   }, []);
 
   return (
-    <div ref={containerRef} className="relative w-[45rem]">
+    <div ref={containerRef} className="relative w-full lg:w-[45rem]">
       {/* Search Input Container */}
       <div
-        className="flex justify-start items-center bg-[#1e2a3f] text-center !px-4 !py-3 rounded-md
+        className="flex justify-start items-center md:justify-self-end bg-[#1e2a3f] text-center !px-4 !py-3 rounded-md
         focus-within:ring-3 focus-within:ring-blue-200 focus-within:border-blue-200
-        border border-[#2c2c2c] transition hover:border-blue-200"
+        border border-[#2c2c2c] transition hover:border-blue-200 w-[70%] lg:w-full"
       >
         <i onClick={handleIconClick}>
           <IoSearchOutline
@@ -117,7 +117,7 @@ const GlobalSearchBar = () => {
           ref={inputRef}
           type="text"
           placeholder=" Search products, orders, customers, or navigate to"
-          className="w-[40rem] !ml-3 bg-transparent text-white !text-xl !font-medium outline-none placeholder:text-gray-100"
+          className="w-[40rem] !ml-3 bg-transparent text-white !text-xl !font-medium outline-none placeholder:text-gray-100 2xl:!text-2xl"
           value={query}
           onChange={handleChange}
           onFocus={() => results.length > 0 && setShowDropdown(true)}

@@ -170,7 +170,7 @@ export const WebsiteSettings = ({
 
       <div className="bg-white rounded-sm border border-gray-200 p-6">
         <h2 className="!font-semibold mb-4 2xl:!text-[2.4rem]">Search Engine Robots</h2>
-        <p className="text-sm text-gray-600 mb-4">
+        <p className="text-sm text-gray-600 mb-4 2xl:!text-2xl">
           For advanced users only, this section allows you to control which
           pages of your website will be crawled and indexed by search engines.{" "}
           <a href="#" className="text-blue-600 hover:underline">
