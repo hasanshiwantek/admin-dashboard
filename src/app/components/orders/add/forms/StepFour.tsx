@@ -23,6 +23,7 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
     console.log("Final submitted data:", values);
 
     const isNewCustomer = !values.selectedCustomer?.id;
+    const isDraft = values.paymentMethod === "draft";
 
     // Build payment method object
     const buildPaymentMethod = () => {
@@ -84,7 +85,7 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
             paymentMethod: values.paymentMethod || "",
             shippingMethod: values.shippingMethod?.provider || "none",
           },
-
+          isDraft,
           paymentMethod: buildPaymentMethod(),
 
           comments: values.customerComments || "",
@@ -152,6 +153,7 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
             method: values.shippingMethod?.method || "",
             cost: values.shippingMethod?.cost || "0.00",
           },
+          isDraft,
           products:
             values.selectedProducts?.map((product: any) => ({
               productId: product.id,
