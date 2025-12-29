@@ -20,6 +20,7 @@ const initialForm: RegisterPayload = {
   name: "",
   email: "",
   password: "",
+  password_confirmation:"",
   phoneNumber: "",
   storeName: "",
   userRole: 1,
@@ -36,6 +37,7 @@ const fields: {
   { name: "name", label: "Full Name" },
   { name: "email", label: "Email", type: "email" },
   { name: "password", label: "Password", type: "password" },
+    { name: "password_confirmation", label: "Confirm Password", type: "password" },
   { name: "phoneNumber", label: "Phone Number" },
   { name: "storeName", label: "Store Name" },
   {
@@ -80,7 +82,7 @@ export default function RegisterPage() {
       <h1 className="!text-5xl mt-10 !text-white">Create your beautiful store today</h1>
  
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="flex justify-center flex-col items-center w-full p-10 rounded-md">
+        <div className="flex justify-center flex-col items-center w-full  p-10 rounded-md">
           {fields.map((field) => (
             <div key={field.name} className="relative">
               <label className="block text-xl font-medium  text-gray-200">

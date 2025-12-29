@@ -578,7 +578,6 @@ Disallow: /search.php`,
           Update the settings in the form below and click "Save", or click
           "Cancel" to keep the current settings.
         </p>
-
         <Tabs
           value={activeTab}
           onValueChange={(val:any) => setActiveTab(val)}

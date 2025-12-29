@@ -19,7 +19,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { PlusIcon, DownloadIcon, SearchIcon, Trash } from "lucide-react";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import OrderActionsDropdown from "../../orders/OrderActionsDropdown";
 import Pagination from "@/components/ui/pagination";
 import { FaCirclePlus, FaCircleMinus } from "react-icons/fa6";
@@ -384,8 +384,8 @@ const AllCustomers = () => {
               </TableRow>
             ) : (
               customers?.data?.map((customer: any, index: number) => (
-                <>
-                  <TableRow key={index} className="h-26 ">
+                <Fragment key={customer?.id}>
+                  <TableRow key={customer?.id} className="h-26 ">
                     <TableCell>
                       <Checkbox
                         checked={selectedCustomers.some(
@@ -534,7 +534,7 @@ const AllCustomers = () => {
                       </TableCell>
                     </TableRow>
                   )}
-                </>
+                </Fragment>
               ))
             )}
           </TableBody>

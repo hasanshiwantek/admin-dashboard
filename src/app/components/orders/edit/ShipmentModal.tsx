@@ -50,7 +50,7 @@ export function ShipmentModal({
   const [trackingCarrier, setTrackingCarrier] = useState("");
   const [trackingId, setTrackingId] = useState("");
   const [shippingMethodDescription, setShippingMethodDescription] = useState(
-    "I will provide the shipping label/others (Mentions the detai"
+    "I will provide the shipping label/others (Mentions the detai)"
   );
   const [updateStatusAndNotify, setUpdateStatusAndNotify] = useState(true);
 
