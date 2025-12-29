@@ -31,7 +31,7 @@ export const SideBar = ({ onClose }: { onClose?: () => void }) => {
   }, [pathname]);
 
   return (
-    <div className="  shrink-0 h-auto
+    <div className="shrink-0 h-auto
   fixed top-0 md:top-22
   z-50 md:z-0
   w-[26.7rem]
@@ -69,7 +69,7 @@ export const SideBar = ({ onClose }: { onClose?: () => void }) => {
                         <SidebarMenuSubItem key={child.title}>
                           <Link
                             href={child.url}
-                            className={`!text-[13px] 2xl:!text-2xl !leading-8 cursor-pointer px-4 py-2 rounded-md block ${
+                            className={`text-xl 2xl:!text-2xl !leading-8 cursor-pointer px-4 py-2 rounded-md block ${
                               pathname === child.url ? "bg-[#24345c]" : ""
                             }`}
                           >
@@ -83,22 +83,23 @@ export const SideBar = ({ onClose }: { onClose?: () => void }) => {
               </Collapsible>
             ) : (
               <SidebarMenuItem key={item.title}>
-                <Link href={item.url || "#"} className="block">
-                  <SidebarMenuButton
-                    className={`p-8 cursor-pointer text-xl rounded-md ${
-                      pathname === item.url ? "bg-[#24345c]" : ""
-                    }`}
-                  >
-                    {item.icon && <item.icon className="mr-2 !h-8 !w-8 " />}
+                <SidebarMenuButton
+                  asChild
+                  className={`p-8 cursor-pointer text-xl 2xl:!text-2xl rounded-md ${
+                    pathname === item.url ? "bg-[#24345c]" : ""
+                  }`}
+                >
+                  <Link href={item.url || "#"} className="flex items-center">
+                    {item.icon && <item.icon className="mr-2 !h-8 !w-8" />}
                     {item.title}
-                  </SidebarMenuButton>
-                </Link>
+                  </Link>
+                </SidebarMenuButton>
               </SidebarMenuItem>
             )
           )}
         </SidebarMenu>
       </SidebarProvider>
-       <div className="md:hidden sticky bottom-0 bg-[rgb(3,16,51)] border-t border-[#2d3748] p-4">
+      <div className="md:hidden sticky bottom-0 bg-[rgb(3,16,51)] border-t border-[#2d3748] p-4">
         <button
           onClick={onClose}
           className="w-full text-white text-lg py-3 rounded-md bg-[#24345c] hover:bg-[#2f4375]"

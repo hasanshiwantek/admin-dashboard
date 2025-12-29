@@ -5,6 +5,7 @@ export interface RegisterPayload {
   name: string;
   email: string;
   password: string;
+  password_confirmation: string;
   phoneNumber: string;
   storeName: string;
   userRole: number;
@@ -55,7 +56,7 @@ export const registerUser = createAsyncThunk(
   "auth/registerUser",
   async (formData: RegisterPayload, thunkAPI) => {
     try {
-      const res = await axiosInstance.post("/auth/register", formData);
+      const res = await axiosInstance.post("user/register", formData);
       return res.data;
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

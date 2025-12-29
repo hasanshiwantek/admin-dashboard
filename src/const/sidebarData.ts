@@ -76,16 +76,25 @@ export const sidebarData = [
       { title: "Logo", url: "/manage/storefront/logo" },
       { title: "Home Page Carousel", url: "/manage/storefront/carousel" },
       // { title: "Social Media Links", url: "/manage/storefront/social-media" },
-      // { title: "Script Manager", url: "/manage/storefront/scripts" },
+      { title: "Script Manager", url: "/manage/storefront/script-manager" },
       { title: "Web Pages", url: "/manage/storefront/web-pages" },
       { title: "Blog", url: "/manage/storefront/blog" },
       // { title: "Image Manager", url: "/manage/storefront/images" },
     ],
   },
-  // { title: "Marketing", icon: Megaphone, url: "/marketing" },
-  // { title: "Analytics", icon: LineChart, url: "/analytics" },
-  // { title: "Apps", icon: AppWindow, url: "/apps" },
-  // { title: "Channels", icon: Layers, url: "/channels" },
-  // { title: "Financing", icon: Banknote, url: "/financing" },
+  {
+    title: "Marketing",
+    icon: Megaphone,
+    children: [
+      {
+        title: "Transaction Emails",
+        url: "/manage/marketing/transactional-emails",
+      },
+      { title: "Coupon Codes", url: "/manage/marketing/coupon-codes" },
+      { title: "Email Marketing", url: "/manage/marketing/email-marketing" },
+      ,
+    ],
+  },
+
   { title: "Settings", icon: Settings, url: "/manage/settings" },
 ];
