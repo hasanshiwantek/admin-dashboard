@@ -24,20 +24,30 @@ import { SecurityPrivacySettings } from "./SecurityPrivacySettings";
 export const FormField = ({
   label,
   children,
-  hasInfo = true, // default value
+  hasInfo = true,
+  className, // sirf label width ke liye
 }: {
   label: string | any;
-  children: React.ReactNode; // use React.ReactNode for children
-  hasInfo?: boolean; // make optional
+  children: React.ReactNode;
+  hasInfo?: boolean;
+  className?: string; // FIX
 }) => (
-  <div className="flex items-start gap-4 py-3">
-    <Label className="w-48 text-right  pt-2">{label}</Label>
+  <div className="flex flex-col lg:flex-row items-start gap-4 py-3">
+    <Label
+      className={`flex justify-start lg:justify-end pt-2 pr-4 2xl:!text-2xl ${
+        className ? className : "w-48 2xl:w-64"
+      }`}
+    >
+      {label}
+    </Label>
+
     <div className="flex-1 flex items-center gap-2">
       {children}
-      {hasInfo && <Info className="w-4 h-4 text-gray-400 flex-shrink-0" />}
+      {hasInfo && <Info className="w-6 h-6 text-gray-400 flex-shrink-0" />}
     </div>
   </div>
 );
+
 
 // CheckboxField Component (Helper for the Display tab)
 // Note: Assumes a Checkbox component that takes 'checked' and 'onCheckedChange'
@@ -46,16 +56,20 @@ export const CheckboxField = ({
   checked,
   onCheckedChange,
   infoText,
+  className,
   isFullWidth = false,
 }: {
   label: string;
   checked: boolean;
+  className?: string; 
   onCheckedChange: (checked: boolean) => void;
   infoText: string;
   isFullWidth?: boolean;
 }) => (
-  <div className="flex items-center gap-4 py-3">
-    <Label className="w-48 text-right pr-4">{label}</Label>
+  <div className="flex flex-col lg:flex-row items-start gap-4 py-3">
+    <Label   className={`flex justify-start lg:justify-end pr-4 pt-1 2xl:!text-2xl ${
+        className ? className : "w-48 2xl:w-64"
+      }`}>{label}</Label>
     <div className="flex-1 flex items-center gap-2">
       <div className="flex items-center space-x-2">
         <Checkbox
@@ -65,7 +79,7 @@ export const CheckboxField = ({
         />
         <Label
           htmlFor={label.replace(/\s/g, "-").toLowerCase()}
-          className="font-normal cursor-pointer"
+          className="font-normal cursor-pointer 2xl:!text-2xl"
         >
           {infoText}
         </Label>
@@ -81,14 +95,23 @@ export const RadioField = ({
   value,
   onValueChange,
   options,
+  className, // sirf label width ke liye
 }: {
   label: string;
   value: string;
   onValueChange: (value: string) => void;
   options: { value: string; label: string }[];
+  className?: string; // optional
 }) => (
-  <div className="flex items-start gap-4 py-3">
-    <Label className="w-48 text-right pr-4 pt-1">{label}</Label>
+  <div className="flex flex-col lg:flex-row items-start gap-4 py-3">
+    <Label
+      className={`flex justify-start lg:justify-end pr-4 pt-1 2xl:!text-2xl ${
+        className ? className : "w-48 2xl:w-64"
+      }`}
+    >
+      {label}
+    </Label>
+
     <RadioGroup
       value={value}
       onValueChange={onValueChange}
@@ -97,7 +120,7 @@ export const RadioField = ({
       {options.map((option) => (
         <div key={option.value} className="flex items-center space-x-2">
           <RadioGroupItem value={option.value} id={option.value} />
-          <Label htmlFor={option.value} className="font-normal">
+          <Label htmlFor={option.value} className="font-normal 2xl:!text-2xl">
             {option.label}
           </Label>
         </div>
@@ -105,6 +128,7 @@ export const RadioField = ({
     </RadioGroup>
   </div>
 );
+
 
 // 🆕 Custom Smtp Settings Sub-Component
 const CustomSmtpSettings = () => {
@@ -144,15 +168,22 @@ export const RadioGroupField = ({
   value,
   onValueChange,
   options,
+  className, // optional, label width ke liye
 }: {
   title: string;
   name: string;
   value: string;
   onValueChange: (value: string) => void;
   options: { value: string; label: string }[];
+  className?: string; // optional
 }) => (
-  <div className="flex items-start gap-4 py-3">
-    <Label className="w-48 text-right pr-4 pt-1">{title}</Label>
+  <div className="flex flex-col lg:flex-row lg:items-start gap-2 lg:gap-4 py-3">
+    <Label
+      className={`flex justify-start lg:justify-end 2xl:!text-2xl pt-1 ${className ? className : "w-full lg:w-48"}`}
+    >
+      {title}
+    </Label>
+
     <RadioGroup
       value={value}
       onValueChange={onValueChange}
@@ -161,25 +192,32 @@ export const RadioGroupField = ({
     >
       {options.map((option) => (
         <div key={option.value} className="flex flex-col space-y-2">
-          <div className="flex items-center space-x-2">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-2">
             <RadioGroupItem
               value={option.value}
               id={`${name}-${option.value}`}
             />
-            <Label htmlFor={`${name}-${option.value}`} className="font-normal">
+            <Label
+              htmlFor={`${name}-${option.value}`}
+              className="font-normal text-base sm:text-lg 2xl:!text-2xl"
+            >
               {option.label}
             </Label>
-            <Info className="w-4 h-4 text-gray-400 flex-shrink-0" />
+            <Info className="w-4 h-4 text-gray-400 flex-shrink-0 mt-1 sm:mt-0" />
           </div>
+
           {/* Conditional rendering for Custom SMTP fields */}
           {option.value === "custom" && value === "custom" && (
-            <CustomSmtpSettings />
+            <div className="mt-2 pl-4 sm:pl-6">
+              <CustomSmtpSettings />
+            </div>
           )}
         </div>
       ))}
     </RadioGroup>
   </div>
 );
+
 
 // Helper component for the three URL Setting sections (Product, Category, Web Page)
 export const UrlSettingSection = ({
@@ -198,33 +236,33 @@ export const UrlSettingSection = ({
   seoOptimizedLongExample: string;
 }) => (
   <div className="mb-8 bg-white border p-8">
-    <h2 className="!font-semibold mb-4">{title}</h2>
+    <h2 className="!font-semibold mb-4 2xl:!text-[2.4rem]">{title}</h2>
     <RadioGroup
       value={settings[`${name}UrlFormat`]}
       onValueChange={(value) => updateSetting(`${name}UrlFormat`, value)}
       className="space-y-4"
     >
-      <div className="flex items-center gap-4">
-        <div className="flex items-center  w-72 text-right flex-row-reverse gap-10">
+      <div className="flex flex-col lg:flex-row lg:item-center items-start gap-4">
+        <div className="flex items-center  w-full lg:w-80 lg:flex-row-reverse gap-10">
           <RadioGroupItem value="seo-optimized-short" id={`${name}-short`} />
-          <Label htmlFor={`${name}-short`} className="ml-2 font-normal">
+          <Label htmlFor={`${name}-short`} className="ml-2 font-normal 2xl:!text-2xl">
             SEO Optimized (Short)
           </Label>
         </div>
-        <div className="flex-1 text-gray-500 text-lg">
+        <div className="flex-1 text-gray-500 text-lg 2xl:!text-2xl">
           {seoOptimizedShortExample}
         </div>
       </div>
 
-      <div className="flex items-center gap-4">
-        <div className="flex items-center  w-72 text-right flex-row-reverse gap-10">
+      <div className="flex flex-col lg:flex-row lg:item-center items-start gap-4">
+        <div className="flex items-center  w-full lg:w-80 lg:flex-row-reverse gap-10">
           <RadioGroupItem value="seo-optimized-long" id={`${name}-long`} />
-          <Label htmlFor={`${name}-long`} className="ml-2 font-normal">
+          <Label htmlFor={`${name}-long`} className="ml-2 font-normal 2xl:!text-2xl">
             SEO Optimized (Long)
           </Label>
         </div>
         <div className="flex-1 flex items-center gap-2">
-          <span className="text-gray-500 text-lg">
+          <span className="text-gray-500 text-lg 2xl:!text-2xl">
             {seoOptimizedLongExample}
           </span>
           <Info className="w-4 h-4 text-gray-400" />
@@ -232,10 +270,10 @@ export const UrlSettingSection = ({
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center  w-72 text-right flex-row-reverse gap-10">
+        <div className="flex flex-col lg:flex-row lg:item-center items-start gap-4">
+          <div className="flex items-center  w-full lg:w-80 lg:flex-row-reverse gap-10">
             <RadioGroupItem value="custom" id={`${name}-custom`} />
-            <Label htmlFor={`${name}-custom`} className="ml-2 font-normal">
+            <Label htmlFor={`${name}-custom`} className="ml-2 font-normal 2xl:!text-2xl">
               Custom
             </Label>
           </div>
@@ -251,11 +289,11 @@ export const UrlSettingSection = ({
           </div>
         </div>
         {settings[`${name}UrlFormat`] === "custom" && (
-          <div className="flex flex-col items-start w-full max-w-lg ml-52 mt-2">
+          <div className="flex flex-col items-start w-full max-w-lg lg:ml-80 mt-2">
             <a href="#" className="text-blue-600 text-sm hover:underline">
               What placeholders can I use and how do they work?
             </a>
-            <Button variant="outline" className="mt-2 text-lg !p-6">
+            <Button variant="outline" className="mt-2 text-lg 2xl:!text-2xl !p-6">
               Update {title.replace(" Settings", "")} URLs...
             </Button>
           </div>
@@ -273,32 +311,32 @@ export const HstsSettings = ({
   settings: any;
   updateSetting: any;
 }) => (
-  <div className="pl-52 space-y-3 mt-4">
-    <p className="text-sm text-gray-700">Set Max-Age Header (max-age) to:</p>
-    <div className="flex items-center space-x-2">
-      <Input
+  <div className="lg:pl-52 space-y-3 mt-4">
+    <div className="flex flex-col lg:flex-row items-start lg:items-center space-x-2">
+    <p className="text-sm text-gray-700 2xl:!text-2xl" >Set Max-Age Header (max-age) to:</p>
+      {/* <Input
         type="number"
         value={settings.hstsMaxAge}
         onChange={(e) => updateSetting("hstsMaxAge", e.target.value)}
         className="w-20"
-      />
-      <Select
-        value={settings.hstsMaxAgeUnit}
-        onValueChange={(value) => updateSetting("hstsMaxAgeUnit", value)}
-      >
-        <SelectTrigger className="w-28">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="minutes">minutes</SelectItem>
-          <SelectItem value="hours">hours</SelectItem>
-          <SelectItem value="days">days</SelectItem>
-          <SelectItem value="months">months</SelectItem>
-          <SelectItem value="years">years</SelectItem>
-        </SelectContent>
-      </Select>
+      /> */}
+    <Select
+  value={settings.hstsMaxAgeUnit}
+  onValueChange={(value) => updateSetting("hstsMaxAgeUnit", value)}
+>
+  <SelectTrigger className="w-56">
+    <SelectValue defaultValue="5 minutes" />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectItem value="0">0 (disabled)</SelectItem>
+    <SelectItem value="5 minutes">5 minutes (for testing)</SelectItem>
+    <SelectItem value="1 year">1 year</SelectItem>
+  </SelectContent>
+</Select>
+
     </div>
     <CheckboxField
+      className="w-full lg:w-0"
       label=""
       checked={settings.hstsApplySubdomains}
       onCheckedChange={(checked) =>
@@ -308,6 +346,7 @@ export const HstsSettings = ({
       isFullWidth={true}
     />
     <CheckboxField
+      className="w-full lg:w-0"
       label=""
       checked={settings.hstsApplyPreload}
       onCheckedChange={(checked) => updateSetting("hstsApplyPreload", checked)}
@@ -326,6 +365,7 @@ export const CspSettings = ({
   updateSetting: any;
 }) => (
   <RadioGroupField
+    className="w-full lg:w-56"
     title="Configure Content-Security-Policy Header Value"
     name="csp-config"
     value={settings.cspConfig}
@@ -346,6 +386,7 @@ export const XFrameOptionsSettings = ({
   updateSetting: any;
 }) => (
   <RadioGroupField
+    className="w-full lg:w-56"
     title="X-Frame-Options Header settings"
     name="xframe-options"
     value={settings.xFrameOptions}
@@ -529,11 +570,11 @@ Disallow: /search.php`,
           className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4"
         >
           <ArrowLeft className="w-6 h-6" />
-          <span className="text-sm">Settings</span>
+          <span className="text-sm 2xl:!text-2xl">Settings</span>
         </button>
 
-        <h1 className=" mb-2 !font-extralight">Store Settings</h1>
-        <p className=" mb-6">
+        <h1 className=" mb-2 !font-extralight 2xl:!text-5xl">Store Settings</h1>
+        <p className=" mb-6 2xl:!text-2xl">
           Update the settings in the form below and click "Save", or click
           "Cancel" to keep the current settings.
         </p>
@@ -542,7 +583,7 @@ Disallow: /search.php`,
           onValueChange={(val:any) => setActiveTab(val)}
           className="mb-6"
         >
-          <TabsList className="border-b  w-full justify-start rounded-none h-auto p-0">
+          <TabsList className="border-b  w-80 justify-start rounded-none h-auto p-0">
             <TabsTrigger
               value="website"
               className="rounded-none border-b-2 border-transparent data-[state=active]:border-b-blue-600 data-[state=active]:bg-transparent px-4 py-3"

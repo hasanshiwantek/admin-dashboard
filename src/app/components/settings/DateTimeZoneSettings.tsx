@@ -44,7 +44,7 @@ export const DateTimezoneSettings = ({
       <div className="bg-white rounded-sm border border-gray-200 p-6">
         <h2 className="!font-semibold mb-4">Date Settings</h2>
 
-        <FormField label="Your Timezone">
+        <FormField className="w-full lg:w-96" label="Your Timezone">
           <Select
             value={settings.timezone}
             onValueChange={(value) => updateSetting("timezone", value)}
@@ -63,13 +63,14 @@ export const DateTimezoneSettings = ({
         </FormField>
 
         <CheckboxField
+          className="w-full lg:w-96"
           label="Enable DST Correction?"
           checked={settings.enableDstCorrection}
           onCheckedChange={(checked) => updateSetting("enableDstCorrection", checked)}
           infoText="Yes, enable daylight saving time correction"
         />
 
-        <FormField label="Display Date Format">
+        <FormField className="w-full lg:w-96" label="Display Date Format">
           <Input
             value={settings.displayDateFormat}
             onChange={(e) => updateSetting("displayDateFormat", e.target.value)}
@@ -77,7 +78,7 @@ export const DateTimezoneSettings = ({
           />
         </FormField>
 
-        <FormField label="Extended Display Date Format">
+        <FormField className="w-full lg:w-96" label="Extended Display Date Format">
           <Input
             value={settings.extendedDisplayDateFormat}
             onChange={(e) => updateSetting("extendedDisplayDateFormat", e.target.value)}

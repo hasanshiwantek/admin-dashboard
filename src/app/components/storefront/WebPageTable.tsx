@@ -94,21 +94,21 @@ const WebPageTable = () => {
     <div className="p-5">
       <div className="flex flex-col space-y-5">
         <div className="flex flex-col   gap-6 ">
-          <h1 className="!font-light">View Web Pages</h1>
-          <p>
+          <h1 className="!font-light 2xl:!text-5xl">View Web Pages</h1>
+          <p className="2xl:!text-2xl">
             Web pages are used to display content that doesn't change often. For
             example an 'About Us' or a 'Contact Us' page.
           </p>
         </div>
         <div className="flex items-center gap-5 ">
           <Link href={"/manage/storefront/web-pages/add"}>
-            <button className="btn-outline-primary">Create a Web Page</button>
+            <button className="btn-outline-primary 2xl:!text-2xl">Create a Web Page</button>
           </Link>
           <button
             className="btn-outline-primary"
             onClick={deleteWebpageHandler}
           >
-            <Trash className="!w-6 !h-6" />
+            <Trash className="!w-6 !h-6 2xl:!h-7" />
           </button>
         </div>
       </div>
@@ -125,10 +125,10 @@ const WebPageTable = () => {
                   aria-label="Select all"
                 />
               </TableHead>
-              <TableHead className="text-left ">Page Name</TableHead>
-              <TableHead className="text-left">Page Type</TableHead>
-              <TableHead className="text-left">Visible</TableHead>
-              <TableHead className="text-left">Action</TableHead>
+              <TableHead className="text-left 2xl:!text-2xl">Page Name</TableHead>
+              <TableHead className="text-left 2xl:!text-2xl">Page Type</TableHead>
+              <TableHead className="text-left 2xl:!text-2xl">Visible</TableHead>
+              <TableHead className="text-left 2xl:!text-2xl">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -160,14 +160,14 @@ const WebPageTable = () => {
                   <TableCell >
                     <Link
                       href={`/manage/storefront/web-pages/edit/${page.id}`}
-                      className="text-blue-600 hover:border-b-blue-600 hover:border-b-2"
+                      className="text-blue-600 hover:border-b-blue-600 hover:border-b-2 2xl:!text-2xl"
                     >
                       {page.pageName}
                     </Link>
                   </TableCell>
-                  <TableCell>{page.pageType}</TableCell>
+                  <TableCell className="2xl:!text-2xl">{page.pageType}</TableCell>
 
-                  <TableCell>
+                  <TableCell className="2xl:!text-2xl">
                     {page.showInNavigation ? (
                       <Check className="text-green-500 w-8 h-8" />
                     ) : (

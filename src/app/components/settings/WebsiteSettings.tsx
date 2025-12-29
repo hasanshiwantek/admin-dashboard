@@ -31,7 +31,7 @@ export const WebsiteSettings = ({
   return (
     <div className="space-y-8">
       <div className="bg-white rounded-sm border border-gray-200 p-6">
-        <h2 className="mb-6 !font-semibold">Physical Dimension Settings</h2>
+        <h2 className="mb-6 !font-semibold 2xl:!text-[2.4rem]">Physical Dimension Settings</h2>
 
         <FormField label="Weight Measurement">
           <Select
@@ -110,7 +110,7 @@ export const WebsiteSettings = ({
       </div>
 
       <div className="bg-white rounded-sm border border-gray-200 p-6">
-        <h2 className="!font-semibold  mb-6">Search Engine Optimization</h2>
+        <h2 className="!font-semibold  mb-6 2xl:!text-[2.4rem]">Search Engine Optimization</h2>
 
         <FormField label="Home Page Title">
           <Input
@@ -158,9 +158,9 @@ export const WebsiteSettings = ({
       </div>
 
       <div className="bg-white rounded-sm border border-gray-200 p-6">
-        <h2 className="!font-semibold mb-4">HTTPS</h2>
+        <h2 className="!font-semibold mb-4 2xl:!text-[2.4rem]">HTTPS</h2>
         <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-4">
-          <p className="text-sm text-gray-700">
+          <p className="text-sm text-gray-700 2xl:!text-2xl">
             All of your storefront website traffic is served via HTTPS. Requests
             to the HTTP version of your storefront will automatically be
             redirected to HTTPS.
@@ -169,8 +169,8 @@ export const WebsiteSettings = ({
       </div>
 
       <div className="bg-white rounded-sm border border-gray-200 p-6">
-        <h2 className="!font-semibold mb-4">Search Engine Robots</h2>
-        <p className="text-sm text-gray-600 mb-4">
+        <h2 className="!font-semibold mb-4 2xl:!text-[2.4rem]">Search Engine Robots</h2>
+        <p className="text-sm text-gray-600 mb-4 2xl:!text-2xl">
           For advanced users only, this section allows you to control which
           pages of your website will be crawled and indexed by search engines.{" "}
           <a href="#" className="text-blue-600 hover:underline">

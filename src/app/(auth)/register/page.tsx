@@ -72,7 +72,7 @@ export default function RegisterPage() {
     alert("Form submitted! (Check console)");
     console.log("Form Registered",registerForm);
    
-    // dispatch(registerUser(registerForm)); // 🔥 send entire form as payload
+    dispatch(registerUser(registerForm)); // 🔥 send entire form as payload
   };
  
   return (
@@ -148,7 +148,7 @@ export default function RegisterPage() {
           </Button>
 
           <div className="flex justify-between gap-2 text-base text-gray-100 whitespace-nowrap">
-            <p className="hover:underline !text-base !text-gray-100 !text-xl"> Already have an account? </p>
+            <p className="hover:underline !text-gray-100 !text-xl"> Already have an account? </p>
              <a href="/login" className="hover:underline !text-xl">
               Login
             </a>

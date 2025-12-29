@@ -47,43 +47,43 @@ export default function ImportCsvForm() {
       {/* Import Source */}
       <div className="p-10 space-y-10">
         <div>
-          <h1 className="!font-light">Import customers</h1>
-          <p>
+          <h1 className="!font-light 2xl:!text-5xl">Import customers</h1>
+          <p className="2xl:!text-2xl">
             You can import customers to your store from a csv file. We recommend
             you make a backup of your customers before running a new import.{" "}
             <span className="!text-blue-500">Learn more</span>
           </p>
         </div>
         <div>
-          <h1 className="!font-semibold mb-4">Import details</h1>
+          <h1 className="!font-semibold mb-4 2xl:!text-[2.4rem]">Import details</h1>
           <div className="bg-white border rounded-md p-10 space-y-10 ">
             <div className="flex items-center space-x-2">
               <Checkbox id="bulkTemplate" {...register("bulkTemplate")} />
-              <Label htmlFor="bulkTemplate">
+              <Label className="2xl:!text-2xl" htmlFor="bulkTemplate">
                 File was exported using the ‘Bulk Edit’ template
               </Label>
             </div>
             <div className="flex items-center space-x-2">
               <Checkbox id="override" {...register("override")} />
-              <Label htmlFor="override">Override existing records</Label>
+              <Label className="2xl:!text-2xl" htmlFor="override">Override existing records</Label>
             </div>
           </div>
         </div>
 
         {/* File Details */}
         <div>
-          <h1 className="!font-semibold mb-4">File details</h1>
+          <h1 className="!font-semibold mb-4 2xl:!text-[2.4rem]">File details</h1>
           <div className="bg-white border rounded-md p-10 space-y-6 ">
             {/* File Source */}
             <div className="space-y-2">
-              <Label className="text-base font-medium">Import file</Label>
+              <Label className="text-base font-medium 2xl:!text-2xl">Import file</Label>
               <RadioGroup
                 defaultValue="upload"
                 onValueChange={(value) => setValue("fileSource", value)}
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="upload" id="upload" />
-                  <Label htmlFor="upload">
+                  <Label className="2xl:!text-2xl" htmlFor="upload">
                     Upload a csv file from my computer (2MB size limit)
                   </Label>
                 </div>
@@ -98,7 +98,7 @@ export default function ImportCsvForm() {
 
                 <div className="flex items-center space-x-2 mt-4">
                   <RadioGroupItem value="server" id="server" />
-                  <Label htmlFor="server">
+                  <Label className="2xl:!text-2xl" htmlFor="server">
                     Use a file already on the server
                   </Label>
                 </div>
@@ -112,12 +112,12 @@ export default function ImportCsvForm() {
                 defaultChecked
                 {...register("hasHeader")}
               />
-              <Label htmlFor="hasHeader">This file contains headers</Label>
+              <Label className="2xl:!text-2xl" htmlFor="hasHeader">This file contains headers</Label>
             </div>
 
             {/* Field Separator */}
             <div className="space-y-1">
-              <Label htmlFor="separator">
+              <Label className="2xl:!text-2xl" htmlFor="separator">
                 Field separator <span className="!text-red-500">*</span>
               </Label>
               <Input
@@ -129,7 +129,7 @@ export default function ImportCsvForm() {
 
             {/* Field Enclosure */}
             <div className="space-y-1">
-              <Label htmlFor="enclosure">
+              <Label className="2xl:!text-2xl" htmlFor="enclosure">
                 Field enclosure <span className="!text-red-500">*</span>
               </Label>
               <Input

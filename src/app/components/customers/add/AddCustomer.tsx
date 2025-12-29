@@ -159,7 +159,7 @@ const AddCustomer = () => {
         <div className="p-10">
           {/* Header */}
           <div className="mb-6">
-            <h1 className=" !font-light">
+            <h1 className=" !font-light 2xl:!text-5xl">
               {isEdit ? "Update" : "Add"} customer
             </h1>
           </div>
@@ -167,13 +167,13 @@ const AddCustomer = () => {
           {/* Tabs */}
           <div className="flex gap-6 border-b mb-6">
             <button
-              className="pb-2 text-xl font-medium border-b-2 border-blue-500"
+              className="pb-2 text-xl font-medium border-b-3 border-blue-500 2xl:!text-2xl"
               type="button"
             >
               Customer details
             </button>
             <button
-              className="pb-2 text-xl font-medium text-gray-500"
+              className="pb-2 text-xl font-medium text-gray-500 2xl:!text-2xl"
               type="button"
             >
               Custom address book
@@ -181,12 +181,12 @@ const AddCustomer = () => {
           </div>
 
           <div className="p-6">
-            <h1 className="!font-semibold mb-4">Customer details</h1>
+            <h1 className="!font-semibold mb-4 2xl:!text-[2.4rem]">Customer details</h1>
 
             <div className="bg-white p-6 rounded-md border space-y-9 ">
               {/* First Name */}
               <div className="space-y-1">
-                <Label>First name</Label>
+                <Label className="2xl:!text-2xl">First name</Label>
                 <Input
                   placeholder=""
                   value={formData.firstName}
@@ -197,7 +197,7 @@ const AddCustomer = () => {
 
               {/* Last Name */}
               <div className="space-y-1">
-                <Label>Last name</Label>
+                <Label className="2xl:!text-2xl">Last name</Label>
                 <Input
                   placeholder=""
                   value={formData.lastName}
@@ -209,7 +209,7 @@ const AddCustomer = () => {
               {/* Company Name */}
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <Label>Company name</Label>
+                  <Label className="2xl:!text-2xl">Company name</Label>
                   <span className="text-sm text-muted-foreground">
                     (optional)
                   </span>
@@ -223,7 +223,7 @@ const AddCustomer = () => {
 
               {/* Email */}
               <div className="space-y-1">
-                <Label>Email</Label>
+                <Label className="2xl:!text-2xl">Email</Label>
                 <Input
                   type="email"
                   placeholder=""
@@ -234,7 +234,7 @@ const AddCustomer = () => {
               </div>
 
               <div className="space-y-1">
-                <Label>Address</Label>
+                <Label className="2xl:!text-2xl">Address</Label>
                 <Textarea
                   className="w-[28rem] h-[60px]"
                   rows={10}
@@ -244,7 +244,7 @@ const AddCustomer = () => {
               </div>
 
               <div className="space-y-1">
-                <Label>Country</Label>
+                <Label className="2xl:!text-2xl">Country</Label>
                 <Select
                   value={formData.country}
                   onValueChange={(value) => updateField("country", value)}
@@ -263,7 +263,7 @@ const AddCustomer = () => {
               </div>
 
               <div className="space-y-1">
-                <Label>State</Label>
+                <Label className="2xl:!text-2xl">State</Label>
                 <Select
                   value={formData.state}
                   onValueChange={(value) => updateField("state", value)}
@@ -283,7 +283,7 @@ const AddCustomer = () => {
 
               {/* Customer Group */}
               <div className="space-y-1">
-                <Label>Customer group</Label>
+                <Label className="2xl:!text-2xl">Customer group</Label>
                 <Select
                   value={formData.customerGroup}
                   onValueChange={(value) => updateField("customerGroup", value)}
@@ -302,7 +302,7 @@ const AddCustomer = () => {
               {/* Phone */}
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <Label>Phone</Label>
+                  <Label className="2xl:!text-2xl">Phone</Label>
                   <span className="text-xs text-muted-foreground">
                     (optional)
                   </span>
@@ -317,7 +317,7 @@ const AddCustomer = () => {
               {/* Store Credit */}
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <Label className="flex items-center gap-1">
+                  <Label className="flex items-center gap-1 2xl:!text-2xl">
                     Store credit
                     <Info className="w-3 h-3 text-muted-foreground" />
                   </Label>
@@ -337,7 +337,7 @@ const AddCustomer = () => {
 
               {/* ACS Emails */}
               <div className="space-y-1">
-                <Label className="flex items-center gap-1">
+                <Label className="flex items-center gap-1 2xl:!text-2xl">
                   Receive ACS/review emails
                   <Info className="w-3 h-3 text-muted-foreground" />
                 </Label>
@@ -359,7 +359,7 @@ const AddCustomer = () => {
 
               {/* Force Password Reset */}
               <div className="space-y-1">
-                <Label className="flex items-center gap-1">
+                <Label className="flex items-center gap-1 2xl:!text-2xl">
                   Force password reset on next login
                   <Info className="w-3 h-3 text-muted-foreground" />
                 </Label>
@@ -382,7 +382,7 @@ const AddCustomer = () => {
               {/* Tax Exempt Code */}
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <Label>Tax exempt code</Label>
+                  <Label className="2xl:!text-2xl">Tax exempt code</Label>
                   <span className="text-xs text-muted-foreground">
                     (optional)
                   </span>
@@ -397,12 +397,12 @@ const AddCustomer = () => {
           </div>
 
           <div className="p-6">
-            <h1 className=" !font-semibold mb-4">Data Prefernces</h1>
+            <h1 className=" !font-semibold mb-4 2xl:!text-[2.4rem]">Data Prefernces</h1>
 
             <div className="bg-white p-6 border rounded-md space-y-7 ">
               <div className="space-y-1">
                 <div className="flex items-center gap-1">
-                  <Label>Analytics</Label>
+                  <Label className="2xl:!text-2xl">Analytics</Label>
                 </div>
                 <Select
                   value={formData.analytics}
@@ -421,7 +421,7 @@ const AddCustomer = () => {
 
               <div className="space-y-1">
                 <div className="flex items-center gap-1">
-                  <Label>Functional</Label>
+                  <Label className="2xl:!text-2xl">Functional</Label>
                 </div>
                 <Select
                   value={formData.functional}
@@ -440,7 +440,7 @@ const AddCustomer = () => {
 
               <div className="space-y-1">
                 <div className="flex items-center gap-1">
-                  <Label>Targeting/Advertising</Label>
+                  <Label className="2xl:!text-2xl">Targeting/Advertising</Label>
                 </div>
                 <Select
                   value={formData.targeting}
@@ -460,14 +460,14 @@ const AddCustomer = () => {
           </div>
 
           <div className="p-6">
-            <h1 className=" !font-semibold mb-4">Password</h1>
+            <h1 className=" !font-semibold mb-4 2xl:!text-[2.4rem]">Password</h1>
 
             <div className="bg-white p-6 border rounded-md space-y-7 ">
               <TooltipProvider>
                 {/* Password Field */}
                 <div className="space-y-1">
                   <div className="flex items-center gap-1">
-                    <Label>Password</Label>
+                    <Label className="2xl:!text-2xl">Password</Label>
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Info className="w-4 h-4 text-muted-foreground cursor-pointer" />
@@ -481,7 +481,7 @@ const AddCustomer = () => {
                       </TooltipContent>
                     </Tooltip>
                   </div>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-xs text-muted-foreground 2xl:!text-2xl">
                     Passwords must be at least 7 characters long and contain
                     both alphabetic and numeric characters.
                   </p>
@@ -497,7 +497,7 @@ const AddCustomer = () => {
                 {/* Confirm Password Field */}
                 <div className="space-y-1">
                   <div className="flex items-center gap-1">
-                    <Label>Confirm password</Label>
+                    <Label className="2xl:!text-2xl">Confirm password</Label>
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Info className="w-4 h-4 text-muted-foreground cursor-pointer" />

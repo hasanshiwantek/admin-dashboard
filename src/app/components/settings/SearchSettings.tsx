@@ -42,14 +42,14 @@ export const SearchSettings = ({
       <div className="bg-white rounded-sm border border-gray-200 p-6">
         <h2 className="!font-semibold mb-6">Search Settings</h2>
 
-        <FormField label="Default Product Sort">
+        <FormField className="w-full lg:w-72" label="Default Product Sort">
           <Select
             value={settings.defaultProductSort}
             onValueChange={(value) =>
               updateSetting("defaultProductSort", value)
             }
           >
-            <SelectTrigger className="w-full">
+            <SelectTrigger className="!w-full">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -62,14 +62,14 @@ export const SearchSettings = ({
           </Select>
         </FormField>
 
-        <FormField label="Default Content Sort">
+        <FormField className="w-full lg:w-72" label="Default Content Sort">
           <Select
             value={settings.defaultContentSort}
             onValueChange={(value) =>
               updateSetting("defaultContentSort", value)
             }
           >
-            <SelectTrigger className="w-full">
+            <SelectTrigger className="!w-full">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -82,14 +82,14 @@ export const SearchSettings = ({
           </Select>
         </FormField>
 
-        <FormField label="Storefront Search Logic">
+        <FormField className="w-full lg:w-72" label="Storefront Search Logic">
           <Select
             value={settings.storefrontSearchLogic}
             onValueChange={(value) =>
               updateSetting("storefrontSearchLogic", value)
             }
           >
-            <SelectTrigger className="w-full">
+            <SelectTrigger className="!w-full">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

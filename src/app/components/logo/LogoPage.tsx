@@ -235,13 +235,13 @@ const LogoPage = () => {
         )}
 
         <div className="mx-auto">
-          <h1 className="!font-extralight mb-6">Logo Options</h1>
+          <h1 className="!font-extralight mb-6 2xl:!text-5xl">Logo Options</h1>
 
           {/* --- LOGO SECTION --- */}
           <div className="bg-white rounded-md shadow-md border p-10 space-y-8">
             {/* Logo Type */}
             <div>
-              <h1 className="!font-semibold tracking-tight mb-6">
+              <h1 className="!font-semibold tracking-tight mb-6 2xl:!text-[2rem]">
                 Select your logo type
               </h1>
               <Controller
@@ -255,13 +255,13 @@ const LogoPage = () => {
                   >
                     <div className="flex items-center space-x-5">
                       <RadioGroupItem value="text" id="text-logo" />
-                      <Label htmlFor="text-logo">
+                      <Label className="2xl:!text-2xl" htmlFor="text-logo">
                         Enter text to display as your logo
                       </Label>
                     </div>
                     <div className="flex items-center space-x-5">
                       <RadioGroupItem value="upload" id="upload-logo" />
-                      <Label htmlFor="upload-logo">Upload a custom image</Label>
+                      <Label className="2xl:!text-2xl" htmlFor="upload-logo">Upload a custom image</Label>
                     </div>
                   </RadioGroup>
                 )}
@@ -271,7 +271,7 @@ const LogoPage = () => {
             {/* Logo Preview */}
             <div className="pt-6 border-t border-gray-100 space-y-3">
               <div className="flex justify-between items-center">
-                <span>Logo preview</span>
+                <span className="2xl:!text-2xl">Logo preview</span>
                 {logoType === "upload" && (
                   <OrderActionsDropdown
                     actions={getDropdownActions()}
@@ -324,7 +324,7 @@ const LogoPage = () => {
             <div className="pt-6 border-t border-gray-100 space-y-2">
               <Label
                 htmlFor="logo-size-select"
-                className="text-base font-semibold"
+                className="text-base font-semibold 2xl:!text-2xl"
               >
                 Logo size
               </Label>
@@ -349,15 +349,15 @@ const LogoPage = () => {
 
               {logoSize === "dimensions" ? (
                 <div className="mt-5 space-x-2 flex items-center text-base text-gray-600">
-                  <Label htmlFor="max-width-input">Max Width:</Label>
+                  <Label className="2xl:!text-2xl" htmlFor="max-width-input">Max Width:</Label>
                   <Input
                     id="max-width-input"
                     type="number"
                     {...register("maxWidth", { valueAsNumber: true })}
                     className="w-24 text-center"
                   />
-                  <span>x</span>
-                  <Label htmlFor="max-height-input">Max Height:</Label>
+                  <span className="2xl:!text-2xl">x</span>
+                  <Label className="2xl:!text-2xl" htmlFor="max-height-input">Max Height:</Label>
                   <Input
                     id="max-height-input"
                     type="number"
@@ -367,7 +367,7 @@ const LogoPage = () => {
                   <span>px</span>
                 </div>
               ) : (
-                <p className="text-sm text-gray-500 pt-1">
+                <p className="text-sm text-gray-500 pt-1 2xl:!text-2xl">
                   Recommended size:{" "}
                   <span className="font-medium text-gray-700">250 x 100px</span>
                 </p>
@@ -376,7 +376,7 @@ const LogoPage = () => {
 
             {/* Launch Page Builder */}
             <div className="pt-6 border-t border-gray-100">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-600 2xl:!text-2xl">
                 Want to adjust the position of your logo?{" "}
                 <a
                   href="#"
@@ -391,8 +391,8 @@ const LogoPage = () => {
 
           {/* --- FAVICON SECTION --- */}
           <div className="bg-white rounded-md shadow-md border p-10 space-y-6 my-30">
-            <h1 className="!font-semibold tracking-tight">Favicon</h1>
-            <p className="text-sm text-gray-600">
+            <h1 className="!font-semibold tracking-tight 2xl:!text-[2.4rem]">Favicon</h1>
+            <p className="text-sm text-gray-600 2xl:!text-2xl">
               A favicon is a small image that represents your brand in browser
               tabs.
             </p>
@@ -435,11 +435,11 @@ const LogoPage = () => {
             />
 
             <div className="pt-4 border-t border-gray-100 space-y-1">
-              <p className="text-sm font-medium text-gray-700">
+              <p className="text-sm font-medium text-gray-700 2xl:!text-2xl">
                 Supported file types:{" "}
                 <span className="font-normal">ICO, PNG, SVG, JPG, GIF</span>
               </p>
-              <p className="text-sm font-medium text-gray-700">
+              <p className="text-sm font-medium text-gray-700 2xl:!text-2xl">
                 Recommended size: <span className="font-normal">32 × 32px</span>
               </p>
             </div>

@@ -90,28 +90,46 @@ const SettingsPage = () => {
     },
   ];
 
-  const SettingsItem = ({ item, onClick }: { item: any; onClick: any }) => (
-    <div
-      onClick={() => onClick(item)}
-      className="flex items-center justify-between py-4 px-0 border-b border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors"
-    >
-      <div className="flex-1">
-        <div className="flex items-center gap-2">
-          <h2 className="">{item?.title}</h2>
-          {item?.isNew && (
-            <Badge
-              variant="secondary"
-              className="bg-green-100 text-green-700 text-xs font-medium px-2 py-0.5"
-            >
-              NEW
-            </Badge>
-          )}
-        </div>
-        <p className=" mt-1">{item?.description}</p>
-      </div>
-      <ChevronRight className="w-8 h-8 text-gray-400 ml-4 flex-shrink-0" />
+ const SettingsItem = ({ item, onClick }: { item: any; onClick: any }) => (
+  <div
+    onClick={() => onClick(item)}
+    className="
+      grid grid-cols-1 gap-3 py-4 border-b border-gray-200
+      hover:bg-gray-50 cursor-pointer transition-colors
+      md:grid-cols-[auto_1fr_auto] md:items-center
+    "
+  >
+    {/* Left: Title + Badge */}
+    <div className="flex items-center gap-2">
+      <h2 className="!text-black !font-bold 2xl:!text-[1.6rem]">
+        {item?.title}
+      </h2>
+
+      {item?.isNew && (
+        <Badge
+          variant="secondary"
+          className="bg-green-100 text-green-700 text-xs font-medium px-2 py-0.5"
+        >
+          NEW
+        </Badge>
+      )}
     </div>
-  );
+
+    {/* Center: Description (SCREEN CENTER) */}
+    <div className="text-left md:text-center">
+      <p className="text-gray-600 2xl:!text-[1.6rem]">
+        {item?.description}
+      </p>
+    </div>
+
+    {/* Right: Arrow */}
+    <div className="justify-self-end">
+      <ChevronRight className="w-8 h-8 text-gray-400" />
+    </div>
+  </div>
+);
+
+
 
   const [currentView, setCurrentView] = useState("main");
   const [currentSetting, setCurrentSetting] = useState<any>(null);
@@ -130,7 +148,7 @@ const SettingsPage = () => {
     <div className="min-h-screen  p-8">
       {currentView === "main" ? (
         <div className="">
-          <h1 className=" mb-6 !font-extralight">Settings</h1>
+          <h1 className=" mb-6 !font-extralight 2xl:!text-[3.2rem]">Settings</h1>
 
           <div className="relative mb-6">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-6 h-6 text-gray-400" />
@@ -158,7 +176,7 @@ const SettingsPage = () => {
 
           <Card className="bg-white shadow-sm">
             <div className="p-6">
-              <h1 className="!font-semibold  mb-4">General</h1>
+              <h1 className="!font-semibold  mb-4 2xl:!text-[2.4rem]">General</h1>
               <div className="divide-y divide-gray-200">
                 {generalItems.map((item) => (
                   <SettingsItem
