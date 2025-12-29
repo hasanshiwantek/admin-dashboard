@@ -25,13 +25,15 @@ export const SideBar = ({ onClose }: { onClose?: () => void }) => {
   );
   useEffect(() => {
     const newOpenMenus = sidebarData.map(
-      (item) => item.children?.some((child) => child.url === pathname) || false
+      (item) =>
+        item.children?.some((child: any) => child.url === pathname) || false
     );
     setOpenMenus(newOpenMenus);
   }, [pathname]);
 
   return (
-    <div className="shrink-0 h-auto
+    <div
+      className="shrink-0 h-auto
   fixed top-0 md:top-22
   z-50 md:z-0
   w-[26.7rem]
@@ -40,7 +42,8 @@ export const SideBar = ({ onClose }: { onClose?: () => void }) => {
   bg-[rgb(3,16,51)]
   text-white
   border-t-2 border-[#2d3748]
-  custom-scroll">
+  custom-scroll"
+    >
       <SidebarProvider>
         <SidebarMenu>
           {sidebarData.map((item, index) =>
@@ -65,7 +68,7 @@ export const SideBar = ({ onClose }: { onClose?: () => void }) => {
                   </CollapsibleTrigger>
                   <CollapsibleContent>
                     <SidebarMenuSub className="ml-16">
-                      {item.children.map((child) => (
+                      {item.children.map((child: any) => (
                         <SidebarMenuSubItem key={child.title}>
                           <Link
                             href={child.url}
