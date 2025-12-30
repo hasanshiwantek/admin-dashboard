@@ -1,8 +1,8 @@
 import React from 'react'
-
+import EmailMarketing from '@/app/components/marketing/email-marketing/EmailMarketing'
 const page = () => {
   return (
-    <div>page</div>
+    <div><EmailMarketing/></div>
   )
 }
 
