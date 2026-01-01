@@ -7,6 +7,7 @@ import { registerUser } from "@/redux/slices/authSlice";
 import { RegisterPayload } from "@/redux/slices/authSlice";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { countriesList } from "@/const/location";
 import {
   Select,
   SelectTrigger,
@@ -14,20 +15,20 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import styles from "@/styles/auth/Auth.module.css"
-
+import styles from "@/styles/auth/Auth.module.css";
+import { useRouter } from "next/navigation";
 const initialForm: RegisterPayload = {
   name: "",
   email: "",
   password: "",
-  password_confirmation:"",
+  password_confirmation: "",
   phoneNumber: "",
   storeName: "",
   userRole: 1,
   businessSize: "",
   region: "",
 };
- 
+
 const fields: {
   name: keyof typeof initialForm;
   label: string;
@@ -37,7 +38,11 @@ const fields: {
   { name: "name", label: "Full Name" },
   { name: "email", label: "Email", type: "email" },
   { name: "password", label: "Password", type: "password" },
-    { name: "password_confirmation", label: "Confirm Password", type: "password" },
+  {
+    name: "password_confirmation",
+    label: "Confirm Password",
+    type: "password",
+  },
   { name: "phoneNumber", label: "Phone Number" },
   { name: "storeName", label: "Store Name" },
   {
@@ -56,31 +61,51 @@ const fields: {
     options: ["Asia", "Middle East", "Europe", "Northeast"],
   },
 ];
- 
+
 export default function RegisterPage() {
   const [registerForm, setRegisterForm] = useState(initialForm);
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
- 
+  const router = useRouter();
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setRegisterForm((prev) => ({ ...prev, [name]: value }));
   };
- 
-  const handleSubmit = (e: React.FormEvent) => {
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert("Form submitted! (Check console)");
-    console.log("Form Registered",registerForm);
-   
-    dispatch(registerUser(registerForm)); // 🔥 send entire form as payload
+
+    try {
+      const resultAction = await dispatch(registerUser(registerForm));
+
+      // ✅ Check if thunk was fulfilled
+      if (registerUser.fulfilled.match(resultAction)) {
+        console.log("User registered successfully", resultAction.payload);
+
+        // ✅ Redirect after success
+        setTimeout(()=>{
+          router.push("/auth/login");
+        },600)
+      } else {
+        console.error(
+          "Registration failed",
+          resultAction.payload || resultAction.error
+        );
+      }
+    } catch (error) {
+      console.error("Unexpected error:", error);
+    }
   };
- 
   return (
-    <div className={`${styles.registerBg} flex flex-col min-h-screen items-center justify-center bg-black `}>
-      <h1 className="!text-5xl mt-10 !text-white">Create your beautiful store today</h1>
- 
+    <div
+      className={`${styles.registerBg} flex flex-col min-h-screen items-center justify-center bg-black `}
+    >
+      <h1 className="!text-5xl mt-10 !text-white">
+        Create your beautiful store today
+      </h1>
+
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="flex justify-center flex-col items-center w-full  p-10 rounded-md">
           {fields.map((field) => (
@@ -88,7 +113,7 @@ export default function RegisterPage() {
               <label className="block text-xl font-medium  text-gray-200">
                 {field.label}
               </label>
- 
+
               {field.options ? (
                 <Select
                   value={registerForm[field.name]?.toString()}
@@ -118,12 +143,16 @@ export default function RegisterPage() {
                     className="w-[30rem] !text-2xl  px-6 py-8 bg-blue-50 text-black placeholder:text-gray-500"
                     placeholder={`Enter your ${field.name}`}
                   />
- 
+
                   <span
                     className=" absolute right-3 top-6 cursor-pointer"
                     onClick={() => setShowPassword((p) => !p)}
                   >
-                    {showPassword ? <FaEyeSlash size={15} /> : <FaEye size={15}/>}
+                    {showPassword ? (
+                      <FaEyeSlash size={15} />
+                    ) : (
+                      <FaEye size={15} />
+                    )}
                   </span>
                 </div>
               ) : (
@@ -139,7 +168,7 @@ export default function RegisterPage() {
               )}
             </div>
           ))}
- 
+
           <Button
             type="submit"
             variant="default"
@@ -150,8 +179,11 @@ export default function RegisterPage() {
           </Button>
 
           <div className="flex justify-between gap-2 text-base text-gray-100 whitespace-nowrap">
-            <p className="hover:underline !text-gray-100 !text-xl"> Already have an account? </p>
-             <a href="/login" className="hover:underline !text-xl">
+            <p className="hover:underline !text-gray-100 !text-xl">
+              {" "}
+              Already have an account?{" "}
+            </p>
+            <a href="/login" className="hover:underline !text-xl">
               Login
             </a>
           </div>

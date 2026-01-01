@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -23,68 +23,47 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, Plus, AlertCircle } from "lucide-react";
 import Pagination from "@/components/ui/pagination";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-interface Script {
-  id: string;
-  name: string;
-  location: string;
-  placement: string;
-  type: string;
-  dateInstalled: string;
-}
-
-const scriptsData: Script[] = [
-  {
-    id: "1",
-    name: "Google Customer Reviews",
-    location: "All pages",
-    placement: "Head",
-    type: "User created",
-    dateInstalled: "Aug 27, 2024",
-  },
-  {
-    id: "2",
-    name: "Google Tag Manager - Updated",
-    location: "All pages",
-    placement: "Head",
-    type: "User created",
-    dateInstalled: "Nov 19, 2024",
-  },
-  {
-    id: "3",
-    name: "hubspot",
-    location: "All pages",
-    placement: "Head",
-    type: "User created",
-    dateInstalled: "Mar 22, 2024",
-  },
-  {
-    id: "4",
-    name: "hubspot Chat",
-    location: "All pages",
-    placement: "Head",
-    type: "User created",
-    dateInstalled: "Mar 25, 2024",
-  },
-  {
-    id: "5",
-    name: "Orgnization",
-    location: "Storefront pages",
-    placement: "Head",
-    type: "User created",
-    dateInstalled: "Jun 14, 2024",
-  },
-];
-
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
+import { fetchScripts, deleteScript } from "@/redux/slices/storefrontSlice";
+import Spinner from "../../loader/Spinner";
 const ScriptManagerTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState("50");
   const totalCount = 20;
   const totalPages = 20;
   const router = useRouter();
+  const dispatch = useAppDispatch();
+
+  const scripts = useAppSelector((state: any) => state.storefront.scriptData);
+
+  const { loading, error } = useAppSelector((state: any) => state.storefront);
+  const scriptsData = scripts?.script;
+
+  useEffect(() => {
+    dispatch(fetchScripts());
+  }, [dispatch]);
+
+  const handleDelete = async (id: any, scriptName: string) => {
+    if (window.confirm(`Are you sure you want to delete "${scriptName}"?`)) {
+      try {
+        const resultAction = await dispatch(deleteScript({ id }));
+
+        if (deleteScript.fulfilled.match(resultAction)) {
+          // Refresh the scripts list
+          setTimeout(()=>{
+            dispatch(fetchScripts());
+          },2000)
+        } else {
+        }
+      } catch (error) {
+        console.error("Error deleting script:", error);
+      }
+    }
+  };
 
   return (
     <div className=" ">
@@ -134,47 +113,160 @@ const ScriptManagerTable = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {scriptsData.map((script) => (
-                <TableRow
-                  key={script.id}
-                  className="hover:bg-gray-50 transition-colors h-18"
-                >
-                  <TableCell>{script.name}</TableCell>
-                  <TableCell>{script.location}</TableCell>
-                  <TableCell>{script.placement}</TableCell>
-                  <TableCell>{script.type}</TableCell>
-                  <TableCell>{script.dateInstalled}</TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          className="h-8 w-8 p-0 hover:bg-gray-100"
-                        >
-                          <MoreHorizontal className="!h-6 !w-6 text-gray-600" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent
-                        align="end"
-                        className="w-[150px] space-y-4"
-                      >
-                        <DropdownMenuItem
-                          onClick={() =>
-                            router.push(
-                              `/manage/storefront/script-manager/edit/${script.id}`
-                            )
-                          }
-                        >
-                          Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="text-red-600">
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+              {/* Loading State */}
+              {loading && (
+                <TableRow>
+                  <TableCell colSpan={6} className="h-64">
+                    <div className="flex flex-col items-center justify-center space-y-3">
+                      <Spinner />
+                      <p className="text-sm text-gray-500">
+                        Loading scripts...
+                      </p>
+                    </div>
                   </TableCell>
                 </TableRow>
-              ))}
+              )}
+
+              {/* Error State */}
+              {!loading && error && (
+                <TableRow>
+                  <TableCell colSpan={6} className="h-64">
+                    <div className="flex flex-col items-center justify-center space-y-4">
+                      <AlertCircle className="w-12 h-12 text-red-500" />
+                      <div className="text-center">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                          Failed to Load Scripts
+                        </h3>
+                        <p className="text-gray-600 mb-4">{error}</p>
+                        <Button
+                          onClick={() => dispatch(fetchScripts())}
+                          variant="outline"
+                          size="sm"
+                        >
+                          Try Again
+                        </Button>
+                      </div>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              )}
+
+              {/* Empty State */}
+              {!loading && !error && scriptsData?.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={6} className="h-64">
+                    <div className="flex flex-col items-center justify-center space-y-4">
+                      <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
+                        <svg
+                          className="w-8 h-8 text-gray-400"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+                          />
+                        </svg>
+                      </div>
+                      <div className="text-center max-w-md">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                          No Scripts Found
+                        </h3>
+                        <p className="text-gray-600 mb-4">
+                          Get started by adding your first script to track
+                          analytics, conversion pixels, or custom functionality.
+                        </p>
+                        <Button
+                          onClick={() =>
+                            router.push("/manage/storefront/script-manager/add")
+                          }
+                          className="btn-primary"
+                          size="sm"
+                        >
+                          <Plus className="w-4 h-4 mr-2" />
+                          Add Your First Script
+                        </Button>
+                      </div>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              )}
+
+              {/* Data Rows */}
+              {!loading &&
+                !error &&
+                scriptsData?.length > 0 &&
+                scriptsData.map((script: any) => (
+                  <TableRow
+                    key={script.id}
+                    className="hover:bg-gray-50 transition-colors h-18"
+                  >
+                    <TableCell className="font-medium">
+                      {script.script_name || "Untitled Script"}
+                    </TableCell>
+                    <TableCell className="capitalize">
+                      {script.location?.replace(/([A-Z])/g, " $1").trim() ||
+                        "N/A"}
+                    </TableCell>
+                    <TableCell className="capitalize">
+                      {script.placement || "N/A"}
+                    </TableCell>
+                    <TableCell className="uppercase">
+                      {script.script_type || "N/A"}
+                    </TableCell>
+                    <TableCell>
+                      {script.created_at
+                        ? new Date(script.created_at).toLocaleDateString(
+                            "en-US",
+                            {
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                            }
+                          )
+                        : "N/A"}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            className="h-8 w-8 p-0 hover:bg-gray-100"
+                          >
+                            <MoreHorizontal className="!h-6 !w-6 text-gray-600" />
+                            <span className="sr-only">Open menu</span>
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                          align="end"
+                          className="w-[150px] space-y-1"
+                        >
+                          <DropdownMenuItem
+                            onClick={() =>
+                              router.push(
+                                `/manage/storefront/script-manager/edit/${script.id}`
+                              )
+                            }
+                            className="cursor-pointer"
+                          >
+                            Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() =>
+                              handleDelete(script.id, script.script_name)
+                            }
+                            className="text-red-600 cursor-pointer focus:text-red-700 focus:bg-red-50"
+                          >
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
         </div>

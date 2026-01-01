@@ -33,10 +33,10 @@ const EmailMarketing = () => {
   };
 
   return (
-    <div className="w-full  ">
+    <div className="w-full ">
       <div className="mx-auto ">
         {/* Header */}
-        <div className="p-10">
+        <div className="p-15">
           <h1 className="!font-light 2xl:!text-5xl mb-2">Email marketing</h1>
           <p className=" text-gray-600">
             Use email marketing to advertise sales, promote your business and
@@ -50,7 +50,7 @@ const EmailMarketing = () => {
 
         {/* Tabs */}
         <Tabs defaultValue="general" className="w-full ">
-          <TabsList className="bg-transparent border-b border-gray-200 rounded-none h-auto px-10 w-full justify-start max-w-md">
+          <TabsList className="bg-transparent border-b border-gray-200 rounded-none h-auto px-15 w-full justify-start max-w-md">
             <TabsTrigger
               value="general"
               className="rounded-none border-b-2 border-transparent data-[state=active]:border-b-blue-600 data-[state=active]:bg-transparent bg-transparent px-4 py-3 text-gray-600 data-[state=active]:text-gray-900 data-[state=active]:shadow-none"
@@ -69,7 +69,7 @@ const EmailMarketing = () => {
           <TabsContent value="general" className="mt-8">
             <form onSubmit={handleSubmit(onSubmit)}>
               {/* Newsletter Settings Section */}
-              <div className="px-10">
+              <div className="px-15">
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-8 ">
                   <div className="p-10">
                     <h2 className="!text-3xl !font-semibold text-gray-900 mb-6">
@@ -195,7 +195,7 @@ const EmailMarketing = () => {
               </div>
 
               {/* Recommended Solutions Section */}
-              <div className="px-10">
+              <div className="px-15">
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-8">
                   <div className="p-10">
                     <h2 className="!text-3xl !font-semibold text-gray-900 mb-6">
@@ -302,7 +302,7 @@ const EmailMarketing = () => {
 
           {/* Subscribers Tab */}
           <TabsContent value="subscribers" className="mt-8">
-            <div className="px-10">
+            <div className="px-15">
               <div className="bg-blue-50 border-l-6 border-blue-500 p-5 mb-6">
                 <p className="!text-2xl text-gray-700">
                   If you are using a third party email service, email
@@ -315,7 +315,7 @@ const EmailMarketing = () => {
                 </p>
               </div>
             </div>
-            <div className="p-10">
+            <div className="p-15">
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-10">
                 <h2 className="!text-3xl !font-semibold text-gray-900 mb-6">
                   Export Newsletter Subscribers
