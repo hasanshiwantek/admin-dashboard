@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -14,8 +14,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Info, X } from "lucide-react";
-
+import { Info, X, Loader2 } from "lucide-react";
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
+import { createScripts, fetchScriptById, updateScript } from "@/redux/slices/storefrontSlice";
+import _ from "lodash";
+import { useRouter, useParams } from "next/navigation";
 interface ScriptFormData {
   scriptName: string;
   description: string;
@@ -30,6 +33,10 @@ interface ScriptFormData {
 }
 
 const AddScript = () => {
+  const params = useParams();
+  const scriptId = params?.id; // Get ID from URL params
+  const isEditMode = !!scriptId; // Determine if we're in edit mode
+
   const { register, handleSubmit, watch, setValue } = useForm<ScriptFormData>({
     defaultValues: {
       placement: "footer",
@@ -43,17 +50,111 @@ const AddScript = () => {
 
   const [integrityHashes, setIntegrityHashes] = useState<string[]>([]);
   const [currentHash, setCurrentHash] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [fetchingScript, setFetchingScript] = useState(false);
 
+  const dispatch = useAppDispatch();
+  const router = useRouter();
   const scriptType = watch("scriptType");
 
-  const onSubmit = (data: ScriptFormData) => {
-    console.log({ ...data, integrityHashes });
+  // Fetch script data if in edit mode
+  useEffect(() => {
+    if (isEditMode && scriptId) {
+      setFetchingScript(true);
+      dispatch(fetchScriptById({ id: scriptId }))
+        .unwrap()
+        .then((response) => {
+          const scriptData = response?.data;
+          
+          if (scriptData) {
+            // Convert snake_case to camelCase
+            const camelCaseScript = _.mapKeys(scriptData, (v, k) => _.camelCase(k));
+
+            // Populate form fields
+            setValue("scriptName", camelCaseScript.scriptName || "");
+            setValue("description", camelCaseScript.description || "");
+            setValue("placement", camelCaseScript.placement || "footer");
+            setValue("location", camelCaseScript.location || "storefront");
+            setValue("scriptCategory", camelCaseScript.scriptCategory || "essential");
+            setValue("scriptType", camelCaseScript.scriptType || "url");
+
+            if (camelCaseScript.scriptType === "url") {
+              setValue("loadMethod", camelCaseScript.loadMethod || "defer");
+              setValue("scriptUrl", camelCaseScript.scriptUrl || "");
+              setIntegrityHashes(camelCaseScript.integrityHashes || []);
+            } else {
+              setValue("scriptContents", camelCaseScript.scriptContent || camelCaseScript.scriptContents || "");
+            }
+          }
+        })
+        .catch((error) => {
+          console.error("Failed to fetch script:", error);
+        })
+        .finally(() => {
+          setFetchingScript(false);
+        });
+    }
+  }, [isEditMode, scriptId, dispatch, setValue]);
+
+  // Helper: convert camelCase keys to snake_case recursively
+  const toSnakeCase = (obj: any): any => {
+    if (Array.isArray(obj)) return obj.map(toSnakeCase);
+    else if (obj !== null && typeof obj === "object") {
+      return Object.fromEntries(
+        Object.entries(obj).map(([key, value]) => [
+          _.snakeCase(key),
+          toSnakeCase(value),
+        ])
+      );
+    }
+    return obj;
+  };
+
+  const onSubmit = async (data: ScriptFormData) => {
+    // Merge integrityHashes from state
+    const payload = { ...data, integrityHashes };
+    const snakeCasePayload = toSnakeCase(payload);
+
+    setLoading(true);
+
+    try {
+      let resultAction;
+
+      if (isEditMode && scriptId) {
+        // Update existing script
+        resultAction = await dispatch(updateScript({ id: scriptId, data: snakeCasePayload }));
+
+        if (updateScript.fulfilled.match(resultAction)) {
+          console.log("Script updated successfully:", resultAction.payload);
+          setTimeout(() => {
+            router.push("/manage/storefront/script-manager");
+          }, 600);
+        } else {
+          console.error("Failed to update script:", resultAction.payload || resultAction.error);
+        }
+      } else {
+        // Create new script
+        resultAction = await dispatch(createScripts(snakeCasePayload));
+
+        if (createScripts.fulfilled.match(resultAction)) {
+          console.log("Script created successfully:", resultAction.payload);
+          setTimeout(() => {
+            router.push("/manage/storefront/script-manager");
+          }, 600);
+        } else {
+          console.error("Failed to create script:", resultAction.payload || resultAction.error);
+        }
+      }
+    } catch (error) {
+      console.error("Unexpected error:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const addHash = () => {
-    // Add the current hash value to the list (even if empty)
     setIntegrityHashes([...integrityHashes, currentHash]);
-    setCurrentHash(""); // Clear the input field
+    setCurrentHash("");
   };
 
   const updateHash = (index: number, value: string) => {
@@ -66,11 +167,23 @@ const AddScript = () => {
     setIntegrityHashes(integrityHashes.filter((_, i) => i !== index));
   };
 
+  // Show loading state while fetching script data
+  if (fetchingScript) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="w-8 h-8 animate-spin mr-2" />
+        <span>Loading script...</span>
+      </div>
+    );
+  }
+
   return (
     <div>
       {/* Header */}
-      <div className="  p-10">
-        <h1 className="!font-light 2xl:!text-5xl mb-2">Create script</h1>
+      <div className="p-10">
+        <h1 className="!font-light 2xl:!text-5xl mb-2">
+          {isEditMode ? "Edit script" : "Create script"}
+        </h1>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="max-w-full">
@@ -78,7 +191,7 @@ const AddScript = () => {
         <div className="bg-white m-6 rounded-sm border p-10">
           {/* Script Name */}
           <div className="mb-6">
-            <Label htmlFor="scriptName" className=" mb-2 block">
+            <Label htmlFor="scriptName" className="mb-2 block">
               Script name
             </Label>
             <Input id="scriptName" {...register("scriptName")} />
@@ -87,19 +200,17 @@ const AddScript = () => {
           {/* Description */}
           <div className="mb-6">
             <div className="flex items-center justify-start gap-5 mb-2">
-              <Label htmlFor="description" className="">
-                Description
-              </Label>
-              <span className="">optional</span>
+              <Label htmlFor="description">Description</Label>
+              <span className="text-gray-500 text-sm">optional</span>
             </div>
             <Input id="description" {...register("description")} />
           </div>
 
           {/* Placement */}
           <div className="mb-6">
-            <Label className=" mb-3 block">Placement</Label>
+            <Label className="mb-3 block">Placement</Label>
             <RadioGroup
-              defaultValue="footer"
+              value={watch("placement")}
               onValueChange={(value) =>
                 setValue("placement", value as "footer" | "header")
               }
@@ -121,14 +232,14 @@ const AddScript = () => {
 
           {/* Location */}
           <div className="mb-6">
-            <Label className=" mb-3 block">Location</Label>
+            <Label className="mb-3 block">Location</Label>
             <RadioGroup
-              defaultValue="storefront"
+              value={watch("location")}
               onValueChange={(value) => setValue("location", value as any)}
             >
               <div className="flex items-center space-x-2 mb-2">
                 <RadioGroupItem value="storefront" id="storefront" />
-                <Label htmlFor="storefront" className=" flex items-center">
+                <Label htmlFor="storefront" className="flex items-center">
                   Storefront pages
                   <Info className="w-4 h-4 ml-1 text-gray-400" />
                 </Label>
@@ -137,7 +248,7 @@ const AddScript = () => {
                 <RadioGroupItem value="checkout" id="checkout" />
                 <Label
                   htmlFor="checkout"
-                  className=" cursor-pointer flex items-center"
+                  className="cursor-pointer flex items-center"
                 >
                   Checkout
                   <Info className="w-4 h-4 ml-1 text-gray-400" />
@@ -150,7 +261,7 @@ const AddScript = () => {
                 />
                 <Label
                   htmlFor="orderConfirmation"
-                  className=" cursor-pointer flex items-center"
+                  className="cursor-pointer flex items-center"
                 >
                   Order confirmation
                   <Info className="w-4 h-4 ml-1 text-gray-400" />
@@ -173,7 +284,7 @@ const AddScript = () => {
           <div className="mb-6">
             <Label className="mb-3 block">Script category</Label>
             <RadioGroup
-              defaultValue="essential"
+              value={watch("scriptCategory")}
               onValueChange={(value) =>
                 setValue("scriptCategory", value as any)
               }
@@ -194,7 +305,7 @@ const AddScript = () => {
               <div className="mb-3">
                 <div className="flex items-center space-x-2 mb-1">
                   <RadioGroupItem value="analytics" id="analytics" />
-                  <Label htmlFor="analytics" className=" cursor-pointer">
+                  <Label htmlFor="analytics" className="cursor-pointer">
                     Analytics
                   </Label>
                 </div>
@@ -221,7 +332,7 @@ const AddScript = () => {
               <div className="mb-3">
                 <div className="flex items-center space-x-2 mb-1">
                   <RadioGroupItem value="targeting" id="targeting" />
-                  <Label htmlFor="targeting" className=" cursor-pointer">
+                  <Label htmlFor="targeting" className="cursor-pointer">
                     Targeting/Advertising
                   </Label>
                 </div>
@@ -235,9 +346,9 @@ const AddScript = () => {
 
           {/* Script Type */}
           <div className="mb-6">
-            <Label className=" mb-3 block">Script type</Label>
+            <Label className="mb-3 block">Script type</Label>
             <RadioGroup
-              defaultValue="url"
+              value={watch("scriptType")}
               onValueChange={(value) =>
                 setValue("scriptType", value as "url" | "script")
               }
@@ -272,7 +383,7 @@ const AddScript = () => {
                   Load method
                 </Label>
                 <Select
-                  defaultValue="defer"
+                  value={watch("loadMethod")}
                   onValueChange={(value) => setValue("loadMethod", value)}
                 >
                   <SelectTrigger>
@@ -301,8 +412,8 @@ const AddScript = () => {
 
               {/* Integrity Hashes */}
               <div className="mb-6">
-                <Label className=" mb-2 block">Integrity Hashes</Label>
-                <p className=" mb-3">
+                <Label className="mb-2 block">Integrity Hashes</Label>
+                <p className="text-sm text-gray-600 mb-3">
                   The integrity hash is a security feature used by browsers to
                   verify that the script is delivered without unexpected
                   manipulation. For any scripts that live on the checkout page,
@@ -369,7 +480,7 @@ const AddScript = () => {
                 </Label>
                 <div className="border rounded-md">
                   <div className="bg-gray-50 px-3 py-2 border-b">
-                    <span className=" font-mono">1</span>
+                    <span className="font-mono text-sm">1</span>
                   </div>
                   <Textarea
                     id="scriptContents"
@@ -385,11 +496,21 @@ const AddScript = () => {
 
         {/* Footer Buttons */}
         <div className="sticky bottom-0 w-full border-t p-6 bg-white flex justify-end gap-4 shadow-lg">
-          <button type="button" className="btn-outline-primary">
+          <button
+            type="button"
+            className="btn-outline-primary"
+            onClick={() => router.push("/manage/storefront/script-manager")}
+            disabled={loading}
+          >
             Cancel
           </button>
-          <button type="submit" className="btn-primary">
-            Save
+          <button
+            type="submit"
+            className="btn-primary flex items-center gap-2"
+            disabled={loading}
+          >
+            {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+            {loading ? (isEditMode ? "Updating..." : "Creating...") : (isEditMode ? "Update" : "Save")}
           </button>
         </div>
       </form>

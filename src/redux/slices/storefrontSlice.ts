@@ -285,6 +285,98 @@ export const deleteCarousal = createAsyncThunk(
   }
 );
 
+export const createScripts = createAsyncThunk(
+  "storefront/createScripts",
+  async (data, thunkAPI) => {
+    try {
+      const res = await axiosInstance.post(
+        `dashboard/scripts/add-script`,
+        data
+      );
+      console.log("Create Scripts Response: ", res?.data);
+      return res.data;
+    } catch (err: any) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to create scripts"
+      );
+    }
+  }
+);
+
+export const fetchScripts = createAsyncThunk(
+  "storefront/fetchScripts",
+  async (_, thunkAPI) => {
+    try {
+      const res = await axiosInstance.get(`dashboard/scripts/get-script`);
+      console.log("Fetch Scripts Response: ", res?.data);
+      return res.data;
+    } catch (err: any) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to fetch scripts"
+      );
+    }
+  }
+);
+
+
+
+// Fetch script by ID
+export const fetchScriptById = createAsyncThunk(
+  "storefront/fetchScriptById",
+  async ({ id }: { id: any }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.get(`dashboard/scripts/get-script/${id}`);
+      console.log("Fetch Script by ID Response:", res?.data);
+      return res.data;
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to fetch script"
+      );
+    }
+  }
+);
+
+// Update script
+export const updateScript = createAsyncThunk(
+  "storefront/updateScript",
+  async ({ id, data }: { id: any; data: any }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.put(
+        `dashboard/scripts/update-script/${id}`,
+        data
+      );
+      console.log("Update Script Response:", res?.data);
+      return res.data;
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to update script"
+      );
+    }
+  }
+);
+
+
+// Delete script
+export const deleteScript = createAsyncThunk(
+  "storefront/deleteScript",
+  async ({ id }: { id: any }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.delete(
+        `dashboard/scripts/delete-script/${id}`
+      );
+      console.log("Delete Script Response:", res?.data);
+      return res.data;
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to delete script"
+      );
+    }
+  }
+);
+
+
 // 2. Initial State
 const initialState = {
   loading: false,
@@ -293,6 +385,7 @@ const initialState = {
   blogs: [],
   logoData: [],
   carouselData: [],
+  scriptData: [],
 };
 
 // 3. Slice
@@ -354,6 +447,17 @@ const homeSlice = createSlice({
         state.carouselData = action.payload;
       })
       .addCase(fetchCarousal.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action?.error?.message || "Failed to  fetch Carousal";
+      })
+      .addCase(fetchScripts.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchScripts.fulfilled, (state, action) => {
+        state.loading = false;
+        state.scriptData = action.payload;
+      })
+      .addCase(fetchScripts.rejected, (state, action) => {
         state.loading = false;
         state.error = action?.error?.message || "Failed to  fetch Carousal";
       });
