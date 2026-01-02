@@ -86,8 +86,8 @@ export default function RegisterPage() {
 
         // ✅ Redirect after success
         setTimeout(()=>{
-          router.push("/auth/login");
-        },600)
+          router.push("/login");
+        },3000)
       } else {
         console.error(
           "Registration failed",

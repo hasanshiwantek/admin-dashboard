@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -8,8 +8,15 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Info } from "lucide-react";
+import { Info, Loader2 } from "lucide-react";
 import CategoryTreeSm from "@/app/components/products/add/CategoryTreeSm";
+import {
+  createCoupon,
+  getCouponById,
+  updateCouponCode,
+} from "@/redux/slices/marketingSlice";
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
+import { useRouter, useParams } from "next/navigation";
 
 interface CouponFormData {
   couponCode: string;
@@ -29,12 +36,17 @@ interface CouponFormData {
   expiration: string;
   appliesToCategories: boolean;
   appliesToProducts: boolean;
-  selectedCategories: string[];
+  categoryIds: string;
+  productIds: string | null;
   limitByLocation: boolean;
   limitByShipping: boolean;
 }
 
 const AddCouponCode = () => {
+  const params = useParams();
+  const couponId = params?.id; // Get ID from URL params
+  const isEditMode = !!couponId;
+
   const methods = useForm<CouponFormData>({
     defaultValues: {
       couponCode: "",
@@ -49,30 +61,143 @@ const AddCouponCode = () => {
       expiration: "",
       appliesToCategories: true,
       appliesToProducts: false,
-      selectedCategories: [],
+      categoryIds: "",
+      productIds: null,
       limitByLocation: false,
       limitByShipping: false,
     },
   });
-  const { register, watch, setValue } = methods;
+
+  const { register, watch, setValue, reset } = methods;
+  const dispatch = useAppDispatch();
+  const router = useRouter();
 
   const [activeTab, setActiveTab] = useState("general");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
   const discountType = watch("discountType");
   const appliesToCategories = watch("appliesToCategories");
 
-  const onSubmit = (data: CouponFormData) => {
-    console.log("Coupon Data:", data);
+  // Fetch coupon data if in edit mode
+  useEffect(() => {
+    if (isEditMode && couponId) {
+      fetchCouponData();
+    }
+  }, [couponId, isEditMode]);
+
+  const fetchCouponData = async () => {
+    setIsLoading(true);
+    try {
+      const result = await dispatch(getCouponById({ id: couponId })).unwrap();
+
+      console.log("Fetched coupon data:", result);
+
+      // Populate form with fetched data
+      const couponData = result?.couponcode || result?.data;
+      if (couponData) {
+        // Helper function to convert string "0"/"1" or "true"/"false" to boolean
+        const toBoolean = (value: any): boolean => {
+          if (
+            value === "1" ||
+            value === 1 ||
+            value === "true" ||
+            value === true
+          ) {
+            return true;
+          }
+          return false;
+        };
+
+        reset({
+          couponCode: couponData.couponCode || "",
+          couponName: couponData.couponName || "",
+          discountType: couponData.discountType || "dollarAmountOrder",
+          discountAmount: couponData.discountAmount || "0.00",
+          minimumPurchase: couponData.minimumPurchase || "0.00",
+          limitTotalUses: toBoolean(couponData.limitTotalUses),
+          limitUsesPerCustomer: toBoolean(couponData.limitUsesPerCustomer),
+          excludeCartDiscounts: toBoolean(couponData.excludeCartDiscounts),
+          enabled: toBoolean(couponData.enabled),
+          expiration: couponData.expiration || "",
+          appliesToCategories: toBoolean(couponData.appliesToCategories),
+          appliesToProducts: toBoolean(couponData.appliesToProducts),
+          categoryIds: couponData.categoryIds || "",
+          productIds: couponData.productIds || null,
+          limitByLocation: toBoolean(couponData.limitByLocation),
+          limitByShipping: toBoolean(couponData.limitByShipping),
+        });
+      }
+    } catch (error: any) {
+      console.error("Error fetching coupon:", error);
+      // Optionally redirect back to list
+      // router.push("/manage/marketing/coupon-codes");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
+  const onSubmit = async (data: CouponFormData) => {
+    console.log("Coupon Data:", data);
+    setIsSubmitting(true);
+
+    try {
+      let result;
+
+      if (isEditMode) {
+        // Update existing coupon
+        result = await dispatch(
+          updateCouponCode({ id: couponId, data })
+        ).unwrap();
+        console.log("Coupon updated successfully:", result);
+      } else {
+        // Create new coupon
+        result = await dispatch(createCoupon({ data })).unwrap();
+        console.log("Coupon created successfully:", result);
+      }
+
+      // Redirect after success
+      setTimeout(() => {
+        router.push("/manage/marketing/coupon-codes");
+      }, 2000);
+    } catch (error: any) {
+      console.error(
+        `Error ${isEditMode ? "updating" : "creating"} coupon:`,
+        error
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleCancel = () => {
+    if (isSubmitting || isLoading) return;
+    router.push("/manage/marketing/coupon-codes");
+  };
+
+  // Show loading state while fetching data in edit mode
+  if (isEditMode && isLoading) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+          <p className="text-gray-600">Loading coupon data...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="w-full ">
+    <div className="w-full">
       {/* Header */}
-      <div className=" p-10 border-b">
-        <h1 className="!font-light 2xl:!text-5xl mb-2">Create a coupon code</h1>
-        <p className=" text-gray-600">
-          Coupon codes allow you to provide customers with discounts on products
-          available for purchase from your store. Fill out the form below to
-          create a unique coupon code.
+      <div className="p-10 border-b">
+        <h1 className="!font-light 2xl:!text-5xl mb-2">
+          {isEditMode ? "Edit coupon code" : "Create a coupon code"}
+        </h1>
+        <p className="text-gray-600">
+          {isEditMode
+            ? "Update the coupon code details below."
+            : "Coupon codes allow you to provide customers with discounts on products available for purchase from your store. Fill out the form below to create a unique coupon code."}
         </p>
       </div>
 
@@ -81,7 +206,7 @@ const AddCouponCode = () => {
           {/* Tabs */}
           <div className="p-10">
             <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="bg-transparent  rounded-none w-full max-w-md justify-start p-0 h-auto">
+              <TabsList className="bg-transparent rounded-none w-full max-w-md justify-start p-0 h-auto">
                 <TabsTrigger
                   value="general"
                   className="rounded-none border-b-2 border-transparent data-[state=active]:border-b-blue-600 data-[state=active]:bg-transparent data-[state=active]:shadow-none px-6 py-3"
@@ -100,7 +225,7 @@ const AddCouponCode = () => {
               <TabsContent value="general" className="mt-6">
                 {/* Coupon Details */}
                 <div className="bg-white border rounded-lg p-8 mb-6">
-                  <h2 className=" !font-semibold text-gray-800 mb-6">
+                  <h2 className="!font-semibold text-gray-800 mb-6">
                     Coupon details
                   </h2>
 
@@ -108,7 +233,7 @@ const AddCouponCode = () => {
                   <div className="grid grid-cols-[200px_1fr] items-center gap-4 mb-6">
                     <Label
                       htmlFor="couponCode"
-                      className="text-right  text-gray-700"
+                      className="text-right text-gray-700"
                     >
                       Coupon code
                     </Label>
@@ -127,7 +252,7 @@ const AddCouponCode = () => {
                   <div className="grid grid-cols-[200px_1fr] items-center gap-4 mb-6">
                     <Label
                       htmlFor="couponName"
-                      className="text-right  text-gray-700"
+                      className="text-right text-gray-700"
                     >
                       Coupon name
                     </Label>
@@ -143,7 +268,7 @@ const AddCouponCode = () => {
 
                   {/* Discount Type */}
                   <div className="grid grid-cols-[200px_1fr] items-start gap-4 mb-6">
-                    <Label className="text-right  text-gray-700 pt-2">
+                    <Label className="text-right text-gray-700 pt-2">
                       Discount type
                     </Label>
                     <RadioGroup
@@ -221,7 +346,7 @@ const AddCouponCode = () => {
                     <div className="grid grid-cols-[200px_1fr] items-center gap-4 mb-6">
                       <Label
                         htmlFor="discountAmount"
-                        className="text-right  text-gray-700"
+                        className="text-right text-gray-700"
                       >
                         Discount amount
                       </Label>
@@ -234,7 +359,7 @@ const AddCouponCode = () => {
                           step="0.01"
                           className="max-w-[150px]"
                         />
-                        <span className=" text-gray-600">
+                        <span className="text-gray-600">
                           off the order total
                         </span>
                         <Info className="w-4 h-4 text-gray-400" />
@@ -244,7 +369,7 @@ const AddCouponCode = () => {
 
                   {/* Minimum Purchase */}
                   <div className="grid grid-cols-[200px_1fr] items-center gap-4 mb-6">
-                    <Label className="text-right  text-gray-700">
+                    <Label className="text-right text-gray-700">
                       Minimum purchase
                       <div className="text-xs text-gray-500">(optional)</div>
                     </Label>
@@ -262,7 +387,7 @@ const AddCouponCode = () => {
 
                   {/* Number of Uses */}
                   <div className="grid grid-cols-[200px_1fr] items-start gap-4 mb-6">
-                    <Label className="text-right  text-gray-700 pt-2">
+                    <Label className="text-right text-gray-700 pt-2">
                       Number of uses
                     </Label>
                     <div className="space-y-3">
@@ -301,7 +426,7 @@ const AddCouponCode = () => {
 
                   {/* Exclude Cart Level Discounts */}
                   <div className="grid grid-cols-[200px_1fr] items-center gap-4 mb-6">
-                    <Label className="text-right  text-gray-700">
+                    <Label className="text-right text-gray-700">
                       Exclude cart level discounts
                     </Label>
                     <div className="flex items-center space-x-2">
@@ -324,7 +449,7 @@ const AddCouponCode = () => {
 
                   {/* Enabled */}
                   <div className="grid grid-cols-[200px_1fr] items-center gap-4 mb-6">
-                    <Label className="text-right  text-gray-700">Enabled</Label>
+                    <Label className="text-right text-gray-700">Enabled</Label>
                     <div className="flex items-center space-x-2">
                       <Checkbox
                         id="enabled"
@@ -344,7 +469,7 @@ const AddCouponCode = () => {
 
                   {/* Expiration */}
                   <div className="grid grid-cols-[200px_1fr] items-center gap-4">
-                    <Label className="text-right  text-gray-700">
+                    <Label className="text-right text-gray-700">
                       Expiration
                       <div className="text-xs text-gray-500">(optional)</div>
                     </Label>
@@ -367,7 +492,7 @@ const AddCouponCode = () => {
                   </h2>
 
                   <div className="grid grid-cols-[200px_1fr] items-start gap-4">
-                    <Label className="text-right  text-gray-700 pt-2">
+                    <Label className="text-right text-gray-700 pt-2">
                       Applies to
                     </Label>
                     <div>
@@ -427,7 +552,7 @@ const AddCouponCode = () => {
                   </h2>
 
                   <div className="grid grid-cols-[200px_1fr] items-center gap-4">
-                    <Label className="text-right  text-gray-700">
+                    <Label className="text-right text-gray-700">
                       Limit by location
                     </Label>
                     <div className="flex items-center space-x-2">
@@ -457,7 +582,7 @@ const AddCouponCode = () => {
                   </h2>
 
                   <div className="grid grid-cols-[200px_1fr] items-center gap-4">
-                    <Label className="text-right  text-gray-700">
+                    <Label className="text-right text-gray-700">
                       Limit By Shipping
                     </Label>
                     <div className="flex items-center space-x-2">
@@ -485,11 +610,27 @@ const AddCouponCode = () => {
 
           {/* Footer Buttons */}
           <div className="sticky bottom-0 w-full border-t p-6 bg-white flex justify-end gap-4 z-999 shadow-lg">
-            <button type="button" className="btn-outline-primary">
+            <button
+              type="button"
+              onClick={handleCancel}
+              disabled={isSubmitting || isLoading}
+              className="btn-outline-primary"
+            >
               Cancel
             </button>
-            <button type="submit" className="btn-primary">
-              Save
+            <button
+              type="submit"
+              disabled={isSubmitting || isLoading}
+              className="btn-primary flex items-center gap-2"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  {isEditMode ? "Updating..." : "Creating..."}
+                </>
+              ) : (
+                <>{isEditMode ? "Update Coupon Code" : "Create Coupon Code"}</>
+              )}
             </button>
           </div>
         </form>
