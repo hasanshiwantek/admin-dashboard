@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -18,18 +18,23 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import Spinner from "../../loader/Spinner";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Check, MoreHorizontal, Trash2, SlidersHorizontal } from "lucide-react";
+  Check,
+  MoreHorizontal,
+  Trash2,
+  SlidersHorizontal,
+  Loader2,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import Pagination from "@/components/ui/pagination";
 import { IoFilterOutline } from "react-icons/io5";
 import Link from "next/link";
+import {
+  getCouponCodes,
+  searchCouponcode,
+} from "@/redux/slices/marketingSlice";
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 
 interface Coupon {
   id: string;
@@ -41,42 +46,33 @@ interface Coupon {
   enabled: boolean;
 }
 
-const couponsData: Coupon[] = [
-  {
-    id: "1",
-    name: "10%",
-    code: "CTSDISCOUNT10",
-    discount: "10.00% off each item",
-    expiration: "N/A",
-    uses: 2,
-    enabled: true,
-  },
-  {
-    id: "2",
-    name: "10 DOLLAR",
-    code: "CTS10001",
-    discount: "$10.00 off the order total",
-    expiration: "N/A",
-    uses: 0,
-    enabled: true,
-  },
-];
-
 const CouponCodesTable = () => {
-  const [coupons, setCoupons] = useState<Coupon[]>(couponsData);
   const [selectedCoupons, setSelectedCoupons] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [itemsPerPage, setItemsPerPage] = useState(20);
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage, setPerPage] = useState("50");
-  const totalCount = 20;
-  const totalPages = 20;
+  const [perPage, setPerPage] = useState("10");
   const router = useRouter();
+  const dispatch = useAppDispatch();
+  const { couponCodes, loading, error } = useAppSelector(
+    (state: any) => state.marketingReducer
+  );
+
+  const couponsData = couponCodes?.couponcode?.data || [];
+  const totalCount = couponCodes?.couponcode?.total || 0;
+  const totalPages = couponCodes?.couponcode?.last_page || 1;
+  const currentPageFromAPI = couponCodes?.couponcode?.current_page || 1;
+
+  console.log(couponCodes);
+
+  useEffect(() => {
+    dispatch(getCouponCodes());
+  }, [dispatch, currentPage, perPage]);
+
   const toggleSelectAll = () => {
-    if (selectedCoupons.length === coupons.length) {
+    if (selectedCoupons.length === couponsData?.length) {
       setSelectedCoupons([]);
     } else {
-      setSelectedCoupons(coupons.map((c) => c.id));
+      setSelectedCoupons(couponsData?.map((c: any) => c.id));
     }
   };
 
@@ -86,6 +82,39 @@ const CouponCodesTable = () => {
     } else {
       setSelectedCoupons([...selectedCoupons, id]);
     }
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    setSelectedCoupons([]); // Clear selections when changing pages
+  };
+
+  const handlePerPageChange = (value: string) => {
+    setPerPage(value);
+    setCurrentPage(1); // Reset to first page when changing items per page
+    setSelectedCoupons([]); // Clear selections
+  };
+  const filterCouponHandler = () => {
+    if (searchQuery.trim()) {
+      // Dispatch search action
+      dispatch(searchCouponcode({ search: searchQuery, per_page: perPage }));
+    } else {
+      // If search is empty, fetch all coupons
+      dispatch(getCouponCodes());
+    }
+  };
+
+  // Handle Enter key press in search input
+  const handleSearchKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      filterCouponHandler();
+    }
+  };
+
+  // Clear search
+  const handleClearSearch = () => {
+    setSearchQuery("");
+    dispatch(getCouponCodes());
   };
 
   return (
@@ -120,7 +149,10 @@ const CouponCodesTable = () => {
                 Create a coupon code
               </button>
             </Link>
-            <button className="btn-outline-primary ">
+            <button
+              className="btn-outline-primary"
+              disabled={selectedCoupons.length === 0}
+            >
               <Trash2 className="h-6 w-6 fill-blue-600" />
             </button>
 
@@ -130,8 +162,22 @@ const CouponCodesTable = () => {
                 placeholder="Filter by Keyword"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={handleSearchKeyPress}
               />
-              <button className="btn-outline-primary h-full">
+              {searchQuery && (
+                <button
+                  onClick={handleClearSearch}
+                  className="px-2 text-gray-400 hover:text-gray-600"
+                  type="button"
+                >
+                  ×
+                </button>
+              )}
+              <button
+                className="btn-outline-primary h-full"
+                onClick={filterCouponHandler}
+                type="button"
+              >
                 <IoFilterOutline />
               </button>
             </div>
@@ -139,9 +185,9 @@ const CouponCodesTable = () => {
             <Pagination
               currentPage={currentPage}
               totalPages={totalPages}
-              onPageChange={setCurrentPage}
+              onPageChange={handlePageChange}
               perPage={perPage}
-              onPerPageChange={setPerPage}
+              onPerPageChange={handlePerPageChange}
             />
           </div>
 
@@ -152,10 +198,11 @@ const CouponCodesTable = () => {
                 <TableHead className="w-12">
                   <Checkbox
                     checked={
-                      selectedCoupons.length === coupons.length &&
-                      coupons.length > 0
+                      selectedCoupons.length === couponsData?.length &&
+                      couponsData?.length > 0
                     }
                     onCheckedChange={toggleSelectAll}
+                    disabled={loading || couponsData?.length === 0}
                   />
                 </TableHead>
                 <TableHead className="font-semibold text-gray-700">
@@ -182,69 +229,163 @@ const CouponCodesTable = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {coupons.map((coupon) => (
-                <TableRow
-                  key={coupon.id}
-                  className="hover:bg-gray-50 transition-colors h-18"
-                >
-                  <TableCell>
-                    <Checkbox
-                      checked={selectedCoupons.includes(coupon.id)}
-                      onCheckedChange={() => toggleSelectCoupon(coupon.id)}
-                    />
-                  </TableCell>
-                  <TableCell className="text-blue-600 font-normal">
-                    {coupon.name}
-                  </TableCell>
-                  <TableCell className="text-gray-700">{coupon.code}</TableCell>
-                  <TableCell className="text-gray-700">
-                    {coupon.discount}
-                  </TableCell>
-                  <TableCell className="text-gray-700">
-                    {coupon.expiration}
-                  </TableCell>
-                  <TableCell className="text-gray-700">{coupon.uses}</TableCell>
-                  <TableCell>
-                    {coupon.enabled && (
-                      <Check className="h-6 w-10 text-green-600" />
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 hover:bg-gray-100"
-                        >
-                          <MoreHorizontal className="!h-6 !w-6 text-gray-600" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent
-                        align="end"
-                        className="w-[120px] space-y-4"
-                      >
-                        <DropdownMenuItem
-                          className="cursor-pointer"
-                          onClick={() =>
-                            router.push(
-                              `/manage/marketing/coupon-codes/edit/${coupon?.id}`
-                            )
-                          }
-                        >
-                          Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="cursor-pointer">
-                          Copy to Clipboard
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="cursor-pointer">
-                          View Orders
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+              {/* Loading State */}
+              {loading && (
+                <TableRow>
+                  <TableCell colSpan={8} className="h-64 text-center">
+                    <div className="flex flex-col items-center justify-center gap-3">
+                      <Spinner />
+                    </div>
                   </TableCell>
                 </TableRow>
-              ))}
+              )}
+
+              {/* Error State */}
+              {!loading && error && (
+                <TableRow>
+                  <TableCell colSpan={8} className="h-64 text-center">
+                    <div className="flex flex-col items-center justify-center gap-3">
+                      <div className="rounded-full bg-red-100 p-3">
+                        <svg
+                          className="h-6 w-6 text-red-600"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M6 18L18 6M6 6l12 12"
+                          />
+                        </svg>
+                      </div>
+                      <p className="text-gray-900 font-medium">
+                        Failed to load coupon codes
+                      </p>
+                      <p className="text-gray-600 text-sm">
+                        {error?.message ||
+                          "An error occurred while fetching data"}
+                      </p>
+                      <Button
+                        onClick={() => dispatch(getCouponCodes())}
+                        variant="outline"
+                        className="mt-2"
+                      >
+                        Try Again
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              )}
+
+              {/* Empty State */}
+              {!loading && !error && couponsData?.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={8} className="h-64 text-center">
+                    <div className="flex flex-col items-center justify-center gap-3">
+                      <div className="rounded-full bg-gray-100 p-3">
+                        <svg
+                          className="h-6 w-6 text-gray-400"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+                          />
+                        </svg>
+                      </div>
+                      <p className="text-gray-900 font-medium">
+                        No coupon codes found
+                      </p>
+                      <p className="text-gray-600 text-sm">
+                        Get started by creating your first coupon code
+                      </p>
+                      <Link href={"/manage/marketing/coupon-codes/add"}>
+                        <Button className="mt-2">Create a coupon code</Button>
+                      </Link>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              )}
+
+              {/* Data Rows */}
+              {!loading &&
+                !error &&
+                couponsData?.length > 0 &&
+                couponsData?.map((coupon: any) => (
+                  <TableRow
+                    key={coupon?.id}
+                    className="hover:bg-gray-50 transition-colors h-18"
+                  >
+                    <TableCell>
+                      <Checkbox
+                        checked={selectedCoupons.includes(coupon?.id)}
+                        onCheckedChange={() => toggleSelectCoupon(coupon?.id)}
+                      />
+                    </TableCell>
+                    <TableCell className="text-blue-600 font-normal">
+                      {coupon?.couponName}
+                    </TableCell>
+                    <TableCell className="text-gray-700">
+                      {coupon?.couponCode}
+                    </TableCell>
+                    <TableCell className="text-gray-700">
+                      {coupon?.discountType === "dollarAmountOrder"
+                        ? `$${coupon?.discountAmount}`
+                        : `${coupon?.discountAmount}%`}
+                    </TableCell>
+                    <TableCell className="text-gray-700">
+                      {coupon?.expiration || "No expiration"}
+                    </TableCell>
+                    <TableCell className="text-gray-700">
+                      {coupon?.uses || 0}
+                    </TableCell>
+                    <TableCell>
+                      {coupon?.enabled === "true" && (
+                        <Check className="h-6 w-10 text-green-600" />
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 hover:bg-gray-100"
+                          >
+                            <MoreHorizontal className="!h-6 !w-6 text-gray-600" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                          align="end"
+                          className="w-[120px] space-y-4"
+                        >
+                          <DropdownMenuItem
+                            className="cursor-pointer"
+                            onClick={() =>
+                              router.push(
+                                `/manage/marketing/coupon-codes/edit/${coupon?.id}`
+                              )
+                            }
+                          >
+                            Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuItem className="cursor-pointer">
+                            Copy to Clipboard
+                          </DropdownMenuItem>
+                          <DropdownMenuItem className="cursor-pointer">
+                            View Orders
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
 
@@ -253,9 +394,9 @@ const CouponCodesTable = () => {
             <Pagination
               currentPage={currentPage}
               totalPages={totalPages}
-              onPageChange={setCurrentPage}
+              onPageChange={handlePageChange}
               perPage={perPage}
-              onPerPageChange={setPerPage}
+              onPerPageChange={handlePerPageChange}
             />
           </div>
         </div>
