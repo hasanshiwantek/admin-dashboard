@@ -469,8 +469,6 @@ export const importTrackingNumbers = createAsyncThunk(
   }
 );
 
-
-
 // ADVANCE RETURN ORDER SEARCH THUNK
 export const advanceReturnOrderSearch = createAsyncThunk(
   "orders/advanceReturnOrderSearch",
@@ -491,7 +489,24 @@ export const advanceReturnOrderSearch = createAsyncThunk(
   }
 );
 
-
+// DRAFT ORDERS
+export const fetchDraftOrders = createAsyncThunk(
+  "orders/fetchDraftOrders",
+  async ({ isDraft }: { isDraft: any }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.get(
+        `dashboard/orders/get-draft-order?isDraft=${isDraft}`
+      );
+      console.log("✅ Draft Order Response Data:", res.data);
+      return res.data;
+    } catch (err: any) {
+      console.error("❌ Error fetching draft orders:", err);
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to fetch draft orders"
+      );
+    }
+  }
+);
 
 // 2. Initial State
 const initialState = {
@@ -500,6 +515,7 @@ const initialState = {
   singleOrder: null,
   loading: false,
   error: null as string | null,
+  draftOrder: [],
 };
 
 // 3. Slice
@@ -576,6 +592,18 @@ const orderSlice = createSlice({
       .addCase(fetchShipmentByKeyword.fulfilled, (state, action) => {
         state.loading = false;
         state.shipments = action.payload;
+      })
+      .addCase(fetchDraftOrders.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(fetchDraftOrders.pending, (state) => {
+        state.loading = true;
+        state.error = null; // reset error
+      })
+      .addCase(fetchDraftOrders.fulfilled, (state, action) => {
+        state.loading = false;
+        state.draftOrder = action.payload;
       });
   },
 });

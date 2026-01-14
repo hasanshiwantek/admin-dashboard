@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Search, ChevronRight, ArrowLeft, Info } from "lucide-react";
 import { WebsiteSettings } from "./WebsiteSettings";
 import { DisplaySettings } from "./DisplaySettings";
@@ -20,6 +20,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { SecurityPrivacySettings } from "./SecurityPrivacySettings";
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
+import Spinner from "../loader/Spinner";
+import {
+  createStoreSettings,
+  fetchStoreSettings,
+} from "@/redux/slices/homeSlice";
 // FormField Component
 export const FormField = ({
   label,
@@ -48,7 +54,6 @@ export const FormField = ({
   </div>
 );
 
-
 // CheckboxField Component (Helper for the Display tab)
 // Note: Assumes a Checkbox component that takes 'checked' and 'onCheckedChange'
 export const CheckboxField = ({
@@ -61,15 +66,19 @@ export const CheckboxField = ({
 }: {
   label: string;
   checked: boolean;
-  className?: string; 
+  className?: string;
   onCheckedChange: (checked: boolean) => void;
   infoText: string;
   isFullWidth?: boolean;
 }) => (
   <div className="flex flex-col lg:flex-row items-start gap-4 py-3">
-    <Label   className={`flex justify-start lg:justify-end pr-4 pt-1 2xl:!text-2xl ${
+    <Label
+      className={`flex justify-start lg:justify-end pr-4 pt-1 2xl:!text-2xl ${
         className ? className : "w-48 2xl:w-64"
-      }`}>{label}</Label>
+      }`}
+    >
+      {label}
+    </Label>
     <div className="flex-1 flex items-center gap-2">
       <div className="flex items-center space-x-2">
         <Checkbox
@@ -129,7 +138,6 @@ export const RadioField = ({
   </div>
 );
 
-
 // 🆕 Custom Smtp Settings Sub-Component
 const CustomSmtpSettings = () => {
   // Note: State for these fields needs to be managed in the parent MiscellaneousSettings component,
@@ -179,7 +187,9 @@ export const RadioGroupField = ({
 }) => (
   <div className="flex flex-col lg:flex-row lg:items-start gap-2 lg:gap-4 py-3">
     <Label
-      className={`flex justify-start lg:justify-end 2xl:!text-2xl pt-1 ${className ? className : "w-full lg:w-48"}`}
+      className={`flex justify-start lg:justify-end 2xl:!text-2xl pt-1 ${
+        className ? className : "w-full lg:w-48"
+      }`}
     >
       {title}
     </Label>
@@ -218,7 +228,6 @@ export const RadioGroupField = ({
   </div>
 );
 
-
 // Helper component for the three URL Setting sections (Product, Category, Web Page)
 export const UrlSettingSection = ({
   title,
@@ -245,7 +254,10 @@ export const UrlSettingSection = ({
       <div className="flex flex-col lg:flex-row lg:item-center items-start gap-4">
         <div className="flex items-center  w-full lg:w-80 lg:flex-row-reverse gap-10">
           <RadioGroupItem value="seo-optimized-short" id={`${name}-short`} />
-          <Label htmlFor={`${name}-short`} className="ml-2 font-normal 2xl:!text-2xl">
+          <Label
+            htmlFor={`${name}-short`}
+            className="ml-2 font-normal 2xl:!text-2xl"
+          >
             SEO Optimized (Short)
           </Label>
         </div>
@@ -257,7 +269,10 @@ export const UrlSettingSection = ({
       <div className="flex flex-col lg:flex-row lg:item-center items-start gap-4">
         <div className="flex items-center  w-full lg:w-80 lg:flex-row-reverse gap-10">
           <RadioGroupItem value="seo-optimized-long" id={`${name}-long`} />
-          <Label htmlFor={`${name}-long`} className="ml-2 font-normal 2xl:!text-2xl">
+          <Label
+            htmlFor={`${name}-long`}
+            className="ml-2 font-normal 2xl:!text-2xl"
+          >
             SEO Optimized (Long)
           </Label>
         </div>
@@ -273,7 +288,10 @@ export const UrlSettingSection = ({
         <div className="flex flex-col lg:flex-row lg:item-center items-start gap-4">
           <div className="flex items-center  w-full lg:w-80 lg:flex-row-reverse gap-10">
             <RadioGroupItem value="custom" id={`${name}-custom`} />
-            <Label htmlFor={`${name}-custom`} className="ml-2 font-normal 2xl:!text-2xl">
+            <Label
+              htmlFor={`${name}-custom`}
+              className="ml-2 font-normal 2xl:!text-2xl"
+            >
               Custom
             </Label>
           </div>
@@ -293,7 +311,10 @@ export const UrlSettingSection = ({
             <a href="#" className="text-blue-600 text-sm hover:underline">
               What placeholders can I use and how do they work?
             </a>
-            <Button variant="outline" className="mt-2 text-lg 2xl:!text-2xl !p-6">
+            <Button
+              variant="outline"
+              className="mt-2 text-lg 2xl:!text-2xl !p-6"
+            >
               Update {title.replace(" Settings", "")} URLs...
             </Button>
           </div>
@@ -313,27 +334,28 @@ export const HstsSettings = ({
 }) => (
   <div className="lg:pl-52 space-y-3 mt-4">
     <div className="flex flex-col lg:flex-row items-start lg:items-center space-x-2">
-    <p className="text-sm text-gray-700 2xl:!text-2xl" >Set Max-Age Header (max-age) to:</p>
+      <p className="text-sm text-gray-700 2xl:!text-2xl">
+        Set Max-Age Header (max-age) to:
+      </p>
       {/* <Input
         type="number"
         value={settings.hstsMaxAge}
         onChange={(e) => updateSetting("hstsMaxAge", e.target.value)}
         className="w-20"
       /> */}
-    <Select
-  value={settings.hstsMaxAgeUnit}
-  onValueChange={(value) => updateSetting("hstsMaxAgeUnit", value)}
->
-  <SelectTrigger className="w-56">
-    <SelectValue defaultValue="5 minutes" />
-  </SelectTrigger>
-  <SelectContent>
-    <SelectItem value="0">0 (disabled)</SelectItem>
-    <SelectItem value="5 minutes">5 minutes (for testing)</SelectItem>
-    <SelectItem value="1 year">1 year</SelectItem>
-  </SelectContent>
-</Select>
-
+      <Select
+        value={settings.hstsMaxAgeUnit}
+        onValueChange={(value) => updateSetting("hstsMaxAgeUnit", value)}
+      >
+        <SelectTrigger className="w-56">
+          <SelectValue defaultValue="5 minutes" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="0">0 (disabled)</SelectItem>
+          <SelectItem value="5 minutes">5 minutes (for testing)</SelectItem>
+          <SelectItem value="1 year">1 year</SelectItem>
+        </SelectContent>
+      </Select>
     </div>
     <CheckboxField
       className="w-full lg:w-0"
@@ -403,12 +425,24 @@ export const XFrameOptionsSettings = ({
 export const StoreSettings = ({
   currentSetting,
   onBack,
-  initialTab,  
+  initialTab,
 }: {
   currentSetting: any;
   onBack: any;
   initialTab?: string;
 }) => {
+  const { storeSettings, settingsLoader } = useAppSelector(
+    (state: any) => state.home
+  );
+  console.log("Store Settings ", storeSettings);
+
+  const dispatch = useAppDispatch();
+
+  // Fetch settings on component mount
+  useEffect(() => {
+    dispatch(fetchStoreSettings());
+  }, [dispatch]);
+
   const [websiteSettings, setWebsiteSettings] = useState({
     weightMeasurement: "pounds",
     lengthMeasurement: "inches",
@@ -416,7 +450,7 @@ export const StoreSettings = ({
     thousandsToken: ",",
     decimalPlaces: "2",
     factoringDimension: "product-depth",
-    homePageTitle: "CTS Point, Inc. | Computer Technology Solutions Point",
+    homePageTitle: "",
     metaKeywords:
       "NETWORK ADAPTERS, POWER SUPPLY, HARD DRIVE, SSD, SWITCHES, PRI",
     metaDescription:
@@ -528,7 +562,7 @@ Disallow: /search.php`,
     reviewEmailDays: "7",
     sendReviewEmailToGuests: true,
     forwardOrderInvoices: true,
-    invoiceEmailRecipient: "sales@ctspoint.com, info@ctspoint.cc",
+    invoiceEmailRecipient: "sales@test.com, info@test.cc",
     smtpServerOption: "default",
     administratorEmail: "info@ctspoint.com",
     requireMarketingConsent: false,
@@ -537,7 +571,7 @@ Disallow: /search.php`,
     emailEveryAbandonedCart: false,
     stopEmailOnCompleteOrder: true,
     enableConvertedCartEmails: true,
-    convertedCartRecipient: "info@ctspoint.com",
+    convertedCartRecipient: "info@test.com",
 
     // Advanced Store Settings
     allowPurchasing: true,
@@ -551,17 +585,93 @@ Disallow: /search.php`,
     throttlePeriodValue: "30",
     throttlePeriodUnit: "minutes",
   });
-  const handleSave = () => {
-    console.log("Saving settings:", websiteSettings);
-    console.log("Saving display settings:", displaySettings);
-    console.log("Saving date & timezone settings:", dateTimezoneSettings);
-    console.log("Saving URL structure settings:", urlStructureSettings);
-    console.log("Saving search settings:", searchSettings);
-    console.log("Saving Security settings:", securityPrivacySettings);
-    console.log("Saving miscellaneous settings:", miscellaneousSettings);
-    // Add your save logic here
+
+  // Update state when storeSettings data is loaded
+  useEffect(() => {
+    if (!storeSettings || storeSettings.length === 0) return;
+
+    const settings = Array.isArray(storeSettings)
+      ? storeSettings[0]
+      : storeSettings;
+
+    console.log("📦 Populating form with fetched settings:", settings);
+
+    if (settings.website)
+      setWebsiteSettings((prev) => ({ ...prev, ...settings.website }));
+    if (settings.display)
+      setDisplaySettings((prev) => ({ ...prev, ...settings.display }));
+    if (settings.dateTimezone)
+      setDateTimezoneSettings((prev) => ({
+        ...prev,
+        ...settings.dateTimezone,
+      }));
+    if (settings.urlStructure)
+      setUrlStructureSettings((prev) => ({
+        ...prev,
+        ...settings.urlStructure,
+      }));
+    if (settings.search)
+      setSearchSettings((prev) => ({ ...prev, ...settings.search }));
+    if (settings.securityPrivacy)
+      setSecurityPrivacySettings((prev) => ({
+        ...prev,
+        ...settings.securityPrivacy,
+      }));
+    if (settings.miscellaneous)
+      setMiscellaneousSettings((prev) => ({
+        ...prev,
+        ...settings.miscellaneous,
+      }));
+  }, [storeSettings]);
+
+  // Add this function in your StoreSettings component
+
+  const preparePayload = () => {
+    return {
+      website: websiteSettings,
+      display: displaySettings,
+      dateTimezone: dateTimezoneSettings,
+      urlStructure: urlStructureSettings,
+      search: searchSettings,
+      securityPrivacy: securityPrivacySettings,
+      miscellaneous: miscellaneousSettings,
+    };
   };
- const [activeTab, setActiveTab] = useState(initialTab || "website"); 
+
+  const handleSave = async () => {
+    const payload = preparePayload();
+
+    console.log("Complete payload:", payload);
+
+    try {
+      const response = await dispatch(createStoreSettings({ data: payload }));
+      if (createStoreSettings.fulfilled.match(response)) {
+        // Show success message to user
+        console.log("Settings saved successfully!", response.payload);
+        onBack();
+      } else {
+        console.log("Error saving store settings", response.payload);
+      }
+    } catch (error) {
+      console.error("Error saving settings:", error);
+      alert("Failed to save settings. Please try again.");
+    }
+  };
+  const [activeTab, setActiveTab] = useState(initialTab || "website");
+
+  // Show loading state while fetching
+  if (settingsLoader) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-xl">
+            <Spinner />
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen  p-8">
       <div className="">
@@ -580,7 +690,7 @@ Disallow: /search.php`,
         </p>
         <Tabs
           value={activeTab}
-          onValueChange={(val:any) => setActiveTab(val)}
+          onValueChange={(val: any) => setActiveTab(val)}
           className="mb-6"
         >
           <TabsList className="border-b  w-80 justify-start rounded-none h-auto p-0">
@@ -634,6 +744,7 @@ Disallow: /search.php`,
             </TabsTrigger>
           </TabsList>
 
+          {/* CONTENT */}
           <TabsContent value="website" className="mt-6">
             <WebsiteSettings
               settings={websiteSettings}

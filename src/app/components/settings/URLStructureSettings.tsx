@@ -21,8 +21,8 @@ export const URLStructureSettings = ({
           name="product"
           settings={settings}
           updateSetting={updateSetting}
-          seoOptimizedShortExample="https://ctspoint.com/ipod-nano/"
-          seoOptimizedLongExample="https://ctspoint.com/products/ipod-nano.html"
+          seoOptimizedShortExample="https://test.com/ipod-nano/"
+          seoOptimizedLongExample="https://test.com/products/ipod-nano.html"
         />
         <hr className="my-8"/>
 
@@ -32,8 +32,8 @@ export const URLStructureSettings = ({
           name="category"
           settings={settings}
           updateSetting={updateSetting}
-          seoOptimizedShortExample="https://ctspoint.com/apple-ipod/"
-          seoOptimizedLongExample="https://ctspoint.com/categories/apple-ipod.html"
+          seoOptimizedShortExample="https://test.com/apple-ipod/"
+          seoOptimizedLongExample="https://test.com/categories/apple-ipod.html"
         />
         <hr className="my-8"/>
 
@@ -43,8 +43,8 @@ export const URLStructureSettings = ({
           name="webPage"
           settings={settings}
           updateSetting={updateSetting}
-          seoOptimizedShortExample="https://ctspoint.com/about-us/"
-          seoOptimizedLongExample="https://ctspoint.com/pages/about-us.html"
+          seoOptimizedShortExample="https://test.com/about-us/"
+          seoOptimizedLongExample="https://test.com/pages/about-us.html"
         />
       </div>
     </div>

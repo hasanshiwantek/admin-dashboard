@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Info } from "lucide-react";
 import { Label } from "@/components/ui/label";
+import {
+  createEmailMarketing,
+  getEmailMarketing,
+} from "@/redux/slices/marketingSlice";
+import { useAppSelector, useAppDispatch } from "@/hooks/useReduxHooks";
+import { RootState } from "@/redux/store";
+
 interface FormData {
   allowNewsletterSubscriptions: boolean;
   checkNewsletterBoxByDefault: boolean;
@@ -15,7 +22,12 @@ interface FormData {
 }
 
 const EmailMarketing = () => {
-  const { register, watch, setValue, handleSubmit } = useForm<FormData>({
+  const dispatch = useAppDispatch();
+  const { emailMarketing, loading, error } = useAppSelector(
+    (state: any) => state.marketingReducer // Adjust to your slice name
+  );
+
+  const { register, watch, setValue, handleSubmit, reset } = useForm<FormData>({
     defaultValues: {
       allowNewsletterSubscriptions: true,
       checkNewsletterBoxByDefault: false,
@@ -24,12 +36,41 @@ const EmailMarketing = () => {
     },
   });
 
+  // Watch all checkbox values
   const allowNewsletterSubscriptions = watch("allowNewsletterSubscriptions");
+  const checkNewsletterBoxByDefault = watch("checkNewsletterBoxByDefault");
   const showNewsletterSummary = watch("showNewsletterSummary");
 
-  const onSubmit = (data: FormData) => {
-    console.log("Form data:", data);
-    // Handle form submission
+  // Fetch email marketing settings on mount
+  useEffect(() => {
+    dispatch(getEmailMarketing());
+  }, [dispatch]);
+
+  // Populate form when data is fetched
+  useEffect(() => {
+    if (emailMarketing && Object.keys(emailMarketing).length > 0) {
+      reset({
+        allowNewsletterSubscriptions:
+          emailMarketing?.data?.allowNewsletterSubscriptions ?? true,
+        checkNewsletterBoxByDefault:
+          emailMarketing?.data?.checkNewsletterBoxByDefault ?? false,
+        showNewsletterSummary:
+          emailMarketing?.data?.showNewsletterSummary ?? false,
+        newsletterSummaryText:
+          emailMarketing?.data?.newsletterSummaryText ?? "",
+      });
+    }
+  }, [emailMarketing, reset]);
+
+  const onSubmit = async (data: FormData) => {
+    try {
+      await dispatch(createEmailMarketing({ data })).unwrap();
+      // Optional: Show success message
+      console.log("Settings saved successfully");
+    } catch (err) {
+      // Optional: Show error message
+      console.error("Failed to save settings:", err);
+    }
   };
 
   return (
@@ -47,6 +88,22 @@ const EmailMarketing = () => {
             .
           </p>
         </div>
+
+        {/* Loading State */}
+        {loading && (
+          <div className="px-15 py-4">
+            <p className="text-gray-600">Loading...</p>
+          </div>
+        )}
+
+        {/* Error State */}
+        {error && (
+          <div className="px-15 py-4">
+            <div className="bg-red-50 border border-red-200 rounded p-4">
+              <p className="text-red-600">{error}</p>
+            </div>
+          </div>
+        )}
 
         {/* Tabs */}
         <Tabs defaultValue="general" className="w-full ">
@@ -119,10 +176,12 @@ const EmailMarketing = () => {
                             <div className="flex items-center gap-2">
                               <Checkbox
                                 id="checkNewsletterBoxByDefault"
+                                checked={checkNewsletterBoxByDefault}
                                 onCheckedChange={(checked) =>
                                   setValue(
                                     "checkNewsletterBoxByDefault",
-                                    checked as boolean
+                                    checked as boolean,
+                                    { shouldValidate: true, shouldDirty: true }
                                   )
                                 }
                               />
@@ -157,7 +216,8 @@ const EmailMarketing = () => {
                               onCheckedChange={(checked) =>
                                 setValue(
                                   "showNewsletterSummary",
-                                  checked as boolean
+                                  checked as boolean,
+                                  { shouldValidate: true, shouldDirty: true }
                                 )
                               }
                             />
@@ -287,14 +347,16 @@ const EmailMarketing = () => {
                   type="button"
                   variant="ghost"
                   className="text-blue-600 hover:text-blue-700 p-5 text-xl"
+                  onClick={() => reset()}
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
-                  className="bg-blue-600 hover:bg-blue-700 text-white p-5 text-xl"
+                  disabled={loading}
+                  className="bg-blue-600 hover:bg-blue-700 text-white p-5 text-xl disabled:opacity-50"
                 >
-                  Save
+                  {loading ? "Saving..." : "Save"}
                 </Button>
               </div>
             </form>
@@ -326,7 +388,10 @@ const EmailMarketing = () => {
                     Subscriber Count:
                   </span>
                   <div className="text-sm text-gray-700 mb-1">
-                    <span className="font-semibold">106</span> (
+                    <span className="font-semibold">
+                      {emailMarketing?.subscriberCount ?? 106}
+                    </span>{" "}
+                    (
                     <a href="#" className="text-blue-600 hover:underline">
                       Download to CSV file
                     </a>{" "}
