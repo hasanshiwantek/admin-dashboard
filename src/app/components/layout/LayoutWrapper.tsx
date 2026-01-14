@@ -7,11 +7,11 @@ import NavigationLoader from "../loader/NavigationLoader";
 interface LayoutWrapperProps {
   children: React.ReactNode;
 }
- 
+
 const LayoutWrapper: React.FC<LayoutWrapperProps> = ({ children }) => {
-    const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   return (
-<div className="flex flex-col h-screen overflow-hidden">
+    <div className="flex flex-col h-screen overflow-hidden">
       {/* Header */}
       <Header onMenuClick={() => setSidebarOpen(true)} />
       <NavigationLoader />
@@ -31,7 +31,7 @@ const LayoutWrapper: React.FC<LayoutWrapperProps> = ({ children }) => {
           className={`
             fixed md:static
             z-50 md:z-0
-            top-0 left-0 h-full
+            top-0 md:top-22 left-0 h-full
             w-[26.8rem]
             bg-white border-r
             transform transition-transform duration-300

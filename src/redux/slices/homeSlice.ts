@@ -49,7 +49,7 @@ export const fetchOrdersByStatus = createAsyncThunk(
 
 export const globalSearch = createAsyncThunk(
   "home/globalSearch",
-  async ({query} : {query:any}, thunkAPI) => {
+  async ({ query }: { query: any }, thunkAPI) => {
     try {
       const res = await axiosInstance.get(
         `dashboard/global-search?query=${query}`
@@ -65,12 +65,49 @@ export const globalSearch = createAsyncThunk(
   }
 );
 
+export const createStoreSettings = createAsyncThunk(
+  "customer/createStoreSettings",
+  async ({ data }: { data: any }, thunkAPI) => {
+    try {
+      const response = await axiosInstance.post(
+        "dashboard/store-setting/add-store-setting",
+        data
+      );
+      console.log("✅ Store Settings Response From Thunk:", response.data);
+
+      return response.data;
+    } catch (error: any) {
+      console.error("❌ Error Saving Store Setting:", error);
+      return thunkAPI.rejectWithValue("Error Saving Store Setting");
+    }
+  }
+);
+
+export const fetchStoreSettings = createAsyncThunk(
+  "customer/fetchStoreSettings",
+  async (_, thunkAPI) => {
+    try {
+      const response = await axiosInstance.get(
+        "dashboard/store-setting/get-store-setting"
+      );
+      console.log("✅ Store Settings Response From Thunk:", response.data);
+
+      return response.data;
+    } catch (error: any) {
+      console.error("❌ Error fetching Store Setting:", error);
+      return thunkAPI.rejectWithValue("Error fetching Store Setting");
+    }
+  }
+);
+
 // 2. Initial State
 const initialState = {
   metrics: null,
   statistics: null,
   orders: [],
   searchData: [],
+  storeSettings: [],
+  settingsLoader: false,
   loading: false,
   error: null as string | null,
 };
@@ -116,6 +153,19 @@ const homeSlice = createSlice({
       // Orders
       .addCase(fetchOrdersByStatus.fulfilled, (state, action) => {
         state.orders = action.payload;
+      })
+      //STORE SETTINGS
+
+      .addCase(fetchStoreSettings.pending, (state) => {
+        state.settingsLoader = true;
+      })
+      .addCase(fetchStoreSettings.fulfilled, (state, action) => {
+        state.settingsLoader = false;
+        state.storeSettings = action.payload?.data;
+      })
+      .addCase(fetchStoreSettings.rejected, (state, action) => {
+        state.settingsLoader = false;
+        state.error = action.error.message || "Failed to fetch settings data";
       });
   },
 });

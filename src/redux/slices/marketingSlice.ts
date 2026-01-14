@@ -93,7 +93,7 @@ export const updateCouponCode = createAsyncThunk(
   }
 );
 
-export const deleteWebPage = createAsyncThunk(
+export const deleteCouponCode = createAsyncThunk(
   "storefront/deleteWebPage",
   async ({ id }: { id: any }, thunkAPI) => {
     try {
@@ -109,11 +109,49 @@ export const deleteWebPage = createAsyncThunk(
   }
 );
 
+export const createEmailMarketing = createAsyncThunk(
+  "storefront/createEmailMarketing",
+  async ({ data }: { data: any }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.put(
+        `dashboard/email-marketings/email-marketing`,
+        data
+      );
+      console.log("Add Email Marketing Response: ", res?.data);
+      return res.data;
+    } catch (err: any) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to add Marketing Response"
+      );
+    }
+  }
+);
+
+export const getEmailMarketing = createAsyncThunk(
+  "marketing/getEmailMarketing",
+  async (_, thunkAPI) => {
+    try {
+      const res = await axiosInstance.get(
+        `dashboard/email-marketings/get-email-marketing`
+      );
+      console.log("Fetch Email Marketing Response ", res?.data);
+      return res?.data;
+    } catch (err: any) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to fetch Email Marketing"
+      );
+    }
+  }
+);
+
 // 2. Initial State
 const initialState = {
   loading: false,
   error: null as string | null,
   couponCodes: [],
+  emailMarketing: [],
 };
 
 // 3. Slice
@@ -135,9 +173,27 @@ const marketingSlice = createSlice({
         state.loading = false;
         state.error = action.error.message || "Failed to add webpage";
       })
+      .addCase(searchCouponcode.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(searchCouponcode.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "Failed to search coupons";
+      })
       .addCase(searchCouponcode.fulfilled, (state, action) => {
         state.loading = false;
         state.couponCodes = action?.payload;
+      })
+      .addCase(getEmailMarketing.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getEmailMarketing.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "Failed to search coupons";
+      })
+      .addCase(getEmailMarketing.fulfilled, (state, action) => {
+        state.loading = false;
+        state.emailMarketing = action?.payload;
       });
   },
 });
