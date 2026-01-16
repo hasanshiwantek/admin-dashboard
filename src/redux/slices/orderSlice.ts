@@ -508,6 +508,25 @@ export const fetchDraftOrders = createAsyncThunk(
   }
 );
 
+// DELETE DRAFT ORDERS
+export const deleteDraftOrders = createAsyncThunk(
+  "orders/deleteDraftOrders",
+  async ({ id }: { id: any }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.delete(
+        `dashboard/orders/delete-draft/${id}`
+      );
+      console.log("✅ Draft Delete Response Data:", res.data);
+      return res.data;
+    } catch (err: any) {
+      console.error("❌ Error deleting draft order:", err);
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to delete draft order"
+      );
+    }
+  }
+);
+
 // 2. Initial State
 const initialState = {
   orders: [],
@@ -605,6 +624,11 @@ const orderSlice = createSlice({
         state.loading = false;
         state.draftOrder = action.payload;
       });
+    // builder.addCase(deleteDraftOrders.fulfilled, (state, action) => {
+    //   state.draftOrder = state.draftOrder?.data?.filter(
+    //     (order: any) => order?.order?.id !== action.meta.arg.id
+    //   );
+    // });
   },
 });
 export default orderSlice.reducer;
