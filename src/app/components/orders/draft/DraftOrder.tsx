@@ -13,16 +13,18 @@ import { Input } from "@/components/ui/input";
 import { Copy, MoreHorizontal, Plus } from "lucide-react";
 import OrderActionsDropdown from "../OrderActionsDropdown";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
-import { fetchDraftOrders } from "@/redux/slices/orderSlice";
+import { fetchDraftOrders ,deleteDraftOrders} from "@/redux/slices/orderSlice";
 import Spinner from "../../loader/Spinner";
 import Link from "next/link";
-
+import { useRouter } from "next/navigation";
 const DraftOrder = () => {
   const dispatch = useAppDispatch();
   const { draftOrder, loading, error } = useAppSelector(
     (state: any) => state.order
   );
+  const router=useRouter()
 
+  
   // Fetch draft orders on component mount
   useEffect(() => {
     dispatch(fetchDraftOrders({ isDraft: true }));
@@ -31,12 +33,32 @@ const DraftOrder = () => {
   const getDropdownActions = (row: any) => [
     {
       label: "Edit",
-      onClick: () => console.log("Edit clicked", row),
+      onClick: () => {
+        router.push(`/manage/orders/edit/${row.id}`)
+        console.log(row.id);
+        
+      },
     },
-    {
-      label: "Delete",
-      onClick: () => console.log("Delete clicked", row),
-    },
+{
+  label: "Delete",
+  onClick: async () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this draft order?"
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await dispatch(deleteDraftOrders({ id: row.id })).unwrap();
+      console.log("✅ Draft order deleted");
+      setTimeout(()=>{
+        dispatch(fetchDraftOrders({ isDraft: true }))
+      },2000)
+    } catch (error) {
+      console.error("❌ Delete failed:", error);
+    }
+  },
+}
   ];
 
   const handleCopyUrl = (url: string) => {
