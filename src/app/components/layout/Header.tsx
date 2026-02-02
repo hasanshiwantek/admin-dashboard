@@ -10,6 +10,7 @@ import UserDropdown from "../dropdowns/UserDropdown";
 import Image from "next/image";
 import GlobalSearchBar from "./GlobalSearch";
 import Link from "next/link";
+
 interface HeaderProps {
   onMenuClick?: () => void;
 }
@@ -17,20 +18,24 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const [companyOpen, setCompanyOpen] = useState<boolean>(false);
   const companyRef = useRef<HTMLDivElement>(null);
-  const [storeData, setStoreData] = useState<any[]>([]);
   const [selectedStore, setSelectedStore] = useState<any>(null);
+
   useEffect(() => {
-    // Runs only in browser
+    // Get available stores
     const storedStores = localStorage.getItem('availableStores');
     const parsedStores = storedStores ? JSON.parse(storedStores) : [];
-    setStoreData(parsedStores);
 
+    // Get the selected store ID (convert to number for comparison)
     const savedStoreId = localStorage.getItem('storeId');
-    const selected =
-      parsedStores.find((store: any) => store.id === savedStoreId) ||
-      parsedStores[0] ||
-      null;
-    setSelectedStore(selected);
+    const selected = parsedStores.find((store: any) => store.id === Number(savedStoreId));
+    
+    if (selected) {
+      setSelectedStore(selected);
+    } else if (parsedStores.length > 0) {
+      // Fallback to first store if saved ID not found
+      setSelectedStore(parsedStores[0]);
+      localStorage.setItem('storeId', parsedStores[0].id.toString());
+    }
   }, []);
 
   useEffect(() => {
@@ -45,6 +50,8 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  console.log("Selected store: ", selectedStore);
 
   return (
     <header className="w-full fixed h-22 px-4 flex items-center justify-start md:justify-between z-40  bg-[var(--header-bg)]">
@@ -79,12 +86,13 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
               <IoIosArrowDown
                 size={20}
                 color="white"
-                className={`transition-transform duration-200 ${companyOpen ? "rotate-180" : ""
-                  }`}
+                className={`transition-transform duration-200 ${
+                  companyOpen ? "rotate-180" : ""
+                }`}
               />
             </div>
 
-            {/* Dropdown Menu */}
+            {/* Dropdown Menu - Only shows selected store info */}
             {companyOpen && (
               <div className="absolute left-0 mt-2 w-[300px] bg-white rounded-md shadow-lg z-50 !p-5">
                 {/* Current Store Info */}
@@ -94,32 +102,6 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
                     {selectedStore?.planType || 'Pro Plan Store'}
                   </p>
                 </div>
-
-                {/* Store List */}
-                {storeData && storeData.length > 1 && (
-                  <div className="border-t border-gray-200 pt-3">
-                    <p className="px-3 pb-2 !text-sm !text-gray-500 font-semibold uppercase">
-                      Switch Store
-                    </p>
-                    {storeData.map((store: any) => (
-                      <div
-                        key={store.id}
-                        className={`p-3 cursor-pointer rounded hover:bg-gray-100 ${selectedStore?.id === store.id ? 'bg-blue-50' : ''
-                          }`}
-                        onClick={() => {
-                          setSelectedStore(store);
-                          localStorage.setItem('selectedStoreId', store.id);
-                          setCompanyOpen(false);
-                        }}
-                      >
-                        <p className="!text-lg !text-black font-medium">{store.name}</p>
-                        {store.planType && (
-                          <p className="!text-sm !text-gray-500">{store.planType}</p>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
               </div>
             )}
           </div>
