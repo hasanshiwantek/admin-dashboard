@@ -17,20 +17,21 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const [companyOpen, setCompanyOpen] = useState<boolean>(false);
   const companyRef = useRef<HTMLDivElement>(null);
+  const [storeData, setStoreData] = useState<any[]>([]);
+  const [selectedStore, setSelectedStore] = useState<any>(null);
+  useEffect(() => {
+    // Runs only in browser
+    const storedStores = localStorage.getItem('availableStores');
+    const parsedStores = storedStores ? JSON.parse(storedStores) : [];
+    setStoreData(parsedStores);
 
-
-  const storedStores = localStorage?.getItem('availableStores');
-  const storeData = storedStores ? JSON.parse(storedStores) : null;
-  console.log("Store data: ", storeData);
-
-  // Get the currently selected store (you might store this separately)
-  const [selectedStore, setSelectedStore] = useState(() => {
-    const savedStoreId = localStorage?.getItem('storeId');
-    console.log(savedStoreId);
-
-    return storeData?.find((store: any) => store.id === savedStoreId) || storeData?.[0] || null;
-  });
-
+    const savedStoreId = localStorage.getItem('storeId');
+    const selected =
+      parsedStores.find((store: any) => store.id === savedStoreId) ||
+      parsedStores[0] ||
+      null;
+    setSelectedStore(selected);
+  }, []);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
