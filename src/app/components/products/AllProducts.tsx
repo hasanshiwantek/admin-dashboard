@@ -138,8 +138,7 @@ export default function AllProducts() {
       if (!picked.length) return;
 
       const ok = window.confirm(
-        `This will permanently delete ${picked.length} categor${
-          picked.length > 1 ? "ies" : "y"
+        `This will permanently delete ${picked.length} categor${picked.length > 1 ? "ies" : "y"
         } for ALL products. Continue?`
       );
       if (!ok) return;
@@ -163,14 +162,14 @@ export default function AllProducts() {
   };
 
   const getDropdownActions = (product: any) => [
-    {
-      label: "Add to channels",
-      onClick: () => console.log("Channel add clicked", product),
-    },
-    {
-      label: "Remove from channels",
-      onClick: () => console.log("Remove from channels clicked", product),
-    },
+    // {
+    //   label: "Add to channels",
+    //   onClick: () => console.log("Channel add clicked", product),
+    // },
+    // {
+    //   label: "Remove from channels",
+    //   onClick: () => console.log("Remove from channels clicked", product),
+    // },
     {
       label: "Add to categories",
       onClick: () => {
@@ -300,17 +299,23 @@ export default function AllProducts() {
         }
       },
     },
+    {
+      label: "Edit",
+      onClick: () => {
+        router.push(`/manage/products/edit/${product?.id}`)
+      },
+    },
   ];
 
   const editdropdownActions = [
-    {
-      label: "Add to channels",
-      onClick: () => console.log("Channel add clicked"),
-    },
-    {
-      label: "Remove from channels",
-      onClick: () => console.log("remove clicked"),
-    },
+    // {
+    //   label: "Add to channels",
+    //   onClick: () => console.log("Channel add clicked"),
+    // },
+    // {
+    //   label: "Remove from channels",
+    //   onClick: () => console.log("remove clicked"),
+    // },
     {
       label: "Add to categories",
       onClick: () => {
@@ -568,7 +573,7 @@ export default function AllProducts() {
       <div className="">
         <div className="flex justify-between items-center mb-4">
           <h1 className="!text-5xl 2xl:!text-[3.2rem] !font-extralight !text-gray-600 !my-5">
-           All Products
+            All Products
           </h1>
           <Link href={"/manage/products/add"}>
             <Button
@@ -586,11 +591,10 @@ export default function AllProducts() {
               <button
                 key={tab}
                 onClick={() => setSelectedTab(tab)}
-                className={`!text-2xl 2xl:!text-[1.6rem] px-5 py-2 rounded  cursor-pointer transition hover:bg-blue-100 ${
-                  selectedTab === tab
+                className={`!text-2xl 2xl:!text-[1.6rem] px-5 py-2 rounded  cursor-pointer transition hover:bg-blue-100 ${selectedTab === tab
                     ? "bg-blue-100 border-blue-600 text-blue-600"
                     : " text-blue-600"
-                }`}
+                  }`}
               >
                 {tab}
               </button>
@@ -742,18 +746,18 @@ export default function AllProducts() {
                         {(product.image ||
                           product.image?.[1]?.path ||
                           product.image?.[0]?.path) && (
-                          <Image
-                            src={
-                              product.image?.[1]?.path ||
-                              product.image?.[0]?.path ||
-                              "/default-product-image.svg"
-                            }
-                            alt={product.name}
-                            width={60}
-                            height={60}
-                            className="rounded !border object-contain !border-gray-300 p-2 shrink-0 w-28 h-24"
-                          />
-                        )}
+                            <Image
+                              src={
+                                product.image?.[1]?.path ||
+                                product.image?.[0]?.path ||
+                                "/default-product-image.svg"
+                              }
+                              alt={product.name}
+                              width={60}
+                              height={60}
+                              className="rounded !border object-contain !border-gray-300 p-2 shrink-0 w-28 h-24"
+                            />
+                          )}
                         <span
                           onClick={() => {
                             router.push(`/manage/products/edit/${product.id}`);

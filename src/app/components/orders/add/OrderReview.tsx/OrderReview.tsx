@@ -43,7 +43,7 @@ const months = [
 const currentYear = new Date().getFullYear();
 const years = Array.from({ length: 10 }, (_, i) => currentYear + i);
 
-export default function OrderReview({step,setStep}:any) {
+export default function OrderReview({ step, setStep }: any) {
   const { watch, register, setValue, getValues } = useFormContext();
   const shipping = watch("shipping");
   const allValues = getValues();
@@ -56,12 +56,17 @@ export default function OrderReview({step,setStep}:any) {
   const selectedProducts = watch("selectedProducts") || [];
   const paymentMethod = watch("paymentMethod");
   const subtotal = selectedProducts.reduce(
-    (sum: number, p: any) => sum + parseFloat(p.price || 0),
+    (sum: number, p: any) => sum + parseFloat(p.price || 0) * (p.quantity || 1),
     0
   );
+
+  console.log("SUBTOTAL : ", subtotal);
+
+
   const shippingCost = 0;
   const total = subtotal + shippingCost;
 
+  console.log("TOTAL : ", total);
   // Function to render specific payment fields based on the selected method
   const renderPaymentFields = () => {
     const customerEmail = billing.email || "customer@example.com"; // Use the actual email from the form data
@@ -215,7 +220,7 @@ export default function OrderReview({step,setStep}:any) {
               <button
                 type="button"
                 className="text-blue-600 text-xl hover:underline"
-                 onClick={() => setStep(step - 3)}
+                onClick={() => setStep(step - 3)}
               >
                 Change
               </button>
@@ -255,7 +260,7 @@ export default function OrderReview({step,setStep}:any) {
               <button
                 type="button"
                 className="text-blue-600 text-xl hover:underline"
-                  onClick={() => setStep(step - 1)}
+                onClick={() => setStep(step - 1)}
               >
                 Change
               </button>

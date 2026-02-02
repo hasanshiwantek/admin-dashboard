@@ -18,6 +18,20 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const [companyOpen, setCompanyOpen] = useState<boolean>(false);
   const companyRef = useRef<HTMLDivElement>(null);
 
+
+  const storedStores = localStorage?.getItem('availableStores');
+  const storeData = storedStores ? JSON.parse(storedStores) : null;
+  console.log("Store data: ", storeData);
+
+  // Get the currently selected store (you might store this separately)
+  const [selectedStore, setSelectedStore] = useState(() => {
+    const savedStoreId = localStorage?.getItem('storeId');
+    console.log(savedStoreId);
+
+    return storeData?.find((store: any) => store.id === savedStoreId) || storeData?.[0] || null;
+  });
+
+
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (
@@ -35,13 +49,13 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
     <header className="w-full fixed h-22 px-4 flex items-center justify-start md:justify-between z-40  bg-[var(--header-bg)]">
       {/* Left: Logo & Company Name */}
       <div className="flex items-center gap-2 lg:!ml-10 2xl:!ml-5 ">
-            {/* ☰ Mobile Sidebar Button */}
-    <button
-      onClick={onMenuClick}
-      className="md:hidden text-white p-2 hover:bg-[#2d3748]"
-    >
-      ☰
-    </button>
+        {/* ☰ Mobile Sidebar Button */}
+        <button
+          onClick={onMenuClick}
+          className="md:hidden text-white p-2 hover:bg-[#2d3748]"
+        >
+          ☰
+        </button>
         <div className="flex justify-start items-center gap-10  ">
           <div className="lg:!p-2 hover:bg-[#2d3748] cursor-pointer">
             <Image
@@ -55,38 +69,63 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
           <div ref={companyRef} className="relative">
             {/* Toggle Button */}
             <div
-              className=" relative flex justify-between gap-4 lg:gap-[62px] lg:!px-4 items-center lg:border-r-2 lg:border-l-2 border-[#2d3748] h-[5rem] cursor-pointer hover:bg-[#2d3748]"
+              className="relative flex justify-between gap-4 lg:gap-[62px] lg:!px-4 items-center lg:border-r-2 lg:border-l-2 border-[#2d3748] h-[5rem] cursor-pointer hover:bg-[#2d3748]"
               onClick={() => setCompanyOpen(!companyOpen)}
             >
               <button className="text-white text-xl font-medium py-1 rounded-md cursor-pointer 2xl:!text-2xl text-nowrap">
-                CTS Point Inc
+                {selectedStore?.name || 'Select Store'}
               </button>
               <IoIosArrowDown
                 size={20}
                 color="white"
-                className={`transition-transform duration-200 ${
-                  companyOpen ? "rotate-180" : ""
-                }`}
+                className={`transition-transform duration-200 ${companyOpen ? "rotate-180" : ""
+                  }`}
               />
             </div>
 
             {/* Dropdown Menu */}
             {companyOpen && (
               <div className="absolute left-0 mt-2 w-[300px] bg-white rounded-md shadow-lg z-50 !p-5">
+                {/* Current Store Info */}
                 <div className="p-4 !my-5">
-                  <p className="!text-2xl !text-black">CTS Point Inc</p>
-                  <p className="!text-xl !text-gray-500">Pro Plan Store</p>
+                  <p className="!text-2xl !text-black">{selectedStore?.name}</p>
+                  <p className="!text-xl !text-gray-500">
+                    {selectedStore?.planType || 'Pro Plan Store'}
+                  </p>
                 </div>
-                <p className="p-3  cursor-pointer !text-2xl hover:text-blue-700">
-                  Switch account
-                </p>
+
+                {/* Store List */}
+                {storeData && storeData.length > 1 && (
+                  <div className="border-t border-gray-200 pt-3">
+                    <p className="px-3 pb-2 !text-sm !text-gray-500 font-semibold uppercase">
+                      Switch Store
+                    </p>
+                    {storeData.map((store: any) => (
+                      <div
+                        key={store.id}
+                        className={`p-3 cursor-pointer rounded hover:bg-gray-100 ${selectedStore?.id === store.id ? 'bg-blue-50' : ''
+                          }`}
+                        onClick={() => {
+                          setSelectedStore(store);
+                          localStorage.setItem('selectedStoreId', store.id);
+                          setCompanyOpen(false);
+                        }}
+                      >
+                        <p className="!text-lg !text-black font-medium">{store.name}</p>
+                        {store.planType && (
+                          <p className="!text-sm !text-gray-500">{store.planType}</p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
           </div>
         </div>
       </div>
       <div>
-        <GlobalSearchBar/>
+        <GlobalSearchBar />
       </div>
 
       {/* Right: Icons and Link */}
@@ -104,8 +143,9 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
         </div>
         <div className="!p-1 hover:bg-[#2d3748] cursor-pointer text-white">
           <Link
-            href="https://newtownspares.advertsedge.com/" target="_blank"
-            className="!text-xl font-medium hover:underline flex items-center gap-1  h-[5rem] !px-3 border-l-2 border-[#2d3748] 2xl:!text-2xl"
+            href={selectedStore?.baseUrl || '#'}
+            target="_blank"
+            className="!text-xl font-medium hover:underline flex items-center gap-1 h-[5rem] !px-3 border-l-2 border-[#2d3748] 2xl:!text-2xl"
           >
             View storefront
             <span>
