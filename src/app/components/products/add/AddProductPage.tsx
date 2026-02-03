@@ -92,15 +92,19 @@ export default function AddProductPage() {
     }
   }, [id, reset]);
 
+
+  const [isLoading, setIsLoading] = useState(false);
+
   const onSubmit = methods.handleSubmit(async (data: Record<string, any>) => {
+    setIsLoading(true);
     try {
       const imageData = Array.isArray(data.image)
         ? data.image.map((img: any) => ({
-            file: img.file || null,
-            url: typeof img.path === "string" ? img.path : "",
-            description: img.description || "",
-            isPrimary: img.isPrimary ? 1 : 0,
-          }))
+          file: img.file || null,
+          url: typeof img.path === "string" ? img.path : "",
+          description: img.description || "",
+          isPrimary: img.isPrimary ? 1 : 0,
+        }))
         : [];
       const { id, ...rest } = data;
       const normalizedFields = {
@@ -128,8 +132,8 @@ export default function AddProductPage() {
       const formData = objectToFormData(payload);
       const result = isEdit
         ? await dispatch(
-            updateProductFormData({ id: product.id, data: formData })
-          )
+          updateProductFormData({ id: product.id, data: formData })
+        )
         : await dispatch(addProduct({ data: formData }));
 
       if (
@@ -141,6 +145,9 @@ export default function AddProductPage() {
       }
     } catch (error) {
       console.error("Unexpected error during save:", error);
+    }
+    finally {
+      setIsLoading(false);
     }
   });
 
@@ -189,9 +196,24 @@ export default function AddProductPage() {
                   Cancel
                 </button>
               </Link>
-              <button className="btn-primary" type="submit">
-                Save Product
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="btn-primary flex items-center gap-2"
+              >
+                {isLoading && (
+                  <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                )}
+
+                {isLoading
+                  ? isEdit
+                    ? "Updating..."
+                    : "Saving..."
+                  : isEdit
+                    ? "Update Product"
+                    : "Save Product"}
               </button>
+
             </div>
           </form>
         </FormProvider>
