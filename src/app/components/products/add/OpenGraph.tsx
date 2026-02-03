@@ -13,10 +13,11 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 
 export default function OpenGraph() {
-
     const { register, setValue, watch } = useFormContext();
     const objectType = watch("objectType");
     const image = watch("image");
+    const useProductName = watch("useProductName");
+    const graphDescription = watch("graphDescription");
 
     return (
         <div id="openGraphSharing" className="p-10 bg-white shadow-lg rounded-sm ">
@@ -28,7 +29,7 @@ export default function OpenGraph() {
                         value={objectType}
                         onValueChange={(value) => setValue("objectType", value)}
                     >
-                        <SelectTrigger  className="!max-w-[100%] w-full">
+                        <SelectTrigger className="!max-w-[100%] w-full">
                             <SelectValue placeholder="Select type" />
                         </SelectTrigger>
                         <SelectContent >
@@ -40,14 +41,22 @@ export default function OpenGraph() {
                 <div className="my-6">
                     <h2 className="2xl:!text-3xl">Title</h2>
                     <div className="flex items-center space-x-2  ">
-                        <Checkbox id="useProductName" {...register("useProductName")} />
+                        <Checkbox
+                            id="useProductName"
+                            checked={useProductName}
+                            onCheckedChange={(checked) => setValue("useProductName", checked)}
+                        />
                         <Label className="2xl:!text-2xl" htmlFor="useProductName">Use product name</Label>
                     </div>
                 </div>
                 <div className="my-6">
                     <h2 className="2xl:!text-3xl">Description</h2>
                     <div className="flex items-center space-x-2  ">
-                        <Checkbox id="graphDescription" {...register("graphDescription")} />
+                        <Checkbox
+                            id="graphDescription"
+                            checked={graphDescription}
+                            onCheckedChange={(checked) => setValue("graphDescription", checked)}
+                        />
                         <Label className="2xl:!text-2xl" htmlFor="graphDescription">Use meta description</Label>
                     </div>
                 </div>
