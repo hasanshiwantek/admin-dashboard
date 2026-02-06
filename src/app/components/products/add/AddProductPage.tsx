@@ -82,6 +82,20 @@ export default function AddProductPage() {
     if (product) reset(product);
   }, [product, reset]);
 
+
+  // ✅ Map backend response to form fields
+  useEffect(() => {
+    if (product) {
+      const mappedProduct = {
+        ...product,
+        // Map relatedProductsEnabled → relatedProducts
+        relatedProducts: product.relatedProductsEnabled || 0,
+      };
+
+      reset(mappedProduct);
+    }
+  }, [product, reset]);
+
   //   useEffect(() => {
   //   if (product) {
   //     reset((prev) => ({
