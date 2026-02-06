@@ -305,6 +305,21 @@ export default function AllProducts() {
         router.push(`/manage/products/edit/${product?.id}`)
       },
     },
+    {
+      label: "View Storefront",
+      onClick: () => {
+        // Get the base URL from selected store
+        const selectedStore = JSON.parse(localStorage.getItem('availableStores') || '[]')
+          .find((store: any) => store.id === Number(localStorage.getItem('storeId')));
+
+        if (selectedStore?.baseUrl && product?.sku) {
+          // Open product page on storefront
+          window.open(`${selectedStore.baseUrl}/${product.sku}`, '_blank');
+        } else {
+          alert('Store URL or Product SKU not found');
+        }
+      },
+    },
   ];
 
   const editdropdownActions = [
@@ -592,8 +607,8 @@ export default function AllProducts() {
                 key={tab}
                 onClick={() => setSelectedTab(tab)}
                 className={`!text-2xl 2xl:!text-[1.6rem] px-5 py-2 rounded  cursor-pointer transition hover:bg-blue-100 ${selectedTab === tab
-                    ? "bg-blue-100 border-blue-600 text-blue-600"
-                    : " text-blue-600"
+                  ? "bg-blue-100 border-blue-600 text-blue-600"
+                  : " text-blue-600"
                   }`}
               >
                 {tab}
