@@ -354,7 +354,7 @@ export default function BlogPage() {
         </div>
 
         {/* FORM ACTION BUTTONS */}
-        <div className="flex justify-end gap-4 items-center fixed w-full bottom-0 right-0 bg-white/90 z-10 shadow-xs border-t p-4 ">
+        <div className="flex justify-end  gap-10 items-center fixed w-full bottom-0 right-0  bg-white/90 z-10 shadow-xs border-t  p-4">
           <button
             type="button"
             className="btn-outline-primary"

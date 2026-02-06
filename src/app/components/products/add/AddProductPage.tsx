@@ -41,9 +41,15 @@ export default function AddProductPage() {
     () => ({
       price: "35",
       dimensions: { weight: "0" },
+
+      // ✅ OpenGraph defaults
+      // objectType: "physical",
+      useProductName: 0,
+      graphDescription: 0,
+      imageOption: "useThumbnail", // ✅ Default value for radio
     }),
     []
-  ); // stable reference
+  );
 
   const methods = useForm({ defaultValues });
   const { reset } = methods;
@@ -106,7 +112,7 @@ export default function AddProductPage() {
           isPrimary: img.isPrimary ? 1 : 0,
         }))
         : [];
-      const { id, ...rest } = data;
+      const { id, imageOption, ...rest } = data;
       const normalizedFields = {
         ...rest,
         image: imageData,
@@ -127,6 +133,19 @@ export default function AddProductPage() {
         isVisible: data.isVisible ? 1 : 0,
         allowPurchase: data.allowPurchase ? 1 : 0,
         stopProcessingRules: data.stopProcessingRules ? 1 : 0,
+        // ✅ Add OpenGraph fields
+        useProductName: data.useProductName ? 1 : 0,
+        graphDescription: data.graphDescription ? 1 : 0,
+
+
+
+        // ✅ Send single field with radio value
+        useThumbnail: imageOption === "useThumbnail" ? 1 : 0,  // Backend ko 0/1 chahiye
+        dontUse: imageOption === "dontUse" ? 1 : 0,
+
+        // ✅ Add CustomsInformation field
+        manageCustoms: data.manageCustoms ? 1 : 0,
+
       };
       const payload = normalizedFields;
       const formData = objectToFormData(payload);
