@@ -59,7 +59,18 @@ export default function BlogTable() {
   const editdropdownActions = (post: any) => [
     {
       label: "View",
-         onClick: () => router.push(`/manage/storefront/blog/edit/${post.id}`),
+           onClick: () => {
+        // Get the base URL from selected store
+        const selectedStore = JSON.parse(localStorage.getItem('availableStores') || '[]')
+          .find((store: any) => store.id === Number(localStorage.getItem('storeId')));
+
+        if (selectedStore?.baseUrl && post?.slug) {
+          // Open product page on storefront
+          window.open(`${selectedStore.baseUrl}/blogs/${post?.slug}`, '_blank');
+        } else {
+          alert('Store URL or blog not found');
+        }
+      },
     },
     {
       label: "Edit",

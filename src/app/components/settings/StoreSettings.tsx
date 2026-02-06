@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Search, ChevronRight, ArrowLeft, Info } from "lucide-react";
 import { WebsiteSettings } from "./WebsiteSettings";
 import { DisplaySettings } from "./DisplaySettings";
@@ -40,9 +41,8 @@ export const FormField = ({
 }) => (
   <div className="flex flex-col lg:flex-row items-start gap-4 py-3">
     <Label
-      className={`flex justify-start lg:justify-end pt-2 pr-4 2xl:!text-2xl ${
-        className ? className : "w-48 2xl:w-64"
-      }`}
+      className={`flex justify-start lg:justify-end pt-2 pr-4 2xl:!text-2xl ${className ? className : "w-48 2xl:w-64"
+        }`}
     >
       {label}
     </Label>
@@ -73,9 +73,8 @@ export const CheckboxField = ({
 }) => (
   <div className="flex flex-col lg:flex-row items-start gap-4 py-3">
     <Label
-      className={`flex justify-start lg:justify-end pr-4 pt-1 2xl:!text-2xl ${
-        className ? className : "w-48 2xl:w-64"
-      }`}
+      className={`flex justify-start lg:justify-end pr-4 pt-1 2xl:!text-2xl ${className ? className : "w-48 2xl:w-64"
+        }`}
     >
       {label}
     </Label>
@@ -114,9 +113,8 @@ export const RadioField = ({
 }) => (
   <div className="flex flex-col lg:flex-row items-start gap-4 py-3">
     <Label
-      className={`flex justify-start lg:justify-end pr-4 pt-1 2xl:!text-2xl ${
-        className ? className : "w-48 2xl:w-64"
-      }`}
+      className={`flex justify-start lg:justify-end pr-4 pt-1 2xl:!text-2xl ${className ? className : "w-48 2xl:w-64"
+        }`}
     >
       {label}
     </Label>
@@ -187,9 +185,8 @@ export const RadioGroupField = ({
 }) => (
   <div className="flex flex-col lg:flex-row lg:items-start gap-2 lg:gap-4 py-3">
     <Label
-      className={`flex justify-start lg:justify-end 2xl:!text-2xl pt-1 ${
-        className ? className : "w-full lg:w-48"
-      }`}
+      className={`flex justify-start lg:justify-end 2xl:!text-2xl pt-1 ${className ? className : "w-full lg:w-48"
+        }`}
     >
       {title}
     </Label>
@@ -437,11 +434,27 @@ export const StoreSettings = ({
   console.log("Store Settings ", storeSettings);
 
   const dispatch = useAppDispatch();
-
+  const router = useRouter(); // ✅ Add
+  const searchParams = useSearchParams(); // ✅ Add
   // Fetch settings on component mount
   useEffect(() => {
     dispatch(fetchStoreSettings());
   }, [dispatch]);
+
+
+
+
+  // ✅ Add: Tab change handler with URL update
+  const handleTabChange = (newTab: string) => {
+    setActiveTab(newTab);
+
+    const view = searchParams.get("view");
+    const setting = searchParams.get("setting");
+    router.push(`/manage/settings?view=${view}&setting=${setting}&tab=${newTab}`);
+  };
+
+
+
 
   const [websiteSettings, setWebsiteSettings] = useState({
     weightMeasurement: "pounds",
@@ -648,7 +661,7 @@ Disallow: /search.php`,
       if (createStoreSettings.fulfilled.match(response)) {
         // Show success message to user
         console.log("Settings saved successfully!", response.payload);
-        onBack();
+        // onBack();
       } else {
         console.log("Error saving store settings", response.payload);
       }
@@ -690,7 +703,7 @@ Disallow: /search.php`,
         </p>
         <Tabs
           value={activeTab}
-          onValueChange={(val: any) => setActiveTab(val)}
+          onValueChange={handleTabChange}
           className="mb-6"
         >
           <TabsList className="border-b  w-80 justify-start rounded-none h-auto p-0">

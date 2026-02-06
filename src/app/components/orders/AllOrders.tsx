@@ -266,6 +266,9 @@ const AllOrders = () => {
           const resulAction = await dispatch(refundOrder({ orderId }));
           if (refundOrder.fulfilled.match(resulAction)) {
             console.log("Order Refunded: ", resulAction?.payload);
+            setTimeout(()=>{
+              refetchOrders(dispatch)
+            },3000)
           } else {
             console.log("Error Refunding Order: ", resulAction?.payload);
           }

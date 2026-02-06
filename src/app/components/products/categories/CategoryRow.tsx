@@ -73,7 +73,7 @@ const CategoryRow = ({
     {
       label: "Create sub-category",
       onClick: () => {
-        router.push(`/manage/products/categories/edit/${category?.id}`);
+        router.push(`/manage/products/categories/add/${category?.id}`);
       },
     },
     {
@@ -102,12 +102,12 @@ const CategoryRow = ({
         router.push(`/manage/products`);
       },
     },
-    {
-      label: "View in page builder",
-    },
-    {
-      label: "Manage product filters",
-    },
+    // {
+    //   label: "View in page builder",
+    // },
+    // {
+    //   label: "Manage product filters",
+    // },
     {
       label: "View on storefront",
       onClick: () => {

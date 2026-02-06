@@ -1,10 +1,11 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState ,useEffect} from "react";
 import { Search, ChevronRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { StoreSettings } from "./StoreSettings";
+import { useRouter, useSearchParams } from "next/navigation";
 const SettingsPage = () => {
 //   const setupItems = [
 //     {
@@ -41,6 +42,14 @@ const SettingsPage = () => {
 //       description: "Your own tax rules and recommended services",
 //     },
 //   ];
+
+
+  const router = useRouter(); // ✅ Added
+  const searchParams = useSearchParams(); // ✅ Added
+  // ✅ Changed: URL se initial values
+  const initialView = searchParams.get("view") || "main";
+  const initialTab = searchParams.get("tab") || "website";
+
 
   const generalItems = [
     {
@@ -91,6 +100,11 @@ const SettingsPage = () => {
   ];
 
  const SettingsItem = ({ item, onClick }: { item: any; onClick: any }) => (
+
+
+
+
+
   <div
     onClick={() => onClick(item)}
     className="
@@ -129,19 +143,35 @@ const SettingsPage = () => {
   </div>
 );
 
-
-
-  const [currentView, setCurrentView] = useState("main");
+  
+  const [currentView, setCurrentView] = useState(initialView); // ✅ Changed
   const [currentSetting, setCurrentSetting] = useState<any>(null);
 
+
+  // ✅ Added: Page load pe URL se state restore
+  useEffect(() => {
+    if (initialView === "detail") {
+      const settingId = searchParams.get("setting");
+      const setting = generalItems.find(item => item.id === settingId);
+      if (setting) {
+        setCurrentSetting(setting);
+        setCurrentView("detail");
+      }
+    }
+  }, []);
+
+  // ✅ Changed: URL update with tab
   const handleSettingClick = (item: any) => {
     setCurrentSetting(item);
     setCurrentView("detail");
+    router.push(`/manage/settings?view=detail&setting=${item.id}&tab=website`);
   };
 
+  // ✅ Changed: URL reset
   const handleBack = () => {
     setCurrentView("main");
     setCurrentSetting(null);
+    router.push("/manage/settings");
   };
 
   return (
@@ -193,7 +223,7 @@ const SettingsPage = () => {
         <StoreSettings
           currentSetting={currentSetting}
           onBack={handleBack}
-          initialTab={currentSetting?.id}
+           initialTab={initialTab}
         />
       )}
     </div>
