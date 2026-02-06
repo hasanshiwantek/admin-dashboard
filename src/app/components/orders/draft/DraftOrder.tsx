@@ -34,7 +34,7 @@ const DraftOrder = () => {
     {
       label: "Edit",
       onClick: () => {
-        router.push(`/manage/orders/edit/${row.id}`)
+        router.push(`/manage/orders/edit/${row.orderId}`)
         console.log(row.id);
         
       },

@@ -1,7 +1,7 @@
-// BasicInfoForm.tsx
+// RelatedProducts.tsx
 import { useFormContext, Controller } from "react-hook-form";
-import { Checkbox } from "@/components/ui/checkbox"
-import { Label } from "@/components/ui/label"
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { HiQuestionMarkCircle } from "react-icons/hi2";
 import {
   Tooltip,
@@ -10,42 +10,39 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-
 export default function RelatedProducts() {
+  const { control } = useFormContext();
 
-    const { register, control } = useFormContext();
- 
-    return (
-        <div id="relatedProducts" className="p-10 bg-white shadow-lg rounded-sm ">
-            <h1 className="2xl:!text-[2.4rem]">Related Products</h1>
-            <Controller
-                control={control}
-                name="relatedProducts"
-                defaultValue={false}
-                render={({ field }) => (
-                    <div className="flex items-center space-x-2 mt-6">
-                        <Checkbox
-                            id="relatedProducts"
-                            checked={field.value}
-                            onCheckedChange={(val) => field.onChange(val === true)}
-                        />
-                        <Label className="2xl:!text-2xl" htmlFor="relatedProducts">
-                            Automatically show related products on my storefront
-                            <TooltipProvider>
-                                <Tooltip>
-                                    <TooltipTrigger asChild>
-                                        <HiQuestionMarkCircle />
-                                    </TooltipTrigger>
-                                    <TooltipContent>
-                                        When enabled, we'll find related products for you. Untick this to surface the ability to select specific products.
-                                    </TooltipContent>
-                                </Tooltip>
-                            </TooltipProvider>
-                        </Label>
-                    </div>
-                )}
+  return (
+    <div id="relatedProducts" className="p-10 bg-white shadow-lg rounded-sm">
+      <h1 className="2xl:!text-[2.4rem]">Related Products</h1>
+      <Controller
+        control={control}
+        name="relatedProducts" // ✅ Keep this as relatedProducts
+        defaultValue={0}
+        render={({ field }) => (
+          <div className="flex items-center space-x-2 mt-6">
+            <Checkbox
+              id="relatedProducts"
+              checked={!!field.value} // ✅ Convert to boolean for display
+              onCheckedChange={(val) => field.onChange(val ? 1 : 0)} // ✅ Store as 0/1
             />
-
-        </div>
-    );
+            <Label className="2xl:!text-2xl flex items-center gap-2" htmlFor="relatedProducts">
+              Automatically show related products on my storefront
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <HiQuestionMarkCircle className="cursor-help" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    When enabled, we'll find related products for you. Untick this to surface the ability to select specific products.
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </Label>
+          </div>
+        )}
+      />
+    </div>
+  );
 }
