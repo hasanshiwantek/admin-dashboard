@@ -35,7 +35,7 @@ export const SideBar = ({ onClose }: { onClose?: () => void }) => {
     <div
       className="shrink-0 h-auto
   fixed top-0 md:top-22
-  z-50 md:z-0
+  z-50 md:z-60
   w-[26.7rem]
   max-h-full
   overflow-y-auto overflow-x-hidden

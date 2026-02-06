@@ -22,7 +22,7 @@ type FormValues = {
     country: string;
     code: string;
   }[];
-  manageCustoms: boolean;
+  manageCustoms: boolean | number | string;
   countryOfOrigin?: string;
   commodityDescription?: string;
 };
@@ -49,10 +49,9 @@ export default function CustomsInformation() {
     control,
     name: "hsCodes",
   });
-  const toggleCheckbox = (checked: boolean) => {
-    setValue("manageCustoms", !!checked);
+  const toggleCheckbox = (checked: any) => {
+    setValue("manageCustoms", checked ? 1 : 0); // ✅ Store as 0/1
   };
-
   return (
     <div
       id="customsInformation"
@@ -69,7 +68,7 @@ export default function CustomsInformation() {
       <div className="flex items-center gap-3">
         <Checkbox
           id="manageCustoms"
-          checked={manageCustoms}
+          checked={!!manageCustoms} // ✅ Convert to boolean for display
           onCheckedChange={toggleCheckbox}
         />
         <Label className="2xl:!text-2xl" htmlFor="manageCustoms">Manage customs information</Label>
@@ -91,7 +90,7 @@ export default function CustomsInformation() {
               <SelectTrigger className="max-w-full ">
                 <SelectValue placeholder="Not specified" />
               </SelectTrigger>
-              <SelectContent className="overflow-y-scroll h-96"> 
+              <SelectContent className="overflow-y-scroll h-96">
                 {countriesList.map((c) => (
                   <SelectItem key={c.value} value={c.value}>
                     {c.label}
@@ -136,9 +135,9 @@ export default function CustomsInformation() {
                     setValue(`hsCodes.${index}.country`, val)
                   }
                   defaultValue={field?.country}
-                  
+
                 >
-                  <SelectTrigger  className="!max-w-[100%] 2xl:!max-w-[90%] w-full">
+                  <SelectTrigger className="!max-w-[100%] 2xl:!max-w-[90%] w-full">
                     <SelectValue placeholder="Select country" />
                   </SelectTrigger>
                   <SelectContent className="overflow-y-scroll h-96">
@@ -151,11 +150,11 @@ export default function CustomsInformation() {
                 </Select>
 
                 {/* HS Code Input */}
-                <Input 
-                   className="!max-w-[100%] 2xl:!max-w-[90%] w-full"
+                <Input
+                  className="!max-w-[100%] 2xl:!max-w-[90%] w-full"
                   placeholder="HS Code"
                   {...register(`hsCodes.${index}.code`)}
-                  // className="w-60"
+                // className="w-60"
                 />
 
                 {/* Delete */}

@@ -19,29 +19,6 @@ import { useRouter } from "next/navigation";
 import { refetchBlogs } from "@/lib/storeFrontUtils";
 import Spinner from "../loader/Spinner";
 // Mock data
-const posts = [
-  {
-    id: "00706M",
-    title: "Explore Dell 00706M Power Supply",
-    author: "Jane Doe",
-    publishedOn: "Jan 10, 2024",
-    status: "published",
-  },
-  {
-    id: "001859D",
-    title: "Review: Dell 0001859D Power Supply",
-    author: "John Smith",
-    publishedOn: "Jan 10, 2024",
-    status: "published",
-  },
-  {
-    id: "001A",
-    title: "Upcoming Trends in Enterprise Storage",
-    author: "Alice Johnson",
-    publishedOn: "N/A",
-    status: "draft",
-  },
-];
 
 export default function BlogTable() {
   const { blogs, loading, error } = useAppSelector(

@@ -86,10 +86,10 @@ export const sidebarData = [
     title: "Marketing",
     icon: Megaphone,
     children: [
-      {
-        title: "Transaction Emails",
-        url: "/manage/marketing/transactional-emails",
-      },
+      // {
+      //   title: "Transaction Emails",
+      //   url: "/manage/marketing/transactional-emails",
+      // },
       { title: "Coupon Codes", url: "/manage/marketing/coupon-codes" },
       { title: "Email Marketing", url: "/manage/marketing/email-marketing" },
       ,
