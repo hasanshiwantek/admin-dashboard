@@ -38,6 +38,10 @@ export const getCouponCodes = createAsyncThunk(
   }
 );
 
+
+
+
+
 export const getCouponById = createAsyncThunk(
   "marketing/getCouponById ",
   async ({ id }: { id: any }, thunkAPI) => {
@@ -109,6 +113,24 @@ export const deleteCouponCode = createAsyncThunk(
   }
 );
 
+
+export const deleteCouponCodes = createAsyncThunk(
+  "marketing/deleteCouponCode",
+  async ({ id }: { id: any }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.delete(
+        `dashboard/coupons/delete-couponcode/${id}`
+      );
+      console.log("Delete Coupon Code Response by id: ", res?.data);
+      return res?.data;
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to delete coupon code"
+      );
+    }
+  }
+);
+
 export const createEmailMarketing = createAsyncThunk(
   "storefront/createEmailMarketing",
   async ({ data }: { data: any }, thunkAPI) => {
@@ -152,6 +174,7 @@ const initialState = {
   error: null as string | null,
   couponCodes: [],
   emailMarketing: [],
+   deleteLoading: false,
 };
 
 // 3. Slice
@@ -194,6 +217,20 @@ const marketingSlice = createSlice({
       .addCase(getEmailMarketing.fulfilled, (state, action) => {
         state.loading = false;
         state.emailMarketing = action?.payload;
+      })
+           .addCase(deleteCouponCodes.pending, (state) => {
+        state.deleteLoading = true;
+      })
+      .addCase(deleteCouponCodes.fulfilled, (state, action) => {
+        state.deleteLoading = false;
+        // Optional: Remove deleted coupon from state
+        // state.couponCodes = state.couponCodes.filter(
+        //   (coupon: any) => coupon.id !== action.meta.arg.id
+        // );
+      })
+      .addCase(deleteCouponCodes.rejected, (state, action) => {
+        state.deleteLoading = false;
+        state.error = action.error.message || "Failed to delete coupon code";
       });
   },
 });

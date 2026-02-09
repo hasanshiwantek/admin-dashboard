@@ -33,8 +33,10 @@ import Link from "next/link";
 import {
   getCouponCodes,
   searchCouponcode,
+  deleteCouponCodes,
 } from "@/redux/slices/marketingSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
+import { toast } from "react-toastify";
 
 interface Coupon {
   id: string;
@@ -51,9 +53,11 @@ const CouponCodesTable = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState("10");
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const { couponCodes, loading, error } = useAppSelector(
+  const { couponCodes, loading, error, deleteLoading } = useAppSelector(
     (state: any) => state.marketingReducer
   );
 
@@ -86,35 +90,79 @@ const CouponCodesTable = () => {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    setSelectedCoupons([]); // Clear selections when changing pages
+    setSelectedCoupons([]);
   };
 
   const handlePerPageChange = (value: string) => {
     setPerPage(value);
-    setCurrentPage(1); // Reset to first page when changing items per page
-    setSelectedCoupons([]); // Clear selections
+    setCurrentPage(1);
+    setSelectedCoupons([]);
   };
+
   const filterCouponHandler = () => {
     if (searchQuery.trim()) {
-      // Dispatch search action
       dispatch(searchCouponcode({ search: searchQuery, per_page: perPage }));
     } else {
-      // If search is empty, fetch all coupons
       dispatch(getCouponCodes());
     }
   };
 
-  // Handle Enter key press in search input
   const handleSearchKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       filterCouponHandler();
     }
   };
 
-  // Clear search
   const handleClearSearch = () => {
     setSearchQuery("");
     dispatch(getCouponCodes());
+  };
+
+  // Delete single coupon
+  const handleDeleteCoupon = async (id: string) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this coupon code?"
+    );
+    
+    if (!confirmDelete) return;
+
+    setDeletingId(id);
+    try {
+      const result = await dispatch(deleteCouponCodes({ id })).unwrap();
+      console.log("Coupon code deleted successfully!");
+      // Refresh the list
+      dispatch(getCouponCodes());
+      // Remove from selected if it was selected
+      setSelectedCoupons(selectedCoupons.filter((cid) => cid !== id));
+    } catch (error: any) {
+      console.error(error || "Failed to delete coupon code");
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
+  // Delete multiple selected coupons
+  const handleDeleteSelected = async () => {
+    if (selectedCoupons.length === 0) return;
+
+    const confirmDelete = window.confirm(
+      `Are you sure you want to delete ${selectedCoupons.length} coupon code(s)?`
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      // Delete all selected coupons
+      await Promise.all(
+        selectedCoupons.map((id) => dispatch(deleteCouponCodes({ id })).unwrap())
+      );
+      console.log(`${selectedCoupons.length} coupon code(s) deleted successfully!`);
+      // Refresh the list
+      dispatch(getCouponCodes());
+      setSelectedCoupons([]);
+    } catch (error: any) {
+      console.error(error || "Failed to delete some coupon codes");
+    }
   };
 
   return (
@@ -133,7 +181,7 @@ const CouponCodesTable = () => {
       {/* Header */}
       <div className="px-6 py-6">
         <h1 className="!font-light 2xl:!text-5xl mb-2">Coupon codes</h1>
-        <p className=" text-gray-600">
+        <p className="text-gray-600">
           Coupon codes allow you to provide customers with discounts on products
           available for purchase from your store.
         </p>
@@ -151,9 +199,14 @@ const CouponCodesTable = () => {
             </Link>
             <button
               className="btn-outline-primary"
-              disabled={selectedCoupons.length === 0}
+              disabled={selectedCoupons.length === 0 || deleteLoading}
+              onClick={handleDeleteSelected}
             >
-              <Trash2 className="h-6 w-6 fill-blue-600" />
+              {deleteLoading ? (
+                <Loader2 className="h-6 w-6 animate-spin" />
+              ) : (
+                <Trash2 className="h-6 w-6 fill-blue-600" />
+              )}
             </button>
 
             <div className="flex items-center border rounded 2xl:h-[37.98px]">
@@ -193,7 +246,7 @@ const CouponCodesTable = () => {
 
           {/* Table */}
           <Table>
-            <TableHeader className="h-18 ">
+            <TableHeader className="h-18">
               <TableRow className="bg-gray-50 hover:bg-gray-50">
                 <TableHead className="w-12">
                   <Checkbox
@@ -326,6 +379,7 @@ const CouponCodesTable = () => {
                       <Checkbox
                         checked={selectedCoupons.includes(coupon?.id)}
                         onCheckedChange={() => toggleSelectCoupon(coupon?.id)}
+                        disabled={deletingId === coupon?.id}
                       />
                     </TableCell>
                     <TableCell className="text-blue-600 font-normal">
@@ -357,13 +411,18 @@ const CouponCodesTable = () => {
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8 hover:bg-gray-100"
+                            disabled={deletingId === coupon?.id}
                           >
-                            <MoreHorizontal className="!h-6 !w-6 text-gray-600" />
+                            {deletingId === coupon?.id ? (
+                              <Loader2 className="!h-6 !w-6 animate-spin" />
+                            ) : (
+                              <MoreHorizontal className="!h-6 !w-6 text-gray-600" />
+                            )}
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent
                           align="end"
-                          className="w-[120px] space-y-4"
+                          className="w-[160px] space-y-4"
                         >
                           <DropdownMenuItem
                             className="cursor-pointer"
@@ -380,6 +439,12 @@ const CouponCodesTable = () => {
                           </DropdownMenuItem>
                           <DropdownMenuItem className="cursor-pointer">
                             View Orders
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="cursor-pointer text-red-600 focus:text-red-600"
+                            onClick={() => handleDeleteCoupon(coupon?.id)}
+                          >
+                            Delete
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
