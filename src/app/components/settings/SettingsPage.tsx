@@ -1,5 +1,5 @@
 "use client";
-import React, { useState ,useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { Search, ChevronRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -7,41 +7,41 @@ import { Badge } from "@/components/ui/badge";
 import { StoreSettings } from "./StoreSettings";
 import { useRouter, useSearchParams } from "next/navigation";
 const SettingsPage = () => {
-//   const setupItems = [
-//     {
-//       title: "Store profile",
-//       description: "Basic information about your business",
-//     },
-//     {
-//       title: "Currencies",
-//       description:
-//         "Currencies customers will see and be charged in at your store",
-//     },
-//     {
-//       title: "Payments",
-//       description:
-//         "Payment methods for the currencies you support in your store",
-//     },
-//     {
-//       title: "Locations",
-//       description:
-//         "Locations represent the physical places where you stock inventory",
-//     },
-//     {
-//       title: "Pick up methods",
-//       description:
-//         "Create and edit in-person pick up methods for online orders.",
-//     },
-//     {
-//       title: "Shipping",
-//       description:
-//         "Store's origin address, shipping zones, and shipping services",
-//     },
-//     {
-//       title: "Tax",
-//       description: "Your own tax rules and recommended services",
-//     },
-//   ];
+  //   const setupItems = [
+  //     {
+  //       title: "Store profile",
+  //       description: "Basic information about your business",
+  //     },
+  //     {
+  //       title: "Currencies",
+  //       description:
+  //         "Currencies customers will see and be charged in at your store",
+  //     },
+  //     {
+  //       title: "Payments",
+  //       description:
+  //         "Payment methods for the currencies you support in your store",
+  //     },
+  //     {
+  //       title: "Locations",
+  //       description:
+  //         "Locations represent the physical places where you stock inventory",
+  //     },
+  //     {
+  //       title: "Pick up methods",
+  //       description:
+  //         "Create and edit in-person pick up methods for online orders.",
+  //     },
+  //     {
+  //       title: "Shipping",
+  //       description:
+  //         "Store's origin address, shipping zones, and shipping services",
+  //     },
+  //     {
+  //       title: "Tax",
+  //       description: "Your own tax rules and recommended services",
+  //     },
+  //   ];
 
 
   const router = useRouter(); // ✅ Added
@@ -99,54 +99,53 @@ const SettingsPage = () => {
     },
   ];
 
- const SettingsItem = ({ item, onClick }: { item: any; onClick: any }) => (
+  const SettingsItem = ({ item, onClick }: { item: any; onClick: any }) => (
 
 
 
 
 
-  <div
-    onClick={() => onClick(item)}
-    className="
+    <div
+      onClick={() => onClick(item)}
+      className="
       grid grid-cols-1 gap-3 py-4 border-b border-gray-200
       hover:bg-gray-50 cursor-pointer transition-colors
       md:grid-cols-[auto_1fr_auto] md:items-center
     "
-  >
-    {/* Left: Title + Badge */}
-    <div className="flex items-center gap-2">
-      <h2 className="!text-black !font-bold 2xl:!text-[1.6rem]">
-        {item?.title}
-      </h2>
+    >
+      {/* Left: Title + Badge */}
+      <div className="flex items-center gap-2">
+        <h2 className="!text-black !font-bold 2xl:!text-[1.6rem]">
+          {item?.title}
+        </h2>
 
-      {item?.isNew && (
-        <Badge
-          variant="secondary"
-          className="bg-green-100 text-green-700 text-xs font-medium px-2 py-0.5"
-        >
-          NEW
-        </Badge>
-      )}
+        {item?.isNew && (
+          <Badge
+            variant="secondary"
+            className="bg-green-100 text-green-700 text-xs font-medium px-2 py-0.5"
+          >
+            NEW
+          </Badge>
+        )}
+      </div>
+
+      {/* Center: Description (SCREEN CENTER) */}
+      <div className="text-left md:text-center">
+        <p className="text-gray-600 2xl:!text-[1.6rem]">
+          {item?.description}
+        </p>
+      </div>
+
+      {/* Right: Arrow */}
+      <div className="justify-self-end">
+        <ChevronRight className="w-8 h-8 text-gray-400" />
+      </div>
     </div>
+  );
 
-    {/* Center: Description (SCREEN CENTER) */}
-    <div className="text-left md:text-center">
-      <p className="text-gray-600 2xl:!text-[1.6rem]">
-        {item?.description}
-      </p>
-    </div>
 
-    {/* Right: Arrow */}
-    <div className="justify-self-end">
-      <ChevronRight className="w-8 h-8 text-gray-400" />
-    </div>
-  </div>
-);
-
-  
   const [currentView, setCurrentView] = useState(initialView); // ✅ Changed
   const [currentSetting, setCurrentSetting] = useState<any>(null);
-
 
   // ✅ Added: Page load pe URL se state restore
   useEffect(() => {
@@ -163,8 +162,10 @@ const SettingsPage = () => {
   // ✅ Changed: URL update with tab
   const handleSettingClick = (item: any) => {
     setCurrentSetting(item);
+    console.log(item);
+
     setCurrentView("detail");
-    router.push(`/manage/settings?view=detail&setting=${item.id}&tab=website`);
+    router.push(`/manage/settings?view=detail&setting=${item.id}&tab=${item.id}`);
   };
 
   // ✅ Changed: URL reset
@@ -174,20 +175,22 @@ const SettingsPage = () => {
     router.push("/manage/settings");
   };
 
+
+
   return (
     <div className="min-h-screen  p-8">
       {currentView === "main" ? (
         <div className="">
           <h1 className=" mb-6 !font-extralight 2xl:!text-[3.2rem]">Settings</h1>
 
-          <div className="relative mb-6">
+          {/* <div className="relative mb-6">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-6 h-6 text-gray-400" />
             <Input
               type="text"
               placeholder="Search"
               className="pl-10 bg-white border-gray-300 !w-full !max-w-full"
             />
-          </div>
+          </div> */}
 
           {/* <Card className="mb-6 bg-white shadow-sm">
        <div className="p-6">
@@ -223,7 +226,7 @@ const SettingsPage = () => {
         <StoreSettings
           currentSetting={currentSetting}
           onBack={handleBack}
-           initialTab={initialTab}
+          initialTab={initialTab}
         />
       )}
     </div>
