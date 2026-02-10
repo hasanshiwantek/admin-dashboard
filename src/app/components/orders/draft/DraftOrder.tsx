@@ -13,18 +13,18 @@ import { Input } from "@/components/ui/input";
 import { Copy, MoreHorizontal, Plus } from "lucide-react";
 import OrderActionsDropdown from "../OrderActionsDropdown";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
-import { fetchDraftOrders ,deleteDraftOrders} from "@/redux/slices/orderSlice";
+import { fetchDraftOrders, deleteDraftOrders } from "@/redux/slices/orderSlice";
 import Spinner from "../../loader/Spinner";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+
 const DraftOrder = () => {
   const dispatch = useAppDispatch();
   const { draftOrder, loading, error } = useAppSelector(
     (state: any) => state.order
   );
-  const router=useRouter()
+  const router = useRouter();
 
-  
   // Fetch draft orders on component mount
   useEffect(() => {
     dispatch(fetchDraftOrders({ isDraft: true }));
@@ -34,31 +34,30 @@ const DraftOrder = () => {
     {
       label: "Edit",
       onClick: () => {
-        router.push(`/manage/orders/edit/${row.orderId}`)
+        router.push(`/manage/orders/edit/${row.orderId}`);
         console.log(row.id);
-        
       },
     },
-{
-  label: "Delete",
-  onClick: async () => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this draft order?"
-    );
+    {
+      label: "Delete",
+      onClick: async () => {
+        const confirmed = window.confirm(
+          "Are you sure you want to delete this draft order?"
+        );
 
-    if (!confirmed) return;
+        if (!confirmed) return;
 
-    try {
-      await dispatch(deleteDraftOrders({ id: row.id })).unwrap();
-      console.log("✅ Draft order deleted");
-      setTimeout(()=>{
-        dispatch(fetchDraftOrders({ isDraft: true }))
-      },2000)
-    } catch (error) {
-      console.error("❌ Delete failed:", error);
-    }
-  },
-}
+        try {
+          await dispatch(deleteDraftOrders({ id: row.orderId })).unwrap();
+          console.log("✅ Draft order deleted");
+          setTimeout(() => {
+            dispatch(fetchDraftOrders({ isDraft: true }));
+          }, 2000);
+        } catch (error) {
+          console.error("❌ Delete failed:", error);
+        }
+      },
+    },
   ];
 
   const handleCopyUrl = (url: string) => {
@@ -68,12 +67,22 @@ const DraftOrder = () => {
     }
   };
 
-  // Calculate total for draft order
-  const calculateTotal = (products: any[]) => {
-    if (!products || products.length === 0) return "$0.00";
-    // This is a placeholder - you'll need to fetch actual prices
-    // or if the API provides total, use that instead
-    return "N/A"; // Replace with actual calculation if available
+  // ✅ Calculate total for draft order
+  const calculateTotal = (products: any[], shippingCost: string = "0.00") => {
+    if (!products || products.length === 0) {
+      return parseFloat(shippingCost || "0").toFixed(2);
+    }
+
+    const productsTotal = products.reduce((sum, product) => {
+      const price = parseFloat(product.price || product.productPrice || "0");
+      const quantity = parseInt(product.quantity || "1", 10);
+      return sum + price * quantity;
+    }, 0);
+
+    const shipping = parseFloat(shippingCost || "0");
+    const total = productsTotal + shipping;
+
+    return total.toFixed(2);
   };
 
   // Show loading state
@@ -132,18 +141,26 @@ const DraftOrder = () => {
             {data && data.length > 0 ? (
               data.map((row: any, index: number) => {
                 // Extract customer name
-                const customerName = `${row.firstName || ""} ${row.lastName || ""}`.trim() || 
-                                    `${row.billingInformation?.firstName || ""} ${row.billingInformation?.lastName || ""}`.trim() ||
-                                    "N/A";
-                
+                const customerName =
+                  `${row.firstName || ""} ${row.lastName || ""}`.trim() ||
+                  `${row.billingInformation?.firstName || ""} ${row.billingInformation?.lastName || ""}`.trim() ||
+                  "N/A";
+
                 // Extract company name if available
-                const companyInfo = row.companyName || row.billingInformation?.companyName;
-                const displayName = companyInfo ? `${customerName} (${companyInfo})` : customerName;
+                const companyInfo =
+                  row.companyName || row.billingInformation?.companyName;
+                const displayName = companyInfo
+                  ? `${customerName} (${companyInfo})`
+                  : customerName;
+
+                // ✅ Calculate total
+                const shippingCost = row.shippingMethod?.cost || "0.00";
+                const totalAmount = calculateTotal(row.products, shippingCost);
 
                 return (
                   <TableRow key={row.customerId || index}>
                     <TableCell className="2xl:!text-2xl">
-                      {row.created_at 
+                      {row.created_at
                         ? new Date(row.created_at).toLocaleDateString("en-US", {
                             weekday: "short",
                             year: "numeric",
@@ -156,7 +173,9 @@ const DraftOrder = () => {
                       <div className="flex flex-col">
                         <span>{displayName}</span>
                         {row.email && (
-                          <span className="text-xs text-gray-500">{row.email}</span>
+                          <span className="text-xs text-gray-500">
+                            {row.email}
+                          </span>
                         )}
                       </div>
                     </TableCell>
@@ -190,8 +209,8 @@ const DraftOrder = () => {
                       </div>
                     </TableCell>
                     <TableCell className="2xl:!text-2xl">
-                      {row.total || calculateTotal(row.products)}
-                      <div className="text-lg text-gray-700">
+                      <div className="font-semibold">${totalAmount}</div>
+                      <div className="text-sm text-gray-500">
                         {row.products?.length || 0} item(s)
                       </div>
                     </TableCell>
