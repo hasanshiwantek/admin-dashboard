@@ -442,6 +442,13 @@ export const StoreSettings = ({
   }, [dispatch]);
 
 
+  // ✅ Add this useEffect to sync activeTab with URL changes
+  useEffect(() => {
+    const tabFromUrl = searchParams.get("tab");
+    if (tabFromUrl && tabFromUrl !== activeTab) {
+      setActiveTab(tabFromUrl);
+    }
+  }, [searchParams]); // Re-run when URL changes
 
 
   // ✅ Add: Tab change handler with URL update
@@ -457,146 +464,125 @@ export const StoreSettings = ({
 
 
   const [websiteSettings, setWebsiteSettings] = useState({
-    weightMeasurement: "pounds",
-    lengthMeasurement: "inches",
-    decimalToken: ".",
-    thousandsToken: ",",
-    decimalPlaces: "2",
-    factoringDimension: "product-depth",
+    weightMeasurement: "",
+    lengthMeasurement: "",
+    decimalToken: "",
+    thousandsToken: "",
+    decimalPlaces: "",
+    factoringDimension: "",
     homePageTitle: "",
-    metaKeywords:
-      "NETWORK ADAPTERS, POWER SUPPLY, HARD DRIVE, SSD, SWITCHES, PRI",
-    metaDescription:
-      "Empower your digital journey with High-Performance IT hardware",
-    wwwRedirect: "redirect-www-to-no-www",
-    robotsTxt: `User-agent: *
-Disallow: /account.php
-Disallow: /cart.php
-Disallow: /checkout.php
-Disallow: /checkout
-Disallow: /finishorder.php
-Disallow: /login.php
-Disallow: /orderstatus.php
-Disallow: /postreview.php
-Disallow: /productimage.php
-Disallow: /productupdates.php
-Disallow: /remote.php
-Disallow: /search.php
-Disallow: /viewfile.php
-Disallow: /wishlist.php
-Disallow: /admin/
-Disallow: /*/price_min
-Disallow: /*/sort=
-Disallow: /*/searchId
-Disallow: /search.php`,
+    metaKeywords: "",
+    metaDescription: "",
+    wwwRedirect: "",
+    robotsTxt: "",
   });
 
   // 🆕 State for Display tab settings (Initial values from the screenshot)
   const [displaySettings, setDisplaySettings] = useState({
-    productBreadcrumbs: "show-one-only",
-    showQuantityBox: true,
-    enableSearchSuggest: true,
+    productBreadcrumbs: "",
+    showQuantityBox: false,
+    enableSearchSuggest: false,
     autoApproveReviews: false,
     enableWishlist: false,
     enableProductComparisons: false,
-    enableAccountCreation: true,
-    useWysiwygEditor: true,
-    showProductThumbnails: true,
-
-    categoryProductList: "current-and-children",
-    defaultProductSort: "featured",
-    menuDisplayDepth: "3",
-
-    showProductPrice: true,
-    detailPageDefaultPrice: "default-catalog",
-    listPageDefaultPrice: "default-catalog",
+    enableAccountCreation: false,
+    useWysiwygEditor: false,
+    showProductThumbnails: false,
+    categoryProductList: "",
+    defaultProductSort: "",
+    menuDisplayDepth: "",
+    showProductPrice: false,
+    detailPageDefaultPrice: "",
+    listPageDefaultPrice: "",
     hidePriceFromGuests: false,
-    showProductSku: true,
-    showProductWeight: true,
-    showProductBrand: true,
-    showProductShippingCost: true,
-    showProductRating: true,
+    showProductSku: false,
+    showProductWeight: false,
+    showProductBrand: false,
+    showProductShippingCost: false,
+    showProductRating: false,
     showAddToCartLink: false,
-    defaultPreOrderMessage: "%DATE%",
+    defaultPreOrderMessage: "",
   });
 
   // 🆕 State for Date & Timezone settings
   const [dateTimezoneSettings, setDateTimezoneSettings] = useState({
-    timezone: "pacific-gmt-8",
+    timezone: "",
     enableDstCorrection: false,
-    displayDateFormat: "M d, Y",
-    extendedDisplayDateFormat: "i S M Y @ g:i A",
+    displayDateFormat: "",
+    extendedDisplayDateFormat: "",
   });
 
   // 🆕 State for URL Structure settings
   const [urlStructureSettings, setUrlStructureSettings] = useState({
-    productUrlFormat: "seo-optimized-short",
-    productCustomUrl: "custom/url/product/%productname%/",
-    categoryUrlFormat: "custom", // Custom is selected in the image for Category
-    categoryCustomUrl: "/%parent%/%categoryname%/",
-    webPageUrlFormat: "seo-optimized-short",
-    webPageCustomUrl: "custom/url/page/%pagename%.html",
+    productUrlFormat: "",
+    productCustomUrl: "",
+    categoryUrlFormat: "",
+    categoryCustomUrl: "",
+    webPageUrlFormat: "",
+    webPageCustomUrl: "",
   });
 
   // 🆕 State for Search settings
   const [searchSettings, setSearchSettings] = useState({
-    defaultProductSort: "relevance",
-    defaultContentSort: "relevance",
-    storefrontSearchLogic: "one-or-more",
+    defaultProductSort: "",
+    defaultContentSort: "",
+    storefrontSearchLogic: "",
   });
 
+
   const [securityPrivacySettings, setSecurityPrivacySettings] = useState({
-    enforcePasswordComplexity: true,
-    inactiveShopperLogout: "default",
-    customLogoutDuration: "7",
-    customLogoutDurationUnit: "days",
-    shopperActivityExtendsLogout: true,
-    controlPanelTimeout: "2hours",
+    enforcePasswordComplexity: false,
+    inactiveShopperLogout: "",
+    customLogoutDuration: "",
+    customLogoutDurationUnit: "",
+    shopperActivityExtendsLogout: false,
+    controlPanelTimeout: "",
     enableRecaptchaStorefront: false,
     recaptchaSiteKey: "",
     recaptchaSecretKey: "",
-    failedLoginLockout: "10",
-    enableRecaptchaPrelaunch: true,
+    failedLoginLockout: "",
+    enableRecaptchaPrelaunch: false,
     enableCookieConsent: false,
     privacyPolicyUrl: "",
-    dataCollectionLimit: "off",
-    enableHsts: true,
-    hstsMaxAge: "5",
-    hstsMaxAgeUnit: "minutes",
+    dataCollectionLimit: "",
+    enableHsts: false,
+    hstsMaxAge: "",
+    hstsMaxAgeUnit: "",
     hstsApplySubdomains: false,
     hstsApplyPreload: false,
-    cspConfig: "no-custom",
+    cspConfig: "",
     enableNonceSecurity: false,
-    xFrameOptions: "deny",
+    xFrameOptions: "",
   });
+
 
   const [miscellaneousSettings, setMiscellaneousSettings] = useState({
     // Email Settings
-    reviewEmailDays: "7",
-    sendReviewEmailToGuests: true,
-    forwardOrderInvoices: true,
-    invoiceEmailRecipient: "sales@test.com, info@test.cc",
-    smtpServerOption: "default",
-    administratorEmail: "info@ctspoint.com",
+    reviewEmailDays: "",
+    sendReviewEmailToGuests: false,
+    forwardOrderInvoices: false,
+    invoiceEmailRecipient: "",
+    smtpServerOption: "",
+    administratorEmail: "",
     requireMarketingConsent: false,
-    enableAbandonedCartEmails: true,
-    abandonedCartThreshold: "10",
+    enableAbandonedCartEmails: false,
+    abandonedCartThreshold: "",
     emailEveryAbandonedCart: false,
-    stopEmailOnCompleteOrder: true,
-    enableConvertedCartEmails: true,
-    convertedCartRecipient: "info@test.com",
+    stopEmailOnCompleteOrder: false,
+    enableConvertedCartEmails: false,
+    convertedCartRecipient: "",
 
     // Advanced Store Settings
-    allowPurchasing: true,
+    allowPurchasing: false,
 
     // Order Settings
-    startingOrderNumber: "311080",
+    startingOrderNumber: "",
 
     // Throttler
     enableThrottler: false,
-    throttleReviewsPerPeriod: "1",
-    throttlePeriodValue: "30",
-    throttlePeriodUnit: "minutes",
+    throttleReviewsPerPeriod: "",
+    throttlePeriodValue: "",
+    throttlePeriodUnit: "",
   });
 
   // Update state when storeSettings data is loaded
