@@ -107,7 +107,7 @@ const DraftOrder = () => {
 
   // Extract data from the response
   const data = draftOrder?.data || [];
-  console.log("Draft Orders Data:", data);
+  console.log("Draft Orders Data:", data  );
 
   return (
     <div className="p-10 max-w-full">
