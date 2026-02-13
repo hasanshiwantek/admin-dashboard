@@ -75,10 +75,10 @@ const AllCustomers = () => {
         setShowCustomerNotes(true);
       },
     },
-    {
-      label: "Login",
-      onClick: () => console.log("Login Customer clicked", customer),
-    },
+    // {
+    //   label: "Login",
+    //   onClick: () => console.log("Login Customer clicked", customer),
+    // },
   ];
 
   const handleSelectAll = () => {
