@@ -94,7 +94,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
 
             {/* Dropdown Menu - Only shows selected store info */}
             {companyOpen && (
-              <div className="absolute left-0 mt-2 w-[300px] bg-white rounded-md shadow-lg z-50 !p-5">
+              <div className="absolute left-0 mt-2 w-[300px] bg-white rounded-md shadow-lg z-999 !p-5">
                 {/* Current Store Info */}
                 <div className="p-4 !my-5">
                   <p className="!text-2xl !text-black">{selectedStore?.name}</p>
@@ -114,12 +114,12 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
       {/* Right: Icons and Link */}
       <div className="flex items-center  gap-1  !mr-2 ">
         <div className="flex items-center justify-between  ">
-          <div className="!p-1 hover:bg-[#2d3748] cursor-pointer ">
+          {/* <div className="!p-1 hover:bg-[#2d3748] cursor-pointer ">
             <HelpDropdown />
           </div>
           <div className=" !p-1 hover:bg-[#2d3748] cursor-pointer">
             <BellDropdown />
-          </div>
+          </div> */}
           <div className="relative !p-1 hover:bg-[#2d3748] cursor-pointer">
             <UserDropdown />
           </div>
