@@ -43,7 +43,7 @@ export default function Pricing() {
         </Label>
         <Input
           className="!max-w-[100%] w-full"
-          // type="number"
+        type="number"
           placeholder="$0"
           value={price}
           onChange={(e) => setValue("price", e.target.value)}

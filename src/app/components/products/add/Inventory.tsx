@@ -1,14 +1,15 @@
 "use client";
 
 import { useFormContext, Controller } from "react-hook-form";
-import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-export default function InventorySection() {
-  const { control, watch, register, setValue } = useFormContext();
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
+export default function InventorySection({ isEdit = false }: { isEdit?: boolean }) {
+  const { control, watch, register } = useFormContext();
+
+  // Watch form values
   const trackInventory = watch("trackInventory");
   const inventoryLevel = watch("inventoryLevel");
 
@@ -16,26 +17,29 @@ export default function InventorySection() {
     <div className="p-10 border rounded-md bg-white space-y-4 scroll-mt-20" id="inventory">
       <h1 className="2xl:!text-[2.4rem]">Inventory</h1>
 
-      {/* Switch: Track Inventory */}
+      {/* Track Inventory Switch */}
       <div className="flex items-center space-x-2">
         <Controller
           control={control}
           name="trackInventory"
-          defaultValue={false}
+          defaultValue={isEdit ? undefined : true} // ✅ checked by default only for new product
           render={({ field }) => (
             <Checkbox
               id="trackInventory"
               checked={field.value}
-              onCheckedChange={(val) => field.onChange(val)}
+              onCheckedChange={field.onChange}
             />
           )}
         />
-        <Label className="2xl:!text-2xl" htmlFor="trackInventory">Track inventory</Label>
+        <Label className="2xl:!text-2xl" htmlFor="trackInventory">
+          Track inventory
+        </Label>
       </div>
 
+      {/* Show inventory level fields only if tracking is enabled */}
       {trackInventory && (
         <>
-          {/* RadioGroup: Inventory Level */}
+          {/* Inventory Level Radio */}
           <Controller
             control={control}
             name="inventoryLevel"
@@ -48,11 +52,15 @@ export default function InventorySection() {
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="product" id="product" />
-                  <Label className="2xl:!text-2xl" htmlFor="product">On the product level</Label>
+                  <Label className="2xl:!text-2xl" htmlFor="product">
+                    On the product level
+                  </Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="variant" id="variant" />
-                  <Label className="2xl:!text-2xl" htmlFor="variant">On the variant level</Label>
+                  <Label className="2xl:!text-2xl" htmlFor="variant">
+                    On the variant level
+                  </Label>
                 </div>
               </RadioGroup>
             )}
@@ -62,22 +70,26 @@ export default function InventorySection() {
           {inventoryLevel === "product" ? (
             <div className="grid grid-cols-1 2xl:grid-cols-2 gap-4 pt-4">
               <div>
-                <Label className="2xl:!text-2xl" htmlFor="currentStock">Current Stock</Label>
+                <Label className="2xl:!text-2xl" htmlFor="currentStock">
+                  Current Stock
+                </Label>
                 <Input
-                  className="!max-w-[100%] 2xl!max-w-[90%] w-full"
                   id="currentStock"
                   type="number"
                   placeholder="0"
+                  className="!max-w-[100%] 2xl:!max-w-[90%] w-full"
                   {...register("currentStock")}
                 />
               </div>
               <div>
-                <Label className="2xl:!text-2xl" htmlFor="lowStock">Low Stock</Label>
+                <Label className="2xl:!text-2xl" htmlFor="lowStock">
+                  Low Stock
+                </Label>
                 <Input
-                  className="!max-w-[100%] 2xl!max-w-[90%] w-full"
                   id="lowStock"
                   type="number"
                   placeholder="0"
+                  className="!max-w-[100%] 2xl:!max-w-[90%] w-full"
                   {...register("lowStock")}
                 />
               </div>
