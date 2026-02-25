@@ -1,4 +1,5 @@
-// OpenGraph.tsx
+"use client";
+
 import { useFormContext } from "react-hook-form";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -11,12 +12,23 @@ import {
 } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
-export default function OpenGraph() {
+interface OpenGraphProps {
+  isEdit?: boolean;
+}
+
+export default function OpenGraph({ isEdit = false }: OpenGraphProps) {
   const { setValue, watch } = useFormContext();
+
   const objectType = watch("objectType");
-  const imageOption = watch("imageOption") || "useThumbnail"; // ✅ Changed from "image" to "imageOption"
-  const useProductName = watch("useProductName");
-  const graphDescription = watch("graphDescription");
+  const imageOption = watch("imageOption") || "useThumbnail";
+
+  // ✅ Fallback logic for checkboxes
+  const useProductNameValue = watch("useProductName");
+  const graphDescriptionValue = watch("graphDescription");
+
+  // If backend value exists (edit mode), use it. Otherwise (new product), default checked (true)
+  const useProductName = useProductNameValue ?? (!isEdit ? 1 : 0);
+  const graphDescription = graphDescriptionValue ?? (!isEdit ? 1 : 0);
 
   return (
     <div id="openGraphSharing" className="p-10 bg-white shadow-lg rounded-sm">
@@ -79,8 +91,8 @@ export default function OpenGraph() {
         <div className="my-6">
           <h2 className="2xl:!text-3xl">Image</h2>
           <RadioGroup
-            value={imageOption} // ✅ Use imageOption
-            onValueChange={(val) => setValue("imageOption", val)} // ✅ Set imageOption
+            value={imageOption}
+            onValueChange={(val) => setValue("imageOption", val)}
           >
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="useThumbnail" id="useThumbnail" />
