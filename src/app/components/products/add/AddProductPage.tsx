@@ -91,6 +91,7 @@ export default function AddProductPage() {
         ...product,
         // Map relatedProductsEnabled → relatedProducts
         relatedProducts: product.relatedProductsEnabled || 0,
+        categoryIds: (product.categoryIds || []).map(Number), // ✅ critical fix
       };
 
       reset(mappedProduct);
@@ -302,3 +303,12 @@ export default function AddProductPage() {
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
