@@ -23,6 +23,27 @@ export const fetchAllProducts = createAsyncThunk(
     }
   }
 );
+export const fetchFilterProducts = createAsyncThunk(
+  "product/fetchFilterProducts",
+  async (
+    { category, sku }: { category: any; sku: string },
+    thunkAPI
+  ) => {
+    console.log("Filtering products with:", { category, sku });
+    try {
+      const res = await axiosInstance.get(
+        `dashboard/products/products-filter?isCategory=${category}&isSku=${sku}`
+      );
+      console.log("✅ Products Response Data:", res.data);
+      return res.data;
+    } catch (err: any) {
+      console.error("❌ Error in fetchFilterProducts:", err);
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to fetch products"
+      );
+    }
+  }
+);
 
 export const fetchSingleProduct = createAsyncThunk(
   "product/fetchSingleProduct",
@@ -378,6 +399,7 @@ export const exportCsv = createAsyncThunk(
 // 2. Initial State
 const initialState = {
   products: [],
+  filterProducts: [],
   singleProduct: [],
   brands: [],
   loading: false,
@@ -409,6 +431,22 @@ const productSlice = createSlice({
       })
       .addCase(fetchAllProducts.rejected, (state, action) => {
         state.loading = false;
+        state.error =
+          (action.payload as string) || action.error.message || "Failed";
+      })
+
+
+      .addCase(fetchFilterProducts.pending, (state) => {
+        state.loading = true;
+        state.error = null; // reset error
+      })
+      .addCase(fetchFilterProducts.fulfilled, (state, action) => {
+        state.loading = false;
+        state.filterProducts = action.payload;
+      })
+      .addCase(fetchFilterProducts.rejected, (state, action) => {
+        state.loading = false;
+        state.filterProducts = []; // Clear previous results on error
         state.error =
           (action.payload as string) || action.error.message || "Failed";
       })

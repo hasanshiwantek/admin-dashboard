@@ -36,89 +36,89 @@ export default function ProductTable({
   return (
     <div>
 
-    <div className="border rounded-md overflow-hidden">
-      <Table>
-        <TableHeader className="bg-muted">
-          <TableRow>
-            <TableHead className="w-[100px]">Products</TableHead>
-            <TableHead>Description</TableHead>
-            <TableHead className="w-[80px]">Qty</TableHead>
-            <TableHead className="w-[100px]">Price</TableHead>
-            <TableHead className="w-[100px]">Total</TableHead>
-            <TableHead className="w-[50px]">Action</TableHead>
-          </TableRow>
-        </TableHeader>
-
-        <TableBody className="!bg-white p-4 h-30">
-          {products.map((product) => (
-            <TableRow key={product.id}>
-              {/* Product Image */}
-              <TableCell>
-                {(product.image?.[1]?.path || product.image?.[0]?.path) && (
-                  <Image
-                    src={product.image?.[1]?.path || product.image?.[0]?.path}
-                    alt={product.name}
-                    width={60}
-                    height={60}
-                    className="rounded !border object-contain !border-gray-300 p-2 shrink-0 w-28 h-24"
-                  />
-                )}
-              </TableCell>
-
-              {/* Description */}
-              <TableCell>
-                <div className="font-semibold !text-xl">{product.name}</div>
-                <div className="text-lg  font-semibold text-gray-800">
-                  {product.sku}
-                </div>
-              </TableCell>
-
-              {/* Quantity */}
-              <TableCell>
-                <Input
-                  type="number"
-                  min={1}
-                  value={product.quantity}
-                  onChange={(e) =>
-                    onQtyChange(product.id, parseInt(e.target.value) || 1)
-                  }
-                />
-              </TableCell>
-
-              {/* Price */}
-              <TableCell>${parseFloat(product.price).toFixed(2)}</TableCell>
-
-              {/* Total */}
-              <TableCell className="font-medium">
-                ${getTotal(product).toFixed(2)}
-              </TableCell>
-              {/* Dropdown Action */}
-              <TableCell className="text-center">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem
-                      onClick={() => onDelete(product.id)}
-                      className="text-red-600"
-                    >
-                      <Trash2 className="w-4 h-4 mr-2" />
-                      Delete
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </TableCell>
+      <div className="border rounded-md overflow-hidden">
+        <Table>
+          <TableHeader className="bg-muted">
+            <TableRow>
+              <TableHead className="w-[100px]">Products</TableHead>
+              <TableHead>Description</TableHead>
+              <TableHead className="w-[80px]">Qty</TableHead>
+              <TableHead className="w-[100px]">Price</TableHead>
+              <TableHead className="w-[100px]">Total</TableHead>
+              <TableHead className="w-[50px]">Action</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+
+          <TableBody className="!bg-white p-4 h-30">
+            {products.map((product) => (
+              <TableRow key={product.id}>
+                {/* Product Image */}
+                <TableCell>
+                  {(product.image?.[1]?.path || product.image?.[0]?.path) && (
+                    <Image
+                      src={product.image?.[1]?.path || product.image?.[0]?.path}
+                      alt={product.name}
+                      width={60}
+                      height={60}
+                      className="rounded !border object-contain !border-gray-300 p-2 shrink-0 w-28 h-24"
+                    />
+                  )}
+                </TableCell>
+
+                {/* Description */}
+                <TableCell>
+                  <div className="font-semibold !text-xl">{product.name}</div>
+                  <div className="text-lg  font-semibold text-gray-800">
+                    {product.sku}
+                  </div>
+                </TableCell>
+
+                {/* Quantity */}
+                <TableCell>
+                  <Input
+                    type="number"
+                    min={1}
+                    value={product.quantity ?? 1}
+                    onChange={(e) =>
+                      onQtyChange(product.id, parseInt(e.target.value) || 1)
+                    }
+                  />
+                </TableCell>
+
+                {/* Price */}
+                <TableCell>${parseFloat(product.price).toFixed(2)}</TableCell>
+
+                {/* Total */}
+                <TableCell className="font-medium">
+                  ${getTotal(product).toFixed(2)}
+                </TableCell>
+                {/* Dropdown Action */}
+                <TableCell className="text-center">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon">
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem
+                        onClick={() => onDelete(product.id)}
+                        className="text-red-600"
+                      >
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
 
 
-    </div>
-          {/* Subtotal */}
+      </div>
+      {/* Subtotal */}
       <div className="flex justify-end font-semibold my-5 items-center bg-gray-700 text-white p-4 text-xl w-fit rounded-md">
         Subtotal:
         <span className="ml-2 !text-xl font-semibold !text-white">${subtotal.toFixed(2)}</span>

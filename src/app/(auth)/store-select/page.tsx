@@ -35,8 +35,10 @@ export default function StoreSelectPage() {
   };
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      router.push("/login");
+    const token = localStorage.getItem("token");
+    const storeId = localStorage.getItem("storeId");
+    if (token && storeId) {
+      router.push("/manage/dashboard");
     }
   }, [isAuthenticated]);
 
