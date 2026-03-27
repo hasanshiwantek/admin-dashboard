@@ -59,8 +59,10 @@ export default function LoginPage() {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (token) {
+    const storeId = localStorage.getItem("storeId");
+    if (token && storeId) {
       router.replace("/manage/dashboard");
+    } else {
     }
   }, []);
 

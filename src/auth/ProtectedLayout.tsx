@@ -14,9 +14,10 @@ const ProtectedLayout = ({ children }: Props) => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+    const storeId = localStorage.getItem("storeId");
     const expiry = localStorage.getItem("tokenExpiry");
 
-    if (!token || !expiry) {
+    if (!token || !expiry || !storeId) {
       router.replace("/login");
       setIsAuthenticated(false);
     } else {
@@ -44,8 +45,8 @@ const ProtectedLayout = ({ children }: Props) => {
   }, [router]);
 
   if (isAuthenticated === null || isAuthenticated === false) {
-  return <NavigationLoader />
-}
+    return <NavigationLoader />
+  }
 
   return <>{children}</>;
 };
