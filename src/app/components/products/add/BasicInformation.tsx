@@ -55,7 +55,7 @@ export default function BasicInfoForm() {
             <div>
               <Label className="2xl:!text-2xl" htmlFor="name">Product Name</Label>
               <Input
-                           className="!max-w-[90%] w-full"
+                className="!max-w-[90%] w-full"
                 id="name"
                 placeholder="Sample Product Name"
                 {...register("name")}
@@ -70,7 +70,7 @@ export default function BasicInfoForm() {
                 value={productType}
                 onValueChange={(value) => setValue("productType", value)}
               >
-                <SelectTrigger              className="!max-w-[90%] w-full">
+                <SelectTrigger className="!max-w-[90%] w-full">
                   <SelectValue placeholder="Select type" />
                 </SelectTrigger>
                 <SelectContent>
@@ -86,8 +86,8 @@ export default function BasicInfoForm() {
                 value={brandId ? String(brandId) : ""}
                 onValueChange={(value) => setValue("brandId", Number(value))}
               >
-                <SelectTrigger              className="!max-w-[90%] w-full">
-                  <SelectValue placeholder="Select brand"  />
+                <SelectTrigger className="!max-w-[90%] w-full">
+                  <SelectValue placeholder="Select brand" />
                 </SelectTrigger>
                 <SelectContent>
                   {brands?.data?.map((brand: any) => (
@@ -105,13 +105,13 @@ export default function BasicInfoForm() {
             <div>
               <Label className="2xl:!text-2xl" htmlFor="sku">SKU</Label>
               <Input
-                           className="!max-w-[90%] w-full" id="sku" placeholder="THX-1138" {...register("sku")}  required/>
+                className="!max-w-[90%] w-full" id="sku" placeholder="THX-1138" {...register("sku")} required />
             </div>
 
             <div>
               <Label className="2xl:!text-2xl" htmlFor="price">Default Price</Label>
               <Input
-                           className="!max-w-[90%] w-full"
+                className="!max-w-[90%] w-full"
                 id="price"
                 placeholder="35"
                 {...register("price", { valueAsNumber: true })}
@@ -122,7 +122,8 @@ export default function BasicInfoForm() {
             <div>
               <Label className="2xl:!text-2xl" htmlFor="dimensions.weight">Weight (lbs)</Label>
               <Input
-                           className="!max-w-[90%] w-full"
+                type="number"
+                className="!max-w-[90%] w-full"
                 id="weight"
                 placeholder="0"
                 {...register("dimensions.weight", { valueAsNumber: true })}
@@ -134,9 +135,9 @@ export default function BasicInfoForm() {
         <div className="flex justify-between my-5">
           <h1>Categories</h1>
           <Link href={"/manage/products/categories"}>
-          <Button type="button" className="bg-transparent shadow-none text-blue-600 text-xl 2xl:!text-2xl hover:bg-blue-100 transition-all p-6 cursor-pointer">
-            <Plus></Plus> Add Categories
-          </Button>
+            <Button type="button" className="bg-transparent shadow-none text-blue-600 text-xl 2xl:!text-2xl hover:bg-blue-100 transition-all p-6 cursor-pointer">
+              <Plus></Plus> Add Categories
+            </Button>
           </Link>
         </div>
         <CategoryTree name="categoryIds" />
