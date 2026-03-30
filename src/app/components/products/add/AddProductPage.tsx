@@ -33,10 +33,38 @@ import { useRouter } from "next/navigation";
 import objectToFormData from "@/lib/formDataUtils";
 import { buildUpdateProductFormData } from "@/lib/formDataUtils";
 // import { updateProductFormData } from "@/redux/slices/productSlice";
+// ✅ Add above onSubmit — reusable helper
+// const buildCopyNameSku = (name: string, sku: string) => {
+//   // ✅ Strip existing "Copy N" or "Copy" suffix
+//   const baseName = name.replace(/\s+Copy\s*\d*$/, "");
+//   const baseSku = sku.replace(/-\d+$/, "");
+//   const match = sku.match(/-(\d+)$/);
+//   const nextNum = match ? parseInt(match[1]) + 1 : 1;
+//   return { name: `${baseName} Copy ${nextNum}`, sku: `${baseSku}-${nextNum}` };
+// };
+const buildCopyNameSku = (name: string, sku: string) => {
+  // ✅ Name: strip "Copy N" → increment
+  const baseName = name.replace(/\s+Copy\s*\d*$/, "");
+  const nameMatch = name.match(/Copy\s*(\d+)$/);
+  const nextNameNum = nameMatch ? parseInt(nameMatch[1]) + 1 : 1;
 
+  // ✅ SKU: get last -N → increment → append to full sku
+  const skuMatch = sku.match(/-(\d+)$/);
+  const nextSkuNum = skuMatch ? parseInt(skuMatch[1]) + 1 : 1;
+
+  return {
+    name: `${baseName} Copy ${nextNameNum}`, // Product Copy 1 → Copy 2 → Copy 3
+    sku: `${sku}-${nextSkuNum}`,             // BC12345678-1 → BC12345678-1-2 → BC12345678-1-2-3
+  };
+};
 export default function AddProductPage() {
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+  const exitAfterSaveRef = useRef(false);
+  const copyAfterSaveRef = useRef(false)
+  const hasUpdatedOriginalRef = useRef(false); // ✅ tracks if update already happened
+
   const defaultValues = useMemo(
     () => ({
       price: "35",
@@ -55,7 +83,7 @@ export default function AddProductPage() {
   const methods = useForm({ defaultValues });
   const { reset } = methods;
   const { id } = useParams();
-  const exitAfterSaveRef = useRef(false);
+  const isEditModeRef = useRef(!!id);
   useEffect(() => {
     if (id) {
       dispatch(fetchSingleProduct({ id }));
@@ -69,9 +97,10 @@ export default function AddProductPage() {
   const [product, setProduct] = useState<any>();
   // const product = editProduct?.data;
   // const product = allProducts.data?.find((p: any) => p.id === Number(id));
-  console.log("Product to edit: ", product);
 
   const isEdit = !!product?.id;
+  // const isEdit = !!id;
+
 
   useEffect(() => {
     if (editProduct?.data) {
@@ -114,11 +143,10 @@ export default function AddProductPage() {
     }
   }, [id, reset]);
 
-
-  const [isLoading, setIsLoading] = useState(false);
-
   const onSubmit = methods.handleSubmit(async (data: Record<string, any>) => {
     setIsLoading(true);
+    const isEdit = isEditModeRef.current;
+
     try {
       const imageData = Array.isArray(data.image)
         ? data.image.map((img: any) => ({
@@ -128,7 +156,9 @@ export default function AddProductPage() {
           isPrimary: img.isPrimary ? 1 : 0,
         }))
         : [];
+
       const { id, imageOption, exitAfterSave, ...rest } = data;
+
       const normalizedFields = {
         ...rest,
         image: imageData,
@@ -149,41 +179,91 @@ export default function AddProductPage() {
         isVisible: data.isVisible ? 1 : 0,
         allowPurchase: data.allowPurchase ? 1 : 0,
         stopProcessingRules: data.stopProcessingRules ? 1 : 0,
-        // ✅ Add OpenGraph fields
         useProductName: data.useProductName ? 1 : 0,
         graphDescription: data.graphDescription ? 1 : 0,
-
-
-
-        // ✅ Send single field with radio value
-        useThumbnail: imageOption === "useThumbnail" ? 1 : 0,  // Backend ko 0/1 chahiye
+        useThumbnail: imageOption === "useThumbnail" ? 1 : 0,
         dontUse: imageOption === "dontUse" ? 1 : 0,
-
-        // ✅ Add CustomsInformation field
         manageCustoms: data.manageCustoms ? 1 : 0,
-
       };
-      const payload = normalizedFields;
-      const formData = objectToFormData(payload);
-      const result = isEdit
-        ? await dispatch(updateProductFormData({ id: product.id, data: formData }))
-        : await dispatch(addProduct({ data: formData }));
 
-      if ((isEdit ? updateProductFormData : addProduct).fulfilled.match(result)) {
-        if (exitAfterSaveRef.current) {
-          router.push("/manage/products");       // Save & Exit → list page
-        } else if (!isEdit) {
-          router.push("/manage/products/add");   // Save (add mode) → same add page
+      // ─── CASE 1: Edit + Copy — 1st click = UPDATE only ──────────
+      if (hasUpdatedOriginalRef.current && isEdit) {
+        const formData = objectToFormData(normalizedFields);
+        const result = await dispatch(addProduct({ data: formData }));
+        if (addProduct.fulfilled.match(result)) {
+          hasUpdatedOriginalRef.current = true;
+          const { name: copyName, sku: copySku } = buildCopyNameSku(data.name, data.sku);
+          methods.reset({ ...data, name: copyName, sku: copySku });
         }
-        // Save (edit mode) → same edit page pe raho, kuch nahi karo
-      } else {
-        console.error("Product save failed:", result.error);
       }
+      if (copyAfterSaveRef.current && isEdit && !hasUpdatedOriginalRef.current) {
+
+        const updateFormData = objectToFormData(normalizedFields);
+        const updateResult = await dispatch(
+          updateProductFormData({ id: product.id, data: updateFormData })
+        );
+
+        if (updateProductFormData.fulfilled.match(updateResult)) {
+          // ✅ Mark updated — next click will CREATE
+          hasUpdatedOriginalRef.current = true;
+          isEditModeRef.current = false;
+
+          setProduct(undefined);
+
+          const { name: copyName, sku: copySku } = buildCopyNameSku(data.name, data.sku);
+          methods.reset({ ...data, name: copyName, sku: copySku });
+          // router.replace("/manage/products/add");
+        } else {
+          console.error("Update failed:", updateResult.error);
+        }
+
+        // ─── CASE 2: Copy — 2nd click = CREATE only ─────────────────
+      } else if (copyAfterSaveRef.current && !isEdit) {
+
+        const formData = objectToFormData(normalizedFields);
+        const result = await dispatch(addProduct({ data: formData }));
+
+        if (addProduct.fulfilled.match(result)) {
+          hasUpdatedOriginalRef.current = false; // ✅ reset for next time
+          const { name: copyName, sku: copySku } = buildCopyNameSku(data.name, data.sku);
+          methods.reset({ ...data, name: copyName, sku: copySku });
+        } else {
+          console.error("Create failed:", result.error);
+        }
+
+        // ─── CASE 3: Normal Save / Update ───────────────────────────
+      } else {
+
+        if (!hasUpdatedOriginalRef.current) {
+
+          const formData = objectToFormData(normalizedFields);
+          const result = isEdit
+            ? await dispatch(updateProductFormData({ id: product.id, data: formData }))
+            : await dispatch(addProduct({ data: formData }));
+
+          const actionCreator = isEdit ? updateProductFormData : addProduct;
+
+          if (actionCreator.fulfilled.match(result)) {
+            if (exitAfterSaveRef.current) {
+              router.push("/manage/products");
+            } else if (!isEdit) {
+              router.push("/manage/products/add");
+            }
+          } else {
+            console.error("Product save failed:", result.error);
+          }
+        }
+      }
+
     } catch (error) {
       console.error("Unexpected error during save:", error);
     } finally {
       setIsLoading(false);
-      exitAfterSaveRef.current = false; // ✅ har submit ke baad reset
+      if (!isEdit) {
+
+        exitAfterSaveRef.current = false;
+      }
+      copyAfterSaveRef.current = false;
     }
   });
 
@@ -268,7 +348,24 @@ export default function AddProductPage() {
                   Cancel
                 </button>
               </Link>
+              {/* Save & Copy */}
 
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="btn-outline-primary flex items-center gap-2"
+                onClick={() => {
+                  if (!isEdit) {
+                    exitAfterSaveRef.current = false; // ✅ not exit
+                  }
+                  copyAfterSaveRef.current = true;  // ✅ copy mode
+                }}
+              >
+                {isLoading && exitAfterSaveRef.current && (
+                  <span className="h-4 w-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                )}
+                {isEdit ? "Update & Copy" : "Save & Copy"}
+              </button>
               {/* Save & Exit */}
               <button
                 type="submit"
