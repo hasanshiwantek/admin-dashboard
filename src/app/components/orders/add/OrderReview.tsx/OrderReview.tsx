@@ -60,13 +60,11 @@ export default function OrderReview({ step, setStep }: any) {
     0
   );
 
-  console.log("SUBTOTAL : ", subtotal);
-
-
   const shippingCost = 0;
   const total = subtotal + shippingCost;
-
-  console.log("TOTAL : ", total);
+  const shippingDestinations = watch("shippingDestinations") || [];
+  const destinationType = watch("destinationType"); // "billing" | "single" | "multiple"
+  const isMultiple = destinationType === "multiple" || shippingDestinations.length > 0;
   // Function to render specific payment fields based on the selected method
   const renderPaymentFields = () => {
     const customerEmail = billing.email || "customer@example.com"; // Use the actual email from the form data
@@ -254,98 +252,192 @@ export default function OrderReview({ step, setStep }: any) {
             {selectedProducts.length}
           </h1>
           {/* Shipping */}
-          <div className="border rounded-md p-5 bg-white space-y-4">
-            <div className="flex justify-between items-start mb-4">
-              <h2 className="font-semibold text-sm">Shipping to:</h2>
-              <button
-                type="button"
-                className="text-blue-600 text-xl hover:underline"
-                onClick={() => setStep(step - 1)}
-              >
-                Change
-              </button>
-            </div>
-            <div className="text-[14px] grid grid-cols-[150px_1fr] gap-y-2">
-              <div className="font-medium">Name</div>
-              <div>
-                {shipping?.firstName} {shipping?.lastName}
+          {isMultiple ? (
+            // ✅ Multiple addresses — show each destination
+            shippingDestinations.map((dest: any, idx: number) => (
+              <div key={idx} className="border rounded-md p-5 bg-white space-y-4">
+                <div className="flex justify-between items-start mb-4">
+                  <h2 className="font-semibold text-sm">
+                    Shipping to: ({idx + 1} of {shippingDestinations.length})
+                  </h2>
+                  <button
+                    type="button"
+                    className="text-blue-600 text-xl hover:underline"
+                    onClick={() => setStep(step - 1)}
+                  >
+                    Change
+                  </button>
+                </div>
+
+                <div className="text-[14px] grid grid-cols-[150px_1fr] gap-y-2">
+                  <div className="font-medium">Name</div>
+                  <div>{dest.address?.firstName} {dest.address?.lastName}</div>
+
+                  <div className="font-medium">Address</div>
+                  <div>{dest.address?.address1}</div>
+
+                  <div className="font-medium">Suburb/City</div>
+                  <div>{dest.address?.city}</div>
+
+                  <div className="font-medium">State/Province</div>
+                  <div>{dest.address?.state}</div>
+
+                  <div className="font-medium">Country</div>
+                  <div>{dest.address?.country}</div>
+
+                  <div className="font-medium">ZIP/Postcode</div>
+                  <div>{dest.address?.zip}</div>
+
+                  <div className="font-medium">Shipping method</div>
+                  <div>{dest.address?.shippingMethod?.provider ?? "None"}</div>
+
+                  <div className="font-medium">Shipping cost</div>
+                  <div>$0.00</div>
+                </div>
+
+                {/* Products for this destination */}
+                <div className="border mt-4 rounded-md overflow-hidden">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-[150px]">Products</TableHead>
+                        <TableHead>
+                          Products shipped to {dest.address?.address1}, {dest.address?.city},{" "}
+                          {dest.address?.zip}, {dest.address?.country}
+                        </TableHead>
+                        <TableHead className="text-center w-12">Qty</TableHead>
+                        <TableHead className="text-center w-24">Price</TableHead>
+                        <TableHead className="text-center w-24">Total</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {dest.products?.map((p: any, pidx: number) => {
+                        const quantity = p.quantity || 1;
+                        const price = parseFloat(p.price || 0);
+                        const total = (price * quantity).toFixed(2);
+                        const imagePath = p.image?.[1]?.path || p.image?.[0]?.path;
+
+                        return (
+                          <TableRow key={pidx}>
+                            <TableCell className="align-top">
+                              {imagePath && (
+                                <Image
+                                  src={imagePath}
+                                  alt={p.name}
+                                  width={70}
+                                  height={70}
+                                  className="border rounded-md object-contain"
+                                />
+                              )}
+                            </TableCell>
+                            <TableCell className="align-top whitespace-normal">
+                              <div className="font-medium">{p.name}</div>
+                              <div className="text-base">{p.sku}</div>
+                            </TableCell>
+                            <TableCell className="text-center align-top">{quantity}</TableCell>
+                            <TableCell className="text-center align-top">${price.toFixed(2)}</TableCell>
+                            <TableCell className="text-center align-top">${total}</TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="border rounded-md p-5 bg-white space-y-4">
+              <div className="flex justify-between items-start mb-4">
+                <h2 className="font-semibold text-sm">Shipping to:</h2>
+                <button
+                  type="button"
+                  className="text-blue-600 text-xl hover:underline"
+                  onClick={() => setStep(step - 1)}
+                >
+                  Change
+                </button>
+              </div>
+              <div className="text-[14px] grid grid-cols-[150px_1fr] gap-y-2">
+                <div className="font-medium">Name</div>
+                <div>
+                  {shipping?.firstName} {shipping?.lastName}
+                </div>
+
+                <div className="font-medium">Address</div>
+                <div>{shipping?.address1}</div>
+
+                <div className="font-medium">Suburb/City</div>
+                <div>{shipping?.city}</div>
+
+                <div className="font-medium">State/Province</div>
+                <div>{shipping?.state}</div>
+
+                <div className="font-medium">Country</div>
+                <div>{shipping?.country}</div>
+
+                <div className="font-medium">ZIP/Postcode</div>
+                <div>{shipping?.zip}</div>
+
+                <div className="font-medium">Shipping method</div>
+                <div>{billing?.shippingMethod?.provider ?? "None"}</div>
+
+                <div className="font-medium">Shipping cost</div>
+                <div>$0.00</div>
               </div>
 
-              <div className="font-medium">Address</div>
-              <div>{shipping?.address1}</div>
+              {/* Product Table */}
+              <div className="border mt-4 rounded-md overflow-hidden">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-[150px]">Products</TableHead>
+                      <TableHead>
+                        Products shipped to {shipping?.address1}, {shipping?.city}
+                        , {shipping?.zip}, {shipping?.country}
+                      </TableHead>
+                      <TableHead className="text-center w-12">Qty</TableHead>
+                      <TableHead className="text-center w-24">Price</TableHead>
+                      <TableHead className="text-center w-24">Total</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {selectedProducts.map((p: any, idx: number) => {
+                      const quantity = p.quantity || 1;
+                      const price = parseFloat(p.price || 0);
+                      const total = (price * quantity).toFixed(2);
+                      const imagePath = p.image?.[1]?.path || p.image?.[0]?.path;
 
-              <div className="font-medium">Suburb/City</div>
-              <div>{shipping?.city}</div>
-
-              <div className="font-medium">State/Province</div>
-              <div>{shipping?.state}</div>
-
-              <div className="font-medium">Country</div>
-              <div>{shipping?.country}</div>
-
-              <div className="font-medium">ZIP/Postcode</div>
-              <div>{shipping?.zip}</div>
-
-              <div className="font-medium">Shipping method</div>
-              <div>{billing?.shippingMethod?.provider ?? "None"}</div>
-
-              <div className="font-medium">Shipping cost</div>
-              <div>$0.00</div>
-            </div>
-
-            {/* Product Table */}
-            <div className="border mt-4 rounded-md overflow-hidden">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[150px]">Products</TableHead>
-                    <TableHead>
-                      Products shipped to {shipping?.address1}, {shipping?.city}
-                      , {shipping?.zip}, {shipping?.country}
-                    </TableHead>
-                    <TableHead className="text-center w-12">Qty</TableHead>
-                    <TableHead className="text-center w-24">Price</TableHead>
-                    <TableHead className="text-center w-24">Total</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {selectedProducts.map((p: any, idx: number) => {
-                    const quantity = p.quantity || 1;
-                    const price = parseFloat(p.price || 0);
-                    const total = (price * quantity).toFixed(2);
-                    const imagePath = p.image?.[1]?.path || p.image?.[0]?.path;
-
-                    return (
-                      <TableRow key={idx}>
-                        <TableCell className="align-top">
-                          <Image
-                            src={imagePath}
-                            alt={p.name}
-                            width={70}
-                            height={70}
-                            className="border rounded-md object-contain"
-                          />
-                        </TableCell>
-                        <TableCell className="align-top whitespace-normal text-ellipsis">
-                          <div className="font-medium">{p.name}</div>
-                          <div className="text-base">{p.sku}</div>
-                        </TableCell>
-                        <TableCell className="text-center align-top">
-                          {quantity}
-                        </TableCell>
-                        <TableCell className="text-center align-top">
-                          ${price.toFixed(2)}
-                        </TableCell>
-                        <TableCell className="text-center align-top">
-                          ${total}
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </div>
-          </div>
+                      return (
+                        <TableRow key={idx}>
+                          <TableCell className="align-top">
+                            <Image
+                              src={imagePath}
+                              alt={p.name}
+                              width={70}
+                              height={70}
+                              className="border rounded-md object-contain"
+                            />
+                          </TableCell>
+                          <TableCell className="align-top whitespace-normal text-ellipsis">
+                            <div className="font-medium">{p.name}</div>
+                            <div className="text-base">{p.sku}</div>
+                          </TableCell>
+                          <TableCell className="text-center align-top">
+                            {quantity}
+                          </TableCell>
+                          <TableCell className="text-center align-top">
+                            ${price.toFixed(2)}
+                          </TableCell>
+                          <TableCell className="text-center align-top">
+                            ${total}
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
+            </div>)}
 
           {/* Comments */}
           <h1 className="!text-4xl !font-bold">Comments and notes</h1>

@@ -28,7 +28,6 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(
     null
   );
-  console.log("Selected Customer from Dropdown: ", selectedCustomer);
 
   const onSubmit = (formData: any) => {
     if (orderType === "existing" && !selectedCustomer) {
@@ -36,7 +35,6 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
       return;
     }
 
-    console.log("Step 1 Submitted:", formData);
     setStep(step + 1);
   };
 
@@ -96,8 +94,10 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
                 value={watch("search")}
                 onChange={(val) => setValue("search", val)}
                 onSelect={(customer) => {
+
                   // Always deep-clone or pick fields to avoid proxy issues
                   const safeCustomer = JSON.parse(JSON.stringify(customer));
+                  console.log("Selected customer: ", safeCustomer, customer);
 
                   // Store safely in local state
                   setSelectedCustomer(safeCustomer);
@@ -166,10 +166,10 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
                   />
                   {typeof errors.password_confirmation?.message ===
                     "string" && (
-                    <p className="!text-red-500 text-sm">
-                      {errors.password_confirmation.message}
-                    </p>
-                  )}
+                      <p className="!text-red-500 text-sm">
+                        {errors.password_confirmation.message}
+                      </p>
+                    )}
 
                   <p className="!text-lg !text-gray-500 mt-1">
                     Adding a password will create a new customer account, not
@@ -222,7 +222,7 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
               )
             ) : watch("firstName") && watch("lastName") ? (
               <span className="text-green-600 2xl:!text-2xl">
-                {watch("firstName")} {watch("lastName")} 
+                {watch("firstName")} {watch("lastName")}
               </span>
             ) : (
               <span className="text-gray-400 2xl:!text-2xl">None</span>

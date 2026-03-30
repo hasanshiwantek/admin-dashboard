@@ -82,7 +82,6 @@ export default function RegisterPage() {
 
       // ✅ Check if thunk was fulfilled
       if (registerUser.fulfilled.match(resultAction)) {
-        console.log("User registered successfully", resultAction.payload);
 
         // ✅ Redirect after success
         setTimeout(()=>{

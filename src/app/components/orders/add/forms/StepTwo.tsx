@@ -85,7 +85,6 @@ export default function StepTwo({ step, setStep }: any) {
   };
 
   const onSubmit = () => {
-    console.log("Step 2 Submitted with:", selectedProducts);
     setStep(step + 1);
   };
 

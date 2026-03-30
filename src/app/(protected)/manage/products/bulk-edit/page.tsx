@@ -48,7 +48,6 @@ export default function BulkEdit() {
     (state) => state.product.selectedProducts
   );
   const dispatch = useAppDispatch();
-  console.log("Edited Seledcted Products From Redux: ", selectedProducts);
   const [categoryModal, setCategoryModal] = useState<{
     open: boolean;
     productId: number | null;
@@ -126,7 +125,6 @@ export default function BulkEdit() {
     handleSave();
     // TODO: Navigate back or close modal
     router.push("/manage/products");
-    console.log("✅ Save and exit clicked");
   };
 
   return (

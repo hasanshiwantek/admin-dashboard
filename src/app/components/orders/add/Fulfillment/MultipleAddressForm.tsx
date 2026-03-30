@@ -19,17 +19,43 @@ export default function MultipleAddressForm() {
   const { getValues, setValue, watch } = useFormContext();
   const products = getValues("selectedProducts") || [];
 
+  const [qtyMap, setQtyMap] = useState<Record<string, number>>({});
+
   const shippingDestinations = watch("shippingDestinations") || [];
   const [selected, setSelected] = useState<string[]>([]);
   const [open, setOpen] = useState(false);
 
   // Filter unallocated products
-  const unallocatedProducts = products.filter(
-    (p: any) =>
-      !shippingDestinations.some((d: any) =>
-        d.products.some((ap: any) => ap.sku === p.sku)
-      )
-  );
+  // const unallocatedProducts = products.filter(
+  //   (p: any) =>
+  //     !shippingDestinations.some((d: any) =>
+  //       d.products.some((ap: any) => ap.sku === p.sku)
+  //     )
+  // );
+  const allocatedQtyMap: Record<string, number> = {};
+  shippingDestinations.forEach((d: any) => {
+    d.products.forEach((p: any) => {
+      allocatedQtyMap[p.sku] = (allocatedQtyMap[p.sku] || 0) + (p.quantity ?? 1);
+    });
+  });
+  const unallocatedProducts = products
+    .map((p: any) => ({
+      ...p,
+      quantity: (p?.quantity ?? 1) - (allocatedQtyMap[p.sku] || 0),
+    }))
+    .filter((p: any) => p.quantity > 0);
+  // Merge qty overrides into selectedProducts
+  const selectedProductsWithQty = unallocatedProducts
+    .filter((p: any) => selected.includes(p.sku))
+    .map((p: any) => ({
+      ...p,
+      quantity: qtyMap[p.sku] ?? p.quantity ?? 1,
+    }));
+  const handleQtyChange = (index: number, qty: number) => {
+    const sku = selectedProductsWithQty[index]?.sku;
+    if (sku) setQtyMap((prev) => ({ ...prev, [sku]: qty }));
+  };
+  console.log("selectedProductsWithQty", selectedProductsWithQty);
 
   const handleCheck = (sku: string) => {
     setSelected((prev) =>
@@ -41,17 +67,56 @@ export default function MultipleAddressForm() {
     selected.includes(p.sku)
   );
 
-  const handleAllocate = (destinationFormData: any) => {
-    if (selectedProducts.length === 0) return;
+  // const handleAllocate = (destinationFormData: any) => {
+  //   if (selectedProducts.length === 0) return;
+
+  //   const newDestination = {
+  //     address: destinationFormData,
+  //     products: selectedProductsWithQty,
+  //     // products: selectedProducts,
+  //   };
+
+  //   const updated = [...shippingDestinations, newDestination];
+  //   setValue("shippingDestinations", updated);
+  //   setSelected([]);
+  //   setQtyMap({});
+  //   setOpen(false);
+  // };
+
+
+
+  // // 
+  // const handleAllocate = (destinationFormData: any) => {
+  //   if (selectedProductsWithQty.length === 0) return;
+
+  //   const newDestination = {
+  //     address: destinationFormData,
+  //     products: selectedProductsWithQty.map((p: any) => ({
+  //       ...p,
+  //       // ✅ save only the qty user selected in dialog, not full qty
+  //       quantity: qtyMap[p.sku] ?? p.quantity ?? 1,
+  //     })),
+  //   };
+
+  //   const updated = [...shippingDestinations, newDestination];
+  //   setValue("shippingDestinations", updated);
+  //   setSelected([]);
+  //   setQtyMap({});
+  //   setOpen(false);
+  // };
+  // MultipleAddressForm
+  const handleAllocate = (destinationFormData: any, productsWithQty: any[]) => {
+    if (!productsWithQty || productsWithQty.length === 0) return;
 
     const newDestination = {
       address: destinationFormData,
-      products: selectedProducts,
+      products: productsWithQty, // ✅ qty only saved on Allocate click
     };
 
     const updated = [...shippingDestinations, newDestination];
     setValue("shippingDestinations", updated);
     setSelected([]);
+    setQtyMap({});
     setOpen(false);
   };
 
@@ -125,7 +190,7 @@ export default function MultipleAddressForm() {
                     actions={getDropdownActions(product)}
                     trigger={
                       <button
-                       type="button"
+                        type="button"
                         className="text-xl cursor-pointer"
                       >
                         •••
@@ -152,8 +217,10 @@ export default function MultipleAddressForm() {
       <DestinationDialog
         open={open}
         setOpen={setOpen}
-        selectedProducts={selectedProducts}
+        selectedProducts={selectedProductsWithQty}
+        // selectedProducts={selectedProducts}
         onAllocate={handleAllocate} // pass allocate handler
+        onQtyChange={handleQtyChange}
       />
 
       {/* Allocated Destinations Table */}
@@ -173,7 +240,7 @@ export default function MultipleAddressForm() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {shippingDestinations.map((dest:any, idx:number) => (
+                {shippingDestinations.map((dest: any, idx: number) => (
                   <TableRow key={idx}>
                     <TableCell>
                       {dest.address.address1}, {dest.address.city} <br />
@@ -190,7 +257,7 @@ export default function MultipleAddressForm() {
                         actions={getDestinationDropdownActions(dest, idx)}
                         trigger={
                           <button
-                           type="button"
+                            type="button"
                             className="text-xl cursor-pointer"
                           >
                             •••
