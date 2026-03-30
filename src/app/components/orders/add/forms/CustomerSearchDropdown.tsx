@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { User } from "lucide-react";
@@ -30,42 +30,43 @@ export default function CustomerSearchDropdown({
   onChange,
   onSelect,
 }: Props) {
+  const dispatch = useAppDispatch();
+  const isSelected = useRef(false); // ✅ track if user just selected
   const [query, setQuery] = useState(value);
   const [results, setResults] = useState<Customer[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [loading, setLoading] = useState(false);
-
   const { customers } = useAppSelector((state: any) => state.customer);
-  console.log("Customers From SearchDropdown: ", customers);
-
   const allCustomers = customers?.data;
 
-  const dispatch = useAppDispatch();
+
+
   useEffect(() => {
     dispatch(fetchCustomers({ page: 1, pageSize: 100 }));
   }, [dispatch, 1, 100]);
-
   useEffect(() => {
     if (query?.length < 1) {
       setResults([]);
+      setShowDropdown(false);
+      return;
+    }
+
+    // ✅ Skip re-search if user just selected a customer
+    if (isSelected.current) {
+      isSelected.current = false;
       return;
     }
 
     const timer = setTimeout(() => {
       setLoading(true);
-
       const filtered = allCustomers?.filter((c: any) => {
-        const fullName = `${c.firstName || ""} ${
-          c.lastName || ""
-        }`.toLowerCase();
+        const fullName = `${c.firstName || ""} ${c.lastName || ""}`.toLowerCase();
         return (
           fullName.includes(query.toLowerCase()) ||
           (c.email && c.email.toLowerCase().includes(query.toLowerCase())) ||
-          (c.companyName &&
-            c.companyName.toLowerCase().includes(query.toLowerCase()))
+          (c.companyName && c.companyName.toLowerCase().includes(query.toLowerCase()))
         );
       });
-
       setResults(filtered);
       setLoading(false);
       setShowDropdown(true);
@@ -73,6 +74,34 @@ export default function CustomerSearchDropdown({
 
     return () => clearTimeout(timer);
   }, [query]);
+
+  // useEffect(() => {
+  //   if (query?.length < 1) {
+  //     setResults([]);
+  //     return;
+  //   }
+
+  //   const timer = setTimeout(() => {
+  //     setLoading(true);
+
+  //     const filtered = allCustomers?.filter((c: any) => {
+  //       const fullName = `${c.firstName || ""} ${c.lastName || ""
+  //         }`.toLowerCase();
+  //       return (
+  //         fullName.includes(query.toLowerCase()) ||
+  //         (c.email && c.email.toLowerCase().includes(query.toLowerCase())) ||
+  //         (c.companyName &&
+  //           c.companyName.toLowerCase().includes(query.toLowerCase()))
+  //       );
+  //     });
+
+  //     setResults(filtered);
+  //     setLoading(false);
+  //     setShowDropdown(true);
+  //   }, 300);
+
+  //   return () => clearTimeout(timer);
+  // }, [query]);
 
   return (
     <div className="relative w-full max-w-[500px]">
@@ -98,12 +127,11 @@ export default function CustomerSearchDropdown({
             ) : results?.length > 0 ? (
               results?.map((customer) => {
                 const name = customer.firstName + " " + customer.lastName;
-                console.log(name);
-
                 return (
                   <div
                     key={customer.id}
                     onClick={() => {
+                      isSelected.current = true;
                       onSelect(customer);
                       setQuery(name); // update input text
                       onChange(name); // update parent form state

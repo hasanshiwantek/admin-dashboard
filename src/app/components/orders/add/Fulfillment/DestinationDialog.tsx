@@ -26,21 +26,64 @@ import {
 import { useFormContext } from "react-hook-form";
 import { countriesList } from "@/const/location";
 import ShippingMethod from "./ShippingMethod";
+import { useEffect, useState } from "react";
 export default function DestinationDialog({
   open,
   setOpen,
   selectedProducts,
   onAllocate,
+  onQtyChange,
 }: any) {
   const { register, setValue, watch, getValues } = useFormContext();
+  const [localQty, setLocalQty] = useState<Record<number, number>>({});
+
   const selectedCustomer = watch("selectedCustomer");
   // Scoped form section for destination fields
   const destinationForm = watch("destinationForm") || {};
   const country = destinationForm.country || "";
+  // const handleAllocateClick = () => {
+  //   const data = getValues("destinationForm");
+  //   onAllocate(data);
+  // };
   const handleAllocateClick = () => {
     const data = getValues("destinationForm");
-    onAllocate(data);
+
+    const productsWithQty = selectedProducts.map((p: any, i: number) => ({
+      ...p,
+      quantity: localQty[i] ?? p.quantity ?? 1, // ✅ use local qty
+    }));
+
+    onAllocate(data, productsWithQty); // ✅ pass products with saved qty
   };
+  // ✅ Clear all destination form fields when modal opens
+  useEffect(() => {
+    if (open) {
+      setValue("destinationForm", {
+        firstName: "",
+        lastName: "",
+        companyName: "",
+        phoneNumber: "",
+        address1: "",
+        address2: "",
+        city: "",
+        country: "",
+        state: "",
+        zip: "",
+        saveAddress: true,
+      });
+    }
+  }, [open])
+  useEffect(() => {
+    if (open) {
+      const initial: Record<number, number> = {};
+      selectedProducts.forEach((p: any, i: number) => {
+        initial[i] = p.quantity ?? 1;
+      });
+      setLocalQty(initial);
+    }
+  }, [open, selectedProducts]);
+  console.log("open", open, selectedProducts);
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="!max-w-7xl max-h-[90vh] overflow-y-auto">
@@ -61,7 +104,42 @@ export default function DestinationDialog({
               {selectedProducts.map((p: any, i: number) => (
                 <TableRow key={i}>
                   <TableCell>{p.name}</TableCell>
-                  <TableCell>{p.quantity}</TableCell>
+                  {/* <TableCell>{p.quantity}</TableCell> */}
+                  {/* <TableCell>
+                    <Input
+                      type="number"
+                      min={1}
+                      max={p.quantity} // ✅ can't allocate more than available
+                      value={p.quantity ?? 1}
+                      className="w-20"
+                      onChange={(e) => {
+                        const val = Math.min(
+                          parseInt(e.target.value) || 1,
+                          p.quantity // ✅ cap at available qty
+                        );
+                        onQtyChange(i, val);
+                      }}
+                    />
+                  </TableCell> */}
+                  <TableCell>
+                    {/* ✅ Select dropdown for qty */}
+                    <select
+                      value={localQty[i] ?? p.quantity ?? 1} // ✅ local state only
+                      onChange={(e) => {
+                        const val = parseInt(e.target.value) || 1;
+                        // ✅ only update local state — parent NOT notified yet
+                        setLocalQty((prev) => ({ ...prev, [i]: val }));
+                        // ❌ removed: onQtyChange(i, val) — don't call parent here
+                      }}
+                      className="border border-gray-300 rounded-md px-2 py-1 text-[14px] w-20 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      {Array.from({ length: p.quantity }, (_, idx) => idx + 1).map((num) => (
+                        <option key={num} value={num} className="text">
+                          {num}
+                        </option>
+                      ))}
+                    </select>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

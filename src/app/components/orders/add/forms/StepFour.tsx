@@ -20,7 +20,6 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
 
   const onSubmit = async () => {
     const values = getValues(); // ✅ collect all step data
-    console.log("Final submitted data:", values);
 
     const isNewCustomer = !values.selectedCustomer?.id;
     const isDraft = values.paymentMethod === "draft";
@@ -182,8 +181,6 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
         };
       }
     })();
-
-    console.log("Final payload data: ", finalPayload);
 
     try {
       let resultAction;

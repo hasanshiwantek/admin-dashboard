@@ -34,8 +34,6 @@ export default function OrderTimelinePage() {
   }
 
   const { order } = orderData || {};
-  console.log("Order Timeline data: ", order);
-
   // ✅ CORRECTED: Build timeline from actual order data
   const timelineEvents = [];
 

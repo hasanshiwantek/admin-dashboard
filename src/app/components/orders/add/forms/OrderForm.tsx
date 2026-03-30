@@ -27,7 +27,6 @@ export default function OrderForm({ orderId }: { orderId: string }) {
     dispatch(fetchOrderById({ orderId }))
       .then((res) => {
         if (!res.payload) {
-          console.warn("fetchOrderById returned no payload", res);
           return;
         }
 
@@ -36,14 +35,10 @@ export default function OrderForm({ orderId }: { orderId: string }) {
 
         if (Array.isArray(order)) {
           if (order.length === 0) {
-            console.warn("fetchOrderById returned an empty orders array", res);
             return;
           }
           order = order[0];
         }
-
-        console.log("Selected Order Details: ", order);
-
 
 
       // Create a customer object from billing information
@@ -104,7 +99,6 @@ export default function OrderForm({ orderId }: { orderId: string }) {
         reset(transformed); // populate form for all steps
       })
       .catch((err) => {
-        console.error("Error fetching order by id:", err);
       });
   }, [orderId]);
 

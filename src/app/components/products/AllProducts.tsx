@@ -51,7 +51,16 @@ const filterTabs = [
   "Visible",
   "Not visible",
 ];
-
+const TAB_FILTERS: Record<string, Record<string, any>> = {
+  All: {},
+  Featured: { isFeatured: true },
+  "Free shipping": { freeShipping: true },
+  "Out of stock": { outOfStock: true },
+  "Inventory low": { inventoryLow: true },
+  "Last imported": { lastImported: true },
+  Visible: { isVisible: true },
+  "Not visible": { isVisible: false },
+};
 export default function AllProducts() {
   const allProducts = useAppSelector((state: any) => state.product.products);
   const { loading, error } = useAppSelector((state: any) => state.product);
@@ -76,7 +85,6 @@ export default function AllProducts() {
   const [categoryAction, setCategoryAction] = useState<"add" | "delete">("add");
 
   const products = allProducts?.data;
-  console.log("All Products data from frontend: ", products);
 
   const filteredProducts = [...(products || [])]
     .filter((product: any) => {
@@ -85,9 +93,14 @@ export default function AllProducts() {
           return product.isFeatured === true;
 
         case "Free shipping":
+          console.log(
+            "fixedShippingCost value:",
+            product.fixedShippingCost,
+            "type:", typeof product.fixedShippingCost
+          );
           return (
             product.fixedShippingCost === 0 ||
-            product.fixedShippingCost === null
+            product.fixedShippingCost === null || product.fixedShippingCost === undefined
           );
 
         case "Out of stock":
@@ -115,7 +128,6 @@ export default function AllProducts() {
       return 0;
     });
 
-  console.log("Filtered Products: ", filteredProducts);
 
   const handleApplyCategories = async (pickedIdsStr: string[]) => {
     if (categoryAction === "add") {
@@ -480,7 +492,6 @@ export default function AllProducts() {
   const handleSelectAllChange = (checked: boolean) => {
     const updated = checked ? filteredProducts?.map((p: any) => p.id) : [];
     setSelectedProductIds(updated);
-    console.log("✅ Updated selectedProductIds (Select All):", updated);
   };
 
   const handleProductCheckboxChange = (id: number, checked: boolean) => {
@@ -512,13 +523,23 @@ export default function AllProducts() {
 
   // PAGINATION LOGIC
   const pagination = allProducts?.pagination;
-  console.log("Pagination: ", pagination);
-
   const totalPages = pagination?.lastPage;
   const [currentPage, setCurrentPage] = useState(pagination?.page || 1);
   const [perPage, setPerPage] = useState(
     pagination?.pageSize?.toString() || "20"
   );
+  const fetchWithFilters = (tab: string, search: string) => {
+    const tabParams = TAB_FILTERS[tab] || {};
+    dispatch(
+      fetchAllProducts({
+        page: 1,
+        pageSize: Number(perPage),
+        ...(search.trim() && { search: search.trim() }),
+        ...tabParams,
+        // result → { page:1, pageSize:20, search:"tes", isFeatured:true }
+      })
+    );
+  };
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     router.push(`?page=${page}&limit=${perPage}`);
@@ -573,7 +594,6 @@ export default function AllProducts() {
       dispatch(fetchAllProducts({ page: currentPage, pageSize: perPage }));
     }
     dispatch(searchAllProducts({ query: searchTerm }));
-    console.log(searchTerm);
   };
 
   if (error) {
@@ -605,7 +625,11 @@ export default function AllProducts() {
             {filterTabs.map((tab) => (
               <button
                 key={tab}
-                onClick={() => setSelectedTab(tab)}
+                onClick={() => {
+                  setSelectedTab(tab);
+                  setCurrentPage(1);
+                  fetchWithFilters(tab, searchTerm); // ✅ fire API with tab + current search
+                }}
                 className={`!text-2xl 2xl:!text-[1.6rem] px-5 py-2 rounded  cursor-pointer transition hover:bg-blue-100 ${selectedTab === tab
                   ? "bg-blue-100 border-blue-600 text-blue-600"
                   : " text-blue-600"
@@ -621,7 +645,7 @@ export default function AllProducts() {
               className="flex justify-start items-center bg-white text-center !px-4 !py-4 rounded-md 
                          focus-within:ring-3 focus-within:ring-blue-200 focus-within:border-blue-200 border border-gray-200  transition hover:border-blue-200 w-[80%]"
             >
-              <i onClick={handleSearchProduct}>
+              <i onClick={() => fetchWithFilters(selectedTab, searchTerm)}>
                 <IoSearchOutline
                   size={20}
                   color="gray"
@@ -634,6 +658,11 @@ export default function AllProducts() {
                 className=" !ml-3 bg-transparent !text-xl 2xl:!text-[1.6rem] !font-medium outline-none placeholder:text-gray-400 w-[80%]"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    fetchWithFilters(selectedTab, searchTerm); // ✅ fire API with search + current tab
+                  }
+                }}
               />
             </div>
 

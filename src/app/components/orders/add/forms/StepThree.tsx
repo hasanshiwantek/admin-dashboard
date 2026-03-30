@@ -71,7 +71,6 @@ export default function StepThree({ step, setStep }: any) {
   const onSubmit = () => {
     const values = getValues();
 
-    console.log("🧾 Step 3 Submitted Values:", values);
 
     if (values.destinationType === "multiple") {
       console.log("📦 Multiple Destinations:", values.shippingDestinations);
@@ -88,8 +87,6 @@ export default function StepThree({ step, setStep }: any) {
           ? values.shippingDestinations
           : [values.destinationForm],
     };
-
-    console.log("🚀 Final Step3 Payload to Submit:", payload);
 
     setStep(step + 1);
   };

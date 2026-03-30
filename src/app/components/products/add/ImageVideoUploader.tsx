@@ -52,8 +52,6 @@ export default function ImageVideoUploader({ initialImages }: Props) {
 
   const syncFormState = (updatedPreviews: PreviewItem[]) => {
     setValue("image", updatedPreviews, { shouldValidate: true });
-    console.log("🟢 Synced to react-hook-form:");
-    console.log("  → image[]:", updatedPreviews);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {

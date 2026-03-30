@@ -39,13 +39,10 @@ const Page = () => {
 
   const dispatch = useAppDispatch();
   const handleSave = async () => {
-    console.log("Profile Saved:", { firstName, lastName, selectedLanguage });
     const result = await dispatch(updateUserPofile({ firstName, lastName }));
     try {
       if (updateUserPofile.fulfilled.match(result)) {
-        console.log("Profile updation  response✅", result?.payload);
       } else {
-        console.log("Error Updating Profile: ", result?.payload);
       }
     } catch (err) {
       console.log("Something went wrong: ", err);

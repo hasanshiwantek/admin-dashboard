@@ -42,8 +42,6 @@ export default function EditInventoryPage() {
     null
   );
   const dispatch = useAppDispatch();
-  console.log("Edited Seledcted Products From Redux: ", selectedProducts);
-
   const [products, setProducts] = useState<Product[]>([]);
   const router = useRouter();
 
