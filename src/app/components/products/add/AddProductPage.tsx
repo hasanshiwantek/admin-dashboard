@@ -33,28 +33,36 @@ import { useRouter } from "next/navigation";
 import objectToFormData from "@/lib/formDataUtils";
 import { buildUpdateProductFormData } from "@/lib/formDataUtils";
 // import { updateProductFormData } from "@/redux/slices/productSlice";
-// ✅ Add above onSubmit — reusable helper
+
 // const buildCopyNameSku = (name: string, sku: string) => {
-//   // ✅ Strip existing "Copy N" or "Copy" suffix
+//   // ✅ Name: strip "Copy N" → increment
 //   const baseName = name.replace(/\s+Copy\s*\d*$/, "");
-//   const baseSku = sku.replace(/-\d+$/, "");
-//   const match = sku.match(/-(\d+)$/);
-//   const nextNum = match ? parseInt(match[1]) + 1 : 1;
-//   return { name: `${baseName} Copy ${nextNum}`, sku: `${baseSku}-${nextNum}` };
+//   const nameMatch = name.match(/Copy\s*(\d+)$/);
+//   const nextNameNum = nameMatch ? parseInt(nameMatch[1]) + 1 : 1;
+
+//   // ✅ SKU: get last -N → increment → append to full sku
+//   const skuMatch = sku.match(/-(\d+)$/);
+//   const nextSkuNum = skuMatch ? parseInt(skuMatch[1]) + 1 : 1;
+//   const randomNum = Math.floor(1000 + Math.random() * 9000);
+
+
+//   return {
+//     name: `${baseName} Copy ${nextNameNum}`, // Product Copy 1 → Copy 2 → Copy 3
+//     sku: `${sku}-${nextSkuNum}`,             // BC12345678-1 → BC12345678-1-2 → BC12345678-1-2-3
+//   };
 // };
 const buildCopyNameSku = (name: string, sku: string) => {
-  // ✅ Name: strip "Copy N" → increment
   const baseName = name.replace(/\s+Copy\s*\d*$/, "");
   const nameMatch = name.match(/Copy\s*(\d+)$/);
   const nextNameNum = nameMatch ? parseInt(nameMatch[1]) + 1 : 1;
 
-  // ✅ SKU: get last -N → increment → append to full sku
-  const skuMatch = sku.match(/-(\d+)$/);
-  const nextSkuNum = skuMatch ? parseInt(skuMatch[1]) + 1 : 1;
+  // ✅ Strip existing -XXXX suffix and replace with new random
+  const baseSku = sku.replace(/-\d+$/, "");
+  const randomNum = Math.floor(1000 + Math.random() * 9000);
 
   return {
-    name: `${baseName} Copy ${nextNameNum}`, // Product Copy 1 → Copy 2 → Copy 3
-    sku: `${sku}-${nextSkuNum}`,             // BC12345678-1 → BC12345678-1-2 → BC12345678-1-2-3
+    name: `${baseName} Copy ${nextNameNum}`,
+    sku: `${baseSku}-${randomNum}`, // BC12345678-4823 → BC12345678-1947 ✅
   };
 };
 export default function AddProductPage() {
@@ -260,7 +268,6 @@ export default function AddProductPage() {
     } finally {
       setIsLoading(false);
       if (!isEdit) {
-
         exitAfterSaveRef.current = false;
       }
       copyAfterSaveRef.current = false;

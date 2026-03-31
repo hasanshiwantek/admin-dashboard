@@ -37,8 +37,6 @@ export default function AddCategoryModal({
   const [parentId, setParentCategory] = useState<number | null>(null);
   const [isVisible, setVisibility] = useState(false);
   const [showError, setShowError] = useState(false);
-  console.log("Category Data from Modal: ", categoryData);
-
   const dispatch = useAppDispatch();
 
   const handleSave = async () => {

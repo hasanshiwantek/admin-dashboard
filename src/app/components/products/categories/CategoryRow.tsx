@@ -20,6 +20,7 @@ import { refetchCategories } from "@/lib/categoryUtils";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
+
 const CategoryRow = ({
   category,
   level = 0,
@@ -28,6 +29,7 @@ const CategoryRow = ({
   expandedIds,
   setExpandedIds,
   highlightId,
+  isDragging
 }: {
   category: any;
   level?: number;
@@ -36,6 +38,7 @@ const CategoryRow = ({
   expandedIds: Set<number>;
   setExpandedIds: React.Dispatch<React.SetStateAction<Set<number>>>;
   highlightId: number | null;
+  isDragging?: boolean;
 }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({
@@ -46,6 +49,7 @@ const CategoryRow = ({
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
+    opacity: isDragging ? 0.4 : 1,
   };
 
   const dispatch = useAppDispatch();
@@ -58,7 +62,8 @@ const CategoryRow = ({
     );
   };
 
-  const hasChildren = category.subcategories?.length;
+  // const hasChildren = category.subcategories?.length;
+  const hasChildren = (category.subcategories?.length ?? 0) > 0;
   const [visibilityMap, setVisibilityMap] = useState<{
     [key: number]: "ENABLED" | "DISABLED";
   }>({});
@@ -120,8 +125,6 @@ const CategoryRow = ({
     {
       label: "Delete",
       onClick: () => {
-        console.log("Catgeory", category);
-
         const ids = {
           ids: [category?.id],
         };
@@ -169,7 +172,7 @@ const CategoryRow = ({
         </TableCell>
         <TableCell className="w-[30px] ">
           {hasChildren ? (
-            <button type="button" onClick={toggle}>
+            <button type="button" onClick={(e) => { e.stopPropagation(); toggle() }}>
               {isExpanded ? (
                 <ChevronDown size={15} />
               ) : (
@@ -178,7 +181,7 @@ const CategoryRow = ({
             </button>
           ) : null}
         </TableCell>
-        <TableCell className="flex  items-center gap-2 text-blue-600 font-medium text-xl py-6">
+        <TableCell className="flex  items-center gap-2 text-blue-600 font-medium text-xl py-6 select-none">
           <div
             style={{ marginLeft: `${level * 20}px` }}
             className="flex items-center gap-2 "
@@ -244,7 +247,7 @@ const CategoryRow = ({
           items={category.subcategories.map((child: any) => child.id)}
           strategy={verticalListSortingStrategy}
         >
-          {category.subcategories.map((child: any) => (
+          {category.subcategories?.length > 0 ? category.subcategories.map((child: any) => (
             <CategoryRow
               key={child.id}
               category={child}
@@ -255,7 +258,7 @@ const CategoryRow = ({
               setExpandedIds={setExpandedIds}
               highlightId={highlightId}
             />
-          ))}
+          )) : <div className="text-center text-gray-500 py-4">No sub-categories</div>}
         </SortableContext>
       )}
     </>

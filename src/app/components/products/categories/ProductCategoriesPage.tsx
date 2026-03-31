@@ -23,8 +23,8 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import { Button } from "@/components/ui/button";
-import { productCategories as initialCategories } from "@/const/productCategories";
 import { Plus } from "lucide-react";
 import AddCategoryModal from "./AddCategoryModal";
 import CategoryRow from "./CategoryRow";
@@ -38,60 +38,46 @@ import { refetchCategories } from "@/lib/categoryUtils";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import Spinner from "../../loader/Spinner";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
 import CategoryDropdown from "./CategoryDropdown";
+import { restrictToWindowEdges } from "@dnd-kit/modifiers";
+
 
 export default function ProductCategoriesPage() {
   const methods = useForm();
   const dispatch = useAppDispatch();
+
   const allCategories = useAppSelector(
     (state: any) => state.category.categories
   );
+
   const categories = allCategories?.data || [];
-  const { loading, error }: { loading: boolean; error: any } = useAppSelector(
+
+  const { loading }: { loading: boolean } = useAppSelector(
     (state) => state.category
   );
 
-  console.log("All Categories fom frontend", categories);
-
-  const categoryData = allCategories?.data;
   const [selectedIds, setSelectedIds] = useState<any[]>([]);
-  const watchCategories = methods.watch("categories", {});
-  // const [categories, setCategories] = useState(initialCategories);
-  const [activeId, setActiveId] = useState(null);
+  const [activeId, setActiveId] = useState<number | null>(null);
   const [parentId, setParentCategory] = useState<number | null>(null);
   const [expandedIds, setExpandedIds] = useState<Set<number>>(new Set());
   const [highlightId, setHighlightId] = useState<number | null>(null);
+  const [isUpdateLoading, setIsUpdateLoading] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 5,
+        distance: 100,
+        delay: 150,
+        tolerance: 5,
       },
     })
   );
 
   const handleDragStart = (event: any) => {
-    setActiveId(event.active.id);
+    setActiveId(Number(event.active.id));
+    // 🔒 Lock scroll
   };
-
-  function removeCategory(tree: any[], id: string): [any, any[]] {
-    for (let i = 0; i < tree.length; i++) {
-      const cat = tree[i];
-      if (cat.id === id) {
-        tree.splice(i, 1);
-        return [cat, tree];
-      }
-      if (cat.children) {
-        const [found, newChildren] = removeCategory(cat.children, id);
-        if (found) {
-          cat.children = newChildren;
-          return [found, tree];
-        }
-      }
-    }
-    return [null, tree];
-  }
 
   const findCategoryById = (list: any[], id: number): any => {
     for (const item of list) {
@@ -106,24 +92,28 @@ export default function ProductCategoriesPage() {
 
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
-    if (!active || !over || active.id === over.id) return;
+    console.log("event", event);
+
+    setActiveId(null);
+    if (!active || !over) return;
 
     const activeId = Number(active.id);
     const overId = Number(over.id);
 
     const dragged = findCategoryById(categories, activeId);
-    const droppedOn = findCategoryById(categories, overId);
 
-    if (!dragged || !droppedOn) return;
+    if (!dragged) return;
+    setIsUpdateLoading(true);
 
-    const isDraggedParent = dragged.parent_id === null;
-    const isDroppedOnParent = droppedOn.parent_id === null;
+    let newParentId = null;
 
-    // ❌ Disallow dragging a parent into another parent
-    if (isDraggedParent && !isDroppedOnParent) return;
+    if (overId) {
+      const droppedOn = findCategoryById(categories, overId);
 
-    const newParentId =
-      isDraggedParent && isDroppedOnParent ? null : droppedOn.id;
+      if (droppedOn && droppedOn.id !== activeId) {
+        newParentId = droppedOn.id;
+      }
+    }
 
     try {
       await dispatch(
@@ -133,260 +123,181 @@ export default function ProductCategoriesPage() {
             name: dragged.name,
             description: dragged.description,
             parentId: newParentId,
-            isVisible: dragged.is_visible === 1, // or adjust according to your data
           },
         })
-      ).unwrap();
-
-      console.log(`Category "${dragged.name}" moved successfully.`);
-      await dispatch(fetchCategories());
+      ).unwrap().finally(async () => {
+        setIsUpdateLoading(false);
+        await dispatch(fetchCategories());
+      });
     } catch (error) {
-      console.error("Failed to move category.");
+      console.error("Failed to move category.", error);
     }
+
+    // setActiveId(null);
   };
 
-  const [open, setOpen] = useState(false);
+  const activeCategory = activeId
+    ? findCategoryById(categories, Number(activeId))
+    : null;
 
-  const onSubmit = (data: any) => {
-    console.log("Selected Categories:", data);
-  };
-
-  console.log("Selected Category: ", selectedIds);
-  const handleDelete = async () => {
+  const handleDelete = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     const catIds = selectedIds?.map((cat: any) => cat?.id);
-    const ids = {
-      ids: catIds,
-    };
 
     if (selectedIds.length === 0) {
       alert("Please select at least one category before deleting.");
-      return; // stop here
+      return;
     }
+
     const confirm = window.confirm("Confirm Deletion?");
-    if (!confirm) {
-      return;
-    } else {
-      try {
-        const resultAction = await dispatch(deleteCategory({ data: ids }));
-        const result = (resultAction as any).payload;
-
-        if ((resultAction as any).meta.requestStatus === "fulfilled") {
-          console.log("✅ Category deleted successfully:", result);
-          setSelectedIds([]);
-          setTimeout(() => {
-            refetchCategories(dispatch);
-          }, 700);
-        } else {
-          console.error("❌ Failed to delete Category:", result);
-        }
-      } catch (err) {
-        console.error("❌ Unexpected error:", err);
-      }
-    }
-  };
-
-  const handleEnableVisibilty = async () => {
-    if (selectedIds.length === 0) {
-      alert("Please select at least one category.");
-      return;
-    }
-
-    const payload = {
-      categories: selectedIds.map((cat) => {
-        const { is_visible, ...rest } = cat; // ❌ Remove is_visible
-        return {
-          ...rest,
-          isVisible: true, // ✅ Add isVisible
-        };
-      }),
-    };
+    if (!confirm) return;
 
     try {
-      const resultAction = await dispatch(
-        updateBulkCategory({ data: payload })
-      );
-      const result = (resultAction as any).payload;
-
-      if ((resultAction as any).meta.requestStatus === "fulfilled") {
-        console.log("✅ Categories updated successfully:", result);
-        setSelectedIds([]);
-        setTimeout(() => {
-          refetchCategories(dispatch);
-        }, 700);
-      } else {
-        console.error("❌ Failed to update categories:", result);
-      }
+      await dispatch(deleteCategory({ data: { ids: catIds } }));
+      setSelectedIds([]);
+      setTimeout(() => dispatch(fetchCategories()), 500);
     } catch (err) {
-      console.error("❌ Unexpected error:", err);
+      console.error(err);
     }
   };
 
-  const handleDisableVisibilty = async () => {
-    if (selectedIds.length === 0) {
-      alert("Please select at least one category.");
-      return;
-    }
+  const handleBulkVisibility = async (visible: boolean) => {
+    if (!selectedIds.length) return;
 
     const payload = {
-      categories: selectedIds.map((cat) => {
-        const { is_visible, ...rest } = cat; // ❌ Remove is_visible
-        return {
-          ...rest,
-          isVisible: false, // ✅ Add isVisible
-        };
-      }),
+      categories: selectedIds.map((cat) => ({
+        ...cat,
+        isVisible: visible,
+      })),
     };
 
-    try {
-      const resultAction = await dispatch(
-        updateBulkCategory({ data: payload })
-      );
-      const result = (resultAction as any).payload;
-
-      if ((resultAction as any).meta.requestStatus === "fulfilled") {
-        console.log("✅ Categories updated successfully:", result);
-        setSelectedIds([]);
-        setTimeout(() => {
-          refetchCategories(dispatch);
-        }, 700);
-      } else {
-        console.error("❌ Failed to update categories:", result);
-      }
-    } catch (err) {
-      console.error("❌ Unexpected error:", err);
-    }
+    await dispatch(updateBulkCategory({ data: payload }));
+    setSelectedIds([]);
+    setTimeout(() => dispatch(fetchCategories()), 500);
   };
+
   useEffect(() => {
     dispatch(fetchCategories());
   }, [dispatch]);
 
-  // new helpers added by faizan ------------------------------------------------------------->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const findPathToId = (list: any[], id: number, path: number[] = []): number[] | null => {
-  for (const item of list) {
-    const newPath = [...path, item.id];
-    if (item.id === id) return newPath;
-    if (item.subcategories?.length) {
-      const found = findPathToId(item.subcategories, id, newPath);
-      if (found) return found;
+  const findPathToId = (
+    list: any[],
+    id: number,
+    path: number[] = []
+  ): number[] | null => {
+    for (const item of list) {
+      const newPath = [...path, item.id];
+      if (item.id === id) return newPath;
+      if (item.subcategories?.length) {
+        const found = findPathToId(item.subcategories, id, newPath);
+        if (found) return found;
+      }
     }
-  }
-  return null;
-};
+    return null;
+  };
 
-const expandPath = (ids: number[]) => {
-  // expand all ancestors (exclude leaf if you only expand parents)
-  setExpandedIds(prev => {
-    const next = new Set(prev);
-    ids.forEach(i => next.add(i));
-    return next;
-  });
-};
+  const expandPath = (ids: number[]) => {
+    setExpandedIds((prev) => {
+      const next = new Set(prev);
+      ids.forEach((i) => next.add(i));
+      return next;
+    });
+  };
 
   return (
     <>
       <FormProvider {...methods}>
-        <form onSubmit={methods.handleSubmit(onSubmit)} className="p-10">
+        <form className="p-10">
           <div className="flex justify-between items-center mb-6">
-            <h1 className="text-5xl font-extralight text-gray-600 2xl:!text-[3.2rem]">
+            <h1 className="text-5xl font-extralight text-gray-600">
               Product Categories
             </h1>
+
             <Button
               size="xl"
-              className=" flex items-center gap-2 btn-primary 2xl:!text-[1.6rem]"
+              className="flex items-center gap-2 btn-primary"
               onClick={() => setOpen(true)}
               type="button"
             >
               <Plus className="!w-6 !h-6" /> Add new
             </Button>
           </div>
-          <div className="flex flex-col  gap-5 p-6 bg-white">
-            <div className="!w-[45rem]">
-              {/* <Input
-                type="search"
-                placeholder="Find category in the structure"
-              /> */}
-              <CategoryDropdown
-                categoryData={categoryData ?? []}
-                value={{ id: parentId ? Number(parentId) : null, path: "", }}
-                // onChange={(val) => { setParentCategory(val.id) }}
-                onChange={(val) => {
-                  setParentCategory(val.id);
-                  const path = findPathToId(categories, val.id) ?? [];
-                  expandPath(path);
-                  setHighlightId(val.id);
-                  setTimeout(() => document.getElementById(`cat-row-${val.id}`)?.scrollIntoView({block: "center"}), 0);
-                }}
-              />
-            </div>
-            <div className="flex justify-start items-center  gap-5 ">
+
+          <div className="flex flex-col gap-5 p-6 bg-white">
+            <CategoryDropdown
+              categoryData={categories}
+              value={{ id: parentId, path: "" }}
+              onChange={(val) => {
+                setParentCategory(val.id);
+                const path = findPathToId(categories, val.id) ?? [];
+                expandPath(path);
+                setHighlightId(val.id);
+              }}
+            />
+
+            <div className="flex gap-4 items-center">
               <Checkbox
-                checked={
-                  selectedIds.length === categories.length &&
-                  categories.length > 0
+                checked={selectedIds.length === categories.length}
+                onCheckedChange={(checked) =>
+                  setSelectedIds(checked ? categories : [])
                 }
-                onCheckedChange={(checked) => {
-                  const newSelected = checked
-                    ? categories.map((cat: any) => cat)
-                    : [];
-                  setSelectedIds(newSelected);
-                  // Optional: Sync with react-hook-form too
-                  methods.setValue("categories", newSelected);
-                }}
               />
 
-              <p className="2xl:!text-[1.6rem]">{categories?.length} categories</p>
-              <div className="flex justify-start items-center ">
-                <button
-                  className="btn-outline-primary"
-                  onClick={handleEnableVisibilty}
-                >
-                  Enable visibilty
-                </button>
-                <button
-                  className="btn-outline-primary"
-                  onClick={handleDisableVisibilty}
-                >
-                  Disable Visibility
-                </button>
-                <button className="btn-outline-primary" onClick={handleDelete}>
-                  Delete
-                </button>
-              </div>
+              <button
+                type="button"
+                className="btn-outline-primary"
+                onClick={() => handleBulkVisibility(true)}
+              >
+                Enable Visibility
+
+              </button>
+
+              <button
+                type="button"
+                className="btn-outline-primary"
+                onClick={() => handleBulkVisibility(false)}
+              >
+                Disable Visibility
+              </button>
+
+              <button
+                type="button"
+                className="btn-outline-primary"
+                onClick={handleDelete}
+              >
+                Delete
+              </button>
             </div>
           </div>
 
           <Table>
-            <TableHeader className="bg-white h-15">
-              <TableRow className="border-t ">
-                <TableHead className="w-[30px]" />
-                <TableHead className="w-[30px]" />
-                <TableHead className="2xl:!text-[1.6rem]">Name</TableHead>
-                <TableHead className="text-center 2xl:!text-[1.6rem] w-[100px]">
-                  Products
-                </TableHead>
-                <TableHead className="text-center 2xl:!text-[1.6rem] w-[150px]">
-                  In subcategories
-                </TableHead>
-                <TableHead className="text-center 2xl:!text-[1.6rem] w-[100px]">
-                  Visibility
-                </TableHead>
-                <TableHead className="text-center 2xl:!text-[1.6rem] w-[100px]"></TableHead>
+            <TableHeader>
+              <TableRow>
+                <TableHead />
+                <TableHead />
+                <TableHead>Name</TableHead>
+                <TableHead>Products</TableHead>
+                <TableHead>Sub</TableHead>
+                <TableHead>Visibility</TableHead>
+                <TableHead />
               </TableRow>
             </TableHeader>
+
             <DndContext
               sensors={sensors}
+              modifiers={[restrictToVerticalAxis, restrictToWindowEdges]}
               collisionDetection={closestCenter}
               onDragStart={handleDragStart}
               onDragEnd={handleDragEnd}
             >
               <SortableContext
-                items={categories}
+                items={categories.map((c: any) => c.id)}
                 strategy={verticalListSortingStrategy}
               >
                 <TableBody>
-                  {loading ? (
+                  {loading || isUpdateLoading ? (
                     <TableRow>
-                      <TableCell colSpan={7} className="text-center py-10">
+                      <TableCell colSpan={7}>
                         <Spinner />
                       </TableCell>
                     </TableRow>
@@ -405,14 +316,23 @@ const expandPath = (ids: number[]) => {
                   )}
                 </TableBody>
               </SortableContext>
+
+              <DragOverlay>
+                {activeCategory ? (
+                  <div className="bg-white shadow-xl border rounded-md p-3">
+                    {activeCategory.name}
+                  </div>
+                ) : null}
+              </DragOverlay>
             </DndContext>
           </Table>
         </form>
       </FormProvider>
+
       <AddCategoryModal
         open={open}
         onOpenChange={setOpen}
-        categoryData={categoryData}
+        categoryData={categories}
       />
     </>
   );
