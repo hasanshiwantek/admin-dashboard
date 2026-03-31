@@ -80,7 +80,7 @@ export default function AddProductPage() {
     []
   );
 
-  const methods = useForm({ defaultValues });
+  const methods: any = useForm({ defaultValues });
   const { reset } = methods;
   const { id } = useParams();
   const isEditModeRef = useRef(!!id);
