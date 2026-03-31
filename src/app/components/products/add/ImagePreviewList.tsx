@@ -9,12 +9,14 @@ type Props = {
   previews: PreviewItem[];
   setPreviews: React.Dispatch<React.SetStateAction<PreviewItem[]>>;
   setValue: UseFormSetValue<any>;
+  inputRef?: React.RefObject<HTMLInputElement | null>;
 };
 
 export default function ImagePreviewList({
   previews,
   setPreviews,
   setValue,
+  inputRef
 }: Props) {
   // const fileListFromArray = (files: File[]): FileList => {
   //   const dt = new DataTransfer();
@@ -39,12 +41,15 @@ export default function ImagePreviewList({
   };
 
   const handleDeleteSelected = () => {
-    const updated = previews.filter((p:any) => !p.selected);
+    const updated = previews.filter((p: any) => !p.selected);
     previews.forEach(
-      (p:any) => p.selected && p.path && URL.revokeObjectURL(p.path)
+      (p: any) => p.selected && p.path instanceof File && URL.revokeObjectURL(p.path)
     );
     setPreviews(updated);
     syncForm(updated);
+
+    // ✅ Reset input so same files can be re-selected
+    if (inputRef?.current) inputRef.current.value = "";
   };
 
   return (
@@ -153,6 +158,7 @@ export default function ImagePreviewList({
                 const updated = previews.filter((_, i) => i !== index);
                 setPreviews(updated);
                 syncForm(updated);
+                if (inputRef?.current) inputRef.current.value = "";
               }}
               className="text-gray-400 hover:text-red-500 cursor-pointer ml-20"
             >

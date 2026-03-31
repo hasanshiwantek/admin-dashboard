@@ -54,6 +54,35 @@ export default function ImageVideoUploader({ initialImages }: Props) {
     setValue("image", updatedPreviews, { shouldValidate: true });
   };
 
+  // const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const files = e.target.files;
+  //   if (!files) return;
+
+  //   const newFiles = Array.from(files).filter(
+  //     (file) =>
+  //       !previews.some(
+  //         (p) => p.file?.name === file.name && p.file?.size === file.size
+  //       )
+  //   );
+
+  //   const newPreviews: PreviewItem[] = newFiles.map((file) => ({
+  //     file,
+  //     path: file, // ✅ FIX: this makes preview work
+  //     description: "",
+  //     selected: false,
+  //     isPrimary: false,
+  //     type: file.type.startsWith("video/") ? "video" : "image",
+  //   }));
+
+  //   const updated = [...previews, ...newPreviews];
+  //   setPreviews(updated);
+  //   syncFormState(updated); // ✅ call with full objects
+  // };
+
+  // useEffect(() => {
+  //   register("urlImages"); // Register it once
+  // }, [register]);
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
@@ -67,7 +96,7 @@ export default function ImageVideoUploader({ initialImages }: Props) {
 
     const newPreviews: PreviewItem[] = newFiles.map((file) => ({
       file,
-      path: file, // ✅ FIX: this makes preview work
+      path: file,
       description: "",
       selected: false,
       isPrimary: false,
@@ -76,13 +105,11 @@ export default function ImageVideoUploader({ initialImages }: Props) {
 
     const updated = [...previews, ...newPreviews];
     setPreviews(updated);
-    syncFormState(updated); // ✅ call with full objects
+    syncFormState(updated);
+
+    // ✅ Reset input so same file can be selected again after delete
+    e.target.value = "";
   };
-
-  // useEffect(() => {
-  //   register("urlImages"); // Register it once
-  // }, [register]);
-
   const addUrlPreview = (item: PreviewItem) => {
     const updated = [...previews, item];
     setPreviews(updated);
@@ -113,7 +140,7 @@ export default function ImageVideoUploader({ initialImages }: Props) {
           <button
             type="button"
             onClick={handleUploadClick}
-            className="btn-outline-primary flex items-center border border-gray-300 px-4 py-2 rounded-md text-sm 2xl:!text-2xl" 
+            className="btn-outline-primary flex items-center border border-gray-300 px-4 py-2 rounded-md text-sm 2xl:!text-2xl"
           >
             <UploadCloudIcon className="w-5 h-5 mr-2" />
             Upload Images
@@ -150,6 +177,7 @@ export default function ImageVideoUploader({ initialImages }: Props) {
           previews={previews}
           setPreviews={setPreviews}
           setValue={setValue}
+          inputRef={inputRef} 
         />
       )}
 
