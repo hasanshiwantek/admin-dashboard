@@ -67,7 +67,7 @@ export default function ProductCategoriesPage() {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 100,
+        distance: 8,
         delay: 150,
         tolerance: 5,
       },
