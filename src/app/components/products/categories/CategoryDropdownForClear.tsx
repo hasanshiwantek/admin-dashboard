@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
+import { useSearchParams } from "next/navigation";
 
 type Category = {
     id: number;
@@ -29,6 +30,7 @@ export default function CategoryDropdownForClear({
 }) {
     const [search, setSearch] = useState("");
     const [showList, setShowList] = useState(false);
+    const searchParams = useSearchParams();
 
     const flattenCategories = (
         categories: Category[],
@@ -62,28 +64,47 @@ export default function CategoryDropdownForClear({
         if (value?.path) {
             setSearch(value.path);
         } else {
-            setSearch(""); // ✅ clear input when value is reset
-            setShowList(false);
+
         }
     }, [value]);
-
+    useEffect(() => {
+        if (!searchParams.get("t")) return;
+        setSearch(""); 
+        setShowList(false);
+    }, [searchParams]);
     return (
         <div className="relative w-full">
-            <Input
-                placeholder="Start typing category name"
-                value={search}
-                onChange={(e) => {
-                    const value = e.target.value;
-                    setSearch(value);
-                    setShowList(value.length > 0);
-                }}
-                onFocus={() => {
-                    if (search.length > 0) {
-                        setShowList(true);
-                    }
-                }}
-                className="!max-w-full"
-            />
+            <div className="flex items-center gap-2 mb-2">
+
+                <Input
+                    placeholder="Start typing category name"
+                    value={search}
+                    onChange={(e) => {
+                        const value = e.target.value;
+                        setSearch(value);
+                        setShowList(value.length > 0);
+                    }}
+                    onFocus={() => {
+                        if (search.length > 0) {
+                            setShowList(true);
+                        }
+                    }}
+                    className="!max-w-full"
+                />
+                {search && (
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setSearch("");       // ✅ clear input
+                            setShowList(false);  // ✅ hide list
+                            onClear?.();         // ✅ call parent's onClear
+                        }}
+                        className="absolute right-2 text-gray-400 hover:text-gray-600"
+                    >
+                        ✕
+                    </button>
+                )}
+            </div>
 
             {showList && (
                 <div className="absolute z-40 mt-1 max-h-64 w-full overflow-auto rounded-md border bg-white shadow-md">
