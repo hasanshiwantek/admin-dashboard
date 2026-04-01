@@ -40,11 +40,14 @@ import Spinner from "../../loader/Spinner";
 import { Checkbox } from "@/components/ui/checkbox";
 import CategoryDropdown from "./CategoryDropdown";
 import { restrictToWindowEdges } from "@dnd-kit/modifiers";
+import { useSearchParams } from "next/navigation";
+import CategoryDropdownForClear from "./CategoryDropdownForClear";
 
 
 export default function ProductCategoriesPage() {
   const methods = useForm();
   const dispatch = useAppDispatch();
+  const searchParams = useSearchParams();
 
   const allCategories = useAppSelector(
     (state: any) => state.category.categories
@@ -92,7 +95,6 @@ export default function ProductCategoriesPage() {
 
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
-    console.log("event", event);
 
     setActiveId(null);
     if (!active || !over) return;
@@ -175,6 +177,13 @@ export default function ProductCategoriesPage() {
     setSelectedIds([]);
     setTimeout(() => dispatch(fetchCategories()), 500);
   };
+  useEffect(() => {
+    // ✅ Only run when t= param is present (sidebar same-route refresh)
+    if (!searchParams.get("t")) return;
+    setSelectedIds([]);
+    dispatch(fetchCategories());
+  }, [searchParams]);
+
 
   useEffect(() => {
     dispatch(fetchCategories());
@@ -224,16 +233,30 @@ export default function ProductCategoriesPage() {
           </div>
 
           <div className="flex flex-col gap-5 p-6 bg-white">
-            <CategoryDropdown
-              categoryData={categories}
-              value={{ id: parentId, path: "" }}
-              onChange={(val) => {
-                setParentCategory(val.id);
-                const path = findPathToId(categories, val.id) ?? [];
-                expandPath(path);
-                setHighlightId(val.id);
-              }}
-            />
+            <div className="flex gap-2 items-center">
+              <CategoryDropdownForClear
+                categoryData={categories}
+                value={{ id: parentId, path: "" }}
+                onChange={(val) => {
+                  setParentCategory(val.id);
+                  const path = findPathToId(categories, val.id) ?? [];
+                  expandPath(path);
+                  setHighlightId(val.id);
+                }}
+              />
+
+              <button
+                type="button"
+                onClick={async () => {
+                  setParentCategory(null);  // ✅ resets value → useEffect in dropdown clears input
+                  setHighlightId(null);
+                  await dispatch(fetchCategories()); // ✅ refetch all categories
+                }}
+                className="btn-outline-primary mt-2 text-sm"
+              >
+                Clear
+              </button>
+            </div>
 
             <div className="flex gap-4 items-center">
               <Checkbox

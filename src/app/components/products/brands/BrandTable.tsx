@@ -12,6 +12,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Settings } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+
 import OrderActionsDropdown from "../../orders/OrderActionsDropdown";
 import { Button } from "@/components/ui/button";
 import Pagination from "@/components/ui/pagination";
@@ -37,17 +39,15 @@ const BrandTable = () => {
   const dispatch = useAppDispatch();
   const brands = useAppSelector((state: any) => state.product.brands);
   const loading = useAppSelector((state: any) => state.product.loading);
-
+  const searchParams = useSearchParams();
   const brandData = brands?.data;
   const pagination = brands?.pagination;
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState("50");
   const totalCount = pagination?.totalCount;
   const totalPages = pagination?.totalPages;
-  console.log("Pagination", pagination);
-
+  const [keyword, setKeyword] = useState("");
   const [selectedIds, setSelectedIds] = useState<any[]>([]);
-
   const isAllSelected = selectedIds.length === brandData?.length;
 
   const toggleSelectAll = () => {
@@ -55,7 +55,6 @@ const BrandTable = () => {
       ? []
       : brandData.map((brand: any) => brand.id);
     setSelectedIds(newSelected);
-    console.log("Selected IDs:", newSelected);
   };
 
   const toggleSelectOne = (id: number) => {
@@ -98,10 +97,8 @@ const BrandTable = () => {
 
   // SEARCH KEYWORD LOGIC
 
-  const [keyword, setKeyword] = useState("");
 
   const filterHandler = async () => {
-    console.log("Keyword: ", keyword);
     try {
       const resultAction = await dispatch(
         fetchBrandByKeyword({
@@ -121,6 +118,14 @@ const BrandTable = () => {
     }
   };
 
+  useEffect(() => {
+    if (!searchParams.get("t")) return;
+    setKeyword("");
+    setPerPage("50");
+    setCurrentPage(1);
+    setSelectedIds([]);
+    dispatch(fetchBrands({ page: 1, pageSize: 50 }));
+  }, [searchParams]);
   useEffect(() => {
     dispatch(fetchBrands({ page: currentPage, pageSize: perPage }));
   }, [dispatch, currentPage, perPage]);
@@ -143,7 +148,7 @@ const BrandTable = () => {
             <Trash className="!w-6 !h-6 2xl:!h-8" />
           </button>
           <Input
-            className="2xl:!text-2xl 2xl:!h-[37.98px]" 
+            className="2xl:!text-2xl 2xl:!h-[37.98px]"
             type="text"
             placeholder="Filter by Keyword"
             value={keyword}
@@ -155,6 +160,17 @@ const BrandTable = () => {
             type="button"
           >
             Filter
+          </button>
+          <button
+            className="btn-outline-primary 2xl:!text-2xl"
+            disabled={!keyword}
+            onClick={() => {
+              setKeyword("");
+              dispatch(fetchBrands({ page: currentPage, pageSize: perPage }));
+            }}
+            type="button"
+          >
+            Clear
           </button>
         </div>
         <div className="flex justify-end">
