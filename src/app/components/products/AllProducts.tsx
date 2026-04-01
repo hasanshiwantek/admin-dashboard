@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Plus, Pencil, Filter, Ellipsis } from "lucide-react";
+import { Plus, Pencil, Filter, Ellipsis, X } from "lucide-react";
 import { IoSearchOutline } from "react-icons/io5";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -41,6 +41,7 @@ import {
   getProductCategoryIds,
 } from "@/lib/toggleCategoryHelper";
 import { deleteProductCategory } from "@/redux/slices/productSlice";
+
 const filterTabs = [
   "All",
   "Featured",
@@ -66,12 +67,12 @@ export default function AllProducts() {
   const { loading, error } = useAppSelector((state: any) => state.product);
   const [selectedTab, setSelectedTab] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
-
+  const router = useRouter();
   const dispatch = useAppDispatch();
+  const searchParams = useSearchParams();
   const [featuredMap, setFeaturedMap] = useState<{ [key: number]: boolean }>(
     {}
   );
-  const router = useRouter();
   const [visibilityMap, setVisibilityMap] = useState<{
     [key: number]: "ENABLED" | "DISABLED";
   }>({});
@@ -93,11 +94,6 @@ export default function AllProducts() {
           return product.isFeatured === true;
 
         case "Free shipping":
-          console.log(
-            "fixedShippingCost value:",
-            product.fixedShippingCost,
-            "type:", typeof product.fixedShippingCost
-          );
           return (
             product.fixedShippingCost === 0 ||
             product.fixedShippingCost === null || product.fixedShippingCost === undefined
@@ -206,7 +202,6 @@ export default function AllProducts() {
     {
       label: "Enable visibility",
       onClick: () => {
-        console.log("Enable visibility clicked", product);
         dispatch(
           updateProduct({
             body: {
@@ -229,8 +224,6 @@ export default function AllProducts() {
     {
       label: "Disable visibility",
       onClick: () => {
-        console.log("Disable visibility clicked", product);
-
         dispatch(
           updateProduct({
             body: {
@@ -253,7 +246,6 @@ export default function AllProducts() {
     {
       label: "Make featured",
       onClick: () => {
-        console.log("Make featured clicked", product);
         dispatch(
           updateProduct({
             body: {
@@ -276,7 +268,6 @@ export default function AllProducts() {
     {
       label: "Make not featured",
       onClick: () => {
-        console.log("Make not featured", product);
         dispatch(
           updateProduct({
             body: {
@@ -299,7 +290,6 @@ export default function AllProducts() {
     {
       label: "Delete",
       onClick: () => {
-        console.log("Delete", product);
         const confirm = window.confirm("Delete Product?");
         if (!confirm) {
           return;
@@ -374,7 +364,6 @@ export default function AllProducts() {
     {
       label: "Enable visiblity",
       onClick: () => {
-        console.log("Enable visiblity clicked");
         dispatch(
           updateProduct({
             body: {
@@ -398,7 +387,6 @@ export default function AllProducts() {
     {
       label: "Disable visiblity",
       onClick: () => {
-        console.log("Disable visibility clicked");
 
         dispatch(
           updateProduct({
@@ -423,7 +411,6 @@ export default function AllProducts() {
     {
       label: "Make featured",
       onClick: () => {
-        console.log("Make featured clicked");
         dispatch(
           updateProduct({
             body: {
@@ -447,7 +434,6 @@ export default function AllProducts() {
     {
       label: "Make Not featured",
       onClick: () => {
-        console.log("Make Notfeatured clicked");
         dispatch(
           updateProduct({
             body: {
@@ -471,7 +457,6 @@ export default function AllProducts() {
     {
       label: "Delete",
       onClick: () => {
-        console.log("Delete", selectedProductIds);
         const confirm = window.confirm("Delete Selecred Products?");
         if (!confirm) {
           return;
@@ -500,7 +485,6 @@ export default function AllProducts() {
       : selectedProductIds.filter((pid) => pid !== id);
 
     setSelectedProductIds(updated);
-    console.log("✅ Updated selectedProductIds:", updated);
   };
 
   const handleEditInventory = () => {
@@ -551,7 +535,6 @@ export default function AllProducts() {
     router.push(`?page=1&limit=${value}`);
   };
 
-  const searchParams = useSearchParams();
 
   const queryObject: Record<string, any> = {};
   searchParams.forEach((value, key) => {
@@ -563,6 +546,19 @@ export default function AllProducts() {
   });
 
   useEffect(() => {
+    // ✅ Only run when t= param is present (sidebar same-route refresh)
+    if (!searchParams.get("t")) return;
+
+    setSelectedTab("All");
+    setSearchTerm("");
+    handleSelectAllChange(false);
+    setSelectedProductIds([]);
+    setCategoryModalOpen(false);
+    setPerPage("20");
+    setCurrentPage(1);
+    dispatch(fetchAllProducts({ page: 1, pageSize: 20 }));
+  }, [searchParams]);
+  useEffect(() => {
     const page = Number(queryObject.page || 1);
     const pageSize = Number(queryObject.limit || queryObject.pageSize || 20);
 
@@ -572,6 +568,7 @@ export default function AllProducts() {
 
     if (filterKeys.length > 0) {
       // 🔍 Run filtered search if extra filters exist
+      if (searchParams.get("t")) return;
       dispatch(
         advanceSearchProduct({
           data: {
@@ -640,30 +637,38 @@ export default function AllProducts() {
             ))}
           </div>
 
-          <div className="flex justify-between gap-10 items-center mb-5">
+          <div className="flex justify-between gap-1 items-center mb-5">
             <div
               className="flex justify-start items-center bg-white text-center !px-4 !py-4 rounded-md 
-                         focus-within:ring-3 focus-within:ring-blue-200 focus-within:border-blue-200 border border-gray-200  transition hover:border-blue-200 w-[80%]"
+             focus-within:ring-3 focus-within:ring-blue-200 focus-within:border-blue-200 border border-gray-200 transition hover:border-blue-200 "
             >
               <i onClick={() => fetchWithFilters(selectedTab, searchTerm)}>
-                <IoSearchOutline
-                  size={20}
-                  color="gray"
-                  className="cursor-pointer"
-                />
+                <IoSearchOutline size={20} color="gray" className="cursor-pointer" />
               </i>
               <input
                 type="text"
                 placeholder=" Search products"
-                className=" !ml-3 bg-transparent !text-xl 2xl:!text-[1.6rem] !font-medium outline-none placeholder:text-gray-400 w-[80%]"
+                className="!ml-3 bg-transparent !text-xl 2xl:!text-[1.6rem] !font-medium outline-none placeholder:text-gray-400 w-[80%]"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
-                    fetchWithFilters(selectedTab, searchTerm); // ✅ fire API with search + current tab
+                    fetchWithFilters(selectedTab, searchTerm);
                   }
                 }}
               />
+
+              <button
+                disabled={!searchTerm.trim()}
+                type="button"
+                onClick={() => {
+                  setSearchTerm("");
+                  fetchWithFilters(selectedTab, ""); // ✅ reset search, keep current tab
+                }}
+                className="ml-2 text-gray-400 hover:text-gray-600 transition"
+              >
+                <X size={18} />
+              </button>
             </div>
 
             {/* <Input placeholder="Search products" className="max-w-[80%] !p-7 " /> */}
@@ -805,7 +810,6 @@ export default function AllProducts() {
                         <span
                           onClick={() => {
                             router.push(`/manage/products/edit/${product.id}`);
-                            console.log("navigated");
                           }}
                           className="!text-blue-600 hover:underline !text-xl 2xl:!text-[1.6rem] !font-medium capitalize  cursor-pointer whitespace-normal break-words leading-snug max-w-[350px]"
                         >

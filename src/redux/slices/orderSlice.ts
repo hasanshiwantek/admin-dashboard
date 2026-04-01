@@ -2,27 +2,50 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "@/lib/axiosInstance";
 
 // 1. Thunk with slight improvement
+// export const fetchAllOrders = createAsyncThunk(
+//   "orders/fetchAllOrders",
+//   async (
+//     { page, perPage }: { page: number; perPage: number | string },
+//     thunkAPI,
+//   ) => {
+//     try {
+//       const res = await axiosInstance.get(
+//         `dashboard/orders/list-orders?page=${page}&perPage=${perPage}`,
+//       );
+//       console.log("✅ Order Response Data:", res.data);
+//       return res.data;
+//     } catch (err: any) {
+//       console.error("❌ Error fetching all orders:", err);
+//       return thunkAPI.rejectWithValue(
+//         err.response?.data?.message || "Failed to fetch orders",
+//       );
+//     }
+//   },
+// );
 export const fetchAllOrders = createAsyncThunk(
   "orders/fetchAllOrders",
   async (
-    { page, perPage }: { page: number; perPage: number | string },
+    { page, perPage, status }: { page: number; perPage: number | string; status?: string },
     thunkAPI,
   ) => {
     try {
+      const params = new URLSearchParams({
+        page: String(page),
+        perPage: String(perPage),
+        ...(status && status !== "All orders" && { status }), // ✅ only add if not "All orders"
+      });
+
       const res = await axiosInstance.get(
-        `dashboard/orders/list-orders?page=${page}&perPage=${perPage}`,
+        `dashboard/orders/list-orders?${params.toString()}`
       );
-      console.log("✅ Order Response Data:", res.data);
       return res.data;
     } catch (err: any) {
-      console.error("❌ Error fetching all orders:", err);
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to fetch orders",
+        err.response?.data?.message || "Failed to fetch orders"
       );
     }
   },
 );
-
 // FETCH ORDER BY ID
 export const fetchOrderById = createAsyncThunk(
   "orders/fetchOrderById",
@@ -50,12 +73,19 @@ export const fetchOrderByKeyword = createAsyncThunk(
       page,
       perPage,
       keyword,
-    }: { page: number; perPage: number | string; keyword: any },
+      status,
+    }: { page: number; perPage: number | string; keyword: any; status?: string },
     thunkAPI,
   ) => {
     try {
+      const params = new URLSearchParams({
+        page: String(page),
+        perPage: String(perPage),
+        keyword: String(keyword),
+        ...(status && status !== "All orders" && { status }), // ✅ only add if not "All orders"
+      });
       const res = await axiosInstance.get(
-        `dashboard/orders/list-orders?page=${page}&pageSize=${perPage}&keyword=${keyword}`,
+        `dashboard/orders/list-orders?${params.toString()}`,
       );
       console.log("✅ Search Order Response Data:", res.data);
       return res.data;

@@ -14,12 +14,15 @@ import {
   CollapsibleTrigger,
   CollapsibleContent,
 } from "@/components/ui/collapsible";
+import { useRouter } from "next/navigation";
 import { sidebarData } from "@/const/sidebarData";
 import { ChevronDown } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 export const SideBar = ({ onClose }: { onClose?: () => void }) => {
   const pathname = usePathname();
+  const router = useRouter();
+
   const [openMenus, setOpenMenus] = useState<boolean[]>(
     sidebarData.map(() => false)
   );
@@ -72,9 +75,17 @@ export const SideBar = ({ onClose }: { onClose?: () => void }) => {
                         <SidebarMenuSubItem key={child.title}>
                           <Link
                             href={child.url}
-                            className={`text-xl 2xl:!text-2xl !leading-8 cursor-pointer px-4 py-2 rounded-md block ${
-                              pathname === child.url ? "bg-[#24345c]" : ""
-                            }`}
+                            className={`text-xl 2xl:!text-2xl !leading-8 cursor-pointer px-4 py-2 rounded-md block ${pathname === child.url ? "bg-[#24345c]" : ""
+                              }`}
+                            onClick={(e) => {
+                              const link = ["/manage/products", "/manage/products/brands", "/manage/products/categories", "/manage/orders"]
+                              if (pathname === child.url) {
+                                e.preventDefault();
+                                if (link.includes(child.url)) {
+                                  router.push(`${child.url}?t=${Date.now()}`);
+                                }
+                              }
+                            }}
                           >
                             {child.title}
                           </Link>
@@ -88,9 +99,8 @@ export const SideBar = ({ onClose }: { onClose?: () => void }) => {
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton
                   asChild
-                  className={`p-8 cursor-pointer text-xl 2xl:!text-2xl rounded-md ${
-                    pathname === item.url ? "bg-[#24345c]" : ""
-                  }`}
+                  className={`p-8 cursor-pointer text-xl 2xl:!text-2xl rounded-md ${pathname === item.url ? "bg-[#24345c]" : ""
+                    }`}
                 >
                   <Link href={item.url || "#"} className="flex items-center">
                     {item.icon && <item.icon className="mr-2 !h-8 !w-8" />}

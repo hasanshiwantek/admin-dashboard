@@ -65,22 +65,18 @@ const AllOrders = () => {
   const [showNotes, setShowNotes] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState<any>(null);
   const router = useRouter();
+  const searchParams = useSearchParams();
   const toggleRow = (id: number) => {
     setExpandedRow((prev) => (prev === id ? null : id));
   };
-
-  console.log("Orders Pagination: ", pagination);
-
   const { loading, error } = useAppSelector((state) => state.order);
-  console.log("Orders data from frontend: ", orders);
-
   const [activeTab, setActiveTab] = useState("All orders");
+  // const filteredOrders = orders?.data?.filter((order: any) => {
+  //   if (activeTab === "All orders") return true;
+  //   return order.status === activeTab;
+  // });
+  const filteredOrders = orders?.data || [];
 
-  const filteredOrders = orders?.data?.filter((order: any) => {
-    if (activeTab === "All orders") return true;
-    return order.status === activeTab;
-  });
-  console.log("Filtered Orders: ", filteredOrders);
   const tabs = [
     "All orders",
     "Awaiting Payment",
@@ -109,7 +105,6 @@ const AllOrders = () => {
     }
 
     setSelectedOrderIds(updated);
-    console.log("🟦 Toggled Single Order:", order);
   };
 
   // Handle "Select All" checkbox
@@ -122,7 +117,6 @@ const AllOrders = () => {
   const handleSelectAllChange = (checked: boolean) => {
     const updated = checked ? filteredOrders : [];
     setSelectedOrderIds(updated);
-    console.log("✅ Selected All Orders:", updated); // full objects
   };
 
   const statusOptions = [
@@ -266,9 +260,9 @@ const AllOrders = () => {
           const resulAction = await dispatch(refundOrder({ orderId }));
           if (refundOrder.fulfilled.match(resulAction)) {
             console.log("Order Refunded: ", resulAction?.payload);
-            setTimeout(()=>{
+            setTimeout(() => {
               refetchOrders(dispatch)
-            },3000)
+            }, 3000)
           } else {
             console.log("Error Refunding Order: ", resulAction?.payload);
           }
@@ -294,13 +288,13 @@ const AllOrders = () => {
   const [keyword, setKeyword] = useState("");
 
   const filterHandler = async () => {
-    console.log("Keyword: ", keyword);
     try {
       const resultAction = await dispatch(
         fetchOrderByKeyword({
           page: currentPage,
           perPage: perPage,
           keyword: keyword,
+          status: activeTab,
         })
       );
       if (fetchOrderByKeyword.fulfilled.match(resultAction)) {
@@ -439,7 +433,6 @@ const AllOrders = () => {
 
   // FETCH ORDERS LOGIC
 
-  const searchParams = useSearchParams();
 
   const queryObject: Record<string, any> = {};
   searchParams.forEach((value, key) => {
@@ -453,12 +446,23 @@ const AllOrders = () => {
   const currentPage = Number(queryObject.page || 1);
   const perPage = Number(queryObject.limit || queryObject.pageSize || 50);
 
+
+  useEffect(() => {
+    if (!searchParams.get("t")) return;
+    setSelectedOrderIds([]);
+    setActiveTab("All orders");
+    setKeyword("");
+    handleSelectAllChange(false);
+    dispatch(fetchAllOrders({ page: currentPage, perPage }));
+  }, [searchParams]);
+
   useEffect(() => {
     const filterKeys = Object.keys(queryObject).filter(
       (key) => !["page", "limit", "pageSize"].includes(key)
     );
 
     if (filterKeys.length > 0) {
+      if (searchParams.get("t")) return;
       dispatch(
         advanceOrderSearch({
           data: {
@@ -469,9 +473,13 @@ const AllOrders = () => {
         })
       );
     } else {
-      dispatch(fetchAllOrders({ page: currentPage, perPage }));
+      dispatch(fetchAllOrders({ page: currentPage, perPage, status: activeTab }));
     }
   }, [searchParams]); // ✅ triggers when URL changes
+
+  useEffect(() => {
+    dispatch(fetchAllOrders({ page: currentPage, perPage, status: activeTab }));
+  }, [activeTab])
   const handlePageChange = (page: number) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("page", page.toString());
@@ -500,11 +508,11 @@ const AllOrders = () => {
         {tabs.map((tab) => (
           <button
             key={tab}
-            className={`!text-2xl pb-3 border-b-3 whitespace-nowrap ${
-              activeTab === tab
-                ? "border-blue-600 font-semibold"
-                : "border-transparent text-gray-500 hover:text-black"
-            }`}
+            className={`!text-2xl pb-3 border-b-3 whitespace-nowrap ${activeTab === tab
+              ? "border-blue-600 font-semibold"
+              : "border-transparent text-gray-500 hover:text-black"
+              }`}
+            // onClick={() => setActiveTab(tab)}
             onClick={() => setActiveTab(tab)}
           >
             {tab}
@@ -629,6 +637,15 @@ const AllOrders = () => {
           >
             Search
           </button>
+          <button
+            className="btn-outline-primary 2xl:!text-2xl"
+            onClick={() => {
+              setKeyword("");
+              dispatch(fetchAllOrders({ page: currentPage, perPage, status: activeTab }));
+            }}
+          >
+            Clear
+          </button>
         </div>
         {/* Pagination */}
         <div className="flex items-center justify-end my-2">
@@ -735,8 +752,8 @@ const AllOrders = () => {
                           {/* Payment Method Icon */}
                           {order.billingInformation?.paymentMethod ===
                             "credit_card" && (
-                            <CreditCard className="w-7 h-7 text-gray-500" />
-                          )}
+                              <CreditCard className="w-7 h-7 text-gray-500" />
+                            )}
                         </div>
                       </TableCell>
                       <TableCell>
@@ -751,9 +768,8 @@ const AllOrders = () => {
                             return (
                               <>
                                 <span
-                                  className={`w-7 h-9 inline-block rounded-sm ${
-                                    currentStatus?.color || "bg-gray-400"
-                                  }`}
+                                  className={`w-7 h-9 inline-block rounded-sm ${currentStatus?.color || "bg-gray-400"
+                                    }`}
                                 />
                                 <Select
                                   defaultValue={normalizedStatus}
