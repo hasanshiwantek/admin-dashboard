@@ -243,19 +243,12 @@ export default function ProductCategoriesPage() {
                   expandPath(path);
                   setHighlightId(val.id);
                 }}
-              />
-
-              <button
-                type="button"
-                onClick={async () => {
-                  setParentCategory(null);  // ✅ resets value → useEffect in dropdown clears input
+                onClear={async () => {
+                  setParentCategory(null);
                   setHighlightId(null);
-                  await dispatch(fetchCategories()); // ✅ refetch all categories
+                  await dispatch(fetchCategories()); // ✅ refetch
                 }}
-                className="btn-outline-primary mt-2 text-sm"
-              >
-                Clear
-              </button>
+              />
             </div>
 
             <div className="flex gap-4 items-center">
