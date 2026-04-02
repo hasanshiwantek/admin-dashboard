@@ -109,15 +109,6 @@ const Page = () => {
     if (authenticatorAppStatus === "ENABLED") {
       setOpen(true);
     } else {
-      // setLoading(true);
-      // dispatch(enableAuthenticator2FA()).then((res) => {
-      //   if (res.payload) {
-      //     setTotpModalOpen(true);
-      //     setTotpData(res.payload);
-      //   }
-      // }).finally(() => {
-      //   setLoading(false);
-      // });
       setConfirmationForAuthEnable(true)
     }
   };
@@ -186,7 +177,7 @@ const Page = () => {
         loading={loading}
         onOpenChange={setConfirmationForEmailEnable}
         variant="enable"
-        title="Enable Email 2FA?"
+        title="Enable Email?"
         description="This will require an OTP code sent to your email on every login."
         onConfirm={() => {
           setLoading(true);
