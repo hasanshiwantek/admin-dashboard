@@ -251,6 +251,23 @@ export const verifyOtp = createAsyncThunk(
     }
   }
 );
+export const resendOtp = createAsyncThunk(
+  "auth/resend-otp",
+  async ({ pendingToken }: { pendingToken: string }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.post("2fa/resend-otp", {
+        pending_token: pendingToken,
+      });
+      return res.data;
+    } catch (err: any) {
+      console.log(err.response);
+      
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "OTP verification failed"
+      );
+    }
+  }
+);
 
 // Slice
 const authSlice = createSlice({

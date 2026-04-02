@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import { setStoreId } from "@/redux/slices/configSlice";
-import { verifyOtp } from "@/redux/slices/authSlice";
+import { resendOtp, verifyOtp } from "@/redux/slices/authSlice";
 import type { AppDispatch } from "@/redux/store";
 import { RootState } from "@/redux/store";
 import ProtectedRoute from "@/auth/ProtectedRoute";
@@ -20,6 +20,7 @@ export default function VerifyOtpPage() {
     const { two_factor_type, two_factor_required, pending_token } = useSelector((state: RootState) => state.auth);
     const [twoFactorData, setTwoFactorData] = useState<any>(null);
     const [otp, setOtp] = useState("");
+    const [resendOtpLoading, setResendOtpLoading] = useState(false)
     const [otpError, setOtpError] = useState("");
     const [otpLoading, setOtpLoading] = useState(false);
     const [timeLeft, setTimeLeft] = useState(59);
@@ -76,6 +77,14 @@ export default function VerifyOtpPage() {
         }
     };
 
+    const handleResendOtp = async () => {
+        setResendOtpLoading(true)
+        dispatch(
+            resendOtp({ pendingToken: twoFactorData!.pending_token })
+        ).finally(() => {
+            setResendOtpLoading(false)
+        })
+    }
     useEffect(() => {
         const token = localStorage.getItem("token");
         const storeId = localStorage.getItem("storeId");
@@ -89,7 +98,6 @@ export default function VerifyOtpPage() {
             router.push("/manage/dashboard");
         }
     }, [isAuthenticated, pending_token]);
-
     return (
         <>
 
@@ -137,7 +145,18 @@ export default function VerifyOtpPage() {
                     />
                     {otpError && <p className="text-red-400 text-lg">{otpError}</p>}
                 </div>
+                <div className="flex w-full sm:w-[34rem] justify-end ">
 
+                    <button
+                        type="button"
+                        onClick={handleResendOtp}
+                        disabled={resendOtpLoading}
+                        className=" cursor-pointer p-2 h-10 mt-3 mb-5 text-[#fff] rounded-lg font-medium !text-2xl border-0 transition "
+
+                    >
+                        {resendOtpLoading ? "Resend..." : "Resend OTP"}
+                    </button>
+                </div>
                 {/* Verify Button */}
                 <Button
                     type="button"
