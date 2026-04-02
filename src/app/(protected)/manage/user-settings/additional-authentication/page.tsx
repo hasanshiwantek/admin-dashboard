@@ -203,7 +203,7 @@ const Page = () => {
         onOpenChange={setConfirmationForAuthEnable}
         variant="enable"
         title="Enable Authenticator?"
-        description="This will remove email verification from your login process."
+        description="Scan the QR code with your authenticator app (e.g. Google Authenticator or Authy) to generate login codes."
         onConfirm={() => {
           setLoading(true);
           dispatch(enableAuthenticator2FA()).then((res) => {
