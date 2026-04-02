@@ -1,20 +1,23 @@
 "use client";
 import React, { useState } from "react";
 import { Save, AlertTriangle, Eye, EyeOff } from "lucide-react"; // Added AlertTriangle for the warning box
+import { useRouter } from "next/navigation";
 
-// --- SHADCN/UI Imports ---
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { logout, profileUpdatePassword } from "@/redux/slices/authSlice";
+import { useAppDispatch } from "@/hooks/useReduxHooks";
+import { RootState } from "@/redux/store";
+import { useSelector } from "react-redux";
 
 // Component for displaying a single password requirement
 const RequirementItem = ({ text, isMet }: { text: any; isMet: any }) => (
   <div className="flex items-center text-lg" aria-live="polite">
     <span
-      className={`mr-2 h-7 w-7 flex items-center justify-center rounded-full ${
-        isMet ? "bg-green-500" : "bg-gray-300"
-      }`}
+      className={`mr-2 h-7 w-7 flex items-center justify-center rounded-full ${isMet ? "bg-green-500" : "bg-gray-300"
+        }`}
     >
       <svg
         className="h-4 w-4 text-white"
@@ -33,12 +36,16 @@ const RequirementItem = ({ text, isMet }: { text: any; isMet: any }) => (
 );
 
 const Page = () => {
+  const dispatch = useAppDispatch();
+  const { loading } = useSelector((state: RootState) => state.auth);
+
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showCurrent, setShowCurrent] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const router = useRouter();
   // Password requirement logic
   const requirements = {
     minLength: newPassword.length >= 12,
@@ -65,20 +72,20 @@ const Page = () => {
       return;
     }
 
-    console.log("Attempting to change password...");
-    // In a real app, this would be an API call
-    alert("Password change initiated. You will be signed out.");
-    const payload={
-      currentPassword:currentPassword,
-      newPassword:newPassword,
-      confirmPassword:confirmPassword
+    const payload = {
+      currentPassword: currentPassword,
+      newPassword: newPassword,
+      confirmPassword: confirmPassword
     }
-    console.log("Changed password payload: ",payload );
-    
+    dispatch(profileUpdatePassword(payload)).then((res) => {
+        if (profileUpdatePassword.fulfilled.match(res)) {
+          dispatch(logout());
+          router.push("/login");
+        }
+    })
   };
 
   const handleCancel = () => {
-    console.log("Cancelled password change.");
     setCurrentPassword("");
     setNewPassword("");
     setConfirmPassword("");
@@ -229,10 +236,11 @@ const Page = () => {
             </button>
             <button
               onClick={handleSave}
+              disabled={loading}
               className="btn-primary flex items-center"
             >
               <Save className="mr-1 -mt-1 h-5 w-5" />
-              Save
+              {loading ? "Loading.." : "Save"}
             </button>
           </div>
         </div>
