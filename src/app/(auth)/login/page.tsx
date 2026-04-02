@@ -21,30 +21,37 @@ export default function LoginPage() {
     password: "",
     showPassword: false,
   });
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     const result = await dispatch(
       loginUser({ email: formData.email, password: formData.password })
     );
-
     if (loginUser.fulfilled.match(result)) {
-      const { token, stores, expireAt, user } = result.payload;
-      Cookies.set("token", token, { expires: 7 });
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
-      localStorage.setItem(
-        "tokenExpiry",
-        new Date(expireAt).getTime().toString()
-      );
+      const { token, stores, expireAt, user, pending_token, two_factor_required, two_factor_type } = result.payload;
 
-      if (stores.length > 0) {
-        // Always show store selection if there is at least 1 store
-        localStorage.setItem("availableStores", JSON.stringify(stores));
-        router.push("/store-select");
+      if (pending_token && two_factor_type) {
+        router.push("/verify-otp");
+        localStorage.setItem("pending_token", pending_token);
+        localStorage.setItem("two_factor_required", two_factor_required.toString());
+        localStorage.setItem("two_factor_type", two_factor_type);
       } else {
-        // No stores available, handle accordingly
-        console.error("No stores available for this user.");
+        Cookies.set("token", token, { expires: 7 });
+        localStorage.setItem("token", token);
+        localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem(
+          "tokenExpiry",
+          new Date(expireAt).getTime().toString()
+        );
+        if (stores?.length > 0) {
+          // Always show store selection if there is at least 1 store
+          localStorage.setItem("availableStores", JSON.stringify(stores));
+          router.push("/store-select");
+        } else {
+          // No stores available, handle accordingly
+          console.error("No stores available for this user.");
+        }
       }
     }
   };
@@ -64,7 +71,7 @@ export default function LoginPage() {
       router.replace("/manage/dashboard");
     } else {
     }
-  }, []);
+  }, [isAuthenticated]);
 
   return (
     <div className="flex flex-col min-h-screen items-center justify-center bg-black">

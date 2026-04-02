@@ -26,8 +26,12 @@ import {
   updateCustomer,
 } from "@/redux/slices/customerSlice";
 import Link from "next/link";
+import { useSelector } from "react-redux";
 const AddCustomer = () => {
   const { id } = useParams(); // dynamic route
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
   const isEdit = !!id;
   const [saveAndAddAnother, setSaveAndAddAnother] = useState(false);
 
@@ -52,8 +56,6 @@ const AddCustomer = () => {
     country: "",
   });
 
-  const dispatch = useAppDispatch();
-  const router = useRouter();
   const updateField = (field: any, value: any) => {
     setFormData((prev: any) => ({ ...prev, [field]: value }));
   };
@@ -111,7 +113,7 @@ const AddCustomer = () => {
       functional: formData.functional,
       targeting: formData.targeting,
     };
-
+    setLoading(true);
     try {
       const resultAction = isEdit
         ? await dispatch(updateCustomer({ id: id, data: payload }))
@@ -150,6 +152,8 @@ const AddCustomer = () => {
     } catch (error) {
       console.error("Submit error:", error);
       alert("Unexpected error occurred.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -532,6 +536,7 @@ const AddCustomer = () => {
             </button>
           </Link>
           <button
+            disabled={loading}
             type="button"
             className="btn-outline-primary"
             onClick={() => {
@@ -544,11 +549,11 @@ const AddCustomer = () => {
                 );
             }}
           >
-            Save and add another
+            {loading ? "Saving..." : "Save and add another"}
           </button>
 
-          <button type="submit" className="btn-primary">
-            {isEdit ? "Update" : "Add"} Customer
+          <button disabled={loading} type="submit" className="btn-primary">
+            {loading ? "Saving..." : isEdit ? "Update Customer" : "Add Customer"}
           </button>
         </div>
       </form>

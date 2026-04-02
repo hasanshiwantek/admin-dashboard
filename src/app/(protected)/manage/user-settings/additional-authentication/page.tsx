@@ -1,10 +1,16 @@
 "use client"
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Mail, Smartphone, Save, AlertTriangle } from "lucide-react";
 
 // --- SHADCN/UI Imports ---
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
+import { confirmAuthenticator, disableEmail2FA, enableAuthenticator2FA, enableEmail2FA, fetchTwofaStatus } from "@/redux/slices/authSlice";
+import DisablePasswordModal from "./helpers/DiablePasswordModal";
+import EnableTOTPModal from "./helpers/EnableTOTPModal";
+import { set } from "react-hook-form";
+import ConfirmationModal from "./helpers/ConfirmationModal";
 // Only necessary components are imported, removing unused ones like Input/Label for this view
 
 // Helper component for the two-factor authentication option card
@@ -62,7 +68,7 @@ const AuthOptionCard = ({
         {actionButton && (
           <div className="flex-shrink-0 ml-4">
             <Button
-            className="!p-5 !text-xl"
+              className="!p-5 !text-xl"
               variant={status === "ENABLED" ? "destructive" : "outline"} // Use 'destructive' to signify disable/remove
               onClick={onAction}
             >
@@ -76,89 +82,198 @@ const AuthOptionCard = ({
 };
 
 const Page = () => {
-  const [emailAuthStatus, setEmailAuthStatus] = useState("ENABLED");
+  const dispatch = useAppDispatch();
+  const [emailAuthStatus, setEmailAuthStatus] = useState("");
   const [authenticatorAppStatus, setAuthenticatorAppStatus] =
-    useState("DISABLED");
+    useState("");
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [confirmationForEmailEnable, setConfirmationForEmailEnable] = useState(false);
+  const [confirmationForAuthEnable, setConfirmationForAuthEnable] = useState(false);
+  const [totpData, setTotpData] = useState(null);
+  const [totpModalOpen, setTotpModalOpen] = useState(false);
+  const fetchTwofa = useAppSelector((state: any) => state.auth.twoFaStatus);
+  function twoFactorStatus() {
+    dispatch(fetchTwofaStatus());
+  }
 
   const handleEmailAction = () => {
-    // In this UI, Email is ENABLED. The action button is not visible for the enabled one.
-    // If we wanted to disable it, the logic would go here.
-    console.log("Email authentication action triggered.");
-  };
-
-  const handleAuthenticatorAction = () => {
-    if (authenticatorAppStatus === "DISABLED") {
-      console.log("Enabling Authenticator app...");
-      // Simulate enabling the app (would show a QR code step in reality)
-      alert("Simulating enable. You would now see a QR code setup screen.");
-      setAuthenticatorAppStatus("ENABLED");
-      setEmailAuthStatus("DISABLED"); // Assuming only one can be active at a time
+    if (emailAuthStatus === "ENABLED") {
+      setOpen(true);
     } else {
-      console.log("Disabling Authenticator app...");
-      setAuthenticatorAppStatus("DISABLED");
-      setEmailAuthStatus("ENABLED"); // Reverting to email
+      setConfirmationForEmailEnable(true)
     }
   };
 
+  const handleAuthenticatorAction = () => {
+    if (authenticatorAppStatus === "ENABLED") {
+      setOpen(true);
+    } else {
+      // setLoading(true);
+      // dispatch(enableAuthenticator2FA()).then((res) => {
+      //   if (res.payload) {
+      //     setTotpModalOpen(true);
+      //     setTotpData(res.payload);
+      //   }
+      // }).finally(() => {
+      //   setLoading(false);
+      // });
+      setConfirmationForAuthEnable(true)
+    }
+  };
+
+  useEffect(() => {
+    if (fetchTwofa?.two_factor_type === "email") {
+      setEmailAuthStatus("ENABLED");
+      setAuthenticatorAppStatus("DISABLED");
+    } else if (fetchTwofa?.two_factor_type === "authenticator") {
+      setEmailAuthStatus("DISABLED");
+      setAuthenticatorAppStatus("ENABLED");
+    } else {
+      setEmailAuthStatus("DISABLED");
+      setAuthenticatorAppStatus("DISABLED");
+    }
+  }, [fetchTwofa])
+
+  useEffect(() => {
+    twoFactorStatus()
+  }, [dispatch]);
+
   return (
-    <div className="min-h-screen  p-10">
-      <div className="">
-        {/* Header */}
-        <div className="mb-6">
-          <h1 className="!font-extralight">
-            Two-factor authentication
-          </h1>
-          <p className=" mt-1">
-            Two-factor authentication protects your account with an extra
-            security step. This means that even if someone has your password,
-            they won't be able to log into your account.
-          </p>
-        </div>
-
-        {/* Two-factor authentication options section */}
-        <Card className="mb-6 border-gray-200 shadow-sm p-6">
-          <h2 className="!font-semibold mb-2">
-            Two-factor authentication options
-          </h2>
-          <p className="mb-6">
-            Only one authentication method may be selected at a time.
-          </p>
-
-          <div className="space-y-4">
-            {/* Email Verification Card */}
-            <AuthOptionCard
-              icon={Mail}
-              title="Email verification"
-              status={emailAuthStatus}
-              description="Basic security Receive tokens in an email to authenticate your login."
-              actionButton={
-                emailAuthStatus === "ENABLED" ? "Disable" : "Enable"
+    <React.Fragment>
+      {open && (
+        <DisablePasswordModal
+          open={open}
+          onOpenChange={setOpen}
+          onConfirm={(password) => {
+            setLoading(true);
+            dispatch(disableEmail2FA({ password })).then((res) => {
+              if (disableEmail2FA.fulfilled.match(res)) {
+                setOpen(false);
+              } else if (disableEmail2FA.rejected.match(res)) {
               }
-              onAction={handleEmailAction}
-              recommended={false}
-            />
+            }).finally(() => {
+              setLoading(false);
+              twoFactorStatus();
+            });
+          }}
+          loading={loading}
+        />
+      )}
+      {totpModalOpen && (
+        <EnableTOTPModal
+          open={totpModalOpen}
+          onOpenChange={setTotpModalOpen}
+          qrData={totpData}
+          loading={loading}
+          onConfirm={(otp) => {
+            setLoading(true);
+            dispatch(confirmAuthenticator({ code: otp }))
+              .then((res) => {
+                if (confirmAuthenticator.fulfilled.match(res)) {
+                  setTotpModalOpen(false);
+                  setTotpData(null);
+                } else if (confirmAuthenticator.rejected.match(res)) {
+                }
+              }).finally(() => {
+                setLoading(false);
+                twoFactorStatus()
+              });
+          }}
+        />)}
+      {confirmationForEmailEnable && <ConfirmationModal
+        open={confirmationForEmailEnable}
+        loading={loading}
+        onOpenChange={setConfirmationForEmailEnable}
+        variant="enable"
+        title="Enable Email 2FA?"
+        description="This will require an OTP code sent to your email on every login."
+        onConfirm={() => {
+          setLoading(true);
+          dispatch(enableEmail2FA()).finally(() => {
+            setLoading(false);
+            setConfirmationForEmailEnable(false)
+            twoFactorStatus();
+          });
+        }}
+      />}
+      {confirmationForAuthEnable && <ConfirmationModal
+        open={confirmationForAuthEnable}
+        loading={loading}
+        onOpenChange={setConfirmationForAuthEnable}
+        variant="enable"
+        title="Enable Authenticator?"
+        description="Scan the QR code with your authenticator app (e.g. Google Authenticator or Authy) to generate login codes."
+        onConfirm={() => {
+          setLoading(true);
+          dispatch(enableAuthenticator2FA()).then((res) => {
+            if (res.payload) {
+              setConfirmationForAuthEnable(false)
+              setTotpModalOpen(true);
+              setTotpData(res.payload);
+            }
+          }).finally(() => {
+            setLoading(false);
+          });
+        }}
+      />}
 
-            {/* Authenticator App Card */}
-            <AuthOptionCard
-              icon={Smartphone}
-              title="Authenticator app"
-              status={authenticatorAppStatus}
-              description="Advanced security\nWhen you log in, the authenticator app will generate a unique password to help us verify your identity. You'll need access to the device with app installed to finish logging in."
-              recommended={true}
-              actionButton={
-                authenticatorAppStatus === "DISABLED" ? "Enable" : "Disable"
-              }
-              onAction={handleAuthenticatorAction}
-            />
+      <div className="min-h-screen  p-10">
+        <div className="">
+          {/* Header */}
+          <div className="mb-6">
+            <h1 className="!font-extralight">
+              Two-factor authentication
+            </h1>
+            <p className=" mt-1">
+              Two-factor authentication protects your account with an extra
+              security step. This means that even if someone has your password,
+              they won't be able to log into your account.
+            </p>
           </div>
-        </Card>
 
-        {/* The original image did not show floating buttons, but I'll add a fixed block 
-            to ensure space at the bottom is accounted for, mimicking the style of 
-            the previous requests. If the buttons are not needed, this section can be removed. 
-            For now, I'll omit the floating buttons since the form doesn't strictly require a "Save" action. */}
+          {/* Two-factor authentication options section */}
+          <Card className="mb-6 border-gray-200 shadow-sm p-6">
+            <h2 className="!font-semibold mb-2">
+              Two-factor authentication options
+            </h2>
+            <p className="mb-6">
+              Only one authentication method may be selected at a time.
+            </p>
+
+            <div className="space-y-4">
+              {/* Email Verification Card */}
+              <AuthOptionCard
+                icon={Mail}
+                title="Email verification"
+                status={emailAuthStatus}
+                description="Basic security Receive tokens in an email to authenticate your login."
+                actionButton={
+                  emailAuthStatus === "ENABLED" ? "Disable" : "Enable"
+                }
+                onAction={handleEmailAction}
+                recommended={false}
+              />
+
+              {/* Authenticator App Card */}
+              <AuthOptionCard
+                icon={Smartphone}
+                title="Authenticator app"
+                status={authenticatorAppStatus}
+                description="Advanced security\nWhen you log in, the authenticator app will generate a unique password to help us verify your identity. You'll need access to the device with app installed to finish logging in."
+                recommended={true}
+                actionButton={
+                  authenticatorAppStatus === "DISABLED" ? "Enable" : "Disable"
+                }
+                onAction={handleAuthenticatorAction}
+              />
+            </div>
+          </Card>
+
+
+        </div>
       </div>
-    </div>
+    </React.Fragment>
   );
 };
 
