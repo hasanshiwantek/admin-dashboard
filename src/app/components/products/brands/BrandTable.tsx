@@ -62,7 +62,6 @@ const BrandTable = () => {
       ? selectedIds.filter((i) => i !== id)
       : [...selectedIds, id];
     setSelectedIds(newSelected);
-    console.log("Selected IDs:", newSelected);
   };
 
   // BRAND DELETION LOGIC

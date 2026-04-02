@@ -39,6 +39,9 @@ export default function StoreSelectPage() {
     const storeId = localStorage.getItem("storeId");
     if (token && storeId) {
       router.push("/manage/dashboard");
+      localStorage.removeItem("pending_token");
+      localStorage.removeItem("two_factor_required");
+      localStorage.removeItem("two_factor_type");
     }
   }, [isAuthenticated]);
 
