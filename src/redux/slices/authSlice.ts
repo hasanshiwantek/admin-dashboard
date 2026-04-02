@@ -261,7 +261,25 @@ export const resendOtp = createAsyncThunk(
       return res.data;
     } catch (err: any) {
       console.log(err.response);
-      
+
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "OTP verification failed"
+      );
+    }
+  }
+);
+export const profileUpdatePassword = createAsyncThunk(
+  "auth/profile/update-password",
+  async ({ currentPassword, newPassword, confirmPassword }: { currentPassword: string, newPassword: string, confirmPassword: string }, thunkAPI) => {
+    const payload = {
+      currentPassword: currentPassword,
+      newPassword: newPassword,
+      confirmPassword: confirmPassword
+    }
+    try {
+      const res = await axiosInstance.post("dashboard/profile/update-password", payload);
+      return res.data;
+    } catch (err: any) {
       return thunkAPI.rejectWithValue(
         err.response?.data?.message || "OTP verification failed"
       );
@@ -347,27 +365,18 @@ const authSlice = createSlice({
       })
       .addCase(verifyOtp.fulfilled, (state, action) => {
         state.loading = false;
-        if (action.payload.pending_token && action.payload.two_factor_type) {
-          state.pending_token = action.payload.pending_token;
-          state.two_factor_required = action.payload.two_factor_required;
-          state.two_factor_type = action.payload.two_factor_type;
-          localStorage.setItem("pending_token", action.payload.pending_token);
-          localStorage.setItem("two_factor_required", action.payload.two_factor_required);
-          localStorage.setItem("two_factor_type", action.payload.two_factor_type);
-        } else {
-          state.user = action.payload.user;
-          state.token = action.payload.token;
-          state.isAuthenticated = true;
-          const mappedStores = action?.payload?.stores?.map((store: any) => ({
-            storeId: store?.id,
-            name: store?.name,
-          }));
-          state.stores = mappedStores;
-          localStorage.setItem("token", action.payload.token);
-          localStorage.setItem("user", JSON.stringify(action.payload.user));
-          localStorage.setItem("availableStores", JSON.stringify(mappedStores));
-          localStorage.removeItem("storeId");
-        }
+        state.user = action.payload.user;
+        state.token = action.payload.token;
+        state.isAuthenticated = true;
+        const mappedStores = action?.payload?.stores?.map((store: any) => ({
+          storeId: store?.id,
+          name: store?.name,
+        }));
+        state.stores = mappedStores;
+        localStorage.setItem("token", action.payload.token);
+        localStorage.setItem("user", JSON.stringify(action.payload.user));
+        localStorage.setItem("availableStores", JSON.stringify(mappedStores));
+        localStorage.removeItem("storeId");
       })
       .addCase(verifyOtp.rejected, (state, action) => {
         state.loading = false;
@@ -397,6 +406,20 @@ const authSlice = createSlice({
         state.loading = false;
       })
       .addCase(disableEmail2FA.rejected, (state, action) => {
+        state.loading = false;
+        state.error =
+          (action.payload as string) || action.error.message || "Failed";
+      })
+
+      // Profile Update Password
+      .addCase(profileUpdatePassword.pending, (state) => {
+        state.loading = true;
+        state.error = null; // reset error
+      })
+      .addCase(profileUpdatePassword.fulfilled, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(profileUpdatePassword.rejected, (state, action) => {
         state.loading = false;
         state.error =
           (action.payload as string) || action.error.message || "Failed";

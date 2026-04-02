@@ -26,12 +26,18 @@ export default function StoreSelectPage() {
   const [selectedStore, setSelectedStore] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
 
+  const verifyOTPLocalClear = () => {
+    localStorage.removeItem("pending_token");
+    localStorage.removeItem("two_factor_required");
+    localStorage.removeItem("two_factor_type");
+  }
   const handleContinue = () => {
     if (!selectedStore) return; // prevent click without selection
     setLoading(true);
     dispatch(setStoreId(selectedStore));
     localStorage.setItem("storeId", selectedStore.toString());
     router.push("/manage/dashboard");
+    verifyOTPLocalClear()
   };
 
   useEffect(() => {
@@ -39,9 +45,7 @@ export default function StoreSelectPage() {
     const storeId = localStorage.getItem("storeId");
     if (token && storeId) {
       router.push("/manage/dashboard");
-      localStorage.removeItem("pending_token");
-      localStorage.removeItem("two_factor_required");
-      localStorage.removeItem("two_factor_type");
+      verifyOTPLocalClear()
     }
   }, [isAuthenticated]);
 
