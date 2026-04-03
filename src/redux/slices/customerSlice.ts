@@ -33,7 +33,6 @@ export const fetchCustomers = createAsyncThunk(
       const res = await axiosInstance.get(
         `dashboard/customers/get-customers?page=${page}&pageSize=${pageSize}`
       );
-      console.log("✅ Fetch Customers Response :", res.data);
       return res.data;
     } catch (err: any) {
       console.error("❌ Error fetching Customer:", err);
@@ -79,7 +78,6 @@ export const fetchCustomerByKeyword = createAsyncThunk(
       const res = await axiosInstance.get(
         `dashboard/customers/get-customers?page=${page}&pageSize=${pageSize}&search=${search}`
       );
-      console.log("✅ Keyword Fetch Customers Response :", res.data);
       return res.data;
     } catch (err: any) {
       console.error("❌ Error fetching Customer:", err);

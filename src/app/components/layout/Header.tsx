@@ -51,8 +51,6 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  console.log("Selected store: ", selectedStore);
-
   return (
     <header className="w-full fixed h-22 px-4 flex items-center justify-start md:justify-between z-40  bg-[var(--header-bg)]">
       {/* Left: Logo & Company Name */}

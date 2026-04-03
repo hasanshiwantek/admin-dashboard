@@ -37,7 +37,6 @@ const ManageOrders = () => {
   const { returnOrders, returnLoader } = useAppSelector(
     (state: any) => state.order
   );
-  console.log("Return Orders: ", returnOrders);
 
   const filterTabs = ["All returns",
     
@@ -98,7 +97,6 @@ const ManageOrders = () => {
   // Handle status change
   const handleStatusChange = (id: number, newStatus: string) => {
     // TODO: Dispatch action to update status in backend
-    console.log(`Updating return ${id} to status: ${newStatus}`);
     // dispatch(updateReturnStatus({ id, status: newStatus }));
   };
 
@@ -112,7 +110,6 @@ const ManageOrders = () => {
       `Are you sure you want to delete ${selectedRows.length} return(s)?`
     );
     if (confirmDelete) {
-      console.log("Deleting returns:", selectedRows);
       // TODO: Dispatch action to delete selected returns
       // dispatch(deleteReturnOrders(selectedRows));
       setSelectedRows([]);

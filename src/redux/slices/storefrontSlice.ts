@@ -11,7 +11,6 @@ export const createWebpage = createAsyncThunk(
         `dashboard/webpages/create-page`,
         data
       );
-      console.log("Add Webpage Response: ", res?.data);
       return res.data;
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -27,7 +26,6 @@ export const getWebPages = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const res = await axiosInstance.get(`dashboard/webpages/web-pages`);
-      console.log("Fetch Webpage Response: ", res?.data);
       return res?.data?.data;
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -45,7 +43,6 @@ export const getWebPageById = createAsyncThunk(
       const res = await axiosInstance.get(
         `dashboard/webpages/single-page/${id}`
       );
-      console.log("Fetch Webpage Response by id: ", res?.data);
       return res?.data;
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -64,7 +61,6 @@ export const updateWebPage = createAsyncThunk(
         `dashboard/webpages/update/${id}`,
         data
       );
-      console.log("Update Webpage Response by id: ", res?.data);
       return res?.data;
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -80,7 +76,6 @@ export const deleteWebPage = createAsyncThunk(
   async ({ id }: { id: any }, thunkAPI) => {
     try {
       const res = await axiosInstance.delete(`dashboard/webpages/delete/${id}`);
-      console.log("Delete Webpage Response by id: ", res?.data);
       return res?.data;
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -97,7 +92,6 @@ export const createBlog = createAsyncThunk(
   async ({ data }: { data: any }, thunkAPI) => {
     try {
       const res = await axiosInstance.post(`dashboard/blogs/add-blog`, data);
-      console.log("Add blog Response: ", res?.data);
       return res.data;
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -114,7 +108,6 @@ export const fetchBlogs = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const res = await axiosInstance.get(`dashboard/blogs/get-blog`);
-      console.log("Fetch blog Response: ", res?.data);
       return res.data;
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -133,7 +126,6 @@ export const fetchBlogbyId = createAsyncThunk(
       const res = await axiosInstance.get(
         `dashboard/blogs/get-blogSingle/${id}`
       );
-      console.log("Fetch blog Response by id: ", res?.data);
       return res.data;
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -153,7 +145,6 @@ export const updateBlog = createAsyncThunk(
         `dashboard/blogs/update-blog/${id}`,
         data
       );
-      console.log("Update blog Response by id: ", res?.data);
       return res?.data;
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -171,7 +162,6 @@ export const deleteBlog = createAsyncThunk(
       const res = await axiosInstance.delete(
         `dashboard/blogs/delete-blog/${id}`
       );
-      console.log("Delete blog Response by id: ", res?.data);
       return res?.data;
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -187,7 +177,6 @@ export const createLogo = createAsyncThunk(
   async ({ data }: { data: any }, thunkAPI) => {
     try {
       const res = await axiosInstance.post(`dashboard/logos/add-logo`, data);
-      console.log("Add logo Response: ", res?.data);
       return res.data;
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -203,7 +192,6 @@ export const fetchLogo = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const res = await axiosInstance.get(`dashboard/logos/get-logos`);
-      console.log("Fetch logo Response: ", res?.data);
       return res.data;
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

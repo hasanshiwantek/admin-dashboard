@@ -82,7 +82,6 @@ export default function DestinationDialog({
       setLocalQty(initial);
     }
   }, [open, selectedProducts]);
-  console.log("open", open, selectedProducts);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

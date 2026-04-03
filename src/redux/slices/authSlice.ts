@@ -64,16 +64,15 @@ const initialState: AuthState = {
   stores: (() => {
     try {
       const s = localStorage.getItem("availableStores");
-      return s ? JSON.parse(s).map((store: any) => ({
-        storeId: store.id,
-        name: store.name,
+      return s ? JSON.parse(s)?.map((store: any) => ({
+        storeId: store?.id,
+        name: store?.name,
       })) : [];
     } catch { return []; }
   })(),
 
   loading: false,
   error: null,
-  // ✅ FIXED
   pending_token:
     typeof window !== "undefined"
       ? localStorage.getItem("pending_token")
@@ -260,8 +259,6 @@ export const resendOtp = createAsyncThunk(
       });
       return res.data;
     } catch (err: any) {
-      console.log(err.response);
-
       return thunkAPI.rejectWithValue(
         err.response?.data?.message || "OTP verification failed"
       );

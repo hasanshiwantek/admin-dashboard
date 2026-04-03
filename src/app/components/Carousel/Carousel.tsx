@@ -144,7 +144,6 @@ const Carousel = () => {
           setActiveSlideId(0);
         }
 
-        console.log("✅ Slide deleted successfully");
       } else {
         console.error("❌ Failed to delete slide");
         alert("Failed to delete the slide from the server.");
@@ -229,9 +228,7 @@ const Carousel = () => {
         setTimeout(async () => {
           await dispatch(fetchCarousal());
         }, 2000);
-        console.log("✅ Carousel added successfully");
       } else {
-        console.log("❌ Failed adding carousel");
       }
 
       setSlides(initialSlides);

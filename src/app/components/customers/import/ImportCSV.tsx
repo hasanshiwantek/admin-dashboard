@@ -112,9 +112,7 @@ const ImportCsv = () => {
     Object.entries(data).forEach(([key, value]) => {
       if (!configKeys.includes(key)) {
         if (value === "__ignore__") {
-          console.log(`${key}: ❌ Ignored`);
         } else {
-          console.log(`${key}: ✅ ${value}`);
         }
       }
     });
@@ -133,18 +131,13 @@ const ImportCsv = () => {
     formData.append("bulkTemplate", bulkTemplate ? "1" : "0");
     formData.append("overwrite", overwrite ? "1" : "0");
 
-    console.log("📦 Final FormData:");
     for (const [key, value] of formData.entries()) {
-      console.log(`${key}:`, value);
     }
     // ✅ Step 3: Dispatch stays unchanged
     try {
       const resultAction = await dispatch(importCustomerCsv(formData));
       const result = (resultAction as any).payload;
-      console.log("Final Payload: ", resultAction);
-
       if ((resultAction as any).meta.requestStatus === "fulfilled") {
-        console.log("✅ CSV imported successfully:", result);
         setTimeout(() => {
           router.push("/manage/customers");
         }, 2000);

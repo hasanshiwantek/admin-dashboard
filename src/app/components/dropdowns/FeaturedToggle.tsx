@@ -43,8 +43,6 @@ const FeaturedToggle = ({ productId, isFeatured, onChange }: FeaturedToggleProps
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => {onChange(productId, false)
-            console.log("Product add to NoNfeatured with productId: ",productId);
-
           }}
           disabled={!isFeatured}
           className={`p-4 transition-all ${

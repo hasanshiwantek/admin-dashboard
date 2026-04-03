@@ -96,7 +96,6 @@ export const fetchCategories = createAsyncThunk(
       const res = await axiosInstance.get(
         `dashboard/categories/list-categories`
       );
-      console.log("✅ Fetch Category Response :", res.data);
       return res.data;
     } catch (err: any) {
       console.error("❌ Error fetching Categories:", err);

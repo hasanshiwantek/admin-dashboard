@@ -122,11 +122,7 @@ const EditBrand = () => {
     console.log("🟡 SUBMITTING BRAND DATA:");
     for (const [key, value] of formDataToSend.entries()) {
       if (value instanceof File) {
-        console.log(
-          `📁 ${key}:`,
-          value.name,
-          `(${value.type}, ${value.size} bytes)`
-        );
+     
       } else {
         console.log(`🔤 ${key}:`, value);
       }

@@ -26,17 +26,12 @@ const Page = () => {
   const dispatch = useAppDispatch();
   const handleChangeEmail = async () => {
     if (newEmail && password) {
-      console.log("Attempting to change email:", { newEmail, password });
-      // In a real app, this would be an API call
       const result = await dispatch(updateUserEmail({ newEmail, password }));
       try {
         if (updateUserEmail.fulfilled.match(result)) {
-          console.log("Profile updation  response✅", result?.payload);
         } else {
-          console.log("Error Updating Profile: ", result?.payload);
         }
       } catch (err) {
-        console.log("Something went wrong: ", err);
       }
     } else {
       alert("Please enter a new email address and verify your password.");
@@ -44,8 +39,6 @@ const Page = () => {
   };
 
   const handleCancel = () => {
-    console.log("Cancelled email change.");
-    // Resetting form fields
     setNewEmail("");
     setPassword("");
   };

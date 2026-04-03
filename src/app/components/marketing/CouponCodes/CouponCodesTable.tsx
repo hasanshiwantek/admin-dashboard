@@ -36,7 +36,6 @@ import {
   deleteCouponCodes,
 } from "@/redux/slices/marketingSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
-import { toast } from "react-toastify";
 
 interface Coupon {
   id: string;

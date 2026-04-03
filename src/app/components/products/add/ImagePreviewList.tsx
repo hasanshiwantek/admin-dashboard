@@ -37,7 +37,6 @@ export default function ImagePreviewList({
   // };
   const syncForm = (updated: PreviewItem[]) => {
     setValue("image", updated, { shouldValidate: true });
-    console.log("🧹 Synced after delete:", updated);
   };
 
   const handleDeleteSelected = () => {

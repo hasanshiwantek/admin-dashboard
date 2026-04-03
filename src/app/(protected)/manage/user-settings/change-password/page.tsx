@@ -98,7 +98,6 @@ const Page = () => {
         <div className="mb-6">
           <h1 className="!font-extralight">Password</h1>
         </div>
-
         {/* Change Password Card */}
         <Card className="mb-6 border-gray-200 shadow-sm">
           <CardContent className="pt-6">

@@ -114,7 +114,6 @@ export const fetchSingleProduct = createAsyncThunk(
   async ({ id }: { id: any }, thunkAPI) => {
     try {
       const res = await axiosInstance.get(`dashboard/products/product/${id}`);
-      console.log("✅ Product Response Data By Id:", res.data);
       return res.data;
     } catch (err: any) {
       console.error("❌ Error in fetching:", err);
@@ -133,7 +132,6 @@ export const searchAllProducts = createAsyncThunk(
       const res = await axiosInstance.get(
         `dashboard/products/search-product?query=${query}`
       );
-      console.log("✅ Search Product Response  Data:", res.data);
       return res.data;
     } catch (err: any) {
       console.error("❌ Error Searching  Product:", err);
@@ -152,7 +150,6 @@ export const updateProduct = createAsyncThunk(
         `dashboard/products/update-product`,
         body
       );
-      console.log("✅ Updation Product response from thunk:", res.data);
       return res.data;
     } catch (err: any) {
       console.error("❌ Error Updating Product:", err);
@@ -174,7 +171,6 @@ export const updateProductFormData = createAsyncThunk(
           headers: { "content-Type": "multipart/form-data" },
         }
       );
-      console.log("✅ Updation Product response from thunk:", res.data);
       return res.data;
     } catch (err: any) {
       console.error("❌ Error Updating Product:", err);
@@ -195,7 +191,6 @@ export const deleteProduct = createAsyncThunk(
           data: { ids }, // ✅ this wraps your array inside an object
         }
       );
-      console.log("✅ Product Deletion response from thunk:", res.data);
       return res.data;
     } catch (err: any) {
       console.error("❌ Error deleting Product:", err);
@@ -215,7 +210,6 @@ export const advanceSearchProduct = createAsyncThunk(
         `dashboard/products/advanced-search`,
         data
       );
-      console.log("✅ Advanced Search Product Response  Data:", res.data);
       return res.data;
     } catch (err: any) {
       console.error("❌ Error Searching  Product:", err);
@@ -238,7 +232,6 @@ export const addProduct = createAsyncThunk(
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
-      console.log("✅ Add Product Response  From Thunk:", res.data);
       return res.data;
     } catch (err: any) {
       console.error("❌ Error Adding  Product:", err);
@@ -259,7 +252,6 @@ export const deleteProductCategory = createAsyncThunk(
         { data }
       );
 
-      console.log("✅ Delete Product Category Response:", response.data);
       return response.data;
     } catch (error: any) {
       console.error("❌ Error Deleting Product Category:", error);
@@ -282,7 +274,6 @@ export const addBrand = createAsyncThunk(
           },
         }
       );
-      console.log("✅ Add Brand Response  From Thunk:", response.data);
 
       return response.data;
     } catch (error: any) {
@@ -303,7 +294,6 @@ export const fetchBrands = createAsyncThunk(
       const response = await axiosInstance.get(
         `dashboard/brands/brand-list?page=${page}&pageSize=${pageSize}`
       );
-      console.log("✅  Brand Response  From Thunk:", response.data);
 
       return response.data;
     } catch (error: any) {
@@ -328,7 +318,6 @@ export const fetchBrandByKeyword = createAsyncThunk(
       const response = await axiosInstance.get(
         `dashboard/brands/brand-list?page=${page}&pageSize=${pageSize}&keyword=${keyword}`
       );
-      console.log("✅  Search Brand Response  From Thunk:", response.data);
 
       return response.data;
     } catch (error: any) {
@@ -344,7 +333,6 @@ export const getBrandById = createAsyncThunk(
   async (id: any, thunkAPI) => {
     try {
       const response = await axiosInstance.get(`dashboard/brands/brand/${id}`);
-      console.log("✅  Brand Response  From Thunk Thru Id:", response.data);
 
       return response.data.data;
     } catch (error: any) {
@@ -364,7 +352,6 @@ export const updateBrand = createAsyncThunk(
         formData
       );
 
-      console.log("✅ Update Brand Response:", response.data);
       return response.data;
     } catch (error: any) {
       console.error("❌ Error Updating Brand:", error);
@@ -382,7 +369,6 @@ export const deleteBrand = createAsyncThunk(
         `dashboard/brands/delete-brand/${id}`
       );
 
-      console.log("✅ Delete Brand Response:", response.data);
       return response.data;
     } catch (error: any) {
       console.error("❌ Error Deleting Brand:", error);
@@ -405,8 +391,6 @@ export const importCsv = createAsyncThunk(
           },
         }
       );
-      console.log("✅ Import Csv Response  From Thunk:", response.data);
-
       return response.data;
     } catch (error: any) {
       console.error("❌ Error Importing CSV:", error);

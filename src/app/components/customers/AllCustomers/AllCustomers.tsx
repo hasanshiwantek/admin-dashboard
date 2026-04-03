@@ -43,7 +43,6 @@ const AllCustomers = () => {
   const { customers } = useAppSelector((state: any) => state.customer);
   const { loading, error } = useAppSelector((state: any) => state.customer);
   const router = useRouter();
-  console.log("AllCustomers From Frontend: ", customers);
   const pagination = customers.pagination;
   // const [currentPage, setCurrentPage] = useState(1);
   // const [perPage, setPerPage] = useState("50");
@@ -84,10 +83,8 @@ const AllCustomers = () => {
   const handleSelectAll = () => {
     if (selectedCustomers.length === customers?.data?.length) {
       setSelectedCustomers([]);
-      console.log("Deselected all");
     } else {
       setSelectedCustomers(customers?.data);
-      console.log("Selected all customers:", customers?.data);
     }
   };
 
@@ -101,7 +98,6 @@ const AllCustomers = () => {
       : [...selectedCustomers, customer];
 
     setSelectedCustomers(updated);
-    console.log("Updated selected customers:", updated);
   };
 
   const deleteCustomerHandler = async () => {
@@ -111,8 +107,6 @@ const AllCustomers = () => {
     }
     const id = selectedCustomers?.map((c) => c?.id);
     const payload = { ids: id };
-    console.log(payload);
-
     const confirm = window.confirm("Delete Selected Customer");
     if (!confirm) {
       return;
@@ -121,7 +115,6 @@ const AllCustomers = () => {
         const result = await dispatch(deleteCustomer({ data: payload }));
 
         if (deleteCustomer.fulfilled.match(result)) {
-          console.log("Customers deleted successfully");
           setSelectedCustomers([]);
           // optionally: refresh list or reset selection
         } else {
@@ -139,7 +132,6 @@ const AllCustomers = () => {
     setExpandedRow((prev) => (prev === id ? null : id));
   };
   const copyBilling = () => {
-    console.log("Copied");
   };
 
   // CUSTOMER UPDATION LOGIC
@@ -157,7 +149,6 @@ const AllCustomers = () => {
       );
 
       if (updateCustomer.fulfilled.match(result)) {
-        console.log(`✅ Customer #${customerId} group updated to "${group}"`);
         // Optionally show toast or refetch
         setTimeout(() => {
           refetchCustomers(dispatch);
@@ -188,7 +179,6 @@ const AllCustomers = () => {
       );
 
       if (updateCustomer.fulfilled.match(result)) {
-        console.log(`✅ Store credit updated for customer #${customerId}`);
         // Optionally refetch or toast
         setTimeout(() => {
           refetchCustomers(dispatch);
@@ -206,7 +196,6 @@ const AllCustomers = () => {
   const [keyword, setKeyword] = useState("");
 
   const filterHandler = async () => {
-    console.log("Keyword: ", keyword);
     try {
       const resultAction = await dispatch(
         fetchCustomerByKeyword({
@@ -216,7 +205,6 @@ const AllCustomers = () => {
         })
       );
       if (fetchCustomerByKeyword.fulfilled.match(resultAction)) {
-        console.log(`✅ Fetch Search Customer Result`);
         // setKeyword("");
       } else {
         console.error("❌ Error fetching Customer");

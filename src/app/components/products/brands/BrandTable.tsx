@@ -80,7 +80,6 @@ const BrandTable = () => {
         const result = (resultAction as any).payload;
 
         if ((resultAction as any).meta.requestStatus === "fulfilled") {
-          console.log("✅ Brand deleted successfully:", result);
           setSelectedIds([]);
           setTimeout(() => {
             refetchBrands(dispatch);

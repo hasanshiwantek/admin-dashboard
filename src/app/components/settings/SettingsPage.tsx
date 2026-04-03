@@ -162,8 +162,6 @@ const SettingsPage = () => {
   // ✅ Changed: URL update with tab
   const handleSettingClick = (item: any) => {
     setCurrentSetting(item);
-    console.log(item);
-
     setCurrentView("detail");
     router.push(`/manage/settings?view=detail&setting=${item.id}&tab=${item.id}`);
   };

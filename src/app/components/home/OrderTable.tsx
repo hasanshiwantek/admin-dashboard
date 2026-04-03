@@ -17,8 +17,6 @@ const OrderTable = () => {
     orders: OrderListResponse;
   };
 
-  console.log("Orders data from frontend: ", orders);
-
   const [activeTab, setActiveTab] = useState("Recent");
   const [filteredOrders, setFilteredOrders] = useState<OrderItem[]>([]);
 

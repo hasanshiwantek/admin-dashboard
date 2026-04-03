@@ -7,7 +7,6 @@ export const refetchProducts = async (
 ) => {
   try {
     await dispatch(fetchAllProducts({ page, pageSize })).unwrap();
-    console.log("✅ Refetched products.");
   } catch (err) {
     console.error("❌ Error re-fetching products:", err);
   }

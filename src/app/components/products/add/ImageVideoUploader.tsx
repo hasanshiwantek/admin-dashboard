@@ -44,8 +44,6 @@ export default function ImageVideoUploader({ initialImages }: Props) {
     }
   }, [initialImages]);
 
-  console.log("Image Previews", previews);
-
   const handleUploadClick = () => {
     inputRef.current?.click();
   };
