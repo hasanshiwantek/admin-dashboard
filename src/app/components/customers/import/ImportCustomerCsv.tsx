@@ -17,7 +17,6 @@ const ImportCustomerCsv = () => {
   } = useForm();
 
   const onSubmit = (data: any) => {
-    console.log("Form Data:", data);
   };
 
   const selectedSource = watch("fileSource");

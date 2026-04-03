@@ -22,6 +22,7 @@ const AuthOptionCard = ({
   recommended,
   actionButton,
   onAction,
+  loading
 }: {
   icon: any;
   title: any;
@@ -30,6 +31,7 @@ const AuthOptionCard = ({
   recommended: any;
   actionButton: any;
   onAction: any;
+  loading: boolean
 }) => {
   return (
     <Card className="border-gray-200 shadow-sm transition-shadow hover:shadow-md">
@@ -68,6 +70,7 @@ const AuthOptionCard = ({
         {actionButton && (
           <div className="flex-shrink-0 ml-4">
             <Button
+              disabled={loading}
               className="!p-5 !text-xl"
               variant={status === "ENABLED" ? "destructive" : "outline"} // Use 'destructive' to signify disable/remove
               onClick={onAction}
@@ -93,6 +96,7 @@ const Page = () => {
   const [totpData, setTotpData] = useState(null);
   const [totpModalOpen, setTotpModalOpen] = useState(false);
   const fetchTwofa = useAppSelector((state: any) => state.auth.twoFaStatus);
+  const state = useAppSelector((state: any) => state.auth);
   function twoFactorStatus() {
     dispatch(fetchTwofaStatus());
   }
@@ -236,6 +240,7 @@ const Page = () => {
               {/* Email Verification Card */}
               <AuthOptionCard
                 icon={Mail}
+                loading={state.loading}
                 title="Email verification"
                 status={emailAuthStatus}
                 description="Basic security Receive tokens in an email to authenticate your login."
@@ -249,6 +254,8 @@ const Page = () => {
               {/* Authenticator App Card */}
               <AuthOptionCard
                 icon={Smartphone}
+                loading={state.loading}
+
                 title="Authenticator app"
                 status={authenticatorAppStatus}
                 description="Advanced security\nWhen you log in, the authenticator app will generate a unique password to help us verify your identity. You'll need access to the device with app installed to finish logging in."

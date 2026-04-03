@@ -120,7 +120,6 @@ export const ImportProgressModal: React.FC<ImportProgressModalProps> = ({
           { progress_key: progressKey }
         );
 
-        console.log("Cancel Response:", response.data);
         toast.success(response.data.message || "Import canceled successfully");
 
         setProgress((prev) => ({ ...prev, status: "canceled" }));

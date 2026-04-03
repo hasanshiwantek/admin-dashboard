@@ -31,8 +31,6 @@ export default function ProductTable({
 
   const subtotal = products.reduce((sum, p) => sum + getTotal(p), 0);
 
-  console.log("Selected Product", products);
-
   return (
     <div>
 

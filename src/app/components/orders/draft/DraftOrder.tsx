@@ -35,7 +35,6 @@ const DraftOrder = () => {
       label: "Edit",
       onClick: () => {
         router.push(`/manage/orders/edit/${row.orderId}`);
-        console.log(row.id);
       },
     },
     {
@@ -49,7 +48,6 @@ const DraftOrder = () => {
 
         try {
           await dispatch(deleteDraftOrders({ id: row.orderId })).unwrap();
-          console.log("✅ Draft order deleted");
           setTimeout(() => {
             dispatch(fetchDraftOrders({ isDraft: true }));
           }, 2000);
@@ -63,7 +61,6 @@ const DraftOrder = () => {
   const handleCopyUrl = (url: string) => {
     if (url) {
       navigator.clipboard.writeText(url);
-      console.log("URL copied to clipboard");
     }
   };
 
@@ -107,7 +104,6 @@ const DraftOrder = () => {
 
   // Extract data from the response
   const data = draftOrder?.data || [];
-  console.log("Draft Orders Data:", data  );
 
   return (
     <div className="p-10 max-w-full">

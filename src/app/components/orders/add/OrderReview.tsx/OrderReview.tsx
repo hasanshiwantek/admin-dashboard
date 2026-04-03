@@ -47,12 +47,7 @@ export default function OrderReview({ step, setStep }: any) {
   const { watch, register, setValue, getValues } = useFormContext();
   const shipping = watch("shipping");
   const allValues = getValues();
-  console.log("FINAL STEP 4 Values✅✅", allValues);
-
-  console.log("Shipping Details from step 4: ", shipping);
-
   const billing = watch();
-  console.log("Billing Details from step 4: ", billing);
   const selectedProducts = watch("selectedProducts") || [];
   const paymentMethod = watch("paymentMethod");
   const subtotal = selectedProducts.reduce(

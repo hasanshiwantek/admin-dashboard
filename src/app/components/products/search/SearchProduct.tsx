@@ -24,8 +24,6 @@ const SearchProduct = () => {
   const { register, control } = useFormContext();
   const { brands } = useAppSelector((state: any) => state.product);
   const dispatch = useAppDispatch();
-  console.log("Brands data from frontend: ", brands);
-
   useEffect(() => {
     dispatch(fetchBrands({ page: 1, pageSize: 50 }));
   }, [dispatch]);

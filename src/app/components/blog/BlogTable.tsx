@@ -65,15 +65,12 @@ export default function BlogTable() {
             const result = (resultAction as any).payload;
 
             if ((resultAction as any).meta.requestStatus === "fulfilled") {
-              console.log("✅ blog deleted successfully:", result);
               setTimeout(() => {
                 refetchBlogs(dispatch);
               }, 700);
             } else {
-              console.error("❌ Failed to delete blog:", result);
             }
           } catch (err) {
-            console.error("❌ Unexpected error:", err);
           }
         }
       },

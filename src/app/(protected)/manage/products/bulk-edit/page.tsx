@@ -115,7 +115,6 @@ export default function BulkEdit() {
       const payload = prepareUpdatePayload(products);
       await dispatch(updateProduct({ body: payload })).unwrap();
       localStorage.removeItem("bulkEditProducts"); // ✅ clean up
-      console.log("✅ Updated successfully");
     } catch (err) {
       console.error("❌ Failed to update:", err);
     }

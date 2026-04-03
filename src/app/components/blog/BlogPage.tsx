@@ -84,7 +84,6 @@ export default function BlogPage() {
         (id && updateBlog.fulfilled.match(resultAction)) ||
         (!id && createBlog.fulfilled.match(resultAction))
       ) {
-        console.log("✅ Blog saved successfully:", resultAction.payload);
         setTimeout(() => {
           router.push("/manage/storefront/blog");
         }, 2000);
@@ -116,8 +115,6 @@ export default function BlogPage() {
 
   // 👇 Save draft triggers submit with draft = true
   const handleDraftSave = () => {
-    console.log("Draft clicked",isDraft);
-    
     setIsDraft(true);
     handleSubmit(onSubmit)();
   };

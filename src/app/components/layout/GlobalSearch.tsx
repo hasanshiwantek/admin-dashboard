@@ -26,8 +26,6 @@ const GlobalSearchBar = () => {
 
   const { searchData, loading } = useAppSelector((state: any) => state.home);
 
-  console.log("Main search data from frontend: ", searchData);
-
   // Only update local results when API responds
   useEffect(() => {
     if (!searchData?.data) {

@@ -7,7 +7,6 @@ export const refetchBrands = async (
 ) => {
   try {
     await dispatch(fetchBrands({ page, pageSize })).unwrap();
-    console.log("✅ Refetched brands.");
   } catch (err) {
     console.error("❌ Error re-fetching brands:", err);
   }

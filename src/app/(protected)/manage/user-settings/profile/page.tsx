@@ -45,13 +45,10 @@ const Page = () => {
       } else {
       }
     } catch (err) {
-      console.log("Something went wrong: ", err);
     }
   };
 
   const handleCancel = () => {
-    console.log("Cancelled changes.");
-    // In a real application, you might navigate back or reset form.
     setFirstName("");
     setLastName("");
     setSelectedLanguage("en");

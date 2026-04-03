@@ -63,8 +63,6 @@ export default function EditPriceSheet({ trigger, product }: any) {
         })
       ).unwrap(); // ✅ unwrap for error handling
 
-      console.log("✅ Product updated:", response);
-
       // Refetch products after successful update
       await refetchProducts(dispatch);
     } catch (err) {

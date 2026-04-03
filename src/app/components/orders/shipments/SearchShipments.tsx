@@ -57,7 +57,6 @@ const SearchShipments = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Submitted Data:", formData);
     const filteredData = Object.entries(formData).reduce(
       (acc, [key, value]) => {
         const isEmptyArray = Array.isArray(value) && value.length === 0;

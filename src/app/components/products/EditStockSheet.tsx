@@ -22,8 +22,6 @@ import { updateProduct } from "@/redux/slices/productSlice";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { refetchProducts } from "@/lib/productUtils";
 export default function EditStockSheet({ trigger, product }: any) {
-  // console.log("Product to edit: ", product);
-
   const [open, setOpen] = useState(false);
   const dispatch = useAppDispatch();
   const [values, setValues] = useState({
@@ -67,8 +65,6 @@ export default function EditStockSheet({ trigger, product }: any) {
           },
         })
       ).unwrap(); // ✅ unwrap for error handling
-
-      console.log("✅ Product updated:", response);
 
       // Refetch products after successful update
       await refetchProducts(dispatch);

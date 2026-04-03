@@ -7,7 +7,6 @@ export const refetchOrders = async (
 ) => {
   try {
     await dispatch(fetchAllOrders({ page, perPage })).unwrap();
-    console.log("✅ Refetched orders.");
   } catch (err) {
     console.error("❌ Error re-fetching orders:", err);
   }
@@ -21,7 +20,6 @@ export const refetchShipments = async (
 ) => {
   try {
     await dispatch(fetchAllShipments({ page, perPage })).unwrap();
-    console.log("✅ Refetched shipments.");
   } catch (err) {
     console.error("❌ Error re-fetching shipments:", err);
   }

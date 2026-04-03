@@ -431,7 +431,6 @@ export const StoreSettings = ({
   const { storeSettings, settingsLoader } = useAppSelector(
     (state: any) => state.home
   );
-  console.log("Store Settings ", storeSettings);
 
   const dispatch = useAppDispatch();
   const router = useRouter(); // ✅ Add
@@ -593,8 +592,6 @@ export const StoreSettings = ({
       ? storeSettings[0]
       : storeSettings;
 
-    console.log("📦 Populating form with fetched settings:", settings);
-
     if (settings.website)
       setWebsiteSettings((prev) => ({ ...prev, ...settings.website }));
     if (settings.display)
@@ -640,16 +637,12 @@ export const StoreSettings = ({
   const handleSave = async () => {
     const payload = preparePayload();
 
-    console.log("Complete payload:", payload);
-
     try {
       const response = await dispatch(createStoreSettings({ data: payload }));
       if (createStoreSettings.fulfilled.match(response)) {
         // Show success message to user
-        console.log("Settings saved successfully!", response.payload);
         // onBack();
       } else {
-        console.log("Error saving store settings", response.payload);
       }
     } catch (error) {
       console.error("Error saving settings:", error);

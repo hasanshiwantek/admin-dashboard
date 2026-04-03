@@ -94,10 +94,6 @@ Updated: ${billing.updatedAt}`;
   const totalPages = Math.ceil(pagination?.total / pagination?.pageSize || 1);
 
   const { loading, error } = useAppSelector((state) => state.order);
-  //   console.log("Orders data from frontend: ", orders);
-
-  console.log("Shipments data from backend", shipments);
-
   //   const filteredOrders = shipments?.data?.filter((order: any) => {
   //     if (activeTab === "All orders") return true;
   //     return order.status === activeTab;

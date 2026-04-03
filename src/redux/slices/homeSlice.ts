@@ -54,7 +54,6 @@ export const globalSearch = createAsyncThunk(
       const res = await axiosInstance.get(
         `dashboard/global-search?query=${query}`
       );
-      console.log("Main Search Data: ", res?.data);
       return res.data;
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -73,8 +72,6 @@ export const createStoreSettings = createAsyncThunk(
         "dashboard/store-setting/add-store-setting",
         data
       );
-      console.log("✅ Store Settings Response From Thunk:", response.data);
-
       return response.data;
     } catch (error: any) {
       console.error("❌ Error Saving Store Setting:", error);
@@ -90,8 +87,6 @@ export const fetchStoreSettings = createAsyncThunk(
       const response = await axiosInstance.get(
         "dashboard/store-setting/get-store-setting"
       );
-      console.log("✅ Store Settings Response From Thunk:", response.data);
-
       return response.data;
     } catch (error: any) {
       console.error("❌ Error fetching Store Setting:", error);

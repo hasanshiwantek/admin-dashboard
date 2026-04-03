@@ -9,8 +9,6 @@ const Stats = () => {
   );
   const data=statistics?.data
   const dispatch = useAppDispatch();
-  console.log("Stats Data from frontend: ", data);
-
   const stats = [
     { label: "Orders", value: data?.totalOrders, link: "/manage/orders" },
     {

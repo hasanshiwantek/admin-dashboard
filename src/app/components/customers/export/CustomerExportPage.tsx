@@ -21,17 +21,13 @@ export default function CustomerExportPage() {
   );
 
   const onSubmit = async (data: any) => {
-    console.log("📤 Export Data:", data);
-
     try {
       const resultAction = await dispatch(exportCustomerCsv({ payload: data }));
       const result = (resultAction as any).payload;
 
       if ((resultAction as any).meta.requestStatus === "fulfilled") {
-        console.log("✅ Export Successful:", result);
         // You can trigger a file download here or redirect
       } else {
-        console.error("❌ Export Failed:", result);
       }
     } catch (error) {
       console.error("❌ Unexpected Export Error:", error);

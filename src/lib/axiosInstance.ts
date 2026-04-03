@@ -33,7 +33,6 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   (error) => {
-    // ✅ Show the main message
     if (error.response?.data?.message) {
       toast.error(error.response.data.message, {
         style: {
@@ -41,6 +40,16 @@ axiosInstance.interceptors.response.use(
           fontWeight: "bold",
         },
       });
+
+      if (error.response?.data?.message == "Unauthenticated.") {
+        localStorage.removeItem("token");
+        localStorage.removeItem("storeId");
+        localStorage.removeItem("user");
+        localStorage.removeItem("availableStores");
+        localStorage.removeItem("tokenExpiry");
+
+        window.location.href = "/login";
+      }
     }
 
     // ✅ Show each validation error from `errors` object

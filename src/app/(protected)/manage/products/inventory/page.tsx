@@ -87,11 +87,8 @@ export default function EditInventoryPage() {
   const handleSave = async () => {
     try {
       const payload = prepareUpdatePayload(products);
-      console.log("🔼 Sending payload:", payload);
       const res = await dispatch(updateProduct({ body: payload })).unwrap();
-      console.log("✅ Updated successfully:", res);
     } catch (err) {
-      console.error("❌ Failed to update products:", err);
     }
   };
 
@@ -100,7 +97,6 @@ export default function EditInventoryPage() {
     // TODO: Navigate back or close modal
     localStorage.removeItem("selectedProducts");
     router.push("/manage/products");
-    console.log("✅ Save and exit clicked");
   };
 
   return (
