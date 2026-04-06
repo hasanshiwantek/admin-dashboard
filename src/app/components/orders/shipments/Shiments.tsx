@@ -22,6 +22,7 @@ import {
   fetchPackingSlipPdf,
   advanceShipmentSearch,
   fetchShipmentByKeyword,
+  updateShipment,
 } from "@/redux/slices/orderSlice";
 import { useSearchParams } from "next/navigation";
 import { refetchOrders, refetchShipments } from "@/lib/orderUtils";
@@ -83,17 +84,19 @@ Updated: ${billing.updatedAt}`;
   const dispatch = useAppDispatch();
   //   const shipments = useAppSelector((state: any) => state.order.shipments);
   const pagination = shipments?.pagination;
-  console.log("Shipments pagination: ", pagination);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState("50");
   const [activeTab, setActiveTab] = useState("All shipments");
   const [selectedOrderIds, setSelectedOrderIds] = useState<number[]>([]);
+  const [savingId, setSavingId] = useState<number | null>(null);
+  const [keyword, setKeyword] = useState("");
+
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
   const total = pagination?.total;
   const totalPages = Math.ceil(pagination?.total / pagination?.pageSize || 1);
 
-  const { loading, error } = useAppSelector((state) => state.order);
+  const { loading, error, shipmentLoader } = useAppSelector((state) => state.order);
   //   const filteredOrders = shipments?.data?.filter((order: any) => {
   //     if (activeTab === "All orders") return true;
   //     return order.status === activeTab;
@@ -106,18 +109,14 @@ Updated: ${billing.updatedAt}`;
     }
   }, [shipments]);
 
-  console.log("Filtered Orders: ", filteredOrders);
-
   const tabs = ["All shipments", "Custom Views"];
 
   // Handle single row checkbox change
   const handleOrderCheckboxChange = (order: any, checked: boolean) => {
     if (checked) {
       setSelectedOrderIds((prev) => [...prev, order.id]);
-      console.log("Selected Order:", order);
     } else {
       setSelectedOrderIds((prev) => prev.filter((id) => id !== order.id));
-      console.log("Unselected Order ID:", order.id);
     }
   };
 
@@ -126,10 +125,8 @@ Updated: ${billing.updatedAt}`;
     if (checked) {
       const allIds = orders.map((order) => order.id);
       setSelectedOrderIds(allIds);
-      console.log("Selected All IDs:", allIds);
     } else {
       setSelectedOrderIds([]);
-      console.log("Deselected All");
     }
   };
 
@@ -142,7 +139,6 @@ Updated: ${billing.updatedAt}`;
           const resultAction = await dispatch(
             fetchPackingSlipPdf({ shipmentId })
           );
-          console.log("Result Action: ", resultAction);
 
           if (fetchPackingSlipPdf.fulfilled.match(resultAction)) {
             const blob = new Blob([resultAction.payload], {
@@ -150,19 +146,15 @@ Updated: ${billing.updatedAt}`;
             });
             const url = URL.createObjectURL(blob);
             window.open(url, "_blank");
-            console.log("SLIP PDF: ", resultAction?.payload);
           } else {
-            console.error("Packing slip failed to download:", resultAction);
           }
         } catch (error) {
-          console.error("Unexpected error:", error);
         }
       },
     },
   ];
 
   const handleTracking = () => {
-    console.log("Tracking saved succesfully. ");
   };
 
   const toggleRow = (id: number) => {
@@ -241,22 +233,18 @@ Updated: ${billing.updatedAt}`;
           deleteShipment({ ids: selectedOrderIds })
         );
         if (deleteShipment.fulfilled.match(result)) {
-          console.log("Shipments Deleted");
           setTimeout(() => {
             refetchShipments(dispatch);
           }, 700);
         } else {
-          console.log("Error Deleting Shipments: ", result.payload);
         }
       } catch (err) {
-        console.log("Something went wrong: ", err);
       }
     }
   };
 
   // KEYWORD SEARCH LOGIC
 
-  const [keyword, setKeyword] = useState("");
 
   const handleSearch = async () => {
     if (keyword === "") {
@@ -273,13 +261,10 @@ Updated: ${billing.updatedAt}`;
         })
       );
       if (fetchShipmentByKeyword.fulfilled.match(resultAction)) {
-        console.log(`✅ Fetch Shipments Result ${resultAction.payload}`);
         // setKeyword("");
       } else {
-        console.error("❌ Error fetching Shipments");
       }
     } catch (err) {
-      console.error("🚨 Unexpected error updating", err);
     }
   };
 
@@ -320,6 +305,11 @@ Updated: ${billing.updatedAt}`;
       dispatch(fetchAllShipments({ page: currentPage, perPage: perPage }));
     }
   }, [searchParams]); // reruns whenever URL changes
+  useEffect(() => {
+    if (!shipmentLoader) {
+      setSavingId(null);
+    }
+  }, [shipmentLoader]);
 
   // ERROR LOGIC
   if (error) {
@@ -348,11 +338,10 @@ Updated: ${billing.updatedAt}`;
           {tabs.map((tab) => (
             <button
               key={tab}
-              className={`!text-2xl pb-1 border-b-3 whitespace-nowrap ${
-                activeTab === tab
-                  ? "border-blue-600"
-                  : "border-transparent text-gray-500 hover:text-black"
-              }`}
+              className={`!text-2xl pb-1 border-b-3 whitespace-nowrap ${activeTab === tab
+                ? "border-blue-600"
+                : "border-transparent text-gray-500 hover:text-black"
+                }`}
               onClick={() => setActiveTab(tab)}
             >
               {tab}
@@ -482,7 +471,7 @@ Updated: ${billing.updatedAt}`;
                           {shipment.shippedTo}
                         </TableCell>
                         <TableCell className="2xl:!text-2xl">{shipment.dateShipped}</TableCell>
-                        <TableCell>
+                        <TableCell className="gap-1.5">
                           <Input
                             placeholder=""
                             value={
@@ -500,21 +489,22 @@ Updated: ${billing.updatedAt}`;
                           />
 
                           <button
-                            className="btn-outline-primary 2xl:h-[32.5px]"
+                            className="btn-outline-primary 2xl:h-[32.5px] ml-2.5"
                             onClick={() => {
-                              const updatedValue = trackingChanges[shipment.id];
-
+                              const updatedValue = trackingChanges[shipment?.id];
                               if (updatedValue !== undefined) {
+                                setSavingId(shipment?.id);
                                 dispatch(
-                                  updateOrder({
-                                    id: shipment.orderId,
-                                    data: updatedValue,
+                                  updateShipment({
+                                    id: shipment?.id,
+                                    data: { trackingId: updatedValue },
                                   })
                                 );
                               }
                             }}
+                            disabled={savingId === shipment?.id}
                           >
-                            Save
+                            {savingId === shipment?.id ? "Saving..." : "Save"}
                           </button>
                         </TableCell>
 
@@ -543,7 +533,7 @@ Updated: ${billing.updatedAt}`;
                             }
                           />
                         </TableCell>
-                      </TableRow>
+                      </TableRow >
                       {expandedRow === shipment.id && (
                         <TableRow>
                           <TableCell colSpan={11}>
@@ -683,7 +673,7 @@ Updated: ${billing.updatedAt}`;
             />
           </div>
         </div>
-      </div>
+      </div >
     </>
   );
 };

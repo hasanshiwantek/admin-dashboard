@@ -109,7 +109,6 @@ const WebPage = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { id } = useParams();
-  console.log("Id For Edit: ", id);
 
   const isEdit = !!id;
 
@@ -134,12 +133,9 @@ const WebPage = () => {
           const result = await dispatch(getWebPageById({ id: id }));
           if (getWebPageById.fulfilled.match(result)) {
             reset(result?.payload?.data);
-            console.log("Web page by id: ", result?.payload);
           } else {
-            console.error("Failed to fetch page:", result.payload);
           }
         } catch (err) {
-          console.error("Error fetching page:", err);
         }
       };
       fetchPage();
@@ -148,8 +144,6 @@ const WebPage = () => {
 
   // Submission handler
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    console.log(isEdit ? "Editing page" : "Creating page", data);
-
     try {
       let result;
       if (isEdit && id) {
@@ -159,11 +153,9 @@ const WebPage = () => {
       }
 
       if ((isEdit ? updateWebPage : createWebpage).fulfilled.match(result)) {
-        console.log("Success:", result.payload?.message);
         router.push("/manage/storefront/web-pages");
         reset();
       } else {
-        console.error("Error:", result.payload);
       }
     } catch (err) {
       console.error("Something went wrong!", err);

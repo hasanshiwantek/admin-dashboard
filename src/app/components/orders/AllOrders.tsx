@@ -177,7 +177,6 @@ const AllOrders = () => {
         try {
           const orderId = order?.id;
           const resultAction = await dispatch(printInvoicePdf({ orderId }));
-          console.log("Result Action: ", resultAction);
 
           if (printInvoicePdf.fulfilled.match(resultAction)) {
             const blob = new Blob([resultAction.payload], {
@@ -185,9 +184,7 @@ const AllOrders = () => {
             });
             const url = URL.createObjectURL(blob);
             window.open(url, "_blank");
-            console.log("SLIP PDF: ", resultAction?.payload);
           } else {
-            console.error("Invoice slip failed to download:", resultAction);
           }
         } catch (error) {
           console.error("Unexpected error:", error);
@@ -201,12 +198,9 @@ const AllOrders = () => {
         try {
           const orderId = order?.id;
           const resultAction = await dispatch(resendInvoice({ orderId }));
-          console.log("Result Action: ", resultAction);
 
           if (resendInvoice.fulfilled.match(resultAction)) {
-            console.log("Invoice send: ", resultAction?.payload);
           } else {
-            console.error("Invoice failed to download:", resultAction);
           }
         } catch (error) {
           console.error("Unexpected error:", error);
@@ -259,15 +253,12 @@ const AllOrders = () => {
         try {
           const resulAction = await dispatch(refundOrder({ orderId }));
           if (refundOrder.fulfilled.match(resulAction)) {
-            console.log("Order Refunded: ", resulAction?.payload);
             setTimeout(() => {
               refetchOrders(dispatch)
             }, 3000)
           } else {
-            console.log("Error Refunding Order: ", resulAction?.payload);
           }
         } catch (err) {
-          console.error("Something went wrong", err);
         }
       },
     },
@@ -280,7 +271,6 @@ const AllOrders = () => {
   ];
 
   const copyBilling = () => {
-    console.log("Copied");
   };
 
   // SEARCH ORDER LOGIC
@@ -298,7 +288,6 @@ const AllOrders = () => {
         })
       );
       if (fetchOrderByKeyword.fulfilled.match(resultAction)) {
-        console.log(`✅ Fetch Order Result`);
         // setKeyword("");
       } else {
         console.error("❌ Error fetching Order");
@@ -391,8 +380,6 @@ const AllOrders = () => {
     // 📧 RESEND INVOICES
     if (selectedAction === "resendOrderInvoices") {
       selectedOrderIds.forEach((id) => {
-        console.log("Order id for resend invoice: ", id?.id);
-
         dispatch(resendInvoice({ orderId: id?.id }));
       });
 

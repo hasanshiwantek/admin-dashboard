@@ -20,14 +20,12 @@ export default function ExportPage() {
   );
 
   const onSubmit = async (data: any) => {
-    console.log("📤 Export Data:", data);
 
     try {
       const resultAction = await dispatch(exportCsv({payload:data}));
       const result = (resultAction as any).payload;
 
       if ((resultAction as any).meta.requestStatus === "fulfilled") {
-        console.log("✅ Export Successful:", result);
         // You can trigger a file download here or redirect
       } else {
         console.error("❌ Export Failed:", result);

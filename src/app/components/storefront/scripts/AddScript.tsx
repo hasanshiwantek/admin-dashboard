@@ -65,7 +65,7 @@ const AddScript = () => {
         .unwrap()
         .then((response) => {
           const scriptData = response?.data;
-          
+
           if (scriptData) {
             // Convert snake_case to camelCase
             const camelCaseScript = _.mapKeys(scriptData, (v, k) => _.camelCase(k));
@@ -125,19 +125,16 @@ const AddScript = () => {
         resultAction = await dispatch(updateScript({ id: scriptId, data: snakeCasePayload }));
 
         if (updateScript.fulfilled.match(resultAction)) {
-          console.log("Script updated successfully:", resultAction.payload);
           setTimeout(() => {
             router.push("/manage/storefront/script-manager");
           }, 600);
         } else {
-          console.error("Failed to update script:", resultAction.payload || resultAction.error);
         }
       } else {
         // Create new script
         resultAction = await dispatch(createScripts(snakeCasePayload));
 
         if (createScripts.fulfilled.match(resultAction)) {
-          console.log("Script created successfully:", resultAction.payload);
           setTimeout(() => {
             router.push("/manage/storefront/script-manager");
           }, 600);

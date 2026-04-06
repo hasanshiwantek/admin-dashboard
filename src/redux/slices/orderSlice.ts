@@ -2,26 +2,6 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "@/lib/axiosInstance";
 
 // 1. Thunk with slight improvement
-// export const fetchAllOrders = createAsyncThunk(
-//   "orders/fetchAllOrders",
-//   async (
-//     { page, perPage }: { page: number; perPage: number | string },
-//     thunkAPI,
-//   ) => {
-//     try {
-//       const res = await axiosInstance.get(
-//         `dashboard/orders/list-orders?page=${page}&perPage=${perPage}`,
-//       );
-//       console.log("✅ Order Response Data:", res.data);
-//       return res.data;
-//     } catch (err: any) {
-//       console.error("❌ Error fetching all orders:", err);
-//       return thunkAPI.rejectWithValue(
-//         err.response?.data?.message || "Failed to fetch orders",
-//       );
-//     }
-//   },
-// );
 export const fetchAllOrders = createAsyncThunk(
   "orders/fetchAllOrders",
   async (
@@ -54,7 +34,6 @@ export const fetchOrderById = createAsyncThunk(
       const res = await axiosInstance.get(
         `dashboard/orders/show-order/${orderId}`,
       );
-      console.log("✅ Order Response Data By ID:", res.data);
       return res?.data;
     } catch (err: any) {
       console.error("❌ Error fetching order by id:", err);
@@ -82,12 +61,11 @@ export const fetchOrderByKeyword = createAsyncThunk(
         page: String(page),
         perPage: String(perPage),
         keyword: String(keyword),
-        ...(status && status !== "All orders" && { status }), // ✅ only add if not "All orders"
+        ...(status && status !== "All orders" && { status }), //  only add if not "All orders"
       });
       const res = await axiosInstance.get(
         `dashboard/orders/list-orders?${params.toString()}`,
       );
-      console.log("✅ Search Order Response Data:", res.data);
       return res.data;
     } catch (err: any) {
       console.error("❌ Error fetching all orders:", err);
@@ -161,7 +139,22 @@ export const updateOrder = createAsyncThunk(
         `dashboard/orders/update-order/${id}`,
         data,
       );
-      console.log("✅ Updtate Order Response Data:", response.data);
+      return response.data;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to update order",
+      );
+    }
+  },
+);
+export const updateShipment = createAsyncThunk(
+  "orders/update-shipment",
+  async ({ id, data }: { id: any; data: any }, thunkAPI) => {
+    try {
+      const response = await axiosInstance.put(
+        `dashboard/shipments/update-shipment/${id}`,
+        data,
+      );
       return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
@@ -180,8 +173,6 @@ export const advanceOrderSearch = createAsyncThunk(
         `dashboard/orders/search-advanced`,
         data,
       );
-      console.log("Advance Order Search Response: ", response.data);
-
       return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
@@ -220,7 +211,7 @@ export const printInvoicePdf = createAsyncThunk(
         `dashboard/orders/invoice/${orderId}`,
 
         {
-          // ✅✅✅ This must be inside the request config
+          //  This must be inside the request config
           responseType: "blob",
           headers: {
             Accept: "application/pdf",
@@ -247,7 +238,6 @@ export const refundOrder = createAsyncThunk(
         `dashboard/orders/refund/${orderId}`,
       );
 
-      console.log("Order refund Response: ", response?.data);
       return response.data;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(
@@ -266,7 +256,6 @@ export const resendInvoice = createAsyncThunk(
       const response = await axiosInstance.post(
         `dashboard/orders/resend-invoice/${orderId}`,
       );
-
       return response.data; // This will be a Blob
     } catch (err: any) {
       return thunkAPI.rejectWithValue(
@@ -350,7 +339,6 @@ export const fetchAllShipments = createAsyncThunk(
       const res = await axiosInstance.get(
         `dashboard/shipments/list-shipment?page=${page}&pageSize=${perPage}`,
       );
-      console.log("✅ Shipments Response Data:", res.data);
       return res.data;
     } catch (err: any) {
       console.error("❌ Error fetching  shipments:", err);
@@ -370,7 +358,6 @@ export const addShipmentOrder = createAsyncThunk(
         `dashboard/shipments/add-shipment`,
         data,
       );
-      console.log("✅ Add Shipment Response Data:", res.data);
       return res.data;
     } catch (err: any) {
       console.error("❌ Error adding shipment:", err);
@@ -390,8 +377,6 @@ export const advanceShipmentSearch = createAsyncThunk(
         `dashboard/shipments/advanced-search`,
         data,
       );
-      console.log("Advance Shipment Search Response: ", response.data);
-
       return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
@@ -416,7 +401,6 @@ export const fetchShipmentByKeyword = createAsyncThunk(
       const res = await axiosInstance.get(
         `dashboard/shipments/list-shipment?page=${page}&pageSize=${perPage}&keyword=${keyword}`,
       );
-      console.log("✅ Search Shipment Response Data:", res.data);
       return res.data;
     } catch (err: any) {
       console.error("❌ Error fetching shipments:", err);
@@ -438,7 +422,6 @@ export const deleteShipment = createAsyncThunk(
           data: { ids }, // ✅ this wraps your array inside an object
         },
       );
-      console.log("✅ Shipment Deletion response from thunk:", res.data);
       return res.data;
     } catch (err: any) {
       console.error("❌ Error deleting shipment:", err);
@@ -489,8 +472,6 @@ export const importTrackingNumbers = createAsyncThunk(
           },
         },
       );
-      console.log("✅ Import Csv Response  From Thunk:", response.data);
-
       return response.data;
     } catch (error: any) {
       console.error("❌ Error Importing CSV:", error);
@@ -508,8 +489,6 @@ export const advanceReturnOrderSearch = createAsyncThunk(
         `dashboard/tracking/search-advanced`,
         data,
       );
-      console.log("Advance Order Search Response: ", response.data);
-
       return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
@@ -527,7 +506,6 @@ export const fetchDraftOrders = createAsyncThunk(
       const res = await axiosInstance.get(
         `dashboard/orders/get-draft-order?isDraft=${isDraft}`,
       );
-      console.log("✅ Draft Order Response Data:", res.data);
       return res.data;
     } catch (err: any) {
       console.error("❌ Error fetching draft orders:", err);
@@ -546,7 +524,6 @@ export const deleteDraftOrders = createAsyncThunk(
       const res = await axiosInstance.delete(
         `dashboard/orders/delete-draft/${id}`,
       );
-      console.log("✅ Draft Delete Response Data:", res.data);
       return res.data;
     } catch (err: any) {
       console.error("❌ Error deleting draft order:", err);
@@ -562,7 +539,6 @@ export const getReturnOrders = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const res = await axiosInstance.get(`dashboard/orders/get-return-order`);
-      console.log("✅ Return Response Data:", res.data);
       return res.data;
     } catch (err: any) {
       console.error("❌ Error fetching returns:", err);
@@ -583,6 +559,7 @@ const initialState = {
   draftOrder: [],
   returnLoader: false,
   returnOrders: [],
+  shipmentLoader: false,
 };
 
 // 3. Slice
@@ -608,7 +585,6 @@ const orderSlice = createSlice({
       .addCase(fetchOrderById.fulfilled, (state, action) => {
         state.loading = false;
         state.singleOrder = action.payload.data;
-        console.log("Fulfilled response: ", state.singleOrder);
       })
       .addCase(fetchOrderByKeyword.pending, (state) => {
         state.loading = true;
@@ -683,6 +659,21 @@ const orderSlice = createSlice({
       })
       .addCase(getReturnOrders.fulfilled, (state, action) => {
         state.returnLoader = false;
+        state.returnOrders = action.payload;
+      })
+
+
+      // update shipment
+      .addCase(updateShipment.rejected, (state, action) => {
+        state.shipmentLoader = false;
+        state.error = action.payload as string;
+      })
+      .addCase(updateShipment.pending, (state) => {
+        state.shipmentLoader = true;
+        state.error = null; // reset error
+      })
+      .addCase(updateShipment.fulfilled, (state, action) => {
+        state.shipmentLoader = false;
         state.returnOrders = action.payload;
       });
     // builder.addCase(deleteDraftOrders.fulfilled, (state, action) => {

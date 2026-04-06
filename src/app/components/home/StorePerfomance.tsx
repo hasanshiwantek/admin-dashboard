@@ -17,8 +17,7 @@ export default function StorePerformanceChart() {
   const dispatch = useAppDispatch();
     const metrics = useAppSelector((state) => state.home?.metrics) as StoreMetricsResponse | null;
     const metricsData = metrics?.data ?? [];
-    console.log(metricsData);
-
+ 
     useEffect(() => {
       dispatch(fetchDashboardMetrics());
     }, [dispatch]);
