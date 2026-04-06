@@ -209,7 +209,6 @@ export const deleteLogo = createAsyncThunk(
       const res = await axiosInstance.delete(
         `dashboard/logos/delete-logo/${id}`
       );
-      console.log("Delete logo Response by id: ", res?.data);
       return res?.data;
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -228,7 +227,6 @@ export const addCarousel = createAsyncThunk(
         `dashboard/carousels/add-crousel`,
         data
       );
-      console.log("Add Carousel Response: ", res?.data);
       return res.data;
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -244,7 +242,6 @@ export const fetchCarousal = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const res = await axiosInstance.get(`dashboard/carousels/get-crousel`);
-      console.log("Fetch Carousal Response: ", res?.data);
       return res.data;
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -262,7 +259,6 @@ export const deleteCarousal = createAsyncThunk(
       const res = await axiosInstance.delete(
         `dashboard/carousels/delete-carousel/${id}`
       );
-      console.log("delete Carousal Response: ", res?.data);
       return res.data;
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -281,7 +277,6 @@ export const createScripts = createAsyncThunk(
         `dashboard/scripts/add-script`,
         data
       );
-      console.log("Create Scripts Response: ", res?.data);
       return res.data;
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -297,7 +292,6 @@ export const fetchScripts = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const res = await axiosInstance.get(`dashboard/scripts/get-script`);
-      console.log("Fetch Scripts Response: ", res?.data);
       return res.data;
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -316,7 +310,6 @@ export const fetchScriptById = createAsyncThunk(
   async ({ id }: { id: any }, thunkAPI) => {
     try {
       const res = await axiosInstance.get(`dashboard/scripts/get-script/${id}`);
-      console.log("Fetch Script by ID Response:", res?.data);
       return res.data;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(
@@ -335,7 +328,6 @@ export const updateScript = createAsyncThunk(
         `dashboard/scripts/update-script/${id}`,
         data
       );
-      console.log("Update Script Response:", res?.data);
       return res.data;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(
@@ -354,7 +346,6 @@ export const deleteScript = createAsyncThunk(
       const res = await axiosInstance.delete(
         `dashboard/scripts/delete-script/${id}`
       );
-      console.log("Delete Script Response:", res?.data);
       return res.data;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(

@@ -28,27 +28,22 @@ const VisibilityToggle = ({ productId, value, onChange }: VisibilityToggleProps)
 
       <DropdownMenuContent className="z-50 w-40 cursor-pointer shadow-sm bg-white">
         <DropdownMenuItem
-          onClick={() => {onChange(productId, "ENABLED")
-            console.log("Product Enabled: ",productId);
-            
-
+          onClick={() => {
+            onChange(productId, "ENABLED")
           }}
           disabled={value === "ENABLED"}
-          className={`p-4 border-b transition-all ${
-            value === "ENABLED" ? "text-gray-400 cursor-not-allowed" : "bg-blue-100 text-blue-600"
-          }`}
+          className={`p-4 border-b transition-all ${value === "ENABLED" ? "text-gray-400 cursor-not-allowed" : "bg-blue-100 text-blue-600"
+            }`}
         >
           Enabled
         </DropdownMenuItem>
         <DropdownMenuItem
-          onClick={() =>{ onChange(productId, "DISABLED")
-            console.log("Product Disabled: ",productId);
-            
+          onClick={() => {
+            onChange(productId, "DISABLED")
           }}
           disabled={value === "DISABLED"}
-          className={`p-4 transition-all ${
-            value === "DISABLED" ? "text-gray-400 cursor-not-allowed" : "bg-blue-100 text-blue-600"
-          }`}
+          className={`p-4 transition-all ${value === "DISABLED" ? "text-gray-400 cursor-not-allowed" : "bg-blue-100 text-blue-600"
+            }`}
         >
           Disabled
         </DropdownMenuItem>

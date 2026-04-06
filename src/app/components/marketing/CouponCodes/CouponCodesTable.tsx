@@ -65,8 +65,6 @@ const CouponCodesTable = () => {
   const totalPages = couponCodes?.couponcode?.last_page || 1;
   const currentPageFromAPI = couponCodes?.couponcode?.current_page || 1;
 
-  console.log(couponCodes);
-
   useEffect(() => {
     dispatch(getCouponCodes());
   }, [dispatch, currentPage, perPage]);
@@ -155,7 +153,6 @@ const CouponCodesTable = () => {
       await Promise.all(
         selectedCoupons.map((id) => dispatch(deleteCouponCodes({ id })).unwrap())
       );
-      console.log(`${selectedCoupons.length} coupon code(s) deleted successfully!`);
       // Refresh the list
       dispatch(getCouponCodes());
       setSelectedCoupons([]);

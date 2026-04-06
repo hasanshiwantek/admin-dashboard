@@ -11,10 +11,8 @@ export const addCustomer = createAsyncThunk(
         `dashboard/customers/add-customer`,
         data
       );
-      console.log("✅ Add Customer Response :", res.data);
       return res.data;
     } catch (err: any) {
-      console.error("❌ Error adding Customer:", err);
       return thunkAPI.rejectWithValue(
         err.response?.data?.message || "Failed to add Customer"
       );
@@ -35,7 +33,6 @@ export const fetchCustomers = createAsyncThunk(
       );
       return res.data;
     } catch (err: any) {
-      console.error("❌ Error fetching Customer:", err);
       return thunkAPI.rejectWithValue(
         err.response?.data?.message || "Failed to fetch Customer"
       );
@@ -52,10 +49,8 @@ export const advanceCustomerSearch = createAsyncThunk(
         `dashboard/customers/customer-search`,
         data
       );
-      console.log("✅ Advance Search Customers Response :", res.data);
       return res.data;
     } catch (err: any) {
-      console.error("❌ Error Searching Customer:", err);
       return thunkAPI.rejectWithValue(
         err.response?.data?.message || "Failed to Search Customer"
       );
@@ -80,7 +75,6 @@ export const fetchCustomerByKeyword = createAsyncThunk(
       );
       return res.data;
     } catch (err: any) {
-      console.error("❌ Error fetching Customer:", err);
       return thunkAPI.rejectWithValue(
         err.response?.data?.message || "Failed to fetch Customer"
       );
@@ -96,10 +90,8 @@ export const fetchCustomerById = createAsyncThunk(
       const res = await axiosInstance.get(
         `dashboard/customers/get-customer/${id}`
       );
-      console.log("✅ Fetch Customer Response :", res.data);
       return res.data;
     } catch (err: any) {
-      console.error("❌ Error fetching Customer:", err);
       return thunkAPI.rejectWithValue(
         err.response?.data?.message || "Failed to fetch Customer"
       );
@@ -116,10 +108,8 @@ export const deleteCustomer = createAsyncThunk(
         `dashboard/customers/delete-customer`,
         { data }
       );
-      console.log("✅ Delete Customer Response :", res.data);
       return res.data;
     } catch (err: any) {
-      console.error("❌ Error deleting Customer:", err);
       return thunkAPI.rejectWithValue(
         err.response?.data?.message || "Failed to delete Customer"
       );
@@ -135,10 +125,8 @@ export const updateCustomer = createAsyncThunk(
         `dashboard/customers/update-customer/${id}`,
         data
       );
-      console.log("✅ Update Customer Response :", res.data);
       return res.data;
     } catch (err: any) {
-      console.error("❌  Error UpdatingCustomer:", err);
       return thunkAPI.rejectWithValue(
         err.response?.data?.message || "Failed to update Customer"
       );
@@ -160,11 +148,8 @@ export const importCustomerCsv = createAsyncThunk(
           },
         }
       );
-      console.log("✅ Import Csv Response  From Thunk:", response.data);
-
       return response.data;
     } catch (error: any) {
-      console.error("❌ Error Importing CSV:", error);
       return thunkAPI.rejectWithValue("Failed to import CSV");
     }
   }
@@ -206,7 +191,6 @@ export const exportCustomerCsv = createAsyncThunk(
 
       return "Export successful";
     } catch (error: any) {
-      console.error("❌ Error Exporting CSV:", error);
       return thunkAPI.rejectWithValue("Failed to Export CSV");
     }
   }

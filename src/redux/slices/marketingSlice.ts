@@ -11,7 +11,6 @@ export const createCoupon = createAsyncThunk(
         `dashboard/coupons/add-couponcode`,
         data
       );
-      console.log("Add Coupon code Response: ", res?.data);
       return res.data;
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -27,7 +26,6 @@ export const getCouponCodes = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const res = await axiosInstance.get(`dashboard/coupons/get-couponcode`);
-      console.log("Fetch Coupon Code Response: ", res?.data);
       return res?.data;
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -49,7 +47,6 @@ export const getCouponById = createAsyncThunk(
       const res = await axiosInstance.get(
         `dashboard/coupons/get-couponcode/${id}`
       );
-      console.log("Fetch Coupon Response by id: ", res?.data);
       return res?.data;
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -67,7 +64,6 @@ export const searchCouponcode = createAsyncThunk(
       const res = await axiosInstance.get(
         `dashboard/coupons/get-couponcode?search=${search}&per_page=${per_page}`
       );
-      console.log("Search Coupon Response by id: ", res?.data);
       return res?.data;
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -86,7 +82,6 @@ export const updateCouponCode = createAsyncThunk(
         `dashboard/coupons/update-couponcode/${id}`,
         data
       );
-      console.log("Update Coupon Code Response by id: ", res?.data);
       return res?.data;
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -102,7 +97,6 @@ export const deleteCouponCode = createAsyncThunk(
   async ({ id }: { id: any }, thunkAPI) => {
     try {
       const res = await axiosInstance.delete(`dashboard/webpages/delete/${id}`);
-      console.log("Delete Webpage Response by id: ", res?.data);
       return res?.data;
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -121,7 +115,6 @@ export const deleteCouponCodes = createAsyncThunk(
       const res = await axiosInstance.delete(
         `dashboard/coupons/delete-couponcode/${id}`
       );
-      console.log("Delete Coupon Code Response by id: ", res?.data);
       return res?.data;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(
@@ -139,7 +132,6 @@ export const createEmailMarketing = createAsyncThunk(
         `dashboard/email-marketings/email-marketing`,
         data
       );
-      console.log("Add Email Marketing Response: ", res?.data);
       return res.data;
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -157,7 +149,6 @@ export const getEmailMarketing = createAsyncThunk(
       const res = await axiosInstance.get(
         `dashboard/email-marketings/get-email-marketing`
       );
-      console.log("Fetch Email Marketing Response ", res?.data);
       return res?.data;
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

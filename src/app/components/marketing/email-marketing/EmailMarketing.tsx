@@ -66,7 +66,6 @@ const EmailMarketing = () => {
     try {
       await dispatch(createEmailMarketing({ data })).unwrap();
       // Optional: Show success message
-      console.log("Settings saved successfully");
     } catch (err) {
       // Optional: Show error message
       console.error("Failed to save settings:", err);

@@ -45,7 +45,6 @@ const WebPageTable = () => {
       ? []
       : webPages.map((brand: any) => brand.id);
     setSelectedIds(newSelected);
-    console.log("Selected IDs:", newSelected);
   };
 
   const toggleSelectOne = (id: number) => {
@@ -53,7 +52,6 @@ const WebPageTable = () => {
       ? selectedIds.filter((i) => i !== id)
       : [...selectedIds, id];
     setSelectedIds(newSelected);
-    console.log("Selected IDs:", newSelected);
   };
 
   // Webpage DELETION LOGIC
@@ -72,7 +70,6 @@ const WebPageTable = () => {
         const result = (resultAction as any).payload;
 
         if ((resultAction as any).meta.requestStatus === "fulfilled") {
-          console.log("✅ Webpage deleted successfully:", result);
           setSelectedIds([]);
           setTimeout(() => {
             refetchWebpages(dispatch);

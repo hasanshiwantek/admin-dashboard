@@ -55,7 +55,6 @@ export default function AddCategoryModal({
 
       await dispatch(addCategory({ data: payload })).unwrap(); // unwrap for error catching
       setParentCategory(null);
-      console.log("Add Category Payload: ", payload);
       setTimeout(()=>{
         refetchCategories(dispatch)
       },600)
