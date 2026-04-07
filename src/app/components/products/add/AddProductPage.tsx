@@ -57,13 +57,13 @@ const buildCopyNameSku = (name: string, sku: string, productUrl: string) => {
   const nextNameNum = nameMatch ? parseInt(nameMatch[1]) + 1 : 1;
 
   const baseSku = sku.replace(/-\d+$/, "");
-  const baseproductUrl = productUrl.replace(/-\d+$/, "");
+  const baseProductUrl = productUrl.replace(/-\d+$/, "");
   const randomNum = Math.floor(1000 + Math.random() * 9000);
 
   return {
     name: `${baseName} Copy ${nextNameNum}`,
     sku: `${baseSku}-${randomNum}`, // BC12345678-4823 → BC12345678-1947 ✅
-    productUrl: `${baseproductUrl}-${randomNum}`
+    productUrl: `${baseProductUrl}-${randomNum}`
   };
 };
 export default function AddProductPage() {
