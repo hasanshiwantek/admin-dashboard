@@ -10,6 +10,7 @@ function Input({
     <input
       type={type}
       data-slot="input"
+      onWheel={(e) => e.currentTarget.blur()}
       className={cn(
         // Base styles
         "!text-xl !md:text-lg w-full max-w-md h-13 px-4 py-4  rounded-sm bg-white transition-colors text-gray-600",
@@ -34,6 +35,9 @@ function Input({
 
         // File input
         "file:border-0 file:bg-transparent file:text-sm file:font-medium file:h-7",
+
+        //  Hide number arrows globally
+        "[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
 
         className
       )}

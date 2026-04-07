@@ -4,23 +4,22 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input";
 import { HiQuestionMarkCircle } from "react-icons/hi2";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
 } from "@/components/ui/tooltip";
 
 
 export default function Dimensions() {
-
     const { register, watch, setValue } = useFormContext();
     const weight = watch("dimensions.weight")
 
     return (
         <section id="dimensionWeight" className="space-y-4 scroll-mt-20" >
             <div className="flex justify-center items-center flex-col">
-            <h1 className="2xl:!text-[2.4rem]">Fulfillment</h1>
-            <p className="text-muted-foreground 2xl:!text-2xl">Setup shipping and inventory details for this product.</p>
+                <h1 className="2xl:!text-[2.4rem]">Fulfillment</h1>
+                <p className="text-muted-foreground 2xl:!text-2xl">Setup shipping and inventory details for this product.</p>
             </div>
             <div className="p-10 bg-white shadow-lg rounded-sm ">
                 <h1 className="2xl:!text-[2.4rem]">Dimensions & Weight</h1>
@@ -42,10 +41,10 @@ export default function Dimensions() {
                                     </Tooltip>
                                 </TooltipProvider>
                             </Label>
-                            <Input              className="!max-w-[90%] w-full" value={weight} placeholder="0" onChange={(e) => setValue("dimensions.weight", e.target.value)} /> 
+                            <Input type="number" className="!max-w-[90%] w-full" value={weight} placeholder="0" onChange={(e) => setValue("dimensions.weight", e.target.value)} />
                         </div>
                         <div>
-                            <Label className="2xl:!text-2xl" htmlFor="dimensions.height">Height (Inches) 
+                            <Label className="2xl:!text-2xl" htmlFor="dimensions.height">Height (Inches)
                                 <span className="!text-red-500">*</span>
                                 <TooltipProvider>
                                     <Tooltip>
@@ -59,9 +58,8 @@ export default function Dimensions() {
                                     </Tooltip>
                                 </TooltipProvider>
                             </Label>
-                            <Input              className="!max-w-[90%] w-full" id="height" {...register("dimensions.height", { valueAsNumber: true })}/>
+                            <Input type="number" className="!max-w-[90%] w-full" id="height" {...register("dimensions.height", { valueAsNumber: true })} />
                         </div>
-
                     </div>
 
                     {/* Right Div */}
@@ -81,11 +79,11 @@ export default function Dimensions() {
                                     </Tooltip>
                                 </TooltipProvider>
                             </Label>
-                            <Input  className="!max-w-[90%] w-full"  id="width" placeholder="" {...register("dimensions.width", {valueAsNumber: true})}/>
+                            <Input type="number" className="!max-w-[90%] w-full" id="width" placeholder="" {...register("dimensions.width", { valueAsNumber: true })} />
                         </div>
 
                         <div>
-                            <Label className="2xl:!text-2xl" htmlFor="dimensions.depth">Depth (Inches) 
+                            <Label className="2xl:!text-2xl" htmlFor="dimensions.depth">Depth (Inches)
                                 <span className="!text-red-500">*</span>
                                 <TooltipProvider>
                                     <Tooltip>
@@ -99,11 +97,10 @@ export default function Dimensions() {
                                     </Tooltip>
                                 </TooltipProvider>
                             </Label>
-                            <Input             className="!max-w-[90%] w-full"   id="depth" {...register("dimensions.depth", {valueAsNumber: true})}/>
+                            <Input type="number" className="!max-w-[90%] w-full" id="depth" {...register("dimensions.depth", { valueAsNumber: true })} />
                         </div>
                     </div>
                 </div>
-
             </div>
         </section>
     );

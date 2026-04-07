@@ -43,7 +43,7 @@ export default function Pricing() {
         </Label>
         <Input
           className="!max-w-[100%] w-full"
-        type="number"
+          type="number"
           placeholder="$0"
           value={price}
           onChange={(e) => setValue("price", e.target.value)}
@@ -91,7 +91,7 @@ export default function Pricing() {
               <div>
                 <Label className="2xl:!text-2xl">Cost</Label>
                 <Input
-                              className="!max-w-[90%] w-full"
+                  className="!max-w-[90%] w-full"
                   type="number"
                   step="any"
                   placeholder="$0"
@@ -103,7 +103,7 @@ export default function Pricing() {
               <div>
                 <Label className="2xl:!text-2xl">MSRP</Label>
                 <Input
-                              className="!max-w-[90%] w-full"
+                  className="!max-w-[90%] w-full"
                   type="number"
                   step="any"
                   placeholder="$0"
@@ -115,7 +115,7 @@ export default function Pricing() {
               <div>
                 <Label className="2xl:!text-2xl">Sale Price</Label>
                 <Input
-                              className="!max-w-[90%] w-full"
+                  className="!max-w-[90%] w-full"
                   type="number"
                   step="any"
                   placeholder="$0"
@@ -146,7 +146,7 @@ export default function Pricing() {
                   </TooltipProvider>
                 </Label>
                 <Input
-                              className="!max-w-[90%] w-full"
+                  className="!max-w-[90%] w-full"
                   type="text"
                   placeholder="Enter tax code"
                   {...register("taxCode")}
