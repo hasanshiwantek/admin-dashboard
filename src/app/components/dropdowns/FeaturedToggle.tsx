@@ -31,7 +31,7 @@ const FeaturedToggle = ({ productId, isFeatured, onChange }: FeaturedToggleProps
       <DropdownMenuContent className="z-50 w-50 cursor-pointer border shadow-sm bg-white">
         <DropdownMenuItem
           onClick={() => {
-            onChange(productId, true)
+            isFeatured ? () => { } : onChange(productId, true)
           }}
           disabled={isFeatured}
           className={`p-4 border-b transition-all ${!isFeatured ? "bg-blue-100 text-blue-600" : "text-gray-400 cursor-not-allowed"
@@ -41,7 +41,7 @@ const FeaturedToggle = ({ productId, isFeatured, onChange }: FeaturedToggleProps
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => {
-            onChange(productId, false)
+            !isFeatured ? () => { } : onChange(productId, false)
           }}
           disabled={!isFeatured}
           className={`p-4 transition-all ${isFeatured ? "bg-blue-100 text-blue-600" : "text-gray-400 cursor-not-allowed"

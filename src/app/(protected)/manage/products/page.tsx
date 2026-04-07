@@ -3,7 +3,7 @@ import AllProducts from '@/app/components/products/AllProducts'
 const page = () => {
   return (
     <div className='p-10'>
-        <AllProducts/>
+      <AllProducts />
     </div>
   )
 }

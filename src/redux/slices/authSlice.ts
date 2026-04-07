@@ -27,22 +27,6 @@ interface AuthState {
   two_factor_type: string | null,
 }
 
-// const initialState: AuthState = {
-//   user: null,
-//   token: null,
-//   loading: false,
-//   error: null,
-//   isAuthenticated: false,
-//   // ✅ Rehydrate stores from localStorage on app start (handles page refresh)
-//   stores: (() => {
-//     try {
-//       const saved = localStorage.getItem("availableStores");
-//       return saved ? JSON.parse(saved) : [];
-//     } catch {
-//       return [];
-//     }
-//   })(),
-// };
 const initialState: AuthState = {
   // ✅ Read token presence to restore auth on refresh
   isAuthenticated: typeof window !== "undefined"

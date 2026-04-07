@@ -19,15 +19,15 @@ export default function ProductIdentifiers() {
         <div className="space-y-12">
           <div>
             <Label className="2xl:!text-2xl" htmlFor="sku">SKU</Label>
-            <Input              className="!max-w-[100%] 2xl:!max-w-[90%] w-full" value={sku} placeholder="THX-1138" onChange={(e) => setValue("sku", e.target.value)} />
+            <Input className="!max-w-[100%] 2xl:!max-w-[90%] w-full" value={sku} placeholder="THX-1138" onChange={(e) => setValue("sku", e.target.value)} />
           </div>
           <div>
             <Label className="2xl:!text-2xl" htmlFor="upc">Product UPC/EAN</Label>
-            <Input              className="!max-w-[100%] 2xl:!max-w-[90%] w-full" id="upc" placeholder="" {...register("upc")} />
+            <Input className="!max-w-[100%] 2xl:!max-w-[90%] w-full" id="upc" placeholder="" {...register("upc")} />
           </div>
           <div>
             <Label className="2xl:!text-2xl" htmlFor="bpn">Bin Picking Number (BPN)</Label>
-            <Input              className="!max-w-[100%] 2xl:!max-w-[90%] w-full" id="bpn" placeholder="" {...register("bpn")} />
+            <Input type="number" className="!max-w-[100%] 2xl:!max-w-[90%] w-full" id="bpn" placeholder="" {...register("bpn")} />
           </div>
         </div>
 
@@ -35,12 +35,12 @@ export default function ProductIdentifiers() {
         <div className="space-y-12">
           <div>
             <Label className="2xl:!text-2xl" htmlFor="mpn">Manufacturer Part Number (MPN)</Label>
-            <Input              className="!max-w-[100%] 2xl:!max-w-[90%] w-full" id="mpn" placeholder="" {...register("mpn")} />
+            <Input type="number" className="!max-w-[100%] 2xl:!max-w-[90%] w-full" id="mpn" placeholder="" {...register("mpn")} />
           </div>
 
           <div>
             <Label className="2xl:!text-2xl" htmlFor="gtin">Global Trade Item Number (GTIN)</Label>
-            <Input              className="!max-w-[100%] 2xl:!max-w-[90%] w-full" id="gtin" {...register("gtin")} />
+            <Input type="number" className="!max-w-[100%] 2xl:!max-w-[90%] w-full" id="gtin" {...register("gtin")} />
           </div>
         </div>
       </div>

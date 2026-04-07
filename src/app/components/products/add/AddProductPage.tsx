@@ -51,18 +51,19 @@ import { buildUpdateProductFormData } from "@/lib/formDataUtils";
 //     sku: `${sku}-${nextSkuNum}`,             // BC12345678-1 → BC12345678-1-2 → BC12345678-1-2-3
 //   };
 // };
-const buildCopyNameSku = (name: string, sku: string) => {
+const buildCopyNameSku = (name: string, sku: string, productUrl: string) => {
   const baseName = name.replace(/\s+Copy\s*\d*$/, "");
   const nameMatch = name.match(/Copy\s*(\d+)$/);
   const nextNameNum = nameMatch ? parseInt(nameMatch[1]) + 1 : 1;
 
-  // ✅ Strip existing -XXXX suffix and replace with new random
   const baseSku = sku.replace(/-\d+$/, "");
+  const baseproductUrl = productUrl.replace(/-\d+$/, "");
   const randomNum = Math.floor(1000 + Math.random() * 9000);
 
   return {
     name: `${baseName} Copy ${nextNameNum}`,
     sku: `${baseSku}-${randomNum}`, // BC12345678-4823 → BC12345678-1947 ✅
+    productUrl: `${baseproductUrl}-${randomNum}`
   };
 };
 export default function AddProductPage() {
@@ -75,8 +76,8 @@ export default function AddProductPage() {
 
   const defaultValues = useMemo(
     () => ({
-      price: "35",
-      dimensions: { weight: "0" },
+      price: "",
+      dimensions: { weight: "" },
       trackInventory: true,     // ✅ default checked for new product
       inventoryLevel: "product",// ✅ default level
       // ✅ OpenGraph defaults
@@ -200,8 +201,8 @@ export default function AddProductPage() {
         const result = await dispatch(addProduct({ data: formData }));
         if (addProduct.fulfilled.match(result)) {
           hasUpdatedOriginalRef.current = true;
-          const { name: copyName, sku: copySku } = buildCopyNameSku(data.name, data.sku);
-          methods.reset({ ...data, name: copyName, sku: copySku });
+          const { name: copyName, sku: copySku, productUrl: copyProductUrl } = buildCopyNameSku(data.name, data.sku, data?.productUrl);
+          methods.reset({ ...data, name: copyName, sku: copySku, productUrl: copyProductUrl });
         }
       }
       if (copyAfterSaveRef.current && isEdit && !hasUpdatedOriginalRef.current) {
@@ -218,8 +219,8 @@ export default function AddProductPage() {
 
           setProduct(undefined);
 
-          const { name: copyName, sku: copySku } = buildCopyNameSku(data.name, data.sku);
-          methods.reset({ ...data, name: copyName, sku: copySku });
+          const { name: copyName, sku: copySku, productUrl: copyProductUrl } = buildCopyNameSku(data.name, data.sku, data?.productUrl);
+          methods.reset({ ...data, name: copyName, sku: copySku, productUrl: copyProductUrl });
           // router.replace("/manage/products/add");
         } else {
           console.error("Update failed:", updateResult.error);
@@ -233,8 +234,8 @@ export default function AddProductPage() {
 
         if (addProduct.fulfilled.match(result)) {
           hasUpdatedOriginalRef.current = false; // ✅ reset for next time
-          const { name: copyName, sku: copySku } = buildCopyNameSku(data.name, data.sku);
-          methods.reset({ ...data, name: copyName, sku: copySku });
+          const { name: copyName, sku: copySku, productUrl: copyProductUrl } = buildCopyNameSku(data.name, data.sku, data?.productUrl);
+          methods.reset({ ...data, name: copyName, sku: copySku, productUrl: copyProductUrl });
         } else {
           console.error("Create failed:", result.error);
         }

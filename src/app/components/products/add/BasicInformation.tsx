@@ -111,9 +111,10 @@ export default function BasicInfoForm() {
             <div>
               <Label className="2xl:!text-2xl" htmlFor="price">Default Price</Label>
               <Input
+                type="number"
                 className="!max-w-[90%] w-full"
                 id="price"
-                placeholder="35"
+                placeholder="Price"
                 {...register("price", { valueAsNumber: true })}
                 required
               />
