@@ -546,9 +546,7 @@ export default function AllProducts() {
   });
 
   useEffect(() => {
-    // ✅ Only run when t= param is present (sidebar same-route refresh)
     if (!searchParams.get("t")) return;
-
     setSelectedTab("All");
     setSearchTerm("");
     handleSelectAllChange(false);
@@ -636,7 +634,6 @@ export default function AllProducts() {
               </button>
             ))}
           </div>
-
           <div className="flex justify-between gap-1 items-center mb-5">
             <div
               className="flex justify-start items-center bg-white text-center !px-4 !py-4 rounded-md 
@@ -658,7 +655,7 @@ export default function AllProducts() {
                 }}
               />
 
-              <button
+              {searchTerm && <button
                 disabled={!searchTerm.trim()}
                 type="button"
                 onClick={() => {
@@ -668,7 +665,7 @@ export default function AllProducts() {
                 className="ml-2 text-gray-400 hover:text-gray-600 transition"
               >
                 <X size={18} />
-              </button>
+              </button>}
             </div>
 
             {/* <Input placeholder="Search products" className="max-w-[80%] !p-7 " /> */}
