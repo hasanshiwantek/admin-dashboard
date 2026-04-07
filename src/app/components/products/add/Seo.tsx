@@ -65,7 +65,8 @@ export default function Seo() {
               </TooltipProvider>
             </Label>
             <Input className="!max-w-[85%] w-full" id="ProductUrl" placeholder="" {...register("productUrl")} />
-            <button className="btn-outline-primary !py-2" type="button">Reset</button>
+            <button className="btn-outline-primary !py-2" type="button" onClick={() => setValue("productUrl", "")}
+            >Reset</button>
           </div>
         </div>
 
@@ -86,11 +87,11 @@ export default function Seo() {
             </TooltipProvider>
           </Label>
           <Input
-          className="!max-w-[85%] 2xl:!max-w-[100%] w-full"
+            className="!max-w-[85%] 2xl:!max-w-[100%] w-full"
             id="metaDescription"
             placeholder=""
             {...register("metaDescription")}
-            // className="!min-w-[75rem]"
+          // className="!min-w-[75rem]"
           />
         </div>
       </div>
