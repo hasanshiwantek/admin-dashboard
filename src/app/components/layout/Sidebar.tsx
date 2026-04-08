@@ -78,7 +78,7 @@ export const SideBar = ({ onClose }: { onClose?: () => void }) => {
                             className={`text-xl 2xl:!text-2xl !leading-8 cursor-pointer px-4 py-2 rounded-md block ${pathname === child.url ? "bg-[#24345c]" : ""
                               }`}
                             onClick={(e) => {
-                              const link = ["/manage/products", "/manage/products/brands", "/manage/products/categories", "/manage/orders"]
+                              const link = ["/manage/products", "/manage/products/brands", "/manage/products/categories", "/manage/orders", "/manage/products/export", "/manage/orders/export"]
                               if (pathname === child.url) {
                                 e.preventDefault();
                                 if (link.includes(child.url)) {
