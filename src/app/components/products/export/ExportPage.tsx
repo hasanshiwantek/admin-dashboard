@@ -1,11 +1,18 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import ExportOptions from "./ExportOption";
 import ExportPreview from "./ExportPreview";
 import { exportCsv } from "@/redux/slices/productSlice";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
+import { useSearchParams } from "next/navigation";
 export default function ExportPage() {
+  const dispatch = useAppDispatch();
+  const searchParams = useSearchParams();
+  const [activeTab, setActiveTab] = useState<"exportOptions" | "exportPreview">(
+    "exportOptions"
+  );
+
   const form = useForm({
     defaultValues: {
       template: "",
@@ -13,16 +20,12 @@ export default function ExportPage() {
       saveExport: false,
     },
   });
-  const dispatch = useAppDispatch();
 
-  const [activeTab, setActiveTab] = useState<"exportOptions" | "exportPreview">(
-    "exportOptions"
-  );
 
   const onSubmit = async (data: any) => {
 
     try {
-      const resultAction = await dispatch(exportCsv({payload:data}));
+      const resultAction = await dispatch(exportCsv({ payload: data }));
       const result = (resultAction as any).payload;
 
       if ((resultAction as any).meta.requestStatus === "fulfilled") {
@@ -34,7 +37,10 @@ export default function ExportPage() {
       console.error("❌ Unexpected Export Error:", error);
     }
   };
-
+  useEffect(() => {
+    if (!searchParams.get("t")) return;
+    setActiveTab("exportOptions")
+  }, [searchParams]);
   return (
     <FormProvider {...form}>
       <div>
@@ -51,22 +57,20 @@ export default function ExportPage() {
               <button
                 type="button"
                 onClick={() => setActiveTab("exportOptions")}
-                className={`px-4 py-2 text-xl  border-b-4 transition-colors 2xl:!text-2xl ${
-                  activeTab === "exportOptions"
-                    ? "border-blue-600 text-blue-600"
-                    : "border-transparent text-gray-500 hover:text-gray-700"
-                }`}
+                className={`px-4 py-2 text-xl  border-b-4 transition-colors 2xl:!text-2xl ${activeTab === "exportOptions"
+                  ? "border-blue-600 text-blue-600"
+                  : "border-transparent text-gray-500 hover:text-gray-700"
+                  }`}
               >
                 Export options
               </button>
               <button
                 type="button"
                 onClick={() => setActiveTab("exportPreview")}
-                className={`px-4 py-2 text-xl border-b-4 transition-colors ${
-                  activeTab === "exportPreview"
-                    ? "border-blue-600 text-blue-600"
-                    : "border-transparent text-gray-500 hover:text-gray-700"
-                }`}
+                className={`px-4 py-2 text-xl border-b-4 transition-colors ${activeTab === "exportPreview"
+                  ? "border-blue-600 text-blue-600"
+                  : "border-transparent text-gray-500 hover:text-gray-700"
+                  }`}
               >
                 Export preview
               </button>
