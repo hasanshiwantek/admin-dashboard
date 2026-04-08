@@ -34,23 +34,6 @@ import objectToFormData from "@/lib/formDataUtils";
 import { buildUpdateProductFormData } from "@/lib/formDataUtils";
 // import { updateProductFormData } from "@/redux/slices/productSlice";
 
-// const buildCopyNameSku = (name: string, sku: string) => {
-//   // ✅ Name: strip "Copy N" → increment
-//   const baseName = name.replace(/\s+Copy\s*\d*$/, "");
-//   const nameMatch = name.match(/Copy\s*(\d+)$/);
-//   const nextNameNum = nameMatch ? parseInt(nameMatch[1]) + 1 : 1;
-
-//   // ✅ SKU: get last -N → increment → append to full sku
-//   const skuMatch = sku.match(/-(\d+)$/);
-//   const nextSkuNum = skuMatch ? parseInt(skuMatch[1]) + 1 : 1;
-//   const randomNum = Math.floor(1000 + Math.random() * 9000);
-
-
-//   return {
-//     name: `${baseName} Copy ${nextNameNum}`, // Product Copy 1 → Copy 2 → Copy 3
-//     sku: `${sku}-${nextSkuNum}`,             // BC12345678-1 → BC12345678-1-2 → BC12345678-1-2-3
-//   };
-// };
 const buildCopyNameSku = (name: string, sku: string, productUrl: string) => {
   const baseName = name.replace(/\s+Copy\s*\d*$/, "");
   const nameMatch = name.match(/Copy\s*(\d+)$/);
