@@ -29,7 +29,7 @@ export const sidebarData = [
       { title: "Draft Orders", url: "/manage/orders/draft" },
       { title: "Shipments", url: "/manage/orders/shipments" },
       { title: "Return request", url: "/manage/orders/returns" },
-      { title: "Tracking Numbers", url: "/manage/orders/tracking" },
+      // { title: "Tracking Numbers", url: "/manage/orders/tracking" },
       // { title: "Gift Certificates", url: "/manage/orders/gifts" },
     ],
   },

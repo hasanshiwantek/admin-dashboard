@@ -62,8 +62,8 @@ const buildCopyNameSku = (name: string, sku: string, productUrl: string) => {
 
   return {
     name: `${baseName} Copy ${nextNameNum}`,
-    sku: `${baseSku}-${randomNum}`, // BC12345678-4823 → BC12345678-1947 ✅
-    productUrl: `${baseProductUrl}-${randomNum}`
+    sku: `${baseSku}-${randomNum}`,
+    ...(productUrl && { productUrl: `${baseProductUrl}-${randomNum}` }), // ✅
   };
 };
 export default function AddProductPage() {
@@ -195,7 +195,11 @@ export default function AddProductPage() {
         manageCustoms: data.manageCustoms ? 1 : 0,
       };
 
-      // ─── CASE 1: Edit + Copy — 1st click = UPDATE only ──────────
+
+      console.log("normalizedFields", normalizedFields);
+
+
+      // // ─── CASE 1: Edit + Copy — 1st click = UPDATE only ──────────
       if (hasUpdatedOriginalRef.current && isEdit) {
         const formData = objectToFormData(normalizedFields);
         const result = await dispatch(addProduct({ data: formData }));
