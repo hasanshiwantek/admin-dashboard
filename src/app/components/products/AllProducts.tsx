@@ -596,7 +596,7 @@ export default function AllProducts() {
         })
       );
     } else {
-      // 📦 Default: Fetch all products
+      //  Default: Fetch all products
       dispatch(fetchAllProducts({ page, pageSize }));
     }
   }, [searchParams]); // reruns whenever URL changes
@@ -751,7 +751,6 @@ export default function AllProducts() {
               {/* <Settings className="w-8 h-8 text-gray-500" /> */}
 
               <div className="p-6">
-                {/* Pagination */}
                 <Pagination
                   currentPage={currentPage}
                   totalPages={totalPages}

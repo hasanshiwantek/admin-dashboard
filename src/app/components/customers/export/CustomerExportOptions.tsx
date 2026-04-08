@@ -5,15 +5,20 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import { useSearchParams } from "next/navigation";
 const templates = [
   { label: "Bulk Edit", value: "bulkEdit" },
   { label: "Default", value: "default" },
 ];
 
 export default function CustomerExportOptions() {
-  const { register, setValue, watch, control } = useFormContext();
+  const searchParams = useSearchParams();
+  const { register, setValue, watch, control, reset } = useFormContext();
   const selected = watch("template");
-
+  useEffect(() => {
+    if (!searchParams.get("t")) return;
+    reset()
+  }, [searchParams]);
   return (
     <div>
       <h1 className="my-5 2xl:!text-[2.4rem]">Export template and file format options</h1>

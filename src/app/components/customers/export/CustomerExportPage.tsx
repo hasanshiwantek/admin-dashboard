@@ -1,12 +1,15 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import CustomerExportOptions from "./CustomerExportOptions";
 import CustomerExportPreview from "./CustomerExportPreview";
 import { exportCsv } from "@/redux/slices/productSlice";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { exportCustomerCsv } from "@/redux/slices/customerSlice";
+import { useSearchParams } from "next/navigation";
 export default function CustomerExportPage() {
+  const dispatch = useAppDispatch();
+  const searchParams = useSearchParams();
   const form = useForm({
     defaultValues: {
       template: "",
@@ -14,7 +17,6 @@ export default function CustomerExportPage() {
       saveExport: false,
     },
   });
-  const dispatch = useAppDispatch();
 
   const [activeTab, setActiveTab] = useState<"exportOptions" | "exportPreview">(
     "exportOptions"
@@ -33,7 +35,10 @@ export default function CustomerExportPage() {
       console.error("❌ Unexpected Export Error:", error);
     }
   };
-
+  useEffect(() => {
+    if (!searchParams.get("t")) return;
+    setActiveTab("exportOptions")
+  }, [searchParams]);
   return (
     <FormProvider {...form}>
       <div>
@@ -50,22 +55,20 @@ export default function CustomerExportPage() {
               <button
                 type="button"
                 onClick={() => setActiveTab("exportOptions")}
-                className={`px-4 py-2 text-xl  border-b-4 transition-colors 2xl:!text-2xl ${
-                  activeTab === "exportOptions"
-                    ? "border-blue-600 text-blue-600"
-                    : "border-transparent text-gray-500 hover:text-gray-700"
-                }`}
+                className={`px-4 py-2 text-xl  border-b-4 transition-colors 2xl:!text-2xl ${activeTab === "exportOptions"
+                  ? "border-blue-600 text-blue-600"
+                  : "border-transparent text-gray-500 hover:text-gray-700"
+                  }`}
               >
                 Export options
               </button>
               <button
                 type="button"
                 onClick={() => setActiveTab("exportPreview")}
-                className={`px-4 py-2 text-xl border-b-4 transition-colors 2xl:!text-2xl ${
-                  activeTab === "exportPreview"
-                    ? "border-blue-600 text-blue-600"
-                    : "border-transparent text-gray-500 hover:text-gray-700"
-                }`}
+                className={`px-4 py-2 text-xl border-b-4 transition-colors 2xl:!text-2xl ${activeTab === "exportPreview"
+                  ? "border-blue-600 text-blue-600"
+                  : "border-transparent text-gray-500 hover:text-gray-700"
+                  }`}
               >
                 Export preview
               </button>
