@@ -3,7 +3,7 @@ import CustomerExportPage from '@/app/components/customers/export/CustomerExport
 const page = () => {
   return (
     <div className='p-10'>
-        <CustomerExportPage/>
+      <CustomerExportPage />
     </div>
   )
 }

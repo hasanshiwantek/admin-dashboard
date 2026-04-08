@@ -8,10 +8,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Pagination from "@/components/ui/pagination";
 import { Check } from "lucide-react";
 import { IoMdClose } from "react-icons/io";
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
+import Spinner from "../../loader/Spinner";
+import { fetchCustomers } from "@/redux/slices/customerSlice";
 
 const customers = [
   {
@@ -59,15 +62,21 @@ const customers = [
 ];
 
 export default function CustomerExportPreview() {
+  const dispatch = useAppDispatch();
+  const { customers, loading } = useAppSelector((state: any) => state?.customer);
   const [currentPage, setCurrentPage] = useState(1);
-  const totalItems = 200;
-  const totalPages = Math.ceil(totalItems / 10);
   const [perPage, setPerPage] = useState("20");
+  const totalItems = customers?.pagination?.total || 0;
+  const totalPages = customers?.lastPage
+
+  useEffect(() => {
+    dispatch(fetchCustomers({ page: currentPage, pageSize: perPage }));
+  }, [dispatch, perPage, currentPage])
 
   return (
     <div>
       <p className=" text-muted-foreground 2xl:!text-2xl">
-        The <strong>{totalItems.toLocaleString()}</strong> customers shown below
+        The <strong>{totalItems?.toLocaleString()}</strong> customers shown below
         will be exported when you click the continue button.
       </p>
       <div className="bg-white p-6 rounded-md border shadow-sm space-y-4">
@@ -93,15 +102,30 @@ export default function CustomerExportPreview() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {customers.map((item, index) => (
-                <TableRow key={index}>
-                  <TableCell className="2xl:!text-[1.6rem] !py-4">{index}</TableCell>
-                  <TableCell className="2xl:!text-[1.6rem] !py-4">{item.name}</TableCell>
-                  <TableCell className="2xl:!text-[1.6rem] !py-4">{item.email}</TableCell>
-                  <TableCell className="2xl:!text-[1.6rem] !py-4">{item.phone}</TableCell>
-                  <TableCell className="2xl:!text-[1.6rem] !py-4">{item.joinDate}</TableCell>
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={10} className="text-center py-10">
+                    <Spinner />
+                  </TableCell>
                 </TableRow>
-              ))}
+              ) : customers?.data?.length === 0 && !loading ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={10}
+                    className="text-center py-10 text-gray-500 text-xl"
+                  >
+                    No customers yet.
+                  </TableCell>
+                </TableRow>
+              ) : (customers?.data?.map((item: any, index: number) => (
+                <TableRow key={index}>
+                  <TableCell className="2xl:!text-[1.6rem] !py-4">{item?.id}</TableCell>
+                  <TableCell className="2xl:!text-[1.6rem] !py-4">{item?.firstName + " " + item?.lastName}</TableCell>
+                  <TableCell className="2xl:!text-[1.6rem] !py-4">{item?.email}</TableCell>
+                  <TableCell className="2xl:!text-[1.6rem] !py-4">{item?.phone}</TableCell>
+                  <TableCell className="2xl:!text-[1.6rem] !py-4">{item?.createdAt}</TableCell>
+                </TableRow>
+              )))}
             </TableBody>
           </Table>
         </div>
