@@ -41,6 +41,7 @@ import {
   getProductCategoryIds,
 } from "@/lib/toggleCategoryHelper";
 import { deleteProductCategory } from "@/redux/slices/productSlice";
+import * as XLSX from "xlsx";
 
 const filterTabs = [
   "All",
@@ -544,7 +545,25 @@ export default function AllProducts() {
       queryObject[key] = value;
     }
   });
+  const handleExport = () => {
+    const selectedProducts = products?.filter((item: any) =>
+      selectedProductIds.includes(item.id)
+    );
 
+    const exportData = selectedProducts.map((item: any) => ({
+      ID: item.id,
+      SKU: item.sku,
+      Name: item.name,
+      Price: item.price,
+      IsFeatured: item.isFeatured ? "Yes" : "No",
+      IsVisible: item.isVisible ? "Yes" : "No",
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Products");
+    XLSX.writeFile(workbook, "products_export.xlsx");
+  };
   useEffect(() => {
     if (!searchParams.get("t")) return;
     setSelectedTab("All");
@@ -693,11 +712,9 @@ export default function AllProducts() {
                 </span>
               </div>
 
-              {selectedProductIds.length > 0 && (
+              {selectedProductIds?.length > 0 && (
                 <div>
-                  <Link href={"/manage/products/export"}>
-                    <button className="btn-outline-primary">Export</button>
-                  </Link>
+                  <button className="btn-outline-primary" onClick={handleExport}>Export</button>
                   <button
                     className="btn-outline-primary"
                     onClick={handlebulkEdit}

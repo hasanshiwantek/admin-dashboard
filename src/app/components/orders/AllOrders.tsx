@@ -53,6 +53,9 @@ import Spinner from "../loader/Spinner";
 import Link from "next/link";
 import OrderNotesModal from "./edit/OrderNotesModal";
 import { ShipmentModal } from "./edit/ShipmentModal";
+import * as XLSX from "xlsx";
+
+
 const AllOrders = () => {
   const dispatch = useAppDispatch();
   const orders = useAppSelector((state: any) => state.order.orders);
@@ -467,6 +470,29 @@ const AllOrders = () => {
   useEffect(() => {
     dispatch(fetchAllOrders({ page: currentPage, perPage, status: activeTab }));
   }, [activeTab])
+
+  const handleExport = () => {
+    const selectedOrders = filteredOrders?.filter((item: any) =>
+      selectedOrderIds?.some((selected: any) =>
+        Number(selected?.id || selected) === Number(item?.id)
+      )
+    );
+
+    const exportData = selectedOrders?.map((item: any) => ({
+      ID: item?.id,
+      "Order Number": item?.orderNumber,
+      "Customer Name": `${item?.billingInformation?.firstName} ${item?.billingInformation?.lastName}`,
+      "Customer Email": item?.customer?.email,
+      Status: item?.status,
+      "Total Amount": item?.totalAmount,
+      'Created At': item?.createdAt,
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Orders");
+    XLSX.writeFile(workbook, "orders_export.xlsx");
+  };
   const handlePageChange = (page: number) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("page", page.toString());
@@ -499,7 +525,6 @@ const AllOrders = () => {
               ? "border-blue-600 font-semibold"
               : "border-transparent text-gray-500 hover:text-black"
               }`}
-            // onClick={() => setActiveTab(tab)}
             onClick={() => setActiveTab(tab)}
           >
             {tab}
@@ -513,11 +538,9 @@ const AllOrders = () => {
           <Link href={"/manage/orders/add"}>
             <button className="btn-outline-primary 2xl:!text-2xl">Add</button>
           </Link>
-          <Link href={"/manage/orders/export"}>
-            <button className="btn-outline-primary 2xl:!text-2xl">
-              Export all
-            </button>
-          </Link>
+          {selectedOrderIds?.length !== 0 && <button disabled={selectedOrderIds?.length == 0} className="btn-outline-primary 2xl:!text-2xl" onClick={handleExport}>
+            Export
+          </button>}
 
           <Select onValueChange={setSelectedAction} value={selectedAction}>
             <SelectTrigger className="w-fit px-6 py-6 2xl:py-[1.8rem]">
@@ -547,12 +570,12 @@ const AllOrders = () => {
               <SelectItem value="bulkCapture" data-action="capture_funds">
                 Capture funds for selected
               </SelectItem>
-              <SelectItem value="startExport" data-action="export">
+              {/* <SelectItem value="startExport" data-action="export">
                 Export selected
               </SelectItem>
               <SelectItem value="deleteOrders" data-action="archive">
                 Archive selected
-              </SelectItem>
+              </SelectItem> */}
 
               {/* Divider for optgroup */}
               <div className="px-2 pt-2 pb-1 my-3 text-2xl font-semibold text-muted-foreground">

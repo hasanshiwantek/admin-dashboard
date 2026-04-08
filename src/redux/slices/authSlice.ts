@@ -182,7 +182,7 @@ export const disableEmail2FA = createAsyncThunk(
   "2fa/disable",
   async ({ password }: { password: string }, thunkAPI) => {
     try {
-      const res = await axiosInstance.post("2fa/disable", { password }); // ✅ send password in body
+      const res = await axiosInstance.post("2fa/disable", { password });
       return res.data;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(
@@ -244,7 +244,7 @@ export const resendOtp = createAsyncThunk(
       return res.data;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "OTP verification failed"
+        err.response?.data?.message
       );
     }
   }
@@ -262,7 +262,7 @@ export const profileUpdatePassword = createAsyncThunk(
       return res.data;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "OTP verification failed"
+        err.response?.data?.message || ""
       );
     }
   }

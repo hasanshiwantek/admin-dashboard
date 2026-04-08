@@ -62,14 +62,14 @@ export default function StoreSelectPage() {
       <div className="flex flex-col min-h-screen items-center justify-center bg-black px-4 md:px-0">
         {/* Top logo */}
         <div className="mb-12">
-          <Image
+          {/* <Image
             src="/fav.png"
             alt="Logo"
             width={250}
             height={250}
             objectFit="contain"
             priority
-          />
+          /> */}
         </div>
 
         <h1 className="!text-5xl md:text-5xl mb-8 !text-white text-center">

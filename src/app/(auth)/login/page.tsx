@@ -77,14 +77,14 @@ export default function LoginPage() {
     <div className="flex flex-col min-h-screen items-center justify-center bg-black">
       {/* Top image */}
       <div className="mb-8">
-        <Image
+        {/* <Image
           src="/fav.png"
           alt="Logo"
           width={250} // set desired width
           height={250} // set desired height
           objectFit="contain"
           priority // optional: loads image faster for above-the-fold content
-        />
+        /> */}
       </div>
 
       <h1 className="!text-5xl mb-2 !text-white">Login to your store</h1>
@@ -159,9 +159,9 @@ export default function LoginPage() {
       <p className="mt-5 text-center !text-white max-w-2xl !text-xl sm:!text-2xl">
         Your administrative account information, such as login credentials, is
         used in accordance with our{" "}
-        <a href="#" className="underline text-blue-600">
-          Privacy Policy
-        </a>
+        {/* <a href="#" className="underline text-blue-600"> */}
+        Privacy Policy
+        {/* </a> */}
         .
       </p>
     </div>

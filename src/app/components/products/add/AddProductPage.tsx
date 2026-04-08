@@ -178,7 +178,11 @@ export default function AddProductPage() {
         manageCustoms: data.manageCustoms ? 1 : 0,
       };
 
-      // ─── CASE 1: Edit + Copy — 1st click = UPDATE only ──────────
+
+      console.log("normalizedFields", normalizedFields);
+
+
+      // // ─── CASE 1: Edit + Copy — 1st click = UPDATE only ──────────
       if (hasUpdatedOriginalRef.current && isEdit) {
         const formData = objectToFormData(normalizedFields);
         const result = await dispatch(addProduct({ data: formData }));
