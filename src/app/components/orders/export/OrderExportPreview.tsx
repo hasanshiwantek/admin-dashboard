@@ -7,8 +7,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Pagination from "@/components/ui/pagination";
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
+import { fetchAllOrders } from "@/redux/slices/orderSlice";
+import Spinner from "../../loader/Spinner";
 const previewData = [
   {
     id: 296136,
@@ -70,14 +73,25 @@ const previewData = [
 ];
 
 export default function OrderExportPreview() {
+  const dispatch = useAppDispatch();
+  const orders = useAppSelector((state: any) => state.order.orders);
+  const { loading, } = useAppSelector((state) => state.order);
+
+  const pagination = orders?.pagination;
+  const total = pagination?.total || 0;
+  const totalPages = pagination?.totalPages;
   const [currentPage, setCurrentPage] = useState(1);
-  const totalItems = 200;
-  const totalPages = Math.ceil(totalItems / 10);
   const [perPage, setPerPage] = useState("20");
+  const orderList = orders?.data || [];
+
+  useEffect(() => {
+    dispatch(fetchAllOrders({ page: currentPage, perPage }));
+  }, [dispatch, perPage, currentPage])
+
 
   return (
     <div>
-      <p className=" text-muted-foreground 2xl:!text-2xl">31 orders ready for export.</p>
+      <p className=" text-muted-foreground 2xl:!text-2xl">{total} orders ready for export.</p>
       <div className="bg-white p-6 rounded-md border shadow-sm space-y-4">
         <div className="flex justify-end my-2">
           {/* Pagination */}
@@ -94,24 +108,41 @@ export default function OrderExportPreview() {
             <TableHeader className="bg-gray-100">
               <TableRow>
                 <TableHead>ID</TableHead>
+                <TableHead>Order Number</TableHead>
                 <TableHead>Customer</TableHead>
-                <TableHead>Date</TableHead>
+                <TableHead>Email</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Merchant-defined status</TableHead>
                 <TableHead>Total</TableHead>
+                <TableHead>Date</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {previewData.map((item, index) => (
-                <TableRow key={index}>
-                  <TableCell className="2xl:!text-2xl">{item.id}</TableCell>
-                  <TableCell className="2xl:!text-2xl">{item.customer}</TableCell>
-                  <TableCell className="2xl:!text-2xl">{item.date}</TableCell>
-                  <TableCell className="2xl:!text-2xl">{item.status}</TableCell>
-                  <TableCell className="2xl:!text-2xl">{item.merchant_defined_status}</TableCell>
-                  <TableCell className="2xl:!text-2xl">{item.total}</TableCell>
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={10} className="text-center py-10">
+                    <Spinner />
+                  </TableCell>
                 </TableRow>
-              ))}
+              ) : orderList?.length === 0 && !loading ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={10}
+                    className="text-center py-10 text-gray-500 text-xl"
+                  >
+                    No orders yet.
+                  </TableCell>
+                </TableRow>
+              ) : (orderList?.map((item: any, index: number) => (
+                <TableRow key={index}>
+                  <TableCell className="2xl:!text-2xl">{item?.id}</TableCell>
+                  <TableCell className="2xl:!text-2xl">{item?.orderNumber}</TableCell>
+                  <TableCell className="2xl:!text-2xl">{`${item?.billingInformation?.firstName} ${item?.billingInformation?.lastName}`}</TableCell>
+                  <TableCell className="2xl:!text-2xl">{item?.billingInformation?.email} </TableCell>
+                  <TableCell className="2xl:!text-2xl">{item?.status}</TableCell>
+                  <TableCell className="2xl:!text-2xl">{item?.totalAmount}</TableCell>
+                  <TableCell className="2xl:!text-2xl">{item?.createdAt}</TableCell>
+                </TableRow>
+              )))}
             </TableBody>
           </Table>
         </div>
