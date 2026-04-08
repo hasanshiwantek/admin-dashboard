@@ -555,8 +555,8 @@ export default function AllProducts() {
       SKU: item.sku,
       Name: item.name,
       Price: item.price,
-      IsFeatured: item.isFeatured ? "Yes" : "No",
-      IsVisible: item.isVisible ? "Yes" : "No",
+      Featured: item.isFeatured ? "Yes" : "No",
+      Visible: item.isVisible ? "Yes" : "No",
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(exportData);

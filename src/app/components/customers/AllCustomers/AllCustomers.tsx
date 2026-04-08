@@ -24,7 +24,7 @@ import OrderActionsDropdown from "../../orders/OrderActionsDropdown";
 import Pagination from "@/components/ui/pagination";
 import { FaCirclePlus, FaCircleMinus } from "react-icons/fa6";
 import { useSearchParams } from "next/navigation";
-
+import * as XLSX from "xlsx";
 import {
   fetchCustomers,
   deleteCustomer,
@@ -38,6 +38,7 @@ import Link from "next/link";
 import Spinner from "../../loader/Spinner";
 import { useRouter } from "next/navigation";
 import CustomerNotesModal from "../edit/CustomerNotesModal";
+
 const AllCustomers = () => {
   const dispatch = useAppDispatch();
   const { customers } = useAppSelector((state: any) => state.customer);
@@ -248,6 +249,39 @@ const AllCustomers = () => {
       dispatch(fetchCustomers({ page: currentPage, pageSize: perPage }));
     }
   }, [searchParams]);
+
+
+  const handleExport = () => {
+    if (!selectedCustomers.length) return
+    const selectedCustomer = customers?.data?.filter((item: any) =>
+      selectedCustomers?.some((selected: any) =>
+        Number(selected?.id || selected) === Number(item?.id)
+      )
+    );
+    const exportData = selectedCustomer.map((item: any) => ({
+      ID: item?.id,
+      "First Name": item?.firstName,
+      "Last Name": item?.lastName,
+      "Email": item?.email,
+      "Phone": item?.phone,
+      "Address": item?.addresses,
+      "Company Name": item?.companyName,
+      "Customer Group": item?.customerGroup,
+      "Store Credit": item?.storeCredit,
+      "Country": item?.country,
+      "State": item?.state,
+      "Tax Exempt Code": item?.taxExemptCode,
+      "Force Password Reset": item?.forcePasswordReset ? 1 : "",
+      "Receive Review Emails": item?.receiveReviewEmails ? 1 : "",
+      "Created At": item?.createdAt,
+      "Updated At": item?.updatedAt,
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Products");
+    XLSX.writeFile(workbook, "customer_export.xlsx");
+  };
   const handlePageChange = (page: number) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("page", page.toString());
@@ -302,14 +336,13 @@ const AllCustomers = () => {
         >
           <Trash className="!w-5 !h-5" />
         </Button>
-        <Link href={"/manage/customers/export"}>
-          <Button
-            variant="outline"
-            className="flex items-center gap-2 !p-6 btn-outline-primary 2xl:!text-2xl"
-          >
-            <DownloadIcon className="!w-5 !h-5" /> Export all customers
-          </Button>
-        </Link>
+        <Button
+          onClick={handleExport}
+          variant="outline"
+          className="flex items-center gap-2 !p-6 btn-outline-primary 2xl:!text-2xl"
+        >
+          <DownloadIcon className="!w-5 !h-5" /> Export selected customers
+        </Button>
         <Input
           placeholder="Filter by keyword"
           value={keyword}
