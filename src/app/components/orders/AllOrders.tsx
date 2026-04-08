@@ -472,6 +472,7 @@ const AllOrders = () => {
   }, [activeTab])
 
   const handleExport = () => {
+    if (!selectedOrderIds.length) return
     const selectedOrders = filteredOrders?.filter((item: any) =>
       selectedOrderIds?.some((selected: any) =>
         Number(selected?.id || selected) === Number(item?.id)
