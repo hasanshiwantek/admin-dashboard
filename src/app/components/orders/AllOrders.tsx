@@ -65,10 +65,16 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 
 countries?.registerLocale(enLocale);
 
+// const getISO2 = (code: string) => {
+//   if (!code) return "";
+//   if (code.length === 2) return code.toUpperCase();
+//   return countries.alpha3ToAlpha2(code) || code;
+// };
 const getISO2 = (code: string) => {
   if (!code) return "";
-  if (code.length === 2) return code.toUpperCase();
-  return countries.alpha3ToAlpha2(code) || code;
+  const upper = code.toUpperCase();
+  if (upper.length === 2) return upper; // AF → AF
+  return countries.alpha3ToAlpha2(upper) || upper; // AFG → AF
 };
 
 // map mein bhi getISO2 use karo
@@ -734,9 +740,14 @@ const AllOrders = () => {
                 </TableRow>
               ) : (
                 filteredOrders?.map((order: any, idx: number) => {
+                  // const countryData = countriesListIcons?.find(
+                  //   (c) => c?.iso2 === getISO2(order?.billingInformation?.country)
+                  // );
                   const countryData = countriesListIcons?.find(
-                    (c) => c?.iso2 === getISO2(order?.billingInformation?.country)
-                  );
+  (c) => 
+    c.iso2 === getISO2(order?.billingInformation?.country) ||
+    c.value === order?.billingInformation?.country
+);
                   return (
                     <Fragment key={order?.id}>
                       <TableRow key={order?.id}>
