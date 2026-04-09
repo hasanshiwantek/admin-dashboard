@@ -49,7 +49,7 @@ import {
   DollarSign,
   CreditCard,
   Monitor,
-  Tablet
+  Smartphone
 } from "lucide-react";
 import countries from "i18n-iso-countries";
 import Spinner from "../loader/Spinner";
@@ -98,7 +98,7 @@ const AllOrders = () => {
   };
   const { loading, error } = useAppSelector((state) => state.order);
   const [activeTab, setActiveTab] = useState("All orders");
- 
+
   const filteredOrders = orders?.data || [];
 
   const tabs = [
@@ -761,11 +761,9 @@ const AllOrders = () => {
                           </button>
                         </TableCell>
                         <TableCell>
-                          {order?.deviceType === "desktop" ? (
-                            <Monitor className="h-9 w-9 " />
-                          ) : order?.deviceType === "mobile" ? (
-                            <Tablet className="h-9 w-9 " />
-                          ) : ""}
+                          {order?.deviceType === "tablet" || order?.deviceType === "mobile" ? (
+                            <Smartphone className="h-9 w-9 " />
+                          ) : <Monitor className="h-9 w-9 " />}
                         </TableCell>
 
                         <TableCell className="2xl:!text-2xl">
@@ -1194,8 +1192,6 @@ const AllOrders = () => {
           order={selectedOrder}
           onClose={() => setShowShipmentModal(false)}
           onSubmit={async (data) => {
-            console.log("Shipment Data:", data);
-
             try {
               // First, add the shipment
               await dispatch(addShipmentOrder({ data }));
