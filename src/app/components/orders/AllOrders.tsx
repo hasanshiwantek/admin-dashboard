@@ -834,7 +834,7 @@ const AllOrders = () => {
 
                             <span className="2xl:!text-2xl">
                               {order.billingInformation?.firstName}{" "}
-                              {order.billingInformation?.lastName}
+                              {order.billingInformation?.lastName} {order?.userType == "guest" ? '(Guest)' : ""}
                             </span>
 
                             {/* Payment Method Icon */}
@@ -971,9 +971,16 @@ const AllOrders = () => {
                                   </p>
 
                                   <div className="flex items-center gap-2">
-                                    <Globe className="w-5 h-5 text-gray-500" />
+
+                                    {countryData?.flag ? <Image
+                                      src={countryData?.flag as string}
+                                      width={20}
+                                      height={20}
+                                      className="rounded-sm object-cover"
+                                      alt={countryData?.label || ""}
+                                    /> : <Globe className="w-5 h-5 text-gray-500" />}
                                     <span>
-                                      {order?.billingInformation?.country ||
+                                      {countryData?.label ||
                                         "N/A"}
                                     </span>
                                   </div>
@@ -989,6 +996,12 @@ const AllOrders = () => {
                                     <Mail className="w-5 h-5 text-gray-500" />
                                     <span>
                                       {order?.billingInformation?.email || "N/A"}
+                                    </span>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    {order?.deviceType === "tablet" || order?.deviceType === "mobile" ? <Smartphone className="h-5 w-5 text-gray-500" /> : <Monitor className="h-5 w-5 text-gray-500" />}
+                                    <span>
+                                      {(order?.deviceType?.toUpperCase()) || ("desktop".toUpperCase())}
                                     </span>
                                   </div>
 
