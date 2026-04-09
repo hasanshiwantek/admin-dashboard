@@ -67,8 +67,9 @@ countries?.registerLocale(enLocale);
 
 const getISO2 = (code: string) => {
   if (!code) return "";
-  if (code.length === 2) return code.toUpperCase();
-  return countries.alpha3ToAlpha2(code) || code;
+  const upper = code.toUpperCase();
+  if (upper.length === 2) return upper; // AF → AF
+  return countries.alpha3ToAlpha2(upper) || upper; // AFG → AF
 };
 
 // map mein bhi getISO2 use karo
@@ -82,7 +83,7 @@ export const countriesListIcons = countriesListIconsRaw?.map((country) => {
 });
 const AllOrders = () => {
   const dispatch = useAppDispatch();
-  const orders = useAppSelector((state: any) => state.order.orders);
+  const orders = useAppSelector((state: any) => state?.order?.orders);
   const pagination = orders?.pagination;
   // const [currentPage, setCurrentPage] = useState(1);
   // const [perPage, setPerPage] = useState("50");
@@ -735,7 +736,9 @@ const AllOrders = () => {
               ) : (
                 filteredOrders?.map((order: any, idx: number) => {
                   const countryData = countriesListIcons?.find(
-                    (c) => c?.iso2 === getISO2(order?.billingInformation?.country)
+                    (c) =>
+                      c.iso2 === getISO2(order?.billingInformation?.country) ||
+                      c.value === order?.billingInformation?.country
                   );
                   return (
                     <Fragment key={order?.id}>
@@ -762,8 +765,28 @@ const AllOrders = () => {
                         </TableCell>
                         <TableCell>
                           {order?.deviceType === "tablet" || order?.deviceType === "mobile" ? (
-                            <Smartphone className="h-9 w-9 " />
-                          ) : <Monitor className="h-9 w-9 " />}
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Smartphone className="h-9 w-9" />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  {order?.deviceType?.toUpperCase()}
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          ) : (
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Monitor className="h-9 w-9" />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  {order?.deviceType?.toUpperCase() || "desktop".toUpperCase()}
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          )}
                         </TableCell>
 
                         <TableCell className="2xl:!text-2xl">
@@ -792,11 +815,11 @@ const AllOrders = () => {
                                       src={countryData?.flag as string}
                                       width={22}
                                       height={22}
-                                      className="rounded-sm object-cover cursor-pointer"
+                                      className="rounded-sm object-cover"
                                       alt={countryData?.label || ""}
                                     />
                                   ) : (
-                                    <span className="cursor-pointer">🏳️</span>
+                                    <span className="">🏳️</span>
                                   )}
                                 </TooltipTrigger>
                                 <TooltipContent>
