@@ -65,19 +65,6 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 
 countries?.registerLocale(enLocale);
 
-// export const countriesListIcons = countriesListIconsRaw?.map((country) => {
-//   const iso2 = countries?.alpha3ToAlpha2(country?.value) || country?.value;
-//   return {
-//     ...country,
-//     iso2,
-//     flag: `https://purecatamphetamine.github.io/country-flag-icons/3x2/${iso2}.svg`,
-//   };
-// });
-// const getISO2 = (code: string) => {
-//   if (!code) return "";
-//   if (code.length === 2) return code.toUpperCase(); // already ISO2 — PK, US, IN
-//   return countries.alpha3ToAlpha2(code) || code;    // ISO3 → ISO2 — PAK→PK, USA→US, IND→IN
-// };
 const getISO2 = (code: string) => {
   if (!code) return "";
   if (code.length === 2) return code.toUpperCase();
@@ -111,10 +98,7 @@ const AllOrders = () => {
   };
   const { loading, error } = useAppSelector((state) => state.order);
   const [activeTab, setActiveTab] = useState("All orders");
-  // const filteredOrders = orders?.data?.filter((order: any) => {
-  //   if (activeTab === "All orders") return true;
-  //   return order.status === activeTab;
-  // });
+ 
   const filteredOrders = orders?.data || [];
 
   const tabs = [
@@ -159,8 +143,6 @@ const AllOrders = () => {
     setSelectedOrderIds(updated);
   };
 
-
-  console.log(countriesListIcons);
 
   const statusOptions = [
     { label: "Pending", value: "Pending", color: "bg-gray-400" },
@@ -752,11 +734,8 @@ const AllOrders = () => {
                 </TableRow>
               ) : (
                 filteredOrders?.map((order: any, idx: number) => {
-                  // const countryData = countriesListIcons?.find(
-                  //   (c) => c.value === order?.billingInformation?.country
-                  // );
                   const countryData = countriesListIcons?.find(
-                    (c) => c.iso2 === getISO2(order?.billingInformation?.country)
+                    (c) => c?.iso2 === getISO2(order?.billingInformation?.country)
                   );
                   return (
                     <Fragment key={order?.id}>
@@ -812,11 +791,11 @@ const AllOrders = () => {
                                 <TooltipTrigger asChild>
                                   {countryData ? (
                                     <Image
-                                      src={countryData.flag as string}
+                                      src={countryData?.flag as string}
                                       width={22}
                                       height={22}
                                       className="rounded-sm object-cover cursor-pointer"
-                                      alt={countryData.label || ""}
+                                      alt={countryData?.label || ""}
                                     />
                                   ) : (
                                     <span className="cursor-pointer">🏳️</span>
