@@ -2,6 +2,7 @@
 export const countriesList = [
   { value: "not-specified", label: "Not specified" },
   { value: "USA", label: "UNITED STATES" },
+  { value: "AFG", label: "AFGHANISTAN" },
   { value: "ALB", label: "ALBANIA" },
   { value: "DZA", label: "ALGERIA" },
   { value: "ASM", label: "AMERICAN SAMOA" },
@@ -198,6 +199,7 @@ export const countriesList = [
   { value: "SPM", label: "ST. PIERRE AND MIQUELON" },
   { value: "SDN", label: "SUDAN" },
   { value: "SUR", label: "SURINAME" },
+  { value: "SSD", label: "SOUTH SUDAN" },
   { value: "SJM", label: "SVALBARD AND JAN MAYEN ISLANDS" },
   { value: "SWZ", label: "SWAZILAND" },
   { value: "SWE", label: "SWEDEN" },
@@ -239,6 +241,7 @@ export const countriesList = [
 export const countriesListIconsRaw  = [
   { value: "not-specified", label: "Not specified" },
   { value: "USA", label: "UNITED STATES" },
+  { value: "AFG", label: "AFGHANISTAN" },
   { value: "ALB", label: "ALBANIA" },
   { value: "DZA", label: "ALGERIA" },
   { value: "ASM", label: "AMERICAN SAMOA" },
@@ -422,6 +425,7 @@ export const countriesListIconsRaw  = [
   { value: "SRB", label: "SERBIA" },
   { value: "SYC", label: "SEYCHELLES" },
   { value: "SLE", label: "SIERRA LEONE" },
+  { value: "SSD", label: "SOUTH SUDAN" },
   { value: "SGP", label: "SINGAPORE" },
   { value: "SVK", label: "SLOVAKIA" },
   { value: "SVN", label: "SLOVENIA" },
