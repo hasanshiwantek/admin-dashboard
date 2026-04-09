@@ -48,14 +48,38 @@ import {
   Ship,
   DollarSign,
   CreditCard,
+  Monitor,
+  Tablet
 } from "lucide-react";
+import countries from "i18n-iso-countries";
 import Spinner from "../loader/Spinner";
 import Link from "next/link";
 import OrderNotesModal from "./edit/OrderNotesModal";
 import { ShipmentModal } from "./edit/ShipmentModal";
 import * as XLSX from "xlsx";
+import enLocale from "i18n-iso-countries/langs/en.json";
+import { countriesListIconsRaw } from "@/const/location";
+import Image from "next/image";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 
+countries?.registerLocale(enLocale);
+
+const getISO2 = (code: string) => {
+  if (!code) return "";
+  if (code.length === 2) return code.toUpperCase();
+  return countries.alpha3ToAlpha2(code) || code;
+};
+
+// map mein bhi getISO2 use karo
+export const countriesListIcons = countriesListIconsRaw?.map((country) => {
+  const iso2 = getISO2(country?.value);
+  return {
+    ...country,
+    iso2,
+    flag: `https://purecatamphetamine.github.io/country-flag-icons/3x2/${iso2}.svg`,
+  };
+});
 const AllOrders = () => {
   const dispatch = useAppDispatch();
   const orders = useAppSelector((state: any) => state.order.orders);
@@ -74,10 +98,7 @@ const AllOrders = () => {
   };
   const { loading, error } = useAppSelector((state) => state.order);
   const [activeTab, setActiveTab] = useState("All orders");
-  // const filteredOrders = orders?.data?.filter((order: any) => {
-  //   if (activeTab === "All orders") return true;
-  //   return order.status === activeTab;
-  // });
+ 
   const filteredOrders = orders?.data || [];
 
   const tabs = [
@@ -121,6 +142,7 @@ const AllOrders = () => {
     const updated = checked ? filteredOrders : [];
     setSelectedOrderIds(updated);
   };
+
 
   const statusOptions = [
     { label: "Pending", value: "Pending", color: "bg-gray-400" },
@@ -683,8 +705,10 @@ const AllOrders = () => {
                   />
                 </TableHead>
                 <TableHead></TableHead>
+                <TableHead></TableHead>
                 <TableHead>Date</TableHead>
                 <TableHead>Order ID</TableHead>
+                <TableHead></TableHead>
                 <TableHead>Customer</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Total</TableHead>
@@ -709,140 +733,171 @@ const AllOrders = () => {
                   </TableCell>
                 </TableRow>
               ) : (
-                filteredOrders?.map((order: any, idx: number) => (
-                  <Fragment key={order?.id}>
-                    <TableRow key={order?.id}>
-                      <TableCell>
-                        <Checkbox
-                          checked={selectedOrderIds.some(
-                            (o) => o.id === order.id
-                          )}
-                          onCheckedChange={(checked: boolean) =>
-                            handleOrderCheckboxChange(order, checked as boolean)
-                          }
-                        />
-                      </TableCell>
-
-                      <TableCell>
-                        <button onClick={() => toggleRow(order.id)}>
-                          {expandedRow === order.id ? (
-                            <FaCircleMinus className="h-7 w-7 fill-gray-600" />
-                          ) : (
-                            <FaCirclePlus className="h-7 w-7 fill-gray-600" />
-                          )}
-                        </button>
-                      </TableCell>
-
-                      <TableCell className="2xl:!text-2xl">
-                        {new Date(order.createdAt).toLocaleDateString("en-GB", {
-                          day: "2-digit",
-                          month: "short", // or "long" for full month name
-                          year: "numeric",
-                        })}
-                      </TableCell>
-
-                      <TableCell className="text-blue-600 2xl:!text-2xl">
-                        {order.id}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          {/* Verification Badge Icon */}
-                          <BadgeCheck className="w-8 h-8 text-white fill-green-500 " />
-
-                          {/* Country Flag Icon */}
-                          {/* <span className="text-lg">
-                            {order.billingInformation?.country === "US"
-                              ? "🇺🇸"
-                              : "🏳️"}
-                          </span> */}
-                          <span className="2xl:!text-2xl">
-                            {order.billingInformation?.firstName}{" "}
-                            {order.billingInformation?.lastName}
-                          </span>
-
-                          {/* Payment Method Icon */}
-                          {order.billingInformation?.paymentMethod ===
-                            "credit_card" && (
-                              <CreditCard className="w-7 h-7 text-gray-500" />
+                filteredOrders?.map((order: any, idx: number) => {
+                  const countryData = countriesListIcons?.find(
+                    (c) => c?.iso2 === getISO2(order?.billingInformation?.country)
+                  );
+                  return (
+                    <Fragment key={order?.id}>
+                      <TableRow key={order?.id}>
+                        <TableCell>
+                          <Checkbox
+                            checked={selectedOrderIds.some(
+                              (o) => o.id === order.id
                             )}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          {(() => {
-                            const normalizedStatus = order.status;
-
-                            const currentStatus = statusOptions.find(
-                              (option) => option.value === normalizedStatus
-                            );
-
-                            return (
-                              <>
-                                <span
-                                  className={`w-7 h-9 inline-block rounded-sm ${currentStatus?.color || "bg-gray-400"
-                                    }`}
-                                />
-                                <Select
-                                  defaultValue={normalizedStatus}
-                                  onValueChange={(newStatus) => {
-                                    dispatch(
-                                      updateOrderStatus({
-                                        id: order.id,
-                                        status: newStatus,
-                                      })
-                                    );
-                                    setTimeout(() => {
-                                      refetchOrders(dispatch);
-                                      setSelectedOrderIds([]);
-                                    }, 700);
-                                  }}
-                                >
-                                  <SelectTrigger className="w-[200px] h-8 p-6">
-                                    <SelectValue>
-                                      {currentStatus?.label ||
-                                        "Awaiting Payment"}
-                                    </SelectValue>
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    {statusOptions.map((option) => (
-                                      <SelectItem
-                                        key={option.value}
-                                        value={option.value}
-                                      >
-                                        {option.label}
-                                      </SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
-                              </>
-                            );
-                          })()}
-                        </div>
-                      </TableCell>
-
-                      <TableCell>
-                        <div className="flex justify-between items-center gap-2 2xl:!text-2xl">
-                          {new Intl.NumberFormat("en-US", {
-                            style: "currency",
-                            currency: "USD",
-                          }).format(Number(order.totalAmount))}
-                          {/* Order Timeline Icon */}
-                          <button
-                            onClick={() =>
-                              router.push(
-                                `/manage/orders/order-timeline/${order?.id}`
-                              )
+                            onCheckedChange={(checked: boolean) =>
+                              handleOrderCheckboxChange(order, checked as boolean)
                             }
-                            className="text-gray-500 hover:text-gray-700 "
-                            title="View Order Timeline"
-                          >
-                            <Clock className="w-5 h-5" />
-                          </button>
-                        </div>
-                      </TableCell>
+                          />
+                        </TableCell>
 
-                      <TableCell>
-                        {/* <OrderActionsDropdown
+                        <TableCell>
+                          <button onClick={() => toggleRow(order.id)}>
+                            {expandedRow === order.id ? (
+                              <FaCircleMinus className="h-7 w-7 fill-gray-600" />
+                            ) : (
+                              <FaCirclePlus className="h-7 w-7 fill-gray-600" />
+                            )}
+                          </button>
+                        </TableCell>
+                        <TableCell>
+                          {order?.deviceType === "desktop" ? (
+                            <Monitor className="h-9 w-9 " />
+                          ) : order?.deviceType === "mobile" ? (
+                            <Tablet className="h-9 w-9 " />
+                          ) : ""}
+                        </TableCell>
+
+                        <TableCell className="2xl:!text-2xl">
+                          {new Date(order.createdAt).toLocaleDateString("en-GB", {
+                            day: "2-digit",
+                            month: "short", // or "long" for full month name
+                            year: "numeric",
+                          })}
+                        </TableCell>
+
+                        <TableCell className="text-blue-600 2xl:!text-2xl">
+                          {order.id}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            {/* Verification Badge Icon */}
+                            <BadgeCheck className="w-8 h-8 text-white fill-green-500 " />
+
+                            {/* Country Flag Icon */}
+
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  {countryData ? (
+                                    <Image
+                                      src={countryData?.flag as string}
+                                      width={22}
+                                      height={22}
+                                      className="rounded-sm object-cover cursor-pointer"
+                                      alt={countryData?.label || ""}
+                                    />
+                                  ) : (
+                                    <span className="cursor-pointer">🏳️</span>
+                                  )}
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  {countryData?.label || "Unknown Country"}
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+
+                            <span className="2xl:!text-2xl">
+                              {order.billingInformation?.firstName}{" "}
+                              {order.billingInformation?.lastName}
+                            </span>
+
+                            {/* Payment Method Icon */}
+                            {order.billingInformation?.paymentMethod ===
+                              "credit_card" && (
+                                <CreditCard className="w-7 h-7 text-gray-500" />
+                              )}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            {(() => {
+                              const normalizedStatus = order.status;
+
+                              const currentStatus = statusOptions.find(
+                                (option) => option.value === normalizedStatus
+                              );
+                              return (
+                                <>
+                                  <span
+                                    className={`w-7 h-9 inline-block rounded-sm ${currentStatus?.color || "bg-gray-400"
+                                      }`}
+                                  />
+                                  <Select
+                                    defaultValue={normalizedStatus}
+                                    onValueChange={(newStatus) => {
+                                      dispatch(
+                                        updateOrderStatus({
+                                          id: order.id,
+                                          status: newStatus,
+                                        })
+                                      );
+                                      setTimeout(() => {
+                                        refetchOrders(dispatch);
+                                        setSelectedOrderIds([]);
+                                      }, 700);
+                                    }}
+                                  >
+                                    <SelectTrigger className="w-[200px] h-8 p-6">
+                                      <SelectValue>
+                                        {currentStatus?.label ||
+                                          "Awaiting Payment"}
+                                      </SelectValue>
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      {statusOptions.map((option) => (
+                                        <SelectItem
+                                          key={option.value}
+                                          value={option.value}
+                                        >
+                                          {option.label}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                </>
+                              );
+                            })()}
+                          </div>
+                        </TableCell>
+
+                        <TableCell>
+                          <div className="flex justify-between items-center gap-2 2xl:!text-2xl">
+                            {new Intl.NumberFormat("en-US", {
+                              style: "currency",
+                              currency: "USD",
+                            }).format(Number(order.totalAmount))}
+                            {/* Order Timeline Icon */}
+                            <button
+                              onClick={() =>
+                                router.push(
+                                  `/manage/orders/order-timeline/${order?.id}`
+                                )
+                              }
+                              className="text-gray-500 hover:text-gray-700 "
+                              title="View Order Timeline"
+                            >
+                              <Clock className="w-5 h-5" />
+                            </button>
+                          </div>
+                        </TableCell>
+
+                        <TableCell>
+                          {/* <OrderActionsDropdown
                           actions={orderActions(order)}
                           trigger={
                             <button className="text-xl cursor-pointer">
@@ -851,264 +906,265 @@ const AllOrders = () => {
                           }
                         /> */}
 
-                        <OrderActionsDropdown
-                          actions={orderActions(order)}
-                          trigger={
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="text-xl cursor-pointer"
-                            >
-                              <Ellipsis className="!w-7 !h-7" />
-                            </Button>
-                          }
-                        />
-                      </TableCell>
-                    </TableRow>
+                          <OrderActionsDropdown
+                            actions={orderActions(order)}
+                            trigger={
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="text-xl cursor-pointer"
+                              >
+                                <Ellipsis className="!w-7 !h-7" />
+                              </Button>
+                            }
+                          />
+                        </TableCell>
+                      </TableRow>
 
-                    {expandedRow === order?.id && (
-                      <TableRow>
-                        <TableCell colSpan={11}>
-                          <div className="grid grid-cols-3 gap-4 bg-gray-50 p-4 ">
-                            <div className="flex">
-                              {/* Left Side: Billing Title & Copy Button */}
-                              <div className="flex flex-col border-r pr-3 mr-3 space-y-2">
-                                <h4 className="font-semibold">Billing</h4>
-                                <button
-                                  className="!px-2 !py-1 text-blue-500 border-blue-400 border text-base"
-                                  onClick={copyBilling}
-                                >
-                                  Copy
-                                </button>
-                              </div>
-
-                              {/* Right Side: Customer Info with Icons */}
-                              <div className="flex flex-col space-y-2">
-                                <p>
-                                  {order?.billingInformation?.firstName}{" "}
-                                  {order?.billingInformation?.lastName}
-                                  <br />
-                                  {order?.billingInformation?.addressLine1}{" "}
-                                  {order?.billingInformation?.addressLine2}
-                                  <br />
-                                  {order?.billingInformation?.state}
-                                </p>
-
-                                <div className="flex items-center gap-2">
-                                  <Globe className="w-5 h-5 text-gray-500" />
-                                  <span>
-                                    {order?.billingInformation?.country ||
-                                      "N/A"}
-                                  </span>
+                      {expandedRow === order?.id && (
+                        <TableRow>
+                          <TableCell colSpan={11}>
+                            <div className="grid grid-cols-3 gap-4 bg-gray-50 p-4 ">
+                              <div className="flex">
+                                {/* Left Side: Billing Title & Copy Button */}
+                                <div className="flex flex-col border-r pr-3 mr-3 space-y-2">
+                                  <h4 className="font-semibold">Billing</h4>
+                                  <button
+                                    className="!px-2 !py-1 text-blue-500 border-blue-400 border text-base"
+                                    onClick={copyBilling}
+                                  >
+                                    Copy
+                                  </button>
                                 </div>
 
-                                <div className="flex items-center gap-2">
-                                  <Phone className="w-5 h-5 text-gray-500" />
-                                  <span>
-                                    {order?.billingInformation?.phone || "N/A"}
-                                  </span>
-                                </div>
+                                {/* Right Side: Customer Info with Icons */}
+                                <div className="flex flex-col space-y-2">
+                                  <p>
+                                    {order?.billingInformation?.firstName}{" "}
+                                    {order?.billingInformation?.lastName}
+                                    <br />
+                                    {order?.billingInformation?.addressLine1}{" "}
+                                    {order?.billingInformation?.addressLine2}
+                                    <br />
+                                    {order?.billingInformation?.state}
+                                  </p>
 
-                                <div className="flex items-center gap-2">
-                                  <Mail className="w-5 h-5 text-gray-500" />
-                                  <span>
-                                    {order?.billingInformation?.email || "N/A"}
-                                  </span>
-                                </div>
+                                  <div className="flex items-center gap-2">
+                                    <Globe className="w-5 h-5 text-gray-500" />
+                                    <span>
+                                      {order?.billingInformation?.country ||
+                                        "N/A"}
+                                    </span>
+                                  </div>
 
-                                <div className="flex items-center gap-2">
-                                  <CreditCard className="w-5 h-5 text-gray-500" />
-                                  <span>
-                                    Payment Method{" "}
-                                    {order?.billingInformation?.paymentMethod ||
-                                      "N/A"}
-                                  </span>
-                                </div>
+                                  <div className="flex items-center gap-2">
+                                    <Phone className="w-5 h-5 text-gray-500" />
+                                    <span>
+                                      {order?.billingInformation?.phone || "N/A"}
+                                    </span>
+                                  </div>
 
-                                <div className="flex items-center gap-2">
-                                  <Clock className="w-5 h-5 text-gray-500" />
-                                  <span>
-                                    {order?.customer?.updatedAt || "N/A"}
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
+                                  <div className="flex items-center gap-2">
+                                    <Mail className="w-5 h-5 text-gray-500" />
+                                    <span>
+                                      {order?.billingInformation?.email || "N/A"}
+                                    </span>
+                                  </div>
 
-                            <div className="flex">
-                              {/* Left Side: Shipping Title & Copy Button */}
-                              <div className="flex flex-col border-r pr-3 mr-3 space-y-2">
-                                <h4 className="font-semibold">Shipping</h4>
-                                <button
-                                  className="!px-2 !py-1 text-blue-500 border-blue-400 border text-base"
-                                  onClick={copyBilling}
-                                >
-                                  Copy
-                                </button>
-                              </div>
+                                  <div className="flex items-center gap-2">
+                                    <CreditCard className="w-5 h-5 text-gray-500" />
+                                    <span>
+                                      Payment Method{" "}
+                                      {order?.billingInformation?.paymentMethod ||
+                                        "N/A"}
+                                    </span>
+                                  </div>
 
-                              {/* Right Side: Shipping Info with Icons */}
-                              <div className="flex flex-col space-y-2">
-                                {/* Customer Info */}
-                                <p>
-                                  {order?.customer?.firstName}{" "}
-                                  {order?.customer?.lastName}
-                                  <br />
-                                  {order?.customer?.address}
-                                  <br />
-                                  {order?.customer?.state}
-                                </p>
-
-                                {/* Method Section */}
-                                <h4 className="font-semibold">Method</h4>
-
-                                <div className="flex items-center gap-2">
-                                  <Ship className="w-5 h-5 text-gray-500" />
-                                  <span>
-                                    {order?.billingInformation
-                                      ?.shippingMethod || "N/A"}
-                                  </span>
-                                </div>
-
-                                <div className="flex items-center gap-2">
-                                  <DollarSign className="w-5 h-5 text-gray-500" />
-                                  <span>
-                                    {order?.shippingCost
-                                      ? `$${order.shippingCost}`
-                                      : "N/A"}
-                                  </span>
-                                </div>
-
-                                <div className="flex items-center gap-2">
-                                  <Mail className="w-5 h-5 text-gray-500" />
-                                  <span>{order?.customer?.email || "N/A"}</span>
-                                </div>
-
-                                <div className="flex items-center gap-2">
-                                  <Calendar className="w-5 h-5 text-gray-500" />
-                                  <span>{order?.shippedAt || "N/A"}</span>
-                                </div>
-
-                                {/* Contact Section */}
-                                <h4 className="font-semibold">Contact</h4>
-
-                                <div className="flex items-center gap-2">
-                                  <Phone className="w-5 h-5 text-gray-500" />
-                                  <span>{order?.customer?.phone || "N/A"}</span>
-                                </div>
-
-                                <div className="flex items-center gap-2">
-                                  <Mail className="w-5 h-5 text-gray-500" />
-                                  <span>{order?.customer?.email || "N/A"}</span>
+                                  <div className="flex items-center gap-2">
+                                    <Clock className="w-5 h-5 text-gray-500" />
+                                    <span>
+                                      {order?.customer?.updatedAt || "N/A"}
+                                    </span>
+                                  </div>
                                 </div>
                               </div>
-                            </div>
 
-                            <div className="flex flex-wrap max-w-full ">
-                              {/* Left - Item count */}
-                              <div className="flex flex-col border-r pr-3 mr-3 min-w-[100px]">
-                                <h4 className="whitespace-nowrap">
-                                  {order?.products?.length} items
-                                </h4>
+                              <div className="flex">
+                                {/* Left Side: Shipping Title & Copy Button */}
+                                <div className="flex flex-col border-r pr-3 mr-3 space-y-2">
+                                  <h4 className="font-semibold">Shipping</h4>
+                                  <button
+                                    className="!px-2 !py-1 text-blue-500 border-blue-400 border text-base"
+                                    onClick={copyBilling}
+                                  >
+                                    Copy
+                                  </button>
+                                </div>
+
+                                {/* Right Side: Shipping Info with Icons */}
+                                <div className="flex flex-col space-y-2">
+                                  {/* Customer Info */}
+                                  <p>
+                                    {order?.customer?.firstName}{" "}
+                                    {order?.customer?.lastName}
+                                    <br />
+                                    {order?.customer?.address}
+                                    <br />
+                                    {order?.customer?.state}
+                                  </p>
+
+                                  {/* Method Section */}
+                                  <h4 className="font-semibold">Method</h4>
+
+                                  <div className="flex items-center gap-2">
+                                    <Ship className="w-5 h-5 text-gray-500" />
+                                    <span>
+                                      {order?.billingInformation
+                                        ?.shippingMethod || "N/A"}
+                                    </span>
+                                  </div>
+
+                                  <div className="flex items-center gap-2">
+                                    <DollarSign className="w-5 h-5 text-gray-500" />
+                                    <span>
+                                      {order?.shippingCost
+                                        ? `$${order.shippingCost}`
+                                        : "N/A"}
+                                    </span>
+                                  </div>
+
+                                  <div className="flex items-center gap-2">
+                                    <Mail className="w-5 h-5 text-gray-500" />
+                                    <span>{order?.customer?.email || "N/A"}</span>
+                                  </div>
+
+                                  <div className="flex items-center gap-2">
+                                    <Calendar className="w-5 h-5 text-gray-500" />
+                                    <span>{order?.shippedAt || "N/A"}</span>
+                                  </div>
+
+                                  {/* Contact Section */}
+                                  <h4 className="font-semibold">Contact</h4>
+
+                                  <div className="flex items-center gap-2">
+                                    <Phone className="w-5 h-5 text-gray-500" />
+                                    <span>{order?.customer?.phone || "N/A"}</span>
+                                  </div>
+
+                                  <div className="flex items-center gap-2">
+                                    <Mail className="w-5 h-5 text-gray-500" />
+                                    <span>{order?.customer?.email || "N/A"}</span>
+                                  </div>
+                                </div>
                               </div>
 
-                              {/* Right - Details */}
-                              <div className="flex flex-col flex-1 min-w-0">
-                                {/* Product list */}
-                                <div className="p-4 border-b space-y-4">
-                                  {order?.products?.map(
-                                    (item: any, index: number) => (
-                                      <div
-                                        key={index}
-                                        className="flex justify-between gap-4 flex-wrap"
-                                      >
-                                        <div className="text-base leading-5 break-words  min-w-0 overflow-hidden">
-                                          <p className="font-semibold">
-                                            {item?.quantity} x{" "}
-                                            <span className="text-blue-600 hover:underline whitespace-normal break-words leading-snug max-w-[300px]">
-                                              {item?.product?.name}
-                                            </span>
-                                          </p>
-                                          <p className="text-xs text-gray-500">
-                                            {item?.product?.optionSet?.title}
-                                          </p>
-                                          <p className="text-sm mt-1">
-                                            <strong>Model:</strong>{" "}
-                                            {item?.product?.sku}
-                                            <br />
-                                            <strong>Brand:</strong>{" "}
-                                            {item?.product?.brand || "N/A"}
-                                          </p>
-                                        </div>
+                              <div className="flex flex-wrap max-w-full ">
+                                {/* Left - Item count */}
+                                <div className="flex flex-col border-r pr-3 mr-3 min-w-[100px]">
+                                  <h4 className="whitespace-nowrap">
+                                    {order?.products?.length} items
+                                  </h4>
+                                </div>
 
-                                        {/* <div className="text-sm font-medium whitespace-nowrap">
+                                {/* Right - Details */}
+                                <div className="flex flex-col flex-1 min-w-0">
+                                  {/* Product list */}
+                                  <div className="p-4 border-b space-y-4">
+                                    {order?.products?.map(
+                                      (item: any, index: number) => (
+                                        <div
+                                          key={index}
+                                          className="flex justify-between gap-4 flex-wrap"
+                                        >
+                                          <div className="text-base leading-5 break-words  min-w-0 overflow-hidden">
+                                            <p className="font-semibold">
+                                              {item?.quantity} x{" "}
+                                              <span className="text-blue-600 hover:underline whitespace-normal break-words leading-snug max-w-[300px]">
+                                                {item?.product?.name}
+                                              </span>
+                                            </p>
+                                            <p className="text-xs text-gray-500">
+                                              {item?.product?.optionSet?.title}
+                                            </p>
+                                            <p className="text-sm mt-1">
+                                              <strong>Model:</strong>{" "}
+                                              {item?.product?.sku}
+                                              <br />
+                                              <strong>Brand:</strong>{" "}
+                                              {item?.product?.brand || "N/A"}
+                                            </p>
+                                          </div>
+
+                                          {/* <div className="text-sm font-medium whitespace-nowrap">
                                           £
                                           {(item.price * item.quantity).toFixed(
                                             2
                                           )}
                                         </div> */}
-                                      </div>
-                                    )
-                                  )}
+                                        </div>
+                                      )
+                                    )}
 
-                                  <button className="flex items-center mt-4 px-3 py-1.5 text-base font-semibold border border-blue-500 text-blue-600 hover:bg-blue-50 rounded w-fit">
-                                    <svg
-                                      className="w-4 h-4 mr-2"
-                                      fill="none"
-                                      stroke="currentColor"
-                                      strokeWidth="2"
-                                      viewBox="0 0 24 24"
-                                    >
-                                      <path d="M3 3h2l.4 2M7 13h14l-1.5 8H6L4.5 5H20"></path>
-                                    </svg>
-                                    Ship Items
-                                  </button>
-                                </div>
+                                    <button className="flex items-center mt-4 px-3 py-1.5 text-base font-semibold border border-blue-500 text-blue-600 hover:bg-blue-50 rounded w-fit">
+                                      <svg
+                                        className="w-4 h-4 mr-2"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        viewBox="0 0 24 24"
+                                      >
+                                        <path d="M3 3h2l.4 2M7 13h14l-1.5 8H6L4.5 5H20"></path>
+                                      </svg>
+                                      Ship Items
+                                    </button>
+                                  </div>
 
-                                {/* Totals */}
-                                <div className="bg-gray-100 p-4 text-sm space-y-2">
-                                  <div className="flex justify-between">
-                                    <span>Subtotal</span>
-                                    <span>
-                                      £
-                                      {order?.products
-                                        .reduce(
-                                          (acc: number, item: any) =>
-                                            acc + item.price * item.quantity,
-                                          0
-                                        )
-                                        .toFixed(2)}
-                                    </span>
-                                  </div>
-                                  <div className="flex justify-between">
-                                    <span>Shipping</span>
-                                    <span>
-                                      £
-                                      {Number(order?.shippingCost || 0).toFixed(
-                                        2
-                                      )}
-                                    </span>
-                                  </div>
-                                  <div className="flex justify-between">
-                                    <span>VAT / TAX</span>
-                                    <span>
-                                      £{Number(order?.tax || 0).toFixed(2)}
-                                    </span>
-                                  </div>
-                                  <div className="flex justify-between font-semibold text-base pt-2 border-t">
-                                    <span>GRAND TOTAL</span>
-                                    <span>
-                                      £{Number(order?.totalAmount).toFixed(2)}
-                                    </span>
+                                  {/* Totals */}
+                                  <div className="bg-gray-100 p-4 text-sm space-y-2">
+                                    <div className="flex justify-between">
+                                      <span>Subtotal</span>
+                                      <span>
+                                        £
+                                        {order?.products
+                                          .reduce(
+                                            (acc: number, item: any) =>
+                                              acc + item.price * item.quantity,
+                                            0
+                                          )
+                                          .toFixed(2)}
+                                      </span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                      <span>Shipping</span>
+                                      <span>
+                                        £
+                                        {Number(order?.shippingCost || 0).toFixed(
+                                          2
+                                        )}
+                                      </span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                      <span>VAT / TAX</span>
+                                      <span>
+                                        £{Number(order?.tax || 0).toFixed(2)}
+                                      </span>
+                                    </div>
+                                    <div className="flex justify-between font-semibold text-base pt-2 border-t">
+                                      <span>GRAND TOTAL</span>
+                                      <span>
+                                        £{Number(order?.totalAmount).toFixed(2)}
+                                      </span>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
                             </div>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </Fragment>
-                ))
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </Fragment>
+                  )
+                })
               )}
             </TableBody>
           </Table>

@@ -16,51 +16,6 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import Spinner from "../../loader/Spinner";
 import { fetchCustomers } from "@/redux/slices/customerSlice";
 
-const customers = [
-  {
-    name: "Stacy Clark",
-    email: "stacy.clark@xylem.com",
-    phone: "12244960842",
-    joinDate: "19 hours ago",
-  },
-  {
-    name: "jane malaise",
-    email: "janembears68@yahoo.com",
-    phone: "9795743063",
-    joinDate: "21 hours ago",
-  },
-  {
-    name: "Kathleen OMara",
-    email: "katieomara63@gmail.com",
-    phone: "6462390919",
-    joinDate: "22 hours ago",
-  },
-  {
-    name: "David Lebov",
-    email: "davidl@sourcecode.com",
-    phone: "781-367-9802",
-    joinDate: "Tuesday at 04:28pm",
-  },
-  {
-    name: "Tierney Becho",
-    email: "tierney.becho@pnnl.gov",
-    phone: "509-372-5920",
-    joinDate: "Monday at 02:22pm",
-  },
-  {
-    name: "Rena Prato",
-    email: "dannyfr22@yahoo.com",
-    phone: "2672962223",
-    joinDate: "Jul 25th, 2025",
-  },
-  {
-    name: "Elisabeth Koponick",
-    email: "elisabeth.koponick@churchofjes...",
-    phone: "484-653-9454",
-    joinDate: "Jul 24th, 2025",
-  },
-];
-
 export default function CustomerExportPreview() {
   const dispatch = useAppDispatch();
   const { customers, loading } = useAppSelector((state: any) => state?.customer);

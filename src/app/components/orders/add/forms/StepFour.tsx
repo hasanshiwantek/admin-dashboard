@@ -17,7 +17,16 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
       router.push("/manage/orders/");
     }
   };
+  const getDeviceType = () => {
+    if (typeof window === "undefined") return "desktop";
 
+    const userAgent = navigator.userAgent;
+
+    if (/mobile/i.test(userAgent)) return "mobile";
+    if (/tablet/i.test(userAgent)) return "tablet";
+
+    return "desktop";
+  };
   const onSubmit = async () => {
     const values = getValues(); // ✅ collect all step data
 
@@ -59,6 +68,7 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
     const finalPayload = (() => {
       if (isNewCustomer) {
         return {
+          deviceType: getDeviceType(),
           customerId: null,
           email: values.email || "",
           password: values.password || "",
@@ -126,6 +136,7 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
         };
       } else {
         return {
+          deviceType: getDeviceType(),
           customerId: values.selectedCustomer?.id || null,
           billingInformation: {
             firstName: values.firstName || "",
