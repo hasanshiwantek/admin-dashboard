@@ -49,7 +49,7 @@ import {
   DollarSign,
   CreditCard,
   Monitor,
-  Tablet
+  Smartphone
 } from "lucide-react";
 import countries from "i18n-iso-countries";
 import Spinner from "../loader/Spinner";
@@ -65,11 +65,6 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 
 countries?.registerLocale(enLocale);
 
-// const getISO2 = (code: string) => {
-//   if (!code) return "";
-//   if (code.length === 2) return code.toUpperCase();
-//   return countries.alpha3ToAlpha2(code) || code;
-// };
 const getISO2 = (code: string) => {
   if (!code) return "";
   const upper = code.toUpperCase();
@@ -88,7 +83,7 @@ export const countriesListIcons = countriesListIconsRaw?.map((country) => {
 });
 const AllOrders = () => {
   const dispatch = useAppDispatch();
-  const orders = useAppSelector((state: any) => state.order.orders);
+  const orders = useAppSelector((state: any) => state?.order?.orders);
   const pagination = orders?.pagination;
   // const [currentPage, setCurrentPage] = useState(1);
   // const [perPage, setPerPage] = useState("50");
@@ -104,7 +99,7 @@ const AllOrders = () => {
   };
   const { loading, error } = useAppSelector((state) => state.order);
   const [activeTab, setActiveTab] = useState("All orders");
- 
+
   const filteredOrders = orders?.data || [];
 
   const tabs = [
@@ -740,14 +735,11 @@ const AllOrders = () => {
                 </TableRow>
               ) : (
                 filteredOrders?.map((order: any, idx: number) => {
-                  // const countryData = countriesListIcons?.find(
-                  //   (c) => c?.iso2 === getISO2(order?.billingInformation?.country)
-                  // );
                   const countryData = countriesListIcons?.find(
-  (c) => 
-    c.iso2 === getISO2(order?.billingInformation?.country) ||
-    c.value === order?.billingInformation?.country
-);
+                    (c) =>
+                      c.iso2 === getISO2(order?.billingInformation?.country) ||
+                      c.value === order?.billingInformation?.country
+                  );
                   return (
                     <Fragment key={order?.id}>
                       <TableRow key={order?.id}>
@@ -772,11 +764,29 @@ const AllOrders = () => {
                           </button>
                         </TableCell>
                         <TableCell>
-                          {order?.deviceType === "desktop" ? (
-                            <Monitor className="h-9 w-9 " />
-                          ) : order?.deviceType === "mobile" ? (
-                            <Tablet className="h-9 w-9 " />
-                          ) : ""}
+                          {order?.deviceType === "tablet" || order?.deviceType === "mobile" ? (
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Smartphone className="h-9 w-9" />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  {order?.deviceType?.toUpperCase()}
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          ) : (
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Monitor className="h-9 w-9" />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  {order?.deviceType?.toUpperCase() || "desktop".toUpperCase()}
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          )}
                         </TableCell>
 
                         <TableCell className="2xl:!text-2xl">
@@ -805,11 +815,11 @@ const AllOrders = () => {
                                       src={countryData?.flag as string}
                                       width={22}
                                       height={22}
-                                      className="rounded-sm object-cover cursor-pointer"
+                                      className="rounded-sm object-cover"
                                       alt={countryData?.label || ""}
                                     />
                                   ) : (
-                                    <span className="cursor-pointer">🏳️</span>
+                                    <span className="">🏳️</span>
                                   )}
                                 </TooltipTrigger>
                                 <TooltipContent>
@@ -1205,8 +1215,6 @@ const AllOrders = () => {
           order={selectedOrder}
           onClose={() => setShowShipmentModal(false)}
           onSubmit={async (data) => {
-            console.log("Shipment Data:", data);
-
             try {
               // First, add the shipment
               await dispatch(addShipmentOrder({ data }));
