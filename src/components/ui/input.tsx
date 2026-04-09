@@ -10,6 +10,7 @@ function Input({
     <input
       type={type}
       data-slot="input"
+      step={type === "number" ? "any" : undefined}
       onWheel={(e) => e.currentTarget.blur()}
       className={cn(
         // Base styles
