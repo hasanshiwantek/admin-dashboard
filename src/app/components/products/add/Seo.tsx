@@ -64,7 +64,19 @@ export default function Seo() {
                 </Tooltip>
               </TooltipProvider>
             </Label>
-            <Input className="!max-w-[85%] w-full" id="ProductUrl" placeholder="" {...register("productUrl")} />
+            <Input 
+                 onKeyDown={(e) => {
+                if (/[#$*&@!=+%`'"|]/.test(e.key)) {
+                  e.preventDefault();
+                }
+              }}
+              onPaste={(e) => {
+                const pasted = e.clipboardData.getData("text");
+                if (/[#$*&@!=+%`'"|]/.test(pasted)) {
+                  e.preventDefault();
+                }
+              }}
+              className="!max-w-[85%] w-full" id="ProductUrl" placeholder="" {...register("productUrl")} />
             <button className="btn-outline-primary !py-2" type="button" onClick={() => setValue("productUrl", "")}
             >Reset</button>
           </div>
