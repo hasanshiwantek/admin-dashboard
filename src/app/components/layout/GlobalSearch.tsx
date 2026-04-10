@@ -15,6 +15,8 @@ type SearchResult = {
 
 const GlobalSearchBar = () => {
   const [query, setQuery] = useState("");
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const [results, setResults] = useState<SearchResult[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
 
@@ -75,7 +77,7 @@ const GlobalSearchBar = () => {
     router.push(url);
   };
 
-  const handleIconClick = () => {
+  const handleIconClick = (e?: React.ChangeEvent<HTMLInputElement>) => {
     if (query.trim()) {
       dispatch(globalSearch({ query }));
       setShowDropdown(true);
@@ -83,6 +85,22 @@ const GlobalSearchBar = () => {
     }
   };
 
+  const handleOnchange = (e?: any) => {
+    const value: any = e.target.value;
+    setQuery(value);
+
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+
+    if (value.trim()) {
+      debounceRef.current = setTimeout(() => {
+        dispatch(globalSearch({ query: value }));
+        setShowDropdown(true);
+      }, 500);
+      inputRef.current?.focus();
+    } else {
+      setShowDropdown(false);
+    }
+  };
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (
@@ -104,7 +122,7 @@ const GlobalSearchBar = () => {
         focus-within:ring-3 focus-within:ring-blue-200 focus-within:border-blue-200
         border border-[#2c2c2c] transition hover:border-blue-200 w-[70%] lg:w-full"
       >
-        <i onClick={handleIconClick}>
+        <i onClick={() => handleIconClick()}>
           <IoSearchOutline
             size={20}
             color="lightgray"
@@ -117,7 +135,8 @@ const GlobalSearchBar = () => {
           placeholder=" Search products, orders, customers, or navigate to"
           className="w-[40rem] !ml-3 bg-transparent text-white !text-xl !font-medium outline-none placeholder:text-gray-100 2xl:!text-2xl"
           value={query}
-          onChange={handleChange}
+          // onChange={handleChange}
+          onChange={handleOnchange}
           onFocus={() => results.length > 0 && setShowDropdown(true)}
           onKeyDown={(e) => {
             if (e.key === "Enter") {

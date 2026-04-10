@@ -99,6 +99,7 @@ const AllOrders = () => {
   };
   const { loading, error } = useAppSelector((state) => state.order);
   const [activeTab, setActiveTab] = useState("All orders");
+  const [filterProductId, setFilterProductId] = useState<string>("");
 
   const filteredOrders = orders?.data || [];
 
@@ -304,6 +305,7 @@ const AllOrders = () => {
   const [keyword, setKeyword] = useState("");
 
   const filterHandler = async () => {
+    setFilterProductId("")
     try {
       const resultAction = await dispatch(
         fetchOrderByKeyword({
@@ -446,6 +448,7 @@ const AllOrders = () => {
 
   // FETCH ORDERS LOGIC
 
+  const productId = localStorage.getItem("filterProductId");
 
   const queryObject: Record<string, any> = {};
   searchParams.forEach((value, key) => {
@@ -461,7 +464,7 @@ const AllOrders = () => {
 
 
   useEffect(() => {
-    if (!searchParams.get("t")) return;
+    if (!searchParams.get("t") || productId) return;
     setSelectedOrderIds([]);
     setActiveTab("All orders");
     setKeyword("");
@@ -486,13 +489,30 @@ const AllOrders = () => {
         })
       );
     } else {
-      dispatch(fetchAllOrders({ page: currentPage, perPage, status: activeTab }));
+      if (!productId) {
+        dispatch(fetchAllOrders({ page: currentPage, perPage, status: activeTab }));
+      }
     }
   }, [searchParams]); // ✅ triggers when URL changes
 
+
   useEffect(() => {
-    dispatch(fetchAllOrders({ page: currentPage, perPage, status: activeTab }));
+    if (!productId) {
+      dispatch(fetchAllOrders({ page: currentPage, perPage, status: activeTab }));
+    }
   }, [activeTab])
+
+
+
+  useEffect(() => {
+    if (productId) {
+      dispatch(fetchAllOrders({ page: currentPage, perPage, status: activeTab, productId: productId }));
+      setTimeout(() => {
+        localStorage.removeItem("filterProductId"); // ✅ use ke baad clear karo
+      }, 1000)
+    }
+  }, []);
+
 
   const handleExport = () => {
     if (!selectedOrderIds.length) return
@@ -549,7 +569,10 @@ const AllOrders = () => {
               ? "border-blue-600 font-semibold"
               : "border-transparent text-gray-500 hover:text-black"
               }`}
-            onClick={() => setActiveTab(tab)}
+            onClick={() => {
+              setFilterProductId("")
+              setActiveTab(tab)
+            }}
           >
             {tab}
           </button>
@@ -675,6 +698,7 @@ const AllOrders = () => {
             className="btn-outline-primary 2xl:!text-2xl"
             onClick={() => {
               setKeyword("");
+              setFilterProductId("")
               dispatch(fetchAllOrders({ page: currentPage, perPage, status: activeTab }));
             }}
           >
