@@ -309,6 +309,12 @@ export default function AllProducts() {
       },
     },
     {
+      label: "Duplicate",
+      onClick: () => {
+        router.push(`/manage/products/dublicate/${product?.id}?isDuplicate=true`)
+      },
+    },
+    {
       label: "View Storefront",
       onClick: () => {
         // Get the base URL from selected store

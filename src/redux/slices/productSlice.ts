@@ -466,6 +466,11 @@ const productSlice = createSlice({
     clearSelectedProducts: (state) => {
       state.selectedProducts = [];
     },
+    resetSingleProduct: (state) => {
+      state.singleProduct = [];
+      state.loading = false;
+      state.error = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -558,6 +563,6 @@ const productSlice = createSlice({
       });
   },
 });
-export const { setSelectedProducts, clearSelectedProducts } =
+export const { setSelectedProducts, clearSelectedProducts, resetSingleProduct } =
   productSlice.actions;
 export default productSlice.reducer;

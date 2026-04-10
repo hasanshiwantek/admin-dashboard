@@ -5,7 +5,7 @@ import axiosInstance from "@/lib/axiosInstance";
 export const fetchAllOrders = createAsyncThunk(
   "orders/fetchAllOrders",
   async (
-    { page, perPage, status }: { page: number; perPage: number | string; status?: string },
+    { page, perPage, status, productId }: { page: number; perPage: number | string; status?: string, productId?: string },
     thunkAPI,
   ) => {
     try {
@@ -13,6 +13,7 @@ export const fetchAllOrders = createAsyncThunk(
         page: String(page),
         perPage: String(perPage),
         ...(status && status !== "All orders" && { status }), // ✅ only add if not "All orders"
+        ...(productId && { productId: String(productId) }), // ✅ correct
       });
 
       const res = await axiosInstance.get(
