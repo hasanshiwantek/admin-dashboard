@@ -119,6 +119,11 @@ const GlobalSearchBar = () => {
           value={query}
           onChange={handleChange}
           onFocus={() => results.length > 0 && setShowDropdown(true)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleIconClick();
+            }
+          }}
         />
       </div>
 
