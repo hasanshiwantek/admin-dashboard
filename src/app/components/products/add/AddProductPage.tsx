@@ -65,6 +65,7 @@ export default function AddProductPage() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const exitAfterSaveRef = useRef(false);
+  const [redirectUpdateScreen, setRedirectUpdateScreen] = useState<any>(null)
   const copyAfterSaveRef = useRef(false)
   const hasUpdatedOriginalRef = useRef(false); // ✅ tracks if update already happened
   const searchParams = useSearchParams();
@@ -171,6 +172,11 @@ export default function AddProductPage() {
     }
   }, [id, reset]);
 
+  useEffect(() => {
+    if (redirectUpdateScreen) {
+
+    }
+  }, [redirectUpdateScreen])
 
   const onSubmit = methods.handleSubmit(async (data: Record<string, any>) => {
     setIsLoading(true);
@@ -393,7 +399,7 @@ export default function AddProductPage() {
 
             if (actionCreator.fulfilled.match(result)) {
               if (exitAfterSaveRef.current) {
-                router.push("/manage/products");
+                router.push(`/manage/products/edit/${result?.payload?.data?.id}`)
               } else if (!isEdit) {
                 router.push("/manage/products/add");
               }
@@ -428,7 +434,7 @@ export default function AddProductPage() {
       (scrollEl as Element).scrollTop = 0;
     }
 
-    setIsScrolled(false); 
+    setIsScrolled(false);
 
     const handleScroll = () => {
       const scrollTop =
@@ -581,11 +587,11 @@ export default function AddProductPage() {
                 {isLoading && exitAfterSaveRef.current && (
                   <span className="h-4 w-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
                 )}
-                Duplicate & Exit
+                Duplicate
               </button>
 
               {/* Duplicate */}
-              <button
+              {/* <button
                 type="submit"
                 disabled={isLoading}
                 className="btn-primary flex items-center gap-2"
@@ -595,7 +601,7 @@ export default function AddProductPage() {
                   <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                 )}
                 {isLoading ? "Duplicating..." : "Duplicate Product"}
-              </button>
+              </button> */}
             </div> : <div className="flex justify-end gap-4 items-center fixed w-full bottom-0 right-0 bg-white/90 z-10 shadow-xs border-t p-4">
               {/* Cancel */}
               <Link href={"/manage/products"}>
@@ -635,11 +641,11 @@ export default function AddProductPage() {
               </button>
 
               {/* Save / Update — same page pe raho */}
-              <button
+              {!isEdit && <button
                 type="submit"
                 disabled={isLoading}
                 className="btn-primary flex items-center gap-2"
-                onClick={() => { exitAfterSaveRef.current = false; }}
+                onClick={() => { exitAfterSaveRef.current = true; }}
               >
                 {isLoading && (
                   <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -647,7 +653,7 @@ export default function AddProductPage() {
                 {isEdit
                   ? isLoading ? "Updating..." : "Update Product"
                   : isLoading ? "Saving..." : "Save Product"}
-              </button>
+              </button>}
             </div>}
           </form>
         </FormProvider>

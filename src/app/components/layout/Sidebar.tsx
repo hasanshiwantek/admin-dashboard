@@ -79,11 +79,14 @@ export const SideBar = ({ onClose }: { onClose?: () => void }) => {
                               }`}
                             onClick={(e) => {
                               const link = ["/manage/products", "/manage/products/brands", "/manage/products/categories", "/manage/orders", "/manage/products/export", "/manage/orders/export", "/manage/customers/export"]
+                              // console.log(pathname, child.url);
+
                               if (pathname === child.url) {
                                 e.preventDefault();
-                                if (link.includes(child.url)) {
-                                  router.push(`${child.url}?t=${Date.now()}`);
-                                }
+                                // if (link.includes(child.url)) {
+                                // router.push(`${child.url}?t=${Date.now()}`);
+                                window.location.reload()
+                                // }
                               }
                             }}
                           >

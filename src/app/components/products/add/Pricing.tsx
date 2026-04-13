@@ -53,15 +53,15 @@ export default function Pricing() {
           <Controller
             name="taxClass"
             control={control}
-            defaultValue="non-taxable"
+            defaultValue="taxable"
             render={({ field }) => (
               <Select value={field.value} onValueChange={field.onChange}>
                 <SelectTrigger className="!max-w-[100%] w-full">
                   <SelectValue placeholder="Select a tax class" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="taxable">Default Tax Class</SelectItem>
                   <SelectItem value="non-taxable">Non-taxable</SelectItem>
-                  <SelectItem value="taxable">Taxable</SelectItem>
                   <SelectItem value="shipping">Shipping</SelectItem>
                   <SelectItem value="gift-wrapping">Gift Wrapping</SelectItem>
                 </SelectContent>

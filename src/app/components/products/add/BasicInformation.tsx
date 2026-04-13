@@ -105,6 +105,17 @@ export default function BasicInfoForm() {
             <div>
               <Label className="2xl:!text-2xl" htmlFor="sku">SKU</Label>
               <Input
+                onKeyDown={(e) => {
+                  if (/[#$*&@!=+%`'"^()|]/.test(e.key)) {
+                    e.preventDefault();
+                  }
+                }}
+                onPaste={(e) => {
+                  const pasted = e.clipboardData.getData("text");
+                  if (/[#$*&@!=+%`'"^()|]/.test(pasted)) {
+                    e.preventDefault();
+                  }
+                }}
                 className="!max-w-[90%] w-full" id="sku" placeholder="THX-1138" {...register("sku")} required />
             </div>
 
