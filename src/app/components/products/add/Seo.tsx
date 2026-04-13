@@ -64,15 +64,25 @@ export default function Seo() {
                 </Tooltip>
               </TooltipProvider>
             </Label>
+<<<<<<< HEAD
             <Input
               onKeyDown={(e) => {
                 if (/[#$*&@!=+%`'"^()|]/.test(e.key)) {
+=======
+            <Input 
+                 onKeyDown={(e) => {
+                if (/[#$*&@!=+%`'"|]/.test(e.key)) {
+>>>>>>> f268c27941ae9c2eb3cfa43f000eb19d3669e52a
                   e.preventDefault();
                 }
               }}
               onPaste={(e) => {
                 const pasted = e.clipboardData.getData("text");
+<<<<<<< HEAD
                 if (/[#$*&@!=+%`'"^()|]/.test(pasted)) {
+=======
+                if (/[#$*&@!=+%`'"|]/.test(pasted)) {
+>>>>>>> f268c27941ae9c2eb3cfa43f000eb19d3669e52a
                   e.preventDefault();
                 }
               }}
