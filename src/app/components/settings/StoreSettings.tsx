@@ -26,6 +26,8 @@ import Spinner from "../loader/Spinner";
 import {
   createStoreSettings,
   fetchStoreSettings,
+  fetchUrlSettings,
+  urlSettings,
 } from "@/redux/slices/homeSlice";
 // FormField Component
 export const FormField = ({
@@ -634,21 +636,133 @@ export const StoreSettings = ({
     };
   };
 
+  // const handleSave = async () => {
+  //   const payload = preparePayload();
+
+  //   try {
+  //     const response = await dispatch(createStoreSettings({ data: payload }));
+  //     if (createStoreSettings.fulfilled.match(response)) {
+  //       // Show success message to user
+  //       // onBack();
+  //     } else {
+  //     }
+  //   } catch (error) {
+  //     console.error("Error saving settings:", error);
+  //     alert("Failed to save settings. Please try again.");
+  //   }
+  // };
+
   const handleSave = async () => {
     const payload = preparePayload();
 
     try {
       const response = await dispatch(createStoreSettings({ data: payload }));
+
       if (createStoreSettings.fulfilled.match(response)) {
-        // Show success message to user
-        // onBack();
-      } else {
+
+        // ✅ SUCCESS: Now also save URL Structure settings individually
+        // const urlPayloads = {
+        //   product: {
+        //     format_type: urlStructureSettings.productUrlFormat === "custom" 
+        //       ? "custom" 
+        //       : urlStructureSettings.productUrlFormat === "seo-optimized-short" 
+        //         ? "seo_optimized_short" 
+        //         : "seo_optimized_long"
+        //   },
+        //   category: {
+        //     format_type: urlStructureSettings.categoryUrlFormat === "custom" 
+        //       ? "custom" 
+        //       : urlStructureSettings.categoryUrlFormat === "seo-optimized-short" 
+        //         ? "seo_optimized_short" 
+        //         : "seo_optimized_category"
+        //   },
+        //   // webPage: {
+        //   //   format_type: urlStructureSettings.webPageUrlFormat === "custom" 
+        //   //     ? "custom" 
+        //   //     : urlStructureSettings.webPageUrlFormat === "seo-optimized-short" 
+        //   //       ? "seo_optimized_short" 
+        //   //       : "seo_optimized_long"
+        //   // }
+        // };
+        // Inside handleSave function in StoreSettings component
+        const urlPayloads = {
+          product: (() => {
+            const format = urlStructureSettings.productUrlFormat;
+            if (format === "custom") {
+              return {
+                format_type: "custom",
+                custom_format: urlStructureSettings.productCustomUrl?.trim() || "/%title%/",
+              };
+            }
+            return {
+              format_type: format === "seo-optimized-short"
+                ? "seo_optimized_short"
+                : "seo_optimized_long",
+            };
+          })(),
+
+          category: (() => {
+            const format = urlStructureSettings.categoryUrlFormat;
+            if (format === "custom") {
+              return {
+                format_type: "custom",
+                custom_format: urlStructureSettings.categoryCustomUrl?.trim() || "/%categoryname%/",
+              };
+            }
+            return {
+              format_type: format === "seo-optimized-short"
+                ? "seo_optimized_short"
+                : "seo_optimized_long",   // as per your requirement
+            };
+          })(),
+
+          // webPage: (() => {
+          //   const format = urlStructureSettings.webPageUrlFormat;
+          //   if (format === "custom") {
+          //     return {
+          //       format_type: "custom",
+          //       custom_format: urlStructureSettings.webPageCustomUrl?.trim() || "/%pagename%/",
+          //     };
+          //   }
+          //   return {
+          //     format_type: format === "seo-optimized-short"
+          //       ? "seo_optimized_short"
+          //       : "seo_optimized_long",
+          //   };
+          // })(),
+        };
+        // Save each URL section individually
+        await Promise.all([
+          dispatch(urlSettings({
+            data: urlPayloads.product,
+            sectionName: "product"
+          })).unwrap(),
+
+          dispatch(urlSettings({
+            data: urlPayloads.category,
+            sectionName: "category"
+          })).unwrap(),
+
+          // dispatch(urlSettings({ 
+          //   data: urlPayloads.webPage, 
+          //   sectionName: "webPage" 
+          // })).unwrap()
+        ]);
+
+        // Refresh URL settings
+        // dispatch(fetchUrlSettings("product"));
+        // dispatch(fetchUrlSettings("category"));
+        // dispatch(fetchUrlSettings("webPage"));
+
+        // toast.success("All settings saved successfully!");
+        // onBack(); // uncomment if you want to go back
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error saving settings:", error);
-      alert("Failed to save settings. Please try again.");
+      // toast.error("Failed to save some settings. Please try again.");
     }
   };
+
   const [activeTab, setActiveTab] = useState(initialTab || "website");
 
   // Show loading state while fetching
