@@ -586,7 +586,7 @@ export default function AddProductPage() {
                 {isLoading && exitAfterSaveRef.current && (
                   <span className="h-4 w-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
                 )}
-                Duplicate
+                Duplicate & Exit
               </button>
 
               {/* Duplicate */}
