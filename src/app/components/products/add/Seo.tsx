@@ -145,7 +145,7 @@ export default function Seo() {
                   setIsUrlManuallyEdited(true);
                 },
               })} />
-            <button disabled={!watchedName} className="btn-outline-primary !py-2" type="button" onClick={() => {
+            <button className="btn-outline-primary !py-2" type="button" onClick={() => {
               setIsUrlManuallyEdited(false)
               if (urlSettingData?.format_type == "seo_optimized_short") {
                 if (watchedName) {
