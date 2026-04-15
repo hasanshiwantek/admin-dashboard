@@ -57,7 +57,7 @@ export default function Seo() {
       if (formatType === "custom" && customFormat) {
         if (brandName || watchedName || watchedSku) {
           const replacements = {
-            "%name%": watchedName ? generateSlug(watchedName) : "",
+            "%title%": watchedName ? generateSlug(watchedName) : "",
             "%sku%": watchedSku ? generateSlug(watchedSku) : "",
             "%brand%": brandName ? generateSlug(brandName) : "",
           };
@@ -164,7 +164,7 @@ export default function Seo() {
               if (formatType === "custom" && customFormat) {
                 if (brandName || watchedName || watchedSku) {
                   const replacements = {
-                    "%name%": watchedName ? generateSlug(watchedName) : "",
+                    "%title%": watchedName ? generateSlug(watchedName) : "",
                     "%sku%": watchedSku ? generateSlug(watchedSku) : "",
                     "%brand%": brandName ? generateSlug(brandName) : "",
                   };
