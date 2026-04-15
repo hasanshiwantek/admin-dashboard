@@ -23,6 +23,8 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import Spinner from "@/app/components/loader/Spinner";
+import { generateSlug } from "@/const/data";
+import { fetchUrlSettings } from "@/redux/slices/homeSlice";
 
 type FormVals = {
     name: string;
@@ -69,9 +71,12 @@ export default function AddSubCategoryPage() {
 
     const idStr = Array.isArray(params.id) ? params.id[0] : params.id;
     const parentCategoryId = Number(idStr);
+    const [isUrlManuallyEdited, setIsUrlManuallyEdited] = useState<boolean>(false);
 
     const dispatch = useAppDispatch();
-
+    const urlSettingData = useAppSelector(
+        (state: any) => state.home?.urlSettingData
+    );
     const catTree = useAppSelector(
         (s: any) => s.category?.categories?.data || []
     );
@@ -105,7 +110,11 @@ export default function AddSubCategoryPage() {
             mounted = false;
         };
     }, [parentCategoryId, dispatch]);
-
+    // useEffect(() => {
+    //     if (parentCategoryId) {
+    //         setIsUrlManuallyEdited(true)
+    //     }
+    // }, [parentCategoryId])
     const {
         register,
         handleSubmit,
@@ -172,9 +181,59 @@ export default function AddSubCategoryPage() {
 
     const onResetSlug = () => {
         if (!nameVal) return;
-        setValue("slug", slugify(nameVal), { shouldDirty: true });
-    };
+        setIsUrlManuallyEdited(false)
+        if (urlSettingData?.format_type == "seo_optimized_short") {
+            if (nameVal) {
+                const slug = generateSlug(nameVal);
+                setValue("slug", `/${slug}`, { shouldDirty: true });
 
+            }
+        } else if (urlSettingData?.format_type == "seo_optimized_long") {
+            if (nameVal) {
+                const slug = generateSlug(nameVal);
+                setValue("slug", `/categories/${slug}`, { shouldDirty: true });
+            }
+        }
+    };
+    useEffect(() => {
+        if (!isUrlManuallyEdited) {
+            if (urlSettingData?.format_type == "seo_optimized_short") {
+                if (nameVal) {
+                    const slug = generateSlug(nameVal);
+                    setValue("slug", `/${slug}`);
+                }
+            } else if (urlSettingData?.format_type == "seo_optimized_long") {
+                if (nameVal) {
+                    const slug = generateSlug(nameVal);
+                    setValue("slug", `/categories/${slug}`);
+                }
+            }
+            const formatType = urlSettingData?.format_type;
+            const customFormat = urlSettingData?.custom_format;
+
+
+            if (formatType === "custom" && customFormat) {
+                if (nameVal) {
+                    const replacements = {
+                        "%name%": nameVal ? generateSlug(nameVal) : "",
+                    };
+
+                    const finalUrl = Object.entries(replacements)
+                        .reduce(
+                            (url, [key, value]) => url.replace(new RegExp(key, "gi"), value),
+                            customFormat
+                        )
+                        .replace(/%[^%]+%/g, "")
+                        .replace(/\/+/g, "/")
+                        .replace(/\/$/g, "");
+                    if (finalUrl) {
+                        setValue("slug", finalUrl);
+                    }
+                }
+            }
+        }
+
+    }, [isUrlManuallyEdited, nameVal]);
     const onPickParent = (val: { id: number; path: string }) => {
         setValue("parent", { id: val.id, path: val.path }, { shouldDirty: true });
     };
@@ -231,6 +290,9 @@ export default function AddSubCategoryPage() {
             localStorage.setItem('storeId', parsedStores[0].id.toString());
         }
     }, []);
+    useEffect(() => {
+        dispatch(fetchUrlSettings("category"));
+    }, [])
     // ✅ SUBMIT: addCategory API call
     const onSubmit = async (vals: FormVals) => {
         try {
@@ -311,9 +373,22 @@ export default function AddSubCategoryPage() {
                                 placeholder="/audio-video-devices-1/"
                                 {...register("slug")}
                                 value={slugVal}
-                                onChange={(e) =>
+                                onChange={(e) => {
+                                    setIsUrlManuallyEdited(true);
                                     setValue("slug", e.target.value, { shouldDirty: true })
                                 }
+                                }
+                                onKeyDown={(e) => {
+                                    if (/[#$*&@!=+%`'"|]/.test(e.key)) {
+                                        e.preventDefault();
+                                    }
+                                }}
+                                onPaste={(e) => {
+                                    const pasted = e.clipboardData.getData("text");
+                                    if (/[#$*&@!=+%`'"|]/.test(pasted)) {
+                                        e.preventDefault();
+                                    }
+                                }}
                                 className="!text-lg flex-1"
                             />
                             <button
