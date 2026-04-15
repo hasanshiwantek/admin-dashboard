@@ -10,11 +10,74 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { HiQuestionMarkCircle } from "react-icons/hi2";
-
+import { useEffect, useState } from "react";
+import { generateSlug } from "@/const/data";
+import { useAppSelector } from "@/hooks/useReduxHooks";
+import { useParams } from "next/navigation";
 export default function Seo() {
   const { register, setValue, watch } = useFormContext();
   const productType = watch("productType");
-  const brand = watch("brand");
+  const { id } = useParams();
+  const [isUrlManuallyEdited, setIsUrlManuallyEdited] = useState<boolean>(false);
+  const urlSettingData = useAppSelector(
+    (state: any) => state.home?.urlSettingData
+  );
+  const { brands } = useAppSelector((state: any) => state.product);
+  const brandId = watch("brandId");
+  const watchedName = watch("name");
+  const watchedSku = watch("sku");
+  const brandName = brands?.data?.find(
+    (item: any) => item?.brand?.id == brandId
+  )?.brand?.name;
+
+
+  useEffect(() => {
+    if (id) {
+      setIsUrlManuallyEdited(true)
+    }
+  }, [id])
+
+  useEffect(() => {
+    if (!isUrlManuallyEdited) {
+      if (urlSettingData?.format_type == "seo_optimized_short") {
+        if (watchedName) {
+          const slug = generateSlug(watchedName);
+          setValue("productUrl", `/${slug}`);
+        }
+      } else if (urlSettingData?.format_type == "seo_optimized_long") {
+        if (watchedName) {
+          const slug = generateSlug(watchedName);
+          setValue("productUrl", `/product/${slug}`);
+        }
+      }
+      const formatType = urlSettingData?.format_type;
+      const customFormat = urlSettingData?.custom_format;
+
+
+      if (formatType === "custom" && customFormat) {
+        if (brandName || watchedName || watchedSku) {
+          const replacements = {
+            "%name%": watchedName ? generateSlug(watchedName) : "",
+            "%sku%": watchedSku ? generateSlug(watchedSku) : "",
+            "%brand%": brandName ? generateSlug(brandName) : "",
+          };
+
+          const finalUrl = Object.entries(replacements)
+            .reduce(
+              (url, [key, value]) => url.replace(new RegExp(key, "gi"), value),
+              customFormat
+            )
+            .replace(/%[^%]+%/g, "")
+            .replace(/\/+/g, "/")
+            .replace(/\/$/g, "");
+          if (finalUrl) {
+            setValue("productUrl", finalUrl);
+          }
+        }
+      }
+
+    }
+  }, [watchedName, watchedSku, isUrlManuallyEdited, brandId]);
 
   return (
     <section id="seo" className="space-y-4 scroll-mt-20">
@@ -76,8 +139,50 @@ export default function Seo() {
                   e.preventDefault();
                 }
               }}
-              className="!max-w-[85%] w-full" id="ProductUrl" placeholder="" {...register("productUrl")} />
-            <button className="btn-outline-primary !py-2" type="button" onClick={() => setValue("productUrl", "")}
+              className="!max-w-[85%] w-full" id="ProductUrl" placeholder=""
+              {...register("productUrl", {
+                onChange: (e) => {
+                  setIsUrlManuallyEdited(true);
+                },
+              })} />
+            <button disabled={!watchedName} className="btn-outline-primary !py-2" type="button" onClick={() => {
+              setIsUrlManuallyEdited(false)
+              if (urlSettingData?.format_type == "seo_optimized_short") {
+                if (watchedName) {
+                  const slug = generateSlug(watchedName);
+                  setValue("productUrl", `/${slug}`);
+                }
+              } else if (urlSettingData?.format_type == "seo_optimized_long") {
+                if (watchedName) {
+                  const slug = generateSlug(watchedName);
+                  setValue("productUrl", `/product/${slug}`);
+                }
+              }
+              const formatType = urlSettingData?.format_type;
+              const customFormat = urlSettingData?.custom_format;
+
+              if (formatType === "custom" && customFormat) {
+                if (brandName || watchedName || watchedSku) {
+                  const replacements = {
+                    "%name%": watchedName ? generateSlug(watchedName) : "",
+                    "%sku%": watchedSku ? generateSlug(watchedSku) : "",
+                    "%brand%": brandName ? generateSlug(brandName) : "",
+                  };
+
+                  const finalUrl = Object.entries(replacements)
+                    .reduce(
+                      (url, [key, value]) => url.replace(new RegExp(key, "gi"), value),
+                      customFormat
+                    )
+                    .replace(/%[^%]+%/g, "")
+                    .replace(/\/+/g, "/")
+                    .replace(/\/$/g, "");
+                  if (finalUrl) {
+                    setValue("productUrl", finalUrl);
+                  }
+                }
+              }
+            }}
             >Reset</button>
           </div>
         </div>

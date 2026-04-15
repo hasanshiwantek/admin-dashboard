@@ -79,7 +79,67 @@ export const createStoreSettings = createAsyncThunk(
     }
   }
 );
+export const urlSettings = createAsyncThunk(
+  "dashboard/url-settings",                    // Better generic type name
+  async ({ data, sectionName }: {
+    data: any;
+    sectionName: "product" | "category" | "webPage";
+  }, thunkAPI) => {
 
+    try {
+      const response = await axiosInstance.post(
+        `dashboard/url-settings/${sectionName}`,   // Dynamic endpoint
+        data
+      );
+
+      return {
+        section: sectionName,
+        data: response.data
+      };
+
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue({
+        section: sectionName,
+        message: error.response?.data?.message || "Failed to update URL settings"
+      });
+    }
+  }
+);
+
+// export const fetchUrlSettings = createAsyncThunk(
+//   "dashboard/url-settings/product",
+//   async (_, thunkAPI) => {
+//     try {
+//       const response = await axiosInstance.get(
+//         "dashboard/url-settings/product"
+//       );
+//       return response.data;
+//     } catch (error: any) {
+//       console.error("❌ Error fetching Store Setting:", error);
+//       return thunkAPI.rejectWithValue("Error fetching Store Setting");
+//     }
+//   }
+// );
+export const fetchUrlSettings = createAsyncThunk(
+  "dashboard/url-settings/fetch",
+  async (sectionName: "product" | "category" | "webPage", thunkAPI) => {
+    try {
+      const response = await axiosInstance.get(
+        `dashboard/url-settings/${sectionName}`   // Dynamic endpoint
+      );
+      return {
+        section: sectionName,
+        data: response.data
+      };
+    } catch (error: any) {
+      console.error(`❌ Error fetching ${sectionName} URL settings:`, error);
+      return thunkAPI.rejectWithValue({
+        section: sectionName,
+        message: error.response?.data?.message || `Error fetching ${sectionName} settings`
+      });
+    }
+  }
+);
 export const fetchStoreSettings = createAsyncThunk(
   "customer/fetchStoreSettings",
   async (_, thunkAPI) => {
@@ -103,8 +163,10 @@ const initialState = {
   searchData: [],
   storeSettings: [],
   settingsLoader: false,
+  urlsettingsLoader: false,
   loading: false,
   error: null as string | null,
+  urlSettingData: null
 };
 
 // 3. Slice
@@ -160,6 +222,31 @@ const homeSlice = createSlice({
       })
       .addCase(fetchStoreSettings.rejected, (state, action) => {
         state.settingsLoader = false;
+        state.error = action.error.message || "Failed to fetch settings data";
+      })
+
+
+
+      .addCase(urlSettings.pending, (state) => {
+        state.urlsettingsLoader = true;
+      })
+      .addCase(urlSettings.fulfilled, (state, action) => {
+        state.urlsettingsLoader = false;
+      })
+      .addCase(urlSettings.rejected, (state, action) => {
+        state.urlsettingsLoader = false;
+        state.error = action.error.message || "Failed to fetch settings data";
+      })
+
+      .addCase(fetchUrlSettings.pending, (state) => {
+        state.urlsettingsLoader = true;
+      })
+      .addCase(fetchUrlSettings.fulfilled, (state, action) => {
+        state.urlsettingsLoader = false;
+        state.urlSettingData = action.payload?.data?.data;
+      })
+      .addCase(fetchUrlSettings.rejected, (state, action) => {
+        state.urlsettingsLoader = false;
         state.error = action.error.message || "Failed to fetch settings data";
       });
   },
