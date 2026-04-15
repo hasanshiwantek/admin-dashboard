@@ -398,7 +398,11 @@ export default function AddProductPage() {
 
             if (actionCreator.fulfilled.match(result)) {
               if (exitAfterSaveRef.current) {
-                router.push(`/manage/products/edit/${result?.payload?.data?.id}`)
+                 if (isEdit) {
+                  router.push("/manage/products");
+                } else {
+                  router.push(`/manage/products/edit/${result?.payload?.data?.id}`)
+                }
               } else if (!isEdit) {
                 router.push("/manage/products/add");
               }
