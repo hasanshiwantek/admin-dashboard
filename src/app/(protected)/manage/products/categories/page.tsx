@@ -3,9 +3,9 @@ import ProductCategoriesPage from '../../../../components/products/categories/Pr
 const page = () => {
   return (
     <>
-    <div className='p-10'>
-      <ProductCategoriesPage/>
-    </div>
+      <div className='p-10'>
+        <ProductCategoriesPage />
+      </div>
     </>
   )
 }

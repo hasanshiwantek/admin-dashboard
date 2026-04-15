@@ -25,6 +25,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Spinner from "@/app/components/loader/Spinner";
+import { fetchUrlSettings } from "@/redux/slices/homeSlice";
+import { generateSlug } from "@/const/data";
 
 type FormVals = {
   name: string;
@@ -81,7 +83,10 @@ export default function EditCategoryPage() {
   const [initial, setInitial] = useState<ApiCategory | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [removeImage, setRemoveImage] = useState(false);
-
+  const [isUrlManuallyEdited, setIsUrlManuallyEdited] = useState<boolean>(false);
+  const urlSettingData = useAppSelector(
+    (state: any) => state.home?.urlSettingData
+  );
   // existing image URL ko pick karne ke liye flexible helper
   const getInitialImageUrl = (cat: any): string | null => {
     // backend se jo aaye us hisab se try kar rahe:
@@ -117,6 +122,11 @@ export default function EditCategoryPage() {
       mounted = false;
     };
   }, [categoryId, dispatch]);
+  useEffect(() => {
+    if (categoryId) {
+      setIsUrlManuallyEdited(true)
+    }
+  }, [categoryId])
 
   // RHF
   const {
@@ -199,9 +209,59 @@ export default function EditCategoryPage() {
 
   const onResetSlug = () => {
     if (!nameVal) return;
-    setValue("slug", slugify(nameVal), { shouldDirty: true });
-  };
+    setIsUrlManuallyEdited(false)
+    if (urlSettingData?.format_type == "seo_optimized_short") {
+      if (nameVal) {
+        const slug = generateSlug(nameVal);
+        setValue("slug", `/${slug}`, { shouldDirty: true });
 
+      }
+    } else if (urlSettingData?.format_type == "seo_optimized_long") {
+      if (nameVal) {
+        const slug = generateSlug(nameVal);
+        setValue("slug", `/categories/${slug}`, { shouldDirty: true });
+      }
+    }
+  };
+  useEffect(() => {
+    if (!isUrlManuallyEdited) {
+      if (urlSettingData?.format_type == "seo_optimized_short") {
+        if (nameVal) {
+          const slug = generateSlug(nameVal);
+          setValue("slug", `/${slug}`);
+        }
+      } else if (urlSettingData?.format_type == "seo_optimized_long") {
+        if (nameVal) {
+          const slug = generateSlug(nameVal);
+          setValue("slug", `/categories/${slug}`);
+        }
+      }
+      const formatType = urlSettingData?.format_type;
+      const customFormat = urlSettingData?.custom_format;
+
+
+      if (formatType === "custom" && customFormat) {
+        if (nameVal) {
+          const replacements = {
+            "%name%": nameVal ? generateSlug(nameVal) : "",
+          };
+
+          const finalUrl = Object.entries(replacements)
+            .reduce(
+              (url, [key, value]) => url.replace(new RegExp(key, "gi"), value),
+              customFormat
+            )
+            .replace(/%[^%]+%/g, "")
+            .replace(/\/+/g, "/")
+            .replace(/\/$/g, "");
+          if (finalUrl) {
+            setValue("slug", finalUrl);
+          }
+        }
+      }
+    }
+
+  }, [isUrlManuallyEdited, nameVal]);
   const onPickParent = (val: { id: number; path: string }) => {
     setValue("parent", { id: val.id, path: val.path }, { shouldDirty: true });
   };
@@ -245,7 +305,9 @@ export default function EditCategoryPage() {
     setValue("image", null, { shouldDirty: true });
     setImagePreview(null);
   };
-
+  useEffect(() => {
+    dispatch(fetchUrlSettings("category"));
+  }, [])
   // --- SUBMIT: ALWAYS FORMDATA ---
   const onSubmit = async (vals: FormVals) => {
     try {
@@ -288,9 +350,9 @@ export default function EditCategoryPage() {
       }
 
       await dispatch(editCategory({ id: categoryId, data: fd })).unwrap();
-      setTimeout(()=>{
+      setTimeout(() => {
         router.push("/manage/products/categories")
-      },2000)
+      }, 2000)
       dispatch(fetchCategories());
     } catch (e) {
       console.error(e);
@@ -333,33 +395,46 @@ export default function EditCategoryPage() {
           </div>
 
           {/* URL + Reset */}
-         <div className="mb-8">
-  {/* Row 1: Label */}
-  <Label className="mb-2 block 2xl:!text-[1.6rem]">
-    URL
-  </Label>
+          <div className="mb-8">
+            {/* Row 1: Label */}
+            <Label className="mb-2 block 2xl:!text-[1.6rem]">
+              URL
+            </Label>
 
-  {/* Row 2: Input + Reset */}
-  <div className="flex items-center gap-4">
-    <Input
-      placeholder="/audio-video-devices-1/"
-      {...register("slug")}
-      value={slugVal}
-      onChange={(e) =>
-        setValue("slug", e.target.value, { shouldDirty: true })
-      }
-      className="!text-lg flex-1"
-    />
+            {/* Row 2: Input + Reset */}
+            <div className="flex items-center gap-4">
+              <Input
+                placeholder="/audio-video-devices-1/"
+                {...register("slug")}
+                value={slugVal}
+                onChange={(e) => {
+                  setIsUrlManuallyEdited(true);
+                  setValue("slug", e.target.value, { shouldDirty: true })
+                }
+                }
+                onKeyDown={(e) => {
+                  if (/[#$*&@!=+%`'"|]/.test(e.key)) {
+                    e.preventDefault();
+                  }
+                }}
+                onPaste={(e) => {
+                  const pasted = e.clipboardData.getData("text");
+                  if (/[#$*&@!=+%`'"|]/.test(pasted)) {
+                    e.preventDefault();
+                  }
+                }}
+                className="!text-lg flex-1"
+              />
 
-    <button
-      type="button"
-      className="text-xl text-blue-600 hover:underline 2xl:!text-[1.6rem]"
-      onClick={onResetSlug}
-    >
-      Reset
-    </button>
-  </div>
-</div>
+              <button
+                type="button"
+                className="text-xl text-blue-600 hover:underline 2xl:!text-[1.6rem]"
+                onClick={onResetSlug}
+              >
+                Reset
+              </button>
+            </div>
+          </div>
 
 
           {/* Description (simple textarea; swap with your rich editor if needed) */}
