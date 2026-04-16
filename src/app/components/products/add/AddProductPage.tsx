@@ -40,6 +40,7 @@ import { buildUpdateProductFormData } from "@/lib/formDataUtils";
 import { useSearchParams } from "next/navigation";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { fetchUrlSettings } from "@/redux/slices/homeSlice";
+import DescriptionEditorQuill from "./DescriptionEditorQuill";
 
 
 const buildCopyNameSku = (name: string, sku: string, productUrl: string) => {
@@ -398,7 +399,7 @@ export default function AddProductPage() {
 
             if (actionCreator.fulfilled.match(result)) {
               if (exitAfterSaveRef.current) {
-                 if (isEdit) {
+                if (isEdit) {
                   router.push("/manage/products");
                 } else {
                   router.push(`/manage/products/edit/${result?.payload?.data?.id}`)
@@ -558,6 +559,10 @@ export default function AddProductPage() {
             <DescriptionEditor />
             {/* FAQ section */}
             <DescriptionEditor fieldName="faq" label="FAQ" height={300} />
+            {/* <DescriptionEditorQuill />
+            FAQ section
+            <DescriptionEditorQuill fieldName="faq" label="FAQ" height={300} /> */}
+
             <ImageVideoUploader initialImages={product?.image || []} />
             <ProductIdentifiers />
             <Pricing />

@@ -25,6 +25,7 @@ import {
 import Spinner from "@/app/components/loader/Spinner";
 import { generateSlug } from "@/const/data";
 import { fetchUrlSettings } from "@/redux/slices/homeSlice";
+import { useSearchParams } from 'next/navigation';
 
 type FormVals = {
     name: string;
@@ -68,10 +69,11 @@ function slugify(s: string) {
 export default function AddSubCategoryPage() {
     const router = useRouter();
     const params = useParams<{ id: string | string[] }>();
-
+    const searchParams = useSearchParams();
     const idStr = Array.isArray(params.id) ? params.id[0] : params.id;
     const parentCategoryId = Number(idStr);
     const [isUrlManuallyEdited, setIsUrlManuallyEdited] = useState<boolean>(false);
+    const rootParentName = searchParams.get('rootParent');
 
     const dispatch = useAppDispatch();
     const urlSettingData = useAppSelector(
@@ -194,6 +196,29 @@ export default function AddSubCategoryPage() {
                 setValue("slug", `/categories/${slug}`, { shouldDirty: true });
             }
         }
+        const formatType = urlSettingData?.format_type;
+        const customFormat = urlSettingData?.custom_format;
+
+        if (formatType === "custom" && customFormat) {
+            if (nameVal || rootParentName) {
+                const replacements = {
+                    "%parent%": rootParentName ? generateSlug(rootParentName) : "",
+                    "%categoryname%": nameVal ? generateSlug(nameVal) : "",
+                };
+
+                const finalUrl = Object.entries(replacements)
+                    .reduce(
+                        (url, [key, value]) => url.replace(new RegExp(key, "gi"), value),
+                        customFormat
+                    )
+                    .replace(/%[^%]+%/g, "")
+                    .replace(/\/+/g, "/")
+                    .replace(/\/$/g, "");
+                if (finalUrl) {
+                    setValue("slug", finalUrl);
+                }
+            }
+        }
     };
     useEffect(() => {
         if (!isUrlManuallyEdited) {
@@ -213,9 +238,10 @@ export default function AddSubCategoryPage() {
 
 
             if (formatType === "custom" && customFormat) {
-                if (nameVal) {
+                if (nameVal || rootParentName) {
                     const replacements = {
-                        "%name%": nameVal ? generateSlug(nameVal) : "",
+                        "%parent%": rootParentName ? generateSlug(rootParentName) : "",
+                        "%categoryname%": nameVal ? generateSlug(nameVal) : "",
                     };
 
                     const finalUrl = Object.entries(replacements)

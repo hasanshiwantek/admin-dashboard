@@ -27,7 +27,7 @@ import {
 import Spinner from "@/app/components/loader/Spinner";
 import { fetchUrlSettings } from "@/redux/slices/homeSlice";
 import { generateSlug } from "@/const/data";
-
+import { useSearchParams } from 'next/navigation';
 type FormVals = {
   name: string;
   slug: string;
@@ -72,9 +72,9 @@ export default function EditCategoryPage() {
   const params = useParams<{ id: string | string[] }>();
   const idStr = Array.isArray(params.id) ? params.id[0] : params.id;
   const categoryId = Number(idStr);
-
+  const searchParams = useSearchParams();
   const dispatch = useAppDispatch();
-
+  const rootParentName = searchParams.get('rootParent');
   const catTree = useAppSelector(
     (s: any) => s.category?.categories?.data || []
   );
@@ -222,6 +222,29 @@ export default function EditCategoryPage() {
         setValue("slug", `/categories/${slug}`, { shouldDirty: true });
       }
     }
+    const formatType = urlSettingData?.format_type;
+    const customFormat = urlSettingData?.custom_format;
+
+    if (formatType === "custom" && customFormat) {
+      if (nameVal || rootParentName) {
+        const replacements = {
+          "%parent%": rootParentName ? generateSlug(rootParentName) : "",
+          "%categoryname%": nameVal ? generateSlug(nameVal) : "",
+        };
+
+        const finalUrl = Object.entries(replacements)
+          .reduce(
+            (url, [key, value]) => url.replace(new RegExp(key, "gi"), value),
+            customFormat
+          )
+          .replace(/%[^%]+%/g, "")
+          .replace(/\/+/g, "/")
+          .replace(/\/$/g, "");
+        if (finalUrl) {
+          setValue("slug", finalUrl);
+        }
+      }
+    }
   };
   useEffect(() => {
     if (!isUrlManuallyEdited) {
@@ -241,9 +264,10 @@ export default function EditCategoryPage() {
 
 
       if (formatType === "custom" && customFormat) {
-        if (nameVal) {
+        if (nameVal || rootParentName) {
           const replacements = {
-            "%name%": nameVal ? generateSlug(nameVal) : "",
+            "%parent%": rootParentName ? generateSlug(rootParentName) : "",
+            "%categoryname%": nameVal ? generateSlug(nameVal) : "",
           };
 
           const finalUrl = Object.entries(replacements)

@@ -59,10 +59,10 @@ interface DescriptionEditorProps {
   height?: number;
 }
 
-export default function DescriptionEditor({ 
+export default function DescriptionEditor({
   fieldName = "description",
   label = "Description",
-  height = 400 
+  height = 400
 }: DescriptionEditorProps) {
   const { setValue, watch } = useFormContext();
   const value = watch(fieldName);
@@ -72,7 +72,9 @@ export default function DescriptionEditor({
     <div className="p-10 bg-white shadow-lg" id={fieldName}>
       <h1 className="my-5 2xl:!text-[2.4rem]">{label}</h1>
       <Editor
-        apiKey="d2z6pu70qtywhkzox051ga0czhas02dp55gl9bxijefs4vxo"
+      // old key
+        // apiKey="d2z6pu70qtywhkzox051ga0czhas02dp55gl9bxijefs4vxo"
+        apiKey={process.env.NEXT_PUBLIC_TINY_MCE_API_KEY || "bwwo2xyy56xeb4lla418k0p1mt3cm2rwqd3qq8vieee1evqa"}
         onInit={(evt, editor) => (editorRef.current = editor)}
         value={value || ""}
         onEditorChange={(content) => {

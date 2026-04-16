@@ -14,7 +14,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import VisibilityToggle from "../../dropdowns/VisibilityToggle";
-import { useAppDispatch } from "@/hooks/useReduxHooks";
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { updateCategory, deleteCategory } from "@/redux/slices/categorySlice";
 import { refetchCategories } from "@/lib/categoryUtils";
 import { useRouter } from "next/navigation";
@@ -29,7 +29,8 @@ const CategoryRow = ({
   expandedIds,
   setExpandedIds,
   highlightId,
-  isDragging
+  isDragging,
+  rootId,
 }: {
   category: any;
   level?: number;
@@ -39,6 +40,7 @@ const CategoryRow = ({
   setExpandedIds: React.Dispatch<React.SetStateAction<Set<number>>>;
   highlightId: number | null;
   isDragging?: boolean;
+  rootId?: number | null;
 }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({
@@ -50,7 +52,13 @@ const CategoryRow = ({
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.4 : 1,
+    paddingLeft: `${level * 28}px`,
   };
+  const allCategories = useAppSelector(
+    (state: any) => state.category.categories
+  );
+
+  const categories = allCategories?.data || [];
 
   const dispatch = useAppDispatch();
   const { register, watch, setValue } = useFormContext();
@@ -72,13 +80,26 @@ const CategoryRow = ({
     {
       label: "Edit",
       onClick: () => {
-        router.push(`/manage/products/categories/edit/${category?.id}`);
+        const mainRootId = rootId
+        const findCategory = categories?.find((item: any) => item?.id == mainRootId)
+        if (rootId != category?.id) {
+          router.push(`/manage/products/categories/edit/${category?.id}?rootParent=${findCategory?.name}`);
+        } else {
+          router.push(`/manage/products/categories/edit/${category?.id}`);
+        }
       },
     },
     {
       label: "Create sub-category",
       onClick: () => {
-        router.push(`/manage/products/categories/add/${category?.id}`);
+        const mainRootId = rootId
+        const findCategory = categories?.find((item: any) => item?.id == mainRootId)
+        if (rootId != category?.id) {
+          router.push(`/manage/products/categories/add/${category?.id}?rootParent=${findCategory?.name}`);
+        } else {
+          router.push(`/manage/products/categories/add/${category?.id}`);
+
+        }
       },
     },
     {
@@ -172,7 +193,7 @@ const CategoryRow = ({
         </TableCell>
         <TableCell className="w-[30px] ">
           {hasChildren ? (
-            <button type="button" onClick={(e) => { e.stopPropagation(); toggle() }}>
+            <button style={{ marginLeft: `${level * 10}px` }} type="button" onClick={(e) => { e.stopPropagation(); toggle() }}>
               {isExpanded ? (
                 <ChevronDown size={15} />
               ) : (
@@ -183,20 +204,20 @@ const CategoryRow = ({
         </TableCell>
         <TableCell className="flex  items-center gap-2 text-blue-600 font-medium text-xl py-6 select-none">
           <div
-            style={{ marginLeft: `${level * 20}px` }}
+            // style={{ marginLeft: `${level * 10}px` }}
             className="flex items-center gap-2 "
           >
             <Folder className="text-indigo-300 w-8 h-8" fill="lightblue" />
-            <Link
-              href={`/manage/products/categories/edit/${category?.id}`}
-              className="cursor-pointer hover:text-blue-800 2xl:!text-[1.6rem]"
+            <div
+              // href={`/manage/products/categories/edit/${category?.id}`}
+              className=" hover:text-blue-800 2xl:!text-[1.6rem]"
             >
               {category.name}
-            </Link>
+            </div>
           </div>
         </TableCell>
-        <TableCell className="text-center text-xl 2xl:!text-[1.6rem]">{category?.total_products}</TableCell>
-        <TableCell className="text-center text-xl 2xl:!text-[1.6rem]">{category?.in_subcategories}</TableCell>
+        <TableCell className="text-left text-xl 2xl:!text-[1.6rem]">{category?.total_products}</TableCell>
+        <TableCell className="text-left text-xl 2xl:!text-[1.6rem]">{category?.in_subcategories}</TableCell>
         <TableCell className="relative hover:bg-blue-100 transition-all  ">
           <VisibilityToggle
             productId={category.id}
@@ -257,6 +278,7 @@ const CategoryRow = ({
               expandedIds={expandedIds}
               setExpandedIds={setExpandedIds}
               highlightId={highlightId}
+              rootId={rootId || category.id}
             />
           )) : <div className="text-center text-gray-500 py-4">No sub-categories</div>}
         </SortableContext>

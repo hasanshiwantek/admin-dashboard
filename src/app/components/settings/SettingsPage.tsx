@@ -97,6 +97,7 @@ const SettingsPage = () => {
       description:
         "Email settings, advanced store settings, order settings, throttler",
     },
+    
   ];
 
   const SettingsItem = ({ item, onClick }: { item: any; onClick: any }) => (
