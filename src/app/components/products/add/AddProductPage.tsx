@@ -401,7 +401,6 @@ export default function AddProductPage() {
               if (exitAfterSaveRef.current) {
                 if (isEdit) {
                   router.push("/manage/products");
-
                 } else {
                   router.push(`/manage/products/edit/${result?.payload?.data?.id}`)
                 }

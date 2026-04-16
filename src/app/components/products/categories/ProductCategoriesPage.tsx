@@ -307,7 +307,7 @@ export default function ProductCategoriesPage() {
               onDragEnd={handleDragEnd}
             >
               <SortableContext
-                items={categories.map((c: any) => c.id)}
+                items={categories?.map((c: any) => c.id)}
                 strategy={verticalListSortingStrategy}
               >
                 <TableBody>
@@ -327,6 +327,7 @@ export default function ProductCategoriesPage() {
                         expandedIds={expandedIds}
                         setExpandedIds={setExpandedIds}
                         highlightId={highlightId}
+                        rootId={category.id}
                       />
                     ))
                   )}
