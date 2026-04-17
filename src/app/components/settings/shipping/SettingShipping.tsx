@@ -217,7 +217,7 @@ const SettingShipping = () => {
                                             FedEx &nbsp;&nbsp;&nbsp; Flat Rate for under 10 LBS item<br />
                                             I will provide the shipping label/others (Mentions the details on below comments box)
                                         </p>
-                                        {item.id !== 2 && <div className="flex items-center gap-3 flex-shrink-0">
+                                         <div className="flex items-center gap-3 flex-shrink-0">
 
                                             <Toggle
                                                 checked={item.is_active ? true : false}
@@ -245,7 +245,7 @@ const SettingShipping = () => {
                                             >
                                                 X
                                             </button>
-                                        </div>}
+                                        </div>
                                     </div>
                                 </div>
                             ))
