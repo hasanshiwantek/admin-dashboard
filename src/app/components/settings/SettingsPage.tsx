@@ -97,17 +97,20 @@ const SettingsPage = () => {
       description:
         "Email settings, advanced store settings, order settings, throttler",
     },
-    
+    {
+      id: "ship",
+      title: "Shipping",
+      description: "Store's origin address, shipping zones, and shipping services",
+    },
   ];
 
   const SettingsItem = ({ item, onClick }: { item: any; onClick: any }) => (
-
-
-
-
-
     <div
-      onClick={() => onClick(item)}
+      onClick={() => {
+
+        onClick(item)
+
+      }}
       className="
       grid grid-cols-1 gap-3 py-4 border-b border-gray-200
       hover:bg-gray-50 cursor-pointer transition-colors
@@ -162,9 +165,13 @@ const SettingsPage = () => {
 
   // ✅ Changed: URL update with tab
   const handleSettingClick = (item: any) => {
-    setCurrentSetting(item);
-    setCurrentView("detail");
-    router.push(`/manage/settings?view=detail&setting=${item.id}&tab=${item.id}`);
+    if (item?.id == "ship") {
+      router.push(`/manage/settings/shipping`);
+    } else {
+      setCurrentSetting(item);
+      setCurrentView("detail");
+      router.push(`/manage/settings?view=detail&setting=${item.id}&tab=${item.id}`);
+    }
   };
 
   // ✅ Changed: URL reset
@@ -222,11 +229,13 @@ const SettingsPage = () => {
           </Card>
         </div>
       ) : (
-        <StoreSettings
-          currentSetting={currentSetting}
-          onBack={handleBack}
-          initialTab={initialTab}
-        />
+        <>
+          <StoreSettings
+            currentSetting={currentSetting}
+            onBack={handleBack}
+            initialTab={initialTab}
+          />
+        </>
       )}
     </div>
   );
