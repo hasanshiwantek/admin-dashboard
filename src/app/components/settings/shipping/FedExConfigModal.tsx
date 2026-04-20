@@ -126,7 +126,7 @@ export default function FedExConfigModal({ open, onOpenChange, methodId }: FedEx
         if (methodId) dispatch(fetchFedexConfig({ method_id: Number(methodId) }));
     }, [methodId])
 
- useEffect(() => {
+    useEffect(() => {
         if (!open) {
             setDisplayName("");
             setDropOffType("");
@@ -143,6 +143,7 @@ export default function FedExConfigModal({ open, onOpenChange, methodId }: FedEx
             setErrors({});
         }
     }, [open]);
+    
     useEffect(() => {
         if (fedexConfig) {
             setDisplayName(fedexConfig.display_name || "");

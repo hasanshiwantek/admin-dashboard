@@ -235,7 +235,7 @@ const SettingShipping = () => {
                                                 I will provide the shipping label/others (Mentions the details on below comments box)
                                             </p>
                                             <div className="flex items-center gap-3 flex-shrink-0">
-                                                <Toggle
+                                                {item.id == 1 ? <Toggle
                                                     checked={item.is_active ? true : false}
                                                     onChange={() => dispatch(updateShippingZone({
                                                         zone_id: item.id,
@@ -243,7 +243,7 @@ const SettingShipping = () => {
                                                     })).finally(() => {
                                                         dispatch(fetchShippingZones())
                                                     })}
-                                                />
+                                                /> : null}
                                             </div>
                                             <div className="flex items-center gap-3 flex-shrink-0">
                                                 <button
