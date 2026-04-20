@@ -135,6 +135,19 @@ export const fetchFedexConfig = createAsyncThunk(
         }
     }
 );
+export const fetchQuoteFedexConfig = createAsyncThunk(
+    "shippingZone/fetchQuoteFedexConfig",
+    async ({ method_id }: { method_id: number | string }, thunkAPI) => {
+        try {
+            const res = await axiosInstance.get(`dashboard/fedex-config/get-quote/${method_id}`);
+            return res.data;
+        } catch (err: any) {
+            return thunkAPI.rejectWithValue(
+                err.response?.data?.message || "Failed to fetch fedex config"
+            );
+        }
+    }
+);
 export const fetchFedexServices = createAsyncThunk(
     "shippingZone/fetchFedexServices",
     async (_, thunkAPI) => {
@@ -153,6 +166,19 @@ export const saveFedexConfig = createAsyncThunk(
     async ({ method_id, data }: { method_id: number | string; data: any }, thunkAPI) => {
         try {
             const res = await axiosInstance.post(`dashboard/fedex-config/save-config/${method_id}`, data);
+            return res.data;
+        } catch (err: any) {
+            return thunkAPI.rejectWithValue(
+                err.response?.data?.message || "Failed to save fedex config"
+            );
+        }
+    }
+);
+export const saveQuoteFedexConfig = createAsyncThunk(
+    "shippingZone/get-quote",
+    async ({ method_id, data }: { method_id: number | string; data: any }, thunkAPI) => {
+        try {
+            const res = await axiosInstance.post(`dashboard/fedex-config/get-quote/${method_id}`, data);
             return res.data;
         } catch (err: any) {
             return thunkAPI.rejectWithValue(
@@ -207,6 +233,7 @@ const initialState = {
     selectedZone: null as any,
     shippingMethods: [] as any[],   // new
     fedexConfig: null as any,        // new
+    quoteFedexConfig: null as any,        // new
     loading: false,
     detailLoader: false,
     methodsLoader: false,            // new
@@ -323,6 +350,19 @@ const shippingZoneSlice = createSlice({
                 state.error = action.error.message || "Failed to fetch fedex config";
             })
 
+            // Fetch Quote Fedex Config
+            .addCase(fetchQuoteFedexConfig.pending, (state) => {
+                state.fedexLoader = true;
+            })
+            .addCase(fetchQuoteFedexConfig.fulfilled, (state, action) => {
+                state.fedexLoader = false;
+                state.quoteFedexConfig = action.payload?.data;
+            })
+            .addCase(fetchQuoteFedexConfig.rejected, (state, action) => {
+                state.fedexLoader = false;
+                state.error = action.error.message || "Failed to fetch fedex config";
+            })
+
 
             // Fedex Services
             .addCase(fetchFedexServices.pending, (state) => {
@@ -345,6 +385,19 @@ const shippingZoneSlice = createSlice({
                 state.fedexConfig = action.payload?.data;
             })
             .addCase(saveFedexConfig.rejected, (state, action) => {
+                state.saveConfigLoader = false;
+                state.error = action.error.message || "Failed to save fedex config";
+            })
+
+
+            // saveQuoteFedexConfig
+            .addCase(saveQuoteFedexConfig.pending, (state) => {
+                state.saveConfigLoader = true;
+            })
+            .addCase(saveQuoteFedexConfig.fulfilled, (state, action) => {
+                state.saveConfigLoader = false;
+            })
+            .addCase(saveQuoteFedexConfig.rejected, (state, action) => {
                 state.saveConfigLoader = false;
                 state.error = action.error.message || "Failed to save fedex config";
             })
