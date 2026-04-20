@@ -79,18 +79,18 @@ const EditButton = ({ onClick }: any) => (
             onClick={onClick}
             style={{
                 fontSize: 13, padding: "4px 12px",
-                border: "1px solid #d0d0d0", borderRight: "none",
+                border: "1px solid #1976d2", borderRight: "none",
                 borderRadius: "4px 0 0 4px", background: "#fff",
-                color: "#333", cursor: "pointer"
+                color: "#1976d2", cursor: "pointer"
             }}
         >
             Edit
         </button>
         <button style={{
             fontSize: 12, padding: "4px 8px",
-            border: "1px solid #d0d0d0",
+            border: "1px solid #1976d2",
             borderRadius: "0 4px 4px 0", background: "#fff",
-            color: "#555", cursor: "pointer"
+            color: "#1976d2", cursor: "pointer"
         }}>
             ▾
         </button>
@@ -203,7 +203,7 @@ export default function ShippingQuotes() {
             {open && <FedExConfigModal
                 open={open}
                 onOpenChange={setOpen}
-                methodId={3}
+                methodId={open}
             />}
             <div style={{ padding: 24, fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", width: "100%" }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4 }}>
@@ -245,30 +245,39 @@ export default function ShippingQuotes() {
                             </div>
                         ))
                     ) : (shippingMethods?.map((row, i) => (
-                        <div key={row.id} style={{ borderBottom: i < rows.length - 1 ? "1px solid #f0f0f0" : "none" }}>
-                            <div style={{ display: "flex", alignItems: "center", gap: 16, padding: "16px 20px" }}>
-                                {/* {row.icon} */}
-                                {/* <FreeShippingIcon /> */}
+                        <div key={row.id} className="px-8 py-8 flex items-center gap-6 hover:bg-gray-50">
+                            {/* Col 1: Icon */}
+                            <div className="w-10 flex-shrink-0 flex items-center justify-center pt-0.5">
                                 <Image
                                     src={"https://upload.wikimedia.org/wikipedia/commons/7/74/Earth_globe.png"}
                                     alt={row.display_name || "icon"}
-                                    width={28}
-                                    height={28}
+                                    width={30}
+                                    height={30}
+                                    // fill
                                     className="object-contain"
-                                    priority={false}        // 
+                                    priority={false}
                                 />
-
-                                <div style={{ flex: 1, minWidth: 0 }}>
-                                    <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
-                                        <span style={{ fontSize: 14, fontWeight: 500, color: "#222" }}>{row.display_name}</span>
-                                    </div>
-                                    <p style={{ fontSize: 13, color: "#777", margin: 0, lineHeight: 1.5 }}>{row.custom_description}</p>
-                                </div>
-                                <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
-                                    <Toggle checked={row.is_active ? true : false} onChange={() => toggle(row.id)} />
-                                    {row.is_active && <EditButton />}
-                                </div>
                             </div>
+                            {/* Col 2: Country Name */}
+                            <div className="w-72 flex-shrink-0 pt-0.5">
+                                <p className="font-medium text-gray-600 text-[1.6rem]">{row?.display_name}</p>
+                            </div>
+
+                            {/* Col 3: Description + Toggle + Buttons */}
+                            <div className="flex flex-1 items-center justify-between gap-4">
+                                <p className="text-gray-600 !text-[1.6rem] leading-relaxed">
+                                    {row.custom_description || "-"}
+                                </p>
+                            </div>
+                            <div className="flex  items-center justify-between gap-4">
+                                <div className="flex items-center gap-3 flex-shrink-0">
+                                    <Toggle
+                                        checked={row.is_active ? true : false} onChange={() => toggle(row.id)}
+                                    />
+                                </div>
+                                <div className="flex items-center gap-3 flex-shrink-0">
+                                    {row.is_active && <EditButton />}
+                                </div>                            </div>
                         </div>
                     )))}
                 </div>
@@ -279,7 +288,7 @@ export default function ShippingQuotes() {
                     Real time shipping quotes
                 </p>
                 <div style={{ background: "#fff", border: "1px solid #e8e8e8", borderRadius: 8, overflow: "hidden" }}>
-                    {fedexLoader ? (
+                    {methodsLoader ? (
                         // Skeleton Loader
                         Array.from({ length: 3 }).map((_, i) => (
                             <div key={i} className="px-6 py-6 flex items-center gap-6">
@@ -303,30 +312,42 @@ export default function ShippingQuotes() {
                                 </div>
                             </div>
                         ))
-                    ) : (realTimeShippingQuotes.map((row, i) => (
-                        <div key={row.id} style={{ borderBottom: i < rows.length - 1 ? "1px solid #f0f0f0" : "none" }}>
-                            <div style={{ display: "flex", alignItems: "center", gap: 16, padding: "16px 20px" }}>
-                                {/* {row.icon} */}
+                    ) : (shippingMethods.filter((item) => item?.is_active).map((row, i) => (
+                        <div key={row.id} className="px-8 py-8 flex items-center gap-6 hover:bg-gray-50">
+                            {/* Col 1: Icon */}
+                            <div className="w-10 flex-shrink-0 flex items-center justify-center pt-0.5">
                                 <Image
-                                    src={row.icon}
-                                    alt={row.name || "icon"}
-                                    width={28}
-                                    height={28}
+                                    src={"https://1000logos.net/wp-content/uploads/2021/04/Fedex-logo.png"}
+                                    alt={row.display_name || "icon"}
+                                    width={30}
+                                    height={30}
                                     className="object-contain"
-                                    priority={false}        // optional
+                                    priority={false}
                                 />
-                                <div style={{ flex: 1, minWidth: 0 }}>
-                                    <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
-                                        <span style={{ fontSize: 14, fontWeight: 500, color: "#222" }}>{row.name}</span>
-                                    </div>
-                                    <p style={{ fontSize: 13, color: "#777", margin: 0, lineHeight: 1.5 }}>{row.description}</p>
+                            </div>
+                            {/* Col 2: Country Name */}
+                            <div className="w-72 flex-shrink-0 pt-0.5">
+                                <p className="font-medium text-gray-600 text-[1.6rem]">{row?.display_name}</p>
+                            </div>
+
+                            {/* Col 3: Description + Toggle + Buttons */}
+                            <div className="flex flex-1 items-center justify-between gap-4">
+                                <p className="text-gray-600 !text-[1.6rem] leading-relaxed">
+                                    {row.custom_description || "-"}
+                                </p>
+                            </div>
+                            <div className="flex  items-center justify-between gap-4">
+                                <div className="flex items-center gap-3 flex-shrink-0">
+                                    <Toggle
+                                        checked={row.is_active ? true : false} onChange={() => toggle(row.id)}
+                                    />
                                 </div>
-                                <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
-                                    <Toggle checked={row.enabled} onChange={() => toggleRealTimeShippingQuotes(row.id)} />
-                                    {row.showEdit && row.enabled && <EditButton onClick={() => setOpen(true)} />}
+                                <div className="flex items-center gap-3 flex-shrink-0">
+                                    {row.is_active && <EditButton onClick={() => setOpen(row?.id)} />}
                                 </div>
                             </div>
                         </div>
+
                     )))}
                 </div>
             </div>

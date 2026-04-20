@@ -111,7 +111,7 @@ export const fetchFedexConfig = createAsyncThunk(
     "shippingZone/fetchFedexConfig",
     async ({ method_id }: { method_id: number | string }, thunkAPI) => {
         try {
-            const res = await axiosInstance.get(`dashboard/fedex-config/get-config/${3}`);
+            const res = await axiosInstance.get(`dashboard/fedex-config/get-config/${method_id}`);
             return res.data;
         } catch (err: any) {
             return thunkAPI.rejectWithValue(

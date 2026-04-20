@@ -207,18 +207,17 @@ const SettingShipping = () => {
                                     </div>
 
                                     {/* Col 2: Country Name */}
-                                    <div className="w-36 flex-shrink-0 pt-0.5">
-                                        <p className="font-medium text-gray-600 2xl:!text-[1.6rem]">{item?.name}</p>
+                                    <div className="w-56 flex-shrink-0 pt-0.5">
+                                        <p className="font-medium text-gray-600 2xl:text-[1.6rem]">{item?.name}</p>
                                     </div>
 
                                     {/* Col 3: Description + Toggle + Buttons */}
-                                    <div className="flex flex-1 items-start justify-between gap-4">
+                                    <div className="flex flex-1 items-center justify-between gap-4">
                                         <p className="text-gray-600 2xl:!text-[1.6rem] leading-relaxed">
-                                            FedEx &nbsp;&nbsp;&nbsp; Flat Rate for under 10 LBS item<br />
+                                            FedEx<br />
                                             I will provide the shipping label/others (Mentions the details on below comments box)
                                         </p>
-                                         <div className="flex items-center gap-3 flex-shrink-0">
-
+                                        <div className="flex items-center gap-3 flex-shrink-0">
                                             <Toggle
                                                 checked={item.is_active ? true : false}
                                                 onChange={() => dispatch(updateShippingZone({
@@ -229,6 +228,9 @@ const SettingShipping = () => {
                                                 })}
                                             />
 
+
+                                        </div>
+                                        <div className="flex items-center gap-3 flex-shrink-0">
                                             <button
                                                 type="button"
                                                 className="btn-outline-primary"

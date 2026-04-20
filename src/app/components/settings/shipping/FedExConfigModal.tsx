@@ -24,7 +24,7 @@ import { disconnectFedex, fetchFedexConfig, fetchFedexServices, saveFedexConfig 
 interface FedExConfigModalProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    methodId?: number
+    methodId?: number | any
 }
 
 const tabs = [
