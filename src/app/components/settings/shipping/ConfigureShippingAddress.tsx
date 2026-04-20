@@ -111,8 +111,8 @@ export default function ConfigureShippingAddress({ open, onOpenChange }: Configu
                                         <SelectValue placeholder="Select country" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {countriesList.map((item) => {
-                                            return <SelectItem value={item.value}>{item.label}</SelectItem>
+                                        {countriesList.map((item, i) => {
+                                            return <SelectItem key={i} value={item.value}>{item.label}</SelectItem>
                                         })}
                                     </SelectContent>
                                 </Select>
@@ -130,9 +130,8 @@ export default function ConfigureShippingAddress({ open, onOpenChange }: Configu
                                         <SelectValue placeholder="Select state" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                       
-                                        {statesList.map((item) => {
-                                            return <SelectItem value={item.value}>{item.label}</SelectItem>
+                                        {statesList.map((item, i) => {
+                                            return <SelectItem key={i} value={item.value}>{item.label}</SelectItem>
                                         })}
                                     </SelectContent>
                                 </Select>
