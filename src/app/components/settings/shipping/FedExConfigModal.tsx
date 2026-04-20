@@ -19,7 +19,7 @@ import {
     SelectItem,
 } from "@/components/ui/select";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
-import { disconnectFedex, fetchFedexConfig, fetchFedexServices, saveFedexConfig } from "@/redux/slices/shippingSlice";
+import { disconnectFedex, fetchFedexConfig, saveFedexConfig } from "@/redux/slices/shippingSlice";
 
 interface FedExConfigModalProps {
     open: boolean;
