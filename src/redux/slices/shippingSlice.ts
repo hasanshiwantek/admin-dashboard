@@ -160,6 +160,19 @@ export const disconnectFedex = createAsyncThunk(
         }
     }
 );
+export const connectFedex = createAsyncThunk(
+    "shippingZone/connection",
+    async ({ method_id }: { method_id: number | string }, thunkAPI) => {
+        try {
+            const res = await axiosInstance.post(`dashboard/fedex-config/test-connection/${method_id}`);
+            return res.data;
+        } catch (err: any) {
+            return thunkAPI.rejectWithValue(
+                err.response?.data?.message || "Failed to disconnect FedEx"
+            );
+        }
+    }
+);
 const initialState = {
     zones: [] as any[],
     selectedZone: null as any,
@@ -176,7 +189,7 @@ const initialState = {
     fedexServices: [] as any[],
     fedexServicesLoader: false,
     saveConfigLoader: false,
-
+    fedexConnection: null
 };
 
 // ─── Slice ────────────────────────────────────────────────────────────────────
@@ -315,6 +328,19 @@ const shippingZoneSlice = createSlice({
                 state.fedexConfig = { ...state.fedexConfig, is_connected: false };
             })
             .addCase(disconnectFedex.rejected, (state, action) => {
+                state.disconnectLoader = false;
+                state.error = action.error.message || "Failed to disconnect FedEx";
+            })
+
+            // fedex connection
+            .addCase(connectFedex.pending, (state) => {
+                state.disconnectLoader = true;
+            })
+            .addCase(connectFedex.fulfilled, (state, action) => {
+                state.disconnectLoader = false;
+                state.fedexConnection = action.payload?.data;
+            })
+            .addCase(connectFedex.rejected, (state, action) => {
                 state.disconnectLoader = false;
                 state.error = action.error.message || "Failed to disconnect FedEx";
             })

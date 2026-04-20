@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import FedExConfigModal from "./FedExConfigModal";
 import Image from "next/image";
-import { fetchFedexConfig, fetchFedexServices, fetchShippingMethods, toggleShippingMethod } from "@/redux/slices/shippingSlice";
+import { connectFedex, fetchFedexConfig, fetchFedexServices, fetchShippingMethods, toggleShippingMethod } from "@/redux/slices/shippingSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { useParams, usePathname } from "next/navigation";
 
@@ -125,48 +125,10 @@ const ShippingRow = ({ icon, name, badge, description, enabled, showEdit, onTogg
 export default function ShippingQuotes() {
     const dispatch = useAppDispatch();
     const { id } = useParams();
-    const { shippingMethods, methodsLoader, fedexConfig, fedexLoader } = useAppSelector(
+    const { shippingMethods, methodsLoader, fedexConfig, fedexLoader, fedexConnection } = useAppSelector(
         (state) => state.shippingZone
     );
     const [open, setOpen] = useState(false);
-    const [rows, setRows] = useState([
-        {
-            id: "free",
-            name: "Free shipping",
-            badge: "Recommended",
-            description: "Use free shipping to improve checkout conversion, increase average order value and reduce abandoned carts.",
-            icon: <FreeShippingIcon />,
-            enabled: false,
-            showEdit: false,
-        },
-        {
-            id: "flat",
-            name: "Flat rate",
-            badge: null,
-            description: "Charge a fixed shipping cost per order or per item.",
-            icon: <FlatRateIcon />,
-            enabled: false,
-            showEdit: false,
-        },
-        {
-            id: "weight",
-            name: "Flat Rate for under 10 LBS Item",
-            badge: null,
-            description: "Calculate shipping cost based on order value or the total weight of items.",
-            icon: <WeightIcon />,
-            enabled: true,
-            showEdit: true,
-        },
-        {
-            id: "pickup",
-            name: "I will provide the shipping label/others (Mentions the details on below comments box)",
-            badge: null,
-            description: "Your customers can pick up / collect their orders from your store's physical retail location.",
-            icon: <PickupIcon />,
-            enabled: true,
-            showEdit: true,
-        },
-    ]);
     const [realTimeShippingQuotes, setRealTimeShippingQuotes] = useState([
         {
             id: "fedEx",
@@ -175,16 +137,28 @@ export default function ShippingQuotes() {
             description: "FedEx Express provides delivery services to evey U.S. address and more than 220 countries and territories around the world.",
             icon: "https://1000logos.net/wp-content/uploads/2021/04/Fedex-logo.png",
             // icon: <FreeShippingIcon />,
-            enabled: true,
-            showEdit: true,
+            enabled: false,
+            showEdit: false,
         },
 
     ]);
+    useEffect(() => {
+        if (fedexConfig) {
+            setRealTimeShippingQuotes((prev) =>
+                prev.map((item) =>
+                    item.id === "fedEx"
+                        ? { ...item, enabled: fedexConfig?.is_connected }
+                        : item
+                )
+            );
+        }
+    }, [fedexConfig]);
 
     const toggle = (method_id: any) => {
         dispatch(toggleShippingMethod({ method_id })).finally(() => {
             dispatch(fetchShippingMethods({ zone_id: Number(id) }));
         })
+        connectFedex
     };
     const toggleRealTimeShippingQuotes = (id: any) => {
         setRealTimeShippingQuotes((prev) =>
@@ -195,6 +169,7 @@ export default function ShippingQuotes() {
 
     useEffect(() => {
         dispatch(fetchFedexServices());
+        dispatch(fetchFedexConfig({ method_id: 3 }));
         if (id) dispatch(fetchShippingMethods({ zone_id: Number(id) }));
     }, [id]);
 
@@ -203,7 +178,7 @@ export default function ShippingQuotes() {
             {open && <FedExConfigModal
                 open={open}
                 onOpenChange={setOpen}
-                methodId={open}
+                methodId={3}
             />}
             <div style={{ padding: 24, fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", width: "100%" }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4 }}>
@@ -288,7 +263,7 @@ export default function ShippingQuotes() {
                     Real time shipping quotes
                 </p>
                 <div style={{ background: "#fff", border: "1px solid #e8e8e8", borderRadius: 8, overflow: "hidden" }}>
-                    {methodsLoader ? (
+                    {fedexLoader ? (
                         // Skeleton Loader
                         Array.from({ length: 3 }).map((_, i) => (
                             <div key={i} className="px-6 py-6 flex items-center gap-6">
@@ -312,13 +287,13 @@ export default function ShippingQuotes() {
                                 </div>
                             </div>
                         ))
-                    ) : (shippingMethods.filter((item) => item?.is_active).map((row, i) => (
+                    ) : (realTimeShippingQuotes?.map((row, i) => (
                         <div key={row.id} className="px-8 py-8 flex items-center gap-6 hover:bg-gray-50">
                             {/* Col 1: Icon */}
                             <div className="w-10 flex-shrink-0 flex items-center justify-center pt-0.5">
                                 <Image
                                     src={"https://1000logos.net/wp-content/uploads/2021/04/Fedex-logo.png"}
-                                    alt={row.display_name || "icon"}
+                                    alt={row.name || "icon"}
                                     width={30}
                                     height={30}
                                     className="object-contain"
@@ -327,23 +302,26 @@ export default function ShippingQuotes() {
                             </div>
                             {/* Col 2: Country Name */}
                             <div className="w-72 flex-shrink-0 pt-0.5">
-                                <p className="font-medium text-gray-600 text-[1.6rem]">{row?.display_name}</p>
+                                <p className="font-medium text-gray-600 text-[1.6rem]">{row?.name}</p>
                             </div>
 
                             {/* Col 3: Description + Toggle + Buttons */}
                             <div className="flex flex-1 items-center justify-between gap-4">
                                 <p className="text-gray-600 !text-[1.6rem] leading-relaxed">
-                                    {row.custom_description || "-"}
+                                    {row.description || "-"}
                                 </p>
                             </div>
                             <div className="flex  items-center justify-between gap-4">
                                 <div className="flex items-center gap-3 flex-shrink-0">
                                     <Toggle
-                                        checked={row.is_active ? true : false} onChange={() => toggle(row.id)}
+                                        checked={row.enabled ? true : false} onChange={() => dispatch(connectFedex({ method_id: 3 })).finally(() => {
+                                            dispatch(fetchFedexConfig({ method_id: 3 }));
+                                        })
+                                        }
                                     />
                                 </div>
                                 <div className="flex items-center gap-3 flex-shrink-0">
-                                    {row.is_active && <EditButton onClick={() => setOpen(row?.id)} />}
+                                    {row.enabled && <EditButton onClick={() => setOpen(true)} />}
                                 </div>
                             </div>
                         </div>
