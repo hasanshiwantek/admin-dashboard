@@ -17,6 +17,21 @@ export const fetchShippingZones = createAsyncThunk(
     }
 );
 
+
+export const fetchAddress = createAsyncThunk(
+    "shippingZone/get-address",
+    async (_, thunkAPI) => {
+        try {
+            const res = await axiosInstance.get(`dashboard/store-shipping-address/get-address`);
+            return res.data;
+        } catch (err: any) {
+            return thunkAPI.rejectWithValue(
+                err.response?.data?.message || "Failed to fetch shipping zones"
+            );
+        }
+    }
+);
+
 export const fetchShippingZone = createAsyncThunk(
     "shippingZone/fetchShippingZone",
     async ({ zone_id }: { zone_id: number | string }, thunkAPI) => {
@@ -173,6 +188,20 @@ export const connectFedex = createAsyncThunk(
         }
     }
 );
+export const saveAddress = createAsyncThunk(
+    "shippingZone/save-address",
+    async ({ data }: { data: any }, thunkAPI) => {
+        try {
+            const res = await axiosInstance.post(`dashboard/store-shipping-address/save-address`, data);
+            return res.data;
+        } catch (err: any) {
+            return thunkAPI.rejectWithValue(
+                err.response?.data?.message || "Failed to save fedex config"
+            );
+        }
+    }
+);
+
 const initialState = {
     zones: [] as any[],
     selectedZone: null as any,
@@ -189,7 +218,8 @@ const initialState = {
     fedexServices: [] as any[],
     fedexServicesLoader: false,
     saveConfigLoader: false,
-    fedexConnection: null
+    fedexConnection: null,
+    sourceAddress: null as any
 };
 
 // ─── Slice ────────────────────────────────────────────────────────────────────
@@ -343,6 +373,31 @@ const shippingZoneSlice = createSlice({
             .addCase(connectFedex.rejected, (state, action) => {
                 state.disconnectLoader = false;
                 state.error = action.error.message || "Failed to disconnect FedEx";
+            })
+
+            // Fetch Address
+            .addCase(fetchAddress.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(fetchAddress.fulfilled, (state, action) => {
+                state.loading = false;
+                state.sourceAddress = action.payload?.data;
+            })
+            .addCase(fetchAddress.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message || "Failed to fetch shipping zones";
+            })
+
+            //    save address
+            .addCase(saveAddress.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(saveAddress.fulfilled, (state, action) => {
+                state.loading = false;
+            })
+            .addCase(saveAddress.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message || "Failed to fetch shipping zones";
             })
     },
 });
