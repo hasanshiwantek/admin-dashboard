@@ -556,12 +556,12 @@ export default function AddProductPage() {
         <FormProvider {...methods}>
           <form onSubmit={onSubmit} className="flex-1  p-6 space-y-8 ">
             <BasicInfoForm />
-            <DescriptionEditor />
-            {/* FAQ section */}
-            <DescriptionEditor fieldName="faq" label="FAQ" height={300} />
-            {/* <DescriptionEditorQuill />
+            {/* <DescriptionEditor />
             FAQ section
-            <DescriptionEditorQuill fieldName="faq" label="FAQ" height={300} /> */}
+            <DescriptionEditor fieldName="faq" label="FAQ" height={300} /> */}
+            <DescriptionEditorQuill />
+            {/* FAQ section */}
+            <DescriptionEditorQuill fieldName="faq" label="FAQ" height={300} />
 
             <ImageVideoUploader initialImages={product?.image || []} />
             <ProductIdentifiers />
