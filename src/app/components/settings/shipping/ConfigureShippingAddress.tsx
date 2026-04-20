@@ -130,6 +130,7 @@ export default function ConfigureShippingAddress({ open, onOpenChange }: Configu
                                         <SelectValue placeholder="Select state" />
                                     </SelectTrigger>
                                     <SelectContent>
+                                       
                                         {statesList.map((item) => {
                                             return <SelectItem value={item.value}>{item.label}</SelectItem>
                                         })}
