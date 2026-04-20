@@ -6,7 +6,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from '@/components/ui/label';
 import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from '@/hooks/useReduxHooks';
-import { deleteShippingZone, fetchShippingZones, updateShippingZone } from '@/redux/slices/shippingSlice';
+import { deleteShippingZone, fetchAddress, fetchShippingZones, updateShippingZone } from '@/redux/slices/shippingSlice';
 import ConfigureShippingAddress from './ConfigureShippingAddress';
 import {
     Popover,
@@ -37,11 +37,12 @@ const SettingShipping = () => {
     const [openPopoverId, setOpenPopoverId] = useState<number | null>(null);
 
     const dispatch = useAppDispatch();
-    const { zones, loading } = useAppSelector((state) => state.shippingZone);
+    const { zones, loading, sourceAddress } = useAppSelector((state) => state.shippingZone);
 
 
     useEffect(() => {
         dispatch(fetchShippingZones());
+        dispatch(fetchAddress());
     }, [dispatch])
 
     return (
@@ -84,18 +85,20 @@ const SettingShipping = () => {
                         <div className="flex justify-between items-center">
                             <div className="flex-1">
                                 <div className="mt-5 text-2xl text-gray-700 leading-relaxed">
-                                    <p>440 N Barranca Ave,</p>
-                                    <p>Suite 1032</p>
-                                    <p>Covina CA 91723</p>
-                                    <p>United States</p>
+                                    <p>{sourceAddress?.address_line_1}</p>
+                                    <p>{sourceAddress?.postal_code}</p>
+                                    <p>{sourceAddress?.city}</p>
+                                    <p>{sourceAddress?.state}</p>
+                                    <p>{sourceAddress?.country}</p>
                                 </div>
                             </div>
                             <button
                                 type="button"
                                 className="btn-outline-primary"
                                 onClick={() => setOpen(true)}
+                                disabled={loading}
                             >
-                                Edit
+                                {loading ? "Loading.. " : "Edit"}
                             </button>
                         </div>
                     </Card>
