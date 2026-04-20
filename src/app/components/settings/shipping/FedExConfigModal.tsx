@@ -142,6 +142,20 @@ export default function FedExConfigModal({ open, onOpenChange, methodId }: FedEx
             setAccountNumber(fedexConfig.account_number || "");
             setApiBaseUrl(fedexConfig.api_base_url || "");
             setPassword(fedexConfig.client_secret || "");
+        } else {
+            // empty all
+            setDisplayName("");
+            setDropOffType("");
+            setPackagingType("");
+            setPackingMethod("");
+            setRateType("");
+            setIncludePackageValue(false);
+            setDestinationType("");
+            setDeliveryServices([]);
+            setKey("");
+            setAccountNumber("");
+            setApiBaseUrl("");
+            setPassword("");
         }
     }, [fedexConfig]);
 
