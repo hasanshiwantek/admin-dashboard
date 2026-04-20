@@ -19,7 +19,8 @@ import {
     SelectItem,
 } from "@/components/ui/select";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
-import { disconnectFedex, fetchFedexConfig, saveFedexConfig } from "@/redux/slices/shippingSlice";
+import { disconnectFedex, fetchFedexConfig, fetchQuoteFedexConfig, saveFedexConfig, saveQuoteFedexConfig } from "@/redux/slices/shippingSlice";
+import { countriesList, statesList } from "@/const/location";
 
 interface FedExConfigModalProps {
     open: boolean;
@@ -62,7 +63,7 @@ export default function FedExConfigModal({ open, onOpenChange, methodId }: FedEx
     const [pkgLength, setPkgLength] = useState("");
     const [pkgWidth, setPkgWidth] = useState("");
     const [pkgHeight, setPkgHeight] = useState("");
-    const { fedexConfig, saveConfigLoader } = useAppSelector(
+    const { fedexConfig, saveConfigLoader, quoteFedexConfig } = useAppSelector(
         (state) => state.shippingZone
     );
 
@@ -97,33 +98,59 @@ export default function FedExConfigModal({ open, onOpenChange, methodId }: FedEx
 
     const handleSubmit = () => {
         if (!validate()) return;
-        dispatch(saveFedexConfig({
-            method_id: Number(methodId),
-            data: {
-                display_name: displayName,
-                dropoff_type: dropOffType,
-                packaging_type: packagingType,
-                packing_method: packingMethod,
-                rate_type: rateType,
-                include_package_value: includePackageValue,
-                destination_type: destinationType,
-                enabled_services: deliveryServices,  // array of selected keys
-                "client_id": key,
-                "client_secret": password || "9e226d83d051430387fa960eeb996fcd",
-                "account_number": accountNumber,
-                "api_base_url": apiBaseUrl,
-                // meter_number: meterNumber
+        if (activeTab == "quote") {
+            const payloadOfQuote: any = {
+                method_id: Number(methodId),
+                data: {
+                    "destination_country": destCountry,
+                    "destination_state": destState,
+                    "destination_zip": destZip,
+                    "package_weight": Number(pkgWeight),
+                    "package_value": Number(pkgValue),
+                    "package_length": Number(pkgLength),
+                    "package_width": Number(pkgWidth),
+                    "package_height": Number(pkgHeight),
+                }
             }
-        })).then((result) => {
-            if (saveFedexConfig.fulfilled.match(result)) {
-                onOpenChange(false);
-                if (methodId) dispatch(fetchFedexConfig({ method_id: Number(methodId) }));
-            }
-        });
+            dispatch(saveQuoteFedexConfig(payloadOfQuote)).then((result) => {
+                if (saveQuoteFedexConfig.fulfilled.match(result)) {
+                    onOpenChange(false);
+                    if (methodId) dispatch(fetchQuoteFedexConfig({ method_id: Number(methodId) }));
+                }
+            })
+        } else {
+            dispatch(saveFedexConfig({
+                method_id: Number(methodId),
+                data: {
+                    display_name: displayName,
+                    dropoff_type: dropOffType,
+                    packaging_type: packagingType,
+                    packing_method: packingMethod,
+                    rate_type: rateType,
+                    include_package_value: includePackageValue,
+                    destination_type: destinationType,
+                    enabled_services: deliveryServices,  // array of selected keys
+                    "client_id": key,
+                    "client_secret": password || "9e226d83d051430387fa960eeb996fcd",
+                    "account_number": accountNumber,
+                    "api_base_url": apiBaseUrl,
+                    // meter_number: meterNumber
+                }
+            })).then((result) => {
+                if (saveFedexConfig.fulfilled.match(result)) {
+                    onOpenChange(false);
+                    if (methodId) dispatch(fetchFedexConfig({ method_id: Number(methodId) }));
+                }
+            });
+        }
+
     };
 
     useEffect(() => {
-        if (methodId) dispatch(fetchFedexConfig({ method_id: Number(methodId) }));
+        if (methodId) {
+            dispatch(fetchQuoteFedexConfig({ method_id: Number(methodId) }));
+            dispatch(fetchFedexConfig({ method_id: Number(methodId) }));
+        }
     }, [methodId])
 
     useEffect(() => {
@@ -141,9 +168,19 @@ export default function FedExConfigModal({ open, onOpenChange, methodId }: FedEx
             setApiBaseUrl("");
             setPassword("");
             setErrors({});
+
+            // Quotes
+            setDestCountry("")
+            setDestState("")
+            setDestZip("")
+            setPkgWeight("")
+            setPkgValue("")
+            setPkgLength("")
+            setPkgWidth("")
+            setPkgHeight("")
         }
     }, [open]);
-    
+
     useEffect(() => {
         if (fedexConfig) {
             setDisplayName(fedexConfig.display_name || "");
@@ -160,12 +197,25 @@ export default function FedExConfigModal({ open, onOpenChange, methodId }: FedEx
             setApiBaseUrl(fedexConfig.api_base_url || "");
             setPassword(fedexConfig.client_secret || "");
         }
-    }, [fedexConfig]);
+        if (quoteFedexConfig) {
+
+            // Quotes fields
+            setDestCountry(quoteFedexConfig.destination_country)
+            setDestState(quoteFedexConfig.destination_state)
+            setDestZip(quoteFedexConfig.destination_zip)
+            setPkgWeight(quoteFedexConfig?.package_weight)
+            setPkgValue(quoteFedexConfig?.package_value)
+            setPkgLength(quoteFedexConfig?.package_length)
+            setPkgWidth(quoteFedexConfig?.package_width)
+            setPkgHeight(quoteFedexConfig.package_height)
+        }
+
+    }, [fedexConfig, quoteFedexConfig]);
 
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-hidden flex flex-col p-0">
+            <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-hidden flex flex-col p-0">
 
                 {/* Header */}
                 <DialogHeader className="px-6 pt-6 pb-4 border-b">
@@ -199,7 +249,7 @@ export default function FedExConfigModal({ open, onOpenChange, methodId }: FedEx
                             {/* Display Name */}
                             <div className="space-y-2">
                                 <Label>Display Name</Label>
-                                <Input value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
+                                <Input className="max-w-full" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
                             </div>
 
                             {/* Drop-off Type */}
@@ -331,32 +381,32 @@ export default function FedExConfigModal({ open, onOpenChange, methodId }: FedEx
                             <div className="space-y-2">
                                 <Label>Destination country</Label>
                                 <Select value={destCountry} onValueChange={setDestCountry}>
-                                    <SelectTrigger><SelectValue /></SelectTrigger>
+                                    <SelectTrigger className="max-w-full"><SelectValue /></SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="United States">United States</SelectItem>
-                                        <SelectItem value="Canada">Canada</SelectItem>
-                                        <SelectItem value="United Kingdom">United Kingdom</SelectItem>
+                                        {countriesList.map((item, i) => {
+                                            return <SelectItem key={i} value={item.value}>{item.label}</SelectItem>
+                                        })}
                                     </SelectContent>
                                 </Select>
                             </div>
                             <div className="space-y-2">
                                 <Label>Destination state</Label>
                                 <Select value={destState} onValueChange={setDestState}>
-                                    <SelectTrigger><SelectValue /></SelectTrigger>
+                                    <SelectTrigger className="max-w-full"><SelectValue /></SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="California">California</SelectItem>
-                                        <SelectItem value="New York">New York</SelectItem>
-                                        <SelectItem value="Texas">Texas</SelectItem>
+                                        {statesList.map((item, i) => {
+                                            return <SelectItem key={i} value={item.value}>{item.label}</SelectItem>
+                                        })}
                                     </SelectContent>
                                 </Select>
                             </div>
                             <div className="space-y-2">
                                 <Label>Destination Zip/Postcode</Label>
-                                <Input value={destZip} onChange={(e) => setDestZip(e.target.value)} />
+                                <Input className="max-w-full" value={destZip} onChange={(e) => setDestZip(e.target.value)} />
                             </div>
                             <div className="space-y-2">
                                 <Label>Package weight</Label>
-                                <Input type="number" value={pkgWeight} onChange={(e) => setPkgWeight(e.target.value)} />
+                                <Input className="max-w-full" type="number" value={pkgWeight} onChange={(e) => setPkgWeight(e.target.value)} />
                             </div>
                             <div className="space-y-2">
                                 <Label>Package value</Label>
@@ -366,7 +416,7 @@ export default function FedExConfigModal({ open, onOpenChange, methodId }: FedEx
                                         type="number"
                                         value={pkgValue}
                                         onChange={(e) => setPkgValue(e.target.value)}
-                                        className="border-0 rounded-none focus-visible:ring-0"
+                                        className="border-0 rounded-none focus-visible:ring-0 max-w-full"
                                     />
                                 </div>
                             </div>
@@ -377,7 +427,7 @@ export default function FedExConfigModal({ open, onOpenChange, methodId }: FedEx
                                         type="number"
                                         value={pkgLength}
                                         onChange={(e) => setPkgLength(e.target.value)}
-                                        className="border-0 rounded-none focus-visible:ring-0"
+                                        className="border-0 rounded-none focus-visible:ring-0  max-w-full"
                                     />
                                     <span className="px-3 py-2 bg-gray-100 text-gray-500 border-l text-sm">Inches</span>
                                 </div>
@@ -389,7 +439,7 @@ export default function FedExConfigModal({ open, onOpenChange, methodId }: FedEx
                                         type="number"
                                         value={pkgWidth}
                                         onChange={(e) => setPkgWidth(e.target.value)}
-                                        className="border-0 rounded-none focus-visible:ring-0"
+                                        className="border-0 rounded-none focus-visible:ring-0  max-w-full"
                                     />
                                     <span className="px-3 py-2 bg-gray-100 text-gray-500 border-l text-sm">Inches</span>
                                 </div>
@@ -401,7 +451,7 @@ export default function FedExConfigModal({ open, onOpenChange, methodId }: FedEx
                                         type="number"
                                         value={pkgHeight}
                                         onChange={(e) => setPkgHeight(e.target.value)}
-                                        className="border-0 rounded-none focus-visible:ring-0"
+                                        className="border-0 rounded-none focus-visible:ring-0  max-w-full"
                                     />
                                     <span className="px-3 py-2 bg-gray-100 text-gray-500 border-l text-sm">Inches</span>
                                 </div>
