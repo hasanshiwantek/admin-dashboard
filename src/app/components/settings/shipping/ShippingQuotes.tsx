@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import FedExConfigModal from "./FedExConfigModal";
 import Image from "next/image";
-import { connectFedex, fetchFedexConfig, fetchFedexServices, fetchShippingMethods, toggleShippingMethod } from "@/redux/slices/shippingSlice";
+import { connectFedex, disconnectFedex, fetchFedexConfig, fetchFedexServices, fetchShippingMethods, toggleShippingMethod } from "@/redux/slices/shippingSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { useParams, usePathname } from "next/navigation";
 
@@ -250,7 +250,7 @@ export default function ShippingQuotes() {
                                         checked={row.is_active ? true : false} onChange={() => toggle(row.id)}
                                     />
                                 </div>
-                                <div className="flex items-center gap-3 flex-shrink-0">
+                                <div className="flex items-center gap-3 flex-shrink-0 ">
                                     {row.is_active && <EditButton />}
                                 </div>                            </div>
                         </div>
@@ -314,9 +314,20 @@ export default function ShippingQuotes() {
                             <div className="flex  items-center justify-between gap-4">
                                 <div className="flex items-center gap-3 flex-shrink-0">
                                     <Toggle
-                                        checked={row.enabled ? true : false} onChange={() => dispatch(connectFedex({ method_id: 3 })).finally(() => {
-                                            dispatch(fetchFedexConfig({ method_id: 3 }));
-                                        })
+                                        checked={row.enabled ? true : false} onChange={() => {
+                                            if (row.enabled) {
+                                                dispatch(disconnectFedex({ method_id: 3 })).then((result) => {
+                                                    if (fedexConfig.fulfilled.match(result)) {
+                                                        dispatch(fetchFedexConfig({ method_id: 3 }));
+                                                    }
+                                                })
+                                            } else {
+                                                dispatch(connectFedex({ method_id: 3 })).finally(() => {
+                                                    dispatch(fetchFedexConfig({ method_id: 3 }));
+                                                })
+                                            }
+
+                                        }
                                         }
                                     />
                                 </div>
