@@ -1,6 +1,6 @@
 "use client";
 // AddProductPage.tsx
-import { useEffect, useState, useMemo, useRef, useLayoutEffect } from "react";
+import React, { useEffect, useState, useMemo, useRef, useLayoutEffect } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import SidebarNavigation from "./SidebarNavigation";
 import BasicInfoForm from "./BasicInformation";
@@ -72,6 +72,8 @@ export default function AddProductPage() {
   const hasUpdatedOriginalRef = useRef(false); // ✅ tracks if update already happened
   const searchParams = useSearchParams();
   const pathname = usePathname();
+  const [showLeaveModal, setShowLeaveModal] = useState(false);
+  const [pendingNavUrl, setPendingNavUrl] = useState<string>("");
 
   const isDuplicate = searchParams.get("isDuplicate") === "true";
   const defaultValues = useMemo(
@@ -90,7 +92,8 @@ export default function AddProductPage() {
   );
 
   const methods: any = useForm({ defaultValues });
-  const { reset } = methods;
+
+  const { reset, formState: { isDirty }, } = methods;
   const { id } = useParams();
   const isEditModeRef = useRef(!!id);
   useEffect(() => {
@@ -161,15 +164,48 @@ export default function AddProductPage() {
     }
   }, [product, reset]);
 
-  //   useEffect(() => {
-  //   if (product) {
-  //     reset((prev) => ({
-  //       ...prev,
-  //       ...product,
-  //     }));
-  //   }
-  // }, [product, reset]);
+  useEffect(() => {
+    window.history.pushState(null, "", window.location.href);
+    const handlePopState = () => {
+      if (isDirty) {
+        window.history.pushState(null, "", window.location.href);
+        setPendingNavUrl("/manage/products");
+        setShowLeaveModal(true);
+      } else {
+        router.push("/manage/products");
+      }
+    };
 
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, [isDirty, router]);
+  // ─── Tab close / page refresh handler ───────────────────────────────────────
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isDirty) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [isDirty]);
+
+  // ─── 2. Helper function ──────────────────────────────────────────────────────
+  const handleBackNavigation = (url: string) => {
+    if (isDirty) {
+      setPendingNavUrl(url);
+      setShowLeaveModal(true);
+    } else {
+      router.push(url);
+    }
+  };
+
+  const confirmLeave = () => {
+    setShowLeaveModal(false);
+    router.push(pendingNavUrl);
+  };
   useEffect(() => {
     if (!id) {
       setProduct(undefined); // Clear previous product state
@@ -460,213 +496,237 @@ export default function AddProductPage() {
     };
   }, [pathname]); // ✅ pat
   return (
-    <div className="my-5" >
-      <div className={`!sticky !top-2 z-40 bg-[#f6f7f9] w-full overflow-visible transition-all duration-300 px-6 ${isScrolled ? "py-1" : "py-3"}`}>
-
-        {/* Back link — scroll pe hide */}
-        {!isScrolled && (
-          <div className="flex items-center gap-2 text-gray-500 cursor-pointer mb-1"
-            onClick={() => router.push("/manage/products")}
-          >
-            <FaArrowLeftLong size={14} />
-            <span className="text-sm uppercase tracking-wide">View Products</span>
-          </div>
-        )}
-
-        {/* Title Row */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 min-w-0">
-            {/* scroll pe back arrow show karo */}
-            {isScrolled && (
-              <FaArrowLeftLong
-                size={14}
-                className="text-gray-500 cursor-pointer flex-shrink-0"
-                onClick={() => router.push("/manage/products")}
-              />
-            )}
-            <h1 className={`!font-semibold !text-gray-800 truncate transition-all duration-300 ${isScrolled ? "!text-base" : "!text-2xl"}`}>
-              {product?.name && !isDuplicate ? product?.name : isDuplicate ? "Duplicate Product" : "Add Product"}
-            </h1>
-            {product?.sku && !isDuplicate && (
+    <React.Fragment>
+      {showLeaveModal && (
+        <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/50">
+          <div className="bg-white rounded-lg shadow-xl w-[400px] p-6">
+            <h2 className="text-lg font-semibold text-gray-800 mb-2">Leave site?</h2>
+            <p className="text-sm text-gray-600 mb-6">
+              Changes you made may not be saved.
+            </p>
+            <div className="flex justify-end gap-3">
               <button
                 type="button"
-                className="flex items-center gap-1 text-blue-600 text-sm font-medium hover:underline whitespace-nowrap"
-                onClick={() => {
-                  const availableStores = JSON.parse(localStorage.getItem("availableStores") || "[]");
-                  const selectedStoreId = Number(localStorage.getItem("storeId"));
-                  const selectedStore = availableStores.find((s: any) => s.id === selectedStoreId);
-                  if (selectedStore?.baseUrl) window.open(`${selectedStore.baseUrl}${product.sku}`, "_blank");
-                  else alert("Store URL or Product SKU not found");
-                }}
+                className="px-4 py-2 text-sm rounded border border-gray-300 text-gray-700 hover:bg-gray-50"
+                onClick={() => setShowLeaveModal(false)}
               >
-                <FiExternalLink size={14} />
+                Cancel
               </button>
+              <button
+                type="button"
+                className="px-4 py-2 text-sm rounded bg-blue-600 text-white hover:bg-blue-700"
+                onClick={confirmLeave}
+              >
+                Leave
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      <div className="my-5" >
+        <div className={`!sticky !top-2 z-40 bg-[#f6f7f9] w-full overflow-visible transition-all duration-300 px-6 ${isScrolled ? "py-1" : "py-3"}`}>
+
+          {/* Back link — scroll pe hide */}
+          {!isScrolled && (
+            <div className="flex items-center gap-2 text-gray-500 cursor-pointer mb-1"
+              onClick={() => router.push("/manage/products")}
+            >
+              <FaArrowLeftLong size={14} />
+              <span className="text-sm uppercase tracking-wide">View Products</span>
+            </div>
+          )}
+
+          {/* Title Row */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 min-w-0">
+              {/* scroll pe back arrow show karo */}
+              {isScrolled && (
+                <FaArrowLeftLong
+                  size={14}
+                  className="text-gray-500 cursor-pointer flex-shrink-0"
+                  onClick={() => router.push("/manage/products")}
+                />
+              )}
+              <h1 className={`!font-semibold !text-gray-800 truncate transition-all duration-300 ${isScrolled ? "!text-base" : "!text-2xl"}`}>
+                {product?.name && !isDuplicate ? product?.name : isDuplicate ? "Duplicate Product" : "Add Product"}
+              </h1>
+              {product?.productUrl && !isDuplicate && (
+                <button
+                  type="button"
+                  className="flex items-center gap-1 text-blue-600 text-sm font-medium hover:underline whitespace-nowrap"
+                  onClick={() => {
+                    const availableStores = JSON.parse(localStorage.getItem("availableStores") || "[]");
+                    const selectedStoreId = Number(localStorage.getItem("storeId"));
+                    const selectedStore = availableStores.find((s: any) => s.id === selectedStoreId);
+                    if (selectedStore?.baseUrl) window.open(`${selectedStore.baseUrl}${product?.productUrl}`, "_blank");
+                    else alert("Store URL or Product SKU not found");
+                  }}
+                >
+                  <FiExternalLink size={14} />
+                </button>
+              )}
+            </div>
+
+            {product?.sku && !isDuplicate && (
+              <div className="flex items-center gap-2">
+                <div className="relative" ref={dropdownRef}>
+                  <button
+                    type="button"
+                    className="p-2 rounded border border-gray-300 hover:bg-gray-100 text-gray-600"
+                    onClick={() => setDropdownOpen((prev) => !prev)}
+                  >
+                    <HiDotsHorizontal size={18} />
+                  </button>
+                  {dropdownOpen && (
+                    <div className="absolute right-0 mt-1 w-48 bg-white border border-gray-200 rounded shadow-lg z-50">
+                      <button className="w-full text-left px-4 py-2 text-xl hover:bg-blue-50 text-gray-700"
+                        onClick={() => {
+                          const availableStores = JSON.parse(localStorage.getItem("availableStores") || "[]");
+                          const selectedStoreId = Number(localStorage.getItem("storeId"));
+                          const selectedStore = availableStores.find((s: any) => s.id === selectedStoreId);
+                          setDropdownOpen(false);
+                          if (selectedStore?.baseUrl && product.productUrl) window.open(`${selectedStore.baseUrl}${product.productUrl}`, "_blank");
+                        }}>
+                        View on storefront
+                      </button>
+                      <button className="w-full text-left px-4 py-2 text-xl hover:bg-gray-50 text-gray-700"
+                        onClick={() => {
+                          setDropdownOpen(false);
+                          localStorage.setItem("filterProductId", String(product.id));
+                          router.push("/manage/orders");
+                        }}>
+                        View orders
+                      </button>
+                      <button className="w-full text-left px-4 py-2 text-xl hover:bg-gray-50 text-gray-700"
+                        onClick={async () => {
+                          setDropdownOpen(false);
+                          await dispatch(deleteProduct({ ids: [product?.id] }));
+                          router.push("/manage/products");
+                        }}>
+                        Delete
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
             )}
           </div>
 
-          {product?.sku && !isDuplicate && (
-            <div className="flex items-center gap-2">
-              <div className="relative" ref={dropdownRef}>
-                <button
-                  type="button"
-                  className="p-2 rounded border border-gray-300 hover:bg-gray-100 text-gray-600"
-                  onClick={() => setDropdownOpen((prev) => !prev)}
-                >
-                  <HiDotsHorizontal size={18} />
-                </button>
-                {dropdownOpen && (
-                  <div className="absolute right-0 mt-1 w-48 bg-white border border-gray-200 rounded shadow-lg z-50">
-                    <button className="w-full text-left px-4 py-2 text-xl hover:bg-blue-50 text-gray-700"
-                      onClick={() => {
-                        const availableStores = JSON.parse(localStorage.getItem("availableStores") || "[]");
-                        const selectedStoreId = Number(localStorage.getItem("storeId"));
-                        const selectedStore = availableStores.find((s: any) => s.id === selectedStoreId);
-                        setDropdownOpen(false);
-                        if (selectedStore?.baseUrl) window.open(`${selectedStore.baseUrl}${product.sku}`, "_blank");
-                      }}>
-                      View on storefront
-                    </button>
-                    <button className="w-full text-left px-4 py-2 text-xl hover:bg-gray-50 text-gray-700"
-                      onClick={() => {
-                        setDropdownOpen(false);
-                        localStorage.setItem("filterProductId", String(product.id));
-                        router.push("/manage/orders");
-                      }}>
-                      View orders
-                    </button>
-                    <button className="w-full text-left px-4 py-2 text-xl hover:bg-gray-50 text-red-600"
-                      onClick={async () => {
-                        setDropdownOpen(false);
-                        await dispatch(deleteProduct({ ids: [product?.id] }));
-                        router.push("/manage/products");
-                      }}>
-                      Delete
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
+          {!isScrolled && <hr className="mt-3" />}
         </div>
-
-        {!isScrolled && <hr className="mt-3" />}
-      </div>
-      <div className="flex ">
-        <SidebarNavigation />
-        <FormProvider {...methods}>
-          <form onSubmit={onSubmit} className="flex-1  p-6 space-y-8 ">
-            <BasicInfoForm />
-            {/* <DescriptionEditor />
+        <div className="flex ">
+          <SidebarNavigation />
+          <FormProvider {...methods}>
+            <form onSubmit={onSubmit} className="flex-1  p-6 space-y-8 ">
+              <BasicInfoForm />
+              {/* <DescriptionEditor />
             FAQ section
             <DescriptionEditor fieldName="faq" label="FAQ" height={300} /> */}
-            <DescriptionEditorQuill />
-            {/* FAQ section */}
-            <DescriptionEditorQuill fieldName="faq" label="FAQ" height={300} />
+              <DescriptionEditorQuill />
+              {/* FAQ section */}
+              <DescriptionEditorQuill fieldName="faq" label="FAQ" height={300} />
 
-            <ImageVideoUploader initialImages={product?.image || []} />
-            <ProductIdentifiers />
-            <Pricing />
-            <Inventory isEdit={isEdit} />
-            {/* <Variations /> */}
-            {/* <Customizations /> */}
-            <StoreFront />
-            <CustomFields />
-            <RelatedProducts isEdit={isEdit} />
-            <Dimensions />
-            <ShippingDetails />
-            <Purchasability />
-            <CustomsInformation />
-            <Seo />
-            <OpenGraph isEdit={isEdit} />
-            {isDuplicate ? <div className="flex justify-end gap-4 items-center fixed w-full bottom-0 right-0 bg-white/90 z-10 shadow-xs border-t p-4">
-              {/* Cancel */}
-              <Link href={"/manage/products"}>
-                <button className="btn-outline-primary" type="button">
+              <ImageVideoUploader initialImages={product?.image || []} />
+              <ProductIdentifiers />
+              <Pricing />
+              <Inventory isEdit={isEdit} />
+              {/* <Variations /> */}
+              {/* <Customizations /> */}
+              <StoreFront />
+              <CustomFields />
+              <RelatedProducts isEdit={isEdit} />
+              <Dimensions />
+              <ShippingDetails />
+              <Purchasability />
+              <CustomsInformation />
+              <Seo />
+              <OpenGraph isEdit={isEdit} />
+              {isDuplicate ? <div className="flex justify-end gap-4 items-center fixed w-full bottom-0 right-0 bg-white/90 z-10 shadow-xs border-t p-4">
+                {/* Cancel */}
+                <button className="btn-outline-primary" type="button" onClick={() => handleBackNavigation("/manage/products")}>
                   Cancel
                 </button>
-              </Link>
 
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="btn-outline-primary flex items-center gap-2"
-                onClick={() => { exitAfterSaveRef.current = true; }}
-              >
-                {isLoading && exitAfterSaveRef.current && (
-                  <span className="h-4 w-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                )}
-                Duplicate & Exit
-              </button>
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="btn-outline-primary flex items-center gap-2"
+                  onClick={() => { exitAfterSaveRef.current = true; }}
+                >
+                  {isLoading && exitAfterSaveRef.current && (
+                    <span className="h-4 w-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                  )}
+                  Duplicate & Exit
+                </button>
 
-              {/* Duplicate */}
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="btn-primary flex items-center gap-2"
-                onClick={() => { exitAfterSaveRef.current = false; }}
-              >
-                {isLoading && (
-                  <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                )}
-                {isLoading ? "Duplicating..." : "Duplicate Product"}
-              </button>
-            </div> : <div className="flex justify-end gap-4 items-center fixed w-full bottom-0 right-0 bg-white/90 z-10 shadow-xs border-t p-4">
-              {/* Cancel */}
-              <Link href={"/manage/products"}>
-                <button className="btn-outline-primary" type="button">
+                {/* Duplicate */}
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="btn-primary flex items-center gap-2"
+                  onClick={() => { exitAfterSaveRef.current = false; }}
+                >
+                  {isLoading && (
+                    <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  )}
+                  {isLoading ? "Duplicating..." : "Duplicate Product"}
+                </button>
+              </div> : <div className="flex justify-end gap-4 items-center fixed w-full bottom-0 right-0 bg-white/90 z-10 shadow-xs border-t p-4">
+                {/* Cancel */}
+                <button onClick={() => handleBackNavigation("/manage/products")} className="btn-outline-primary" type="button">
                   Cancel
                 </button>
-              </Link>
-              {/* Save & Copy */}
+                {/* Save & Copy */}
 
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="btn-outline-primary flex items-center gap-2"
-                onClick={() => {
-                  if (!isEdit) {
-                    exitAfterSaveRef.current = false; // ✅ not exit
-                  }
-                  copyAfterSaveRef.current = true;  // ✅ copy mode
-                }}
-              >
-                {isLoading && exitAfterSaveRef.current && (
-                  <span className="h-4 w-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                )}
-                {isEdit ? "Update & Copy" : "Save & Copy"}
-              </button>
-              {/* Save & Exit */}
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="btn-outline-primary flex items-center gap-2"
-                onClick={() => { exitAfterSaveRef.current = true; }}
-              >
-                {isLoading && exitAfterSaveRef.current && (
-                  <span className="h-4 w-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                )}
-                {isEdit ? "Update & Exit" : "Save & Exit"}
-              </button>
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="btn-outline-primary flex items-center gap-2"
+                  onClick={() => {
+                    if (!isEdit) {
+                      exitAfterSaveRef.current = false; // ✅ not exit
+                    }
+                    copyAfterSaveRef.current = true;  // ✅ copy mode
+                  }}
+                >
+                  {isLoading && exitAfterSaveRef.current && (
+                    <span className="h-4 w-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                  )}
+                  {isEdit ? "Update & Copy" : "Save & Copy"}
+                </button>
+                {/* Save & Exit */}
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="btn-outline-primary flex items-center gap-2"
+                  onClick={() => { exitAfterSaveRef.current = true; }}
+                >
+                  {isLoading && exitAfterSaveRef.current && (
+                    <span className="h-4 w-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                  )}
+                  {isEdit ? "Update & Exit" : "Save & Exit"}
+                </button>
 
-              {/* Save / Update — same page pe raho */}
-              {!isEdit && <button
-                type="submit"
-                disabled={isLoading}
-                className="btn-primary flex items-center gap-2"
-                onClick={() => { exitAfterSaveRef.current = true; }}
-              >
-                {isLoading && (
-                  <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                )}
-                {isEdit
-                  ? isLoading ? "Updating..." : "Update Product"
-                  : isLoading ? "Saving..." : "Save Product"}
-              </button>}
-            </div>}
-          </form>
-        </FormProvider>
+                {/* Save / Update — same page pe raho */}
+                {!isEdit && <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="btn-primary flex items-center gap-2"
+                  onClick={() => { exitAfterSaveRef.current = true; }}
+                >
+                  {isLoading && (
+                    <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  )}
+                  {isEdit
+                    ? isLoading ? "Updating..." : "Update Product"
+                    : isLoading ? "Saving..." : "Save Product"}
+                </button>}
+              </div>}
+            </form>
+          </FormProvider>
+        </div>
       </div>
-    </div>
+    </React.Fragment>
   );
 }
 

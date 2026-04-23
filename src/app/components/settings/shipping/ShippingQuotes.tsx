@@ -3,7 +3,7 @@ import FedExConfigModal from "./FedExConfigModal";
 import Image from "next/image";
 import { connectFedex, disconnectFedex, fetchFedexConfig, fetchFedexServices, fetchShippingMethods, toggleShippingMethod } from "@/redux/slices/shippingSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
-import { useParams, usePathname } from "next/navigation";
+import { useParams, } from "next/navigation";
 
 const FreeShippingIcon = () => (
     <div style={{
