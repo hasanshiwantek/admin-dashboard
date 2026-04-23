@@ -129,16 +129,17 @@ export default function Seo() {
             </Label>
             <Input
               onKeyDown={(e) => {
-                if (/[#$*&@!=+%`'"|]/.test(e.key)) {
+                if (/[#$*&@!=+%`'":;<>{}[]|]/.test(e.key)) {
                   e.preventDefault();
                 }
               }}
               onPaste={(e) => {
                 const pasted = e.clipboardData.getData("text");
-                if (/[#$*&@!=+%`'"|]/.test(pasted)) {
+                if (/[#$*&@!=+%`'":;<>{}[]|]/.test(pasted)) {
                   e.preventDefault();
                 }
               }}
+              required
               className="!max-w-[85%] w-full" id="ProductUrl" placeholder=""
               {...register("productUrl", {
                 onChange: (e) => {

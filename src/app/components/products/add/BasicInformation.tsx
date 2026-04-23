@@ -106,13 +106,13 @@ export default function BasicInfoForm() {
               <Label className="2xl:!text-2xl" htmlFor="sku">SKU</Label>
               <Input
                 onKeyDown={(e) => {
-                  if (/[#$*&@!=+%`'"^()|]/.test(e.key)) {
+                  if (/[$*&@!=+%`'"^|]/.test(e.key)) {
                     e.preventDefault();
                   }
                 }}
                 onPaste={(e) => {
                   const pasted = e.clipboardData.getData("text");
-                  if (/[#$*&@!=+%`'"^()|]/.test(pasted)) {
+                  if (/[$*&@!=+%`'"^|]/.test(pasted)) {
                     e.preventDefault();
                   }
                 }}
