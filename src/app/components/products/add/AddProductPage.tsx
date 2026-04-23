@@ -257,35 +257,18 @@ export default function AddProductPage() {
           manageCustoms: data.manageCustoms ? 1 : 0,
         };
 
-        // // ─── CASE 1: Edit + Copy — 1st click = UPDATE only ──────────
-        if (hasUpdatedOriginalRef.current && isEdit) {
-          const formData = objectToFormData(normalizedFields);
-          const result = await dispatch(addProduct({ data: formData }));
-          if (addProduct.fulfilled.match(result)) {
-            hasUpdatedOriginalRef.current = true;
-            const { name: copyName, sku: copySku, productUrl: copyProductUrl } = buildCopyNameSku(data.name, data.sku, data?.productUrl);
-            methods.reset({ ...data, name: copyName, sku: copySku, productUrl: copyProductUrl });
-          }
-        }
-        if (copyAfterSaveRef.current && isEdit && !hasUpdatedOriginalRef.current) {
+        if (copyAfterSaveRef.current && isEdit) {
 
           const updateFormData = objectToFormData(normalizedFields);
-          const updateResult = await dispatch(
-            addProduct({ data: updateFormData })
-          );
+          const updateResult = await dispatch(addProduct({ data: updateFormData }));
 
           if (addProduct.fulfilled.match(updateResult)) {
-            // ✅ Mark updated — next click will CREATE
-            hasUpdatedOriginalRef.current = true;
             isEditModeRef.current = false;
-
             setProduct(undefined);
-
             const { name: copyName, sku: copySku, productUrl: copyProductUrl } = buildCopyNameSku(data.name, data.sku, data?.productUrl);
             methods.reset({ ...data, name: copyName, sku: copySku, productUrl: copyProductUrl });
-            // router.replace("/manage/products/add");
           } else {
-
+            console.error("Create copy failed:", updateResult.error);
           }
 
           // ─── CASE 2: Copy — 2nd click = CREATE only ─────────────────
@@ -305,24 +288,17 @@ export default function AddProductPage() {
           // ─── CASE 3: Normal Save / Update ───────────────────────────
         } else {
 
-          if (!hasUpdatedOriginalRef.current) {
+          const formData = objectToFormData(normalizedFields);
+          const result = await dispatch(addProduct({ data: formData }));
 
-            const formData = objectToFormData(normalizedFields);
-            const result = await dispatch(addProduct({ data: formData }));
-            const { name: copyName, sku: copySku, productUrl: copyProductUrl } = buildCopyNameSku(data.name, data.sku, data?.productUrl);
-            methods.reset({ ...data, name: copyName, sku: copySku, productUrl: copyProductUrl });
-
-            const actionCreator = addProduct;
-
-            if (actionCreator.fulfilled.match(result)) {
-              if (exitAfterSaveRef.current) {
-                router.push("/manage/products");
-              } else if (!isEdit) {
-                router.push("/manage/products/add");
-              }
+          if (addProduct.fulfilled.match(result)) {
+            if (exitAfterSaveRef.current) {
+              router.push("/manage/products");
             } else {
-              console.error("Product save failed:", result.error);
+              router.push(`/manage/products/edit/${result?.payload?.data?.id}`);
             }
+          } else {
+            console.error("Product save failed:", result.error);
           }
         }
 
@@ -330,9 +306,8 @@ export default function AddProductPage() {
         console.error("Unexpected error during save:", error);
       } finally {
         setIsLoading(false);
-        if (!isEdit) {
-          exitAfterSaveRef.current = false;
-        }
+        exitAfterSaveRef.current = false;
+        hasUpdatedOriginalRef.current = false;
         copyAfterSaveRef.current = false;
       }
     } else {
@@ -376,17 +351,7 @@ export default function AddProductPage() {
         };
 
 
-        // // ─── CASE 1: Edit + Copy — 1st click = UPDATE only ──────────
-        if (hasUpdatedOriginalRef.current && isEdit) {
-          const formData = objectToFormData(normalizedFields);
-          const result = await dispatch(addProduct({ data: formData }));
-          if (addProduct.fulfilled.match(result)) {
-            hasUpdatedOriginalRef.current = true;
-            const { name: copyName, sku: copySku, productUrl: copyProductUrl } = buildCopyNameSku(data.name, data.sku, data?.productUrl);
-            methods.reset({ ...data, name: copyName, sku: copySku, productUrl: copyProductUrl });
-          }
-        }
-        if (copyAfterSaveRef.current && isEdit && !hasUpdatedOriginalRef.current) {
+        if (copyAfterSaveRef.current && isEdit) {
 
           const updateFormData = objectToFormData(normalizedFields);
           const updateResult = await dispatch(
@@ -394,15 +359,10 @@ export default function AddProductPage() {
           );
 
           if (updateProductFormData.fulfilled.match(updateResult)) {
-            // ✅ Mark updated — next click will CREATE
-            hasUpdatedOriginalRef.current = true;
             isEditModeRef.current = false;
-
             setProduct(undefined);
-
             const { name: copyName, sku: copySku, productUrl: copyProductUrl } = buildCopyNameSku(data.name, data.sku, data?.productUrl);
             methods.reset({ ...data, name: copyName, sku: copySku, productUrl: copyProductUrl });
-            // router.replace("/manage/products/add");
           } else {
             console.error("Update failed:", updateResult.error);
           }
@@ -424,28 +384,22 @@ export default function AddProductPage() {
           // ─── CASE 3: Normal Save / Update ───────────────────────────
         } else {
 
-          if (!hasUpdatedOriginalRef.current) {
+          const formData = objectToFormData(normalizedFields);
+          const result = isEdit
+            ? await dispatch(updateProductFormData({ id: product.id, data: formData }))
+            : await dispatch(addProduct({ data: formData }));
 
-            const formData = objectToFormData(normalizedFields);
-            const result = isEdit
-              ? await dispatch(updateProductFormData({ id: product.id, data: formData }))
-              : await dispatch(addProduct({ data: formData }));
+          const actionCreator = isEdit ? updateProductFormData : addProduct;
 
-            const actionCreator = isEdit ? updateProductFormData : addProduct;
-
-            if (actionCreator.fulfilled.match(result)) {
-              if (exitAfterSaveRef.current) {
-                if (isEdit) {
-                  router.push("/manage/products");
-                } else {
-                  router.push(`/manage/products/edit/${result?.payload?.data?.id}`)
-                }
-              } else if (!isEdit) {
-                router.push("/manage/products/add");
-              }
-            } else {
-              console.error("Product save failed:", result.error);
+          if (actionCreator.fulfilled.match(result)) {
+            if (exitAfterSaveRef.current) {
+              router.push("/manage/products");
+            } else if (!isEdit) {
+              router.push(`/manage/products/edit/${result?.payload?.data?.id}`);
             }
+            // isEdit + !exitAfterSaveRef → stays on edit page
+          } else {
+            console.error("Product save failed:", result.error);
           }
         }
 
@@ -453,9 +407,8 @@ export default function AddProductPage() {
         console.error("Unexpected error during save:", error);
       } finally {
         setIsLoading(false);
-        if (!isEdit) {
-          exitAfterSaveRef.current = false;
-        }
+        exitAfterSaveRef.current = false;
+        hasUpdatedOriginalRef.current = false;
         copyAfterSaveRef.current = false;
       }
     }
@@ -529,7 +482,8 @@ export default function AddProductPage() {
           {/* Back link — scroll pe hide */}
           {!isScrolled && (
             <div className="flex items-center gap-2 text-gray-500 cursor-pointer mb-1"
-              onClick={() => router.push("/manage/products")}
+              // onClick={() => router.push("/manage/products")}
+              onClick={() => handleBackNavigation("/manage/products")}
             >
               <FaArrowLeftLong size={14} />
               <span className="text-sm uppercase tracking-wide">View Products</span>
@@ -558,8 +512,7 @@ export default function AddProductPage() {
                     const availableStores = JSON.parse(localStorage.getItem("availableStores") || "[]");
                     const selectedStoreId = Number(localStorage.getItem("storeId"));
                     const selectedStore = availableStores.find((s: any) => s.id === selectedStoreId);
-                    // if (selectedStore?.baseUrl) window.open(`${selectedStore.baseUrl}${product?.productUrl}`, "_blank");
-                          if (selectedStore?.baseUrl) window.open(`${selectedStore.baseUrl}${product?.productUrl[0] == "/" ? product?.productUrl.slice(1) : product?.productUrl}`, "_blank");
+                    if (selectedStore?.baseUrl) window.open(`${selectedStore.baseUrl}${product?.productUrl[0] == "/" ? product?.productUrl.slice(1) : product?.productUrl}`, "_blank");
                     else alert("Store URL or Product SKU not found");
                   }}
                 >
@@ -586,7 +539,7 @@ export default function AddProductPage() {
                           const selectedStoreId = Number(localStorage.getItem("storeId"));
                           const selectedStore = availableStores.find((s: any) => s.id === selectedStoreId);
                           setDropdownOpen(false);
-                               if (selectedStore?.baseUrl) window.open(`${selectedStore.baseUrl}${product?.productUrl[0] == "/" ? product?.productUrl.slice(1) : product?.productUrl}`, "_blank");
+                          if (selectedStore?.baseUrl) window.open(`${selectedStore.baseUrl}${product?.productUrl[0] == "/" ? product?.productUrl.slice(1) : product?.productUrl}`, "_blank");
                         }}>
                         View on storefront
                       </button>
@@ -687,6 +640,7 @@ export default function AddProductPage() {
                     if (!isEdit) {
                       exitAfterSaveRef.current = false; // ✅ not exit
                     }
+
                     copyAfterSaveRef.current = true;  // ✅ copy mode
                   }}
                 >
@@ -709,18 +663,28 @@ export default function AddProductPage() {
                 </button>
 
                 {/* Save / Update — same page pe raho */}
-                {!isEdit && <button
+                {isEdit ? <button
                   type="submit"
                   disabled={isLoading}
                   className="btn-primary flex items-center gap-2"
-                  onClick={() => { exitAfterSaveRef.current = true; }}
+                  onClick={() => { exitAfterSaveRef.current = false; }}
                 >
                   {isLoading && (
                     <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                   )}
-                  {isEdit
-                    ? isLoading ? "Updating..." : "Update Product"
-                    : isLoading ? "Saving..." : "Save Product"}
+                  {isLoading ? "Saving..." : "Save"}
+                </button> : <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="btn-primary flex items-center gap-2"
+                  onClick={() => {
+                    exitAfterSaveRef.current = false;
+                  }}
+                >
+                  {isLoading && (
+                    <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  )}
+                  {isLoading ? "Saving..." : "Save"}
                 </button>}
               </div>}
             </form>
