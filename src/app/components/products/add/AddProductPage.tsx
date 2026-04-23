@@ -558,7 +558,8 @@ export default function AddProductPage() {
                     const availableStores = JSON.parse(localStorage.getItem("availableStores") || "[]");
                     const selectedStoreId = Number(localStorage.getItem("storeId"));
                     const selectedStore = availableStores.find((s: any) => s.id === selectedStoreId);
-                    if (selectedStore?.baseUrl) window.open(`${selectedStore.baseUrl}${product?.productUrl}`, "_blank");
+                    // if (selectedStore?.baseUrl) window.open(`${selectedStore.baseUrl}${product?.productUrl}`, "_blank");
+                          if (selectedStore?.baseUrl) window.open(`${selectedStore.baseUrl}${product?.productUrl[0] == "/" ? product?.productUrl.slice(1) : product?.productUrl}`, "_blank");
                     else alert("Store URL or Product SKU not found");
                   }}
                 >
@@ -585,7 +586,7 @@ export default function AddProductPage() {
                           const selectedStoreId = Number(localStorage.getItem("storeId"));
                           const selectedStore = availableStores.find((s: any) => s.id === selectedStoreId);
                           setDropdownOpen(false);
-                          if (selectedStore?.baseUrl && product.productUrl) window.open(`${selectedStore.baseUrl}${product.productUrl}`, "_blank");
+                               if (selectedStore?.baseUrl) window.open(`${selectedStore.baseUrl}${product?.productUrl[0] == "/" ? product?.productUrl.slice(1) : product?.productUrl}`, "_blank");
                         }}>
                         View on storefront
                       </button>
