@@ -1182,8 +1182,8 @@ const AllOrders = () => {
                                     <div className="flex justify-between">
                                       <span>Subtotal</span>
                                       <span>
-                                        £
-                                        {order?.products
+                                        
+                                        ${order?.products
                                           .reduce(
                                             (acc: number, item: any) =>
                                               acc + item.price * item.quantity,
@@ -1195,8 +1195,8 @@ const AllOrders = () => {
                                     <div className="flex justify-between">
                                       <span>Shipping</span>
                                       <span>
-                                        £
-                                        {Number(order?.shippingCost || 0).toFixed(
+                                        
+                                        ${Number(order?.shippingCost || 0).toFixed(
                                           2
                                         )}
                                       </span>
@@ -1204,13 +1204,13 @@ const AllOrders = () => {
                                     <div className="flex justify-between">
                                       <span>VAT / TAX</span>
                                       <span>
-                                        £{Number(order?.tax || 0).toFixed(2)}
+                                        ${Number(order?.tax || 0).toFixed(2)}
                                       </span>
                                     </div>
                                     <div className="flex justify-between font-semibold text-base pt-2 border-t">
                                       <span>GRAND TOTAL</span>
                                       <span>
-                                        £{Number(order?.totalAmount).toFixed(2)}
+                                       ${Number(order?.totalAmount).toFixed(2)}
                                       </span>
                                     </div>
                                   </div>
