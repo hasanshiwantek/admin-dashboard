@@ -800,7 +800,7 @@ export const StoreSettings = ({
           className="mb-6"
         >
           <TabsList className="border-b  w-80 justify-start rounded-none h-auto p-0">
-            <TabsTrigger
+            {/* <TabsTrigger
               value="website"
               className="rounded-none border-b-2 border-transparent data-[state=active]:border-b-blue-600 data-[state=active]:bg-transparent px-4 py-3"
             >
@@ -823,14 +823,14 @@ export const StoreSettings = ({
               className="rounded-none border-b-2 border-transparent data-[state=active]:border-b-blue-600 data-[state=active]:bg-transparent px-4 py-3"
             >
               Date & Timezone
-            </TabsTrigger>
+            </TabsTrigger> */}
             <TabsTrigger
               value="url-structure"
               className="rounded-none border-b-2 border-transparent data-[state=active]:border-b-blue-600 data-[state=active]:bg-transparent px-4 py-3"
             >
               URL Structure
             </TabsTrigger>
-            <TabsTrigger
+            {/* <TabsTrigger
               value="search"
               className="rounded-none border-b-2 border-transparent data-[state=active]:border-b-blue-600 data-[state=active]:bg-transparent px-4 py-3"
             >
@@ -847,7 +847,7 @@ export const StoreSettings = ({
               className="rounded-none border-b-2 border-transparent data-[state=active]:border-b-blue-600 data-[state=active]:bg-transparent px-4 py-3"
             >
               Miscellaneous
-            </TabsTrigger>
+            </TabsTrigger> */}
           </TabsList>
 
           {/* CONTENT */}
