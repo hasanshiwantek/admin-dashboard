@@ -79,21 +79,23 @@ const EditButton = ({ onClick }: any) => (
             onClick={onClick}
             style={{
                 fontSize: 13, padding: "4px 12px",
-                border: "1px solid #1976d2", borderRight: "none",
-                borderRadius: "4px 0 0 4px", background: "#fff",
+                border: "1px solid #1976d2", 
+                // borderRight: "none",
+                borderRadius: "4px 0 0 4px",
+                 background: "#fff",
                 color: "#1976d2", cursor: "pointer"
             }}
         >
             Edit
         </button>
-        <button style={{
+        {/* <button style={{
             fontSize: 12, padding: "4px 8px",
             border: "1px solid #1976d2",
             borderRadius: "0 4px 4px 0", background: "#fff",
             color: "#1976d2", cursor: "pointer"
         }}>
             ▾
-        </button>
+        </button> */}
     </div>
 );
 
@@ -183,11 +185,11 @@ export default function ShippingQuotes() {
             <div style={{ padding: 24, fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", width: "100%" }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4 }}>
                     <h1 style={{ fontSize: 20, fontWeight: 600, margin: 0, color: "#111" }}>United States</h1>
-                    <button style={{
+                    {/* <button style={{
                         fontSize: 13, padding: "5px 16px",
                         border: "1px solid #d0d0d0", borderRadius: 4,
                         background: "#fff", color: "#333", cursor: "pointer"
-                    }}>Edit</button>
+                    }}>Edit</button> */}
                 </div>
 
                 <p style={{ fontSize: 12, fontWeight: 600, color: "#999", letterSpacing: "0.05em", textTransform: "uppercase", margin: "16px 0 12px" }}>
@@ -250,9 +252,10 @@ export default function ShippingQuotes() {
                                         checked={row.is_active ? true : false} onChange={() => toggle(row.id)}
                                     />
                                 </div>
-                                <div className="flex items-center gap-3 flex-shrink-0 ">
+                                {/* <div className="flex items-center gap-3 flex-shrink-0 ">
                                     {row.is_active && <EditButton />}
-                                </div>                            </div>
+                                </div> */}
+                            </div>
                         </div>
                     )))}
                 </div>

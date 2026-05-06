@@ -59,7 +59,7 @@ const SettingShipping = () => {
                         <div>
                             <h1 className=" text-gray-900 !font-extralight 2xl:!text-[3.2rem]">Shipping</h1>
                         </div>
-                        <div className="flex items-center gap-6 text-sm">
+                        {/* <div className="flex items-center gap-6 text-sm">
                             <a
                                 href="#"
                                 className="text-blue-600 hover:text-blue-700 hover:underline transition-colors 2xl:!text-[1.6rem]"
@@ -72,7 +72,7 @@ const SettingShipping = () => {
                             >
                                 Video tutorial
                             </a>
-                        </div>
+                        </div> */}
                     </div>
                     <div className="flex-1">
                         <h2 className="  mb-3  !text-black !font-bold  text-[15px] 2xl:!text-[1.6rem]">Shipping origin</h2>
@@ -116,11 +116,11 @@ const SettingShipping = () => {
                             <h3 className="font-semibold text-gray-600 text-[15px] 2xl:!text-[1.6rem]">
                                 Configure your shipping rules
                             </h3>
-                            <button type="button"
+                            {/* <button type="button"
                                 className="btn-outline-primary">
                                 Add shipping zone
                                 <span className="text-xs">▼</span>
-                            </button>
+                            </button> */}
                         </div>
 
                         <div className=" rounded-lg overflow-hidden  p-4">
@@ -128,63 +128,11 @@ const SettingShipping = () => {
                             {/* Header */}
                             <div className="bg-white px-6 py-3  font-semibold 2xl:!text-[1.6rem] flex items-center justify-between">
                                 <span className=' !text-black font-semibold  text-[15px] 2xl:!text-[1.6rem] '>Basic shipping rules</span>
-                                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                {/* <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
                                     <path d="M2 8L6 4L10 8" stroke="#6B7280" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                                </svg>
+                                </svg> */}
                             </div>
 
-
-                            {/* Rule 2: United States */}
-                            {/* {zones?.map((item) => {
-                            return <div className="px-6 py-6 flex items-center gap-6 hover:bg-gray-50">
-                                <div className="w-10 flex-shrink-0 flex items-center justify-center pt-0.5">
-                                    <div className="w-10 h-8  overflow-hidden  border-gray-200 flex-shrink-0">
-                                        {item.id == 1 ? <img
-                                            src="https://flagcdn.com/w80/us.png"
-                                            alt="US"
-                                            className="w-full h-full object-cover"
-                                        /> : <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="1.5">
-                                            <circle cx="12" cy="12" r="10" />
-                                            <path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20" />
-                                        </svg>}
-                                    </div>
-                                </div>
-                                <div className="w-36 flex-shrink-0 pt-0.5">
-                                    <p className="font-medium text-gray-600 2xl:!text-[1.6rem]">{item?.name}</p>
-                                </div>
-
-                                <div className="flex flex-1 items-start justify-between gap-4">
-                                    <p className="text-gray-600 2xl:!text-[1.6rem] leading-relaxed">
-                                        FedEx &nbsp;&nbsp;&nbsp; Flat Rate for under 10 LBS item<br />
-                                        I will provide the shipping label/others (Mentions the details on below comments box)
-                                    </p>
-                                    <div className="flex items-center gap-3 flex-shrink-0">
-                                        {item.id !== 2 && <Toggle checked={item.is_active ? true : false} onChange={() => dispatch(updateShippingZone({
-                                            zone_id: item.id,
-                                            data: {
-                                                name: item?.name,
-                                                is_active: !item.is_active
-                                            }
-                                        }))} />}
-
-                                        <button
-                                            type="button"
-                                            className="btn-outline-primary"
-                                            onClick={() => router.replace("/manage/settings/shipping/" + item?.id)}
-                                        >
-                                            Edit
-                                        </button>
-                                        <button
-                                            type="button"
-                                            className="btn-outline-primary"
-                                            onClick={() => dispatch(deleteShippingZone({ zone_id: item?.id }))}
-                                        >
-                                            ✕
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        })} */}
                             {loading ? (
                                 // Skeleton Loader
                                 Array.from({ length: 3 }).map((_, i) => (
@@ -297,7 +245,7 @@ const SettingShipping = () => {
                         </div>
 
                         {/* Shipping address form display */}
-                        <div className="mt-8  p-4">
+                        {/* <div className="mt-8  p-4">
                             <h3 className="text-xl  mb-3  text-black !font-bold   text-[15px] 2xl:!text-[1.6rem]">Shipping address form display</h3>
                             <p className=" leading-relaxed  mt-5 mb-5 text-gray-600 2xl:!text-[1.6rem]">
                                 Control which countries are shown in the country drop down at checkout when shoppers
@@ -321,7 +269,7 @@ const SettingShipping = () => {
                                     </Label>
                                 </div>
                             </RadioGroup>
-                        </div>
+                        </div> */}
                     </Card>
                 </div >
             </div >
