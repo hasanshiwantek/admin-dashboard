@@ -120,7 +120,6 @@ const AllOrders = () => {
   const [selectedOrderIds, setSelectedOrderIds] = useState<any[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<any>();
   const [showShipmentModal, setShowShipmentModal] = useState(false);
-  // Handle single row checkbox change
   const handleOrderCheckboxChange = (order: any, checked: boolean) => {
     let updated;
 
