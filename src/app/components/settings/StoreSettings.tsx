@@ -305,7 +305,7 @@ export const UrlSettingSection = ({
             />
           </div>
         </div>
-        {settings[`${name}UrlFormat`] === "custom" && (
+        {/* {settings[`${name}UrlFormat`] === "custom" && (
           <div className="flex flex-col items-start w-full max-w-lg lg:ml-80 mt-2">
             <a href="#" className="text-blue-600 text-sm hover:underline">
               What placeholders can I use and how do they work?
@@ -317,7 +317,7 @@ export const UrlSettingSection = ({
               Update {title.replace(" Settings", "")} URLs...
             </Button>
           </div>
-        )}
+        )} */}
       </div>
     </RadioGroup>
   </div>
