@@ -94,7 +94,21 @@ export const addOrder = createAsyncThunk(
     }
   },
 );
-
+export const capturePayment = createAsyncThunk(
+  "orders/capturePayment",
+  async ({ payment_intent_id }: { payment_intent_id: string }, thunkAPI) => {
+    try {
+      const response = await axiosInstance.post("dashboard/stripe/capture", {
+        payment_intent_id,
+      });
+      return response.data;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to capture payment"
+      );
+    }
+  }
+);
 // ADD ORDER FOR NEW CUSTOMER  THUNK
 export const addOrderForNewCustomer = createAsyncThunk(
   "orders/addOrderForNewCustomer",
