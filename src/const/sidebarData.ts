@@ -74,7 +74,7 @@ export const sidebarData = [
       //   url: "/manage/storefront/themes-marketplace",
       // },
       // { title: "Logo", url: "/manage/storefront/logo" },
-      // { title: "Home Page Carousel", url: "/manage/storefront/carousel" },
+      { title: "Home Page Carousel", url: "/manage/storefront/carousel" },
       // { title: "Social Media Links", url: "/manage/storefront/social-media" },
       { title: "Script Manager", url: "/manage/storefront/script-manager" },
       { title: "Web Pages", url: "/manage/storefront/web-pages" },

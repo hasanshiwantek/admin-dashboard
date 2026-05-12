@@ -32,6 +32,7 @@ import {
   printInvoicePdf,
   addShipmentOrder,
   refundOrder,
+  capturePayment,
 } from "@/redux/slices/orderSlice";
 import { Ellipsis, MoreHorizontal, BadgeCheck, Flag } from "lucide-react";
 import { refetchOrders } from "@/lib/orderUtils";
@@ -61,6 +62,7 @@ import enLocale from "i18n-iso-countries/langs/en.json";
 import { countriesListIconsRaw } from "@/const/location";
 import Image from "next/image";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import ConfirmationModal from "./edit/CaptuedPaymentModal";
 
 
 countries?.registerLocale(enLocale);
@@ -91,6 +93,8 @@ const AllOrders = () => {
   const totalPages = pagination?.totalPages;
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
   const [showNotes, setShowNotes] = useState(false);
+  const [showCaptured, setShowCaptured] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState<any>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -154,6 +158,7 @@ const AllOrders = () => {
     },
     {
       label: "Awaiting Fulfillment",
+      // value: "Paid",
       value: "Awaiting Fulfillment",
       color: "bg-blue-300",
     },
@@ -238,6 +243,13 @@ const AllOrders = () => {
       onClick: () => {
         setSelectedOrderId(order.id);
         setShowNotes(true);
+      },
+    },
+    {
+      label: "Captured Payment",
+      onClick: () => {
+        setSelectedOrderId(order?.payment?.payment_intent_id);
+        setShowConfirm(true);
       },
     },
     {
@@ -344,7 +356,6 @@ const AllOrders = () => {
         "3": "Partially Shipped",
         "10": "Completed",
         "2": "Shipped",
-        "5": "Cancelled",
         "6": "Declined",
         "4": "Refunded",
         "13": "Disputed",
@@ -861,8 +872,7 @@ const AllOrders = () => {
                             </span>
 
                             {/* Payment Method Icon */}
-                            {order.billingInformation?.paymentMethod ===
-                              "credit_card" && (
+                            {order.status === "Awaiting Payment" && (
                                 <CreditCard className="w-7 h-7 text-gray-500" />
                               )}
                           </div>
@@ -1181,7 +1191,7 @@ const AllOrders = () => {
                                     <div className="flex justify-between">
                                       <span>Subtotal</span>
                                       <span>
-                                        
+
                                         ${order?.products
                                           .reduce(
                                             (acc: number, item: any) =>
@@ -1194,7 +1204,7 @@ const AllOrders = () => {
                                     <div className="flex justify-between">
                                       <span>Shipping</span>
                                       <span>
-                                        
+
                                         ${Number(order?.shippingCost || 0).toFixed(
                                           2
                                         )}
@@ -1209,7 +1219,7 @@ const AllOrders = () => {
                                     <div className="flex justify-between font-semibold text-base pt-2 border-t">
                                       <span>GRAND TOTAL</span>
                                       <span>
-                                       ${Number(order?.totalAmount).toFixed(2)}
+                                        ${Number(order?.totalAmount).toFixed(2)}
                                       </span>
                                     </div>
                                   </div>
@@ -1243,6 +1253,20 @@ const AllOrders = () => {
           open={showNotes}
           onClose={handleCloseNotes}
           orderId={selectedOrderId}
+        />
+      )}
+      {showConfirm && selectedOrderId && (
+        <ConfirmationModal
+          open={showConfirm}
+          onClose={() => setShowConfirm(false)}
+          onConfirm={async () => {
+            // capture funds logic
+            if (selectedOrderId) {
+              await dispatch(capturePayment({ payment_intent_id: selectedOrderId })).unwrap()
+              dispatch(fetchAllOrders({ page: currentPage, perPage }));
+            }
+          }}
+          message="Are you sure you want to capture funds for this order?"
         />
       )}
       {showShipmentModal && selectedOrder && (
