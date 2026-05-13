@@ -206,16 +206,16 @@ const StoreFront = () => {
               <Controller
                 name="condition"
                 control={control}
-                defaultValue="new"
+                defaultValue="New"
                 render={({ field }) => (
                   <Select value={field.value} onValueChange={field.onChange}>
                     <SelectTrigger className="!max-w-[100%] 2xl!max-w-[90%] w-full">
                       <SelectValue placeholder="Select condition" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="new">New</SelectItem>
-                      <SelectItem value="used">Used</SelectItem>
-                      <SelectItem value="refurbished">Refurbished</SelectItem>
+                      <SelectItem value="New">New</SelectItem>
+                      <SelectItem value="Used">Used</SelectItem>
+                      <SelectItem value="Refurbished">Refurbished</SelectItem>
                     </SelectContent>
                   </Select>
                 )}
