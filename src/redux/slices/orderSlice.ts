@@ -44,6 +44,23 @@ export const fetchOrderById = createAsyncThunk(
     }
   },
 );
+// FETCH shipment BY ORDER ID
+export const shipmentByOrderId = createAsyncThunk(
+  "orders/shipment-by-order",
+  async ({ orderId }: { orderId: any }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.get(
+        `dashboard/shipments/shipment-by-order?order_id=${orderId}`,
+      );
+      return res?.data;
+    } catch (err: any) {
+      console.error("❌ Error fetching order by id:", err);
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to fetch order",
+      );
+    }
+  },
+);
 
 // FETCH ORDER BY KEYWORD
 export const fetchOrderByKeyword = createAsyncThunk(
@@ -569,6 +586,7 @@ const initialState = {
   orders: [],
   shipments: [],
   singleOrder: null,
+  singleShipmentByOrder: null,
   loading: false,
   error: null as string | null,
   draftOrder: [],
@@ -600,6 +618,10 @@ const orderSlice = createSlice({
       .addCase(fetchOrderById.fulfilled, (state, action) => {
         state.loading = false;
         state.singleOrder = action.payload.data;
+      })
+      .addCase(shipmentByOrderId.fulfilled, (state, action) => {
+        state.loading = false;
+        state.singleShipmentByOrder = action.payload.data;
       })
       .addCase(fetchOrderByKeyword.pending, (state) => {
         state.loading = true;

@@ -33,6 +33,7 @@ import {
   addShipmentOrder,
   refundOrder,
   capturePayment,
+  shipmentByOrderId,
 } from "@/redux/slices/orderSlice";
 import { Ellipsis, MoreHorizontal, BadgeCheck, Flag } from "lucide-react";
 import { refetchOrders } from "@/lib/orderUtils";
@@ -63,6 +64,7 @@ import { countriesListIconsRaw } from "@/const/location";
 import Image from "next/image";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import ConfirmationModal from "./edit/CaptuedPaymentModal";
+import ShipmentsTableModal from "./edit/ShipmentsTableModal";
 
 
 countries?.registerLocale(enLocale);
@@ -95,13 +97,14 @@ const AllOrders = () => {
   const [showNotes, setShowNotes] = useState(false);
   const [showCaptured, setShowCaptured] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [showShipmentTable, setShowShipmentTable] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState<any>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
   const toggleRow = (id: number) => {
     setExpandedRow((prev) => (prev === id ? null : id));
   };
-  const { loading, error } = useAppSelector((state) => state.order);
+  const { loading, error, singleShipmentByOrder } = useAppSelector((state) => state.order);
   const [activeTab, setActiveTab] = useState("All orders");
   const [filterProductId, setFilterProductId] = useState<string>("");
 
@@ -245,19 +248,41 @@ const AllOrders = () => {
         setShowNotes(true);
       },
     },
-    {
-      label: "Captured Payment",
-      onClick: () => {
-        setSelectedOrderId(order?.payment?.payment_intent_id);
-        setShowConfirm(true);
-      },
-    },
-    {
+    // {
+    //   label: "Capture Payment",
+    //   onClick: () => {
+    //     setSelectedOrderId(order?.payment?.payment_intent_id);
+    //     setShowConfirm(true);
+    //   },
+    // },
+     ...(order?.status.toLowerCase() !== "awaiting fulfillment" ? [{
+            label: "Capture Payment",
+            onClick: () => {
+                setSelectedOrderId(order?.payment?.payment_intent_id);
+                setShowConfirm(true);
+            },
+        }] : []),
+    // {
+    //   label: "Shipment table",
+    //   onClick: () => {
+    //     setSelectedOrderId(order.id);
+    //     setShowShipmentTable(true);
+    //   },
+    // },
+    // Shipment table - show only when Shipped
+    ...(order?.status.toLowerCase() === "shipped" ? [{
       label: "View shipments",
       onClick: () => {
-        router.push("/manage/orders/shipments");
+        setSelectedOrderId(order.id);
+        setShowShipmentTable(true);
       },
-    },
+    }] : []),
+    // {
+    //   label: "View shipments",
+    //   onClick: () => {
+    //     router.push("/manage/orders/shipments");
+    //   },
+    // },
     {
       label: "Ship items",
       onClick: () => {
@@ -512,7 +537,17 @@ const AllOrders = () => {
     }
   }, [activeTab])
 
-
+  const selectedOrderDetails = filteredOrders.find((item: any) => Number(item.id) === Number(selectedOrderId));
+  const counrtyBilling = countriesListIcons?.find(
+    (c) =>
+      c.iso2 === getISO2(selectedOrderDetails?.billingInformation?.country) ||
+      c.value === selectedOrderDetails?.billingInformation?.country
+  );
+  const counrtyShipping = countriesListIcons?.find(
+    (c) =>
+      c.iso2 === getISO2(selectedOrderDetails?.customer?.country) ||
+      c.value === selectedOrderDetails?.customer?.country
+  );
 
   useEffect(() => {
     if (productId) {
@@ -559,6 +594,13 @@ const AllOrders = () => {
     params.set("limit", limit);
     router.push(`?${params.toString()}`);
   };
+
+  useEffect(() => {
+    if (showShipmentTable) {
+      dispatch(shipmentByOrderId({ orderId: selectedOrderId })).unwrap()
+    }
+  }, [showShipmentTable])
+
 
   // ERROR LOGIC
   if (error) {
@@ -873,8 +915,8 @@ const AllOrders = () => {
 
                             {/* Payment Method Icon */}
                             {order.status === "Awaiting Payment" && (
-                                <CreditCard className="w-7 h-7 text-gray-500" />
-                              )}
+                              <CreditCard className="w-7 h-7 text-gray-500" />
+                            )}
                           </div>
                         </TableCell>
                         <TableCell>
@@ -885,6 +927,8 @@ const AllOrders = () => {
                               const currentStatus = statusOptions.find(
                                 (option) => option.value === normalizedStatus
                               );
+                              console.log("currentStatus", currentStatus);
+
                               return (
                                 <>
                                   <span
@@ -909,7 +953,7 @@ const AllOrders = () => {
                                     <SelectTrigger className="w-[200px] h-8 p-6">
                                       <SelectValue>
                                         {currentStatus?.label ||
-                                          "Awaiting Payment"}
+                                          ""}
                                       </SelectValue>
                                     </SelectTrigger>
                                     <SelectContent>
@@ -1267,6 +1311,17 @@ const AllOrders = () => {
             }
           }}
           message="Are you sure you want to capture funds for this order?"
+        />
+      )}
+      {showShipmentTable && selectedOrderId && singleShipmentByOrder && (
+        <ShipmentsTableModal
+          open={showShipmentTable}
+          onClose={() => setShowShipmentTable(false)}
+          onConfirm={() => setShowShipmentTable(false)}
+          shipments={singleShipmentByOrder ? [singleShipmentByOrder] : []}
+          orderDetails={filteredOrders.find((item: any) => item.id == selectedOrderId)}
+          counrtyShipping={counrtyShipping}
+          counrtyBilling={counrtyBilling}
         />
       )}
       {showShipmentModal && selectedOrder && (
