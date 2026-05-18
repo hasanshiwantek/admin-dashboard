@@ -136,10 +136,11 @@ export default function AddProductPage() {
           name: copyName,
           sku: copySku,
           productUrl: copyProductUrl,
+          callForPricing: editProduct.data?.callPricing
         };
         setProduct(updatedProduct);
       } else {
-        setProduct(editProduct.data);
+        setProduct({ ...editProduct.data, callForPricing: editProduct.data?.callPricing });
       }
     }
   }, [editProduct, isDuplicate]);
@@ -255,6 +256,7 @@ export default function AddProductPage() {
           useThumbnail: imageOption === "useThumbnail" ? 1 : 0,
           dontUse: imageOption === "dontUse" ? 1 : 0,
           manageCustoms: data.manageCustoms ? 1 : 0,
+          callForPricing: data.callForPricing ? 1 : 0,
         };
 
         if (copyAfterSaveRef.current && isEdit) {
@@ -348,6 +350,7 @@ export default function AddProductPage() {
           useThumbnail: imageOption === "useThumbnail" ? 1 : 0,
           dontUse: imageOption === "dontUse" ? 1 : 0,
           manageCustoms: data.manageCustoms ? 1 : 0,
+          callForPricing: data.callForPricing ? 1 : 0,
         };
 
 
