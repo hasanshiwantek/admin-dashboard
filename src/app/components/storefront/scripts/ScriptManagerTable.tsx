@@ -54,9 +54,9 @@ const ScriptManagerTable = () => {
 
         if (deleteScript.fulfilled.match(resultAction)) {
           // Refresh the scripts list
-          setTimeout(()=>{
+          setTimeout(() => {
             dispatch(fetchScripts());
-          },2000)
+          }, 2000)
         } else {
         }
       } catch (error) {
@@ -220,13 +220,13 @@ const ScriptManagerTable = () => {
                     <TableCell>
                       {script.created_at
                         ? new Date(script.created_at).toLocaleDateString(
-                            "en-US",
-                            {
-                              year: "numeric",
-                              month: "short",
-                              day: "numeric",
-                            }
-                          )
+                          "en-US",
+                          {
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                          }
+                        )
                         : "N/A"}
                     </TableCell>
                     <TableCell className="text-right">
@@ -271,7 +271,7 @@ const ScriptManagerTable = () => {
           </Table>
         </div>
         {/* Pagination Footer */}
-        <div className="flex items-center justify-end px-6 py-4 ">
+        {/* <div className="flex items-center justify-end px-6 py-4 ">
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
@@ -279,7 +279,7 @@ const ScriptManagerTable = () => {
             perPage={perPage}
             onPerPageChange={setPerPage}
           />
-        </div>
+        </div> */}
         {/* Footer Note */}
         <p className="mt-4">
           Looking for BigCommerce provided Analytics scripts? They can be found

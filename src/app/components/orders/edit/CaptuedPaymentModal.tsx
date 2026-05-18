@@ -40,7 +40,8 @@ export default function ConfirmationModal({
     return (
         <Dialog open={open} onOpenChange={handleClose}>
             <DialogContent
-                className="sm:max-w-[700px] p-0 gap-0 rounded-none"
+                className="sm:max-w-[900px] p-0 gap-0 rounded-none [&>button]:text-white [&>button]:top-3 [&>button]:right-3"
+
                 onEscapeKeyDown={handleClose}
                 onPointerDownOutside={handleClose}
             >
