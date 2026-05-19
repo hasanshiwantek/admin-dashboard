@@ -49,6 +49,13 @@ export default function OpenGraph({ isEdit = false }: OpenGraphProps) {
             <SelectContent>
               <SelectItem value="physical">Physical</SelectItem>
               <SelectItem value="digital">Digital</SelectItem>
+              <SelectItem value="album">Album</SelectItem>
+              <SelectItem value="book">Book</SelectItem>
+              <SelectItem value="drink">Drink</SelectItem>
+              <SelectItem value="food">Food</SelectItem>
+              <SelectItem value="game">Game</SelectItem>
+              <SelectItem value="movie">Movie</SelectItem>
+              <SelectItem value="product">Product</SelectItem>
             </SelectContent>
           </Select>
         </div>
