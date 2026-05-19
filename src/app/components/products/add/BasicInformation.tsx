@@ -74,8 +74,8 @@ export default function BasicInfoForm() {
                   <SelectValue placeholder="Select type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="physical">Physical</SelectItem>
-                  <SelectItem value="digital">Digital</SelectItem>
+                  <SelectItem value="Physical">Physical</SelectItem>
+                  <SelectItem value="Digital">Digital</SelectItem>
                 </SelectContent>
               </Select>
             </div>

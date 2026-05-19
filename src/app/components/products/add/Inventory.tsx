@@ -11,7 +11,7 @@ export default function InventorySection({ isEdit = false }: { isEdit?: boolean 
 
   // Watch form values
   const trackInventory = watch("trackInventory");
-  const inventoryLevel = watch("inventoryLevel");
+  const inventoryLevel = watch("inventoryLevel") || "product";
 
   return (
     <div className="p-10 border rounded-md bg-white space-y-4 scroll-mt-20" id="inventory">
@@ -48,6 +48,7 @@ export default function InventorySection({ isEdit = false }: { isEdit?: boolean 
               <RadioGroup
                 value={field.value}
                 onValueChange={field.onChange}
+                
                 className="flex flex-col space-y-2"
               >
                 <div className="flex items-center space-x-2">

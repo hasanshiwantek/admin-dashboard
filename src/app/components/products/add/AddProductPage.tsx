@@ -140,7 +140,7 @@ export default function AddProductPage() {
         };
         setProduct(updatedProduct);
       } else {
-        setProduct({ ...editProduct.data, callForPricing: editProduct.data?.callPricing });
+        setProduct({ ...editProduct?.data, callForPricing: editProduct?.data?.callPricing });
       }
     }
   }, [editProduct, isDuplicate]);
@@ -455,22 +455,22 @@ export default function AddProductPage() {
     <React.Fragment>
       {showLeaveModal && (
         <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/50">
-          <div className="bg-white rounded-lg shadow-xl w-[400px] p-6">
-            <h2 className="text-lg font-semibold text-gray-800 mb-2">Leave site?</h2>
-            <p className="text-sm text-gray-600 mb-6">
+          <div className="bg-white rounded-lg shadow-xl w-[600px] p-6">
+            <h2 className="text-3xl font-semibold text-gray-800 mb-2">Leave site?</h2>
+            <p className="text-2xl text-gray-600 mb-6">
               Changes you made may not be saved.
             </p>
             <div className="flex justify-end gap-3">
               <button
                 type="button"
-                className="px-4 py-2 text-sm rounded border border-gray-300 text-gray-700 hover:bg-gray-50"
+                className="px-4 py-2 text-2xl rounded border border-gray-300 text-gray-700 hover:bg-gray-50"
                 onClick={() => setShowLeaveModal(false)}
               >
                 Cancel
               </button>
               <button
                 type="button"
-                className="px-4 py-2 text-sm rounded bg-blue-600 text-white hover:bg-blue-700"
+                className="px-4 py-2 text-2xl rounded bg-blue-600 text-white hover:bg-blue-700"
                 onClick={confirmLeave}
               >
                 Leave
