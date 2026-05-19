@@ -255,13 +255,13 @@ const AllOrders = () => {
     //     setShowConfirm(true);
     //   },
     // },
-     ...(order?.status.toLowerCase() !== "awaiting fulfillment" ? [{
-            label: "Capture Payment",
-            onClick: () => {
-                setSelectedOrderId(order?.payment?.payment_intent_id);
-                setShowConfirm(true);
-            },
-        }] : []),
+    ...(order?.status.toLowerCase() !== "awaiting fulfillment" ? [{
+      label: "Capture Payment",
+      onClick: () => {
+        setSelectedOrderId(order?.payment?.payment_intent_id);
+        setShowConfirm(true);
+      },
+    }] : []),
     // {
     //   label: "Shipment table",
     //   onClick: () => {
