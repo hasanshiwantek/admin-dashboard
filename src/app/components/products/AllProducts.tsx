@@ -141,7 +141,7 @@ export default function AllProducts() {
           },
         })
       );
-      setTimeout(() => refetchProducts(dispatch), 300);
+      setTimeout(() => refetchProducts(dispatch, currentPage, Number(perPage)), 300);
     } else if (categoryAction === "delete") {
       const picked = pickedIdsStr.map(Number);
       if (!picked.length) return;
@@ -159,7 +159,7 @@ export default function AllProducts() {
       );
       // refresh categories (and products if needed)
       setTimeout(() => {
-        refetchProducts(dispatch);
+        refetchProducts(dispatch, currentPage, Number(perPage));
       }, 300);
     }
 
@@ -218,7 +218,7 @@ export default function AllProducts() {
           })
         );
         setTimeout(() => {
-          refetchProducts(dispatch);
+          refetchProducts(dispatch, currentPage, Number(perPage));
         }, 3000);
       },
     },
@@ -240,7 +240,7 @@ export default function AllProducts() {
           })
         );
         setTimeout(() => {
-          refetchProducts(dispatch);
+          refetchProducts(dispatch, currentPage, Number(perPage));
         }, 3000);
       },
     },
@@ -262,7 +262,7 @@ export default function AllProducts() {
           })
         );
         setTimeout(() => {
-          refetchProducts(dispatch);
+          refetchProducts(dispatch, currentPage, Number(perPage));
         }, 200);
       },
     },
@@ -284,7 +284,7 @@ export default function AllProducts() {
           })
         );
         setTimeout(() => {
-          refetchProducts(dispatch);
+          refetchProducts(dispatch, currentPage, Number(perPage));
         }, 200);
       },
     },
@@ -297,7 +297,7 @@ export default function AllProducts() {
         } else {
           dispatch(deleteProduct({ ids: [product.id] }));
           setTimeout(() => {
-            refetchProducts(dispatch);
+            refetchProducts(dispatch, currentPage, Number(perPage));
           }, 600);
         }
       },
@@ -321,9 +321,9 @@ export default function AllProducts() {
         const selectedStore = JSON.parse(localStorage.getItem('availableStores') || '[]')
           .find((store: any) => store.id === Number(localStorage.getItem('storeId')));
 
-        if (selectedStore?.baseUrl && product?.sku) {
+        if (selectedStore?.baseUrl && product?.productUrl) {
           // Open product page on storefront
-          window.open(`${selectedStore.baseUrl}/${product.sku}`, '_blank');
+          window.open(`${selectedStore.baseUrl}${product.productUrl}`, '_blank');
         } else {
           alert('Store URL or Product SKU not found');
         }
@@ -386,7 +386,7 @@ export default function AllProducts() {
           })
         );
         setTimeout(() => {
-          refetchProducts(dispatch);
+          refetchProducts(dispatch, currentPage, Number(perPage));
         }, 3000);
         setSelectedProductIds([]);
       },
@@ -410,7 +410,7 @@ export default function AllProducts() {
           })
         );
         setTimeout(() => {
-          refetchProducts(dispatch);
+          refetchProducts(dispatch, currentPage, Number(perPage));
         }, 3000);
         setSelectedProductIds([]);
       },
@@ -433,7 +433,7 @@ export default function AllProducts() {
           })
         );
         setTimeout(() => {
-          refetchProducts(dispatch);
+          refetchProducts(dispatch, currentPage, Number(perPage));
         }, 3000);
         setSelectedProductIds([]);
       },
@@ -456,7 +456,7 @@ export default function AllProducts() {
           })
         );
         setTimeout(() => {
-          refetchProducts(dispatch);
+          refetchProducts(dispatch, currentPage, Number(perPage));
         }, 3000);
         setSelectedProductIds([]);
       },
@@ -470,7 +470,7 @@ export default function AllProducts() {
         } else {
           dispatch(deleteProduct({ ids: selectedProductIds }));
           setTimeout(() => {
-            refetchProducts(dispatch);
+            refetchProducts(dispatch, currentPage, Number(perPage));
           }, 3000);
           setSelectedProductIds([]);
         }
@@ -606,7 +606,10 @@ export default function AllProducts() {
       dispatch(fetchAllProducts({ page, pageSize }));
     }
   }, [searchParams]); // reruns whenever URL changes
-
+  useEffect(() => {
+    if (pagination?.page) setCurrentPage(pagination.page);
+    if (pagination?.pageSize) setPerPage(pagination.pageSize.toString());
+  }, [pagination]);
   // SearchPoduct Logic
 
   const handleSearchProduct = () => {
@@ -863,7 +866,7 @@ export default function AllProducts() {
                                 },
                               })
                             );
-                            refetchProducts(dispatch);
+                            refetchProducts(dispatch, currentPage, Number(perPage));
                           }}
                         />
                       </TableCell>
@@ -932,7 +935,7 @@ export default function AllProducts() {
                                 },
                               })
                             );
-                            refetchProducts(dispatch);
+                            refetchProducts(dispatch, currentPage, Number(perPage));
                           }}
                         />
                       </TableCell>
