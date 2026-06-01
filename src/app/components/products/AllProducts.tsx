@@ -370,8 +370,8 @@ export default function AllProducts() {
     },
     {
       label: "Enable visiblity",
-      onClick: () => {
-        dispatch(
+      onClick: async () => {
+        const result = await dispatch(
           updateProduct({
             body: {
               products: [
@@ -385,17 +385,17 @@ export default function AllProducts() {
             },
           })
         );
-        setTimeout(() => {
+
+        if (updateProduct.fulfilled.match(result)) {
           refetchProducts(dispatch, currentPage, Number(perPage));
-        }, 3000);
-        setSelectedProductIds([]);
+          setSelectedProductIds([]);
+        }
       },
     },
     {
       label: "Disable visiblity",
-      onClick: () => {
-
-        dispatch(
+      onClick: async () => {
+        const result = await dispatch(
           updateProduct({
             body: {
               products: [
@@ -409,16 +409,17 @@ export default function AllProducts() {
             },
           })
         );
-        setTimeout(() => {
+
+        if (updateProduct.fulfilled.match(result)) {
           refetchProducts(dispatch, currentPage, Number(perPage));
-        }, 3000);
-        setSelectedProductIds([]);
+          setSelectedProductIds([]);
+        }
       },
     },
     {
       label: "Make featured",
-      onClick: () => {
-        dispatch(
+      onClick: async () => {
+        const result = await dispatch(
           updateProduct({
             body: {
               products: [
@@ -432,16 +433,17 @@ export default function AllProducts() {
             },
           })
         );
-        setTimeout(() => {
+        if (updateProduct.fulfilled.match(result)) {
           refetchProducts(dispatch, currentPage, Number(perPage));
-        }, 3000);
-        setSelectedProductIds([]);
+
+          setSelectedProductIds([]);
+        }
       },
     },
     {
       label: "Make Not featured",
-      onClick: () => {
-        dispatch(
+      onClick: async () => {
+        const result = await dispatch(
           updateProduct({
             body: {
               products: [
@@ -455,24 +457,29 @@ export default function AllProducts() {
             },
           })
         );
-        setTimeout(() => {
+        if (updateProduct.fulfilled.match(result)) {
           refetchProducts(dispatch, currentPage, Number(perPage));
-        }, 3000);
-        setSelectedProductIds([]);
+          setSelectedProductIds([]);
+        }
       },
     },
     {
       label: "Delete",
-      onClick: () => {
+      onClick: async () => {
         const confirm = window.confirm("Delete Selecred Products?");
         if (!confirm) {
           return;
         } else {
-          dispatch(deleteProduct({ ids: selectedProductIds }));
-          setTimeout(() => {
+          // dispatch(deleteProduct({ ids: selectedProductIds }));
+          // setTimeout(() => {
+          //   refetchProducts(dispatch, currentPage, Number(perPage));
+          // }, 3000);
+          // setSelectedProductIds([]);
+          const result = await dispatch(deleteProduct({ ids: selectedProductIds }));
+          if (deleteProduct.fulfilled.match(result)) {
             refetchProducts(dispatch, currentPage, Number(perPage));
-          }, 3000);
-          setSelectedProductIds([]);
+            setSelectedProductIds([]);
+          }
         }
       },
     },
