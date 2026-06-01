@@ -24,11 +24,16 @@ const Pagination = ({
   perPage,
   onPerPageChange,
 }: PaginationProps) => {
-  const getVisiblePages = () => {
-    if (totalPages <= 7) return [...Array(totalPages).keys()].map((i) => i + 1);
+  const getVisiblePages = (): (number | "...")[] => {
+    if (totalPages <= 7) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
 
-    if (currentPage <= 4) return [1, 2, 3, 4, 5, "...", totalPages];
-    if (currentPage >= totalPages - 3)
+    if (currentPage <= 3) {
+      return [1, 2, 3, 4, 5, "...", totalPages];
+    }
+
+    if (currentPage >= totalPages - 2) {
       return [
         1,
         "...",
@@ -38,20 +43,21 @@ const Pagination = ({
         totalPages - 1,
         totalPages,
       ];
+    }
+
     return [
-      1,
-      "...",
+      currentPage - 2,
       currentPage - 1,
       currentPage,
       currentPage + 1,
+      currentPage + 2,
       "...",
       totalPages,
     ];
   };
 
   return (
-    <div className="flex items-center justify-start gap-5 px-2 text-lg ">
-      {/* Page numbers */}
+    <div className="flex items-center justify-start gap-5 px-2 text-lg">
       <div className="flex items-center space-x-3">
         {getVisiblePages().map((page, i) =>
           page === "..." ? (
@@ -61,18 +67,19 @@ const Pagination = ({
           ) : (
             <Button
               type="button"
-              key={i}
+              key={`page-${page}`}
               variant={currentPage === page ? "secondary" : "ghost"}
+            
               size="lg"
-              className={`h-7 w-7  px-6 py-2 text-blue-600 font-medium text-xl cursor-pointer hover:text-gray-400 hover:border ${
-                currentPage === page && "bg-gray-400 text-white"
-              }`}
+              className={`h-7 w-7  px-6 py-2 text-blue-600 font-medium text-xl cursor-pointer hover:text-gray-400 hover:border ${currentPage === page && "bg-gray-400 text-white"
+                }`}
               onClick={() => onPageChange(Number(page))}
             >
               {page}
             </Button>
           )
         )}
+
         {currentPage < totalPages && (
           <button
             type="button"
@@ -85,20 +92,18 @@ const Pagination = ({
       </div>
 
       {/* View per page */}
-      <div className="flex items-center">
-        <Select value={perPage} onValueChange={onPerPageChange}>
-          <SelectTrigger className="">
-            <SelectValue placeholder={`View ${perPage}`} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="20">View 20</SelectItem>
-            <SelectItem value="10">View 10</SelectItem>
-            <SelectItem value="30">View 30</SelectItem>
-            <SelectItem value="50">View 50</SelectItem>
-            <SelectItem value="100">View 100</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+      <Select value={perPage} onValueChange={onPerPageChange}>
+        <SelectTrigger className="w-[110px]">
+          <SelectValue placeholder={`View ${perPage}`} />
+        </SelectTrigger>
+        <SelectContent>
+          {["10", "20", "30", "50", "100"].map((val) => (
+            <SelectItem key={val} value={val}>
+              View {val}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   );
 };
