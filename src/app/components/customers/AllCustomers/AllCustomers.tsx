@@ -416,7 +416,7 @@ const AllCustomers = () => {
                       />
                     </TableCell>
                     <TableCell>
-                      <button
+                      {/* <button
                         onClick={() => toggleRow(customer.id)}
                         className="mt-3"
                       >
@@ -425,7 +425,7 @@ const AllCustomers = () => {
                         ) : (
                           <FaCirclePlus className="h-7 w-7 fill-blue-500" />
                         )}
-                      </button>
+                      </button> */}
                     </TableCell>
                     <TableCell>
                       <div className=" text-blue-600 cursor-pointer hover:underline">

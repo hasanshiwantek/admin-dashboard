@@ -29,45 +29,45 @@ import {
 import { useRouter, useParams } from "next/navigation";
 const templates = [
   { label: "-- No Parent Page --", value: "" },
-  { label: "Product Condition", value: "172" },
-  { label: "Help Center", value: "40" },
-  { label: "Shipping Policy", value: "67" },
-  { label: "Return Policy", value: "85" },
-  { label: "Refund Policy", value: "170" },
-  { label: "Terms & Conditions", value: "5" },
-  { label: "Warranty", value: "8" },
-  { label: "Can I Undo My Canceled Order?", value: "128" },
-  { label: "Orders by Phone, fax, or Email", value: "129" },
-  { label: "Refund Process", value: "145" },
-  { label: "Benefits Of An Account", value: "38" },
-  { label: "Currently Unavailable Items", value: "25" },
-  { label: "Editing An Order", value: "20" },
-  { label: "Editing Or Canceling A Return", value: "23" },
-  { label: "Email Notifications", value: "15" },
-  { label: "How to track a package", value: "29" },
-  { label: "New Items", value: "57" },
-  { label: "Open Box Items", value: "54" },
-  { label: "PC Assembling Services", value: "55" },
-  { label: "Price Match Guarantee", value: "32" },
-  { label: "Problems Logging In", value: "39" },
-  { label: "Products Specifications And Details", value: "24" },
-  { label: "Products Warranties", value: "26" },
-  { label: "Refurbished Items", value: "56" },
-  { label: "Reporting a delivery issue", value: "28" },
-  { label: "Resolving a Declined", value: "33" },
-  {
-    label: "Return Shipping Fees, Full Refunds & Partial Refunds",
-    value: "21",
-  },
-  { label: "Time Sync Error", value: "37" },
-  { label: "Track An Order", value: "14" },
-  { label: "U.S. Payment Methods", value: "34" },
-  { label: "U.S. shipping policy", value: "27" },
-  { label: "Payment Policy", value: "12" },
-  { label: "Shipping & Returns", value: "2" },
-  { label: "About Us", value: "7" },
-  { label: "Contact Us", value: "4" },
-  { label: "Blog", value: "3" },
+  // { label: "Product Condition", value: "172" },
+  // { label: "Help Center", value: "40" },
+  // { label: "Shipping Policy", value: "67" },
+  // { label: "Return Policy", value: "85" },
+  // { label: "Refund Policy", value: "170" },
+  // { label: "Terms & Conditions", value: "5" },
+  // { label: "Warranty", value: "8" },
+  // { label: "Can I Undo My Canceled Order?", value: "128" },
+  // { label: "Orders by Phone, fax, or Email", value: "129" },
+  // { label: "Refund Process", value: "145" },
+  // { label: "Benefits Of An Account", value: "38" },
+  // { label: "Currently Unavailable Items", value: "25" },
+  // { label: "Editing An Order", value: "20" },
+  // { label: "Editing Or Canceling A Return", value: "23" },
+  // { label: "Email Notifications", value: "15" },
+  // { label: "How to track a package", value: "29" },
+  // { label: "New Items", value: "57" },
+  // { label: "Open Box Items", value: "54" },
+  // { label: "PC Assembling Services", value: "55" },
+  // { label: "Price Match Guarantee", value: "32" },
+  // { label: "Problems Logging In", value: "39" },
+  // { label: "Products Specifications And Details", value: "24" },
+  // { label: "Products Warranties", value: "26" },
+  // { label: "Refurbished Items", value: "56" },
+  // { label: "Reporting a delivery issue", value: "28" },
+  // { label: "Resolving a Declined", value: "33" },
+  // {
+  //   label: "Return Shipping Fees, Full Refunds & Partial Refunds",
+  //   value: "21",
+  // },
+  // { label: "Time Sync Error", value: "37" },
+  // { label: "Track An Order", value: "14" },
+  // { label: "U.S. Payment Methods", value: "34" },
+  // { label: "U.S. shipping policy", value: "27" },
+  // { label: "Payment Policy", value: "12" },
+  // { label: "Shipping & Returns", value: "2" },
+  // { label: "About Us", value: "7" },
+  // { label: "Contact Us", value: "4" },
+  // { label: "Blog", value: "3" },
 ];
 
 type FormValues = {
@@ -117,12 +117,12 @@ const WebPage = () => {
       id: "wysiwyg",
       label: "Contain content created using the WYSIWYG editor below",
     },
-    { id: "link", label: "Link to another website or document" },
-    {
-      id: "contact",
-      label: "Allow people to send questions/comments via a contact form",
-    },
-    { id: "rawHtml", label: "Contain raw HTML entered in the text area below" },
+    // { id: "link", label: "Link to another website or document" },
+    // {
+    //   id: "contact",
+    //   label: "Allow people to send questions/comments via a contact form",
+    // },
+    // { id: "rawHtml", label: "Contain raw HTML entered in the text area below" },
   ];
 
   // Fetch page data if editing
@@ -325,7 +325,8 @@ const WebPage = () => {
                 {/* Parent Page */}
                 <div className="flex justify-start gap-15 items-start mt-4">
                   <Label className="pt-1 2xl:!text-2xl">Parent Page</Label>
-                  <div className="w-[300px] border rounded-md overflow-y-auto h-[180px] bg-white text-xl">
+                  <div className="w-[300px] border rounded-md overflow-y-auto  bg-white text-xl">
+                  {/* <div className="w-[300px] border rounded-md overflow-y-auto h-[180px] bg-white text-xl"> */}
                     {templates.map((tpl) => {
                       const isSelected = watch("parentPage") === tpl.label;
                       return (
@@ -416,7 +417,7 @@ const WebPage = () => {
 
               {/* Checkboxes */}
               <div className="flex flex-col space-y-4 pt-4 ml-20">
-                <Controller
+                {/* <Controller
                   name="displayAsHomePage"
                   control={control}
                   render={({ field: { value, onChange, ...field } }) => (
@@ -441,7 +442,7 @@ const WebPage = () => {
                       </div>
                     </div>
                   )}
-                />
+                /> */}
 
                 <Controller
                   name="restrictToCustomersOnly"
