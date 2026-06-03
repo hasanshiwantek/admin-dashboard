@@ -10,7 +10,8 @@ import {
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Input } from "@/components/ui/input";
-import { Editor } from "@tinymce/tinymce-react";
+// import { Editor } from "@tinymce/tinymce-react";
+
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import {
@@ -24,9 +25,11 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import {
   createWebpage,
   getWebPageById,
+  getWebPages,
   updateWebPage,
 } from "@/redux/slices/storefrontSlice";
 import { useRouter, useParams } from "next/navigation";
+import DescriptionEditorQuill from "../products/add/DescriptionEditorQuill";
 const templates = [
   { label: "-- No Parent Page --", value: "" },
   // { label: "Product Condition", value: "172" },
@@ -71,7 +74,7 @@ const templates = [
 ];
 
 type FormValues = {
-  pageType: "wysiwyg" | "link" | "contact" | "rawHtml"; // add this
+  pageType: string; // add this
   pageName: string;
   pageUrl: string;
   pageContent: string;
@@ -86,10 +89,25 @@ type FormValues = {
   displayAsHomePage: boolean;
   restrictToCustomersOnly: boolean;
   sortOrder: string | number;
+  // link type
+  link: string;
+  // contact type
+  emailQuestionsTo: string;
+  showTheseFields: string[];
+  // rawHtml type
+  rawHtml: string;
 };
-
+const CONTACT_FIELDS = [
+  { id: "email", label: "Email Address", locked: true },
+  { id: "comments", label: "Question/Comment", locked: true },
+  { id: "full_name", label: "Full Name", locked: false },
+  { id: "company_name", label: "Company Name", locked: false },
+  { id: "phone_number", label: "Phone Number", locked: false },
+  { id: "order_number", label: "Order Number", locked: false },
+  { id: "rma_number", label: "RMA Number", locked: false },
+];
 const WebPage = () => {
-  const [pageType, setPageType] = useState("wysiwyg");
+  // const [pageType, setPageType] = useState("wysiwyg");
   const methods = useForm<FormValues>({
     defaultValues: {
       pageName: "",
@@ -99,12 +117,20 @@ const WebPage = () => {
       displayAsHomePage: false,
       restrictToCustomersOnly: false,
       sortOrder: 0,
+      // 
+      link: "",
+      emailQuestionsTo: "",
+      showTheseFields: ["email", "comments"],
+      rawHtml: "",
     },
   });
 
   const { control, setValue, watch, register, handleSubmit, reset } = methods;
   const selected = watch("template");
   const pageContent = watch("pageContent");
+  const webPages = useAppSelector((state: any) => state?.storefront?.webPages);
+  const pageType = watch("pageType");
+  const showTheseFields = watch("showTheseFields") || [];
   const editorRef = useRef<any>(null);
   const dispatch = useAppDispatch();
   const router = useRouter();
@@ -114,15 +140,15 @@ const WebPage = () => {
 
   const options = [
     {
-      id: "wysiwyg",
+      id: "1",
       label: "Contain content created using the WYSIWYG editor below",
     },
-    // { id: "link", label: "Link to another website or document" },
-    // {
-    //   id: "contact",
-    //   label: "Allow people to send questions/comments via a contact form",
-    // },
-    // { id: "rawHtml", label: "Contain raw HTML entered in the text area below" },
+    { id: "2", label: "Link to another website or document" },
+    {
+      id: "3",
+      label: "Allow people to send questions/comments via a contact form",
+    },
+    { id: "4", label: "Contain raw HTML entered in the text area below" },
   ];
 
   // Fetch page data if editing
@@ -161,28 +187,42 @@ const WebPage = () => {
       console.error("Something went wrong!", err);
     }
   };
+  const toggleContactField = (fieldId: string) => {
+    const current = showTheseFields;
+    const updated = current.includes(fieldId)
+      ? current.filter((f) => f !== fieldId)
+      : [...current, fieldId];
+    setValue("showTheseFields", updated, { shouldDirty: true });
+  };
+
+  useEffect(() => {
+    dispatch(getWebPages());
+  }, [dispatch]);
+
 
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="p-5 space-y-5">
           <div className="flex flex-col space-y-5 mt-10">
-
-            <h1 className="!font-extralight 2xl:!text-5xl">{isEdit ? "Edit" : "Create"} a Web Page</h1>
-            <p className="2xl:!text-2xl"> 
+            <h1 className="!font-extralight 2xl:!text-5xl">
+              {isEdit ? "Edit" : "Create"} a Web Page
+            </h1>
+            <p className="2xl:!text-2xl">
               To create a web page (such as an "About Us" page or a contact
               form), start by choosing the type of page you want and then fill
               in the other details.
             </p>
           </div>
+
           {/* PAGE TYPE */}
           <div className="space-y-4 mt-10">
             <h1 className="!font-semibold text-lg 2xl:!text-[2.4rem]">Page Type</h1>
             <div className="bg-white shadow-md p-10">
               <Controller
-                name="pageType" // must exist in FormValues
+                name="pageType"
                 control={control}
-                defaultValue="wysiwyg"
+                defaultValue={"1"}
                 render={({ field }) => (
                   <RadioGroup
                     value={field.value}
@@ -190,12 +230,11 @@ const WebPage = () => {
                     className="space-y-2"
                   >
                     {options.map((opt) => (
-                      <div
-                        key={opt.id}
-                        className="flex items-start space-x-3 ml-60"
-                      >
+                      <div key={opt.id} className="flex items-start space-x-3 ml-60">
                         <RadioGroupItem id={opt.id} value={opt.id} />
-                        <Label className="2xl:!text-2xl" htmlFor={opt.id}>{opt.label}</Label>
+                        <Label className="2xl:!text-2xl" htmlFor={opt.id}>
+                          {opt.label}
+                        </Label>
                       </div>
                     ))}
                   </RadioGroup>
@@ -208,83 +247,157 @@ const WebPage = () => {
           <div className="space-y-4 mt-10">
             <h1 className="!font-semibold text-lg 2xl:!text-[2.4rem]">Web Page Details</h1>
             <div className="bg-white shadow-md p-10 space-y-5">
-              {[
-                { label: "Page Name", name: "pageName" },
-                { label: "Page URL", name: "pageUrl" },
-              ].map(({ label, name }) => (
-                <div className="flex items-center gap-4" key={name}>
-                  <Label htmlFor={name} className="w-[140px] text-right 2xl:!text-2xl">
-                    {label}:
-                  </Label>
-                  <Controller
-                    name={name as keyof FormValues}
-                    control={control}
-                    render={({ field }) => {
-                      const { value, ...rest } = field;
-                      return (
-                        <Input
-                          id={name}
-                          {...rest}
-                          value={
-                            typeof value === "boolean"
-                              ? String(value)
-                              : value ?? ""
-                          }
-                          placeholder={`Enter ${label}`}
-                        />
-                      );
-                    }}
-                  />
-                </div>
-              ))}
 
-              <div className="flex items-start justify-start gap-4">
-                <Label className="w-[140px] text-right 2xl:!text-2xl">Page Content:</Label>
-                <Editor
-                  apiKey="d2z6pu70qtywhkzox051ga0czhas02dp55gl9bxijefs4vxo"
-                  onInit={(evt, editor) => (editorRef.current = editor)}
-                  value={pageContent || ""}
-                  onEditorChange={(content) =>
-                    setValue("pageContent", content, { shouldDirty: true })
-                  }
-                  init={{
-                    height: 400,
-                    menubar: true,
-                    directionality: "ltr",
-                    plugins: [
-                      "advlist",
-                      "autolink",
-                      "lists",
-                      "link",
-                      "image",
-                      "charmap",
-                      "preview",
-                      "anchor",
-                      "searchreplace",
-                      "visualblocks",
-                      "code",
-                      "fullscreen",
-                      "insertdatetime",
-                      "media",
-                      "table",
-                      "code",
-                      "help",
-                      "wordcount",
-                      "emoticons",
-                      "hr",
-                      "pagebreak",
-                      "print",
-                    ],
-                    toolbar: `undo redo | blocks fontfamily fontsize | bold italic underline strikethrough forecolor backcolor | 
-             alignleft aligncenter alignright alignjustify | 
-             outdent indent | numlist bullist | link image media table hr emoticons | 
-             code fullscreen preview print | removeformat`,
-                    branding: false,
-                    default_link_target: "_blank",
-                    toolbar_mode: "sliding",
-                  }}
+              {/* Page Name — always visible */}
+              <div className="flex items-center gap-4">
+                <Label htmlFor="pageName" className="w-[140px] text-right 2xl:!text-2xl">
+                  Page Name:
+                </Label>
+                <Controller
+                  name="pageName"
+                  control={control}
+                  render={({ field }) => (
+                    <Input id="pageName" {...field} placeholder="Enter Page Name" />
+                  )}
                 />
               </div>
+
+              {/* Page URL — always visible */}
+              {pageType != "2" && <div className="flex items-center gap-4">
+                <Label htmlFor="pageUrl" className="w-[140px] text-right 2xl:!text-2xl">
+                  Page URL:
+                </Label>
+                <Controller
+                  name="pageUrl"
+                  control={control}
+                  render={({ field }) => (
+                    <Input id="pageUrl" {...field} placeholder="Enter Page URL" />
+                  )}
+                />
+              </div>}
+
+              {/* WYSIWYG */}
+              {pageType == "1" && (
+                <div className="flex items-start justify-start gap-4">
+                  <Label className="w-[140px] text-right 2xl:!text-2xl">Page Content:</Label>
+                  <DescriptionEditorQuill
+                    fieldName="pageContent"
+                    label="Page Content"
+                    height={300}
+                  />
+                </div>
+              )}
+
+              {/* LINK */}
+              {pageType == "2" && (
+                <div className="flex items-center gap-4">
+                  <Label htmlFor="link" className="w-[140px] text-right 2xl:!text-2xl">
+                    Link:
+                  </Label>
+                  <Controller
+                    name="link"
+                    control={control}
+                    render={({ field }) => (
+                      <Input id="link" {...field} placeholder="https://" />
+                    )}
+                  />
+                </div>
+              )}
+
+              {/* CONTACT FORM */}
+              {pageType == "3" && (
+                <div className="space-y-5">
+                  {/* Page Content editor */}
+                  <div className="flex items-start justify-start gap-4">
+                    <Label className="w-[140px] text-right 2xl:!text-2xl">Page Content:</Label>
+                    <DescriptionEditorQuill
+                      fieldName="pageContent"
+                      label="Page Content"
+                      height={300}
+                    />
+                  </div>
+
+                  {/* Email Questions To */}
+                  <div className="flex items-center gap-4">
+                    <Label htmlFor="emailQuestionsTo" className="w-[180px] text-right 2xl:!text-2xl">
+                      Email Questions to:
+                    </Label>
+                    <Controller
+                      name="emailQuestionsTo"
+                      control={control}
+                      render={({ field }) => (
+                        <Input
+                          id="emailQuestionsTo"
+                          {...field}
+                          placeholder="info@mystore.com"
+                          className="max-w-[300px]"
+                        />
+                      )}
+                    />
+                  </div>
+
+                  {/* Show These Fields */}
+                  <div className="flex items-start gap-4">
+                    <Label className="w-[180px] text-right pt-1 2xl:!text-2xl">
+                      Show These Fields:
+                    </Label>
+                    <div className="space-y-2">
+                      {CONTACT_FIELDS.map((f) => (
+                        <div key={f.id} className="flex items-center gap-2">
+                          <Checkbox
+                            id={f.id}
+                            checked={f.locked || showTheseFields.includes(f.id)}
+                            disabled={f.locked}
+                            onCheckedChange={() => toggleContactField(f.id)}
+                          />
+                          <Label htmlFor={f.id} className="cursor-pointer 2xl:!text-xl">
+                            {f.label}
+                          </Label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Spam Protection */}
+                  <div className="flex items-center gap-4">
+                    <Label className="w-[180px] text-right 2xl:!text-2xl">
+                      Spam Protection:
+                    </Label>
+                    <div className="flex items-center gap-2">
+                      <Checkbox
+                        id="spamProtection"
+                        checked={showTheseFields.includes("spamProtection")}
+                        onCheckedChange={() => toggleContactField("spamProtection")}
+                      />
+                      <Label htmlFor="spamProtection" className="cursor-pointer 2xl:!text-xl">
+                        Add Manual Captcha
+                      </Label>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* RAW HTML */}
+              {pageType == '4' && (
+                <div className="flex items-start gap-4">
+                  <Label htmlFor="rawHtml" className="w-[140px] text-right 2xl:!text-2xl">
+                    HTML Content:
+                  </Label>
+                  <Controller
+                    name="rawHtml"
+                    control={control}
+                    render={({ field }) => (
+                      <textarea
+                        id="rawHtml"
+                        {...field}
+                        rows={15}
+                        className="flex-1 border rounded-md p-3 font-mono text-sm resize-y focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Enter raw HTML here..."
+                      />
+                    )}
+                  />
+                </div>
+              )}
             </div>
           </div>
 
@@ -293,17 +406,13 @@ const WebPage = () => {
             <h1 className="!font-semibold text-lg 2xl:!text-[2.4rem]">Navigation Menu Options</h1>
             <div className="bg-white shadow-md p-10 space-y-5">
               <div className="ml-20">
-                {/* Navigation Menu Checkbox */}
                 <Controller
                   name="showInNavigation"
                   control={control}
                   defaultValue={false}
                   render={({ field: { value, onChange } }) => (
                     <div className="flex items-center gap-4">
-                      <Label
-                        htmlFor="showInNavigation"
-                        className="cursor-pointer 2xl:!text-2xl"
-                      >
+                      <Label htmlFor="showInNavigation" className="cursor-pointer 2xl:!text-2xl">
                         Navigation Menu
                       </Label>
                       <Checkbox
@@ -312,41 +421,32 @@ const WebPage = () => {
                         onCheckedChange={onChange}
                         className="mr-2"
                       />
-                      <Label
-                        htmlFor="showInNavigation"
-                        className="cursor-pointer 2xl:!text-2xl"
-                      >
+                      <Label htmlFor="showInNavigation" className="cursor-pointer 2xl:!text-2xl">
                         Yes, show this web page on the navigation menu
                       </Label>
                     </div>
                   )}
                 />
 
-                {/* Parent Page */}
                 <div className="flex justify-start gap-15 items-start mt-4">
                   <Label className="pt-1 2xl:!text-2xl">Parent Page</Label>
-                  <div className="w-[300px] border rounded-md overflow-y-auto  bg-white text-xl">
-                  {/* <div className="w-[300px] border rounded-md overflow-y-auto h-[180px] bg-white text-xl"> */}
-                    {templates.map((tpl) => {
-                      const isSelected = watch("parentPage") === tpl.label;
+                  <div className="w-[300px] border rounded-md overflow-y-auto h-[160px] bg-white text-xl">
+                    {[{ pageName: "-- No Parent Page --", id: 0 }, ...(webPages.filter((item: any) => item.id != id) || [])]?.map((tpl: any) => {
+                      const isSelected = watch("parentPage") === tpl.id;
                       return (
                         <div
-                          key={tpl.label}
+                          key={tpl.id}
                           onClick={() =>
-                            setValue(
-                              "parentPage",
-                              isSelected ? "" : tpl.label,
-                              {
-                                shouldDirty: true,
-                              }
-                            )
+                            setValue("parentPage", isSelected ? "" : tpl.id, {
+                              shouldDirty: true,
+                            })
                           }
                           className={cn(
                             "cursor-pointer px-3 py-1",
                             isSelected && "bg-blue-600 text-white"
                           )}
                         >
-                          {tpl.label}
+                          {tpl.pageName}
                         </div>
                       );
                     })}
@@ -375,22 +475,14 @@ const WebPage = () => {
                     name={name as keyof FormValues}
                     control={control}
                     render={({ field }) => (
-                      <Input
-                        id={name}
-                        {...field}
-                        value={field.value as string | number | undefined}
-                      />
+                      <Input id={name} {...field} value={field.value as string} />
                     )}
                   />
                 </div>
               ))}
 
-              {/* Template Layout File */}
               <div className="flex items-center gap-4 ml-20">
-                <Label
-                  htmlFor="templateLayoutFile"
-                  className="w-[190px] text-right 2xl:!text-2xl"
-                >
+                <Label htmlFor="templateLayoutFile" className="w-[190px] text-right 2xl:!text-2xl">
                   Template Layout File:
                 </Label>
                 <Controller
@@ -403,47 +495,15 @@ const WebPage = () => {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="default">default</SelectItem>
-                        <SelectItem value="page-full-width">
-                          page-full-width
-                        </SelectItem>
-                        <SelectItem value="multi-add-skus">
-                          multi-add-skus
-                        </SelectItem>
+                        <SelectItem value="page-full-width">page-full-width</SelectItem>
+                        <SelectItem value="multi-add-skus">multi-add-skus</SelectItem>
                       </SelectContent>
                     </Select>
                   )}
                 />
               </div>
 
-              {/* Checkboxes */}
               <div className="flex flex-col space-y-4 pt-4 ml-20">
-                {/* <Controller
-                  name="displayAsHomePage"
-                  control={control}
-                  render={({ field: { value, onChange, ...field } }) => (
-                    <div className="flex items-center gap-8">
-                      <Label className="w-[180px] text-right 2xl:!text-2xl">
-                        Display as Home Page
-                      </Label>
-                      <div className="flex items-center">
-                        <Checkbox
-                          id="displayAsHomePage"
-                          checked={value}
-                          onCheckedChange={onChange}
-                          {...field}
-                          className="mr-2"
-                        />
-                        <Label
-                          htmlFor="displayAsHomePage"
-                          className="cursor-pointer 2xl:!text-2xl"
-                        >
-                          Yes, display this page as the home page of my store
-                        </Label>
-                      </div>
-                    </div>
-                  )}
-                /> */}
-
                 <Controller
                   name="restrictToCustomersOnly"
                   control={control}
@@ -460,12 +520,8 @@ const WebPage = () => {
                           {...field}
                           className="mr-2"
                         />
-                        <Label
-                          htmlFor="restrictToCustomersOnly"
-                          className="cursor-pointer 2xl:!text-2xl"
-                        >
-                          Yes, only allow customers who've logged in to view
-                          this page
+                        <Label htmlFor="restrictToCustomersOnly" className="cursor-pointer 2xl:!text-2xl">
+                          Yes, only allow customers who've logged in to view this page
                         </Label>
                       </div>
                     </div>
@@ -473,7 +529,6 @@ const WebPage = () => {
                 />
               </div>
 
-              {/* Sort Order */}
               <div className="flex items-start gap-4 pt-4 ml-20">
                 <Label htmlFor="sortOrder" className="w-[190px] text-right 2xl:!text-2xl">
                   Sort Order (Optional):
@@ -482,12 +537,7 @@ const WebPage = () => {
                   name="sortOrder"
                   control={control}
                   render={({ field }) => (
-                    <Input
-                      id="sortOrder"
-                      {...field}
-                      type="number"
-                      className="w-[100px]"
-                    />
+                    <Input id="sortOrder" {...field} type="number" className="w-[100px]" />
                   )}
                 />
               </div>
@@ -499,7 +549,7 @@ const WebPage = () => {
             <button
               type="button"
               className="btn-outline-primary"
-             onClick={()=>router.push("/manage/storefront/web-pages")}
+              onClick={() => router.push("/manage/storefront/web-pages")}
             >
               Cancel
             </button>
