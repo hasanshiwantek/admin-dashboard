@@ -83,7 +83,7 @@ export const urlSettings = createAsyncThunk(
   "dashboard/url-settings",                    // Better generic type name
   async ({ data, sectionName }: {
     data: any;
-    sectionName: "product" | "category" | "webPage";
+    sectionName: "product" | "category" | "webpage";
   }, thunkAPI) => {
 
     try {
@@ -122,7 +122,7 @@ export const urlSettings = createAsyncThunk(
 // );
 export const fetchUrlSettings = createAsyncThunk(
   "dashboard/url-settings/fetch",
-  async (sectionName: "product" | "category" | "webPage", thunkAPI) => {
+  async (sectionName: "product" | "category" | "webpage", thunkAPI) => {
     try {
       const response = await axiosInstance.get(
         `dashboard/url-settings/${sectionName}`   // Dynamic endpoint
