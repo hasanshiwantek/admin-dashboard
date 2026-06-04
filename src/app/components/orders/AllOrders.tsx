@@ -927,7 +927,6 @@ const AllOrders = () => {
                               const currentStatus = statusOptions.find(
                                 (option) => option.value === normalizedStatus
                               );
-                              console.log("currentStatus", currentStatus);
 
                               return (
                                 <>
