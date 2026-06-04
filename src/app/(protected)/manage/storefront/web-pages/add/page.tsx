@@ -3,7 +3,7 @@ import WebPage from '@/app/components/storefront/WebPage'
 const page = () => {
   return (
     <div className='p-10'>
-        <WebPage/>
+      <WebPage />
     </div>
   )
 }
