@@ -716,20 +716,22 @@ export const StoreSettings = ({
             };
           })(),
 
-          // webPage: (() => {
-          //   const format = urlStructureSettings.webPageUrlFormat;
-          //   if (format === "custom") {
-          //     return {
-          //       format_type: "custom",
-          //       custom_format: urlStructureSettings.webPageCustomUrl?.trim() || "/%pagename%/",
-          //     };
-          //   }
-          //   return {
-          //     format_type: format === "seo-optimized-short"
-          //       ? "seo_optimized_short"
-          //       : "seo_optimized_long",
-          //   };
-          // })(),
+          webPage: (() => {
+            const format = urlStructureSettings.webPageUrlFormat;
+            console.log("format", format, urlStructureSettings);
+
+            if (format === "custom") {
+              return {
+                format_type: "custom",
+                custom_format: urlStructureSettings.webPageCustomUrl?.trim() || "/%pagename%/",
+              };
+            }
+            return {
+              format_type: format === "seo-optimized-short"
+                ? "seo_optimized_short"
+                : "seo_optimized_long",
+            };
+          })(),
         };
         // Save each URL section individually
         await Promise.all([
@@ -743,10 +745,10 @@ export const StoreSettings = ({
             sectionName: "category"
           })).unwrap(),
 
-          // dispatch(urlSettings({ 
-          //   data: urlPayloads.webPage, 
-          //   sectionName: "webPage" 
-          // })).unwrap()
+          dispatch(urlSettings({
+            data: urlPayloads.webPage,
+            sectionName: "webpage"
+          })).unwrap()
         ]);
 
         // Refresh URL settings
@@ -777,6 +779,7 @@ export const StoreSettings = ({
       </div>
     );
   }
+  
 
   return (
     <div className="min-h-screen  p-8">

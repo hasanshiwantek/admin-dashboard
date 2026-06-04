@@ -255,7 +255,7 @@ const AllOrders = () => {
     //     setShowConfirm(true);
     //   },
     // },
-    ...(order?.status.toLowerCase() !== "awaiting fulfillment" ? [{
+    ...(String(order?.status || "")?.toLowerCase() !== "awaiting fulfillment" ? [{
       label: "Capture Payment",
       onClick: () => {
         setSelectedOrderId(order?.payment?.payment_intent_id);
@@ -270,7 +270,7 @@ const AllOrders = () => {
     //   },
     // },
     // Shipment table - show only when Shipped
-    ...(order?.status.toLowerCase() === "shipped" ? [{
+    ...(String(order?.status || "")?.toLowerCase() === "shipped" ? [{
       label: "View shipments",
       onClick: () => {
         setSelectedOrderId(order.id);

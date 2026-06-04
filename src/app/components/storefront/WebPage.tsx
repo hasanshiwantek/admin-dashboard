@@ -30,48 +30,8 @@ import {
 } from "@/redux/slices/storefrontSlice";
 import { useRouter, useParams } from "next/navigation";
 import DescriptionEditorQuill from "../products/add/DescriptionEditorQuill";
-const templates = [
-  { label: "-- No Parent Page --", value: "" },
-  // { label: "Product Condition", value: "172" },
-  // { label: "Help Center", value: "40" },
-  // { label: "Shipping Policy", value: "67" },
-  // { label: "Return Policy", value: "85" },
-  // { label: "Refund Policy", value: "170" },
-  // { label: "Terms & Conditions", value: "5" },
-  // { label: "Warranty", value: "8" },
-  // { label: "Can I Undo My Canceled Order?", value: "128" },
-  // { label: "Orders by Phone, fax, or Email", value: "129" },
-  // { label: "Refund Process", value: "145" },
-  // { label: "Benefits Of An Account", value: "38" },
-  // { label: "Currently Unavailable Items", value: "25" },
-  // { label: "Editing An Order", value: "20" },
-  // { label: "Editing Or Canceling A Return", value: "23" },
-  // { label: "Email Notifications", value: "15" },
-  // { label: "How to track a package", value: "29" },
-  // { label: "New Items", value: "57" },
-  // { label: "Open Box Items", value: "54" },
-  // { label: "PC Assembling Services", value: "55" },
-  // { label: "Price Match Guarantee", value: "32" },
-  // { label: "Problems Logging In", value: "39" },
-  // { label: "Products Specifications And Details", value: "24" },
-  // { label: "Products Warranties", value: "26" },
-  // { label: "Refurbished Items", value: "56" },
-  // { label: "Reporting a delivery issue", value: "28" },
-  // { label: "Resolving a Declined", value: "33" },
-  // {
-  //   label: "Return Shipping Fees, Full Refunds & Partial Refunds",
-  //   value: "21",
-  // },
-  // { label: "Time Sync Error", value: "37" },
-  // { label: "Track An Order", value: "14" },
-  // { label: "U.S. Payment Methods", value: "34" },
-  // { label: "U.S. shipping policy", value: "27" },
-  // { label: "Payment Policy", value: "12" },
-  // { label: "Shipping & Returns", value: "2" },
-  // { label: "About Us", value: "7" },
-  // { label: "Contact Us", value: "4" },
-  // { label: "Blog", value: "3" },
-];
+import { fetchUrlSettings } from "@/redux/slices/homeSlice";
+import { generateSlug } from "@/const/data";
 
 type FormValues = {
   pageType: string; // add this
@@ -129,13 +89,17 @@ const WebPage = () => {
   const selected = watch("template");
   const pageContent = watch("pageContent");
   const webPages = useAppSelector((state: any) => state?.storefront?.webPages);
+  const urlSettingData = useAppSelector(
+    (state: any) => state.home?.urlSettingData
+  );
   const pageType = watch("pageType");
   const showTheseFields = watch("showTheseFields") || [];
+  const [isUrlManuallyEdited, setIsUrlManuallyEdited] = useState<boolean>(false);
   const editorRef = useRef<any>(null);
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { id } = useParams();
-
+  const watchedName = watch("pageName");
   const isEdit = !!id;
 
   const options = [
@@ -195,11 +159,57 @@ const WebPage = () => {
     setValue("showTheseFields", updated, { shouldDirty: true });
   };
 
+
+
+  useEffect(() => {
+    if (!isUrlManuallyEdited) {
+      if (urlSettingData?.format_type == "seo_optimized_short") {
+        if (watchedName) {
+          const slug = generateSlug(watchedName);
+          setValue("pageUrl", `/${slug}`);
+        }
+      } else if (urlSettingData?.format_type == "seo_optimized_long") {
+        if (watchedName) {
+          const slug = generateSlug(watchedName);
+          setValue("pageUrl", `/pages/${slug}`);
+        }
+      }
+      const formatType = urlSettingData?.format_type;
+      const customFormat = urlSettingData?.custom_format;
+
+      if (formatType === "custom" && customFormat) {
+        if (watchedName) {
+          const replacements = {
+            "%pagename%": watchedName ? generateSlug(watchedName) : "",
+          };
+
+          const finalUrl = Object.entries(replacements)
+            .reduce(
+              (url, [key, value]) => url.replace(new RegExp(key, "gi"), value),
+              customFormat
+            )
+            .replace(/%[^%]+%/g, "")
+            .replace(/\/+/g, "/")
+            .replace(/\/$/g, "");
+          if (finalUrl) {
+            setValue("pageUrl", finalUrl);
+          }
+        }
+      }
+
+    }
+  }, [watchedName, isUrlManuallyEdited]);
   useEffect(() => {
     dispatch(getWebPages());
   }, [dispatch]);
-
-
+  useEffect(() => {
+    if (id) {
+      setIsUrlManuallyEdited(true)
+    }
+  }, [id])
+  useEffect(() => {
+    dispatch(fetchUrlSettings("webpage"));
+  }, [])
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -271,9 +281,61 @@ const WebPage = () => {
                   name="pageUrl"
                   control={control}
                   render={({ field }) => (
-                    <Input id="pageUrl" {...field} placeholder="Enter Page URL" />
+                    <Input id="pageUrl"
+                      {...field}
+                      onKeyDown={(e) => {
+                        if (/[$*&@!=+%`'"^|]/.test(e.key)) {
+                          e.preventDefault();
+                        }
+                      }}
+                      onPaste={(e) => {
+                        const pasted = e.clipboardData.getData("text");
+                        if (/[$*&@!=+%`'"^|]/.test(pasted)) {
+                          e.preventDefault();
+                        }
+                      }} onChange={(e) => {
+                        field.onChange(e);
+                        setIsUrlManuallyEdited(true);
+                      }} placeholder="Enter Page URL" />
                   )}
                 />
+                <button className="btn-outline-primary !py-2" type="button" onClick={() => {
+                  setIsUrlManuallyEdited(false)
+                  if (urlSettingData?.format_type == "seo_optimized_short") {
+                    if (watchedName) {
+                      const slug = generateSlug(watchedName);
+                      setValue("pageUrl", `/${slug}`);
+                    }
+                  } else if (urlSettingData?.format_type == "seo_optimized_long") {
+                    if (watchedName) {
+                      const slug = generateSlug(watchedName);
+                      setValue("pageUrl", `/pages/${slug}`);
+                    }
+                  }
+                  const formatType = urlSettingData?.format_type;
+                  const customFormat = urlSettingData?.custom_format;
+
+                  if (formatType === "custom" && customFormat) {
+                    if (watchedName) {
+                      const replacements = {
+                        "%pagename%": watchedName ? generateSlug(watchedName) : "",
+                      };
+
+                      const finalUrl = Object.entries(replacements)
+                        .reduce(
+                          (url, [key, value]) => url.replace(new RegExp(key, "gi"), value),
+                          customFormat
+                        )
+                        .replace(/%[^%]+%/g, "")
+                        .replace(/\/+/g, "/")
+                        .replace(/\/$/g, "");
+                      if (finalUrl) {
+                        setValue("pageUrl", finalUrl);
+                      }
+                    }
+                  }
+                }}
+                >Reset</button>
               </div>}
 
               {/* WYSIWYG */}

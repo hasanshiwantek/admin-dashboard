@@ -33,7 +33,7 @@ const OrderTable = () => {
       setFilteredOrders(orders.data);
     } else {
       const filtered = orders.data.filter(
-        (order) => order.status.toLowerCase() === activeTab.toLowerCase()
+        (order) => order?.status?.toLowerCase() === activeTab?.toLowerCase()
       );
       setFilteredOrders(filtered);
     }
