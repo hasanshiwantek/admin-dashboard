@@ -201,15 +201,13 @@ const WebPage = () => {
   }, [watchedName, isUrlManuallyEdited]);
   useEffect(() => {
     dispatch(getWebPages());
+    dispatch(fetchUrlSettings("webpage"));
   }, [dispatch]);
   useEffect(() => {
     if (id) {
       setIsUrlManuallyEdited(true)
     }
   }, [id])
-  useEffect(() => {
-    dispatch(fetchUrlSettings("webpage"));
-  }, [])
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)}>
