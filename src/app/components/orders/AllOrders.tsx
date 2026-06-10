@@ -831,6 +831,11 @@ const AllOrders = () => {
                       c.iso2 === getISO2(order?.billingInformation?.country) ||
                       c.value === order?.billingInformation?.country
                   );
+                  const countryDataForCustomer = countriesListIcons?.find(
+                    (c) =>
+                      c.iso2 === getISO2(order?.customer?.country) ||
+                      c.value === order?.customer?.country
+                  );
                   return (
                     <Fragment key={order?.id}>
                       <TableRow key={order?.id}>
@@ -1149,6 +1154,8 @@ const AllOrders = () => {
                                     {order?.customer?.addressLine2}
                                     <br />
                                     {order?.customer?.state}
+                                    <br />
+                                    {countryDataForCustomer?.label || "N/A"}
                                   </p>
 
                                   {/* Method Section */}
