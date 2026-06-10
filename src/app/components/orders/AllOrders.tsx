@@ -65,6 +65,8 @@ import Image from "next/image";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import ConfirmationModal from "./edit/CaptuedPaymentModal";
 import ShipmentsTableModal from "./edit/ShipmentsTableModal";
+import { toast } from "react-toastify";
+import dayjs from "dayjs";
 
 
 countries?.registerLocale(enLocale);
@@ -333,7 +335,20 @@ const AllOrders = () => {
     },
   ];
 
-  const copyBilling = () => {
+  const copyBilling = (info: any) => {
+    if (!info) return;
+
+    const text = [
+      `${info.firstName || ""} ${info.lastName || ""}`.trim(),
+      [info.addressLine1, info.addressLine2].filter(Boolean).join(" "),
+      [info.city, info.state, info.zip].filter(Boolean).join(", "),
+      info.country || "",
+    ]
+      .filter(Boolean)
+      .join("\n");
+
+    navigator.clipboard.writeText(text);
+    toast.success("Address copied!");
   };
 
   // SEARCH ORDER LOGIC
@@ -1028,7 +1043,7 @@ const AllOrders = () => {
                                   <h4 className="font-semibold">Billing</h4>
                                   <button
                                     className="!px-2 !py-1 text-blue-500 border-blue-400 border text-base"
-                                    onClick={copyBilling}
+                                    onClick={() => copyBilling(order?.billingInformation)}
                                   >
                                     Copy
                                   </button>
@@ -1075,27 +1090,39 @@ const AllOrders = () => {
                                     </span>
                                   </div>
                                   <div className="flex items-center gap-2">
+                                    <Clock className="w-5 h-5 text-gray-500" />
+                                    <span>
+                                      {order?.billingInformation?.updatedAt
+                                        ? dayjs(order?.billingInformation?.updatedAt).format("DD MMM YYYY HH:mm:ss")
+                                        : "N/A"}
+                                    </span>
+                                  </div>
+                                  <div className="flex items-center gap-2">
                                     {order?.deviceType === "tablet" || order?.deviceType === "mobile" ? <Smartphone className="h-5 w-5 text-gray-500" /> : <Monitor className="h-5 w-5 text-gray-500" />}
                                     <span>
                                       {(order?.deviceType?.toUpperCase()) || ("desktop".toUpperCase())}
                                     </span>
                                   </div>
-
                                   <div className="flex items-center gap-2">
                                     <CreditCard className="w-5 h-5 text-gray-500" />
                                     <span>
-                                      Payment Method{" "}
                                       {order?.billingInformation?.paymentMethod ||
                                         "N/A"}
                                     </span>
                                   </div>
-
-                                  <div className="flex items-center gap-2">
-                                    <Clock className="w-5 h-5 text-gray-500" />
+                                  {order?.status == "Awaiting Fulfillment" && <div className="flex items-center gap-2">
+                                    <CreditCard className="w-5 h-5 text-gray-500" />
                                     <span>
-                                      {order?.customer?.updatedAt || "N/A"}
+                                      Captued
                                     </span>
-                                  </div>
+                                  </div>}
+                                  {order?.payment?.payment_intent_id && <div className="flex items-center gap-2">
+                                    <CreditCard className="w-5 h-5 !text-blue-400 " />
+                                    <span>
+                                      {order?.payment?.payment_intent_id ||
+                                        "N/A"}
+                                    </span>
+                                  </div>}
                                 </div>
                               </div>
 
@@ -1105,7 +1132,7 @@ const AllOrders = () => {
                                   <h4 className="font-semibold">Shipping</h4>
                                   <button
                                     className="!px-2 !py-1 text-blue-500 border-blue-400 border text-base"
-                                    onClick={copyBilling}
+                                    onClick={() => copyBilling(order?.customer)}
                                   >
                                     Copy
                                   </button>
@@ -1118,7 +1145,8 @@ const AllOrders = () => {
                                     {order?.customer?.firstName}{" "}
                                     {order?.customer?.lastName}
                                     <br />
-                                    {order?.customer?.address}
+                                    {order?.customer?.addressLine1}{" "}
+                                    {order?.customer?.addressLine2}
                                     <br />
                                     {order?.customer?.state}
                                   </p>
@@ -1170,7 +1198,7 @@ const AllOrders = () => {
 
                               <div className="flex flex-wrap max-w-full ">
                                 {/* Left - Item count */}
-                                <div className="flex flex-col border-r pr-3 mr-3 min-w-[100px]">
+                                <div className="flex flex-col border-r pr-1 pt-2 mr-1 ">
                                   <h4 className="whitespace-nowrap">
                                     {order?.products?.length} items
                                   </h4>
@@ -1189,19 +1217,26 @@ const AllOrders = () => {
                                           <div className="text-base leading-5 break-words  min-w-0 overflow-hidden">
                                             <p className="font-semibold">
                                               {item?.quantity} x{" "}
-                                              <span className="text-blue-600 hover:underline whitespace-normal break-words leading-snug max-w-[300px]">
-                                                {item?.product?.name}
+                                              <span onClick={() => {
+                                                const availableStores = JSON.parse(localStorage.getItem("availableStores") || "[]");
+                                                const selectedStoreId = Number(localStorage.getItem("storeId"));
+                                                const selectedStore = availableStores.find((s: any) => s.id === selectedStoreId);
+                                                if (selectedStore?.baseUrl) window.open(`${selectedStore.baseUrl}${item?.productUrl == "/" ? item?.productUrl.slice(1) : item?.productUrl}`, "_blank");
+                                                else alert("Store URL or Product SKU not found");
+                                              }} className="!text-blue-400 font-light cursor-pointer hover:underline whitespace-normal break-words leading-snug max-w-[300px]">
+                                                {item?.name}
                                               </span>
                                             </p>
                                             <p className="text-xs text-gray-500">
-                                              {item?.product?.optionSet?.title}
+                                              {item?.optionSet?.title}
                                             </p>
                                             <p className="text-sm mt-1">
                                               <strong>Model:</strong>{" "}
-                                              {item?.product?.sku}
+                                              {item?.sku}
                                               <br />
                                               <strong>Brand:</strong>{" "}
-                                              {item?.product?.brand || "N/A"}
+                                              {item?.brand?.name || item?.brand || "N/A"}
+
                                             </p>
                                           </div>
 
@@ -1215,7 +1250,10 @@ const AllOrders = () => {
                                       )
                                     )}
 
-                                    <button className="flex items-center mt-4 px-3 py-1.5 text-base font-semibold border border-blue-500 text-blue-600 hover:bg-blue-50 rounded w-fit">
+                                    <button onClick={() => {
+                                      setSelectedOrder(order); // store in state
+                                      setShowShipmentModal(true);
+                                    }} className="flex items-center mt-4 px-3 py-1.5 text-base font-semibold border border-blue-500 text-blue-600 hover:bg-blue-50 rounded w-fit">
                                       <svg
                                         className="w-4 h-4 mr-2"
                                         fill="none"
