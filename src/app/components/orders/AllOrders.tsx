@@ -1117,8 +1117,8 @@ const AllOrders = () => {
                                     </span>
                                   </div>}
                                   {order?.payment?.payment_intent_id && <div className="flex items-center gap-2">
-                                    <CreditCard className="w-5 h-5 !text-blue-400 " />
-                                    <span>
+                                    <CreditCard className="w-5 h-5  " />
+                                    <span className="!text-blue-400">
                                       {order?.payment?.payment_intent_id ||
                                         "N/A"}
                                     </span>
