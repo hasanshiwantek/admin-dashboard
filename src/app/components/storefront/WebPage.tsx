@@ -492,12 +492,12 @@ const WebPage = () => {
                   <Label className="pt-1 2xl:!text-2xl">Parent Page</Label>
                   <div className="w-[300px] border rounded-md overflow-y-auto h-[160px] bg-white text-xl">
                     {[{ pageName: "-- No Parent Page --", id: 0 }, ...(webPages.filter((item: any) => item.id != id) || [])]?.map((tpl: any) => {
-                      const isSelected = watch("parentPage") === tpl.id;
+                      const isSelected =String(watch("parentPage")) === String(tpl.id);
                       return (
                         <div
                           key={tpl.id}
                           onClick={() =>
-                            setValue("parentPage", isSelected ? "" : tpl.id, {
+                            setValue("parentPage", isSelected ? "" : String(tpl.id), {
                               shouldDirty: true,
                             })
                           }
