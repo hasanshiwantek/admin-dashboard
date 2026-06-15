@@ -45,7 +45,7 @@ export const sidebarData = [
       { title: "Categories", url: "/manage/products/categories" },
       // { title: "Options", url: "/manage/products/options" },
       // { title: "Filtering", url: "/manage/products/filtering" },
-      // { title: "Reviews", url: "/manage/products/reviews" },
+      { title: "Reviews", url: "/manage/products/reviews" },
       // { title: "Price Lists", url: "/manage/products/price-lists" },
       { title: "Brands", url: "/manage/products/brands" },
       // { title: "Import SKUs", url: "/manage/products/import-skus" },

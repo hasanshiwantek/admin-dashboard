@@ -9,18 +9,26 @@ import {
   CartesianGrid,
   ResponsiveContainer,
 } from "recharts";
-import { fetchDashboardMetrics } from "@/redux/slices/homeSlice";
-import { useAppDispatch,useAppSelector } from "@/hooks/useReduxHooks";
+import { fetchDashboardMetrics, fetchDashboardStoreCount } from "@/redux/slices/homeSlice";
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { StoreMetric, StoreMetricsResponse } from "@/types/types";
 
 export default function StorePerformanceChart() {
   const dispatch = useAppDispatch();
-    const metrics = useAppSelector((state) => state.home?.metrics) as StoreMetricsResponse | null;
-    const metricsData = metrics?.data ?? [];
- 
-    useEffect(() => {
-      dispatch(fetchDashboardMetrics());
-    }, [dispatch]);
+  const metrics = useAppSelector((state) => state.home?.metrics) as StoreMetricsResponse | null;
+  const metricsCount = useAppSelector((state: any) => state.home?.metricsCount)
+  const metricsData = metrics?.data ?? [];
+  const chartData = metricsData ? [
+    { label: "Visits", value: Number(metricsCount?.visits) },
+    { label: "Orders", value: Number(metricsCount?.orders) },
+    { label: "Revenue", value: Number(metricsCount?.revenue) },
+    { label: "Conversion", value: Number(metricsCount?.conversion) },
+
+  ] : [];
+  useEffect(() => {
+    dispatch(fetchDashboardMetrics());
+    dispatch(fetchDashboardStoreCount());
+  }, [dispatch]);
 
   if (!metricsData) return <div>Loading...</div>;
 
@@ -31,20 +39,22 @@ export default function StorePerformanceChart() {
         {/* Summary Cards */}
         <div className="grid grid-cols-4 gap-4 mb-6">
           {[
-            { label: "Visits", key: "visits", color: "text-blue-600" },
+            { label: "Visits", key: "visits", color: "text-blue-600", value: metricsCount?.visits },
             {
               label: "Conversion",
               key: "conversion",
               color: "text-purple-600",
               suffix: "%",
+              value: metricsCount?.conversion
             },
-            { label: "Orders", key: "orders", color: "text-green-600" },
+            { label: "Orders", key: "orders", color: "text-green-600", value: metricsCount?.orders },
             {
-              label: "Revenue",
-              key: "revenue",
+              label: "Revenue", key: "revenue",
               color: "text-emerald-600",
               prefix: "$",
+              value: metricsCount?.revenue
             },
+
           ].map((metric) => {
             const total = metricsData.reduce(
               (sum, m) => sum + Number(m[metric.key as keyof StoreMetric]),
@@ -68,7 +78,7 @@ export default function StorePerformanceChart() {
                 </div>
                 <div className={`text-[2rem] lg:text-[3rem] font-semibold ${metric.color}`}>
                   {metric.prefix || ""}
-                  {metric.suffix ? total.toFixed(2) : Math.round(total)}
+                  {metric.suffix ? metric?.value?.toFixed(2) : Math.round(metric.value)}
                   {metric.suffix || ""}
                 </div>
                 <div className="text-md text-gray-500">
