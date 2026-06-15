@@ -84,7 +84,7 @@ const EditReview = () => {
                 rating: Number(data.rating),
             };
             await dispatch(updateReview({ id: reviewId, data: payload })).unwrap();
-            // setTimeout(() => router.push("/manage/products/reviews"), 1000);
+             setTimeout(() => router.push("/manage/products/reviews"), 1000);
         } catch (err) {
             console.error("Error updating review:", err);
         } finally {
