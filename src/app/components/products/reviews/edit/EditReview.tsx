@@ -224,7 +224,7 @@ const EditReview = () => {
                         <div className="flex justify-end gap-3 px-6 py-4  border-gray-200">
                             <button
                                 type="button"
-                                onClick={() => router.push("/manage/reviews")}
+                                onClick={() => router.push("/manage/products/reviews")}
                                 disabled={isSubmitting || isLoading}
                                 className="text-sm text-blue-600 hover:underline px-3 py-1 disabled:opacity-50"
                             >
