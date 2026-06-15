@@ -9,6 +9,7 @@ import customerReducer from "./slices/customerSlice";
 import storeReducer from "./slices/storefrontSlice";
 import marketingReducer from "./slices/marketingSlice";
 import shippingZoneReducer from "./slices/shippingSlice"
+import reviewReducer from "./slices/reviewSlice"
 export const store = configureStore({
   reducer: {
     home: homeReducer,
@@ -21,6 +22,7 @@ export const store = configureStore({
     storefront: storeReducer,
     marketingReducer: marketingReducer,
     shippingZone: shippingZoneReducer,
+    review: reviewReducer,
   },
 });
 

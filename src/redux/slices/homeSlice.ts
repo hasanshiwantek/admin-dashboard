@@ -16,6 +16,20 @@ export const fetchDashboardMetrics = createAsyncThunk(
     }
   }
 );
+export const fetchDashboardStoreCount = createAsyncThunk(
+  "home/store-count",
+  async (_, thunkAPI) => {
+    try {
+      const res = await axiosInstance.get(`dashboard/store-count`);
+      return res.data;
+    } catch (err: any) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to fetch metrics"
+      );
+    }
+  }
+);
 
 export const fetchStoreStatistics = createAsyncThunk(
   "home/fetchStoreStatistics",
@@ -158,6 +172,7 @@ export const fetchStoreSettings = createAsyncThunk(
 // 2. Initial State
 const initialState = {
   metrics: null,
+  metricsCount: null,
   statistics: null,
   orders: [],
   searchData: [],
@@ -186,6 +201,19 @@ const homeSlice = createSlice({
         state.metrics = action.payload;
       })
       .addCase(fetchDashboardMetrics.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "Failed to fetch metrics";
+      })
+
+      // Metrics count
+      .addCase(fetchDashboardStoreCount.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchDashboardStoreCount.fulfilled, (state, action) => {
+        state.loading = false;
+        state.metricsCount = action.payload?.data;
+      })
+      .addCase(fetchDashboardStoreCount.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || "Failed to fetch metrics";
       })
