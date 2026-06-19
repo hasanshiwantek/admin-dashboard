@@ -10,6 +10,8 @@ import storeReducer from "./slices/storefrontSlice";
 import marketingReducer from "./slices/marketingSlice";
 import shippingZoneReducer from "./slices/shippingSlice"
 import reviewReducer from "./slices/reviewSlice"
+import orderMessageSlice from "./slices/orderMessageSlice"
+
 export const store = configureStore({
   reducer: {
     home: homeReducer,
@@ -23,6 +25,8 @@ export const store = configureStore({
     marketingReducer: marketingReducer,
     shippingZone: shippingZoneReducer,
     review: reviewReducer,
+    orderMessage: orderMessageSlice,
+
   },
 });
 

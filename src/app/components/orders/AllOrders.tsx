@@ -51,7 +51,9 @@ import {
   DollarSign,
   CreditCard,
   Monitor,
-  Smartphone
+  Smartphone,
+  MessageCircle,
+  MessageSquareText
 } from "lucide-react";
 import countries from "i18n-iso-countries";
 import Spinner from "../loader/Spinner";
@@ -999,6 +1001,17 @@ const AllOrders = () => {
                               currency: "USD",
                             }).format(Number(order.totalAmount))}
                             {/* Order Timeline Icon */}
+                            <button
+                              onClick={() =>
+                                router.push(
+                                  `/manage/orders/message/${order?.id}`
+                                )
+                              }
+                              className="text-gray-500 hover:text-gray-700 "
+                              title="View messages for this order"
+                            >
+                              <MessageSquareText className="w-5 h-5" />
+                            </button>
                             <button
                               onClick={() =>
                                 router.push(
