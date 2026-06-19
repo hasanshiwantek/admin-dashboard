@@ -8,14 +8,12 @@ import { Info, Loader2 } from "lucide-react";
 import { getReviewById, updateReview } from "@/redux/slices/reviewSlice";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { useRouter, useParams } from "next/navigation";
+import { getMessageById, updateMessage } from "@/redux/slices/orderMessageSlice";
 
 interface ReviewFormData {
-    name: string;
-    userName: string;
-    comment: string;
-    email: string;
-    approved: string;
-    rating: string;
+    message: string;
+    subject: string;
+    email: string
 }
 
 const RATING_OPTIONS = [
@@ -28,7 +26,8 @@ const RATING_OPTIONS = [
 
 const EditMessage = () => {
     const params = useParams();
-    const reviewId = params?.id;
+    const messageId = params?.messageId;
+    const orderId = params?.orderId;
     const dispatch = useAppDispatch();
     const router = useRouter();
 
@@ -37,31 +36,26 @@ const EditMessage = () => {
 
     const methods = useForm<ReviewFormData>({
         defaultValues: {
-            name: "",
-            comment: "",
-            email: "",
-            approved: "0",
-            rating: "5",
+            message: "",
+            subject: "",
         },
     });
 
     const { register, reset, handleSubmit } = methods;
 
     useEffect(() => {
-        if (!reviewId) return;
+        if (!messageId) return;
         const fetchReview = async () => {
             setIsLoading(true);
             try {
-                const result = await dispatch(getReviewById({ id: reviewId })).unwrap();
+                const result = await dispatch(getMessageById({ id: messageId })).unwrap();
                 const data = result?.data || result;
                 if (data) {
+
                     reset({
-                        name: data?.subject || "",
-                        userName: data?.name || data?.user?.name,
-                        // email: data.email || "",
-                        comment: data.comment || "",
-                        approved: String(data.approved ?? "0"),
-                        rating: String(data.rating ?? "5"),
+                        email: data?.customer?.email || "",
+                        subject: data?.subject,
+                        message: data.message || "",
                     });
                 }
             } catch (err) {
@@ -71,20 +65,18 @@ const EditMessage = () => {
             }
         };
         fetchReview();
-    }, [reviewId]);
+    }, [messageId]);
 
     const onSubmit = async (data: ReviewFormData) => {
         setIsSubmitting(true);
         try {
             const payload = {
-                subject: data.name, //review title
-                comment: data.comment, //comment
-                name: data?.userName || "", //author name
-                approved: data.approved === "1",   // ✅ string "1"/"0" → boolean true/false
-                rating: Number(data.rating),
-            };
-            await dispatch(updateReview({ id: reviewId, data: payload })).unwrap();
-            // setTimeout(() => router.push("/manage/products/reviews"), 1000);
+                "subject": data.subject,
+                "message": data.message,
+                "is_read": true
+            }
+            await dispatch(updateMessage({ id: messageId, data: payload })).unwrap();
+            setTimeout(() => router.push(`/manage/orders/message/${orderId}`), 1000);
         } catch (err) {
             console.error("Error updating review:", err);
         } finally {
@@ -97,7 +89,7 @@ const EditMessage = () => {
             <div className="w-full h-screen flex items-center justify-center">
                 <div className="flex flex-col items-center gap-4">
                     <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-                    <p className="text-gray-600">Loading review...</p>
+                    <p className="text-gray-600">Loading message...</p>
                 </div>
             </div>
         );
@@ -125,50 +117,49 @@ const EditMessage = () => {
                     {/* ── White Card ── */}
                     <div className="bg-white border border-gray-200 rounded-sm">
 
-
-
                         {/* Form Fields */}
                         <div className="px-8 py-6">
 
                             {/* Review Title */}
                             <div className="flex items-center gap-3 mb-5">
                                 <Label
-                                    htmlFor="name"
+                                    htmlFor="email"
                                     className="text-[12px] text-gray-600 text-right w-[110px] shrink-0"
                                 >
                                     From:
                                 </Label>
                                 <Input
-                                    id="name"
-                                    {...register("name")}
+                                    id="email"
+                                    {...register("email")}
+                                    disabled={true}
                                     className="w-[280px] h-8 text-sm border-gray-300"
                                 />
                             </div>
                             {/* Author */}
                             <div className="flex items-center gap-3 mb-5">
                                 <Label
-                                    htmlFor="userName"
+                                    htmlFor="subject"
                                     className="text-[12px] text-gray-600 text-right w-[110px] shrink-0"
                                 >
                                     Subject:
                                 </Label>
                                 <Input
-                                    id="userName"
-                                    {...register("userName")}
+                                    id="subject"
+                                    {...register("subject")}
                                     className="w-[280px] h-8 text-sm border-gray-300"
                                 />
                             </div>
                             {/* Review */}
                             <div className="flex items-start gap-3 mb-5">
                                 <Label
-                                    htmlFor="comment"
+                                    htmlFor="message"
                                     className="text-[12px] text-gray-600 text-right w-[110px] shrink-0 pt-1"
                                 >
                                     Message:
                                 </Label>
                                 <textarea
-                                    id="comment"
-                                    {...register("comment")}
+                                    id="message"
+                                    {...register("message")}
                                     rows={5}
                                     className="w-[280px] border border-gray-300 rounded-sm px-2 py-1 text-sm resize-y focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-blue-400 transition"
                                 />
@@ -179,7 +170,7 @@ const EditMessage = () => {
                         <div className="flex justify-end gap-3 px-6 py-4  border-gray-200">
                             <button
                                 type="button"
-                                onClick={() => router.push("/manage/reviews")}
+                                onClick={() => router.push(`/manage/orders/message/${orderId}`)}
                                 disabled={isSubmitting || isLoading}
                                 className="text-sm text-blue-600 hover:underline px-3 py-1 disabled:opacity-50"
                             >

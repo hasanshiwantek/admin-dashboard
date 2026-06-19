@@ -78,7 +78,19 @@ export const unreadMessageStatus = createAsyncThunk(
         }
     }
 );
-
+export const getMessageById = createAsyncThunk(
+    "orderMessage/getMessageById",
+    async ({ id }: { id: any }, thunkAPI) => {
+        try {
+            const res = await axiosInstance.get(`web/customer-messages/show/${id}`);
+            return res?.data;
+        } catch (err: any) {
+            return thunkAPI.rejectWithValue(
+                err.response?.data?.message || "Failed to fetch review"
+            );
+        }
+    }
+);
 export const deleteOrderMessages = createAsyncThunk(
     "orderMessage/delete",
     async (
@@ -99,6 +111,22 @@ export const deleteOrderMessages = createAsyncThunk(
     }
 );
 
+export const updateMessage = createAsyncThunk(
+    "orderMessage/updateMessage",
+    async ({ id, data }: { id: any; data: any }, thunkAPI) => {
+        try {
+            const res = await axiosInstance.put(
+                `web/customer-messages/update/${id}`,
+                data
+            );
+            return res?.data;
+        } catch (err: any) {
+            return thunkAPI.rejectWithValue(
+                err.response?.data?.message || "Failed to update review"
+            );
+        }
+    }
+);
 // ── Initial State ─────────────────────────────────────────────────────────────
 
 const initialState = {
