@@ -269,8 +269,7 @@ export default function AllReviews() {
 
                                     {/* Product name + type */}
                                     <TableCell className="py-2">
-                                        <span
-                                            onClick={() => router.push(`/manage/products/reviews/edit/${review.id}`)}
+                                        <span onClick={() => router.push(`/manage/products/reviews/edit/${review.id}`)}
                                             className="!text-blue-600 hover:underline cursor-pointer !text-[1rem]  block max-w-[500px] leading-snug whitespace-normal break-words">
                                             {review?.product?.name}
                                         </span>
