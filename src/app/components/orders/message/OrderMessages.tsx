@@ -18,10 +18,14 @@ import {
     deleteOrderMessages,
     markMessageStatus,
     unreadMessageStatus,
+    toggleFlagHeaders,
 } from "@/redux/slices/orderMessageSlice";
+import { Flag } from 'lucide-react';
+
 // import Spinner from "../../loader/Spinner";
 import { useRouter, useParams } from "next/navigation";
 import OrderActionsDropdown from "../OrderActionsDropdown";
+import Spinner from "../../loader/Spinner";
 
 export default function OrderMessages() {
     const dispatch = useAppDispatch();
@@ -61,7 +65,7 @@ export default function OrderMessages() {
         if (!selectedIds.length) return;
         const ok = window.confirm(`Delete ${selectedIds.length} message(s)?`);
         if (!ok) return;
-        await dispatch(deleteOrderMessages({ ids: selectedIds, orderId }));
+        await dispatch(deleteOrderMessages({ ids: selectedIds }));
         dispatch(fetchOrderMessages({ orderId }));
         setSelectedIds([]);
     };
@@ -75,10 +79,10 @@ export default function OrderMessages() {
             },
         },
         {
-            label: "Flag",
-            onClick: () => {
-
-                // toggle read/unread action
+            label: message?.isFlagged ? "Un-Flag" : "Flag",
+            onClick: async () => {
+                await dispatch(toggleFlagHeaders({ messageId: [message.id], flag: !message?.isFlagged }))
+                dispatch(fetchOrderMessages({ orderId }));
             },
         },
     ];
@@ -138,7 +142,7 @@ export default function OrderMessages() {
                     </button>
                     <button
                         className="btn-outline-primary"
-                        onClick={() => router.push(`/manage/orders/${orderId}`)}
+                        onClick={() => router.push(`/manage/orders`)}
                     >
                         View Orders
                     </button>
@@ -162,6 +166,8 @@ export default function OrderMessages() {
                                 Subject
                             </TableHead>
                             <TableHead className="!text-xl 2xl:!text-[1.4rem] font-semibold text-gray-700">
+                            </TableHead>
+                            <TableHead className="!text-xl 2xl:!text-[1.4rem] font-semibold text-gray-700">
                                 Message
                             </TableHead>
                             <TableHead className="!text-xl 2xl:!text-[1.4rem] font-semibold text-gray-700">
@@ -183,7 +189,7 @@ export default function OrderMessages() {
                         {loading ? (
                             <TableRow>
                                 <TableCell colSpan={8} className="text-center py-10">
-                                    {/* <Spinner /> */}
+                                    <Spinner />
                                 </TableCell>
                             </TableRow>
                         ) : messages.length === 0 ? (
@@ -239,6 +245,13 @@ export default function OrderMessages() {
                                                 className={`!text-xl 2xl:!text-[1.4rem] ${isUnread && isFromCustomer ? "font-semibold text-gray-900" : "text-gray-700"}`}
                                             >
                                                 {message.subject}
+                                            </span>
+                                        </TableCell>
+                                        <TableCell className="py-2">
+                                            <span
+                                                className={`!text-xl 2xl:!text-[1.4rem] ${isUnread && isFromCustomer ? "font-semibold text-gray-900" : "text-gray-700"}`}
+                                            >
+                                                {message.isFlagged ? <Flag className="w-6 h-6 text-red-500" /> : <></>}
                                             </span>
                                         </TableCell>
 

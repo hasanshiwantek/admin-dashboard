@@ -1001,27 +1001,28 @@ const AllOrders = () => {
                               currency: "USD",
                             }).format(Number(order.totalAmount))}
                             {/* Order Timeline Icon */}
+
                             <button
-                              onClick={() =>
-                                router.push(
-                                  `/manage/orders/message/${order?.id}`
-                                )
-                              }
-                              className="text-gray-500 hover:text-gray-700 "
-                              title="View messages for this order"
+
+                              className="text-gray-500 hover:text-gray-700 flex gap-1 "
+                              title="View Order Timeline"
                             >
-                              <MessageSquareText className="w-5 h-5" />
-                            </button>
-                            <button
-                              onClick={() =>
+                              {order?.isMessage ? <div className="relative">
+                                <MessageSquareText onClick={() =>
+                                  router.push(
+                                    `/manage/orders/message/${order?.id}`
+                                  )
+                                } className="w-6 h-6" />
+
+                                <span className="absolute -top-3.5 !right-0  !text-red-500">
+                                  {order?.messageCount}
+                                </span>
+                              </div> : <></>}
+                              <Clock onClick={() =>
                                 router.push(
                                   `/manage/orders/order-timeline/${order?.id}`
                                 )
-                              }
-                              className="text-gray-500 hover:text-gray-700 "
-                              title="View Order Timeline"
-                            >
-                              <Clock className="w-5 h-5" />
+                              } className="w-6 h-6" />
                             </button>
                           </div>
                         </TableCell>

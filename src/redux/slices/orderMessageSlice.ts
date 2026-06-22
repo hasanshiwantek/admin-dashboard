@@ -58,6 +58,7 @@ export const markMessageStatus = createAsyncThunk(
         }
     }
 );
+
 export const unreadMessageStatus = createAsyncThunk(
     "orderMessage/mark-read",
     async (
@@ -67,8 +68,27 @@ export const unreadMessageStatus = createAsyncThunk(
         try {
             const res = await axiosInstance.post(
                 `web/customer-messages/mark-unread`,
-                // `dashboard/orders/${orderId}/messages/${id}/status`,
                 { ids: messageId }
+            );
+            return res?.data;
+        } catch (err: any) {
+            return thunkAPI.rejectWithValue(
+                err.response?.data?.message || "Failed to update message status"
+            );
+        }
+    }
+);
+
+export const toggleFlagHeaders = createAsyncThunk(
+    "orderMessage/flagHeaders",
+    async (
+        { messageId, flag }: { messageId: number[]; flag: boolean },
+        thunkAPI
+    ) => {
+        try {
+            const res = await axiosInstance.post(
+                `web/customer-messages/toggle-flag`,
+                { ids: messageId, flag }
             );
             return res?.data;
         } catch (err: any) {
@@ -92,15 +112,15 @@ export const getMessageById = createAsyncThunk(
     }
 );
 export const deleteOrderMessages = createAsyncThunk(
-    "orderMessage/delete",
+    "orderMessage/customer-messages",
     async (
-        { orderId, ids }: { orderId: string | number; ids: number[] },
+        { ids }: { ids: number[] },
         thunkAPI
     ) => {
         try {
-            const res = await axiosInstance.delete(
-                `dashboard/orders/${orderId}/messages/bulk-delete`,
-                { data: { ids } }
+            const res = await axiosInstance.post(
+                `web/customer-messages/delete`,
+                { ids }
             );
             return res?.data;
         } catch (err: any) {
@@ -190,14 +210,27 @@ const orderMessageSlice = createSlice({
 
             // deleteOrderMessages
             .addCase(deleteOrderMessages.pending, (state) => {
-                state.deleteLoading = true;
+                state.loading = true;
                 state.error = null;
             })
             .addCase(deleteOrderMessages.fulfilled, (state) => {
-                state.deleteLoading = false;
+                state.loading = false;
             })
             .addCase(deleteOrderMessages.rejected, (state, action) => {
-                state.deleteLoading = false;
+                state.loading = false;
+                state.error = action.payload as string;
+            })
+
+            // toggleFlagHeaders
+            .addCase(toggleFlagHeaders.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(toggleFlagHeaders.fulfilled, (state) => {
+                state.loading = false;
+            })
+            .addCase(toggleFlagHeaders.rejected, (state, action) => {
+                state.loading = false;
                 state.error = action.payload as string;
             });
     },
