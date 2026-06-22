@@ -6,9 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Info, Loader2 } from "lucide-react";
 import { getReviewById, updateReview } from "@/redux/slices/reviewSlice";
-import { useAppDispatch } from "@/hooks/useReduxHooks";
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { useRouter, useParams } from "next/navigation";
-import { sendOrderMessage } from "@/redux/slices/orderMessageSlice";
+import { fetchOrderMessages, sendOrderMessage } from "@/redux/slices/orderMessageSlice";
 
 interface ReviewFormData {
     message: string;
@@ -26,10 +26,13 @@ const RATING_OPTIONS = [
 
 const AddMessage = () => {
     const params = useParams();
-    const orderId = params?.orderId;
+    const orderId = params?.orderId as string;
     const dispatch = useAppDispatch();
     const router = useRouter();
-
+    const { messages, loading, error, order } = useAppSelector(
+        (state: any) => state.orderMessage
+    );
+    const messageFind = messages?.find((item: any) => item.senderType !== 'admin')
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -41,32 +44,6 @@ const AddMessage = () => {
     });
 
     const { register, reset, handleSubmit } = methods;
-
-    useEffect(() => {
-        if (!orderId) return;
-        const fetchReview = async () => {
-            // setIsLoading(true);
-            // try {
-            //     const result = await dispatch(getReviewById({ id: orderId })).unwrap();
-            //     const data = result?.data || result;
-            //     if (data) {
-            //         reset({
-            //             name: data?.subject || "",
-            //             subject: data?.name || data?.user?.name,
-            //             // email: data.email || "",
-            //             comment: data.message || "",
-            //             approved: String(data.approved ?? "0"),
-            //             rating: String(data.rating ?? "5"),
-            //         });
-            //     }
-            // } catch (err) {
-            //     console.error("Error fetching review:", err);
-            // } finally {
-            //     setIsLoading(false);
-            // }
-        };
-        fetchReview();
-    }, [orderId]);
 
     const onSubmit = async (data: ReviewFormData) => {
         setIsSubmitting(true);
@@ -85,6 +62,24 @@ const AddMessage = () => {
         }
     };
 
+    useEffect(() => {
+        if (!orderId) return;
+        const fetchOrders = async () => {
+            dispatch(fetchOrderMessages({ orderId }))
+        };
+        fetchOrders();
+    }, [orderId]);
+
+
+    useEffect(() => {
+        if (messageFind?.customer?.email) {
+            reset({
+                email: messageFind?.customer?.email,
+            })
+        }
+    }, [messageFind])
+
+
     if (isLoading) {
         return (
             <div className="w-full h-screen flex items-center justify-center">
@@ -101,7 +96,7 @@ const AddMessage = () => {
 
             {/* ── Page Header (outside white box) ── */}
             <div className="px-6 pt-6 pb-3">
-                <h1 className="text-2xl font-normal text-gray-800">Edit Message</h1>
+                <h1 className="text-2xl font-normal text-gray-800">Add Message</h1>
                 <p className="text-sm text-gray-500 mt-1">
                     Add the details of the message below. When you click 'Save' the message will not be re-emailed to the customer, but is still visible from their account.
                 </p>
@@ -131,6 +126,7 @@ const AddMessage = () => {
                                 </Label>
                                 <Input
                                     id="email"
+                                    disabled={true}
                                     {...register("email")}
                                     className="w-[280px] h-8 text-sm border-gray-300"
                                 />
