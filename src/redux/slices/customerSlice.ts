@@ -98,6 +98,21 @@ export const fetchCustomerById = createAsyncThunk(
     }
   }
 );
+export const fetchCustomerDetailById = createAsyncThunk(
+  "customer/fetchCustomerById",
+  async ({ id }: { id: any }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.get(
+        `dashboard/orders/customer/${id}/orders`
+      );
+      return res.data;
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to fetch Customer"
+      );
+    }
+  }
+);
 
 // DELETE CUSTOMER THUNK
 export const deleteCustomer = createAsyncThunk(
@@ -199,6 +214,7 @@ export const exportCustomerCsv = createAsyncThunk(
 // 2. Initial State
 const initialState = {
   customers: [],
+  singleCustomer: null,
   loading: false,
   error: null as string | null,
 };
@@ -240,7 +256,22 @@ const categorySlice = createSlice({
             (item: any) => !deletedIds.includes(item.id)
           ),
         };
-      });
+      })
+
+
+      .addCase(fetchCustomerDetailById.pending, (state) => {
+        state.loading = true;
+        state.error = null; // reset error
+      })
+      .addCase(fetchCustomerDetailById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.singleCustomer = action?.payload?.data;
+      })
+      .addCase(fetchCustomerDetailById.rejected, (state, action) => {
+        state.loading = false;
+        state.error =
+          (action.payload as string) || action.error.message || "Failed";
+      })
   },
 });
 export default categorySlice.reducer;

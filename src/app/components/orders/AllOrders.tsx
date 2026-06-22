@@ -828,6 +828,7 @@ const AllOrders = () => {
                 </TableRow>
               ) : (
                 filteredOrders?.map((order: any, idx: number) => {
+                  const userType = order?.userType == "guest"
                   const countryData = countriesListIcons?.find(
                     (c) =>
                       c.iso2 === getISO2(order?.billingInformation?.country) ||
@@ -930,10 +931,13 @@ const AllOrders = () => {
                         <TableCell>
                           <div className="flex items-center gap-2">
 
-                            <span className="2xl:!text-2xl">
+                            {userType ? <span className="2xl:!text-2xl">
                               {order.billingInformation?.firstName}{" "}
-                              {order.billingInformation?.lastName} {order?.userType == "guest" ? '(Guest)' : ""}
-                            </span>
+                              {order.billingInformation?.lastName} (Guest)
+                            </span> : <Link href={"/manage/orders/customer/" + order?.customer?.id} className="2xl:!text-2xl !text-blue-500 cursor-pointer hover:underline">
+                              {order.billingInformation?.firstName}{" "}
+                              {order.billingInformation?.lastName}
+                            </Link>}
 
                             {/* Payment Method Icon */}
                             {order.status === "Awaiting Payment" && (
