@@ -173,10 +173,10 @@ export default function EditCategoryPage() {
       template_layout: "Default",
       sort_order: 0,
       default_product_sort: "storefront_default",
-      seo_home_title: "",
-      seo_meta_keywords: "",
-      seo_meta_description: "",
-      seo_search_keywords: "",
+      seo_home_title: (initial as any).seoHomeTitle || "",        // ← fix
+      seo_meta_keywords: (initial as any).seoMetakeywords || "",  // ← fix
+      seo_meta_description: (initial as any).seoMetaDescription || "", // ← fix
+      seo_search_keywords: (initial as any).seoSearchKeywords || "",   // ← fix
       image: null,
     });
     const url = getInitialImageUrl(initial);
