@@ -43,10 +43,10 @@ const EditBrand = () => {
         if (data) {
           setFormData({
             name: data.name || "",
-            pageTitle: data.pageTitle || "",
-            metaKeywords: data.metaKeywords || "",
-            metaDescription: data.metaDescription || "",
-            searchKeywords: data.searchKeywords || "",
+            pageTitle: data.page_title || "",
+            metaKeywords: data.meta_keywords || "",
+            metaDescription: data.meta_description || "",
+            searchKeywords: data.search_keywords || "",
             logo: null, // Don't prefill file input
             brandURL: data.brandURL || "",
             templateLayout: data.templateLayout || "default",
@@ -122,7 +122,7 @@ const EditBrand = () => {
     console.log("🟡 SUBMITTING BRAND DATA:");
     for (const [key, value] of formDataToSend.entries()) {
       if (value instanceof File) {
-     
+
       } else {
         console.log(`🔤 ${key}:`, value);
       }
