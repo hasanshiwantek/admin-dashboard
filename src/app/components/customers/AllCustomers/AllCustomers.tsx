@@ -565,7 +565,10 @@ const AllCustomers = () => {
                                     </span>
 
                                     <span>Notes</span>
-                                    <span className="text-blue-600 cursor-pointer">
+                                    <span onClick={() => {
+                                      setSelectedCustomerId(customer?.id);
+                                      setShowCustomerNotes(true);
+                                    }} className="text-blue-600 cursor-pointer">
                                       View Notes
                                     </span>
                                   </div>
@@ -590,7 +593,10 @@ const AllCustomers = () => {
                                       Order #{order.orderNumber}
                                     </span>
 
-                                    <span className="text-blue-600 cursor-pointer">
+                                    <span onClick={() => {
+                                      setSelectedCustomerId(customer?.id);
+                                      setShowCustomerNotes(true);
+                                    }} className="text-blue-600 cursor-pointer">
                                       View Notes
                                     </span>
                                   </div>
