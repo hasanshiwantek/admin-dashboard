@@ -180,6 +180,67 @@ const Carousel = () => {
     }
   };
 
+  // const onSubmit = async () => {
+  //   if (slides.length === 0) {
+  //     alert("Please add at least one slide to save the carousel.");
+  //     return;
+  //   }
+
+  //   try {
+  //     const formData = new FormData();
+  //     formData.append(
+  //       "settings[swapInterval]",
+  //       settings.swapInterval.toString()
+  //     );
+
+  //     slides.forEach((slide, index) => {
+  //       formData.append(`slides[${index}][id]`, slide.id.toString());
+  //       formData.append(`slides[${index}][heading]`, slide.heading);
+  //       formData.append(`slides[${index}][text]`, slide.text);
+  //       formData.append(`slides[${index}][buttonText]`, slide.buttonText);
+  //       formData.append(`slides[${index}][link]`, slide.link);
+  //       formData.append(`slides[${index}][altText]`, slide.altText);
+
+  //       if (slide.imageUrl.startsWith("data:image")) {
+  //         const byteString = atob(slide.imageUrl.split(",")[1]);
+  //         const mimeString = slide.imageUrl
+  //           .split(",")[0]
+  //           .split(":")[1]
+  //           .split(";")[0];
+  //         const ab = new ArrayBuffer(byteString.length);
+  //         const ia = new Uint8Array(ab);
+  //         for (let i = 0; i < byteString.length; i++) {
+  //           ia[i] = byteString.charCodeAt(i);
+  //         }
+  //         const blob = new Blob([ab], { type: mimeString });
+  //         formData.append(
+  //           `slides[${index}][image]`,
+  //           blob,
+  //           `slide-${slide.id}.png`
+  //         );
+  //       } else {
+  //         formData.append(`slides[${index}][imageUrl]`, slide.imageUrl);
+  //       }
+  //     });
+
+  //     const response = await dispatch(addCarousel({ data: formData }));
+  //     if (addCarousel.fulfilled.match(response)) {
+  //       setTimeout(async () => {
+  //         await dispatch(fetchCarousal());
+  //       }, 2000);
+  //     } else {
+  //     }
+
+  //     setSlides(initialSlides);
+  //     setActiveSlideId(0);
+  //     setSettings({ swapInterval: 5 });
+  //   } catch (err) {
+  //     console.error("❌ Error saving carousel:", err);
+  //     alert("⚠️ Failed to save carousel data.");
+  //   }
+  // };
+
+
   const onSubmit = async () => {
     if (slides.length === 0) {
       alert("Please add at least one slide to save the carousel.");
@@ -187,59 +248,61 @@ const Carousel = () => {
     }
 
     try {
-      const formData = new FormData();
-      formData.append(
-        "settings[swapInterval]",
-        settings.swapInterval.toString()
+      // ✅ Existing IDs backend se
+      const existingIds = new Set(
+        (carouselData?.slides || []).map((s: any) => s.id)
       );
 
-      slides.forEach((slide, index) => {
-        formData.append(`slides[${index}][id]`, slide.id.toString());
-        formData.append(`slides[${index}][heading]`, slide.heading);
-        formData.append(`slides[${index}][text]`, slide.text);
-        formData.append(`slides[${index}][buttonText]`, slide.buttonText);
-        formData.append(`slides[${index}][link]`, slide.link);
-        formData.append(`slides[${index}][altText]`, slide.altText);
+      // ✅ Sirf naye slides — jo backend mein nahi hain
+      const newSlides = slides.filter((slide) => !existingIds.has(slide.id));
 
-        if (slide.imageUrl.startsWith("data:image")) {
-          const byteString = atob(slide.imageUrl.split(",")[1]);
-          const mimeString = slide.imageUrl
-            .split(",")[0]
-            .split(":")[1]
-            .split(";")[0];
-          const ab = new ArrayBuffer(byteString.length);
-          const ia = new Uint8Array(ab);
-          for (let i = 0; i < byteString.length; i++) {
-            ia[i] = byteString.charCodeAt(i);
+      // ✅ Updated slides — jo exist karte hain aur modify hue hain
+      const updatedSlides = slides.filter((slide) => existingIds.has(slide.id));
+
+      const formData = new FormData();
+      formData.append("settings[swapInterval]", settings.swapInterval.toString());
+
+      if (newSlides.length > 0) {
+        // ✅ Sirf new slides bhejo addCarousel mein
+        newSlides.forEach((slide, index) => {
+          formData.append(`slides[${index}][heading]`, slide.heading);
+          formData.append(`slides[${index}][text]`, slide.text);
+          formData.append(`slides[${index}][buttonText]`, slide.buttonText);
+          formData.append(`slides[${index}][link]`, slide.link);
+          formData.append(`slides[${index}][altText]`, slide.altText);
+
+          if (slide.imageUrl.startsWith("data:image")) {
+            const byteString = atob(slide.imageUrl.split(",")[1]);
+            const mimeString = slide.imageUrl.split(",")[0].split(":")[1].split(";")[0];
+            const ab = new ArrayBuffer(byteString.length);
+            const ia = new Uint8Array(ab);
+            for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
+            const blob = new Blob([ab], { type: mimeString });
+            formData.append(`slides[${index}][image]`, blob, `slide-new-${index}.png`);
           }
-          const blob = new Blob([ab], { type: mimeString });
-          formData.append(
-            `slides[${index}][image]`,
-            blob,
-            `slide-${slide.id}.png`
-          );
-        } else {
-          formData.append(`slides[${index}][imageUrl]`, slide.imageUrl);
-        }
-      });
+        });
 
-      const response = await dispatch(addCarousel({ data: formData }));
-      if (addCarousel.fulfilled.match(response)) {
-        setTimeout(async () => {
-          await dispatch(fetchCarousal());
-        }, 2000);
-      } else {
+        const response = await dispatch(addCarousel({ data: formData }));
+        if (addCarousel.fulfilled.match(response)) {
+          setTimeout(() => dispatch(fetchCarousal()), 2000);
+        }
+      }
+
+      if (updatedSlides.length > 0) {
+        // ✅ Existing slides ke liye update thunk call karo (agar ho)
+        // dispatch(updateCarousel({ data: updatedFormData }))
+        console.log("Updated slides:", updatedSlides);
       }
 
       setSlides(initialSlides);
       setActiveSlideId(0);
       setSettings({ swapInterval: 5 });
+
     } catch (err) {
       console.error("❌ Error saving carousel:", err);
       alert("⚠️ Failed to save carousel data.");
     }
   };
-
   const handleAltTextChange = (index: number, value: string) => {
     const updatedSlides = [...slides];
     updatedSlides[index].altText = value;
@@ -300,14 +363,12 @@ const Carousel = () => {
           {/* Active Slide Fields */}
 
           <div
-            className={`flex flex-wrap gap-4 ${
-              errors.heading || errors.text || errors.buttonText || errors.link
+            className={`flex flex-wrap gap-4 ${errors.heading || errors.text || errors.buttonText || errors.link
                 ? "items-center"
                 : "items-end"
-            }
- mb-6 bg-white p-4 rounded-lg shadow-sm border ${
-   activeSlideId === 0 ? "opacity-60 pointer-events-none" : ""
- }`}
+              }
+ mb-6 bg-white p-4 rounded-lg shadow-sm border ${activeSlideId === 0 ? "opacity-60 pointer-events-none" : ""
+              }`}
           >
             {/* HEADING FIELD */}
             <div className="flex-1 max-w-[200px] flex flex-col 2xl:flex-row mr-5 2xl:gap-6">
@@ -323,9 +384,8 @@ const Carousel = () => {
                     )
                   );
                 }}
-                className={`p-2 border rounded w-full min-h-[38px] ${
-                  errors.heading ? "border-red-500" : "border-gray-300"
-                } focus:ring-blue-500 focus:border-blue-500`}
+                className={`p-2 border rounded w-full min-h-[38px] ${errors.heading ? "border-red-500" : "border-gray-300"
+                  } focus:ring-blue-500 focus:border-blue-500`}
               />
               {errors.heading && (
                 <p className="text-xs text-red-500 mt-1">
@@ -348,9 +408,8 @@ const Carousel = () => {
                     )
                   );
                 }}
-                className={`p-2 border rounded w-full min-h-[38px] ${
-                  errors.text ? "border-red-500" : "border-gray-300"
-                } focus:ring-blue-500 focus:border-blue-500`}
+                className={`p-2 border rounded w-full min-h-[38px] ${errors.text ? "border-red-500" : "border-gray-300"
+                  } focus:ring-blue-500 focus:border-blue-500`}
               />
               {errors.text && (
                 <p className="text-xs text-red-500 mt-1">
@@ -375,9 +434,8 @@ const Carousel = () => {
                     )
                   );
                 }}
-                className={`p-2 border rounded w-full min-h-[38px] ${
-                  errors.buttonText ? "border-red-500" : "border-gray-300"
-                } focus:ring-blue-500 focus:border-blue-500`}
+                className={`p-2 border rounded w-full min-h-[38px] ${errors.buttonText ? "border-red-500" : "border-gray-300"
+                  } focus:ring-blue-500 focus:border-blue-500`}
               />
               {errors.buttonText && (
                 <p className="text-xs text-red-500 mt-1">
@@ -401,9 +459,8 @@ const Carousel = () => {
                   );
                 }}
                 placeholder="Enter destination link"
-                className={`p-2 border rounded w-full min-h-[38px] ${
-                  errors.link ? "border-red-500" : "border-gray-300"
-                } focus:ring-blue-500 focus:border-blue-500`}
+                className={`p-2 border rounded w-full min-h-[38px] ${errors.link ? "border-red-500" : "border-gray-300"
+                  } focus:ring-blue-500 focus:border-blue-500`}
               />
               {errors.link && (
                 <p className="text-xs text-red-500 mt-1">
@@ -480,11 +537,10 @@ const Carousel = () => {
                     <div
                       key={slide.id}
                       onClick={() => setActiveSlideId(slide.id)}
-                      className={`relative min-w-[100px] h-[70px] border-2 cursor-pointer transition duration-150 ease-in-out ${
-                        slide.id === activeSlideId
+                      className={`relative min-w-[100px] h-[70px] border-2 cursor-pointer transition duration-150 ease-in-out ${slide.id === activeSlideId
                           ? "border-blue-600 ring-4 ring-blue-100"
                           : "border-gray-300 hover:border-blue-400"
-                      } bg-gray-100 rounded-md flex items-center justify-center text-xs text-gray-700 overflow-hidden`}
+                        } bg-gray-100 rounded-md flex items-center justify-center text-xs text-gray-700 overflow-hidden`}
                       style={{
                         backgroundImage: `url(${slide.imageUrl})`,
                         backgroundSize: "cover",
