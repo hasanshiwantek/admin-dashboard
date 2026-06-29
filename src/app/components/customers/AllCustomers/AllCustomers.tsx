@@ -31,6 +31,7 @@ import {
   updateCustomer,
   fetchCustomerByKeyword,
   advanceCustomerSearch,
+  loginAsCustomer,
 } from "@/redux/slices/customerSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { refetchCustomers } from "@/lib/customerUtils";
@@ -38,6 +39,7 @@ import Link from "next/link";
 import Spinner from "../../loader/Spinner";
 import { useRouter } from "next/navigation";
 import CustomerNotesModal from "../edit/CustomerNotesModal";
+import { toast } from "react-toastify";
 
 const AllCustomers = () => {
   const dispatch = useAppDispatch();
@@ -75,10 +77,30 @@ const AllCustomers = () => {
         setShowCustomerNotes(true);
       },
     },
-    // {
-    //   label: "Login",
-    //   onClick: () => console.log("Login Customer clicked", customer),
-    // },
+    {
+      label: "Login",
+      onClick: async () => {
+        const customerId = customer?.id;
+        const availableStores = JSON.parse(localStorage.getItem("availableStores") || "[]");
+        const selectedStoreId = Number(localStorage.getItem("storeId"));
+        const selectedStore = availableStores.find((s: any) => s.id === selectedStoreId);
+
+        if (!selectedStore?.baseUrl) {
+          toast.error("Store not found");
+          return;
+        }
+        try {
+          const res = await dispatch(loginAsCustomer({ customerId })).unwrap();
+
+          const token = res?.token || res?.data?.token;
+          if (token && selectedStore.baseUrl) {
+            window.open(`${selectedStore.baseUrl}/?token=${token}`, "_blank");
+          }
+        } catch (err) {
+          toast.error("Failed to login as customer");
+        }
+      }
+    },
   ];
 
   const handleSelectAll = () => {
@@ -416,7 +438,7 @@ const AllCustomers = () => {
                       />
                     </TableCell>
                     <TableCell>
-                      {/* <button
+                      <button
                         onClick={() => toggleRow(customer.id)}
                         className="mt-3"
                       >
@@ -425,7 +447,7 @@ const AllCustomers = () => {
                         ) : (
                           <FaCirclePlus className="h-7 w-7 fill-blue-500" />
                         )}
-                      </button> */}
+                      </button>
                     </TableCell>
                     <TableCell>
                       <div className=" text-blue-600 cursor-pointer hover:underline">
@@ -512,44 +534,71 @@ const AllCustomers = () => {
                   {expandedRow === customer.id && (
                     <TableRow>
                       <TableCell colSpan={11}>
-                        <div className="grid grid-cols-3 gap-2 bg-gray-50 p-4 ">
-                          <div className="flex">
-                            <div className="flex flex-col border-r pr-3 mr-3 space-y-1">
-                              <h4 className="font-semibold 2xl:!text-[2rem]">Current Orders</h4>
-                            </div>
+                        <div className="grid grid-cols-3 bg-gray-50 p-4">
+
+                          {/* Current Orders Title */}
+                          <div className="border-r pr-4">
+                            <h4 className="font-semibold text-lg">
+                              Current Orders
+                            </h4>
                           </div>
 
-                          <div className="flex">
-                            <div className="flex flex-col border-r pr-3 mr-3 space-y-1">
-                              <h4 className="font-semibold 2xl:!text-[1.8rem]">Order#500041</h4>
-                              <div className="flex flex-col gap-2.5 ">
-                                <span className="ml-4 2xl:!text-2xl">Status</span>
-                                <span className="2xl:!text-2xl">Order total</span>
+                          {/* Current Order Details */}
+                          <div className="border-r px-4">
+                            {customer?.currentOrders?.length > 0 ? (
+                              customer.currentOrders.map((order: any) => (
+                                <div key={order.id} className="mb-4">
+                                  <h4 className="font-semibold text-blue-600">
+                                    Order #{order.orderNumber}
+                                  </h4>
 
-                                <span className="2xl:!text-2xl">Date orderd</span>
-                                <span className="2xl:!text-2xl">Notes</span>
-                              </div>
-                            </div>
+                                  <div className="grid grid-cols-[120px_1fr] gap-y-2 mt-2">
+                                    <span>Status</span>
+                                    <span>{order.status}</span>
 
-                            <div className="flex flex-col space-y-1">
-                              <p>.</p>
-                              <p className="2xl:!text-2xl">Awaiting Payment</p>
-                              <p className="2xl:!text-2xl">£1,461.00</p>
-                              <p className="2xl:!text-2xl">Jul 17th, 2025</p>
-                              <p className="2xl:!text-2xl">View Notes</p>
-                            </div>
+                                    <span>Order total</span>
+                                    <span>${order.totalAmount}</span>
+
+                                    <span>Date ordered</span>
+                                    <span>
+                                      {new Date(order.createdAt).toLocaleDateString()}
+                                    </span>
+
+                                    <span>Notes</span>
+                                    <span className="text-blue-600 cursor-pointer">
+                                      View Notes
+                                    </span>
+                                  </div>
+                                </div>
+                              ))
+                            ) : (
+                              <p>No current orders</p>
+                            )}
                           </div>
 
-                          <div className="flex">
-                            <div className="flex flex-col border-r pr-3 mr-3 space-y-1">
-                              <div className="flex flex-col gap-2.5 ">
-                                <h4 className="font-semibold 2xl:!text-[2rem]">Past Orders</h4>
-                              </div>
-                            </div>
+                          {/* Past Orders */}
+                          <div className="px-4">
+                            <h4 className="font-semibold text-lg mb-3">
+                              Past Orders
+                            </h4>
 
-                            <div className="flex flex-col space-y-1 2xl:!text-2xl">
+                            {customer?.pastOrders?.length > 0 ? (
+                              customer.pastOrders.map((order: any) => (
+                                <div key={order.id} className="mb-2">
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-blue-600">
+                                      Order #{order.orderNumber}
+                                    </span>
+
+                                    <span className="text-blue-600 cursor-pointer">
+                                      View Notes
+                                    </span>
+                                  </div>
+                                </div>
+                              ))
+                            ) : (
                               <p>No past orders</p>
-                            </div>
+                            )}
                           </div>
                         </div>
                       </TableCell>
