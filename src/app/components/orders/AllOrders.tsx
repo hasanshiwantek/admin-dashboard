@@ -942,8 +942,8 @@ const AllOrders = () => {
                             {/* Payment Method Icon */}
                             {order.status === "Awaiting Payment" && (
                               <CreditCard onClick={() => {
-                                setSelectedOrder(order);
-                                setShowShipmentModal(true);
+                                setSelectedOrderId(order?.payment?.payment_intent_id);
+                                setShowConfirm(true);
                               }} className="w-7 h-7 text-gray-500 cursor-pointer" />
                             )}
                           </div>
