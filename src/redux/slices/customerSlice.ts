@@ -19,6 +19,23 @@ export const addCustomer = createAsyncThunk(
     }
   }
 );
+// LOGIN AS CUSTOMER THUNK
+export const loginAsCustomer = createAsyncThunk(
+  "customer/login-as-customer",
+  async ({ customerId }: { customerId: any }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.post(
+        `dashboard/login-as-customer`,
+        { customer_id: customerId }  // ← object properly pass karo
+      );
+      return res.data;
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to login customer"
+      );
+    }
+  }
+);
 
 // FETCH CUSTOMERS THUNK
 export const fetchCustomers = createAsyncThunk(

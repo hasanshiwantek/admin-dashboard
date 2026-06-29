@@ -52,8 +52,8 @@ import {
   CreditCard,
   Monitor,
   Smartphone,
-  MessageCircle,
-  MessageSquareText
+  NotebookText,
+  MonitorCheck
 } from "lucide-react";
 import countries from "i18n-iso-countries";
 import Spinner from "../loader/Spinner";
@@ -941,7 +941,10 @@ const AllOrders = () => {
 
                             {/* Payment Method Icon */}
                             {order.status === "Awaiting Payment" && (
-                              <CreditCard className="w-7 h-7 text-gray-500" />
+                              <CreditCard onClick={() => {
+                                setSelectedOrder(order);
+                                setShowShipmentModal(true);
+                              }} className="w-7 h-7 text-gray-500 cursor-pointer" />
                             )}
                           </div>
                         </TableCell>
@@ -1005,28 +1008,51 @@ const AllOrders = () => {
                               currency: "USD",
                             }).format(Number(order.totalAmount))}
                             {/* Order Timeline Icon */}
-
                             <button
 
-                              className="text-gray-500 hover:text-gray-700 flex gap-1 "
+                              className="text-gray-500  flex gap-1 "
+                              title="View messages for this order"
+                            >
+                              {order?.isMessage ? (
+                                <div
+                                  className="relative cursor-pointer w-6 h-6"
+                                  onClick={() => router.push(`/manage/orders/message/${order?.id}`)}
+                                >
+                                  <Mail className="w-8 h-8" />
+                                  {order?.messageCount > 0 && (
+                                    <span className="absolute -top-2 right-0 bg-blue-600 !text-white text-[10px] font-bold rounded-full min-w-[16px] h-[16px] flex items-center justify-center px-[3px]">
+                                      {order.messageCount}
+                                    </span>
+                                  )}
+                                </div>
+                              ) : <></>}
+
+                            </button>
+                            <button
+                              className="text-gray-500  flex gap-1 "
+                              title="View comment for this order"
+                            >
+
+                              {order?.comments ? <div className="relative">
+                                <NotebookText onClick={() => {
+                                  setSelectedOrderId(order.id);
+                                  setShowNotes(true);
+                                }
+                                } className="w-8 h-8" />
+
+                              </div> : <></>}
+
+                            </button>
+                            <button
+
+                              className="text-gray-500  flex gap-1 "
                               title="View Order Timeline"
                             >
-                              {order?.isMessage ? <div className="relative">
-                                <MessageSquareText onClick={() =>
-                                  router.push(
-                                    `/manage/orders/message/${order?.id}`
-                                  )
-                                } className="w-6 h-6" />
-
-                                <span className="absolute -top-3.5 !right-0  !text-red-500">
-                                  {order?.messageCount}
-                                </span>
-                              </div> : <></>}
                               <Clock onClick={() =>
                                 router.push(
                                   `/manage/orders/order-timeline/${order?.id}`
                                 )
-                              } className="w-6 h-6" />
+                              } className="w-8 h-8" />
                             </button>
                           </div>
                         </TableCell>
@@ -1108,7 +1134,7 @@ const AllOrders = () => {
 
                                   <div className="flex items-center gap-2">
                                     <Mail className="w-5 h-5 text-gray-500" />
-                                    <span>
+                                    <span className="!text-blue-400">
                                       {order?.billingInformation?.email || "N/A"}
                                     </span>
                                   </div>
@@ -1126,6 +1152,12 @@ const AllOrders = () => {
                                       {(order?.deviceType?.toUpperCase()) || ("desktop".toUpperCase())}
                                     </span>
                                   </div>
+                                  {order?.ipAddress && <div className="flex items-center gap-2">
+                                    {<MonitorCheck className="h-5 w-5 text-gray-500" />}
+                                    <span className="!text-blue-400">
+                                      {order?.ipAddress}
+                                    </span>
+                                  </div>}
                                   <div className="flex items-center gap-2">
                                     <CreditCard className="w-5 h-5 text-gray-500" />
                                     <span>

@@ -30,7 +30,7 @@ export default function OrderNotesModal({
     (state: any) => state.order || {}
   );
 
-  const order = singleOrder;
+  const order = singleOrder?.[0];
   const [comments, setComments] = useState("");
   const [staffNotes, setStaffNotes] = useState("");
 
@@ -63,10 +63,10 @@ export default function OrderNotesModal({
     // Reset form state
     setComments("");
     setStaffNotes("");
-    
+
     // Close modal
     onClose();
-    
+
     // ✅ Force remove any lingering overlays
     setTimeout(() => {
       document.body.style.pointerEvents = "";
@@ -79,7 +79,7 @@ export default function OrderNotesModal({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent 
+      <DialogContent
         className="sm:max-w-3xl"
         onEscapeKeyDown={handleClose}
         onPointerDownOutside={handleClose}
