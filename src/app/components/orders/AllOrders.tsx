@@ -35,7 +35,7 @@ import {
   capturePayment,
   shipmentByOrderId,
 } from "@/redux/slices/orderSlice";
-import { Ellipsis, MoreHorizontal, BadgeCheck, Flag } from "lucide-react";
+import { Ellipsis, MoreHorizontal, BadgeCheck, BadgeX, TriangleAlert } from "lucide-react";
 import { refetchOrders } from "@/lib/orderUtils";
 import { FaCirclePlus, FaCircleMinus } from "react-icons/fa6";
 import { useSearchParams } from "next/navigation";
@@ -839,6 +839,25 @@ const AllOrders = () => {
                       c.iso2 === getISO2(order?.customer?.country) ||
                       c.value === order?.customer?.country
                   );
+                  const riskConfig: Record<string, { icon: React.ReactNode; label: string, extendLabel: string }> = {
+                    normal: {
+                      icon: <BadgeCheck className="w-8 h-8 text-white fill-green-500" />,
+                      label: "Fraudulent Check Approved",
+                      extendLabel: "Approved"
+                    },
+                    elevated: {
+                      icon: <TriangleAlert className="w-8 h-8 text-white fill-yellow-500" />,
+                      label: "Manual Verification Required — Please check the transaction details in your Payment Provider's control panel for why this order has been flagged for review.",
+                      extendLabel: "Verification required"
+                    },
+                    highest: {
+                      icon: <BadgeX className="w-8 h-8 text-white fill-red-500" />,
+                      label: "Fraudulent Order Rejected",
+                      extendLabel: "Rejected"
+                    },
+                  };
+                  const riskLevel = order?.payment?.risk_level;
+                  const risk = riskConfig[riskLevel];
                   return (
                     <Fragment key={order?.id}>
                       <TableRow key={order?.id}>
@@ -902,8 +921,21 @@ const AllOrders = () => {
                         <TableCell>
                           <div className="flex items-center gap-2">
                             {/* Verification Badge Icon */}
-                            <BadgeCheck className="w-8 h-8 text-white fill-green-500 " />
-
+                            {/* {order?.payment?.risk_level == "normal" ?
+                              <BadgeCheck className="w-8 h-8 text-white fill-green-500 " /> : order?.payment?.risk_level == "elevated" ? <TriangleAlert className="w-8 h-8 text-white fill-yellow-500 " /> : order?.payment?.risk_level == "highest" ? <BadgeX className="w-8 h-8 text-white fill-red-500 " /> : <></>
+                            } */}
+                            {risk && (
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <span className="cursor-pointer">{risk.icon}</span>
+                                  </TooltipTrigger>
+                                  <TooltipContent >
+                                    {risk.label}
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                            )}
                             {/* Country Flag Icon */}
 
                             <TooltipProvider>
@@ -1176,6 +1208,12 @@ const AllOrders = () => {
                                     <span className="!text-blue-400">
                                       {order?.payment?.payment_intent_id ||
                                         "N/A"}
+                                    </span>
+                                  </div>}
+                                  {risk && <div className="flex items-center gap-2">
+                                    {risk.icon}
+                                    <span className="!text-blue-400">
+                                      {risk.extendLabel}
                                     </span>
                                   </div>}
                                 </div>
