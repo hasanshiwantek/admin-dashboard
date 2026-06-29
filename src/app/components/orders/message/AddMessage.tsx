@@ -8,7 +8,7 @@ import { Info, Loader2 } from "lucide-react";
 import { getReviewById, updateReview } from "@/redux/slices/reviewSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { useRouter, useParams } from "next/navigation";
-import { fetchOrderMessages, sendOrderMessage } from "@/redux/slices/orderMessageSlice";
+import { fetchOrderMessages, getCustomerDetailById, sendOrderMessage } from "@/redux/slices/orderMessageSlice";
 
 interface ReviewFormData {
     message: string;
@@ -29,10 +29,9 @@ const AddMessage = () => {
     const orderId = params?.orderId as string;
     const dispatch = useAppDispatch();
     const router = useRouter();
-    const { messages, loading, error, order } = useAppSelector(
+    const { loading, error, order, customerDetail } = useAppSelector(
         (state: any) => state.orderMessage
     );
-    const messageFind = messages?.find((item: any) => item.senderType !== 'admin')
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -65,19 +64,19 @@ const AddMessage = () => {
     useEffect(() => {
         if (!orderId) return;
         const fetchOrders = async () => {
-            dispatch(fetchOrderMessages({ orderId }))
+            dispatch(getCustomerDetailById({ id: orderId }))
         };
         fetchOrders();
     }, [orderId]);
 
 
     useEffect(() => {
-        if (messageFind?.customer?.email) {
+        if (customerDetail?.email) {
             reset({
-                email: messageFind?.customer?.email,
+                email: customerDetail?.email,
             })
         }
-    }, [messageFind])
+    }, [customerDetail?.email])
 
 
     if (isLoading) {
