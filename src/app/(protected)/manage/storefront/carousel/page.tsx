@@ -3,7 +3,7 @@ import Carousel from '@/app/components/Carousel/Carousel'
 const page = () => {
   return (
     <div className='p-10'>
-<Carousel/>
+      <Carousel />
     </div>
   )
 }
