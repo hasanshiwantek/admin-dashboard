@@ -111,6 +111,19 @@ export const getMessageById = createAsyncThunk(
         }
     }
 );
+export const getCustomerDetailById = createAsyncThunk(
+    "orderMessage/customer-by-order",
+    async ({ id }: { id: any }, thunkAPI) => {
+        try {
+            const res = await axiosInstance.get(`dashboard/orders/customer-by-order/${id}`);
+            return res?.data;
+        } catch (err: any) {
+            return thunkAPI.rejectWithValue(
+                err.response?.data?.message || "Failed to fetch review"
+            );
+        }
+    }
+);
 export const deleteOrderMessages = createAsyncThunk(
     "orderMessage/customer-messages",
     async (
@@ -155,6 +168,7 @@ const initialState = {
     error: null as string | null,
     messages: [] as any[],
     order: null as any,
+    customerDetail: null
 };
 
 // ── Slice ─────────────────────────────────────────────────────────────────────
@@ -230,6 +244,20 @@ const orderMessageSlice = createSlice({
                 state.loading = false;
             })
             .addCase(toggleFlagHeaders.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as string;
+            })
+
+            // Get Customer Detail
+            .addCase(getCustomerDetailById.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(getCustomerDetailById.fulfilled, (state, action) => {
+                state.loading = false;
+                state.customerDetail = action.payload?.data
+            })
+            .addCase(getCustomerDetailById.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload as string;
             });
