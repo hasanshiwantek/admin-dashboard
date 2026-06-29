@@ -507,9 +507,9 @@ const AllCustomers = () => {
                       </div>
                     </TableCell>
 
-                    <TableCell className="2xl:!text-2xl">1</TableCell>
+                    <TableCell className="2xl:!text-2xl">{customer?.totalOrders}</TableCell>
                     <TableCell className="2xl:!text-2xl">
-                      {new Date(customer.createdAt).toLocaleString("en-US", {
+                      {new Date(customer?.joinDate).toLocaleString("en-US", {
                         dateStyle: "medium",
                         timeStyle: "short",
                       })}
@@ -565,7 +565,10 @@ const AllCustomers = () => {
                                     </span>
 
                                     <span>Notes</span>
-                                    <span className="text-blue-600 cursor-pointer">
+                                    <span onClick={() => {
+                                      setSelectedCustomerId(customer?.id);
+                                      setShowCustomerNotes(true);
+                                    }} className="text-blue-600 cursor-pointer">
                                       View Notes
                                     </span>
                                   </div>
@@ -590,7 +593,10 @@ const AllCustomers = () => {
                                       Order #{order.orderNumber}
                                     </span>
 
-                                    <span className="text-blue-600 cursor-pointer">
+                                    <span onClick={() => {
+                                      setSelectedCustomerId(customer?.id);
+                                      setShowCustomerNotes(true);
+                                    }} className="text-blue-600 cursor-pointer">
                                       View Notes
                                     </span>
                                   </div>
