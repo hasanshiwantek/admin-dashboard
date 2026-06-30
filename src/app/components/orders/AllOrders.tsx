@@ -831,13 +831,13 @@ const AllOrders = () => {
                   const userType = order?.userType == "guest"
                   const countryData = countriesListIcons?.find(
                     (c) =>
-                      c.iso2 === getISO2(order?.billingInformation?.country) ||
-                      c.value === order?.billingInformation?.country
+                      c.iso2 === getISO2(order?.billingAddress?.country) ||
+                      c.value === order?.billingAddress?.country
                   );
                   const countryDataForCustomer = countriesListIcons?.find(
                     (c) =>
-                      c.iso2 === getISO2(order?.customer?.country) ||
-                      c.value === order?.customer?.country
+                      c.iso2 === getISO2(order?.billingInformation?.country) ||
+                      c.value === order?.billingInformation?.country
                   );
                   const riskConfig: Record<string, { icon: React.ReactNode; label: string, extendLabel: string }> = {
                     normal: {
@@ -964,11 +964,11 @@ const AllOrders = () => {
                           <div className="flex items-center gap-2">
 
                             {userType ? <span className="2xl:!text-2xl">
-                              {order.billingInformation?.firstName}{" "}
-                              {order.billingInformation?.lastName} (Guest)
+                              {order.billingAddress?.name}{" "}(Guest)
+                              {/* {order.billingAddress?.lastName}  */}
                             </span> : <Link href={"/manage/orders/customer/" + order?.customer?.id} className="2xl:!text-2xl !text-blue-500 cursor-pointer hover:underline">
-                              {order.billingInformation?.firstName}{" "}
-                              {order.billingInformation?.lastName}
+                              {order.billingAddress?.name}{" "}
+                              {/* {order.customer?.lastName} */}
                             </Link>}
 
                             {/* Payment Method Icon */}
@@ -1124,7 +1124,7 @@ const AllOrders = () => {
                                   <h4 className="font-semibold">Billing</h4>
                                   <button
                                     className="!px-2 !py-1 text-blue-500 border-blue-400 border text-base"
-                                    onClick={() => copyBilling(order?.billingInformation)}
+                                    onClick={() => copyBilling(order?.billingAddress)}
                                   >
                                     Copy
                                   </button>
@@ -1133,13 +1133,12 @@ const AllOrders = () => {
                                 {/* Right Side: Customer Info with Icons */}
                                 <div className="flex flex-col space-y-2">
                                   <p>
-                                    {order?.billingInformation?.firstName}{" "}
-                                    {order?.billingInformation?.lastName}
+                                    {order?.billingAddress?.name}{" "}
                                     <br />
-                                    {order?.billingInformation?.addressLine1}{" "}
-                                    {order?.billingInformation?.addressLine2}
+                                    {order?.billingAddress?.addressLine1}{" "}
+                                    {order?.billingAddress?.addressLine2}
                                     <br />
-                                    {order?.billingInformation?.state}
+                                    {order?.billingAddress?.state}
                                   </p>
 
                                   <div className="flex items-center gap-2">
@@ -1160,14 +1159,14 @@ const AllOrders = () => {
                                   <div className="flex items-center gap-2">
                                     <Phone className="w-5 h-5 text-gray-500" />
                                     <span>
-                                      {order?.billingInformation?.phone || "N/A"}
+                                      {order?.billingAddress?.phone || "N/A"}
                                     </span>
                                   </div>
 
                                   <div className="flex items-center gap-2">
                                     <Mail className="w-5 h-5 text-gray-500" />
                                     <span className="!text-blue-400">
-                                      {order?.billingInformation?.email || "N/A"}
+                                      {order?.billingAddress?.email || "N/A"}
                                     </span>
                                   </div>
                                   <div className="flex items-center gap-2">
@@ -1225,7 +1224,7 @@ const AllOrders = () => {
                                   <h4 className="font-semibold">Shipping</h4>
                                   <button
                                     className="!px-2 !py-1 text-blue-500 border-blue-400 border text-base"
-                                    onClick={() => copyBilling(order?.customer)}
+                                    onClick={() => copyBilling(order?.billingInformation)}
                                   >
                                     Copy
                                   </button>
@@ -1235,13 +1234,13 @@ const AllOrders = () => {
                                 <div className="flex flex-col space-y-2">
                                   {/* Customer Info */}
                                   <p>
-                                    {order?.customer?.firstName}{" "}
-                                    {order?.customer?.lastName}
+                                    {order?.billingInformation?.firstName}{" "}
+                                    {order?.billingInformation?.lastName}
                                     <br />
-                                    {order?.customer?.addressLine1}{" "}
-                                    {order?.customer?.addressLine2}
+                                    {order?.billingInformation?.addressLine1}{" "}
+                                    {order?.billingInformation?.addressLine2}
                                     <br />
-                                    {order?.customer?.state}
+                                    {order?.billingInformation?.state}
                                     <br />
                                     {countryDataForCustomer?.label || "N/A"}
                                   </p>
@@ -1268,7 +1267,7 @@ const AllOrders = () => {
 
                                   <div className="flex items-center gap-2">
                                     <Mail className="w-5 h-5 text-gray-500" />
-                                    <span>{order?.customer?.email || "N/A"}</span>
+                                    <span>{order?.billingInformation?.email || "N/A"}</span>
                                   </div>
 
                                   <div className="flex items-center gap-2">
@@ -1281,12 +1280,12 @@ const AllOrders = () => {
 
                                   <div className="flex items-center gap-2">
                                     <Phone className="w-5 h-5 text-gray-500" />
-                                    <span>{order?.customer?.phone || "N/A"}</span>
+                                    <span>{order?.billingInformation?.phone || "N/A"}</span>
                                   </div>
 
                                   <div className="flex items-center gap-2">
                                     <Mail className="w-5 h-5 text-gray-500" />
-                                    <span>{order?.customer?.email || "N/A"}</span>
+                                    <span>{order?.billingInformation?.email || "N/A"}</span>
                                   </div>
                                 </div>
                               </div>
