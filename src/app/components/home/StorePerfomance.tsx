@@ -18,7 +18,7 @@ import AnalyticsToolbar from "./AnalyticsToolbar";
 export default function StorePerformanceChart() {
   const dispatch = useAppDispatch();
   const [filter, setFilter] = useState("today");
-  console.log("Current Filter:", filter);
+
   const metrics = useAppSelector((state) => state.home?.metrics) as StoreMetricsResponse | null;
   const metricsCount = useAppSelector((state: any) => state.home?.metricsCount)
   const dateRange = useAppSelector((state: any) => state.home.dateRange);
@@ -37,7 +37,7 @@ console.log("Previous:", previous);
 
   ] : [];
   useEffect(() => {
-      console.log("🚀 useEffect fired:", filter);
+   
     dispatch(fetchDashboardMetrics());
     // dispatch(fetchDashboardStoreCount());
       dispatch(fetchDashboardStoreCountFiltered(filter));
