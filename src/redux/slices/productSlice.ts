@@ -414,7 +414,7 @@ export const exportCsv = createAsyncThunk(
 
       // Create a blob URL for the file
       const blob = new Blob([response.data], {
-        type: response.headers["content-type"],
+               type:  String(response.headers["content-type"] ?? ""),
       });
       const downloadUrl = URL.createObjectURL(blob);
 
