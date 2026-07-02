@@ -30,6 +30,23 @@ export const fetchDashboardStoreCount = createAsyncThunk(
     }
   }
 );
+export const fetchDashboardStoreCountFiltered = createAsyncThunk(
+  "home/store-count-filtered",
+  async (filter: string, thunkAPI) => {
+    try {
+      const res = await axiosInstance.get(
+        `dashboard/store-count-filtered?filter=${filter}`
+      );
+
+      return res.data;
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message ||
+          "Failed to fetch filtered store count"
+      );
+    }
+  }
+);
 
 export const fetchStoreStatistics = createAsyncThunk(
   "home/fetchStoreStatistics",
@@ -174,6 +191,8 @@ const initialState = {
   metrics: null,
   metricsCount: null,
   statistics: null,
+    dateRange: null, //add
+  previous: null, ///add
   orders: [],
   searchData: [],
   storeSettings: [],
@@ -202,7 +221,10 @@ const homeSlice = createSlice({
       })
       .addCase(fetchDashboardMetrics.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || "Failed to fetch metrics";
+       state.error =
+  (action.payload as string) ||
+  action.error.message ||
+  "Failed to fetch filtered metrics";
       })
 
       // Metrics count
@@ -217,6 +239,25 @@ const homeSlice = createSlice({
         state.loading = false;
         state.error = action.error.message || "Failed to fetch metrics";
       })
+
+      .addCase(fetchDashboardStoreCountFiltered.pending, (state) => {
+  state.loading = true;
+})
+.addCase(fetchDashboardStoreCountFiltered.fulfilled, (state, action) => {
+  state.loading = false;
+
+  state.metricsCount = action.payload.data;
+
+  state.dateRange = action.payload.dateRange;
+
+  state.previous = action.payload.previous;
+})
+.addCase(fetchDashboardStoreCountFiltered.rejected, (state, action) => {
+  state.loading = false;
+
+  state.error =
+    action.payload as string || "Failed to fetch filtered metrics";
+})
       // GLOBAL SEARCH
       .addCase(globalSearch.pending, (state) => {
         state.loading = true;

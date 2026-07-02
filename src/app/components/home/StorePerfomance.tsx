@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   LineChart,
   Line,
@@ -9,14 +9,25 @@ import {
   CartesianGrid,
   ResponsiveContainer,
 } from "recharts";
-import { fetchDashboardMetrics, fetchDashboardStoreCount } from "@/redux/slices/homeSlice";
+import { fetchDashboardMetrics, fetchDashboardStoreCount,fetchDashboardStoreCountFiltered, } from "@/redux/slices/homeSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { StoreMetric, StoreMetricsResponse } from "@/types/types";
+import AnalyticsToolbar from "./AnalyticsToolbar";
+
 
 export default function StorePerformanceChart() {
   const dispatch = useAppDispatch();
+  const [filter, setFilter] = useState("today");
+  console.log("Current Filter:", filter);
   const metrics = useAppSelector((state) => state.home?.metrics) as StoreMetricsResponse | null;
   const metricsCount = useAppSelector((state: any) => state.home?.metricsCount)
+  const dateRange = useAppSelector((state: any) => state.home.dateRange);
+const previous = useAppSelector((state: any) => state.home.previous);
+
+
+console.log("Metrics Count:", metricsCount);
+console.log("Date Range:", dateRange);
+console.log("Previous:", previous);
   const metricsData = metrics?.data ?? [];
   const chartData = metricsData ? [
     { label: "Visits", value: Number(metricsCount?.visits) },
@@ -26,33 +37,46 @@ export default function StorePerformanceChart() {
 
   ] : [];
   useEffect(() => {
+      console.log("🚀 useEffect fired:", filter);
     dispatch(fetchDashboardMetrics());
-    dispatch(fetchDashboardStoreCount());
-  }, [dispatch]);
+    // dispatch(fetchDashboardStoreCount());
+      dispatch(fetchDashboardStoreCountFiltered(filter));
+  }, [dispatch,filter]);
+
 
   if (!metricsData) return <div>Loading...</div>;
 
   return (
     <div>
       <h1 className="my-5 !text-[2.4rem]">Store Performance</h1>
+      <AnalyticsToolbar
+  filter={filter}
+  onFilterChange={setFilter}
+   dateRange={dateRange}
+/>
+      
       <div className="w-full h-100% p-4 bg-white rounded shadow">
         {/* Summary Cards */}
         <div className="grid grid-cols-4 gap-4 mb-6">
           {[
-            { label: "Visits", key: "visits", color: "text-blue-600", value: metricsCount?.visits },
+            { label: "Visits", key: "visits", color: "text-blue-600", value: metricsCount?.visits ,previous: previous?.visits,},
             {
               label: "Conversion",
               key: "conversion",
               color: "text-purple-600",
               suffix: "%",
-              value: metricsCount?.conversion
+              value: metricsCount?.conversion,
+              previous: previous?.conversion,
             },
-            { label: "Orders", key: "orders", color: "text-green-600", value: metricsCount?.orders },
+            { label: "Orders", key: "orders", color: "text-green-600", value: metricsCount?.orders ,  previous: previous?.orders,},
             {
               label: "Revenue", key: "revenue",
               color: "text-emerald-600",
               prefix: "$",
-              value: metricsCount?.revenue
+              value: metricsCount?.revenue,
+                  
+                   previous: previous?.revenue,
+
             },
 
           ].map((metric) => {
@@ -83,6 +107,7 @@ export default function StorePerformanceChart() {
                 </div>
                 <div className="text-md text-gray-500">
                   {/* {last} last week's total */}
+                   Previous: {metric.previous ?? 0}
                 </div>
               </div>
             );
