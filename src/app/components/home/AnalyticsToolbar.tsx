@@ -47,10 +47,10 @@ const comparisons = [
     label: "Previous period",
     value: "previous_period",
   },
-  {
-    label: "Last year",
-    value: "last_year",
-  },
+  // {
+  //   label: "Last year",
+  //   value: "last_year",
+  // },
 ];
   interface AnalyticsToolbarProps {
   filter: string;

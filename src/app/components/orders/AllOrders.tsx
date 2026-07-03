@@ -126,7 +126,7 @@ const AllOrders = () => {
     "Shipped",
     "Incomplete",
     "Archived",
-    "Custom views",
+    // "Custom views",
   ];
 
   const [selectedOrderIds, setSelectedOrderIds] = useState<any[]>([]);

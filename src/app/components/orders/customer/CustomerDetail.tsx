@@ -110,7 +110,6 @@ const CustomerDetail = () => {
             }
         },
     ];
-
     const handleSelectAll = () => {
         if (selectedCustomers.length === customers?.data?.length) {
             setSelectedCustomers([]);
