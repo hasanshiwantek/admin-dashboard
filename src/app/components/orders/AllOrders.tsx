@@ -541,21 +541,25 @@ const AllOrders = () => {
 
   // useEffect(() => {
   //   if (!productId) {
-  //     // dispatch(fetchAllOrders({ page: currentPage, perPage, status: activeTab }));
+  //     dispatch(fetchAllOrders({ page: currentPage, perPage, status: activeTab }));
   //   }
   // }, [activeTab])
   useEffect(() => {
     const query = Object.fromEntries(searchParams.entries());
 
-    if (Object.keys(query).length > 0) {
+    if (Object.keys(query).length > 0 && activeTab === "All orders") {
       dispatch(advanceOrderSearch({ data: query }));
     } else {
       if (!productId) {
+
         dispatch(fetchAllOrders({ page: currentPage, perPage, status: activeTab }));
       }
       // dispatch(fetchAllOrders({ page: currentPage, perPage, status: activeTab }));
     }
-  }, [searchParams, activeTab]);
+  }, [searchParams]);
+
+  console.log(activeTab);
+
 
 
   const selectedOrderDetails = filteredOrders.find((item: any) => Number(item.id) === Number(selectedOrderId));
@@ -643,8 +647,16 @@ const AllOrders = () => {
               : "border-transparent text-gray-500 hover:text-black"
               }`}
             onClick={() => {
-              setFilterProductId("")
-              setActiveTab(tab)
+              const query = Object.fromEntries(searchParams.entries());
+              if (Object.keys(query).length > 0) {
+                setActiveTab(tab)
+                router.push(`/manage/orders`);
+
+              } else {
+                dispatch(fetchAllOrders({ page: currentPage, perPage, status: tab }));
+                setFilterProductId("")
+                setActiveTab(tab)
+              }
             }}
           >
             {tab}
