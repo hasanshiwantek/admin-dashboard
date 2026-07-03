@@ -98,7 +98,8 @@ const AllCustomers = () => {
           console.log(token, selectedStore);
 
           if (token && selectedStore.baseUrl) {
-            window.open(`${selectedStore.baseUrl}/?token=${token}`, "_blank");
+              const baseUrl = selectedStore.baseUrl.replace(/\/$/, ""); // ✅ trailing slash remove
+  window.open(`${baseUrl}/?token=${token}`, "_blank");
           }
         } catch (err) {
           toast.error("Failed to login as customer");
