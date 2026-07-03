@@ -101,6 +101,7 @@ const AllOrders = () => {
   const [showNotes, setShowNotes] = useState(false);
   const [showCaptured, setShowCaptured] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [showVoidConfirm, setShowVoidConfirm] = useState(false);
   const [showShipmentTable, setShowShipmentTable] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState<any>(null);
   const router = useRouter();
@@ -297,20 +298,10 @@ const AllOrders = () => {
     {
       label: "Void",
       onClick: async () => {
-        try {
-          await dispatch(
-            updateOrderStatus({
-              id: order.id,
-              status: "Cancelled",
-            })
-          );
-          // Only refetch once after all operations
-          setTimeout(() => {
-            refetchOrders(dispatch);
-          }, 700);
-        } catch (error) {
-          console.error("Error:", error);
-        }
+
+
+        setSelectedOrderId(order?.id);
+        setShowVoidConfirm(true);
       },
     },
     {
@@ -841,17 +832,17 @@ const AllOrders = () => {
                   );
                   const riskConfig: Record<string, { icon: React.ReactNode; label: string, extendLabel: string }> = {
                     normal: {
-                      icon: <BadgeCheck className="w-8 h-8 text-white fill-green-500" />,
+                      icon: <BadgeCheck className="w-6 h-6 text-white fill-green-500" />,
                       label: "Fraudulent Check Approved",
                       extendLabel: "Approved"
                     },
                     elevated: {
-                      icon: <TriangleAlert className="w-8 h-8 text-white fill-yellow-500" />,
+                      icon: <TriangleAlert className="w-6 h-6 text-white fill-yellow-500" />,
                       label: "Manual Verification Required — Please check the transaction details in your Payment Provider's control panel for why this order has been flagged for review.",
                       extendLabel: "Verification required"
                     },
                     highest: {
-                      icon: <BadgeX className="w-8 h-8 text-white fill-red-500" />,
+                      icon: <BadgeX className="w-6 h-6 text-white fill-red-500" />,
                       label: "Fraudulent Order Rejected",
                       extendLabel: "Rejected"
                     },
@@ -1133,11 +1124,20 @@ const AllOrders = () => {
                                 {/* Right Side: Customer Info with Icons */}
                                 <div className="flex flex-col space-y-2">
                                   <p>
-                                    {order?.billingAddress?.name}{" "}
+                                    {/* {order?.billingAddress?.name}{" "}
                                     <br />
                                     {order?.billingAddress?.addressLine1}{" "}
                                     {order?.billingAddress?.addressLine2}
-                                    <br />
+                                    <br /> */}
+                                    {order?.billingAddress?.name && (
+                                      <>{order.billingAddress.name}<br /></>
+                                    )}
+                                    {order?.billingAddress?.addressLine1 && (
+                                      <>{order.billingAddress.addressLine1}<br /></>
+                                    )}
+                                    {order?.billingAddress?.addressLine2 && (
+                                      <>{order.billingAddress.addressLine2}<br /></>
+                                    )}
                                     {order?.billingAddress?.state}
                                   </p>
 
@@ -1237,8 +1237,12 @@ const AllOrders = () => {
                                     {order?.billingInformation?.firstName}{" "}
                                     {order?.billingInformation?.lastName}
                                     <br />
-                                    {order?.billingInformation?.addressLine1}{" "}
-                                    {order?.billingInformation?.addressLine2}
+                                    {order?.billingInformation?.addressLine1 && (
+                                      <>{order.billingInformation.addressLine1}</>
+                                    )}
+                                    {order?.billingInformation?.addressLine2 && (
+                                      <>, {order.billingInformation.addressLine2}</>
+                                    )}
                                     <br />
                                     {order?.billingInformation?.state}
                                     <br />
@@ -1272,7 +1276,7 @@ const AllOrders = () => {
 
                                   <div className="flex items-center gap-2">
                                     <Calendar className="w-5 h-5 text-gray-500" />
-                                    <span>{order?.shippedAt || "N/A"}</span>
+                                    <span>{dayjs(order?.updatedAt).format("DD MMM YYYY HH:mm:ss") || "N/A"}</span>
                                   </div>
 
                                   {/* Contact Section */}
@@ -1442,6 +1446,25 @@ const AllOrders = () => {
             }
           }}
           message="Are you sure you want to capture funds for this order?"
+        />
+      )}
+      {showVoidConfirm && selectedOrderId && (
+        <ConfirmationModal
+          open={showVoidConfirm}
+          onClose={() => setShowVoidConfirm(false)}
+          onConfirm={async () => {
+            // void payment logic
+            if (selectedOrderId) {
+              await dispatch(
+                updateOrderStatus({
+                  id: selectedOrderId,
+                  status: "Cancelled",
+                })
+              ).unwrap()
+              dispatch(fetchAllOrders({ page: currentPage, perPage }));
+            }
+          }}
+          message="Are you sure you want to void for this order?"
         />
       )}
       {showShipmentTable && selectedOrderId && singleShipmentByOrder && (
