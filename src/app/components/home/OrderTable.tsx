@@ -9,9 +9,10 @@ const tabs = [{ tab: "Recent", queryIndex: 0 }, { tab: "Pending", queryIndex: 1 
 const query = [
   "All orders",            // Recent
   "Awaiting Payment",      // Pending
-  "Awaiting Fulfillment",  // Completed
-  "Refunded",              // Refunded
+  "Shipped",  // Completed
+  "Cancelled",              // Refunded
 ];
+
 
 const OrderTable = () => {
   const dispatch = useAppDispatch();
