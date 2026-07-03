@@ -539,11 +539,24 @@ const AllOrders = () => {
   }, [searchParams]); // ✅ triggers when URL changes
 
 
+  // useEffect(() => {
+  //   if (!productId) {
+  //     // dispatch(fetchAllOrders({ page: currentPage, perPage, status: activeTab }));
+  //   }
+  // }, [activeTab])
   useEffect(() => {
-    if (!productId) {
-      dispatch(fetchAllOrders({ page: currentPage, perPage, status: activeTab }));
+    const query = Object.fromEntries(searchParams.entries());
+
+    if (Object.keys(query).length > 0) {
+      dispatch(advanceOrderSearch({ data: query }));
+    } else {
+      if (!productId) {
+        dispatch(fetchAllOrders({ page: currentPage, perPage, status: activeTab }));
+      }
+      // dispatch(fetchAllOrders({ page: currentPage, perPage, status: activeTab }));
     }
-  }, [activeTab])
+  }, [searchParams, activeTab]);
+
 
   const selectedOrderDetails = filteredOrders.find((item: any) => Number(item.id) === Number(selectedOrderId));
   const counrtyBilling = countriesListIcons?.find(

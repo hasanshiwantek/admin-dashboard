@@ -109,7 +109,9 @@ Updated: ${billing.updatedAt}`;
     }
   }, [shipments]);
 
-  const tabs = ["All shipments", "Custom Views"];
+  const tabs = ["All shipments",
+    // "Custom Views"
+  ];
 
   // Handle single row checkbox change
   const handleOrderCheckboxChange = (order: any, checked: boolean) => {
@@ -457,13 +459,13 @@ Updated: ${billing.updatedAt}`;
                           />
                         </TableCell>
                         <TableCell>
-                          <button onClick={() => toggleRow(shipment.id)}>
+                          {/* <button onClick={() => toggleRow(shipment.id)}>
                             {expandedRow === shipment.id ? (
                               <FaCircleMinus className="h-7 w-7 fill-gray-600" />
                             ) : (
                               <FaCirclePlus className="h-7 w-7 fill-gray-600" />
                             )}
-                          </button>
+                          </button> */}
                         </TableCell>
                         <TableCell className="2xl:!text-2xl">{shipment.id}</TableCell>
 
