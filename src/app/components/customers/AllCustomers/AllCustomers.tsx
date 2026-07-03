@@ -93,6 +93,10 @@ const AllCustomers = () => {
           const res = await dispatch(loginAsCustomer({ customerId })).unwrap();
 
           const token = res?.token || res?.data?.token;
+
+
+          console.log(token, selectedStore);
+
           if (token && selectedStore.baseUrl) {
             window.open(`${selectedStore.baseUrl}/?token=${token}`, "_blank");
           }
