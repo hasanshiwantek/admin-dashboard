@@ -31,7 +31,8 @@ import {
     updateCustomer,
     fetchCustomerByKeyword,
     advanceCustomerSearch,
-    fetchCustomerDetailById
+    fetchCustomerDetailById,
+    loginAsCustomer
 } from "@/redux/slices/customerSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { refetchCustomers } from "@/lib/customerUtils";
@@ -39,6 +40,7 @@ import Link from "next/link";
 import Spinner from "../../loader/Spinner";
 import { useRouter } from "next/navigation";
 import CustomerNotesModal from "../../customers/edit/CustomerNotesModal";
+import { toast } from "react-toastify";
 // import CustomerNotesModal from "../../edit/CustomerNotesModal";
 
 const CustomerDetail = () => {
@@ -82,7 +84,30 @@ const CustomerDetail = () => {
         },
         {
             label: "Login",
-            onClick: () => console.log("Login Customer clicked", customer),
+            onClick: async () => {
+                const customerId = customer?.id;
+                const availableStores = JSON.parse(localStorage.getItem("availableStores") || "[]");
+                const selectedStoreId = Number(localStorage.getItem("storeId"));
+                const selectedStore = availableStores.find((s: any) => s.id === selectedStoreId);
+
+                if (!selectedStore?.baseUrl) {
+                    toast.error("Store not found");
+                    return;
+                }
+                try {
+                    const res = await dispatch(loginAsCustomer({ customerId })).unwrap();
+
+                    const token = res?.token || res?.data?.token;
+
+                    console.log(token, selectedStore, customerId);
+
+                    if (token && selectedStore.baseUrl) {
+                        window.open(`${selectedStore.baseUrl}/?token=${token}`, "_blank");
+                    }
+                } catch (err) {
+                    toast.error("Failed to login as customer");
+                }
+            }
         },
     ];
 
