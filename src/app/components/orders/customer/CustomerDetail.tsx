@@ -108,8 +108,10 @@ const CustomerDetail = () => {
 
       if (token && selectedStore.baseUrl) {
         // ✅ Trailing slash remove karo
-        const baseUrl = selectedStore.baseUrl.replace(/\/+$/, "");
-        window.open(`${baseUrl}/auth/login-as-customer?token=${token}`, "_blank");
+const baseUrl = selectedStore.baseUrl.replace(/\/+$/, "");
+const finalUrl = `${baseUrl}/auth/login-as-customer?token=${token}`;
+console.log("Final URL:", finalUrl);
+window.open(finalUrl, "_blank");
       } else {
         toast.error("Token or store URL missing");
       }
