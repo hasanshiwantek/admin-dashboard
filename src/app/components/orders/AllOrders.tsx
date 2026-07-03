@@ -120,13 +120,13 @@ const AllOrders = () => {
     "Awaiting Payment",
     "Awaiting Fulfillment",
     "Awaiting Shipment",
-    "High Risk",
+    // "High Risk",
     "Pre-orders",
     "Refunded",
     "Shipped",
     "Incomplete",
     "Archived",
-    "Custom views",
+    // "Custom views",
   ];
 
   const [selectedOrderIds, setSelectedOrderIds] = useState<any[]>([]);
