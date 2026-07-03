@@ -210,26 +210,26 @@ const AllOrders = () => {
         router.push(`/manage/orders/edit/${order.id}`);
       },
     },
-    {
-      label: "Print invoice",
-      onClick: async () => {
-        try {
-          const orderId = order?.id;
-          const resultAction = await dispatch(printInvoicePdf({ orderId }));
+    // {
+    //   label: "Print invoice",
+    //   onClick: async () => {
+    //     try {
+    //       const orderId = order?.id;
+    //       const resultAction = await dispatch(printInvoicePdf({ orderId }));
 
-          if (printInvoicePdf.fulfilled.match(resultAction)) {
-            const blob = new Blob([resultAction.payload], {
-              type: "application/pdf",
-            });
-            const url = URL.createObjectURL(blob);
-            window.open(url, "_blank");
-          } else {
-          }
-        } catch (error) {
-          console.error("Unexpected error:", error);
-        }
-      },
-    },
+    //       if (printInvoicePdf.fulfilled.match(resultAction)) {
+    //         const blob = new Blob([resultAction.payload], {
+    //           type: "application/pdf",
+    //         });
+    //         const url = URL.createObjectURL(blob);
+    //         window.open(url, "_blank");
+    //       } else {
+    //       }
+    //     } catch (error) {
+    //       console.error("Unexpected error:", error);
+    //     }
+    //   },
+    // },
     { label: "Print packing slip" },
     {
       label: "Resend invoice",

@@ -70,10 +70,10 @@ const CustomerDetail = () => {
             label: "Edit",
             onClick: () => router.push(`/manage/customers/edit/${customer?.id}`),
         },
-        {
-            label: "View Orders",
-            onClick: () => console.log("View Orders clicked", customer),
-        },
+        // {
+        //     label: "View Orders",
+        //     onClick: () => console.log("View Orders clicked", customer),
+        // },
         {
             label: "View Notes",
             onClick: () => {
