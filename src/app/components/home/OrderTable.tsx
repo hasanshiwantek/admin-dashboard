@@ -161,7 +161,7 @@ const OrderTable = () => {
         <div className="divide-y">
           {filteredOrders.length === 0 && (
             <p className="text-center  py-10">
-              No orders found for <strong>{activeTab}</strong>.
+              No orders found for <strong>{tabs[activeTab].tab}</strong>.
             </p>
           )}
         </div>
