@@ -65,10 +65,10 @@ const AllCustomers = () => {
       label: "Edit",
       onClick: () => router.push(`/manage/customers/edit/${customer.id}`),
     },
-    {
-      label: "View Orders",
-      onClick: () => console.log("View Orders clicked", customer),
-    },
+    // {
+    //   label: "View Orders",
+    //   onClick: () => console.log("View Orders clicked", customer),
+    // },
     {
       label: "View Notes",
       onClick: () => {
@@ -341,9 +341,9 @@ const AllCustomers = () => {
         <button className="pb-2 text-xl font-medium border-b-2 border-blue-500 2xl:!text-2xl">
           All customers
         </button>
-        <button className="pb-2 text-xl font-medium text-gray-500 hover:text-gray-700 2xl:!text-2xl">
+        {/* <button className="pb-2 text-xl font-medium text-gray-500 hover:text-gray-700 2xl:!text-2xl">
           Custom views
-        </button>
+        </button> */}
       </div>
 
       {/* Actions */}
