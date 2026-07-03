@@ -82,47 +82,34 @@ const CustomerDetail = () => {
                 setShowCustomerNotes(true);
             },
         },
-     {
-  label: "Login",
-  onClick: async () => {
-    const customerId = customer?.id;
-    const availableStores = JSON.parse(localStorage.getItem("availableStores") || "[]");
-    const selectedStoreId = Number(localStorage.getItem("storeId"));
-    const selectedStore = availableStores.find((s: any) => s.id === selectedStoreId);
+        {
+            label: "Login",
+            onClick: async () => {
+                const customerId = customer?.id;
+                const availableStores = JSON.parse(localStorage.getItem("availableStores") || "[]");
+                const selectedStoreId = Number(localStorage.getItem("storeId"));
+                const selectedStore = availableStores.find((s: any) => s.id === selectedStoreId);
 
-    console.log("availableStores:", availableStores);
-    console.log("selectedStoreId:", selectedStoreId);
-    console.log("selectedStore:", selectedStore);
+                if (!selectedStore?.baseUrl) {
+                    toast.error("Store not found");
+                    return;
+                }
+                try {
+                    const res = await dispatch(loginAsCustomer({ customerId })).unwrap();
 
-    if (!selectedStore?.baseUrl) {
-      toast.error("Store not found");
-      return;
-    }
+                    const token = res?.token || res?.data?.token;
 
-    try {
-      const res = await dispatch(loginAsCustomer({ customerId })).unwrap();
-      const token = res?.token || res?.data?.token;
+                    console.log(token, selectedStore, customerId);
 
-      console.log("token:", token);
-      console.log("baseUrl:", selectedStore.baseUrl);
-
-      if (token && selectedStore.baseUrl) {
-        // ✅ Trailing slash remove karo
-const baseUrl = selectedStore.baseUrl.replace(/\/+$/, "");
-const finalUrl = `${baseUrl}/auth/login-as-customer?token=${token}`;
-console.log("Final URL:", finalUrl);
-window.open(finalUrl, "_blank");
-      } else {
-        toast.error("Token or store URL missing");
-      }
-    } catch (err: any) {
-      console.error(err);
-      toast.error(err?.message || "Failed to login as customer");
-    }
-  }
-}
+                    if (token && selectedStore.baseUrl) {
+                        window.open(`${selectedStore.baseUrl}/?token=${token}`, "_blank");
+                    }
+                } catch (err) {
+                    toast.error("Failed to login as customer");
+                }
+            }
+        },
     ];
-
     const handleSelectAll = () => {
         if (selectedCustomers.length === customers?.data?.length) {
             setSelectedCustomers([]);
