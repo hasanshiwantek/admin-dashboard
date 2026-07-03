@@ -5,7 +5,13 @@ import { fetchAllOrders } from "@/redux/slices/orderSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { OrderItem, OrderListResponse } from "@/types/types";
 import Spinner from "../loader/Spinner";
-const tabs = ["Recent", "Pending", "Completed", "Refunded"];
+const tabs = [{ tab: "Recent", queryIndex: 0 }, { tab: "Pending", queryIndex: 1 }, { tab: "Completed", queryIndex: 2 }, { tab: "Refunded", queryIndex: 3 }];
+const query = [
+  "All orders",            // Recent
+  "Awaiting Payment",      // Pending
+  "Awaiting Fulfillment",  // Completed
+  "Refunded",              // Refunded
+];
 
 const OrderTable = () => {
   const dispatch = useAppDispatch();
@@ -16,28 +22,34 @@ const OrderTable = () => {
     error: string | null;
     orders: OrderListResponse;
   };
-
-  const [activeTab, setActiveTab] = useState("Recent");
-  const [filteredOrders, setFilteredOrders] = useState<OrderItem[]>([]);
+  const filteredOrders = orders?.data || [];
+  const [activeTab, setActiveTab] = useState<any>("0");
+  // const [filteredOrders, setFilteredOrders] = useState<OrderItem[]>([]);
 
   // Fetch all orders on mount
-  useEffect(() => {
-    dispatch(fetchAllOrders({ page: 1, perPage: 20 }));
-  }, [dispatch]);
 
+  useEffect(() => {
+    dispatch(
+      fetchAllOrders({
+        page: 1,
+        perPage: 20,
+        status: query[activeTab],
+      })
+    );
+  }, [activeTab]);
   // Filter orders based on active tab
-  useEffect(() => {
-    if (!orders?.data) return;
+  // useEffect(() => {
+  //   if (!orders?.data) return;
 
-    if (activeTab === "Recent") {
-      setFilteredOrders(orders.data);
-    } else {
-      const filtered = orders.data.filter(
-        (order) => order?.status?.toLowerCase() === activeTab?.toLowerCase()
-      );
-      setFilteredOrders(filtered);
-    }
-  }, [activeTab, orders]);
+  //   if (activeTab === "Recent") {
+  //     setFilteredOrders(orders.data);
+  //   } else {
+  //     const filtered = orders.data.filter(
+  //       (order) => order?.status?.toLowerCase() === activeTab?.toLowerCase()
+  //     );
+  //     setFilteredOrders(filtered);
+  //   }
+  // }, [activeTab, orders]);
 
   return (
     <div>
@@ -50,14 +62,13 @@ const OrderTable = () => {
             {tabs.map((tab, i) => (
               <button
                 key={i}
-                onClick={() => setActiveTab(tab)}
-                className={`text-xl lg:text-2xl px-6 py-2 rounded-full transition cursor-pointer ${
-                  activeTab === tab
-                    ? "bg-blue-600 text-white"
-                    : "text-gray-600 hover:text-blue-600"
-                }`}
+                onClick={() => setActiveTab(tab.queryIndex.toString())}
+                className={`text-xl lg:text-2xl px-6 py-2 rounded-full transition cursor-pointer ${activeTab === tab.queryIndex.toString()
+                  ? "bg-blue-600 text-white"
+                  : "text-gray-600 hover:text-blue-600"
+                  }`}
               >
-                {tab}
+                {tab.tab}
               </button>
             ))}
           </div>
@@ -70,21 +81,11 @@ const OrderTable = () => {
         </div>
 
         {/* Loading Spinner */}
-        {loading && (
+        {loading ? (
           <div className="text-center py-10">
             <Spinner />
           </div>
-        )}
-
-        {/* Error Message */}
-        {!loading && error && (
-          <div className="text-center py-10 text-red-500 text-lg">
-            Error: {error}
-          </div>
-        )}
-
-        {/* Orders */}
-        <div className="divide-y">
+        ) : <div className="divide-y">
           {filteredOrders.length === 0 && (
             <p className="text-center  py-10">
               No orders found for <strong>{activeTab}</strong>.
@@ -147,6 +148,22 @@ const OrderTable = () => {
               </div>
             );
           })}
+        </div>}
+
+        {/* Error Message */}
+        {!loading && error && (
+          <div className="text-center py-10 text-red-500 text-lg">
+            Error: {error}
+          </div>
+        )}
+
+        {/* Orders */}
+        <div className="divide-y">
+          {filteredOrders.length === 0 && (
+            <p className="text-center  py-10">
+              No orders found for <strong>{tabs[activeTab].tab}</strong>.
+            </p>
+          )}
         </div>
       </div>
     </div>
