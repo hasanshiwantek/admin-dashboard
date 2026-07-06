@@ -191,7 +191,7 @@ const ManageOrders = () => {
         <div className="flex justify-start gap-10 items-center mb-5 w-full">
           <div className="flex justify-start gap-10 items-center">
             {/* Delete icon */}
-            <div
+            {/* <div
               onClick={handleDeleteSelected}
               className="
                 cursor-pointer 
@@ -205,10 +205,10 @@ const ManageOrders = () => {
               "
             >
               <MdDelete className="h-7 w-7" color="#6F8DFD" />
-            </div>
+            </div> */}
 
             {/* Filter input with icon + Filter text button */}
-            <div className="flex items-center bg-white border border-gray-200 rounded-md max-w-full focus-within:ring-3 focus-within:ring-blue-200 focus-within:border-blue-200">
+            {/* <div className="flex items-center bg-white border border-gray-200 rounded-md max-w-full focus-within:ring-3 focus-within:ring-blue-200 focus-within:border-blue-200">
               <input
                 type="text"
                 placeholder="Filter by Keyword"
@@ -224,15 +224,15 @@ const ManageOrders = () => {
                 <ListFilter size={20} color="#6F8DFD" />
                 Filter
               </button>
-            </div>
+            </div> */}
           </div>
 
           {/* Advance Search button */}
-          <Link href={"/manage/orders/view-returns"}>
+          {/* <Link href={"/manage/orders/view-returns"}>
             <button className="btn-outline-primary flex justify-start gap-1 items-center !text-xl">
               Advance Search
             </button>
-          </Link>
+          </Link> */}
         </div>
 
         {/* Show message if no returns */}

@@ -241,6 +241,7 @@ const Carousel = () => {
   // };
 
 
+
   const onSubmit = async () => {
     if (slides.length === 0) {
       alert("Please add at least one slide to save the carousel.");
@@ -274,11 +275,14 @@ const Carousel = () => {
           if (slide.imageUrl.startsWith("data:image")) {
             const byteString = atob(slide.imageUrl.split(",")[1]);
             const mimeString = slide.imageUrl.split(",")[0].split(":")[1].split(";")[0];
+            const extension = mimeString.split("/")[1];
             const ab = new ArrayBuffer(byteString.length);
             const ia = new Uint8Array(ab);
             for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
             const blob = new Blob([ab], { type: mimeString });
-            formData.append(`slides[${index}][image]`, blob, `slide-new-${index}.png`);
+            console.log("blob", blob);
+
+            formData.append(`slides[${index}][image]`, blob, `slide-new-${index}.${extension}`);
           }
         });
 
