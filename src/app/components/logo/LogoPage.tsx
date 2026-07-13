@@ -378,13 +378,13 @@ const LogoPage = () => {
             <div className="pt-6 border-t border-gray-100">
               <p className="text-sm text-gray-600 2xl:!text-2xl">
                 Want to adjust the position of your logo?{" "}
-                <a
+                {/* <a
                   href="#"
                   className="text-blue-600 hover:text-blue-700 font-medium underline"
                   onClick={(e) => e.preventDefault()}
                 >
                   Launch Page Builder
-                </a>
+                </a> */}
               </p>
             </div>
           </div>
