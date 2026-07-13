@@ -99,10 +99,9 @@ const OrderSearch = () => {
     <form onSubmit={handleSubmit}>
       <div className="p-10">
         <div className="flex flex-col space-y-5">
-          <h1 className="!font-extralight 2xl:!text-5xl">Search Products</h1>
+          <h1 className="!font-extralight 2xl:!text-5xl">Search orders</h1>
           <p className="2xl:!text-2xl">
-            Search for specific products using the advanced search options
-            below.
+        Search for specific orders using the advanced search options below.
           </p>
         </div>
 
