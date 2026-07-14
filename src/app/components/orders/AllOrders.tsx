@@ -226,22 +226,56 @@ const AllOrders = () => {
       onClick: async () => {
         try {
           const orderId = order?.id;
+          if (!orderId) {
+            console.error("Order ID is missing");
+            return;
+          }
+
           const resultAction = await dispatch(printInvoicePdf({ orderId }));
 
           if (printInvoicePdf.fulfilled.match(resultAction)) {
-            const blob = new Blob([resultAction.payload], {
-              type: "application/pdf",
-            });
+            const payload = resultAction.payload;
+
+            let blob: Blob;
+
+            if (payload instanceof Blob) {
+              blob = payload;
+            } else if (payload instanceof ArrayBuffer || payload instanceof Uint8Array) {
+              // Fixed the TypeScript error here
+              blob = new Blob([new Uint8Array(payload as ArrayBuffer)], {
+                type: "application/pdf",
+              });
+            } else if (typeof payload === "string") {
+              // If backend returns base64 string
+              const byteCharacters = atob(
+                payload.replace(/^data:application\/pdf;base64,/, "")
+              );
+              const byteNumbers = new Array(byteCharacters.length);
+              for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+              }
+              const byteArray = new Uint8Array(byteNumbers);
+              blob = new Blob([byteArray], { type: "application/pdf" });
+            } else {
+              // Fallback
+              blob = new Blob([payload as any], { type: "application/pdf" });
+            }
+
             const url = URL.createObjectURL(blob);
             window.open(url, "_blank");
-          } else {
+
+            // Cleanup memory after some time
+            setTimeout(() => URL.revokeObjectURL(url), 10000);
+          } else if (printInvoicePdf.rejected.match(resultAction)) {
+            console.error("Failed to print invoice:", resultAction.error);
+            // You can add toast notification here
           }
         } catch (error) {
           console.error("Unexpected error:", error);
         }
       },
     },
-    { label: "Print packing slip" },
+    // { label: "Print packing slip" },
     {
       label: "Resend invoice",
       onClick: async () => {
