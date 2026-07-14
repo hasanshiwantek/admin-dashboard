@@ -90,7 +90,7 @@ const defaultValues: FedExFormValues = {
 const tabs = [
     { id: "settings", label: "Settings" },
     { id: "connection", label: "Connection" },
-    { id: "quote", label: "Quote" },
+    // { id: "quote", label: "Quote" },
 ];
 
 // ─── Small reusable error message ─────────────────────────────

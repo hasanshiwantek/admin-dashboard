@@ -275,7 +275,7 @@ const AllOrders = () => {
         }
       },
     },
-    { label: "Print packing slip" },
+    // { label: "Print packing slip" },
     {
       label: "Resend invoice",
       onClick: async () => {
