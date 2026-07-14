@@ -259,6 +259,30 @@ export const printInvoicePdf = createAsyncThunk(
     }
   },
 );
+export const printPackingSlipPdf = createAsyncThunk(
+  "orders/printPackingSlipPdf",
+  async ({ orderId }: { orderId: number | string }, thunkAPI) => {
+    try {
+      const response = await axiosInstance.get(
+        `dashboard/shipments/packing-slip/${orderId}`,
+
+        {
+          //  This must be inside the request config
+          responseType: "blob",
+          headers: {
+            Accept: "application/pdf",
+          },
+        },
+      );
+
+      return response.data; // This will be a Blob
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to download PDF",
+      );
+    }
+  },
+);
 
 //PAYMENT INVOICE THUNK
 
