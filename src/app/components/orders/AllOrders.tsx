@@ -221,26 +221,26 @@ const AllOrders = () => {
         router.push(`/manage/orders/edit/${order.id}`);
       },
     },
-    // {
-    //   label: "Print invoice",
-    //   onClick: async () => {
-    //     try {
-    //       const orderId = order?.id;
-    //       const resultAction = await dispatch(printInvoicePdf({ orderId }));
+    {
+      label: "Print invoice",
+      onClick: async () => {
+        try {
+          const orderId = order?.id;
+          const resultAction = await dispatch(printInvoicePdf({ orderId }));
 
-    //       if (printInvoicePdf.fulfilled.match(resultAction)) {
-    //         const blob = new Blob([resultAction.payload], {
-    //           type: "application/pdf",
-    //         });
-    //         const url = URL.createObjectURL(blob);
-    //         window.open(url, "_blank");
-    //       } else {
-    //       }
-    //     } catch (error) {
-    //       console.error("Unexpected error:", error);
-    //     }
-    //   },
-    // },
+          if (printInvoicePdf.fulfilled.match(resultAction)) {
+            const blob = new Blob([resultAction.payload], {
+              type: "application/pdf",
+            });
+            const url = URL.createObjectURL(blob);
+            window.open(url, "_blank");
+          } else {
+          }
+        } catch (error) {
+          console.error("Unexpected error:", error);
+        }
+      },
+    },
     { label: "Print packing slip" },
     {
       label: "Resend invoice",
@@ -257,6 +257,15 @@ const AllOrders = () => {
         }
       },
     },
+    ...(order.isMessage && !order?.userType ? [
+      {
+        label: "Send Message",
+        onClick: () => {
+          router.push(
+            `/manage/orders/message/${order?.id}`,
+          )
+        }
+      }] : []),
     {
       label: "View notes",
       onClick: () => {
@@ -264,24 +273,27 @@ const AllOrders = () => {
         setShowNotes(true);
       },
     },
-    // {
-    //   label: "Capture Payment",
-    //   onClick: () => {
-    //     setSelectedOrderId(order?.payment?.payment_intent_id);
-    //     setShowConfirm(true);
-    //   },
-    // },
-    ...(String(order?.status || "")?.toLowerCase() !== "awaiting fulfillment"
-      ? [
+    ...(String(order?.status || "")?.toLowerCase() !== "shipped" ? [{
+      label: "Ship items",
+      onClick: () => {
+        setSelectedOrder(order); // store in state
+        setShowShipmentModal(true);
+      },
+    }] : []),
+    ...(
+      String(order?.status || "").toLowerCase() !== "awaiting fulfillment" &&
+        String(order?.status || "").toLowerCase() !== "shipped"
+        ? [
           {
-            label: "Capture Payment",
+            label: "Capture Funds",
             onClick: () => {
               setSelectedOrderId(order?.payment?.payment_intent_id);
               setShowConfirm(true);
             },
           },
         ]
-      : []),
+        : []
+    ),
     // {
     //   label: "Shipment table",
     //   onClick: () => {
@@ -290,38 +302,31 @@ const AllOrders = () => {
     //   },
     // },
     // Shipment table - show only when Shipped
-    ...(String(order?.status || "")?.toLowerCase() === "shipped"
-      ? [
-          {
-            label: "View shipments",
-            onClick: () => {
-              setSelectedOrderId(order.id);
-              setShowShipmentTable(true);
-            },
+
+    ...(
+      String(order?.status || "").toLowerCase() !== "cancelled" && String(order?.status || "").toLowerCase() !== "awaiting payment" && String(order?.status || "").toLowerCase() !== "awaiting fulfillment"
+        ? [{
+          label: "View shipments",
+          onClick: () => {
+            setSelectedOrderId(order.id);
+            setShowShipmentTable(true);
           },
-        ]
-      : []),
+        }] : []),
     // {
     //   label: "View shipments",
     //   onClick: () => {
     //     router.push("/manage/orders/shipments");
     //   },
     // },
-    {
-      label: "Ship items",
-      onClick: () => {
-        setSelectedOrder(order); // store in state
-        setShowShipmentModal(true);
-      },
-    },
-    {
-      label: "Void",
+
+    ...(String(order?.status || "")?.toLowerCase() !== "shipped" && String(order?.status || "").toLowerCase() !== "awaiting fulfillment" ? [{
+      label: "Void Transaction",
       onClick: async () => {
         setSelectedOrderId(order?.id);
         setShowVoidConfirm(true);
       },
-    },
-    {
+    }] : []),
+    ...(String(order?.status || "")?.toLowerCase() !== "cancelled" && String(order?.status || "").toLowerCase() !== "awaiting payment" ? [{
       label: "Refund",
       onClick: async () => {
         const orderId = order?.id;
@@ -333,9 +338,9 @@ const AllOrders = () => {
             }, 3000);
           } else {
           }
-        } catch (err) {}
+        } catch (err) { }
       },
-    },
+    }] : []),
     {
       label: "View order timeline",
       onClick: () => {
@@ -383,7 +388,7 @@ const AllOrders = () => {
     } catch (err) {
       console.error("🚨 Unexpected error updating", err);
     }
-    
+
   };
 
   // UPDATE ORDER STATUS LOGIC
@@ -660,7 +665,7 @@ const AllOrders = () => {
         Error: {error}
       </div>
     );
-  }      
+  }
   return (
     <div className=" bg-[var(--store-bg)] min-h-screen mt-20">
       {/* Tabs */}
@@ -668,11 +673,10 @@ const AllOrders = () => {
         {tabs.map((tab) => (
           <button
             key={tab}
-            className={`!text-2xl pb-3 border-b-3 whitespace-nowrap ${
-              activeTab === tab
-                ? "border-blue-600 font-semibold"
-                : "border-transparent text-gray-500 hover:text-black"
-            }`}
+            className={`!text-2xl pb-3 border-b-3 whitespace-nowrap ${activeTab === tab
+              ? "border-blue-600 font-semibold"
+              : "border-transparent text-gray-500 hover:text-black"
+              }`}
             onClick={() => {
               const query = Object.fromEntries(searchParams.entries());
               if (Object.keys(query).length > 0) {
@@ -955,7 +959,7 @@ const AllOrders = () => {
                         </TableCell>
                         <TableCell>
                           {order?.deviceType === "tablet" ||
-                          order?.deviceType === "mobile" ? (
+                            order?.deviceType === "mobile" ? (
                             <TooltipProvider>
                               <Tooltip>
                                 <TooltipTrigger asChild>
@@ -1083,9 +1087,8 @@ const AllOrders = () => {
                               return (
                                 <>
                                   <span
-                                    className={`w-7 h-9 inline-block rounded-sm ${
-                                      currentStatus?.color || "bg-gray-400"
-                                    }`}
+                                    className={`w-7 h-9 inline-block rounded-sm ${currentStatus?.color || "bg-gray-400"
+                                      }`}
                                   />
                                   <Select
                                     defaultValue={normalizedStatus}
@@ -1135,7 +1138,7 @@ const AllOrders = () => {
                               className="text-gray-500  flex gap-1 "
                               title="View messages for this order"
                             >
-                              {order?.isMessage ? (
+                              {order?.isMessage && !userType ? (
                                 <div
                                   className="relative cursor-pointer w-6 h-6"
                                   onClick={() =>
@@ -1250,7 +1253,7 @@ const AllOrders = () => {
                                     <Clock className="w-5 h-5 text-gray-500" />
 
                                     {order?.deviceType === "tablet" ||
-                                    order?.deviceType === "mobile" ? (
+                                      order?.deviceType === "mobile" ? (
                                       <Smartphone className="w-5 h-5 text-gray-500" />
                                     ) : (
                                       <Monitor className="w-5 h-5 text-gray-500" />
@@ -1264,8 +1267,8 @@ const AllOrders = () => {
 
                                     {order?.status ===
                                       "Awaiting Fulfillment" && (
-                                      <CreditCard className="w-5 h-5 text-gray-500" />
-                                    )}
+                                        <CreditCard className="w-5 h-5 text-gray-500" />
+                                      )}
 
                                     {order?.payment?.payment_intent_id && (
                                       <CreditCard className="w-5 h-5 text-gray-500" />
@@ -1338,9 +1341,9 @@ const AllOrders = () => {
                                     <span>
                                       {order?.billingInformation?.updatedAt
                                         ? dayjs(
-                                            order?.billingInformation
-                                              ?.updatedAt,
-                                          ).format("DD MMM YYYY HH:mm:ss")
+                                          order?.billingInformation
+                                            ?.updatedAt,
+                                        ).format("DD MMM YYYY HH:mm:ss")
                                         : "N/A"}
                                     </span>
                                   </div>
@@ -1433,23 +1436,23 @@ const AllOrders = () => {
                                       <br />
                                       {order?.billingInformation
                                         ?.addressLine1 && (
-                                        <>
-                                          {
-                                            order.billingInformation
-                                              .addressLine1
-                                          }
-                                        </>
-                                      )}
+                                          <>
+                                            {
+                                              order.billingInformation
+                                                .addressLine1
+                                            }
+                                          </>
+                                        )}
                                       {order?.billingInformation
                                         ?.addressLine2 && (
-                                        <>
-                                          ,{" "}
-                                          {
-                                            order.billingInformation
-                                              .addressLine2
-                                          }
-                                        </>
-                                      )}
+                                          <>
+                                            ,{" "}
+                                            {
+                                              order.billingInformation
+                                                .addressLine2
+                                            }
+                                          </>
+                                        )}
                                       <br />
                                       {order?.billingInformation?.state}
                                       <br />
