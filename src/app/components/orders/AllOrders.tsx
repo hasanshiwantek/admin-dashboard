@@ -657,9 +657,10 @@ const AllOrders = () => {
   // }, [activeTab])
   useEffect(() => {
     const query = Object.fromEntries(searchParams.entries());
+    console.log(query);
 
     if (Object.keys(query).length > 0 && activeTab === "All orders") {
-      dispatch(advanceOrderSearch({ data: query }));
+      // dispatch(advanceOrderSearch({ data: query }));
     } else {
       if (!productId) {
 
@@ -668,9 +669,6 @@ const AllOrders = () => {
       // dispatch(fetchAllOrders({ page: currentPage, perPage, status: activeTab }));
     }
   }, [searchParams]);
-
-  console.log(activeTab);
-
 
 
   const selectedOrderDetails = filteredOrders.find(

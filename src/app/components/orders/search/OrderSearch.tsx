@@ -101,7 +101,7 @@ const OrderSearch = () => {
         <div className="flex flex-col space-y-5">
           <h1 className="!font-extralight 2xl:!text-5xl">Search orders</h1>
           <p className="2xl:!text-2xl">
-        Search for specific orders using the advanced search options below.
+            Search for specific orders using the advanced search options below.
           </p>
         </div>
 
@@ -110,7 +110,7 @@ const OrderSearch = () => {
           <div className="bg-white shadow-md p-10 space-y-10">
             {/* Search Keywords */}
             <div className="flex items-center gap-4">
-              <Label  htmlFor="searchKeywords" className="w-[140px] text-right 2xl:!text-2xl">
+              <Label htmlFor="searchKeywords" className="w-[140px] text-right 2xl:!text-2xl">
                 Search Keywords:
                 <TooltipProvider>
                   <Tooltip>
@@ -133,48 +133,57 @@ const OrderSearch = () => {
                 onChange={(e) => handleChange("keywords", e.target.value)}
               />
             </div>
-
             {/* Select Dropdowns */}
             {[
               {
                 id: "status",
                 label: "Status",
                 options: [
-                  "Awaiting Payment",
-                  "Pending",
-                  "Awaiting Fulfillment",
-                  "Awaiting Shipment",
-                  "Awaiting Pickup",
-                  "Partially Shipped",
-                  "Completed",
-                  "Shipped",
-                  "Cancelled",
-                  "Declined",
-                  "Refunded",
-                  "Disputed",
-                  "Manual Verification Required",
-                  "Partially Refunded",
+                  { label: "Awaiting Payment", value: "Awaiting Payment" },
+                  { label: "Pending", value: "Pending" },
+                  { label: "Awaiting Fulfillment", value: "Awaiting Fulfillment" },
+                  { label: "Awaiting Shipment", value: "Awaiting Shipment" },
+                  { label: "Awaiting Pickup", value: "Awaiting Pickup" },
+                  { label: "Partially Shipped", value: "Partially Shipped" },
+                  { label: "Completed", value: "Completed" },
+                  { label: "Shipped", value: "Shipped" },
+                  { label: "Cancelled", value: "Cancelled" },
+                  { label: "Declined", value: "Declined" },
+                  { label: "Refunded", value: "Refunded" },
+                  { label: "Disputed", value: "Disputed" },
+                  { label: "Manual Verification Required", value: "Manual Verification Required" },
+                  { label: "Partially Refunded", value: "Partially Refunded" },
                 ],
               },
               {
                 id: "paymentMethod",
                 label: "Payment Method",
-                options: ["Google pay", "Stripe", "Credit Card"],
+                options: [
+                  { label: "Google pay", value: "google_pay" },
+                  { label: "Stripe", value: "stripe" },
+                  { label: "Credit Card", value: "credit_card" },
+                ],
               },
               {
                 id: "shippingProvider",
                 label: "Shipping provider",
-                options: ["USPS", "Fed Ex"],
+                options: [
+                  { label: "USPS", value: "USPS" },
+                  { label: "Fed Ex", value: "FedEx" },
+                ],
               },
               {
                 id: "shippingMethod",
                 label: "Shipping Method",
-                options: ["Standard", "Flat Rate"],
+                options: [
+                  { label: "Standard", value: "standard" },
+                  { label: "Flat Rate", value: "flat_rate" },
+                ],
               },
               {
                 id: "fulfillmentSource",
                 label: "Fulfillment source",
-                options: ["FBA"],
+                options: [{ label: "FBA", value: "fba" }],
               },
             ].map(({ id, label, options }) => (
               <div key={id} className="flex items-center gap-4">
@@ -183,14 +192,12 @@ const OrderSearch = () => {
                 </Label>
                 <Select onValueChange={(val) => handleChange(id, val)}>
                   <SelectTrigger>
-                    <SelectValue
-                      placeholder={`--Choose ${label.toLowerCase()}--`}
-                    />
+                    <SelectValue placeholder={`--Choose ${label.toLowerCase()}--`} />
                   </SelectTrigger>
                   <SelectContent>
                     {options.map((opt) => (
-                      <SelectItem key={opt} value={opt.toLowerCase()}>
-                        {opt}
+                      <SelectItem key={opt.value} value={opt.value}>
+                        {opt.label}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -288,7 +295,7 @@ const OrderSearch = () => {
             <h1 className="my-5 2xl:!text-[2.4rem]">Search by Range</h1>
             <div className="bg-white shadow-md p-10 space-y-10">
               <div className="flex items-center gap-4">
-                <Label  htmlFor="orderIdFrom" className="w-[100px] text-right 2xl:!text-2xl">
+                <Label htmlFor="orderIdFrom" className="w-[100px] text-right 2xl:!text-2xl">
                   Order Id:
                 </Label>
                 <span className="text-sm text-gray-600 2xl:!text-2xl">From </span>
@@ -347,17 +354,17 @@ const OrderSearch = () => {
                   </SelectTrigger>
                   <SelectContent>
                     {[
-                      "Today",
-                      "Yesterday",
-                      "Last 24 hours",
-                      "Last 7 days",
-                      "Last 30 days",
-                      "This month",
-                      "This year",
-                      "Custom period",
+                      { label: "Today", value: "Today" },
+                      { label: "Yesterday", value: "Yesterday" },
+                      { label: "Last 24 hours", value: "Last24Hours" },
+                      { label: "Last 7 days", value: "Last7Days" },
+                      { label: "Last 30 days", value: "Last30Days" },
+                      { label: "This month", value: "ThisMonth" },
+                      { label: "This year", value: "ThisYear" },
+                      { label: "Custom period", value: "CustomPeriod" },
                     ].map((opt) => (
-                      <SelectItem key={opt} value={opt}>
-                        {opt}
+                      <SelectItem key={opt.value} value={opt.value}>
+                        {opt.label}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -392,7 +399,7 @@ const OrderSearch = () => {
             <h1 className="my-5 2xl:!text-[2.4rem]">Sort Order</h1>
             <div className="bg-white shadow-md p-10 space-y-10">
               <div className="flex items-center gap-4">
-                <Label  htmlFor="sortBy" className="w-[140px] text-right 2xl:!text-2xl">
+                <Label htmlFor="sortBy" className="w-[140px] text-right 2xl:!text-2xl">
                   Sort Order:
                 </Label>
                 <Select onValueChange={(val) => handleChange("sortBy", val)}>

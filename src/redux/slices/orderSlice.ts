@@ -201,9 +201,9 @@ export const advanceOrderSearch = createAsyncThunk(
   "orders/advanceOrderSearch",
   async ({ data }: { data: any }, thunkAPI) => {
     try {
-      const response = await axiosInstance.post(
+      const response = await axiosInstance.get(
         `dashboard/orders/search-advanced`,
-        data,
+        { params: data },
       );
       return response.data;
     } catch (error: any) {
@@ -355,7 +355,7 @@ export const exportOrderCsv = createAsyncThunk(
 
       // Create a blob URL for the file
       const blob = new Blob([response.data], {
-         type:  String(response.headers["content-type"] ?? ""),
+        type: String(response.headers["content-type"] ?? ""),
       });
       const downloadUrl = URL.createObjectURL(blob);
 
