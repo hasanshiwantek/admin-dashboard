@@ -363,12 +363,7 @@ export function ShipmentModal({
                   Update the order status to Shipped, and notify the customer
                   via email.
                 </Label>
-                <a
-                  href="#"
-                  className="text-sm text-blue-600 hover:underline block mt-1"
-                >
-                  Order status email settings
-                </a>
+                
               </div>
             </div>
           </div>
