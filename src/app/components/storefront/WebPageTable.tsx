@@ -16,7 +16,7 @@ import OrderActionsDropdown from "../orders/OrderActionsDropdown";
 import { Button } from "@/components/ui/button";
 import Pagination from "@/components/ui/pagination";
 import Link from "next/link";
-import { getWebPages, deleteWebPage } from "@/redux/slices/storefrontSlice";
+import { getWebPages, deleteWebPage, updateNavigation } from "@/redux/slices/storefrontSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { useRouter } from "next/navigation";
 import { refetchWebpages } from "@/lib/storeFrontUtils";
@@ -166,9 +166,25 @@ const WebPageTable = () => {
 
                   <TableCell className="2xl:!text-2xl">
                     {page.showInNavigation ? (
-                      <Check className="text-green-500 w-8 h-8" />
+                      <Check className="text-green-500 w-8 h-8 cursor-pointer" onClick={() => {
+                        dispatch(updateNavigation({
+                          id: page.id, data: {
+                            "showInNavigation": false
+                          }
+                        })).unwrap().then(() => {
+                          dispatch(getWebPages());
+                        })
+                      }} />
                     ) : (
-                      <X className="text-red-500 w-8 h-8" />
+                      <X className="text-red-500 w-8 h-8 cursor-pointer" onClick={() => {
+                        dispatch(updateNavigation({
+                          id: page.id, data: {
+                            "showInNavigation": true
+                          }
+                        })).unwrap().then(() => {
+                          dispatch(getWebPages());
+                        })
+                      }} />
                     )}
                   </TableCell>
                   <TableCell>

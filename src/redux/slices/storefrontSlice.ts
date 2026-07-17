@@ -70,6 +70,23 @@ export const updateWebPage = createAsyncThunk(
     }
   }
 );
+export const updateNavigation = createAsyncThunk(
+  "storefront/updateNavigation",
+  async ({ id, data }: { id: any; data: any }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.put(
+        `dashboard/webpages/update-navigation/${id}`,
+        data
+      );
+      return res?.data;
+    } catch (err: any) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to update web page"
+      );
+    }
+  }
+);
 
 export const deleteWebPage = createAsyncThunk(
   "storefront/deleteWebPage",
