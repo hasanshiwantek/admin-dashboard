@@ -201,9 +201,9 @@ export const advanceOrderSearch = createAsyncThunk(
   "orders/advanceOrderSearch",
   async ({ data }: { data: any }, thunkAPI) => {
     try {
-      const response = await axiosInstance.post(
+      const response = await axiosInstance.get(
         `dashboard/orders/search-advanced`,
-        data,
+        { params: data },
       );
       return response.data;
     } catch (error: any) {
@@ -241,6 +241,30 @@ export const printInvoicePdf = createAsyncThunk(
     try {
       const response = await axiosInstance.get(
         `dashboard/orders/invoice/${orderId}`,
+
+        {
+          //  This must be inside the request config
+          responseType: "blob",
+          headers: {
+            Accept: "application/pdf",
+          },
+        },
+      );
+
+      return response.data; // This will be a Blob
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to download PDF",
+      );
+    }
+  },
+);
+export const printPackingSlipPdf = createAsyncThunk(
+  "orders/printPackingSlipPdf",
+  async ({ orderId }: { orderId: number | string }, thunkAPI) => {
+    try {
+      const response = await axiosInstance.get(
+        `dashboard/shipments/packing-slip/${orderId}`,
 
         {
           //  This must be inside the request config
@@ -331,7 +355,7 @@ export const exportOrderCsv = createAsyncThunk(
 
       // Create a blob URL for the file
       const blob = new Blob([response.data], {
-         type:  String(response.headers["content-type"] ?? ""),
+        type: String(response.headers["content-type"] ?? ""),
       });
       const downloadUrl = URL.createObjectURL(blob);
 
