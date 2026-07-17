@@ -33,105 +33,107 @@ export default function OrderTimelinePage() {
     );
   }
 
-  const { order } = orderData || {};
+  // const { order } = orderData || {};
+  const timelineEvents = orderData?.timeline || [];
+  const orderNumber = orderData?.order_number;
   // ✅ CORRECTED: Build timeline from actual order data
-  const timelineEvents = [];
+  // const timelineEvents = [];
 
-  // 1. Order Created Event
-  if (order?.createdAt) {
-    timelineEvents.push({
-      time: order.createdAt,
-      title: "Order created",
-      description: `Order Number: ${order.orderNumber}\nStatus: ${
-        order.isDraft ? "Draft" : order.status
-      }`,
-    });
-  }
+  // // 1. Order Created Event
+  // if (order?.createdAt) {
+  //   timelineEvents.push({
+  //     time: order.createdAt,
+  //     title: "Order created",
+  //     description: `Order Number: ${order.orderNumber}\nStatus: ${
+  //       order.isDraft ? "Draft" : order.status
+  //     }`,
+  //   });
+  // }
 
-  // 2. Payment Method Event
-  if (order?.billingInformation?.paymentMethod) {
-    timelineEvents.push({
-      time: order.billingInformation.createdAt || order.createdAt,
-      title: "Payment method selected",
-      description: `Payment Method: ${
-        order.billingInformation.paymentMethod === "credit_card"
-          ? "Credit Card"
-          : order.billingInformation.paymentMethod
-      }`,
-    });
-  }
+  // // 2. Payment Method Event
+  // if (order?.billingInformation?.paymentMethod) {
+  //   timelineEvents.push({
+  //     time: order.billingInformation.createdAt || order.createdAt,
+  //     title: "Payment method selected",
+  //     description: `Payment Method: ${
+  //       order.billingInformation.paymentMethod === "credit_card"
+  //         ? "Credit Card"
+  //         : order.billingInformation.paymentMethod
+  //     }`,
+  //   });
+  // }
 
-  // 3. Shipping Method Event
-  if (order?.billingInformation?.shippingMethod) {
-    timelineEvents.push({
-      time: order.billingInformation.createdAt || order.createdAt,
-      title: "Shipping method selected",
-      description: `Shipping: ${order.billingInformation.shippingMethod
-        .replace(/_/g, " ")
-        .toUpperCase()}\nShipping Cost: $${order.shippingCost}`,
-    });
-  }
+  // // 3. Shipping Method Event
+  // if (order?.billingInformation?.shippingMethod) {
+  //   timelineEvents.push({
+  //     time: order.billingInformation.createdAt || order.createdAt,
+  //     title: "Shipping method selected",
+  //     description: `Shipping: ${order.billingInformation.shippingMethod
+  //       .replace(/_/g, " ")
+  //       .toUpperCase()}\nShipping Cost: $${order.shippingCost}`,
+  //   });
+  // }
 
-  // 4. Order Status Event
-  if (order?.status) {
-    timelineEvents.push({
-      time: order.updatedAt || order.createdAt,
-      title: "Order status",
-      description: `Current Status: ${order.status}`,
-    });
-  }
+  // // 4. Order Status Event
+  // if (order?.status) {
+  //   timelineEvents.push({
+  //     time: order.updatedAt || order.createdAt,
+  //     title: "Order status",
+  //     description: `Current Status: ${order.status}`,
+  //   });
+  // }
 
-  // 5. Shipping Event (if shipped)
-  if (order?.shippedAt) {
-    timelineEvents.push({
-      time: order.shippedAt,
-      title: "Order shipped",
-      description: `Carrier: ${order.carrierName || "N/A"}\nTracking Number: ${
-        order.trackingNumber || "N/A"
-      }`,
-    });
-  }
+  // // 5. Shipping Event (if shipped)
+  // if (order?.shippedAt) {
+  //   timelineEvents.push({
+  //     time: order.shippedAt,
+  //     title: "Order shipped",
+  //     description: `Carrier: ${order.carrierName || "N/A"}\nTracking Number: ${
+  //       order.trackingNumber || "N/A"
+  //     }`,
+  //   });
+  // }
 
-  // 6. Notes Events
-  if (order?.notes && order.notes.length > 0) {
-    order.notes.forEach((note: any) => {
-      timelineEvents.push({
-        time: note.createdAt || order.createdAt,
-        title: "Note added",
-        description: note.content || note.text,
-      });
-    });
-  }
+  // // 6. Notes Events
+  // if (order?.notes && order.notes.length > 0) {
+  //   order.notes.forEach((note: any) => {
+  //     timelineEvents.push({
+  //       time: note.createdAt || order.createdAt,
+  //       title: "Note added",
+  //       description: note.content || note.text,
+  //     });
+  //   });
+  // }
 
-  // 7. Staff Notes Event
-  if (order?.staffNotes) {
-    timelineEvents.push({
-      time: order.updatedAt || order.createdAt,
-      title: "Staff note added",
-      description: order.staffNotes,
-    });
-  }
+  // // 7. Staff Notes Event
+  // if (order?.staffNotes) {
+  //   timelineEvents.push({
+  //     time: order.updatedAt || order.createdAt,
+  //     title: "Staff note added",
+  //     description: order.staffNotes,
+  //   });
+  // }
 
-  // 8. Comments Event
-  if (order?.comments) {
-    timelineEvents.push({
-      time: order.updatedAt || order.createdAt,
-      title: "Customer comment",
-      description: order.comments,
-    });
-  }
+  // // 8. Comments Event
+  // if (order?.comments) {
+  //   timelineEvents.push({
+  //     time: order.updatedAt || order.createdAt,
+  //     title: "Customer comment",
+  //     description: order.comments,
+  //   });
+  // }
 
-  // Sort events by time (newest first or oldest first - your choice)
-  timelineEvents.sort(
-    (a, b) => new Date(a.time).getTime() - new Date(b.time).getTime()
-  );
+  // // Sort events by time (newest first or oldest first - your choice)
+  // timelineEvents.sort(
+  //   (a, b) => new Date(a.time).getTime() - new Date(b.time).getTime()
+  // );
 
   return (
     <div className="p-10">
       <div className="p-6 max-w-4xl mx-auto">
         <h1 className="text-2xl font-bold mb-4">
           Order timeline -{" "}
-          <span className="text-blue-600">Order #{order?.orderNumber}</span>
+          <span className="text-blue-600">Order #{orderNumber}</span>
         </h1>
         <Separator className="mb-6" />
 
@@ -141,22 +143,31 @@ export default function OrderTimelinePage() {
           </div>
         ) : (
           <div className="relative border-l border-gray-300 pl-6 space-y-6">
-            {timelineEvents.map((event, index) => (
+            {timelineEvents.map((event: any, index: any) => (
               <div key={index} className="relative">
                 <div className="absolute left-[-13px] top-1.5 w-3 h-3 bg-white border-2 border-blue-500 rounded-full" />
                 <span className="text-lg text-gray-500 mb-1">
-                  {dayjs(event.time).format("MMMM D, YYYY h:mm A")}
+                  {/* {dayjs(event.time).format("MMMM D, YYYY h:mm A")} */}
+                  {event.date} {event.time}
                 </span>
                 <Card className="bg-white">
                   <CardContent className="py-4">
                     <h2 className="font-semibold text-lg mb-1">
                       {event.title}
                     </h2>
-                    {event.description && (
-                      <p className="text-lg whitespace-pre-line text-muted-foreground">
-                        {event.description}
-                      </p>
-                    )}
+                    {event.details &&
+  !Array.isArray(event.details) &&
+  Object.entries(event.details).map(([key, value]) => (
+    <p
+      key={key}
+      className="text-lg whitespace-pre-line text-muted-foreground"
+    >
+      <span className="font-medium">
+        {key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}:
+      </span>{" "}
+      {String(value)}
+    </p>
+  ))}
                   </CardContent>
                 </Card>
               </div>

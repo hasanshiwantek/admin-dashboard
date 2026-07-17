@@ -344,6 +344,7 @@ export function ShipmentModal({
                 onChange={(e) => setShippingMethodDescription(e.target.value)}
               />
             </div>
+            
 
             {/* Update status checkbox */}
             <div className="flex items-center gap-5 pt-2">
@@ -363,12 +364,12 @@ export function ShipmentModal({
                   Update the order status to Shipped, and notify the customer
                   via email.
                 </Label>
-                <a
+                {/* <a
                   href="#"
-                  className="text-sm text-blue-600 hover:underline block mt-1"
+                  className="text-sm text-blue-600 hover:underline block mt-1" 
                 >
                   Order status email settings
-                </a>
+                </a> */}
               </div>
             </div>
           </div>
