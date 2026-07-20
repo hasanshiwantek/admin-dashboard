@@ -74,11 +74,11 @@ const SettingsPage = () => {
     //   title: "Date & Timezone",
     //   description: "Timezone, DST correction, display date format",
     // },
-    {
-      id: "url-structure",
-      title: "URL structure",
-      description: "Product, category and web pages URL settings",
-    },
+    // {
+    //   id: "url-structure",
+    //   title: "URL structure",
+    //   description: "Product, category and web pages URL settings",
+    // },
     // {
     //   id: "search",
     //   title: "Search",
