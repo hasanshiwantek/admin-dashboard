@@ -43,13 +43,11 @@ const SettingsPage = () => {
   //     },
   //   ];
 
-
   const router = useRouter(); // ✅ Added
   const searchParams = useSearchParams(); // ✅ Added
   // ✅ Changed: URL se initial values
   const initialView = searchParams.get("view") || "main";
   const initialTab = searchParams.get("tab") || "website";
-
 
   const generalItems = [
     {
@@ -100,16 +98,15 @@ const SettingsPage = () => {
     {
       id: "ship",
       title: "Shipping",
-      description: "Store's origin address, shipping zones, and shipping services",
+      description:
+        "Store's origin address, shipping zones, and shipping services",
     },
   ];
 
   const SettingsItem = ({ item, onClick }: { item: any; onClick: any }) => (
     <div
       onClick={() => {
-
-        onClick(item)
-
+        onClick(item);
       }}
       className="
       grid grid-cols-1 gap-3 py-4 border-b border-gray-200
@@ -135,9 +132,7 @@ const SettingsPage = () => {
 
       {/* Center: Description (SCREEN CENTER) */}
       <div className="text-left md:text-center">
-        <p className="text-gray-600 2xl:!text-[1.6rem]">
-          {item?.description}
-        </p>
+        <p className="text-gray-600 2xl:!text-[1.6rem]">{item?.description}</p>
       </div>
 
       {/* Right: Arrow */}
@@ -147,7 +142,6 @@ const SettingsPage = () => {
     </div>
   );
 
-
   const [currentView, setCurrentView] = useState(initialView); // ✅ Changed
   const [currentSetting, setCurrentSetting] = useState<any>(null);
 
@@ -155,7 +149,7 @@ const SettingsPage = () => {
   useEffect(() => {
     if (initialView === "detail") {
       const settingId = searchParams.get("setting");
-      const setting = generalItems.find(item => item.id === settingId);
+      const setting = generalItems.find((item) => item.id === settingId);
       if (setting) {
         setCurrentSetting(setting);
         setCurrentView("detail");
@@ -170,7 +164,9 @@ const SettingsPage = () => {
     } else {
       setCurrentSetting(item);
       setCurrentView("detail");
-      router.push(`/manage/settings?view=detail&setting=${item.id}&tab=${item.id}`);
+      router.push(
+        `/manage/settings?view=detail&setting=${item.id}&tab=${item.id}`,
+      );
     }
   };
 
@@ -181,13 +177,13 @@ const SettingsPage = () => {
     router.push("/manage/settings");
   };
 
-
-
   return (
     <div className="min-h-screen  p-8">
       {currentView === "main" ? (
         <div className="">
-          <h1 className=" mb-6 !font-extralight 2xl:!text-[3.2rem]">Settings</h1>
+          <h1 className=" mb-6 !font-extralight 2xl:!text-[3.2rem]">
+            Settings
+          </h1>
 
           {/* <div className="relative mb-6">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-6 h-6 text-gray-400" />
@@ -215,7 +211,9 @@ const SettingsPage = () => {
 
           <Card className="bg-white shadow-sm">
             <div className="p-6">
-              <h1 className="!font-semibold  mb-4 2xl:!text-[2.4rem]">General</h1>
+              <h1 className="!font-semibold  mb-4 2xl:!text-[2.4rem]">
+                General
+              </h1>
               <div className="divide-y divide-gray-200">
                 {generalItems.map((item) => (
                   <SettingsItem
@@ -227,6 +225,43 @@ const SettingsPage = () => {
               </div>
             </div>
           </Card>
+          {/* <div
+            className="w-full bg-white rounded-md border border-gray-200 shadow-sm px-8 py-8"
+            onClick={() => router.push("/manage/settings/storeLogs")}
+          >
+            <h1 className="!font-semibold  mb-4 2xl:!text-[2.4rem]">
+              Advanced
+            </h1>
+
+            <div className="flex items-center justify-between border-b border-gray-200 pb-4 cursor-pointer group">
+              <div className="flex items-center gap-25">
+                <span className="text-[16px] font-semibold text-[#202124]">
+                  Store logs
+                </span>
+              </div>
+              <div>
+                <span className=" 2xl:!text-[1.6rem]">
+                  System logs and staff action logs rules
+                </span>
+              </div>
+
+            
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-8 h-8 text-gray-500 group-hover:text-black transition"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M9 6l6 6-6 6"
+                />
+              </svg>
+            </div>
+          </div> */}
         </div>
       ) : (
         <>
