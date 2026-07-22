@@ -11,6 +11,7 @@ import marketingReducer from "./slices/marketingSlice";
 import shippingZoneReducer from "./slices/shippingSlice"
 import reviewReducer from "./slices/reviewSlice"
 import orderMessageSlice from "./slices/orderMessageSlice"
+import userPermissionSlice from "./slices/userPermission"
 
 export const store = configureStore({
   reducer: {
@@ -26,10 +27,13 @@ export const store = configureStore({
     shippingZone: shippingZoneReducer,
     review: reviewReducer,
     orderMessage: orderMessageSlice,
-
+    userPermission: userPermissionSlice,
   },
 });
 
 // Infer types
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
+
+
+

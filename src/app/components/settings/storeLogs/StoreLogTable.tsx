@@ -1,10 +1,20 @@
 "use client";
-
+import Link from "next/link";
 import {
   ChevronLeft,
   ChevronRight,
   Pencil,
 } from "lucide-react";
+
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+
 
 const logs = [
   {
@@ -90,7 +100,7 @@ export default function StoreLogsTable() {
 
       <div className="flex justify-end items-center gap-2 px-6 py-3 border-b border-[#e6e6e6] text-[12px]">
 
-        <ChevronLeft size={14} className="!text-[#4361ee] cursor-pointer"/>
+        <ChevronLeft size={14} className="!text-[#4361ee] cursor-pointer" />
 
         <span className="!text-[#4361ee] cursor-pointer">1</span>
 
@@ -116,85 +126,77 @@ export default function StoreLogsTable() {
 
       </div>
 
-      <table className="w-full border-collapse">
+      <div>
+        <Table>
+          <TableHeader className="h-18">
+            <TableRow className="border-b border-[#e5e5e5] bg-white hover:bg-white">
+              <TableHead className="w-[50px]"></TableHead>
+              <TableHead className="text-left py-4 px-4 font-semibold text-[13px] text-[#333]">
+                Usernames
+              </TableHead>
+              <TableHead className="text-left py-4 px-4 font-semibold text-[13px] text-[#333]">
+                Action
+              </TableHead>
+              <TableHead className="w-[260px] text-left py-4 px-4 font-semibold text-[13px] text-[#333]">
+                Date
+              </TableHead>
+              <TableHead className="w-[180px] text-left py-4 px-4 font-semibold text-[13px] text-[#333]">
+                IP Address
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
 
-        <thead>
+            {/* PART 2 se start hoga yahan */}
+            {logs.map((item) => (
+              <TableRow
+                key={item.id}
+                className="border-b border-[#ececec] hover:bg-[#fafafa] transition-colors"
+              >
+                {/* Icon */}
+                <TableCell className="py-4 px-4 align-top">
+                  <Pencil
+                    size={13}
+                    strokeWidth={1.8}
+                    className="text-[#9d9d9d]"
+                  />
+                </TableCell>
 
-          <tr className="border-b border-[#e5e5e5] bg-white">
+                {/* Username */}
+                <TableCell className="py-4 px-4 align-top">
+                  <Link
+                    href="#"
+                    className="text-[13px] text-[#4a64d8] hover:underline break-all"
+                  >
+                    {item.username}
+                  </Link>
+                </TableCell>
 
-            <th className="w-[50px]"></th>
+                {/* Action */}
+                <TableCell className="py-4 px-4 align-top">
+                  <div className="text-[13px] leading-6 text-[#222] whitespace-normal break-words">
+                    {item.action}
+                  </div>
+                </TableCell>
 
-            <th className="text-left py-4 px-4 font-semibold text-[13px] text-[#333]">
-              Username
-            </th>
+                {/* Date */}
+                <TableCell className="py-4 px-4 align-top whitespace-nowrap">
+                  <span className="text-[13px] text-[#222]">
+                    {item.date}
+                  </span>
+                </TableCell>
 
-            <th className="text-left py-4 px-4 font-semibold text-[13px] text-[#333]">
-              Action
-            </th>
-
-            <th className="w-[260px] text-left py-4 px-4 font-semibold text-[13px] text-[#333]">
-              Date
-            </th>
-
-            <th className="w-[180px] text-left py-4 px-4 font-semibold text-[13px] text-[#333]">
-              IP Address
-            </th>
-
-          </tr>
-
-        </thead>
-
-        <tbody>
-
-          {/* PART 2 se start hoga yahan */}
-                    {logs.map((item) => (
-            <tr
-              key={item.id}
-              className="border-b border-[#ececec] hover:bg-[#fafafa] transition-colors"
-            >
-              {/* Icon */}
-              <td className="py-4 px-4 align-top">
-                <Pencil
-                  size={13}
-                  strokeWidth={1.8}
-                  className="text-[#9d9d9d]"
-                />
-              </td>
-
-              {/* Username */}
-              <td className="py-4 px-4 align-top">
-                <a
-                  href="#"
-                  className="text-[13px] text-[#4a64d8] hover:underline break-all"
-                >
-                  {item.username}
-                </a>
-              </td>
-
-              {/* Action */}
-              <td className="py-4 px-4 align-top">
-                <div className="text-[13px] leading-6 text-[#222] break-words">
-                  {item.action}
-                </div>
-              </td>
-
-              {/* Date */}
-              <td className="py-4 px-4 align-top whitespace-nowrap">
-                <span className="text-[13px] text-[#222]">
-                  {item.date}
-                </span>
-              </td>
-
-              {/* IP */}
-              <td className="py-4 px-4 align-top whitespace-nowrap">
-                <span className="text-[13px] text-[#222]">
-                  {item.ip}
-                </span>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                {/* IP */}
+                <TableCell className="py-4 px-4 align-top whitespace-nowrap">
+                  <span className="text-[13px] text-[#222]">
+                    {item.ip}
+                  </span>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
 
       {/* Bottom Pagination */}
 
@@ -222,14 +224,11 @@ export default function StoreLogsTable() {
         <span className="text-[#4a64d8] cursor-pointer">
           Next
         </span>
-
         <ChevronRight
           size={14}
           className="text-gray-400 cursor-pointer"
         />
-
       </div>
-
     </div>
   );
 }

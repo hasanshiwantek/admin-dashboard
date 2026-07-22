@@ -15,14 +15,16 @@ import {
   CollapsibleContent,
 } from "@/components/ui/collapsible";
 import { useRouter } from "next/navigation";
-import { sidebarData } from "@/const/sidebarData";
+// import { sidebarData } from "@/const/sidebarData";
+import { useSidebarData } from "@/const/sidebarDataDynamic"; // jahan file rakhi hai
+
 import { ChevronDown } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 export const SideBar = ({ onClose }: { onClose?: () => void }) => {
   const pathname = usePathname();
   const router = useRouter();
-
+  const sidebarData = useSidebarData();
   const [openMenus, setOpenMenus] = useState<boolean[]>(
     sidebarData.map(() => false)
   );
