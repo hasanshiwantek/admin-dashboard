@@ -56,6 +56,7 @@ const AddUser = () => {
         control,
         setValue,
         watch,
+        formState: { errors }, // ← add this
     } = useForm<FormValues>({
         defaultValues: {
             userRole: 1,
@@ -125,95 +126,149 @@ const AddUser = () => {
                 <div className="bg-white border border-gray-200 rounded-sm">
                     <div className="px-8 py-6">
 
+                        {/* First Name */}
                         <div className="flex items-center gap-3 mb-5">
                             <Label
                                 htmlFor="firstName"
                                 className="text-[12px] text-gray-600 text-right w-[110px] shrink-0"
                             >
-                                First Name:
+                                First Name: <span className="text-red-500">*</span>
                             </Label>
-                            <Input
-                                id="firstName"
-                                placeholder="John"
-                                {...register("firstName")}
-                                className="w-[280px] h-8 text-sm border-gray-300"
-                            />
+                            <div className="flex flex-col">
+                                <Input
+                                    id="firstName"
+                                    placeholder="John"
+                                    {...register("firstName", { required: "First name is required" })}
+                                    className="w-[280px] h-8 text-sm border-gray-300"
+                                />
+                                {errors.firstName && (
+                                    <span className="text-red-500 text-xs mt-1">{errors.firstName.message}</span>
+                                )}
+                            </div>
                         </div>
 
+                        {/* Last Name */}
                         <div className="flex items-center gap-3 mb-5">
                             <Label
                                 htmlFor="lastName"
                                 className="text-[12px] text-gray-600 text-right w-[110px] shrink-0"
                             >
-                                Last Name:
+                                Last Name: <span className="text-red-500">*</span>
                             </Label>
-                            <Input
-                                id="lastName"
-                                placeholder="Doe"
-                                {...register("lastName")}
-                                className="w-[280px] h-8 text-sm border-gray-300"
-                            />
+                            <div className="flex flex-col">
+                                <Input
+                                    id="lastName"
+                                    placeholder="Doe"
+                                    {...register("lastName", { required: "Last name is required" })}
+                                    className="w-[280px] h-8 text-sm border-gray-300"
+                                />
+                                {errors.lastName && (
+                                    <span className="text-red-500 text-xs mt-1">{errors.lastName.message}</span>
+                                )}
+                            </div>
                         </div>
 
+                        {/* Email */}
                         <div className="flex items-center gap-3 mb-5">
                             <Label
                                 htmlFor="email"
                                 className="text-[12px] text-gray-600 text-right w-[110px] shrink-0"
                             >
-                                Email:
+                                Email: <span className="text-red-500">*</span>
                             </Label>
-                            <Input
-                                id="email"
-                                type="email"
-                                placeholder="john@example.com"
-                                {...register("email")}
-                                className="w-[280px] h-8 text-sm border-gray-300"
-                            />
+                            <div className="flex flex-col">
+                                <Input
+                                    id="email"
+                                    type="email"
+                                    placeholder="john@example.com"
+                                    {...register("email", {
+                                        required: "Email is required",
+                                        pattern: {
+                                            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                                            message: "Invalid email address",
+                                        },
+                                    })}
+                                    className="w-[280px] h-8 text-sm border-gray-300"
+                                />
+                                {errors.email && (
+                                    <span className="text-red-500 text-xs mt-1">{errors.email.message}</span>
+                                )}
+                            </div>
                         </div>
 
+                        {/* Phone Number */}
                         <div className="flex items-center gap-3 mb-5">
                             <Label
                                 htmlFor="phoneNumber"
                                 className="text-[12px] text-gray-600 text-right w-[110px] shrink-0"
                             >
-                                Phone Number:
+                                Phone Number: <span className="text-red-500">*</span>
                             </Label>
-                            <Input
-                                id="phoneNumber"
-                                placeholder="+92 300 1234567"
-                                {...register("phoneNumber")}
-                                className="w-[280px] h-8 text-sm border-gray-300"
-                            />
+                            <div className="flex flex-col">
+                                <Input
+                                    id="phoneNumber"
+                                    placeholder="+92 300 1234567"
+                                    {...register("phoneNumber", { required: "Phone number is required" })}
+                                    className="w-[280px] h-8 text-sm border-gray-300"
+                                />
+                                {errors.phoneNumber && (
+                                    <span className="text-red-500 text-xs mt-1">{errors.phoneNumber.message}</span>
+                                )}
+                            </div>
                         </div>
 
+                        {/* Password */}
                         <div className="flex items-center gap-3 mb-5">
                             <Label
                                 htmlFor="password"
                                 className="text-[12px] text-gray-600 text-right w-[110px] shrink-0"
                             >
-                                Password:
+                                Password: <span className="text-red-500">*</span>
                             </Label>
-                            <Input
-                                id="password"
-                                type="password"
-                                {...register("password")}
-                                className="w-[280px] h-8 text-sm border-gray-300"
-                            />
+                            <div className="flex flex-col">
+                                <Input
+                                    id="password"
+                                    type="password"
+                                    {...register("password", {
+                                        required: "Password is required",
+                                        minLength: {
+                                            value: 6,
+                                            message: "Password must be at least 6 characters",
+                                        },
+                                    })}
+                                    className="w-[280px] h-8 text-sm border-gray-300"
+                                />
+                                {errors.password && (
+                                    <span className="text-red-500 text-xs mt-1">{errors.password.message}</span>
+                                )}
+                            </div>
                         </div>
 
+                        {/* Confirm Password */}
                         <div className="flex items-center gap-3 mb-5">
                             <Label
                                 htmlFor="password_confirmation"
                                 className="text-[12px] text-gray-600 text-right w-[110px] shrink-0"
                             >
-                                Confirm Password:
+                                Confirm Password: <span className="text-red-500">*</span>
                             </Label>
-                            <Input
-                                id="password_confirmation"
-                                type="password"
-                                {...register("password_confirmation")}
-                                className="w-[280px] h-8 text-sm border-gray-300"
-                            />
+                            <div className="flex flex-col">
+                                <Input
+                                    id="password_confirmation"
+                                    type="password"
+                                    {...register("password_confirmation", {
+                                        required: "Please confirm your password",
+                                        validate: (value) =>
+                                            value === watch("password") || "Passwords do not match",
+                                    })}
+                                    className="w-[280px] h-8 text-sm border-gray-300"
+                                />
+                                {errors.password_confirmation && (
+                                    <span className="text-red-500 text-xs mt-1">
+                                        {errors.password_confirmation.message}
+                                    </span>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>

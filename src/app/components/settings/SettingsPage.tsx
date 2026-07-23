@@ -144,6 +144,18 @@ const SettingsPage = () => {
 
   const [currentView, setCurrentView] = useState(initialView); // ✅ Changed
   const [currentSetting, setCurrentSetting] = useState<any>(null);
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    try {
+      const userString = localStorage.getItem("user");
+      if (userString) {
+        setUser(JSON.parse(userString));
+      }
+    } catch (error) {
+      console.error("Failed to parse user:", error);
+    }
+  }, []);
 
   // ✅ Added: Page load pe URL se state restore
   useEffect(() => {
@@ -225,71 +237,74 @@ const SettingsPage = () => {
               </div>
             </div>
           </Card>
-          <div
-            className="w-full bg-white rounded-md border border-gray-200 shadow-sm px-8 py-8"
+          {user?.isOwner && <div className="mt-2 mb-2">
 
-          >
-            <h1 className="!font-semibold  mb-4 2xl:!text-[2.4rem]">
-              Advanced
-            </h1>
+            <div
+              className="w-full bg-white rounded-md border border-gray-200 shadow-sm px-8 py-8"
 
-            <div onClick={() => router.push("/manage/settings/storeLogs")} className="flex items-center justify-between border-b border-gray-200 pb-4 cursor-pointer group">
-              <div className="flex items-center gap-25">
-                <span className="!text-black !font-bold 2xl:!text-[1.6rem]">
-                  Store logs
-                </span>
+            >
+              <h1 className="!font-semibold  mb-4 2xl:!text-[2.4rem]">
+                Advanced
+              </h1>
+
+              {/* <div onClick={() => router.push("/manage/settings/storeLogs")} className="flex items-center justify-between border-b border-gray-200 pb-4 cursor-pointer group">
+                <div className="flex items-center gap-25">
+                  <span className="!text-black !font-bold 2xl:!text-[1.6rem]">
+                    Store logs
+                  </span>
+                </div>
+                <div>
+                  <span className="text-gray-600 2xl:!text-[1.6rem]">
+                    System logs and staff action logs rules
+                  </span>
+                </div>
+
+
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-8 h-8 text-gray-500 group-hover:text-black transition"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M9 6l6 6-6 6"
+                  />
+                </svg>
+              </div> */}
+              <div onClick={() => router.push("/manage/settings/user-permission")} className="flex items-center justify-between border-b border-gray-200 pb-4 cursor-pointer group">
+                <div className="flex items-center gap-25">
+                  <span className="!text-black !font-bold 2xl:!text-[1.6rem]">
+                    Users
+                  </span>
+                </div>
+                <div>
+                  <span className="text-gray-600 2xl:!text-[1.6rem]">
+                    System Permissions
+                  </span>
+                </div>
+
+
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-8 h-8 text-gray-500 group-hover:text-black transition"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M9 6l6 6-6 6"
+                  />
+                </svg>
               </div>
-              <div>
-                <span className="text-gray-600 2xl:!text-[1.6rem]">
-                  System logs and staff action logs rules
-                </span>
-              </div>
-
-
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-8 h-8 text-gray-500 group-hover:text-black transition"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M9 6l6 6-6 6"
-                />
-              </svg>
             </div>
-            <div onClick={() => router.push("/manage/settings/user-permission")} className="flex items-center justify-between border-b border-gray-200 pb-4 cursor-pointer group">
-              <div className="flex items-center gap-25">
-                <span className="!text-black !font-bold 2xl:!text-[1.6rem]">
-                  Users
-                </span>
-              </div>
-              <div>
-                <span className="text-gray-600 2xl:!text-[1.6rem]">
-                  System Permissions
-                </span>
-              </div>
-
-
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-8 h-8 text-gray-500 group-hover:text-black transition"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M9 6l6 6-6 6"
-                />
-              </svg>
-            </div>
-          </div>
+          </div>}
         </div>
       ) : (
         <>

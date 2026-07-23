@@ -29,7 +29,7 @@ export default function LoginPage() {
       loginUser({ email: formData.email, password: formData.password })
     );
     if (loginUser.fulfilled.match(result)) {
-      const { token, stores, expireAt, user, pending_token, two_factor_required, two_factor_type } = result.payload;
+      const { token, stores, expireAt, user, isOwner, pending_token, two_factor_required, two_factor_type } = result.payload;
 
       if (pending_token && two_factor_type) {
         router.push("/verify-otp");
@@ -39,7 +39,7 @@ export default function LoginPage() {
       } else {
         Cookies.set("token", token, { expires: 7 });
         localStorage.setItem("token", token);
-        localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem("user", JSON.stringify({ ...user, isOwner }));
         localStorage.setItem(
           "tokenExpiry",
           new Date(expireAt).getTime().toString()

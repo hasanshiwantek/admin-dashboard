@@ -99,7 +99,7 @@ export const updateAdminUser = createAsyncThunk(
 // DELETE dashboard/admin-users/{id}
 export const deleteAdminUser = createAsyncThunk(
     "adminUsers/deleteAdminUser",
-    async ({ id }: { id: number }, thunkAPI) => {
+    async ({ id }: { id: any }, thunkAPI) => {
         try {
             const res = await axiosInstance.delete(`dashboard/admin-users/${id}`);
             return { ...res.data, id };

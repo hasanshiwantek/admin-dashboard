@@ -106,7 +106,7 @@ const EditUser = () => {
             firstName,
             lastName: rest.join(" "),
             email: user.email || "",
-            phoneNumber: user.phone || "",
+            phoneNumber: user.phoneNumber || "",
             storeName: user.storeName || "",
             businessSize: user.businessSize || "",
             region: user.region || "",
@@ -210,6 +210,7 @@ const EditUser = () => {
                             </Label>
                             <Input
                                 id="email"
+                                disabled
                                 type="email"
                                 placeholder="john@example.com"
                                 {...register("email")}
@@ -232,7 +233,7 @@ const EditUser = () => {
                             />
                         </div>
 
-                        <div className="flex items-center gap-3 mb-5">
+                        {/* <div className="flex items-center gap-3 mb-5">
                             <Label
                                 htmlFor="password"
                                 className="text-[12px] text-gray-600 text-right w-[110px] shrink-0"
@@ -260,7 +261,7 @@ const EditUser = () => {
                                 {...register("password_confirmation")}
                                 className="w-[280px] h-8 text-sm border-gray-300"
                             />
-                        </div>
+                        </div> */}
                     </div>
                 </div>
 
