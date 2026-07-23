@@ -1,0 +1,553 @@
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import { Loader2 } from "lucide-react";
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
+import { useRouter } from "next/navigation";
+import { fetchPermissions, fetchMyPermissions } from "@/redux/slices/userPermission";
+import { registerUser } from "@/redux/slices/authSlice";
+
+type FormValues = {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber: string;
+    password: string;
+    password_confirmation: string;
+    companyName: string;
+    storeName: string;
+    addressLine1: string;
+    addressLine2: string;
+    suburb: string;
+    country: string;
+    state: string;
+    zip: string;
+    base_url: string;
+    businessSize: string;
+    region: string;
+    userRole: number;
+    permissions: number[];
+};
+
+const AddUser = () => {
+    const dispatch = useAppDispatch();
+    const router = useRouter();
+
+    const { permissionGroups, permissionsLoading } = useAppSelector(
+        (state: any) => state?.userPermission
+    );
+
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const {
+        register,
+        handleSubmit,
+        control,
+        setValue,
+        watch,
+        formState: { errors }, // ← add this
+    } = useForm<FormValues>({
+        defaultValues: {
+            userRole: 1,
+            permissions: [],
+        },
+    });
+
+    const selectedPermissions = watch("permissions") || [];
+
+    useEffect(() => {
+        dispatch(fetchPermissions());
+        dispatch(fetchMyPermissions());
+    }, []);
+
+    const onSubmit = async (data: FormValues) => {
+        setIsSubmitting(true);
+        try {
+            const payload = {
+                ...data,
+                permissions: selectedPermissions.length ? selectedPermissions : [1],
+            };
+            const resultAction = await dispatch(registerUser(payload));
+
+            if (registerUser.fulfilled.match(resultAction)) {
+                console.log("Submitting:", payload);
+                router.push("/manage/settings/user-permission");
+            }
+
+        } catch (err) {
+            console.error("Error creating user:", err);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    if (permissionsLoading && !permissionGroups?.length) {
+        return (
+            <div className="w-full h-screen flex items-center justify-center">
+                <div className="flex flex-col items-center gap-4">
+                    <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+                    <p className="text-gray-600">Loading...</p>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="w-full min-h-screen bg-gray-100 flex flex-col">
+
+            {/* ── Page Header (outside white box) ── */}
+            <div className="px-6 pt-6 pb-3">
+                <h1 className="text-2xl font-normal text-gray-800">Add New User</h1>
+                <p className="text-sm text-gray-500 mt-1">
+                    Add the details of the user below. Assign the permissions this user should have access to, then click 'Save'.
+                </p>
+            </div>
+
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col flex-1 px-6 pb-6">
+
+                {/* ── Personal Information ── */}
+                <div className="px-0 py-4">
+                    <h2 className="text-base font-semibold text-gray-800">
+                        Personal Information
+                    </h2>
+                </div>
+
+                <div className="bg-white border border-gray-200 rounded-sm">
+                    <div className="px-8 py-6">
+
+                        {/* First Name */}
+                        <div className="flex items-center gap-3 mb-5">
+                            <Label
+                                htmlFor="firstName"
+                                className="text-[12px] text-gray-600 text-right w-[110px] shrink-0"
+                            >
+                                First Name: <span className="text-red-500">*</span>
+                            </Label>
+                            <div className="flex flex-col">
+                                <Input
+                                    id="firstName"
+                                    placeholder="John"
+                                    {...register("firstName", { required: "First name is required" })}
+                                    className="w-[280px] h-8 text-sm border-gray-300"
+                                />
+                                {errors.firstName && (
+                                    <span className="text-red-500 text-xs mt-1">{errors.firstName.message}</span>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Last Name */}
+                        <div className="flex items-center gap-3 mb-5">
+                            <Label
+                                htmlFor="lastName"
+                                className="text-[12px] text-gray-600 text-right w-[110px] shrink-0"
+                            >
+                                Last Name: <span className="text-red-500">*</span>
+                            </Label>
+                            <div className="flex flex-col">
+                                <Input
+                                    id="lastName"
+                                    placeholder="Doe"
+                                    {...register("lastName", { required: "Last name is required" })}
+                                    className="w-[280px] h-8 text-sm border-gray-300"
+                                />
+                                {errors.lastName && (
+                                    <span className="text-red-500 text-xs mt-1">{errors.lastName.message}</span>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Email */}
+                        <div className="flex items-center gap-3 mb-5">
+                            <Label
+                                htmlFor="email"
+                                className="text-[12px] text-gray-600 text-right w-[110px] shrink-0"
+                            >
+                                Email: <span className="text-red-500">*</span>
+                            </Label>
+                            <div className="flex flex-col">
+                                <Input
+                                    id="email"
+                                    type="email"
+                                    placeholder="john@example.com"
+                                    {...register("email", {
+                                        required: "Email is required",
+                                        pattern: {
+                                            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                                            message: "Invalid email address",
+                                        },
+                                    })}
+                                    className="w-[280px] h-8 text-sm border-gray-300"
+                                />
+                                {errors.email && (
+                                    <span className="text-red-500 text-xs mt-1">{errors.email.message}</span>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Phone Number */}
+                        <div className="flex items-center gap-3 mb-5">
+                            <Label
+                                htmlFor="phoneNumber"
+                                className="text-[12px] text-gray-600 text-right w-[110px] shrink-0"
+                            >
+                                Phone Number: <span className="text-red-500">*</span>
+                            </Label>
+                            <div className="flex flex-col">
+                                <Input
+                                    id="phoneNumber"
+                                    placeholder="+92 300 1234567"
+                                    {...register("phoneNumber", { required: "Phone number is required" })}
+                                    className="w-[280px] h-8 text-sm border-gray-300"
+                                />
+                                {errors.phoneNumber && (
+                                    <span className="text-red-500 text-xs mt-1">{errors.phoneNumber.message}</span>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Password */}
+                        <div className="flex items-center gap-3 mb-5">
+                            <Label
+                                htmlFor="password"
+                                className="text-[12px] text-gray-600 text-right w-[110px] shrink-0"
+                            >
+                                Password: <span className="text-red-500">*</span>
+                            </Label>
+                            <div className="flex flex-col">
+                                <Input
+                                    id="password"
+                                    type="password"
+                                    {...register("password", {
+                                        required: "Password is required",
+                                        minLength: {
+                                            value: 6,
+                                            message: "Password must be at least 6 characters",
+                                        },
+                                    })}
+                                    className="w-[280px] h-8 text-sm border-gray-300"
+                                />
+                                {errors.password && (
+                                    <span className="text-red-500 text-xs mt-1">{errors.password.message}</span>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Confirm Password */}
+                        <div className="flex items-center gap-3 mb-5">
+                            <Label
+                                htmlFor="password_confirmation"
+                                className="text-[12px] text-gray-600 text-right w-[110px] shrink-0"
+                            >
+                                Confirm Password: <span className="text-red-500">*</span>
+                            </Label>
+                            <div className="flex flex-col">
+                                <Input
+                                    id="password_confirmation"
+                                    type="password"
+                                    {...register("password_confirmation", {
+                                        required: "Please confirm your password",
+                                        validate: (value) =>
+                                            value === watch("password") || "Passwords do not match",
+                                    })}
+                                    className="w-[280px] h-8 text-sm border-gray-300"
+                                />
+                                {errors.password_confirmation && (
+                                    <span className="text-red-500 text-xs mt-1">
+                                        {errors.password_confirmation.message}
+                                    </span>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* ── Business Information ── */}
+                {/* <div className="px-0 py-4 mt-4">
+                    <h2 className="text-base font-semibold text-gray-800">
+                        Business Information
+                    </h2>
+                </div>
+
+                <div className="bg-white border border-gray-200 rounded-sm">
+                    <div className="px-8 py-6">
+
+                        <div className="flex items-center gap-3 mb-5">
+                            <Label
+                                htmlFor="companyName"
+                                className="text-[12px] text-gray-600 text-right w-[110px] shrink-0"
+                            >
+                                Company Name:
+                            </Label>
+                            <Input
+                                id="companyName"
+                                {...register("companyName")}
+                                className="w-[280px] h-8 text-sm border-gray-300"
+                            />
+                        </div>
+
+                        <div className="flex items-center gap-3 mb-5">
+                            <Label
+                                htmlFor="storeName"
+                                className="text-[12px] text-gray-600 text-right w-[110px] shrink-0"
+                            >
+                                Store Name:
+                            </Label>
+                            <Input
+                                id="storeName"
+                                {...register("storeName")}
+                                className="w-[280px] h-8 text-sm border-gray-300"
+                            />
+                        </div>
+
+                        <div className="flex items-center gap-3 mb-5">
+                            <Label
+                                htmlFor="businessSize"
+                                className="text-[12px] text-gray-600 text-right w-[110px] shrink-0"
+                            >
+                                Business Size:
+                            </Label>
+                            <div className="w-[280px]">
+                                <Select onValueChange={(v) => setValue("businessSize", v)}>
+                                    <SelectTrigger className="h-8 text-sm border-gray-300">
+                                        <SelectValue placeholder="Select business size" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="Small">Small (1-10)</SelectItem>
+                                        <SelectItem value="Medium">Medium (11-50)</SelectItem>
+                                        <SelectItem value="Large">Large (51+)</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-3 mb-5">
+                            <Label
+                                htmlFor="region"
+                                className="text-[12px] text-gray-600 text-right w-[110px] shrink-0"
+                            >
+                                Region:
+                            </Label>
+                            <Input
+                                id="region"
+                                {...register("region")}
+                                className="w-[280px] h-8 text-sm border-gray-300"
+                            />
+                        </div>
+
+                        <div className="flex items-center gap-3 mb-5">
+                            <Label
+                                htmlFor="base_url"
+                                className="text-[12px] text-gray-600 text-right w-[110px] shrink-0"
+                            >
+                                Base URL:
+                            </Label>
+                            <Input
+                                id="base_url"
+                                placeholder="https://example.com"
+                                {...register("base_url")}
+                                className="w-[280px] h-8 text-sm border-gray-300"
+                            />
+                        </div>
+                    </div>
+                </div> */}
+
+                {/* ── Address ── */}
+                {/* <div className="px-0 py-4 mt-4">
+                    <h2 className="text-base font-semibold text-gray-800">
+                        Address
+                    </h2>
+                </div>
+
+                <div className="bg-white border border-gray-200 rounded-sm">
+                    <div className="px-8 py-6">
+
+                        <div className="flex items-center gap-3 mb-5">
+                            <Label
+                                htmlFor="addressLine1"
+                                className="text-[12px] text-gray-600 text-right w-[110px] shrink-0"
+                            >
+                                Address Line 1:
+                            </Label>
+                            <Input
+                                id="addressLine1"
+                                {...register("addressLine1")}
+                                className="w-[280px] h-8 text-sm border-gray-300"
+                            />
+                        </div>
+
+                        <div className="flex items-center gap-3 mb-5">
+                            <Label
+                                htmlFor="addressLine2"
+                                className="text-[12px] text-gray-600 text-right w-[110px] shrink-0"
+                            >
+                                Address Line 2:
+                            </Label>
+                            <Input
+                                id="addressLine2"
+                                {...register("addressLine2")}
+                                className="w-[280px] h-8 text-sm border-gray-300"
+                            />
+                        </div>
+
+                        <div className="flex items-center gap-3 mb-5">
+                            <Label
+                                htmlFor="suburb"
+                                className="text-[12px] text-gray-600 text-right w-[110px] shrink-0"
+                            >
+                                Suburb:
+                            </Label>
+                            <Input
+                                id="suburb"
+                                {...register("suburb")}
+                                className="w-[280px] h-8 text-sm border-gray-300"
+                            />
+                        </div>
+
+                        <div className="flex items-center gap-3 mb-5">
+                            <Label
+                                htmlFor="country"
+                                className="text-[12px] text-gray-600 text-right w-[110px] shrink-0"
+                            >
+                                Country:
+                            </Label>
+                            <Input
+                                id="country"
+                                {...register("country")}
+                                className="w-[280px] h-8 text-sm border-gray-300"
+                            />
+                        </div>
+
+                        <div className="flex items-center gap-3 mb-5">
+                            <Label
+                                htmlFor="state"
+                                className="text-[12px] text-gray-600 text-right w-[110px] shrink-0"
+                            >
+                                State / Province:
+                            </Label>
+                            <Input
+                                id="state"
+                                {...register("state")}
+                                className="w-[280px] h-8 text-sm border-gray-300"
+                            />
+                        </div>
+
+                        <div className="flex items-center gap-3 mb-5">
+                            <Label
+                                htmlFor="zip"
+                                className="text-[12px] text-gray-600 text-right w-[110px] shrink-0"
+                            >
+                                ZIP / Postal Code:
+                            </Label>
+                            <Input
+                                id="zip"
+                                {...register("zip")}
+                                className="w-[280px] h-8 text-sm border-gray-300"
+                            />
+                        </div>
+                    </div>
+                </div> */}
+
+                {/* ── Permissions ── */}
+                {/* ── Permissions ── */}
+                <div className="px-0 py-4 mt-4">
+                    <h2 className="text-base font-semibold text-gray-800">
+                        Permissions
+                    </h2>
+                </div>
+
+                <div className="bg-white border border-gray-200 rounded-sm">
+                    <div className="px-8 py-6">
+                        <div className="space-y-6">
+                            {permissionGroups?.map((group: any) => (
+                                <div key={group.group} className="flex items-start gap-3">
+                                    <Label className="text-[12px] text-gray-600 text-right w-[150px] shrink-0 pt-2 capitalize">
+                                        {group.group}:
+                                    </Label>
+
+                                    <div className="w-[420px] max-h-[160px] overflow-y-auto border border-gray-300 rounded-sm bg-white">
+                                        {group.permissions?.map((permission: any) => (
+                                            <Controller
+                                                key={permission.id}
+                                                name="permissions"
+                                                control={control}
+                                                render={({ field }) => {
+                                                    const isChecked = field.value?.includes(permission.id);
+                                                    return (
+                                                        <label
+                                                            className={`flex items-center gap-3 px-3 py-2 cursor-pointer transition ${isChecked
+                                                                ? "bg-[#eef2ff]"
+                                                                : "hover:bg-gray-50"
+                                                                }`}
+                                                        >
+                                                            <Checkbox
+                                                                checked={isChecked}
+                                                                onCheckedChange={(checked) => {
+                                                                    if (checked) {
+                                                                        field.onChange([...(field.value || []), permission.id]);
+                                                                    } else {
+                                                                        field.onChange(
+                                                                            (field.value || []).filter((id) => id !== permission.id)
+                                                                        );
+                                                                    }
+                                                                }}
+                                                                className="data-[state=checked]:bg-[#4361ee] data-[state=checked]:border-[#4361ee]"
+                                                            />
+                                                            <span className="text-[13px] text-gray-700">
+                                                                {permission.label}
+                                                            </span>
+                                                        </label>
+                                                    );
+                                                }}
+                                            />
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* ── Footer inside card, right-aligned ── */}
+                    <div className="flex justify-end gap-3 px-6 py-4 border-gray-200">
+                        <button
+                            type="button"
+                            onClick={() => router.back()}
+                            disabled={isSubmitting}
+                            className="text-sm text-blue-600 hover:underline px-3 py-1 disabled:opacity-50"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            disabled={isSubmitting}
+                            className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-5 py-1.5 rounded-sm flex items-center gap-2 disabled:opacity-50 transition"
+                        >
+                            {isSubmitting ? (
+                                <>
+                                    <Loader2 className="h-3 w-3 animate-spin" />
+                                    Saving...
+                                </>
+                            ) : (
+                                "Save"
+                            )}
+                        </button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    );
+};
+
+export default AddUser;

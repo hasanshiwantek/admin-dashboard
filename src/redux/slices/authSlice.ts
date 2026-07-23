@@ -93,7 +93,7 @@ export const loginUser = createAsyncThunk(
 // Register thunk
 export const registerUser = createAsyncThunk(
   "auth/registerUser",
-  async (formData: RegisterPayload, thunkAPI) => {
+  async (formData: any, thunkAPI) => {
     try {
       const res = await axiosInstance.post("user/register", formData);
       return res.data;
