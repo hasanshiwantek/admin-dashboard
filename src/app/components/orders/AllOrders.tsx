@@ -1579,7 +1579,7 @@ const AllOrders = () => {
                                     {/* <Ship className="w-5 h-5 text-gray-500" /> */}
                                     <span>
                                       {order?.billingInformation
-                                        ?.shippingMethod || "N/A"}
+                                        ?.shippingData || "N/A"}
                                     </span>
                                   </div>
 
