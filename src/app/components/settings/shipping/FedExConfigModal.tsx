@@ -188,7 +188,7 @@ export default function FedExConfigModal({
     useEffect(() => {
         if (methodId) {
             dispatch(fetchFedexConfig({ method_id: Number(methodId) }));
-            dispatch(fetchQuoteFedexConfig({ method_id: Number(methodId) }));
+            // dispatch(fetchQuoteFedexConfig({ method_id: Number(methodId) }));
         }
     }, [methodId, dispatch]);
 
@@ -211,8 +211,10 @@ export default function FedExConfigModal({
             dispatch(saveQuoteFedexConfig(payload)).then((result) => {
                 if (saveQuoteFedexConfig.fulfilled.match(result)) {
                     onOpenChange(false);
-                    if (methodId)
-                        dispatch(fetchQuoteFedexConfig({ method_id: Number(methodId) }));
+                    if (methodId) {
+
+                        // dispatch(fetchQuoteFedexConfig({ method_id: Number(methodId) }));
+                    }
                 }
             });
         } else {
@@ -280,8 +282,8 @@ export default function FedExConfigModal({
                                 type="button"
                                 onClick={() => setActiveTab(tab.id)}
                                 className={`py-4 text-[15px] font-medium border-b-2 transition-all ${activeTab === tab.id
-                                        ? "border-blue-600 text-blue-600"
-                                        : "border-transparent text-gray-600 hover:text-gray-900"
+                                    ? "border-blue-600 text-blue-600"
+                                    : "border-transparent text-gray-600 hover:text-gray-900"
                                     }`}
                             >
                                 {tab.label}
