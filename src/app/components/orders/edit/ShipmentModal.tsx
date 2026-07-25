@@ -315,7 +315,7 @@ export function ShipmentModal({
             </div>
 
             {/* Other Tracking Carrier Options */}
-            <div className="space-y-2">
+             {shippingMethod == "Other" && <div className="space-y-2">
               <Label className="font-medium">
                 Other Tracking Carrier options
               </Label>
@@ -325,6 +325,7 @@ export function ShipmentModal({
                 onChange={(e) => setTrackingCarrier(e.target.value)}
               />
             </div>
+            }
 
             {/* Tracking ID */}
             <div className="space-y-2">
