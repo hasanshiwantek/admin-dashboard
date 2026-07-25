@@ -1641,9 +1641,9 @@ const AllOrders = () => {
                                 {/* Right - Details */}
                                 <div className="flex flex-col flex-1 min-w-0">
                                   {["Shipped", "Completed"].includes(order?.status) && <div className="bg-gray-100 p-4 text-sm space-y-0">
-                                    <div className="flex ">
-                                      <span className="!text-blue-400">Shipment #2490</span>
-                                    </div>
+                                    {order?.shipmentId && <div className="flex ">
+                                      <span className="!text-blue-400">Shipment #{order?.shipmentId}</span>
+                                    </div>}
                                     <div className="flex ">
                                       <span> {order?.products?.length} items @  {dayjs(order?.updatedAt).format(
                                         "DD MMM YYYY HH:mm:ss",
@@ -1651,7 +1651,7 @@ const AllOrders = () => {
 
                                     </div>
                                     <div className="flex ">
-                                      <span>Tracking#:</span>
+                                      <span>Tracking #: </span>
                                       <span>
                                         {order?.trackingNumber}
                                       </span>
