@@ -406,7 +406,13 @@ const AllOrders = () => {
     //     router.push("/manage/orders/shipments");
     //   },
     // },
-
+    ...(String(order?.status || "")?.toLowerCase() !== "shipped" && String(order?.status || "").toLowerCase() !== "awaiting fulfillment" ? [{
+      label: "Void Transaction",
+      onClick: async () => {
+        setSelectedOrderId(order?.id);
+        setShowVoidConfirm(true);
+      },
+    }] : []),
     ...(String(order?.status || "")?.toLowerCase() !== "shipped" && String(order?.status || "").toLowerCase() !== "awaiting fulfillment" ? [{
       label: "Void Transaction",
       onClick: async () => {
@@ -1044,8 +1050,8 @@ const AllOrders = () => {
                           </button>
                         </TableCell>
                         <TableCell>
-                          {order?.deviceType === "tablet" ||
-                            order?.deviceType === "mobile" ? (
+                          {order?.deviceType === "Server Blink (Tablet)" ||
+                            order?.deviceType === "Server Blink (Mobile)" ? (
                             <TooltipProvider>
                               <Tooltip>
                                 <TooltipTrigger asChild>
@@ -1063,8 +1069,7 @@ const AllOrders = () => {
                                   <Monitor className="h-9 w-9" />
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                  {order?.deviceType?.toUpperCase() ||
-                                    "desktop".toUpperCase()}
+                                  {order?.deviceType?.toUpperCase()}
                                 </TooltipContent>
                               </Tooltip>
                             </TooltipProvider>
@@ -1338,16 +1343,16 @@ const AllOrders = () => {
 
                                     <Clock className="w-5 h-5 text-gray-500" />
 
-                                    {order?.deviceType === "tablet" ||
-                                      order?.deviceType === "mobile" ? (
+                                    {order?.ipAddress && (
+                                      <MonitorCheck className="w-5 h-5 text-gray-500" />
+                                    )}
+                                    {order?.deviceType === "Server Blink (Tablet)" ||
+                                      order?.deviceType === "Server Blink (Mobile)" ? (
                                       <Smartphone className="w-5 h-5 text-gray-500" />
                                     ) : (
                                       <Monitor className="w-5 h-5 text-gray-500" />
                                     )}
 
-                                    {order?.ipAddress && (
-                                      <MonitorCheck className="w-5 h-5 text-gray-500" />
-                                    )}
 
                                     <CreditCard className="w-5 h-5 text-gray-500" />
 
@@ -1355,9 +1360,17 @@ const AllOrders = () => {
                                       "Awaiting Fulfillment" && (
                                         <CreditCard className="w-5 h-5 text-gray-500" />
                                       )}
+                                    {order?.status ===
+                                      "Awaiting Payment" && (
+                                        <CreditCard className="w-5 h-5 text-gray-500" />
+                                      )}
 
                                     {order?.payment?.payment_intent_id && (
                                       <CreditCard className="w-5 h-5 text-gray-500" />
+                                    )}
+
+                                    {order?.comments && (
+                                      <NotebookText className="w-5 h-5 text-gray-500" />
                                     )}
 
                                     {risk && (
@@ -1433,14 +1446,6 @@ const AllOrders = () => {
                                         : "N/A"}
                                     </span>
                                   </div>
-                                  <div className="flex items-center gap-2">
-                                    {/* {order?.deviceType === "tablet" || order?.deviceType === "mobile" ?
-                                     <Smartphone className="h-5 w-5 text-gray-500" /> : <Monitor className="h-5 w-5 text-gray-500" />} */}
-                                    <span>
-                                      {order?.deviceType?.toUpperCase() ||
-                                        "desktop".toUpperCase()}
-                                    </span>
-                                  </div>
                                   {order?.ipAddress && (
                                     <div className="flex items-center gap-2">
                                       {/* {<MonitorCheck className="h-5 w-5 text-gray-500" />} */}
@@ -1450,6 +1455,14 @@ const AllOrders = () => {
                                     </div>
                                   )}
                                   <div className="flex items-center gap-2">
+                                    {/* {order?.deviceType === "tablet" || order?.deviceType === "mobile" ?
+                                     <Smartphone className="h-5 w-5 text-gray-500" /> : <Monitor className="h-5 w-5 text-gray-500" />} */}
+                                    <span>
+                                      {order?.deviceType}
+                                    </span>
+                                  </div>
+
+                                  <div className="flex items-center gap-2">
                                     {/* <CreditCard className="w-5 h-5 text-gray-500" /> */}
                                     <span>
                                       {order?.billingInformation
@@ -1458,15 +1471,29 @@ const AllOrders = () => {
                                   </div>
                                   {order?.status == "Awaiting Fulfillment" && (
                                     <div className="flex items-center gap-2">
-                                      {/* <CreditCard className="w-5 h-5 text-gray-500" /> */}
                                       <span>Captued</span>
+                                    </div>
+                                  )}
+                                  {order?.status == "Awaiting Payment" && (
+                                    <div className="flex items-center gap-2">
+                                      <span onClick={() => {
+                                        setSelectedOrderId(order?.payment?.payment_intent_id);
+                                        setShowConfirm(true);
+                                      }} className="!text-blue-400  cursor-pointer" >Capture Funds</span>
                                     </div>
                                   )}
                                   {order?.payment?.payment_intent_id && (
                                     <div className="flex items-center gap-2">
-                                      {/* <CreditCard className="w-5 h-5  " /> */}
                                       <span className="!text-blue-400">
                                         {order?.payment?.payment_intent_id ||
+                                          "N/A"}
+                                      </span>
+                                    </div>
+                                  )}
+                                  {order?.comments && (
+                                    <div className="flex items-center gap-2">
+                                      <span className="">
+                                        {order?.comments ||
                                           "N/A"}
                                       </span>
                                     </div>
@@ -1613,6 +1640,24 @@ const AllOrders = () => {
 
                                 {/* Right - Details */}
                                 <div className="flex flex-col flex-1 min-w-0">
+                                  {["Shipped", "Completed"].includes(order?.status) && <div className="bg-gray-100 p-4 text-sm space-y-0">
+                                    <div className="flex ">
+                                      <span className="!text-blue-400">Shipment #2490</span>
+                                    </div>
+                                    <div className="flex ">
+                                      <span> {order?.products?.length} items @  {dayjs(order?.updatedAt).format(
+                                        "DD MMM YYYY HH:mm:ss",
+                                      ) || "N/A"} </span>
+
+                                    </div>
+                                    <div className="flex ">
+                                      <span>Tracking#:</span>
+                                      <span>
+                                        {order?.trackingNumber}
+                                      </span>
+                                    </div>
+
+                                  </div>}
                                   {/* Product list */}
                                   <div className="p-4 border-b space-y-4">
                                     {order?.products?.map(
@@ -1663,7 +1708,7 @@ const AllOrders = () => {
                                               {item?.optionSet?.title}
                                             </p>
                                             <p className="text-sm mt-1">
-                                              <strong>Model:</strong>{" "}
+                                              {/* <strong>Model:</strong>{" "} */}
                                               {item?.sku}
                                               <br />
                                               <strong>Brand:</strong>{" "}
@@ -1683,7 +1728,7 @@ const AllOrders = () => {
                                       ),
                                     )}
 
-                                    <button
+                                    {!["shipped", "completed"].includes(String(order?.status || "").toLowerCase()) && <button
                                       onClick={() => {
                                         setSelectedOrder(order); // store in state
                                         setShowShipmentModal(true);
@@ -1700,7 +1745,7 @@ const AllOrders = () => {
                                         <path d="M3 3h2l.4 2M7 13h14l-1.5 8H6L4.5 5H20"></path>
                                       </svg>
                                       Ship Items
-                                    </button>
+                                    </button>}
                                   </div>
 
                                   {/* Totals */}
