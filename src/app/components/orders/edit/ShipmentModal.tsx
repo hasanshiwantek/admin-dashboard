@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogTrigger,
@@ -50,7 +50,7 @@ export function ShipmentModal({
   const [trackingCarrier, setTrackingCarrier] = useState("");
   const [trackingId, setTrackingId] = useState("");
   const [shippingMethodDescription, setShippingMethodDescription] = useState(
-    "I will provide the shipping label/others (Mentions the detai)"
+    ""
   );
   const [updateStatusAndNotify, setUpdateStatusAndNotify] = useState(true);
 
@@ -89,14 +89,13 @@ export function ShipmentModal({
       },
       trackingId: trackingId,
       trackingCarrier: trackingCarrier,
-      shippingMethod: shippingMethodDescription,
+      shippingMethod: shippingMethodDescription || order.billingInformation?.shippingData,
       dateShipped: new Date().toISOString().split("T")[0],
       packingSlipNotes: order?.staffNotes,
       updateStatusAndNotify: updateStatusAndNotify,
       shipTo: {
-        name: `${order?.billingInformation?.firstName || ""} ${
-          order?.billingInformation?.lastName || ""
-        }`,
+        name: `${order?.billingInformation?.firstName || ""} ${order?.billingInformation?.lastName || ""
+          }`,
         company: order?.billingInformation?.company || "",
         addressLine1: order?.billingInformation?.addressLine1 || "",
         addressLine2: order?.billingInformation?.addressLine2 || "",
@@ -107,11 +106,14 @@ export function ShipmentModal({
       },
     };
 
-    console.log("Shipment Payload:", payload);
     onSubmit(payload);
     onClose();
   };
-
+  useEffect(() => {
+    if (order.billingInformation?.shippingData) {
+      setShippingMethodDescription(order.billingInformation?.shippingData)
+    }
+  }, [order.billingInformation?.shippingData])
   return (
     <Dialog open={open} onOpenChange={(val) => !val && onClose()}>
       <DialogTrigger asChild>
@@ -315,7 +317,7 @@ export function ShipmentModal({
             </div>
 
             {/* Other Tracking Carrier Options */}
-             {shippingMethod == "Other" && <div className="space-y-2">
+            {shippingMethod == "Other" && <div className="space-y-2">
               <Label className="font-medium">
                 Other Tracking Carrier options
               </Label>
@@ -326,7 +328,6 @@ export function ShipmentModal({
               />
             </div>
             }
-
             {/* Tracking ID */}
             <div className="space-y-2">
               <Label className="font-medium">Tracking ID</Label>
@@ -345,7 +346,7 @@ export function ShipmentModal({
                 onChange={(e) => setShippingMethodDescription(e.target.value)}
               />
             </div>
-            
+
 
             {/* Update status checkbox */}
             <div className="flex items-center gap-5 pt-2">
