@@ -1356,8 +1356,7 @@ const AllOrders = () => {
 
                                     <CreditCard className="w-5 h-5 text-gray-500" />
 
-                                    {order?.status ===
-                                      "Awaiting Fulfillment" && (
+                                         {["Shipped", "Awaiting Fulfillment"].includes(order?.status)  && (
                                         <CreditCard className="w-5 h-5 text-gray-500" />
                                       )}
                                     {order?.status ===
@@ -1469,8 +1468,9 @@ const AllOrders = () => {
                                         ?.paymentMethod || "N/A"}
                                     </span>
                                   </div>
-                                  {order?.status == "Awaiting Fulfillment" && (
+                                   {["Shipped", "Awaiting Fulfillment"].includes(order?.status) && (
                                     <div className="flex items-center gap-2">
+                                      {/* <CreditCard className="w-5 h-5 text-gray-500" /> */}
                                       <span>Captued</span>
                                     </div>
                                   )}
