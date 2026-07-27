@@ -413,13 +413,6 @@ const AllOrders = () => {
         setShowVoidConfirm(true);
       },
     }] : []),
-    ...(String(order?.status || "")?.toLowerCase() !== "shipped" && String(order?.status || "").toLowerCase() !== "awaiting fulfillment" ? [{
-      label: "Void Transaction",
-      onClick: async () => {
-        setSelectedOrderId(order?.id);
-        setShowVoidConfirm(true);
-      },
-    }] : []),
     ...(String(order?.status || "")?.toLowerCase() !== "cancelled" && String(order?.status || "").toLowerCase() !== "awaiting payment" ? [{
       label: "Refund",
       onClick: async () => {
@@ -1356,9 +1349,9 @@ const AllOrders = () => {
 
                                     <CreditCard className="w-5 h-5 text-gray-500" />
 
-                                         {["Shipped", "Awaiting Fulfillment"].includes(order?.status)  && (
-                                        <CreditCard className="w-5 h-5 text-gray-500" />
-                                      )}
+                                    {["Shipped", "Awaiting Fulfillment"].includes(order?.status) && (
+                                      <CreditCard className="w-5 h-5 text-gray-500" />
+                                    )}
                                     {order?.status ===
                                       "Awaiting Payment" && (
                                         <CreditCard className="w-5 h-5 text-gray-500" />
@@ -1430,9 +1423,9 @@ const AllOrders = () => {
 
                                   <div className="flex items-center gap-2">
                                     {/* <Mail className="w-5 h-5 text-gray-500" /> */}
-                                    <span className="!text-blue-400">
+                                    <Link className="!text-blue-400" href={`mailto:${order.billingAddress.email}`}>
                                       {order?.billingAddress?.email || "N/A"}
-                                    </span>
+                                    </Link>
                                   </div>
                                   <div className="flex items-center gap-2">
                                     {/* <Clock className="w-5 h-5 text-gray-500" /> */}
@@ -1448,9 +1441,9 @@ const AllOrders = () => {
                                   {order?.ipAddress && (
                                     <div className="flex items-center gap-2">
                                       {/* {<MonitorCheck className="h-5 w-5 text-gray-500" />} */}
-                                      <span className="!text-blue-400">
+                                      <Link href={`https://whatismyipaddress.com/ip/${order?.ipAddress}`} target="_blank" className="!text-blue-400">
                                         {order?.ipAddress}
-                                      </span>
+                                      </Link>
                                     </div>
                                   )}
                                   <div className="flex items-center gap-2">
@@ -1468,7 +1461,7 @@ const AllOrders = () => {
                                         ?.paymentMethod || "N/A"}
                                     </span>
                                   </div>
-                                   {["Shipped", "Awaiting Fulfillment"].includes(order?.status) && (
+                                  {["Shipped", "Awaiting Fulfillment"].includes(order?.status) && (
                                     <div className="flex items-center gap-2">
                                       {/* <CreditCard className="w-5 h-5 text-gray-500" /> */}
                                       <span>Captued</span>
@@ -1622,10 +1615,10 @@ const AllOrders = () => {
 
                                   <div className="flex items-center gap-2">
                                     {/* <Mail className="w-5 h-5 text-gray-500" /> */}
-                                    <span>
+                                    <Link className="text-blue-500" href={`mailto:${order.billingInformation.email}`}>
                                       {order?.billingInformation?.email ||
                                         "N/A"}
-                                    </span>
+                                    </Link>
                                   </div>
                                 </div>
                               </div>
@@ -1691,7 +1684,7 @@ const AllOrders = () => {
                                                     );
                                                   if (selectedStore?.baseUrl)
                                                     window.open(
-                                                      `${selectedStore.baseUrl}${item?.productUrl == "/" ? item?.productUrl.slice(1) : item?.productUrl}`,
+                                                      `${selectedStore.baseUrl.replace(/\/$/, "")}${item?.productUrl == "/" ? item?.productUrl.slice(1) : item?.productUrl}`,
                                                       "_blank",
                                                     );
                                                   else

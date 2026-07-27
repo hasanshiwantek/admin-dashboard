@@ -182,8 +182,16 @@ const SettingShipping = () => {
                                         {/* Col 3: Description + Toggle + Buttons */}
                                         <div className="flex flex-1 items-center justify-between gap-4">
                                             <p className="text-gray-600 2xl:!text-[1.6rem] leading-relaxed">
-                                                FedEx<br />
-                                                I will provide the shipping label/others (Mentions the details on below comments box)
+                                                {/* FedEx<br />
+                                                I will provide the shipping label/others (Mentions the details on below comments box) */}
+                                                {item?.shipping_methods
+                                                    ?.filter((m: any) => m.is_active)
+                                                    .map((m: any, index: number) => (
+                                                        <span key={m.id ?? index}>
+                                                            {m?.display_name}
+                                                            <br />
+                                                        </span>
+                                                    ))}
                                             </p>
                                             <div className="flex items-center gap-3 flex-shrink-0">
                                                 {item.id == 1 ? <Toggle
