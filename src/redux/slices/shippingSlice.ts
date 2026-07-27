@@ -227,7 +227,38 @@ export const saveAddress = createAsyncThunk(
         }
     }
 );
+export const fetchShippingMethodById = createAsyncThunk(
+    "shippingZone/fetchShippingMethodById",
+    async ({ method_id }: { method_id: number | string }, thunkAPI) => {
+        try {
+            const res = await axiosInstance.get(
+                `dashboard/shipping-methods/get-method/${method_id}`
+            );
+            return res.data; // { success, message, data }
+        } catch (err: any) {
+            return thunkAPI.rejectWithValue(
+                err.response?.data?.message || "Failed to fetch shipping method"
+            );
+        }
+    }
+);
 
+export const updateShippingMethod = createAsyncThunk(
+    "shippingZone/updateShippingMethod",
+    async ({ method_id, payload }: { method_id: number, payload: any }, thunkAPI) => {
+        try {
+            const res = await axiosInstance.put(
+                `dashboard/shipping-methods/update-method/${method_id}`,
+                payload
+            );
+            return res.data;
+        } catch (err: any) {
+            return thunkAPI.rejectWithValue(
+                err.response?.data?.message || "Failed to update shipping method"
+            );
+        }
+    }
+);
 const initialState = {
     zones: [] as any[],
     selectedZone: null as any,

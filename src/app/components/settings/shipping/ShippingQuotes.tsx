@@ -4,6 +4,8 @@ import Image from "next/image";
 import { connectFedex, disconnectFedex, fetchFedexConfig, fetchFedexServices, fetchShippingMethods, toggleShippingMethod } from "@/redux/slices/shippingSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { useParams, } from "next/navigation";
+import ShipByWeightModal from "./helpers/SippingQuotesRange";
+import ShippingQuotesDisplayName from "./helpers/ShippingQuotesDisplayName";
 
 const FreeShippingIcon = () => (
     <div style={{
@@ -79,10 +81,10 @@ const EditButton = ({ onClick }: any) => (
             onClick={onClick}
             style={{
                 fontSize: 13, padding: "4px 12px",
-                border: "1px solid #1976d2", 
+                border: "1px solid #1976d2",
                 // borderRight: "none",
                 borderRadius: "4px 0 0 4px",
-                 background: "#fff",
+                background: "#fff",
                 color: "#1976d2", cursor: "pointer"
             }}
         >
@@ -131,6 +133,7 @@ export default function ShippingQuotes() {
         (state) => state.shippingZone
     );
     const [open, setOpen] = useState(false);
+    const [shippingQuotes, setShippingQuotes] = useState<any>(null);
     const [realTimeShippingQuotes, setRealTimeShippingQuotes] = useState([
         {
             id: "fedEx",
@@ -171,7 +174,7 @@ export default function ShippingQuotes() {
 
     useEffect(() => {
         dispatch(fetchFedexServices());
-        dispatch(fetchFedexConfig({ method_id: 3 }));
+        // dispatch(fetchFedexConfig({ method_id: 3 }));
         if (id) dispatch(fetchShippingMethods({ zone_id: Number(id) }));
     }, [id]);
 
@@ -180,7 +183,25 @@ export default function ShippingQuotes() {
             {open && <FedExConfigModal
                 open={open}
                 onOpenChange={setOpen}
-                methodId={3}
+                methodId={open}
+            />}
+            {shippingQuotes?.method_type !== "custom_label" && <ShipByWeightModal
+                open={shippingQuotes}
+                onOpenChange={() => setShippingQuotes(null)}
+                onSubmit={(data) => {
+                    dispatch(fetchShippingMethods({ zone_id: Number(id) }));
+                    setShippingQuotes(null)
+                }}
+                methodId={shippingQuotes?.id}
+            />}
+            {shippingQuotes?.method_type == "custom_label" && <ShippingQuotesDisplayName
+                open={shippingQuotes}
+                onOpenChange={() => setShippingQuotes(null)}
+                onSubmit={(data) => {
+                    dispatch(fetchShippingMethods({ zone_id: Number(id) }));
+                    setShippingQuotes(null)
+                }}
+                methodId={shippingQuotes?.id}
             />}
             <div style={{ padding: 24, fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", width: "100%" }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4 }}>
@@ -221,7 +242,7 @@ export default function ShippingQuotes() {
                                 </div>
                             </div>
                         ))
-                    ) : (shippingMethods?.map((row, i) => (
+                    ) : (shippingMethods.filter((item: any) => item?.method_type !== "fedex_realtime")?.map((row, i) => (
                         <div key={row.id} className="px-8 py-8 flex items-center gap-6 hover:bg-gray-50">
                             {/* Col 1: Icon */}
                             <div className="w-10 flex-shrink-0 flex items-center justify-center pt-0.5">
@@ -252,9 +273,12 @@ export default function ShippingQuotes() {
                                         checked={row.is_active ? true : false} onChange={() => toggle(row.id)}
                                     />
                                 </div>
-                                {/* <div className="flex items-center gap-3 flex-shrink-0 ">
-                                    {row.is_active && <EditButton />}
-                                </div> */}
+                                <div className="flex items-center gap-3 flex-shrink-0 ">
+                                    {row.is_active && <EditButton onClick={() => setShippingQuotes({
+                                        id: row?.id,
+                                        method_type: row?.method_type
+                                    })} />}
+                                </div>
                             </div>
                         </div>
                     )))}
@@ -290,13 +314,13 @@ export default function ShippingQuotes() {
                                 </div>
                             </div>
                         ))
-                    ) : (realTimeShippingQuotes?.map((row, i) => (
+                    ) : (shippingMethods.filter((item: any) => item?.method_type == "fedex_realtime")?.map((row, i) => (
                         <div key={row.id} className="px-8 py-8 flex items-center gap-6 hover:bg-gray-50">
                             {/* Col 1: Icon */}
                             <div className="w-10 flex-shrink-0 flex items-center justify-center pt-0.5">
                                 <Image
                                     src={"https://1000logos.net/wp-content/uploads/2021/04/Fedex-logo.png"}
-                                    alt={row.name || "icon"}
+                                    alt={row.display_name || "icon"}
                                     width={30}
                                     height={30}
                                     className="object-contain"
@@ -305,37 +329,39 @@ export default function ShippingQuotes() {
                             </div>
                             {/* Col 2: Country Name */}
                             <div className="w-72 flex-shrink-0 pt-0.5">
-                                <p className="font-medium text-gray-600 text-[1.6rem]">{row?.name}</p>
+                                <p className="font-medium text-gray-600 text-[1.6rem]">{row?.display_name}</p>
                             </div>
 
                             {/* Col 3: Description + Toggle + Buttons */}
                             <div className="flex flex-1 items-center justify-between gap-4">
                                 <p className="text-gray-600 !text-[1.6rem] leading-relaxed">
-                                    {row.description || "-"}
+                                    {row.custom_description || "-"}
                                 </p>
                             </div>
                             <div className="flex  items-center justify-between gap-4">
                                 <div className="flex items-center gap-3 flex-shrink-0">
                                     <Toggle
-                                        checked={row.enabled ? true : false} onChange={() => {
-                                            if (row.enabled) {
-                                                dispatch(disconnectFedex({ method_id: 3 })).then((result) => {
-                                                    if (fedexConfig.fulfilled.match(result)) {
-                                                        dispatch(fetchFedexConfig({ method_id: 3 }));
-                                                    }
-                                                })
-                                            } else {
-                                                dispatch(connectFedex({ method_id: 3 })).finally(() => {
-                                                    dispatch(fetchFedexConfig({ method_id: 3 }));
-                                                })
-                                            }
+                                        checked={row.is_active ? true : false}
+                                        // onChange={() => {
+                                        //     if (row.enabled) {
+                                        //         dispatch(disconnectFedex({ method_id: row.id })).then((result) => {
+                                        //             if (fedexConfig.fulfilled.match(result)) {
+                                        //                 dispatch(fetchFedexConfig({ method_id: row.id }));
+                                        //             }
+                                        //         })
+                                        //     } else {
+                                        //         dispatch(connectFedex({ method_id: row.id })).finally(() => {
+                                        //             dispatch(fetchFedexConfig({ method_id: row.id }));
+                                        //         })
+                                        //     }
 
-                                        }
-                                        }
+                                        // }
+                                        // }
+                                        onChange={() => toggle(row.id)}
                                     />
                                 </div>
                                 <div className="flex items-center gap-3 flex-shrink-0">
-                                    {row.enabled && <EditButton onClick={() => setOpen(true)} />}
+                                    {row.is_active && <EditButton onClick={() => setOpen(row.id)} />}
                                 </div>
                             </div>
                         </div>
