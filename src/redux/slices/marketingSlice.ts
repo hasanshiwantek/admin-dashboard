@@ -158,6 +158,41 @@ export const getEmailMarketing = createAsyncThunk(
     }
   }
 );
+export const deleteAllSubscribers = createAsyncThunk(
+  "marketing/deleteAllSubscribers",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.delete(
+        "/dashboard/subscribers/delete-all"
+      );
+
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
+    }
+  }
+);
+export const exportSubscribers = createAsyncThunk(
+  "marketing/exportSubscribers",
+  async (_, thunkAPI) => {
+    try {
+      const response = await axiosInstance.get(
+        "dashboard/subscribers/export",
+        {
+          responseType: "blob",
+        }
+      );
+
+      return response.data;
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to export subscribers"
+      );
+    }
+  }
+);
 
 // 2. Initial State
 const initialState = {
@@ -222,7 +257,19 @@ const marketingSlice = createSlice({
       .addCase(deleteCouponCodes.rejected, (state, action) => {
         state.deleteLoading = false;
         state.error = action.error.message || "Failed to delete coupon code";
-      });
+      })
+      .addCase(deleteAllSubscribers.pending, (state) => {
+  state.deleteLoading = true;
+})
+.addCase(deleteAllSubscribers.fulfilled, (state) => {
+  state.deleteLoading = false;
+})
+.addCase(deleteAllSubscribers.rejected, (state, action) => {
+  state.deleteLoading = false;
+  state.error = action.payload as string;
+})
+
+      
   },
 });
 

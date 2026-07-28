@@ -21,6 +21,7 @@ import {
     fetchUserPermissions,
     updateAdminUser,
     fetchAdminUsers,
+    fetchAdminUserById,
 } from "@/redux/slices/userPermission";
 
 type FormValues = {
@@ -49,10 +50,16 @@ const EditUser = () => {
     const dispatch = useAppDispatch();
     const router = useRouter();
     const params = useParams();
-    const userId = params?.userId as string;
+    const userId = params?.userId;
 
-    const { permissionGroups, permissionsLoading, userPermissions, adminUsers } =
-        useAppSelector((state: any) => state?.userPermission);
+  const {
+    permissionGroups,
+    permissionsLoading,
+    userPermissions,
+    adminUsers,
+    selectedAdminUser,
+} = useAppSelector((state: any) => state.userPermission);
+
 
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -80,7 +87,7 @@ const EditUser = () => {
 
     useEffect(() => {
         if (!userId) return;
-        dispatch(fetchUserPermissions({ userId: Number(userId) }));
+       dispatch(fetchAdminUserById({ id: Number(userId) }));
     }, [userId]);
 
     // Prefill user's existing permissions
@@ -94,25 +101,42 @@ const EditUser = () => {
         setValue("permissions", ids.filter(Boolean));
     }, [userPermissions]);
 
-    // Prefill user's basic details from the list (if available)
-    useEffect(() => {
-        if (!userId || !adminUsers?.length) return;
-        const user = adminUsers.find((u: any) => String(u.id) === String(userId));
-        if (!user) return;
+    // // Prefill user's basic details from the list (if available)
+    // useEffect(() => {
+    //     if (!userId || !adminUsers?.length) return;
+    //     const user = adminUsers.find((u: any) => String(u.id) === String(userId));
+    //     if (!user) return;
 
-        const [firstName = "", ...rest] = (user.name || "").split(" ");
-        reset((prev) => ({
-            ...prev,
-            firstName,
-            lastName: rest.join(" "),
-            email: user.email || "",
-            phoneNumber: user.phoneNumber || "",
-            storeName: user.storeName || "",
-            businessSize: user.businessSize || "",
-            region: user.region || "",
-            userRole: user.userRole ?? 1,
-        }));
-    }, [userId, adminUsers]);
+    //     const [firstName = "", ...rest] = (user.name || "").split(" ");
+    //     reset((prev) => ({
+    //         ...prev,
+    //         firstName,
+    //         lastName: rest.join(" "),
+    //         email: user.email || "",
+    //         phoneNumber: user.phoneNumber || "",
+    //         storeName: user.storeName || "",
+    //         businessSize: user.businessSize || "",
+    //         region: user.region || "",
+    //         userRole: user.userRole ?? 1,
+    //     }));
+    // }, [userId, adminUsers]);
+    useEffect(() => {
+    if (!selectedAdminUser) return;
+
+    const [firstName = "", ...rest] = (selectedAdminUser.name || "").split(" ");
+
+    reset((prev) => ({
+        ...prev,
+        firstName,
+        lastName: rest.join(" "),
+        email: selectedAdminUser.email || "",
+        phoneNumber: selectedAdminUser.phoneNumber || "",
+        storeName: selectedAdminUser.storeName || "",
+        businessSize: selectedAdminUser.businessSize || "",
+        region: selectedAdminUser.region || "",
+        userRole: selectedAdminUser.userRole ?? 1,
+    }));
+}, [selectedAdminUser, reset]);
 
     const onSubmit = async (data: FormValues) => {
         setIsSubmitting(true);

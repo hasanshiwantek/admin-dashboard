@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
@@ -8,11 +8,24 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Info } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
   createEmailMarketing,
+  deleteAllSubscribers,
   getEmailMarketing,
+  exportSubscribers,
 } from "@/redux/slices/marketingSlice";
 import { useAppSelector, useAppDispatch } from "@/hooks/useReduxHooks";
 import { RootState } from "@/redux/store";
+import { toast } from "react-toastify";
 
 interface FormData {
   allowNewsletterSubscriptions: boolean;
@@ -23,8 +36,9 @@ interface FormData {
 
 const EmailMarketing = () => {
   const dispatch = useAppDispatch();
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const { emailMarketing, loading, error } = useAppSelector(
-    (state: any) => state.marketingReducer // Adjust to your slice name
+    (state: any) => state.marketingReducer, // Adjust to your slice name
   );
 
   const { register, watch, setValue, handleSubmit, reset } = useForm<FormData>({
@@ -61,6 +75,38 @@ const EmailMarketing = () => {
       });
     }
   }, [emailMarketing, reset]);
+  const handleDeleteAll = async () => {
+    try {
+      const res = await dispatch(deleteAllSubscribers()).unwrap();
+
+      toast.success(res.message);
+
+      setOpenDeleteModal(false);
+
+      dispatch(getEmailMarketing()); // subscriber count refresh
+    } catch (err: any) {
+      toast.error(err);
+    }
+  };
+  const handleExportSubscribers = async () => {
+    try {
+      const blob = await dispatch(exportSubscribers()).unwrap();
+
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "subscribers.csv";
+
+      document.body.appendChild(link);
+      link.click();
+
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -105,14 +151,14 @@ const EmailMarketing = () => {
         )}
 
         {/* Tabs */}
-        <Tabs defaultValue="general" className="w-full ">
+        <Tabs defaultValue="subscribers" className="w-full ">
           <TabsList className="bg-transparent border-b border-gray-200 rounded-none h-auto px-15 w-full justify-start max-w-md">
-            <TabsTrigger
+            {/* <TabsTrigger
               value="general"
               className="rounded-none border-b-2 border-transparent data-[state=active]:border-b-blue-600 data-[state=active]:bg-transparent bg-transparent px-4 py-3 text-gray-600 data-[state=active]:text-gray-900 data-[state=active]:shadow-none"
             >
               General settings
-            </TabsTrigger>
+            </TabsTrigger> */}
             <TabsTrigger
               value="subscribers"
               className="rounded-none border-b-2 border-transparent data-[state=active]:border-b-blue-600 data-[state=active]:bg-transparent bg-transparent px-4 py-3 text-gray-600 data-[state=active]:text-gray-900 data-[state=active]:shadow-none"
@@ -146,7 +192,7 @@ const EmailMarketing = () => {
                           onCheckedChange={(checked) =>
                             setValue(
                               "allowNewsletterSubscriptions",
-                              checked as boolean
+                              checked as boolean,
                             )
                           }
                         />
@@ -180,7 +226,7 @@ const EmailMarketing = () => {
                                   setValue(
                                     "checkNewsletterBoxByDefault",
                                     checked as boolean,
-                                    { shouldValidate: true, shouldDirty: true }
+                                    { shouldValidate: true, shouldDirty: true },
                                   )
                                 }
                               />
@@ -216,7 +262,7 @@ const EmailMarketing = () => {
                                 setValue(
                                   "showNewsletterSummary",
                                   checked as boolean,
-                                  { shouldValidate: true, shouldDirty: true }
+                                  { shouldValidate: true, shouldDirty: true },
                                 )
                               }
                             />
@@ -377,26 +423,41 @@ const EmailMarketing = () => {
               </div>
             </div>
             <div className="p-15">
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-10">
-                <h2 className="!text-3xl !font-semibold text-gray-900 mb-6">
+               <h2 className="!text-4xl !font-semibold text-gray-900 mb-6">
                   Export Newsletter Subscribers
                 </h2>
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-10">
+               
 
-                <div className="flex items-center justify-center gap-6 py-6 border-t border-b border-gray-200">
+                <div className="flex items-center gap-6 py-6 mt-4">
                   <span className="text-sm text-gray-700 font-medium">
                     Subscriber Count:
                   </span>
-                  <div className="text-sm text-gray-700 mb-1">
-                    <span className="font-semibold">
+                  <div className="text-[12px] text-gray-700 mb-1 mr-1">
+                    <span className="font-semibold b">
                       {emailMarketing?.subscriberCount ?? 106}
                     </span>{" "}
                     (
-                    <a href="#" className="text-blue-600 hover:underline">
+                    <a
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleExportSubscribers();
+                      }}
+                      className="text-blue-600 hover:underline ml-2"
+                    >
                       Download to CSV file
                     </a>{" "}
-                    or{" "}
-                    <a href="#" className="text-blue-600 hover:underline">
-                      delete all subscribers
+                    <span className="text=[#000000]"> or  </span>{" "}
+                    <a
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setOpenDeleteModal(true);
+                      }}
+                      className="text-blue-600 hover:underline"
+                    >
+                      Delete all subscribers
                     </a>
                     )
                   </div>
@@ -405,6 +466,33 @@ const EmailMarketing = () => {
             </div>
           </TabsContent>
         </Tabs>
+
+        <AlertDialog open={openDeleteModal} onOpenChange={setOpenDeleteModal}>
+          <AlertDialogContent className="sm:max-w-[600px] w-[95%] rounded-2xl p-8">
+            <AlertDialogHeader className="space-y-3">
+              <AlertDialogTitle className="text-2xl font-semibold">
+                Delete All Subscribers?
+              </AlertDialogTitle>
+
+              <AlertDialogDescription className="text-base leading-7 text-gray-600">
+                Are you sure you want to delete all subscribers?
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+
+            <AlertDialogFooter className="mt-8 gap-3">
+              <AlertDialogCancel className="h-11 px-6 bg-blue-100 text-blue-700 border-blue-200 hover:bg-blue-200">
+                Cancel
+              </AlertDialogCancel>
+
+              <AlertDialogAction
+                onClick={handleDeleteAll}
+                className="h-11 px-6 bg-red-600 hover:bg-red-700 text-white"
+              >
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );
