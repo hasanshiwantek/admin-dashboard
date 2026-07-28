@@ -46,6 +46,7 @@ export default function StoreLogsPage() {
       </p>
 
       {/* Filters */}
+      
 
       <div className="flex justify-end gap-3 mt-8 mb-6">
 
@@ -77,3 +78,10 @@ export default function StoreLogsPage() {
     </div>
   );
 }
+
+
+
+
+
+
+
