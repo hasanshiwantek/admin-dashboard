@@ -42,6 +42,7 @@ import {
   BadgeCheck,
   BadgeX,
   TriangleAlert,
+  Copy,
 } from "lucide-react";
 import { refetchOrders } from "@/lib/orderUtils";
 import { FaCirclePlus, FaCircleMinus } from "react-icons/fa6";
@@ -1304,20 +1305,21 @@ const AllOrders = () => {
                       {expandedRow === order?.id && (
                         <TableRow>
                           <TableCell colSpan={11}>
-                            <div className="grid grid-cols-3 gap-4 bg-gray-50 p-4 ">
+                            <div className="grid grid-cols-3 gap-4 bg-[#fcfcfb] p-4 ">
                               <div className="flex">
                                 {/* Left Side: Billing Title & Copy Button */}
                                 <div className="flex flex-col border-r pr-3 mr-3 space-y-2">
-                                  <h4 className="font-semibold">Billing</h4>
+                                  <h4 className="font-semibold text-[18px] #[34313f]">Billing</h4>
                                   <button
-                                    className="!px-2 !py-1 text-blue-500 border-blue-400 border text-base"
+                                    className="!px-2 !py-1 flex items-center gap-1 text-[#4B71FC] border border-[#4B71FC]  text-base"
                                     onClick={() =>
                                       copyBilling(order?.billingAddress)
                                     }
                                   >
+                                    <Copy size={8} />
                                     Copy
                                   </button>
-                                  <div className="flex flex-col items-end mt-19 space-y-4">
+                                  <div className="flex flex-col items-end mt-17 space-y-4">
                                     {countryData?.flag ? (
                                       <Image
                                         src={countryData.flag}
@@ -1376,7 +1378,7 @@ const AllOrders = () => {
                                 {/* Right Side: Customer Info with Icons */}
                                 <div className="flex flex-col space-y-2  ">
                                   <div className="w-[180px] min-w-[180px] h-[90px] overflow-y-auto pr-1">
-                                    <p className="w-full whitespace-normal break-words overflow-wrap-anywhere">
+                                    <p className="w-full whitespace-normal break-words text-[13px] text-[#34313f] overflow-wrap-anywhere">
                                       {/* {order?.billingAddress?.name}{" "}
                                     <br />
                                     {order?.billingAddress?.addressLine1}{" "}
@@ -1505,17 +1507,18 @@ const AllOrders = () => {
                               <div className="flex">
                                 {/* Left Side: Shipping Title & Copy Button */}
                                 <div className="flex flex-col border-r pr-3 mr-3 space-y-2">
-                                  <h4 className="font-semibold">Shipping</h4>
+                                  <h4 className="font-semibold text-[18px] text-[#34313f]">Shipping</h4>
                                   <button
-                                    className="!px-2 !py-1 text-blue-500 border-blue-400 border text-base"
+                                    className="!px-2 !py-1 flex items-center gap-1  text-[#4B71FC] border border-[#4B71FC]  text-base"
                                     onClick={() =>
                                       copyBilling(order?.billingInformation)
                                     }
                                   >
+                                    <Copy  size={8} />
                                     Copy
                                   </button>
 
-                                  <div className="flex flex-col items-end mt-40 space-y-4">
+                                  <div className="flex flex-col items-end mt-38 space-y-4">
                                     <Ship className="w-5 h-5 text-gray-500" />
 
                                     <DollarSign className="w-5 h-5 text-gray-500" />
@@ -1615,7 +1618,7 @@ const AllOrders = () => {
 
                                   <div className="flex items-center gap-2">
                                     {/* <Mail className="w-5 h-5 text-gray-500" /> */}
-                                    <Link className="text-blue-500" href={`mailto:${order.billingInformation.email}`}>
+                                    <Link className="text-[#6f8DFD] text-[13px]"  href={`mailto:${order.billingInformation.email}`}>
                                       {order?.billingInformation?.email ||
                                         "N/A"}
                                     </Link>
@@ -1692,7 +1695,7 @@ const AllOrders = () => {
                                                       "Store URL or Product SKU not found",
                                                     );
                                                 }}
-                                                className="!text-blue-400 font-light cursor-pointer hover:underline whitespace-normal break-words leading-snug max-w-[300px]"
+                                                className="!text-[#6F8DFD] font-light cursor-pointer hover:underline whitespace-normal break-words leading-snug max-w-[300px]"
                                               >
                                                 {item?.name}
                                               </span>
@@ -1742,7 +1745,7 @@ const AllOrders = () => {
                                   </div>
 
                                   {/* Totals */}
-                                  <div className="bg-gray-100 p-4 text-sm space-y-2">
+                                  <div className="bg-[#E4E7ED] text-[#34313f] p-4 text-sm space-y-2">
                                     <div className="flex justify-between">
                                       <span>Subtotal</span>
                                       <span>

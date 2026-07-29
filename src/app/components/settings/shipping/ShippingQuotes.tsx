@@ -1,96 +1,206 @@
 import React, { useEffect, useState } from "react";
 import FedExConfigModal from "./FedExConfigModal";
 import Image from "next/image";
-import { connectFedex, disconnectFedex, fetchFedexConfig, fetchFedexServices, fetchShippingMethods, toggleShippingMethod } from "@/redux/slices/shippingSlice";
+import {
+  connectFedex,
+  disconnectFedex,
+  fetchFedexConfig,
+  fetchFedexServices,
+  fetchShippingMethods,
+  toggleShippingMethod,
+} from "@/redux/slices/shippingSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
-import { useParams, } from "next/navigation";
+import { useParams } from "next/navigation";
 import ShipByWeightModal from "./helpers/SippingQuotesRange";
 import ShippingQuotesDisplayName from "./helpers/ShippingQuotesDisplayName";
 
 const FreeShippingIcon = () => (
-    <div style={{
-        width: 44, height: 44, borderRadius: 6, border: "1px solid #e0e0e0",
-        display: "flex", flexDirection: "column", alignItems: "center",
-        justifyContent: "center", background: "#f9f9f9", gap: 1, flexShrink: 0
-    }}>
-        <span style={{ fontSize: 9, fontWeight: 700, color: "#1976d2", letterSpacing: "0.04em" }}>FREE</span>
-        <span style={{ fontSize: 8, fontWeight: 600, color: "#1976d2", letterSpacing: "0.03em" }}>SHIPPING</span>
-    </div>
+  <div
+    style={{
+      width: 44,
+      height: 44,
+      borderRadius: 6,
+      border: "1px solid #e0e0e0",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      background: "#f9f9f9",
+      gap: 1,
+      flexShrink: 0,
+    }}
+  >
+    <span
+      style={{
+        fontSize: 9,
+        fontWeight: 700,
+        color: "#1976d2",
+        letterSpacing: "0.04em",
+      }}
+    >
+      FREE
+    </span>
+    <span
+      style={{
+        fontSize: 8,
+        fontWeight: 600,
+        color: "#1976d2",
+        letterSpacing: "0.03em",
+      }}
+    >
+      SHIPPING
+    </span>
+  </div>
 );
 
 const FlatRateIcon = () => (
-    <div style={{
-        width: 44, height: 44, borderRadius: 6, border: "1px solid #e0e0e0",
-        display: "flex", flexDirection: "column", alignItems: "center",
-        justifyContent: "center", background: "#f9f9f9", gap: 1, flexShrink: 0
-    }}>
-        <span style={{ fontSize: 9, fontWeight: 700, color: "#888", letterSpacing: "0.04em" }}>FLAT</span>
-        <span style={{ fontSize: 8, fontWeight: 600, color: "#888", letterSpacing: "0.03em" }}>RATE</span>
-    </div>
+  <div
+    style={{
+      width: 44,
+      height: 44,
+      borderRadius: 6,
+      border: "1px solid #e0e0e0",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      background: "#f9f9f9",
+      gap: 1,
+      flexShrink: 0,
+    }}
+  >
+    <span
+      style={{
+        fontSize: 9,
+        fontWeight: 700,
+        color: "#888",
+        letterSpacing: "0.04em",
+      }}
+    >
+      FLAT
+    </span>
+    <span
+      style={{
+        fontSize: 8,
+        fontWeight: 600,
+        color: "#888",
+        letterSpacing: "0.03em",
+      }}
+    >
+      RATE
+    </span>
+  </div>
 );
 
 const WeightIcon = () => (
-    <div style={{
-        width: 44, height: 44, borderRadius: 6, border: "1px solid #e0e0e0",
-        display: "flex", alignItems: "center", justifyContent: "center",
-        background: "#f9f9f9", flexShrink: 0
-    }}>
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-            stroke="#555" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
-            <line x1="3" y1="6" x2="21" y2="6" />
-            <path d="M16 10a4 4 0 01-8 0" />
-        </svg>
-    </div>
+  <div
+    style={{
+      width: 44,
+      height: 44,
+      borderRadius: 6,
+      border: "1px solid #e0e0e0",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      background: "#f9f9f9",
+      flexShrink: 0,
+    }}
+  >
+    <svg
+      width="22"
+      height="22"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#555"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
+      <line x1="3" y1="6" x2="21" y2="6" />
+      <path d="M16 10a4 4 0 01-8 0" />
+    </svg>
+  </div>
 );
 
 const PickupIcon = () => (
-    <div style={{
-        width: 44, height: 44, borderRadius: 6, border: "1px solid #e0e0e0",
-        display: "flex", alignItems: "center", justifyContent: "center",
-        background: "#f9f9f9", flexShrink: 0
-    }}>
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-            stroke="#555" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
-            <polyline points="9 22 9 12 15 12 15 22" />
-        </svg>
-    </div>
+  <div
+    style={{
+      width: 44,
+      height: 44,
+      borderRadius: 6,
+      border: "1px solid #e0e0e0",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      background: "#f9f9f9",
+      flexShrink: 0,
+    }}
+  >
+    <svg
+      width="22"
+      height="22"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#555"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+      <polyline points="9 22 9 12 15 12 15 22" />
+    </svg>
+  </div>
 );
 
 const Toggle = ({ checked, onChange }: any) => (
+  <div
+    onClick={() => onChange(!checked)}
+    style={{
+      width: 38,
+      height: 22,
+      borderRadius: 11,
+      cursor: "pointer",
+      background: checked ? "#1976d2" : "#ccc",
+      position: "relative",
+      transition: "background 0.2s",
+      flexShrink: 0,
+    }}
+  >
     <div
-        onClick={() => onChange(!checked)}
-        style={{
-            width: 38, height: 22, borderRadius: 11, cursor: "pointer",
-            background: checked ? "#1976d2" : "#ccc",
-            position: "relative", transition: "background 0.2s", flexShrink: 0
-        }}
-    >
-        <div style={{
-            position: "absolute", top: 3, left: checked ? 19 : 3,
-            width: 16, height: 16, borderRadius: "50%", background: "#fff",
-            transition: "left 0.2s", boxShadow: "0 1px 3px rgba(0,0,0,0.2)"
-        }} />
-    </div>
+      style={{
+        position: "absolute",
+        top: 3,
+        left: checked ? 19 : 3,
+        width: 16,
+        height: 16,
+        borderRadius: "50%",
+        background: "#fff",
+        transition: "left 0.2s",
+        boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
+      }}
+    />
+  </div>
 );
 
 const EditButton = ({ onClick }: any) => (
-    <div style={{ display: "flex", flexShrink: 0 }}>
-        <button
-            onClick={onClick}
-            style={{
-                fontSize: 13, padding: "4px 12px",
-                border: "1px solid #1976d2",
-                // borderRight: "none",
-                borderRadius: "4px 0 0 4px",
-                background: "#fff",
-                color: "#1976d2", cursor: "pointer"
-            }}
-        >
-            Edit
-        </button>
-        {/* <button style={{
+  <div style={{ display: "flex", flexShrink: 0 }}>
+    <button
+      onClick={onClick}
+      style={{
+        fontSize: 13,
+        padding: "4px 12px",
+        border: "1px solid #1976d2",
+        // borderRight: "none",
+        borderRadius: "4px 0 0 4px",
+        background: "#fff",
+        color: "#1976d2",
+        cursor: "pointer",
+      }}
+    >
+      Edit
+    </button>
+    {/* <button style={{
             fontSize: 12, padding: "4px 8px",
             border: "1px solid #1976d2",
             borderRadius: "0 4px 4px 0", background: "#fff",
@@ -98,277 +208,414 @@ const EditButton = ({ onClick }: any) => (
         }}>
             ▾
         </button> */}
-    </div>
+  </div>
 );
 
-const ShippingRow = ({ icon, name, badge, description, enabled, showEdit, onToggle }: any) => (
-    <div style={{
-        display: "flex", alignItems: "center", gap: 16,
-        padding: "16px 20px", borderBottom: "1px solid #f0f0f0"
-    }}>
-        {icon}
-        <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
-                <span style={{ fontSize: 14, fontWeight: 500, color: "#222" }}>{name}</span>
-                {badge && (
-                    <span style={{
-                        fontSize: 10, fontWeight: 600, background: "#e8f5e9",
-                        color: "#2e7d32", borderRadius: 3, padding: "1px 6px"
-                    }}>{badge}</span>
-                )}
-            </div>
-            <p style={{ fontSize: 13, color: "#777", margin: 0, lineHeight: 1.5 }}>{description}</p>
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
-            <Toggle checked={enabled} onChange={onToggle} />
-            {showEdit && enabled && <EditButton />}
-        </div>
+const ShippingRow = ({
+  icon,
+  name,
+  badge,
+  description,
+  enabled,
+  showEdit,
+  onToggle,
+}: any) => (
+  <div
+    style={{
+      display: "flex",
+      alignItems: "center",
+      gap: 16,
+      padding: "16px 20px",
+      borderBottom: "1px solid #f0f0f0",
+    }}
+  >
+    {icon}
+    <div style={{ flex: 1, minWidth: 0 }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 6,
+          marginBottom: 4,
+        }}
+      >
+        <span style={{ fontSize: 14, fontWeight: 500, color: "#222" }}>
+          {name}
+        </span>
+        {badge && (
+          <span
+            style={{
+              fontSize: 10,
+              fontWeight: 600,
+              background: "#e8f5e9",
+              color: "#2e7d32",
+              borderRadius: 3,
+              padding: "1px 6px",
+            }}
+          >
+            {badge}
+          </span>
+        )}
+      </div>
+      <p style={{ fontSize: 13, color: "#777", margin: 0, lineHeight: 1.5 }}>
+        {description}
+      </p>
     </div>
+    <div
+      style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}
+    >
+      <Toggle checked={enabled} onChange={onToggle} />
+      {showEdit && enabled && <EditButton />}
+    </div>
+  </div>
 );
 
 export default function ShippingQuotes() {
-    const dispatch = useAppDispatch();
-    const { id } = useParams();
-    const { shippingMethods, methodsLoader, fedexConfig, fedexLoader, fedexConnection } = useAppSelector(
-        (state) => state.shippingZone
+  const dispatch = useAppDispatch();
+  const { id } = useParams();
+  const {
+    shippingMethods,
+    methodsLoader,
+    fedexConfig,
+    fedexLoader,
+    fedexConnection,
+  } = useAppSelector((state) => state.shippingZone);
+  const [open, setOpen] = useState(false);
+  const [shippingQuotes, setShippingQuotes] = useState<any>(null);
+  const [realTimeShippingQuotes, setRealTimeShippingQuotes] = useState([
+    {
+      id: "fedEx",
+      name: "FedEx",
+      badge: "Recommended",
+      description:
+        "FedEx Express provides delivery services to evey U.S. address and more than 220 countries and territories around the world.",
+      icon: "https://1000logos.net/wp-content/uploads/2021/04/Fedex-logo.png",
+      // icon: <FreeShippingIcon />,
+      enabled: false,
+      showEdit: false,
+    },
+  ]);
+  const shippingIcons: Record<string, string> = {
+    free_shipping:
+      "https://microapps.bigcommerce.com/ng-shipping-manager/b9b0967f26d6cded3671d9c547517af87002d860/img/icons/free-shipping.png",
+
+    flat_rate_weight:
+      "https://microapps.bigcommerce.com/ng-shipping-manager/b9b0967f26d6cded3671d9c547517af87002d860/img/icons/by-range.png",
+
+    flat_rate:
+      "https://microapps.bigcommerce.com/ng-shipping-manager/b9b0967f26d6cded3671d9c547517af87002d860/img/icons/flat-rate.png",
+
+    custom_label:
+      "https://microapps.bigcommerce.com/ng-shipping-manager/b9b0967f26d6cded3671d9c547517af87002d860/img/icons/pick-up-in-store.png",
+
+    fedex_realtime:
+      "https://1000logos.net/wp-content/uploads/2021/04/Fedex-logo.png",
+  };
+  useEffect(() => {
+    if (fedexConfig) {
+      setRealTimeShippingQuotes((prev) =>
+        prev.map((item) =>
+          item.id === "fedEx"
+            ? { ...item, enabled: fedexConfig?.is_connected }
+            : item,
+        ),
+      );
+    }
+  }, [fedexConfig]);
+
+  const toggle = (method_id: any) => {
+    dispatch(toggleShippingMethod({ method_id })).finally(() => {
+      dispatch(fetchShippingMethods({ zone_id: Number(id) }));
+    });
+    connectFedex;
+  };
+  const toggleRealTimeShippingQuotes = (id: any) => {
+    setRealTimeShippingQuotes((prev) =>
+      prev.map((r) => (r.id === id ? { ...r, enabled: !r.enabled } : r)),
     );
-    const [open, setOpen] = useState(false);
-    const [shippingQuotes, setShippingQuotes] = useState<any>(null);
-    const [realTimeShippingQuotes, setRealTimeShippingQuotes] = useState([
-        {
-            id: "fedEx",
-            name: "FedEx",
-            badge: "Recommended",
-            description: "FedEx Express provides delivery services to evey U.S. address and more than 220 countries and territories around the world.",
-            icon: "https://1000logos.net/wp-content/uploads/2021/04/Fedex-logo.png",
-            // icon: <FreeShippingIcon />,
-            enabled: false,
-            showEdit: false,
-        },
+  };
 
-    ]);
-    useEffect(() => {
-        if (fedexConfig) {
-            setRealTimeShippingQuotes((prev) =>
-                prev.map((item) =>
-                    item.id === "fedEx"
-                        ? { ...item, enabled: fedexConfig?.is_connected }
-                        : item
-                )
-            );
-        }
-    }, [fedexConfig]);
+  useEffect(() => {
+    dispatch(fetchFedexServices());
+    // dispatch(fetchFedexConfig({ method_id: 3 }));
+    if (id) dispatch(fetchShippingMethods({ zone_id: Number(id) }));
+  }, [id]);
 
-    const toggle = (method_id: any) => {
-        dispatch(toggleShippingMethod({ method_id })).finally(() => {
+  return (
+    <React.Fragment>
+      {open && (
+        <FedExConfigModal open={open} onOpenChange={setOpen} methodId={open} />
+      )}
+      {shippingQuotes?.method_type !== "custom_label" && (
+        <ShipByWeightModal
+          open={shippingQuotes}
+          onOpenChange={() => setShippingQuotes(null)}
+          onSubmit={(data) => {
             dispatch(fetchShippingMethods({ zone_id: Number(id) }));
-        })
-        connectFedex
-    };
-    const toggleRealTimeShippingQuotes = (id: any) => {
-        setRealTimeShippingQuotes((prev) =>
-            prev.map((r) => (r.id === id ? { ...r, enabled: !r.enabled } : r))
-        );
-    };
-
-
-    useEffect(() => {
-        dispatch(fetchFedexServices());
-        // dispatch(fetchFedexConfig({ method_id: 3 }));
-        if (id) dispatch(fetchShippingMethods({ zone_id: Number(id) }));
-    }, [id]);
-
-    return (
-        <React.Fragment>
-            {open && <FedExConfigModal
-                open={open}
-                onOpenChange={setOpen}
-                methodId={open}
-            />}
-            {shippingQuotes?.method_type !== "custom_label" && <ShipByWeightModal
-                open={shippingQuotes}
-                onOpenChange={() => setShippingQuotes(null)}
-                onSubmit={(data) => {
-                    dispatch(fetchShippingMethods({ zone_id: Number(id) }));
-                    setShippingQuotes(null)
-                }}
-                methodId={shippingQuotes?.id}
-            />}
-            {shippingQuotes?.method_type == "custom_label" && <ShippingQuotesDisplayName
-                open={shippingQuotes}
-                onOpenChange={() => setShippingQuotes(null)}
-                onSubmit={(data) => {
-                    dispatch(fetchShippingMethods({ zone_id: Number(id) }));
-                    setShippingQuotes(null)
-                }}
-                methodId={shippingQuotes?.id}
-            />}
-            <div style={{ padding: 24, fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", width: "100%" }}>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4 }}>
-                    <h1 style={{ fontSize: 20, fontWeight: 600, margin: 0, color: "#111" }}>United States</h1>
-                    {/* <button style={{
+            setShippingQuotes(null);
+          }}
+          methodId={shippingQuotes?.id}
+        />
+      )}
+      {shippingQuotes?.method_type == "custom_label" && (
+        <ShippingQuotesDisplayName
+          open={shippingQuotes}
+          onOpenChange={() => setShippingQuotes(null)}
+          onSubmit={(data) => {
+            dispatch(fetchShippingMethods({ zone_id: Number(id) }));
+            setShippingQuotes(null);
+          }}
+          methodId={shippingQuotes?.id}
+        />
+      )}
+      <div
+        style={{
+          padding: 24,
+          fontFamily:
+            "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+          width: "100%",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginBottom: 4,
+          }}
+        >
+          <h1
+            style={{ fontSize: 20, fontWeight: 600, margin: 0, color: "#111" }}
+          >
+            United States
+          </h1>
+          {/* <button style={{
                         fontSize: 13, padding: "5px 16px",
                         border: "1px solid #d0d0d0", borderRadius: 4,
                         background: "#fff", color: "#333", cursor: "pointer"
                     }}>Edit</button> */}
+        </div>
+
+        <p
+          style={{
+            fontSize: 12,
+            fontWeight: 600,
+            color: "#999",
+            letterSpacing: "0.05em",
+            textTransform: "uppercase",
+            margin: "16px 0 12px",
+          }}
+        >
+          Static shipping quotes
+        </p>
+
+        <div
+          style={{
+            background: "#fff",
+            border: "1px solid #e8e8e8",
+            borderRadius: 8,
+            overflow: "hidden",
+          }}
+        >
+          {methodsLoader
+            ? // Skeleton Loader
+              Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="px-6 py-6 flex items-center gap-6">
+                  {/* Icon skeleton */}
+                  <div className="w-10 h-8 bg-gray-200 animate-pulse rounded flex-shrink-0" />
+                  {/* Name skeleton */}
+                  <div className="w-36 flex-shrink-0">
+                    <div className="h-4 bg-gray-200 animate-pulse rounded w-24" />
+                  </div>
+                  {/* Description + buttons skeleton */}
+                  <div className="flex flex-1 items-start justify-between gap-4">
+                    <div className="space-y-2">
+                      <div className="h-4 bg-gray-200 animate-pulse rounded w-64" />
+                      <div className="h-4 bg-gray-200 animate-pulse rounded w-80" />
+                    </div>
+                    <div className="flex items-center gap-3 flex-shrink-0">
+                      <div className="w-10 h-5 bg-gray-200 animate-pulse rounded-full" />
+                      <div className="w-14 h-8 bg-gray-200 animate-pulse rounded" />
+                      <div className="w-8 h-8 bg-gray-200 animate-pulse rounded" />
+                    </div>
+                  </div>
                 </div>
+              ))
+            : shippingMethods
+                .filter((item: any) => item?.method_type !== "fedex_realtime")
+                ?.map((row, i) => (
+                  <div
+                    key={row.id}
+                    className="px-8 py-8 flex items-center gap-10  border-b border-[#ECECEC]  hover:bg-gray-50"
+                  >
+                    {/* Col 1: Icon */}
+                    <div className="w-20 flex-shrink-0 flex items-center justify-center pt-0.5">
+                      <Image
+                        src={
+                          shippingIcons[row.method_type] ||
+                          "https://microapps.bigcommerce.com/ng-shipping-manager/b9b0967f26d6cded3671d9c547517af87002d860/img/icons/free-shipping.png"
+                        }
+                        alt={row.display_name}
+                        width={120}
+                        height={120}
+                        className="object-contain"
+                      />
+                    </div>
+                    {/* Col 2: Country Name */}
+                    <div className="w-80 flex-shrink-0 pt-0.5">
+                      <p className="font-medium !text-[#5D5866] !text-[15px]">
+                        {row?.display_name}
+                      </p>
+                    </div>
 
-                <p style={{ fontSize: 12, fontWeight: 600, color: "#999", letterSpacing: "0.05em", textTransform: "uppercase", margin: "16px 0 12px" }}>
-                    Static shipping quotes
-                </p>
+                    {/* Col 3: Description + Toggle + Buttons */}
+                    <div className="flex flex-1 items-center justify-between gap-4">
+                      <p className="!text-[#5D5866] !text-[15px] leading-relaxed">
+                        {row.custom_description || "-"}
+                      </p>
+                    </div>
+                    <div className="flex  items-center justify-between gap-4">
+                      <div className="flex items-center gap-3 flex-shrink-0">
+                        <Toggle
+                          checked={row.is_active ? true : false}
+                          onChange={() => toggle(row.id)}
+                        />
+                      </div>
+                      <div className="flex items-center gap-3 flex-shrink-0 ">
+                        {row.is_active && (
+                          <EditButton
+                            onClick={() =>
+                              setShippingQuotes({
+                                id: row?.id,
+                                method_type: row?.method_type,
+                              })
+                            }
+                          />
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+        </div>
+      </div>
 
-                <div style={{ background: "#fff", border: "1px solid #e8e8e8", borderRadius: 8, overflow: "hidden" }}>
-                    {methodsLoader ? (
-                        // Skeleton Loader
-                        Array.from({ length: 3 }).map((_, i) => (
-                            <div key={i} className="px-6 py-6 flex items-center gap-6">
-                                {/* Icon skeleton */}
-                                <div className="w-10 h-8 bg-gray-200 animate-pulse rounded flex-shrink-0" />
-                                {/* Name skeleton */}
-                                <div className="w-36 flex-shrink-0">
-                                    <div className="h-4 bg-gray-200 animate-pulse rounded w-24" />
-                                </div>
-                                {/* Description + buttons skeleton */}
-                                <div className="flex flex-1 items-start justify-between gap-4">
-                                    <div className="space-y-2">
-                                        <div className="h-4 bg-gray-200 animate-pulse rounded w-64" />
-                                        <div className="h-4 bg-gray-200 animate-pulse rounded w-80" />
-                                    </div>
-                                    <div className="flex items-center gap-3 flex-shrink-0">
-                                        <div className="w-10 h-5 bg-gray-200 animate-pulse rounded-full" />
-                                        <div className="w-14 h-8 bg-gray-200 animate-pulse rounded" />
-                                        <div className="w-8 h-8 bg-gray-200 animate-pulse rounded" />
-                                    </div>
-                                </div>
-                            </div>
-                        ))
-                    ) : (shippingMethods.filter((item: any) => item?.method_type !== "fedex_realtime")?.map((row, i) => (
-                        <div key={row.id} className="px-8 py-8 flex items-center gap-6 hover:bg-gray-50">
-                            {/* Col 1: Icon */}
-                            <div className="w-10 flex-shrink-0 flex items-center justify-center pt-0.5">
-                                <Image
-                                    src={"https://upload.wikimedia.org/wikipedia/commons/7/74/Earth_globe.png"}
-                                    alt={row.display_name || "icon"}
-                                    width={30}
-                                    height={30}
-                                    // fill
-                                    className="object-contain"
-                                    priority={false}
-                                />
-                            </div>
-                            {/* Col 2: Country Name */}
-                            <div className="w-72 flex-shrink-0 pt-0.5">
-                                <p className="font-medium text-gray-600 text-[1.6rem]">{row?.display_name}</p>
-                            </div>
-
-                            {/* Col 3: Description + Toggle + Buttons */}
-                            <div className="flex flex-1 items-center justify-between gap-4">
-                                <p className="text-gray-600 !text-[1.6rem] leading-relaxed">
-                                    {row.custom_description || "-"}
-                                </p>
-                            </div>
-                            <div className="flex  items-center justify-between gap-4">
-                                <div className="flex items-center gap-3 flex-shrink-0">
-                                    <Toggle
-                                        checked={row.is_active ? true : false} onChange={() => toggle(row.id)}
-                                    />
-                                </div>
-                                <div className="flex items-center gap-3 flex-shrink-0 ">
-                                    {row.is_active && <EditButton onClick={() => setShippingQuotes({
-                                        id: row?.id,
-                                        method_type: row?.method_type
-                                    })} />}
-                                </div>
-                            </div>
-                        </div>
-                    )))}
+      <div
+        style={{
+          padding: 24,
+          fontFamily:
+            "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+          width: "100%",
+        }}
+      >
+        <p
+          style={{
+            fontSize: 12,
+            fontWeight: 600,
+            color: "#999",
+            letterSpacing: "0.05em",
+            textTransform: "uppercase",
+            margin: "16px 0 12px",
+          }}
+        >
+          Real time shipping quotes
+        </p>
+        <div
+          style={{
+            background: "#fff",
+            border: "1px solid #e8e8e8",
+            borderRadius: 8,
+            overflow: "hidden",
+          }}
+        >
+          {fedexLoader
+            ? // Skeleton Loader
+              Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="px-6 py-6 flex items-center gap-6">
+                  {/* Icon skeleton */}
+                  <div className="w-10 h-8 bg-gray-200 animate-pulse rounded flex-shrink-0" />
+                  {/* Name skeleton */}
+                  <div className="w-36 flex-shrink-0">
+                    <div className="h-4 bg-gray-200 animate-pulse rounded w-24" />
+                  </div>
+                  {/* Description + buttons skeleton */}
+                  <div className="flex flex-1 items-start justify-between gap-4">
+                    <div className="space-y-2">
+                      <div className="h-4 bg-gray-200 animate-pulse rounded w-64" />
+                      <div className="h-4 bg-gray-200 animate-pulse rounded w-80" />
+                    </div>
+                    <div className="flex items-center gap-3 flex-shrink-0">
+                      <div className="w-10 h-5 bg-gray-200 animate-pulse rounded-full" />
+                      <div className="w-14 h-8 bg-gray-200 animate-pulse rounded" />
+                      <div className="w-8 h-8 bg-gray-200 animate-pulse rounded" />
+                    </div>
+                  </div>
                 </div>
-            </div>
+              ))
+            : shippingMethods
+                .filter((item: any) => item?.method_type == "fedex_realtime")
+                ?.map((row, i) => (
+                  <div
+                    key={row.id}
+                    className="px-8 py-8 flex items-center gap-6 hover:bg-gray-50"
+                  >
+                    {/* Col 1: Icon */}
+                    <div className="w-10 flex-shrink-0 flex items-center justify-center pt-0.5">
+                      <Image
+                        src={
+                          "https://1000logos.net/wp-content/uploads/2021/04/Fedex-logo.png"
+                        }
+                        alt={row.display_name || "icon"}
+                        width={30}
+                        height={30}
+                        className="object-contain"
+                        priority={false}
+                      />
+                    </div>
+                    {/* Col 2: Country Name */}
+                    <div className="w-72 flex-shrink-0 pt-0.5">
+                      <p className="font-medium text-gray-600 text-[1.6rem]">
+                        {row?.display_name}
+                      </p>
+                    </div>
 
-            <div style={{ padding: 24, fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", width: "100%" }}>
-                <p style={{ fontSize: 12, fontWeight: 600, color: "#999", letterSpacing: "0.05em", textTransform: "uppercase", margin: "16px 0 12px" }}>
-                    Real time shipping quotes
-                </p>
-                <div style={{ background: "#fff", border: "1px solid #e8e8e8", borderRadius: 8, overflow: "hidden" }}>
-                    {fedexLoader ? (
-                        // Skeleton Loader
-                        Array.from({ length: 3 }).map((_, i) => (
-                            <div key={i} className="px-6 py-6 flex items-center gap-6">
-                                {/* Icon skeleton */}
-                                <div className="w-10 h-8 bg-gray-200 animate-pulse rounded flex-shrink-0" />
-                                {/* Name skeleton */}
-                                <div className="w-36 flex-shrink-0">
-                                    <div className="h-4 bg-gray-200 animate-pulse rounded w-24" />
-                                </div>
-                                {/* Description + buttons skeleton */}
-                                <div className="flex flex-1 items-start justify-between gap-4">
-                                    <div className="space-y-2">
-                                        <div className="h-4 bg-gray-200 animate-pulse rounded w-64" />
-                                        <div className="h-4 bg-gray-200 animate-pulse rounded w-80" />
-                                    </div>
-                                    <div className="flex items-center gap-3 flex-shrink-0">
-                                        <div className="w-10 h-5 bg-gray-200 animate-pulse rounded-full" />
-                                        <div className="w-14 h-8 bg-gray-200 animate-pulse rounded" />
-                                        <div className="w-8 h-8 bg-gray-200 animate-pulse rounded" />
-                                    </div>
-                                </div>
-                            </div>
-                        ))
-                    ) : (shippingMethods.filter((item: any) => item?.method_type == "fedex_realtime")?.map((row, i) => (
-                        <div key={row.id} className="px-8 py-8 flex items-center gap-6 hover:bg-gray-50">
-                            {/* Col 1: Icon */}
-                            <div className="w-10 flex-shrink-0 flex items-center justify-center pt-0.5">
-                                <Image
-                                    src={"https://1000logos.net/wp-content/uploads/2021/04/Fedex-logo.png"}
-                                    alt={row.display_name || "icon"}
-                                    width={30}
-                                    height={30}
-                                    className="object-contain"
-                                    priority={false}
-                                />
-                            </div>
-                            {/* Col 2: Country Name */}
-                            <div className="w-72 flex-shrink-0 pt-0.5">
-                                <p className="font-medium text-gray-600 text-[1.6rem]">{row?.display_name}</p>
-                            </div>
+                    {/* Col 3: Description + Toggle + Buttons */}
+                    <div className="flex flex-1 items-center justify-between gap-4">
+                      <p className="text-gray-600 !text-[1.6rem] leading-relaxed">
+                        {row.custom_description || "-"}
+                      </p>
+                    </div>
+                    <div className="flex  items-center justify-between gap-4">
+                      <div className="flex items-center gap-3 flex-shrink-0">
+                        <Toggle
+                          checked={row.is_active ? true : false}
+                          // onChange={() => {
+                          //     if (row.enabled) {
+                          //         dispatch(disconnectFedex({ method_id: row.id })).then((result) => {
+                          //             if (fedexConfig.fulfilled.match(result)) {
+                          //                 dispatch(fetchFedexConfig({ method_id: row.id }));
+                          //             }
+                          //         })
+                          //     } else {
+                          //         dispatch(connectFedex({ method_id: row.id })).finally(() => {
+                          //             dispatch(fetchFedexConfig({ method_id: row.id }));
+                          //         })
+                          //     }
 
-                            {/* Col 3: Description + Toggle + Buttons */}
-                            <div className="flex flex-1 items-center justify-between gap-4">
-                                <p className="text-gray-600 !text-[1.6rem] leading-relaxed">
-                                    {row.custom_description || "-"}
-                                </p>
-                            </div>
-                            <div className="flex  items-center justify-between gap-4">
-                                <div className="flex items-center gap-3 flex-shrink-0">
-                                    <Toggle
-                                        checked={row.is_active ? true : false}
-                                        // onChange={() => {
-                                        //     if (row.enabled) {
-                                        //         dispatch(disconnectFedex({ method_id: row.id })).then((result) => {
-                                        //             if (fedexConfig.fulfilled.match(result)) {
-                                        //                 dispatch(fetchFedexConfig({ method_id: row.id }));
-                                        //             }
-                                        //         })
-                                        //     } else {
-                                        //         dispatch(connectFedex({ method_id: row.id })).finally(() => {
-                                        //             dispatch(fetchFedexConfig({ method_id: row.id }));
-                                        //         })
-                                        //     }
-
-                                        // }
-                                        // }
-                                        onChange={() => toggle(row.id)}
-                                    />
-                                </div>
-                                <div className="flex items-center gap-3 flex-shrink-0">
-                                    {row.is_active && <EditButton onClick={() => setOpen(row.id)} />}
-                                </div>
-                            </div>
-                        </div>
-
-                    )))}
-                </div>
-            </div>
-        </React.Fragment>
-    );
+                          // }
+                          // }
+                          onChange={() => toggle(row.id)}
+                        />
+                      </div>
+                      <div className="flex items-center gap-3 flex-shrink-0">
+                        {row.is_active && (
+                          <EditButton onClick={() => setOpen(row.id)} />
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+        </div>
+      </div>
+    </React.Fragment>
+  );
 }
