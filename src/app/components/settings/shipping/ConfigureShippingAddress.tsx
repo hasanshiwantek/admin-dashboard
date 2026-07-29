@@ -63,7 +63,7 @@ export default function ConfigureShippingAddress({ open, onOpenChange }: Configu
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-hidden flex flex-col p-0">
+            <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-hidden flex flex-col p-3">
 
                 {/* Header */}
                 <DialogHeader className="px-6 pt-6 pb-4 border-b flex-shrink-0">
@@ -80,10 +80,10 @@ export default function ConfigureShippingAddress({ open, onOpenChange }: Configu
 
                             {/* Address Line 1 */}
                             <div className="space-y-1.5">
-                                <Label className=" text-gray-700">Address line 1</Label>
+                                <Label className="!text-[15px] font-normal !text-[#5D5B66]">Address line 1</Label>
                                 <Input
                                     {...register("address_line_1", { required: "Address line 1 is required" })}
-                                    className={errors.address_line_1 ? "border-red-500 max-w-full" : "max-w-full"}
+                                    className={errors.address_line_1 ? "border-red-500 max-w-full !h-15 text-base !font-normal" : "max-w-full !h-15 text-base !font-normal"}
                                 />
                                 {errors.address_line_1 && <p className="text-xs text-red-500">{errors.address_line_1.message}</p>}
                             </div>
@@ -91,7 +91,7 @@ export default function ConfigureShippingAddress({ open, onOpenChange }: Configu
                             {/* Address Line 2 */}
                             <div className="space-y-1.5">
                                 <div className="flex items-center justify-between">
-                                    <Label className=" text-gray-700">Address line 2</Label>
+                                    <Label className="!text-[15px] font-normal !text-[#5D5B66]">Address line 2</Label>
                                     <span className="text-xs text-gray-400">(optional)</span>
                                 </div>
                                 <Input className="max-w-full" {...register("address_line_2")} />
@@ -99,32 +99,32 @@ export default function ConfigureShippingAddress({ open, onOpenChange }: Configu
 
                             {/* City */}
                             <div className="space-y-1.5">
-                                <Label className=" text-gray-700">City</Label>
+                                <Label className="!text-[15px] font-normal !text-[#5D5B66]">City</Label>
                                 <Input
                                     {...register("city", { required: "City is required" })}
-                                    className={errors.city ? "border-red-500 max-w-full" : " max-w-full"}
+                                    className={errors.city ? "border-red-500 max-w-full !h-15 text-base !font-normal" : " max-w-full !h-15 text-base !font-normal"}
                                 />
                                 {errors.city && <p className="text-xs text-red-500">{errors.city.message}</p>}
                             </div>
 
                             {/* Postal Code */}
                             <div className="space-y-1.5">
-                                <Label className=" text-gray-700">Postal code</Label>
+                                <Label className="!text-[15px] font-normal !text-[#5D5B66]">Postal code</Label>
                                 <Input
                                     {...register("postal_code", { required: "Postal code is required" })}
-                                    className={errors.postal_code ? "border-red-500 max-w-full" : "max-w-full"}
+                                    className={errors.postal_code ? "border-red-500 max-w-full !h-15 text-base !font-normal" : "max-w-full !h-15 text-base !font-normal"}
                                 />
                                 {errors.postal_code && <p className="text-xs text-red-500">{errors.postal_code.message}</p>}
                             </div>
 
                             {/* Country */}
                             <div className="space-y-1.5">
-                                <Label className=" text-gray-700">Country</Label>
+                                <Label className="!text-[15px] font-normal !text-[#5D5B66]">Country</Label>
                                 <Select
                                     value={watch("country")}
                                     onValueChange={(v) => setValue("country", v, { shouldValidate: true })}
                                 >
-                                    <SelectTrigger className={errors.country ? "border-red-500 max-w-full" : "max-w-full"}>
+                                    <SelectTrigger className={errors.country ? "border-red-500 max-w-full !h-15 text-base !font-normal" : "max-w-full !h-15 text-base !font-normal"}>
                                         <SelectValue placeholder="Select country" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -138,12 +138,12 @@ export default function ConfigureShippingAddress({ open, onOpenChange }: Configu
 
                             {/* State */}
                             <div className="space-y-1.5">
-                                <Label className=" text-gray-700">State</Label>
+                                <Label className=" !text-[15px] font-normal !text-[#5D5B66]">State</Label>
                                 <Select
                                     value={watch("state")}
                                     onValueChange={(v) => setValue("state", v, { shouldValidate: true })}
                                 >
-                                    <SelectTrigger className={errors.state ? "border-red-500 max-w-full " : "max-w-full"}>
+                                    <SelectTrigger className={errors.state ? "border-red-500 max-w-full !h-15 text-base !font-normal" : "max-w-full !h-15 text-base !font-normal"}>
                                         <SelectValue placeholder="Select state" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -158,20 +158,20 @@ export default function ConfigureShippingAddress({ open, onOpenChange }: Configu
                             {/* Phone Number */}
                             <div className="space-y-1.5">
                                 <div className="flex items-center justify-between">
-                                    <Label className=" text-gray-700">Phone number</Label>
+                                    <Label className=" !text-[15px] font-normal !text-[#5D5B66]">Phone number</Label>
                                     <span className="text-xs text-gray-400">(optional)</span>
                                 </div>
-                                <Input className="max-w-full" type="tel" {...register("phone_number")} />
+                                <Input className="max-w-full !h-15 text-base !font-normal" type="tel" {...register("phone_number")} />
                             </div>
 
                         </div>
 
                         {/* Footer */}
-                        <div className="border-t bg-white px-6 py-4 flex justify-end gap-3 flex-shrink-0">
-                            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+                        <div className=" bg-white px-6 py-4 flex justify-end gap-3 flex-shrink-0">
+                            <Button type="button" className="h-14 px-8 !text-[14px]" variant="outline" onClick={() => onOpenChange(false)}>
                                 Cancel
                             </Button>
-                            <Button disabled={loading} type="submit" className="bg-blue-600 hover:bg-blue-700">
+                            <Button disabled={loading} type="submit" className="bg-blue-600 h-14 px-8 !text-[14px] hover:bg-blue-700 ">
                                 {loading ? "Updating..." : "Update"}
                             </Button>
                         </div>

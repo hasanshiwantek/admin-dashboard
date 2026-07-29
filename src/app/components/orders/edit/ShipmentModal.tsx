@@ -37,7 +37,7 @@ export function ShipmentModal({
     order?.products?.reduce((acc: any, product: any, index: number) => {
       acc[index] = product.quantity || 1;
       return acc;
-    }, {}) || {}
+    }, {}) || {},
   );
 
   const [weightLbs, setWeightLbs] = useState(12);
@@ -49,9 +49,8 @@ export function ShipmentModal({
   const [shippingMethod, setShippingMethod] = useState("Other");
   const [trackingCarrier, setTrackingCarrier] = useState("");
   const [trackingId, setTrackingId] = useState("");
-  const [shippingMethodDescription, setShippingMethodDescription] = useState(
-    ""
-  );
+  const [shippingMethodDescription, setShippingMethodDescription] =
+    useState("");
   const [updateStatusAndNotify, setUpdateStatusAndNotify] = useState(true);
 
   console.log("Selected Order: ", order);
@@ -89,13 +88,15 @@ export function ShipmentModal({
       },
       trackingId: trackingId,
       trackingCarrier: trackingCarrier,
-      shippingMethod: shippingMethodDescription || order.billingInformation?.shippingData,
+      shippedBy: shippingMethod,
+      shippingMethod: shippingMethodDescription,
       dateShipped: new Date().toISOString().split("T")[0],
-      packingSlipNotes: order?.staffNotes,
+      packingSlipNotes: packingSlipNotes,
       updateStatusAndNotify: updateStatusAndNotify,
       shipTo: {
-        name: `${order?.billingInformation?.firstName || ""} ${order?.billingInformation?.lastName || ""
-          }`,
+        name: `${order?.billingInformation?.firstName || ""} ${
+          order?.billingInformation?.lastName || ""
+        }`,
         company: order?.billingInformation?.company || "",
         addressLine1: order?.billingInformation?.addressLine1 || "",
         addressLine2: order?.billingInformation?.addressLine2 || "",
@@ -111,9 +112,9 @@ export function ShipmentModal({
   };
   useEffect(() => {
     if (order.billingInformation?.shippingData) {
-      setShippingMethodDescription(order.billingInformation?.shippingData)
+      setShippingMethodDescription(order.billingInformation?.shippingData);
     }
-  }, [order.billingInformation?.shippingData])
+  }, [order.billingInformation?.shippingData]);
   return (
     <Dialog open={open} onOpenChange={(val) => !val && onClose()}>
       <DialogTrigger asChild>
@@ -317,17 +318,18 @@ export function ShipmentModal({
             </div>
 
             {/* Other Tracking Carrier Options */}
-            {shippingMethod == "Other" && <div className="space-y-2">
-              <Label className="font-medium">
-                Other Tracking Carrier options
-              </Label>
-              <Input
-                placeholder="Type to find a carrier..."
-                value={trackingCarrier}
-                onChange={(e) => setTrackingCarrier(e.target.value)}
-              />
-            </div>
-            }
+            {shippingMethod == "Other" && (
+              <div className="space-y-2">
+                <Label className="font-medium">
+                  Other Tracking Carrier options
+                </Label>
+                <Input
+                  placeholder="Type to find a carrier..."
+                  value={trackingCarrier}
+                  onChange={(e) => setTrackingCarrier(e.target.value)}
+                />
+              </div>
+            )}
             {/* Tracking ID */}
             <div className="space-y-2">
               <Label className="font-medium">Tracking ID</Label>
@@ -346,7 +348,6 @@ export function ShipmentModal({
                 onChange={(e) => setShippingMethodDescription(e.target.value)}
               />
             </div>
-
 
             {/* Update status checkbox */}
             <div className="flex items-center gap-5 pt-2">

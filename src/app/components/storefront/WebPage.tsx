@@ -77,7 +77,7 @@ const WebPage = () => {
       displayAsHomePage: false,
       restrictToCustomersOnly: false,
       sortOrder: 0,
-      // 
+      //
       link: "",
       emailQuestionsTo: "",
       showTheseFields: ["email", "comments"],
@@ -90,11 +90,12 @@ const WebPage = () => {
   const pageContent = watch("pageContent");
   const webPages = useAppSelector((state: any) => state?.storefront?.webPages);
   const urlSettingData = useAppSelector(
-    (state: any) => state.home?.urlSettingData
+    (state: any) => state.home?.urlSettingData,
   );
   const pageType = watch("pageType");
   const showTheseFields = watch("showTheseFields") || [];
-  const [isUrlManuallyEdited, setIsUrlManuallyEdited] = useState<boolean>(false);
+  const [isUrlManuallyEdited, setIsUrlManuallyEdited] =
+    useState<boolean>(false);
   const editorRef = useRef<any>(null);
   const dispatch = useAppDispatch();
   const router = useRouter();
@@ -125,8 +126,7 @@ const WebPage = () => {
             reset(result?.payload?.data);
           } else {
           }
-        } catch (err) {
-        }
+        } catch (err) {}
       };
       fetchPage();
     }
@@ -143,6 +143,7 @@ const WebPage = () => {
       }
 
       if ((isEdit ? updateWebPage : createWebpage).fulfilled.match(result)) {
+        dispatch(getWebPages());
         router.push("/manage/storefront/web-pages");
         reset();
       } else {
@@ -158,8 +159,6 @@ const WebPage = () => {
       : [...current, fieldId];
     setValue("showTheseFields", updated, { shouldDirty: true });
   };
-
-
 
   useEffect(() => {
     if (!isUrlManuallyEdited) {
@@ -186,7 +185,7 @@ const WebPage = () => {
           const finalUrl = Object.entries(replacements)
             .reduce(
               (url, [key, value]) => url.replace(new RegExp(key, "gi"), value),
-              customFormat
+              customFormat,
             )
             .replace(/%[^%]+%/g, "")
             .replace(/\/+/g, "/")
@@ -196,7 +195,6 @@ const WebPage = () => {
           }
         }
       }
-
     }
   }, [watchedName, isUrlManuallyEdited]);
   useEffect(() => {
@@ -205,9 +203,9 @@ const WebPage = () => {
   }, [dispatch]);
   useEffect(() => {
     if (id) {
-      setIsUrlManuallyEdited(true)
+      setIsUrlManuallyEdited(true);
     }
-  }, [id])
+  }, [id]);
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -225,7 +223,9 @@ const WebPage = () => {
 
           {/* PAGE TYPE */}
           <div className="space-y-4 mt-10">
-            <h1 className="!font-semibold text-lg 2xl:!text-[2.4rem]">Page Type</h1>
+            <h1 className="!font-semibold text-lg 2xl:!text-[2.4rem]">
+              Page Type
+            </h1>
             <div className="bg-white shadow-md p-10">
               <Controller
                 name="pageType"
@@ -238,7 +238,10 @@ const WebPage = () => {
                     className="space-y-2"
                   >
                     {options.map((opt) => (
-                      <div key={opt.id} className="flex items-start space-x-3 ml-60">
+                      <div
+                        key={opt.id}
+                        className="flex items-start space-x-3 ml-60"
+                      >
                         <RadioGroupItem id={opt.id} value={opt.id} />
                         <Label className="2xl:!text-2xl" htmlFor={opt.id}>
                           {opt.label}
@@ -253,93 +256,124 @@ const WebPage = () => {
 
           {/* WEB PAGE DETAILS */}
           <div className="space-y-4 mt-10">
-            <h1 className="!font-semibold text-lg 2xl:!text-[2.4rem]">Web Page Details</h1>
+            <h1 className="!font-semibold text-lg 2xl:!text-[2.4rem]">
+              Web Page Details
+            </h1>
             <div className="bg-white shadow-md p-10 space-y-5">
-
               {/* Page Name — always visible */}
               <div className="flex items-center gap-4">
-                <Label htmlFor="pageName" className="w-[140px] text-right 2xl:!text-2xl">
+                <Label
+                  htmlFor="pageName"
+                  className="w-[140px] text-right 2xl:!text-2xl"
+                >
                   Page Name:
                 </Label>
                 <Controller
                   name="pageName"
                   control={control}
                   render={({ field }) => (
-                    <Input id="pageName" {...field} placeholder="Enter Page Name" />
+                    <Input
+                      id="pageName"
+                      {...field}
+                      placeholder="Enter Page Name"
+                    />
                   )}
                 />
               </div>
 
               {/* Page URL — always visible */}
-              {pageType != "2" && <div className="flex items-center gap-4">
-                <Label htmlFor="pageUrl" className="w-[140px] text-right 2xl:!text-2xl">
-                  Page URL:
-                </Label>
-                <Controller
-                  name="pageUrl"
-                  control={control}
-                  render={({ field }) => (
-                    <Input id="pageUrl"
-                      {...field}
-                      onKeyDown={(e) => {
-                        if (/[$*&@!=+%`'"^|]/.test(e.key)) {
-                          e.preventDefault();
+              {pageType != "2" && (
+                <div className="flex items-center gap-4">
+                  <Label
+                    htmlFor="pageUrl"
+                    className="w-[140px] text-right 2xl:!text-2xl"
+                  >
+                    Page URL:
+                  </Label>
+                  <Controller
+                    name="pageUrl"
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        id="pageUrl"
+                        {...field}
+                        onKeyDown={(e) => {
+                          if (/[$*&@!=+%`'"^|]/.test(e.key)) {
+                            e.preventDefault();
+                          }
+                        }}
+                        onPaste={(e) => {
+                          const pasted = e.clipboardData.getData("text");
+                          if (/[$*&@!=+%`'"^|]/.test(pasted)) {
+                            e.preventDefault();
+                          }
+                        }}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          setIsUrlManuallyEdited(true);
+                        }}
+                        placeholder="Enter Page URL"
+                      />
+                    )}
+                  />
+                  <button
+                    className="btn-outline-primary !py-2"
+                    type="button"
+                    onClick={() => {
+                      setIsUrlManuallyEdited(false);
+                      if (
+                        urlSettingData?.format_type == "seo_optimized_short"
+                      ) {
+                        if (watchedName) {
+                          const slug = generateSlug(watchedName);
+                          setValue("pageUrl", `/${slug}`);
                         }
-                      }}
-                      onPaste={(e) => {
-                        const pasted = e.clipboardData.getData("text");
-                        if (/[$*&@!=+%`'"^|]/.test(pasted)) {
-                          e.preventDefault();
+                      } else if (
+                        urlSettingData?.format_type == "seo_optimized_long"
+                      ) {
+                        if (watchedName) {
+                          const slug = generateSlug(watchedName);
+                          setValue("pageUrl", `/pages/${slug}`);
                         }
-                      }} onChange={(e) => {
-                        field.onChange(e);
-                        setIsUrlManuallyEdited(true);
-                      }} placeholder="Enter Page URL" />
-                  )}
-                />
-                <button className="btn-outline-primary !py-2" type="button" onClick={() => {
-                  setIsUrlManuallyEdited(false)
-                  if (urlSettingData?.format_type == "seo_optimized_short") {
-                    if (watchedName) {
-                      const slug = generateSlug(watchedName);
-                      setValue("pageUrl", `/${slug}`);
-                    }
-                  } else if (urlSettingData?.format_type == "seo_optimized_long") {
-                    if (watchedName) {
-                      const slug = generateSlug(watchedName);
-                      setValue("pageUrl", `/pages/${slug}`);
-                    }
-                  }
-                  const formatType = urlSettingData?.format_type;
-                  const customFormat = urlSettingData?.custom_format;
-
-                  if (formatType === "custom" && customFormat) {
-                    if (watchedName) {
-                      const replacements = {
-                        "%pagename%": watchedName ? generateSlug(watchedName) : "",
-                      };
-
-                      const finalUrl = Object.entries(replacements)
-                        .reduce(
-                          (url, [key, value]) => url.replace(new RegExp(key, "gi"), value),
-                          customFormat
-                        )
-                        .replace(/%[^%]+%/g, "")
-                        .replace(/\/+/g, "/")
-                        .replace(/\/$/g, "");
-                      if (finalUrl) {
-                        setValue("pageUrl", finalUrl);
                       }
-                    }
-                  }
-                }}
-                >Reset</button>
-              </div>}
+                      const formatType = urlSettingData?.format_type;
+                      const customFormat = urlSettingData?.custom_format;
+
+                      if (formatType === "custom" && customFormat) {
+                        if (watchedName) {
+                          const replacements = {
+                            "%pagename%": watchedName
+                              ? generateSlug(watchedName)
+                              : "",
+                          };
+
+                          const finalUrl = Object.entries(replacements)
+                            .reduce(
+                              (url, [key, value]) =>
+                                url.replace(new RegExp(key, "gi"), value),
+                              customFormat,
+                            )
+                            .replace(/%[^%]+%/g, "")
+                            .replace(/\/+/g, "/")
+                            .replace(/\/$/g, "");
+                          if (finalUrl) {
+                            setValue("pageUrl", finalUrl);
+                          }
+                        }
+                      }
+                    }}
+                  >
+                    Reset
+                  </button>
+                </div>
+              )}
 
               {/* WYSIWYG */}
               {pageType == "1" && (
                 <div className="flex items-start justify-start gap-4">
-                  <Label className="w-[140px] text-right 2xl:!text-2xl">Page Content:</Label>
+                  <Label className="w-[140px] text-right 2xl:!text-2xl">
+                    Page Content:
+                  </Label>
                   <DescriptionEditorQuill
                     fieldName="pageContent"
                     label="Page Content"
@@ -351,7 +385,10 @@ const WebPage = () => {
               {/* LINK */}
               {pageType == "2" && (
                 <div className="flex items-center gap-4">
-                  <Label htmlFor="link" className="w-[140px] text-right 2xl:!text-2xl">
+                  <Label
+                    htmlFor="link"
+                    className="w-[140px] text-right 2xl:!text-2xl"
+                  >
                     Link:
                   </Label>
                   <Controller
@@ -369,7 +406,9 @@ const WebPage = () => {
                 <div className="space-y-5">
                   {/* Page Content editor */}
                   <div className="flex items-start justify-start gap-4">
-                    <Label className="w-[140px] text-right 2xl:!text-2xl">Page Content:</Label>
+                    <Label className="w-[140px] text-right 2xl:!text-2xl">
+                      Page Content:
+                    </Label>
                     <DescriptionEditorQuill
                       fieldName="pageContent"
                       label="Page Content"
@@ -379,7 +418,10 @@ const WebPage = () => {
 
                   {/* Email Questions To */}
                   <div className="flex items-center gap-4">
-                    <Label htmlFor="emailQuestionsTo" className="w-[180px] text-right 2xl:!text-2xl">
+                    <Label
+                      htmlFor="emailQuestionsTo"
+                      className="w-[180px] text-right 2xl:!text-2xl"
+                    >
                       Email Questions to:
                     </Label>
                     <Controller
@@ -410,7 +452,10 @@ const WebPage = () => {
                             disabled={f.locked}
                             onCheckedChange={() => toggleContactField(f.id)}
                           />
-                          <Label htmlFor={f.id} className="cursor-pointer 2xl:!text-xl">
+                          <Label
+                            htmlFor={f.id}
+                            className="cursor-pointer 2xl:!text-xl"
+                          >
                             {f.label}
                           </Label>
                         </div>
@@ -427,9 +472,14 @@ const WebPage = () => {
                       <Checkbox
                         id="spamProtection"
                         checked={showTheseFields.includes("spamProtection")}
-                        onCheckedChange={() => toggleContactField("spamProtection")}
+                        onCheckedChange={() =>
+                          toggleContactField("spamProtection")
+                        }
                       />
-                      <Label htmlFor="spamProtection" className="cursor-pointer 2xl:!text-xl">
+                      <Label
+                        htmlFor="spamProtection"
+                        className="cursor-pointer 2xl:!text-xl"
+                      >
                         Add Manual Captcha
                       </Label>
                     </div>
@@ -438,9 +488,12 @@ const WebPage = () => {
               )}
 
               {/* RAW HTML */}
-              {pageType == '4' && (
+              {pageType == "4" && (
                 <div className="flex items-start gap-4">
-                  <Label htmlFor="rawHtml" className="w-[140px] text-right 2xl:!text-2xl">
+                  <Label
+                    htmlFor="rawHtml"
+                    className="w-[140px] text-right 2xl:!text-2xl"
+                  >
                     HTML Content:
                   </Label>
                   <Controller
@@ -463,7 +516,9 @@ const WebPage = () => {
 
           {/* NAVIGATION MENU */}
           <div className="space-y-4 mt-10">
-            <h1 className="!font-semibold text-lg 2xl:!text-[2.4rem]">Navigation Menu Options</h1>
+            <h1 className="!font-semibold text-lg 2xl:!text-[2.4rem]">
+              Navigation Menu Options
+            </h1>
             <div className="bg-white shadow-md p-10 space-y-5">
               <div className="ml-20">
                 <Controller
@@ -472,7 +527,10 @@ const WebPage = () => {
                   defaultValue={false}
                   render={({ field: { value, onChange } }) => (
                     <div className="flex items-center gap-4">
-                      <Label htmlFor="showInNavigation" className="cursor-pointer 2xl:!text-2xl">
+                      <Label
+                        htmlFor="showInNavigation"
+                        className="cursor-pointer 2xl:!text-2xl"
+                      >
                         Navigation Menu
                       </Label>
                       <Checkbox
@@ -481,7 +539,10 @@ const WebPage = () => {
                         onCheckedChange={onChange}
                         className="mr-2"
                       />
-                      <Label htmlFor="showInNavigation" className="cursor-pointer 2xl:!text-2xl">
+                      <Label
+                        htmlFor="showInNavigation"
+                        className="cursor-pointer 2xl:!text-2xl"
+                      >
                         Yes, show this web page on the navigation menu
                       </Label>
                     </div>
@@ -491,19 +552,27 @@ const WebPage = () => {
                 <div className="flex justify-start gap-15 items-start mt-4">
                   <Label className="pt-1 2xl:!text-2xl">Parent Page</Label>
                   <div className="w-[300px] border rounded-md overflow-y-auto h-[160px] bg-white text-xl">
-                    {[{ pageName: "-- No Parent Page --", id: 0 }, ...(webPages.filter((item: any) => item.id != id) || [])]?.map((tpl: any) => {
-                      const isSelected =String(watch("parentPage")) === String(tpl.id);
+                    {[
+                      { pageName: "-- No Parent Page --", id: 0 },
+                      ...(webPages.filter((item: any) => item.id != id) || []),
+                    ]?.map((tpl: any) => {
+                      const isSelected =
+                        String(watch("parentPage")) === String(tpl.id);
                       return (
                         <div
                           key={tpl.id}
                           onClick={() =>
-                            setValue("parentPage", isSelected ? "" : String(tpl.id), {
-                              shouldDirty: true,
-                            })
+                            setValue(
+                              "parentPage",
+                              isSelected ? "" : String(tpl.id),
+                              {
+                                shouldDirty: true,
+                              },
+                            )
                           }
                           className={cn(
                             "cursor-pointer px-3 py-1",
-                            isSelected && "bg-blue-600 text-white"
+                            isSelected && "bg-blue-600 text-white",
                           )}
                         >
                           {tpl.pageName}
@@ -519,7 +588,9 @@ const WebPage = () => {
 
           {/* ADVANCED OPTIONS */}
           <div className="space-y-4 mt-10">
-            <h1 className="!font-semibold text-lg 2xl:!text-[2.4rem]">Advanced Options</h1>
+            <h1 className="!font-semibold text-lg 2xl:!text-[2.4rem]">
+              Advanced Options
+            </h1>
             <div className="bg-white shadow-md p-10 space-y-5">
               {[
                 { label: "Page Title", name: "pageTitle" },
@@ -528,21 +599,31 @@ const WebPage = () => {
                 { label: "Search Keywords", name: "searchKeywords" },
               ].map(({ label, name }) => (
                 <div className="flex items-center gap-4 ml-20" key={name}>
-                  <Label htmlFor={name} className="w-[190px] text-right 2xl:!text-2xl">
+                  <Label
+                    htmlFor={name}
+                    className="w-[190px] text-right 2xl:!text-2xl"
+                  >
                     {label} (Optional):
                   </Label>
                   <Controller
                     name={name as keyof FormValues}
                     control={control}
                     render={({ field }) => (
-                      <Input id={name} {...field} value={field.value as string} />
+                      <Input
+                        id={name}
+                        {...field}
+                        value={field.value as string}
+                      />
                     )}
                   />
                 </div>
               ))}
 
               <div className="flex items-center gap-4 ml-20">
-                <Label htmlFor="templateLayoutFile" className="w-[190px] text-right 2xl:!text-2xl">
+                <Label
+                  htmlFor="templateLayoutFile"
+                  className="w-[190px] text-right 2xl:!text-2xl"
+                >
                   Template Layout File:
                 </Label>
                 <Controller
@@ -555,8 +636,12 @@ const WebPage = () => {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="default">default</SelectItem>
-                        <SelectItem value="page-full-width">page-full-width</SelectItem>
-                        <SelectItem value="multi-add-skus">multi-add-skus</SelectItem>
+                        <SelectItem value="page-full-width">
+                          page-full-width
+                        </SelectItem>
+                        <SelectItem value="multi-add-skus">
+                          multi-add-skus
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   )}
@@ -580,8 +665,12 @@ const WebPage = () => {
                           {...field}
                           className="mr-2"
                         />
-                        <Label htmlFor="restrictToCustomersOnly" className="cursor-pointer 2xl:!text-2xl">
-                          Yes, only allow customers who've logged in to view this page
+                        <Label
+                          htmlFor="restrictToCustomersOnly"
+                          className="cursor-pointer 2xl:!text-2xl"
+                        >
+                          Yes, only allow customers who've logged in to view
+                          this page
                         </Label>
                       </div>
                     </div>
@@ -590,14 +679,22 @@ const WebPage = () => {
               </div>
 
               <div className="flex items-start gap-4 pt-4 ml-20">
-                <Label htmlFor="sortOrder" className="w-[190px] text-right 2xl:!text-2xl">
+                <Label
+                  htmlFor="sortOrder"
+                  className="w-[190px] text-right 2xl:!text-2xl"
+                >
                   Sort Order (Optional):
                 </Label>
                 <Controller
                   name="sortOrder"
                   control={control}
                   render={({ field }) => (
-                    <Input id="sortOrder" {...field} type="number" className="w-[100px]" />
+                    <Input
+                      id="sortOrder"
+                      {...field}
+                      type="number"
+                      className="w-[100px]"
+                    />
                   )}
                 />
               </div>

@@ -57,7 +57,7 @@ const SettingShipping = () => {
                     {/* <h1 className=" mb-6 !font-extralight 2xl:!text-[3.2rem]">Settings</h1> */}
                     <div className="flex items-center justify-between mb-10">
                         <div>
-                            <h1 className=" text-gray-900 !font-extralight 2xl:!text-[3.2rem]">Shipping</h1>
+                            <h1 className=" text-gray-900 !font-extralight !text-[30px]">Shipping</h1>
                         </div>
                         {/* <div className="flex items-center gap-6 text-sm">
                             <a
@@ -75,21 +75,21 @@ const SettingShipping = () => {
                         </div> */}
                     </div>
                     <div className="flex-1">
-                        <h2 className="  mb-3  !text-black !font-bold  text-[15px] 2xl:!text-[1.6rem]">Shipping origin</h2>
-                        <p className=" leading-relaxed  mt-5 text-gray-600 2xl:!text-[1.6rem]">
+                        <h2 className="  mb-3  !text-[#34313f] !font-bold  text-[20px] 2xl:!text-[1.6rem]">Shipping origin</h2>
+                        <p className=" leading-relaxed  mt-5 !text-[#5D5B66] !text-[15px] ">
                             The shipping origin is the address where you ship your products from.
                             It is also used to calculate the shipping rates displayed to your customers within the checkout.
                         </p>
                     </div>
-                    <Card className="p-6 bg-white shadow-sm mt-10">
+                    <Card className="p-6 bg-white shadow-sm !rounded-none mt-10">
                         <div className="flex justify-between items-center">
                             <div className="flex-1">
-                                <div className="mt-5 text-2xl text-gray-700 leading-relaxed">
-                                    <p>{sourceAddress?.address_line_1}</p>
-                                    <p>{sourceAddress?.postal_code}</p>
-                                    <p>{sourceAddress?.city}</p>
-                                    <p>{sourceAddress?.state}</p>
-                                    <p>{sourceAddress?.country}</p>
+                                <div className="mt-5 !text-[15px] !text-[#5D5B66]  leading-relaxed">
+                                    <p className='!text-[15px] !text-[#5D5B66] '>{sourceAddress?.address_line_1}</p>
+                                    <p className='!text-[15px] !text-[#5D5B66] '>{sourceAddress?.postal_code}</p>
+                                    <p className='!text-[15px] !text-[#5D5B66] '>{sourceAddress?.city}</p>
+                                    <p className='!text-[15px] !text-[#5D5B66] '>{sourceAddress?.state}</p>
+                                    <p className='!text-[15px] !text-[#5D5B66] '>{sourceAddress?.country}</p>
                                 </div>
                             </div>
                             <button
@@ -103,17 +103,17 @@ const SettingShipping = () => {
                         </div>
                     </Card>
                     <div className="flex-1 mt-10">
-                        <h2 className="text-xl  mb-3  text-black !font-bold   text-[15px] 2xl:!text-[1.6rem]">Checkout shipping options</h2>
+                        <h2 className="mb-3  !text-[#34313f]    !text-[20px] 2xl:!text-[1.6rem]">Checkout shipping options</h2>
 
-                        <p className=" leading-relaxed  mt-5 text-gray-600 2xl:!text-[1.6rem]">
+                        <p className=" leading-relaxed  mt-5 !text-[#5D5B66]  !text-[15px]">
                             Manage your shipping zones, carriers and rukes you want to offer to your customers within the checkout.
                         </p>
                     </div>
                     <Card className="p-6 bg-white shadow-sm mt-6">
 
                         {/* Header */}
-                        <div className="flex justify-between items-center mb-6">
-                            <h3 className="font-semibold text-gray-600 text-[15px] 2xl:!text-[1.6rem]">
+                        <div className="flex justify-between items-center rounded-none mb-6">
+                            <h3 className="font-semibold !text-[#5D5B66] !text-[15px] ">
                                 Configure your shipping rules
                             </h3>
                             {/* <button type="button"
@@ -176,18 +176,18 @@ const SettingShipping = () => {
 
                                         {/* Col 2: Country Name */}
                                         <div className="w-56 flex-shrink-0 pt-0.5">
-                                            <p className="font-medium text-gray-600 2xl:text-[1.6rem]">{item?.name}</p>
+                                            <p className="font-medium !text-[#5D5B66] !text-[15px]">{item?.name}</p>
                                         </div>
 
                                         {/* Col 3: Description + Toggle + Buttons */}
                                         <div className="flex flex-1 items-center justify-between gap-4">
-                                            <p className="text-gray-600 2xl:!text-[1.6rem] leading-relaxed">
+                                            <p className="!text-[15px] !text-[#5D5B66] leading-relaxed">
                                                 {/* FedEx<br />
                                                 I will provide the shipping label/others (Mentions the details on below comments box) */}
                                                 {item?.shipping_methods
                                                     ?.filter((m: any) => m.is_active)
                                                     .map((m: any, index: number) => (
-                                                        <span key={m.id ?? index}>
+                                                        <span key={m.id ?? index} className="!text-[15px] !font-normal !text-[#5D5B66]">
                                                             {m?.display_name}
                                                             <br />
                                                         </span>
