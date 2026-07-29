@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useMemo } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Editor } from "@tinymce/tinymce-react";
 import { Input } from "@/components/ui/input";
@@ -16,6 +16,9 @@ import {
   updateBlog,
 } from "@/redux/slices/storefrontSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
+import ReactQuill from "react-quill-new";
+import "react-quill-new/dist/quill.snow.css";
+
 export default function BlogPage() {
   type FormValues = {
     title: string;
@@ -40,6 +43,39 @@ export default function BlogPage() {
         isDraft: false,
       },
     });
+  const formats = [
+    "header",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "color",
+    "background",
+    "list",
+    "bullet",
+    "align",
+    "link",
+    "image",
+    "blockquote",
+    "code-block",
+  ];
+
+  const modules = useMemo(
+    () => ({
+      toolbar: [
+        [{ header: [1, 2, 3, false] }],
+        ["bold", "italic", "underline", "strike"],
+        [{ color: [] }, { background: [] }],
+        [{ list: "ordered" }, { list: "bullet" }],
+        [{ align: [] }],
+        ["link", "image"],
+        ["blockquote", "code-block"],
+        ["clean"],
+      ],
+    }),
+    [],
+  );
+
   const params = useParams();
   const id = params?.id; // will be undefined if it's a "create" page
 
@@ -154,106 +190,13 @@ export default function BlogPage() {
                 control={control}
                 rules={{ required: true }}
                 render={({ field }) => (
-                  <Editor
-                    apiKey="d2z6pu70qtywhkzox051ga0czhas02dp55gl9bxijefs4vxo"
-                    onInit={(evt, editor) => (editorRef.current = editor)}
-                    value={field.value}
-                    onEditorChange={(content) => field.onChange(content)}
-                    init={{
-                      height: 500,
-                      menubar: true,
-                      directionality: "ltr",
-                      plugins: [
-                        "advlist",
-                        "autolink",
-                        "lists",
-                        "link",
-                        "image",
-                        "charmap",
-                        "preview",
-                        "anchor",
-                        "searchreplace",
-                        "visualblocks",
-                        "code",
-                        "fullscreen",
-                        "insertdatetime",
-                        "media",
-                        "table",
-                        "toc",
-                        "help",
-                        "wordcount",
-                        "emoticons",
-                        "hr",
-                        "pagebreak",
-                        "print",
-                      ],
-                      // Cleaned up toolbar (removed duplicate line)
-                      toolbar: `undo redo | blocks fontfamily fontsize | bold italic underline strikethrough forecolor backcolor | 
-            alignleft aligncenter alignright alignjustify | outdent indent | numlist bullist |  
-            link image media table hr emoticons toc | code fullscreen preview print | removeformat`,
-
-                      branding: false,
-                      default_link_target: "_blank",
-                      toolbar_mode: "sliding",
-
-                      // TOC configuration (Correct, no change needed)
-                      toc_header: "h1,h2,h3",
-                      toc_depth: 3,
-                      toc_class: "my-toc",
-
-                      // Image upload (Correct, assuming editorRef is a valid React Ref)
-                      images_upload_url: "/api/upload",
-                      automatic_uploads: true,
-                      file_picker_types: "image",
-                      file_picker_callback: function (
-                        callback: any,
-                        value: any,
-                        meta: any
-                      ) {
-                        if (meta.filetype === "image") {
-                          const input = document.createElement("input");
-                          input.setAttribute("type", "file");
-                          input.setAttribute("accept", "image/*");
-                          input.onchange = function (ev: Event) {
-                            const target = ev.currentTarget as HTMLInputElement;
-                            const file = target.files?.[0];
-                            if (!file) return;
-
-                            const reader = new FileReader();
-                            reader.onload = function () {
-                              if (
-                                reader.result &&
-                                typeof reader.result === "string"
-                              ) {
-                                // **Crucially relies on editorRef.current being set**
-                                const editorInstance = editorRef.current;
-                                if (!editorInstance) return;
-
-                                const id = "blobid" + new Date().getTime();
-                                const blobCache =
-                                  editorInstance.editorUpload.blobCache;
-                                const base64 = reader.result.split(",")[1];
-                                const blobInfo = blobCache.create(
-                                  id,
-                                  file,
-                                  base64
-                                );
-                                blobCache.add(blobInfo);
-                                callback(blobInfo.blobUri(), {
-                                  title: file.name,
-                                });
-                              } else {
-                                console.error(
-                                  "FileReader result is null or not a string"
-                                );
-                              }
-                            };
-                            reader.readAsDataURL(file);
-                          };
-                          input.click();
-                        }
-                      },
-                    }}
+                  <ReactQuill
+                    theme="snow"
+                    value={field.value || ""}
+                    onChange={field.onChange}
+                    modules={modules}
+                    formats={formats}
+                    placeholder="Write your description here..."
                   />
                 )}
               />
@@ -309,7 +252,7 @@ export default function BlogPage() {
                       setPreview(null);
                       // Clear the file input manually
                       const input = document.getElementById(
-                        "thumbnail"
+                        "thumbnail",
                       ) as HTMLInputElement;
                       if (input) input.value = "";
                     }}
@@ -328,17 +271,25 @@ export default function BlogPage() {
         {/* SEO Section */}
         <div className="mb-30">
           <div className="  bg-white p-10 rounded-sm shadow-md ">
-            <h1 className="!font-bold my-5 2xl:!text-[2.4rem]">SEO (optional)</h1>
+            <h1 className="!font-bold my-5 2xl:!text-[2.4rem]">
+              SEO (optional)
+            </h1>
             <div className="ml-30 flex flex-col gap-10">
               <div className="flex items-center gap-4">
-                <Label htmlFor="Your post URL" className="w-[120px] 2xl:!text-2xl">
+                <Label
+                  htmlFor="Your post URL"
+                  className="w-[120px] 2xl:!text-2xl"
+                >
                   Post URL
                 </Label>
                 <Input placeholder="Your post URL" {...register("postUrl")} />
               </div>
 
               <div className="flex items-center gap-4">
-                <Label htmlFor=" Meta description" className="w-[120px] 2xl:!text-2xl">
+                <Label
+                  htmlFor=" Meta description"
+                  className="w-[120px] 2xl:!text-2xl"
+                >
                   Meta description
                 </Label>
                 <Input
