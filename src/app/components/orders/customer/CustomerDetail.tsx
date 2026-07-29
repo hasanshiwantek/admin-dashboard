@@ -399,7 +399,7 @@ const CustomerDetail = () => {
                                                 onCheckedChange={() => handleSelectOne(customer)}
                                             />
                                         </TableCell>
-                                        <TableCell>
+                                        {/* <TableCell>
                                             <button
                                                 onClick={() => toggleRow(customer, singleCustomer)}
                                                 className="mt-3"
@@ -410,7 +410,7 @@ const CustomerDetail = () => {
                                                     <FaCirclePlus className="h-7 w-7 fill-blue-500" />
                                                 )}
                                             </button>
-                                        </TableCell>
+                                        </TableCell> */}
                                         <TableCell>
                                             <div className=" text-blue-600 cursor-pointer hover:underline">
                                                 <Link className="2xl:!text-2xl" href={`/manage/customers/edit/${customer?.id}`}>
