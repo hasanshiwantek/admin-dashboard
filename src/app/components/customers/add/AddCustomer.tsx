@@ -176,12 +176,12 @@ const AddCustomer = () => {
             >
               Customer details
             </button>
-            <button
+            {/* <button
               className="pb-2 text-xl font-medium text-gray-500 2xl:!text-2xl"
               type="button"
             >
               Custom address book
-            </button>
+            </button> */}
           </div>
 
           <div className="p-6">

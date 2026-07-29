@@ -268,11 +268,11 @@ export default function ShipByWeightModal({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[760px] max-h-[90vh] overflow-hidden flex flex-col p-0">
+            <DialogContent className="sm:max-w-[760px] max-h-[90vh] overflow-hidden flex flex-col p-5">
 
                 {/* Header */}
-                <DialogHeader className="px-6 pt-6 pb-4 border-b">
-                    <DialogTitle className="text-xl font-semibold text-gray-800">
+                <DialogHeader className="px-6 pt-6 pb-8">
+                    <DialogTitle className="!text-[20px] !font-semibold !text-[#313440]">
                         Ship by weight or order total options
                     </DialogTitle>
                 </DialogHeader>
@@ -282,7 +282,7 @@ export default function ShipByWeightModal({
                     <div className="flex gap-8">
                         <button
                             type="button"
-                            className="py-4 text-[15px] font-medium border-b-2 border-blue-600 text-blue-600"
+                            className="py-4 text-[15px] !text-[#34313f] font-medium border-b-4 border-blue-600 text-blue-600"
                         >
                             Settings
                         </button>
@@ -304,21 +304,21 @@ export default function ShipByWeightModal({
                     )}
 
                     {/* Display name */}
-                    <div>
-                        <Label className="text-sm text-gray-600 font-medium">
+                    <div  className="w-full" >
+                        <Label className="!text-[15px] text-[#5D5B66] font-medium">
                             Display name
                         </Label>
                         <Input
                             value={displayName}
                             onChange={(e) => setDisplayName(e.target.value)}
                             placeholder="Flat Rate for under 10 LBS*"
-                            className="mt-1"
+                            className="mt-1 h-15 max-w-[470px] "
                         />
                     </div>
 
                     {/* Charge shipping */}
-                    <div>
-                        <Label className="text-sm text-gray-600 font-medium">
+                    <div className="!mt-10">
+                        <Label className="!text-[15px] text-[#5D5B66]  font-medium">
                             Charge shipping
                         </Label>
                         <Select
@@ -327,22 +327,22 @@ export default function ShipByWeightModal({
                                 setChargeShipping(v as "by_weight" | "by_order_total")
                             }
                         >
-                            <SelectTrigger className="mt-1 w-full sm:w-[280px]">
+                            <SelectTrigger className="mt-1 w-full !h-[16] sm:w-[280px]">
                                 <SelectValue placeholder="Select" />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="by_weight">By weight</SelectItem>
-                                <SelectItem value="by_order_total">
+                                {/* <SelectItem value="by_order_total">
                                     By order total
-                                </SelectItem>
+                                </SelectItem> */}
                             </SelectContent>
                         </Select>
                     </div>
 
                     {/* Default shipping cost + Type */}
-                    <div className="flex flex-col sm:flex-row gap-4">
+                    <div className="flex flex-col gap-2 !mt-10 mb-8 sm:flex-row sm:items-end sm:gap-3">
                         <div className="flex-1">
-                            <Label className="text-sm text-gray-600 font-medium">
+                            <Label className="!text-[15px] text-[#5D5B66]  font-medium">
                                 Default shipping cost{" "}
                                 <span className="text-gray-400 font-normal">
                                     (optional)
@@ -358,7 +358,7 @@ export default function ShipByWeightModal({
                             />
                         </div>
                         <div className="w-full sm:w-[220px]">
-                            <Label className="text-sm text-gray-600 font-medium">
+                            <Label className="!text-[15px] text-[#5D5B66]  font-medium">
                                 Type
                             </Label>
                             <Select value={type} onValueChange={setType}>
@@ -376,25 +376,25 @@ export default function ShipByWeightModal({
                     <hr className="border-gray-200" />
 
                     {/* Ranges */}
-                    <div>
-                        <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                    <div className=" mt-5">
+                        <h3 className="!text-[20px] !font-semibold text-[#34313f] mb-9">
                             Ranges
                         </h3>
 
                         {/* Column headers */}
                         <div className="flex gap-4 mb-2">
                             <div className="flex-1">
-                                <Label className="text-sm text-gray-600 font-medium">
+                                <Label className="!text-[15px] text-[#5D5B66] font-medium">
                                     From
                                 </Label>
                             </div>
                             <div className="flex-1">
-                                <Label className="text-sm text-gray-600 font-medium">
+                                <Label className="!text-[15px] text-[#5D5B66] font-medium">
                                     Up to (but not inc.)
                                 </Label>
                             </div>
                             <div className="flex-1">
-                                <Label className="text-sm text-gray-600 font-medium">
+                                <Label className="!text-[15px] text-[#5D5B66] font-medium">
                                     Cost
                                 </Label>
                             </div>
@@ -418,6 +418,7 @@ export default function ShipByWeightModal({
                                                 )
                                             }
                                             placeholder="0.00"
+                                            className="h-14"
                                         />
                                     </div>
                                     <div className="flex-1">
@@ -431,6 +432,7 @@ export default function ShipByWeightModal({
                                                 )
                                             }
                                             placeholder="1 000.00"
+                                            className="h-14"
                                         />
                                     </div>
                                     <div className="flex-1">
@@ -448,7 +450,7 @@ export default function ShipByWeightModal({
                                                     )
                                                 }
                                                 placeholder="10.00"
-                                                className="pl-7"
+                                                className="pl-7 h-14"
                                             />
                                         </div>
                                     </div>
@@ -460,9 +462,9 @@ export default function ShipByWeightModal({
                                             variant="outline"
                                             size="icon"
                                             onClick={addRange}
-                                            className="border-blue-500 text-blue-600 hover:bg-blue-50 shrink-0"
+                                            className="h-14 w-14 border-blue-500 text-blue-600 rounded-none hover:bg-blue-50 shrink-0"
                                         >
-                                            <Plus size={18} />
+                                            <Plus size={44} />
                                         </Button>
                                     ) : (
                                         <Button
@@ -482,12 +484,12 @@ export default function ShipByWeightModal({
                 </div>
 
                 {/* Footer */}
-                <div className="flex justify-end items-center gap-4 px-6 py-4 border-t bg-white">
+                <div className="flex justify-end items-center gap-4 px-6 py-4 ">
                     <Button
                         type="button"
                         variant="ghost"
                         onClick={() => onOpenChange(false)}
-                        className="text-blue-600 hover:text-blue-700"
+                        className="text-blue-600 h-14 px-8 !text-[14px] hover:text-blue-700"
                         disabled={saving}
                     >
                         Cancel
@@ -496,7 +498,7 @@ export default function ShipByWeightModal({
                         type="button"
                         onClick={handleSubmit}
                         disabled={loading || saving}
-                        className="bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50"
+                        className="bg-blue-600 h-14 px-8 !text-[14px] hover:bg-blue-700 text-white disabled:opacity-50"
                     >
                         {saving ? "Saving…" : "Submit"}
                     </Button>
