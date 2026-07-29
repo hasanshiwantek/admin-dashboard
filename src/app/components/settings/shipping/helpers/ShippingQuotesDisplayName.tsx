@@ -178,11 +178,11 @@ export default function ShippingQuotesDisplayName({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[760px] max-h-[90vh] overflow-hidden flex flex-col p-0">
+            <DialogContent className="sm:max-w-[760px] max-h-[90vh] overflow-hidden flex flex-col p-6">
 
                 {/* Header */}
-                <DialogHeader className="px-6 pt-6 pb-4 border-b">
-                    <DialogTitle className="text-xl font-semibold text-gray-800">
+                <DialogHeader className="px-6 pt-6 pb-20 ">
+                    <DialogTitle className="!text-[20px] font-semibold text-[#31340]">
                         Pickup options
                     </DialogTitle>
                 </DialogHeader>
@@ -192,7 +192,7 @@ export default function ShippingQuotesDisplayName({
                     <div className="flex gap-8">
                         <button
                             type="button"
-                            className="py-4 text-[15px] font-medium border-b-2 border-blue-600 text-blue-600"
+                            className="py-4 text-[15px] text-[#34313F] font-medium border-b-2 border-blue-600 text-blue-600"
                         >
                             Settings
                         </button>
@@ -214,26 +214,26 @@ export default function ShippingQuotesDisplayName({
                     )}
 
                     {/* Display name */}
-                    <div>
-                        <Label className="text-sm text-gray-600 font-medium">
+                    <div className="w-full mb-10">
+                        <Label className="text-[15px] text-[#5D5866] font-medium">
                             Display name
                         </Label>
                         <Input
                             value={displayName}
                             onChange={(e) => setDisplayName(e.target.value)}
                             placeholder="Ship on my own/company shipping account (mention shipping account on order comments)"
-                            className="mt-1"
+                            className="mt-1 max-w-[490px] h-14 !font-normal"
                         />
                     </div>
                 </div>
 
                 {/* Footer */}
-                <div className="flex justify-end items-center gap-4 px-6 py-4 border-t bg-white">
+                <div className="flex justify-end items-center gap-4 px-6 py-4">
                     <Button
                         type="button"
                         variant="ghost"
                         onClick={() => onOpenChange(false)}
-                        className="text-blue-600 hover:text-blue-700"
+                        className="text-blue-600 h-14 px-8 !text-[14px] hover:text-blue-700"
                         disabled={saving}
                     >
                         Cancel
@@ -242,7 +242,7 @@ export default function ShippingQuotesDisplayName({
                         type="button"
                         onClick={handleSubmit}
                         disabled={loading || saving}
-                        className="bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50"
+                        className="bg-blue-600 h-14 px-8 !text-[14px] hover:bg-blue-700 text-white disabled:opacity-50"
                     >
                         {saving ? "Saving…" : "Submit"}
                     </Button>

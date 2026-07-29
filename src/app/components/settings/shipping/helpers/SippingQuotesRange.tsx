@@ -472,9 +472,9 @@ export default function ShipByWeightModal({
                                             variant="outline"
                                             size="icon"
                                             onClick={() => removeRange(index)}
-                                            className="border-red-300 text-red-500 hover:bg-red-50 shrink-0"
+                                            className=" h-14 w-14 border-red-300 rounded-none text-red-500 hover:bg-red-50 shrink-0"
                                         >
-                                            <Trash2 size={18} />
+                                            <Trash2 size={44} />
                                         </Button>
                                     )}
                                 </div>
