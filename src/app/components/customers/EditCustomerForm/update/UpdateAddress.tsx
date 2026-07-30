@@ -140,110 +140,118 @@ export default function UpdateAddress() {
     }
 
     return (
-        <div className="min-h-screen bg-[#f6f7fb]">
-            <form onSubmit={handleSubmit}>
-                <div className="max-w-3xl mx-auto px-6 py-10">
-                    <h1 className="text-[28px] font-light text-[#222] mb-8">
+         <div className="ab flex flex-col bg-[#f6f7fb]">
+         <form onSubmit={handleSubmit} className="flex min-h-[calc(100vh-64px)] flex-col">
+               <div className="max-w-[940px] mx-auto w-full flex-1 px-6 py-10">
+                    <h1 className="text-[30px] !font-light text-[#313440] mb-8">
                         Edit address
                     </h1>
 
-                    <div className="bg-white border border-[#e5e7eb] rounded-md p-8">
+                   <div className="bg-white border border-[#e5e7eb] rounded-md px-6 py-8">
                         {/* First Name + Last Name */}
-                        <div className="grid grid-cols-2 gap-6 mb-5">
+                      <div className="grid grid-cols-2 gap-x-5 gap-y-6 w-full">
                             <div>
-                                <Label className="text-[13px] mb-1.5 block">
-                                    First Name <span className="text-red-500">*</span>
+                                <Label className="text-[15px]   text-[#313440] font-semibold mb-2 block">
+                                    First Name <span className="!text-red-500">*</span>
                                 </Label>
                                 <Input
                                     value={form.first_name}
                                     onChange={(e) => updateField("first_name", e.target.value)}
                                     required
-                                    className="h-10"
+                                    className="h-12 rounded-sm "
                                 />
                             </div>
                             <div>
-                                <Label className="text-[13px] mb-1.5 block">
-                                    Last Name <span className="text-red-500">*</span>
+                                <Label className="text-[15px] text-[#313440] mb-1.5 block">
+                                    Last Name <span className="!text-red-500">*</span>
                                 </Label>
                                 <Input
                                     value={form.last_name}
                                     onChange={(e) => updateField("last_name", e.target.value)}
                                     required
-                                    className="h-10"
+                                    className="h-12 w-full"
                                 />
                             </div>
                         </div>
 
                         {/* Company + Phone */}
-                        <div className="grid grid-cols-2 gap-6 mb-5">
+                        <div className="grid grid-cols-2 gap-6  !text-[#313440] mb-5 mt-2 !w-full">
                             <div>
-                                <Label className="text-[13px] mb-1.5 block">Company Name</Label>
+                                <Label className="text-[15px] mb-1.5 block">
+                                    Company Name
+                                </Label>
                                 <Input
                                     value={form.company_name}
                                     onChange={(e) => updateField("company_name", e.target.value)}
-                                    className="h-10"
+                                    className="h-12 w-full"
                                 />
                             </div>
                             <div>
-                                <Label className="text-[13px] mb-1.5 block">Phone Number</Label>
+                                <Label className="text-[15px] mb-1.5 block">
+                                    Phone Number
+                                </Label>
                                 <Input
                                     value={form.phone_number}
                                     onChange={(e) => updateField("phone_number", e.target.value)}
-                                    className="h-10"
+                                    className="h-12 w-full"
                                 />
                             </div>
                         </div>
 
                         {/* Address Line 1 */}
                         <div className="mb-5">
-                            <Label className="text-[13px] mb-1.5 block">
-                                Address Line 1 <span className="text-red-500">*</span>
+                            <Label className="text-[15px] mb-1.5 block">
+                                Address Line 1<span className="!text-red-500">*</span>
                             </Label>
                             <Input
                                 value={form.address_line_1}
                                 onChange={(e) => updateField("address_line_1", e.target.value)}
                                 required
-                                className="h-10"
+                                className="h-12 w-full"
                             />
                         </div>
 
                         {/* Address Line 2 */}
-                        <div className="mb-5">
-                            <Label className="text-[13px] mb-1.5 block">Address Line 2</Label>
+                        <div className="mb-5  !text-[#313440]">
+                            <Label className="text-[15px] mb-1.5 block">
+                                Address Line 2
+                            </Label>
                             <Input
                                 value={form.address_line_2}
                                 onChange={(e) => updateField("address_line_2", e.target.value)}
-                                className="h-10"
+                                className="h-12 w-full"
                             />
                         </div>
 
                         {/* City + State */}
                         <div className="grid grid-cols-2 gap-6 mb-5">
                             <div>
-                                <Label className="text-[13px] mb-1.5 block">
-                                    City <span className="text-red-500">*</span>
+                                <Label className="text-[15px] mb-1.5 block">
+                                    City <span className="!text-red-500">*</span>
                                 </Label>
                                 <Input
                                     value={form.city}
                                     onChange={(e) => updateField("city", e.target.value)}
                                     required
-                                    className="h-10"
+                                    className="h-12 w-full"
                                 />
                             </div>
                             <div>
-                                <Label className="text-[13px] mb-1.5 block">State</Label>
+                                <Label className="text-[15px]  text-[#313440] mb-1.5 block">
+                                    State
+                                </Label>
                                 <Select
                                     value={form.state}
                                     onValueChange={(val) => updateField("state", val)}
                                     disabled={!form.country}
                                 >
-                                    <SelectTrigger className="h-10">
+                                    <SelectTrigger className="h-12 w-full">
                                         <SelectValue placeholder="Choose state" />
                                     </SelectTrigger>
                                     <SelectContent className="max-h-72 overflow-y-auto">
-                                        {stateList.map((s, i) => (
-                                            <SelectItem key={i} value={s.code}>
-                                                {s.name}
+                                        {stateList?.map((c: any, i: number) => (
+                                            <SelectItem key={i} value={c.code}>
+                                                {c.name}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>
@@ -252,23 +260,23 @@ export default function UpdateAddress() {
                         </div>
 
                         {/* Country + Zip */}
-                        <div className="grid grid-cols-2 gap-6 mb-6">
+                        <div className="grid grid-cols-2 gap-6 mb-6 !w-full">
                             <div>
-                                <Label className="text-[13px] mb-1.5 block">
-                                    Country <span className="text-red-500">*</span>
+                                <Label className="text-[15px] mb-1.5 block">
+                                    Country <span className="!text-red-500">*</span>
                                 </Label>
                                 <Select
                                     value={form.country}
                                     onValueChange={(val) => {
                                         updateField("country", val);
-                                        updateField("state", "");
+                                        updateField("state", ""); // clear state when country changes
                                     }}
                                 >
-                                    <SelectTrigger className="h-10">
+                                    <SelectTrigger className="h-12 w-full">
                                         <SelectValue placeholder="Choose country" />
                                     </SelectTrigger>
                                     <SelectContent className="max-h-72 overflow-y-auto">
-                                        {countryList.map((c, i) => (
+                                        {countryList?.map((c: any, i: number) => (
                                             <SelectItem key={i} value={c.code}>
                                                 {c.name}
                                             </SelectItem>
@@ -277,26 +285,28 @@ export default function UpdateAddress() {
                                 </Select>
                             </div>
                             <div>
-                                <Label className="text-[13px] mb-1.5 block">Code postal</Label>
+                                <Label className="text-[15px]  text-[#313440] mb-1.5 block">
+                                    Code postal
+                                </Label>
                                 <Input
                                     value={form.zip}
                                     onChange={(e) => updateField("zip", e.target.value)}
-                                    className="h-10"
+                                    className="h-12 w-full"
                                 />
                             </div>
                         </div>
 
                         {/* Type */}
                         <div>
-                            <Label className="text-[13px] mb-3 block">Type</Label>
+                            <Label className="text-[15px]  text-[#313440] mb-3 block">Type</Label>
                             <RadioGroup
                                 value={form.type}
                                 onValueChange={(val) => updateField("type", val)}
                                 className="flex flex-col gap-2"
                             >
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center   text-[#313440] gap-2">
                                     <RadioGroupItem value="Residential" id="residential" />
-                                    <Label htmlFor="residential" className="text-[13px] cursor-pointer">
+                                    <Label htmlFor="residential" className="text-[15px] cursor-pointer">
                                         Residential
                                     </Label>
                                 </div>
@@ -312,7 +322,10 @@ export default function UpdateAddress() {
                 </div>
 
                 {/* Footer */}
-                <div className="sticky bottom-0 w-full border-t bg-white px-6 py-4 flex justify-end gap-3">
+              
+
+                
+          <div className="sticky bottom-0 w-full border-t bg-white px-6 py-4 flex justify-end gap-3">
                     <button
                         type="button"
                         onClick={() => router.back()}
@@ -320,6 +333,8 @@ export default function UpdateAddress() {
                     >
                         Cancel
                     </button>
+
+               
 
                     <button
                         type="submit"
