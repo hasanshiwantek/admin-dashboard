@@ -181,7 +181,7 @@ export default function AddAddress() {
                         {/* Address Line 1 */}
                         <div className="mb-5">
                             <Label className="text-[15px] mb-1.5 block">
-                                Address Line 1<span className="text-red-500">*</span>
+                                Address Line 1<span className="!text-red-500">*</span>
                             </Label>
                             <Input
                                 value={form.address_line_1}
@@ -194,7 +194,7 @@ export default function AddAddress() {
                         {/* Address Line 2 */}
                         <div className="mb-5  !text-[#313440]">
                             <Label className="text-[15px] mb-1.5 block">
-                                Address Line 1
+                                Address Line 2
                             </Label>
                             <Input
                                 value={form.address_line_2}
