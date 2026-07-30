@@ -82,6 +82,7 @@ import ConfirmationModal from "./edit/CaptuedPaymentModal";
 import ShipmentsTableModal from "./edit/ShipmentsTableModal";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
+import ShipmentModalForId from "./edit/ShipmentModalForId";
 
 countries?.registerLocale(enLocale);
 
@@ -115,6 +116,7 @@ const AllOrders = () => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [showVoidConfirm, setShowVoidConfirm] = useState(false);
   const [showShipmentTable, setShowShipmentTable] = useState(false);
+  const [showShipmentIdTable, setShowShipmentIdTable] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState<any>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -739,10 +741,10 @@ const AllOrders = () => {
   };
 
   useEffect(() => {
-    if (showShipmentTable) {
+    if (showShipmentTable || showShipmentIdTable) {
       dispatch(shipmentByOrderId({ orderId: selectedOrderId })).unwrap();
     }
-  }, [showShipmentTable]);
+  }, [showShipmentTable, showShipmentIdTable]);
 
   // ERROR LOGIC
   if (error) {
@@ -1639,7 +1641,11 @@ const AllOrders = () => {
                                 <div className="flex flex-col flex-1 min-w-0">
                                   {["Shipped", "Completed"].includes(order?.status) && <div className="bg-gray-100 p-4 text-sm space-y-0">
                                     {order?.shipmentId && <div className="flex ">
-                                      <span className="!text-blue-400">Shipment #{order?.shipmentId}</span>
+                                      <span onClick={() => {
+                                        setSelectedOrderId(order.id);
+                                        setShowShipmentIdTable(true);
+
+                                      }} className="!text-blue-400 cursor-pointer">Shipment #{order?.shipmentId}</span>
                                     </div>}
                                     <div className="flex ">
                                       <span> {order?.products?.length} items @  {dayjs(order?.updatedAt).format(
@@ -1854,6 +1860,19 @@ const AllOrders = () => {
           open={showShipmentTable}
           onClose={() => setShowShipmentTable(false)}
           onConfirm={() => setShowShipmentTable(false)}
+          shipments={singleShipmentByOrder ? [singleShipmentByOrder] : []}
+          orderDetails={filteredOrders.find(
+            (item: any) => item.id == selectedOrderId,
+          )}
+          counrtyShipping={counrtyShipping}
+          counrtyBilling={counrtyBilling}
+        />
+      )}
+      {showShipmentIdTable && selectedOrderId && singleShipmentByOrder && (
+        <ShipmentModalForId
+          open={showShipmentIdTable}
+          onClose={() => setShowShipmentIdTable(false)}
+          onConfirm={() => setShowShipmentIdTable(false)}
           shipments={singleShipmentByOrder ? [singleShipmentByOrder] : []}
           orderDetails={filteredOrders.find(
             (item: any) => item.id == selectedOrderId,

@@ -37,10 +37,11 @@ const BrandTable = () => {
     },
   ];
   const dispatch = useAppDispatch();
+
   const brands = useAppSelector((state: any) => state.product.brands);
   const loading = useAppSelector((state: any) => state.product.loading);
   const searchParams = useSearchParams();
-  const brandData = brands?.data;
+  const brandData = brands?.data || [];
   const pagination = brands?.pagination;
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState("50");
@@ -48,20 +49,23 @@ const BrandTable = () => {
   const totalPages = pagination?.totalPages;
   const [keyword, setKeyword] = useState("");
   const [selectedIds, setSelectedIds] = useState<any[]>([]);
-  const isAllSelected = selectedIds.length === brandData?.length;
+  const isAllSelected =
+    brandData.length > 0 && selectedIds.length === brandData.length;
+  const isIndeterminate =
+    selectedIds.length > 0 && selectedIds.length < brandData.length;
 
   const toggleSelectAll = () => {
-    const newSelected = isAllSelected
-      ? []
-      : brandData.map((brand: any) => brand.id);
-    setSelectedIds(newSelected);
+    if (isAllSelected) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(brandData.map((item: any) => item.brand?.id).filter(Boolean));
+    }
   };
 
   const toggleSelectOne = (id: number) => {
-    const newSelected = selectedIds.includes(id)
-      ? selectedIds.filter((i) => i !== id)
-      : [...selectedIds, id];
-    setSelectedIds(newSelected);
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    );
   };
 
   // BRAND DELETION LOGIC
