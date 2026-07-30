@@ -12,6 +12,7 @@ import shippingZoneReducer from "./slices/shippingSlice"
 import reviewReducer from "./slices/reviewSlice"
 import orderMessageSlice from "./slices/orderMessageSlice"
 import userPermissionSlice from "./slices/userPermission"
+import storeLogsSlice from "./slices/storeLogsSlice"
 
 export const store = configureStore({
   reducer: {
@@ -28,6 +29,7 @@ export const store = configureStore({
     review: reviewReducer,
     orderMessage: orderMessageSlice,
     userPermission: userPermissionSlice,
+    storeLogs: storeLogsSlice,
   },
 });
 
