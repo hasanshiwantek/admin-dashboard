@@ -304,7 +304,7 @@ export default function ShipByWeightModal({
                     )}
 
                     {/* Display name */}
-                    <div  className="w-full" >
+                    <div className="w-full" >
                         <Label className="!text-[15px] text-[#5D5B66] font-medium">
                             Display name
                         </Label>
@@ -327,7 +327,7 @@ export default function ShipByWeightModal({
                                 setChargeShipping(v as "by_weight" | "by_order_total")
                             }
                         >
-                            <SelectTrigger className="mt-1 w-full !h-[16] sm:w-[280px]">
+                            <SelectTrigger className="mt-1 w-full !h-16 sm:w-[280px]">
                                 <SelectValue placeholder="Select" />
                             </SelectTrigger>
                             <SelectContent>
