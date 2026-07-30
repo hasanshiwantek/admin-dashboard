@@ -1017,6 +1017,9 @@ const AllOrders = () => {
                   };
                   const riskLevel = order?.payment?.risk_level;
                   const risk = riskConfig[riskLevel];
+                  const isMobileOrTablet =
+                    order?.deviceType?.includes("Mobile") ||
+                    order?.deviceType?.includes("Tablet");
                   return (
                     <Fragment key={order?.id}>
                       <TableRow key={order?.id}>
@@ -1044,8 +1047,7 @@ const AllOrders = () => {
                           </button>
                         </TableCell>
                         <TableCell>
-                          {order?.deviceType === "Server Blink (Tablet)" ||
-                            order?.deviceType === "Server Blink (Mobile)" ? (
+                          {isMobileOrTablet ? (
                             <TooltipProvider>
                               <Tooltip>
                                 <TooltipTrigger asChild>
@@ -1081,7 +1083,7 @@ const AllOrders = () => {
                           )}
                         </TableCell>
 
-                        <TableCell className="text-blue-600 2xl:!text-2xl">
+                        <TableCell className=" 2xl:!text-2xl">
                           {order.id}
                         </TableCell>
                         <TableCell>
@@ -1341,8 +1343,7 @@ const AllOrders = () => {
                                     {order?.ipAddress && (
                                       <MonitorCheck className="w-5 h-5 text-gray-500" />
                                     )}
-                                    {order?.deviceType === "Server Blink (Tablet)" ||
-                                      order?.deviceType === "Server Blink (Mobile)" ? (
+                                    {isMobileOrTablet ? (
                                       <Smartphone className="w-5 h-5 text-gray-500" />
                                     ) : (
                                       <Monitor className="w-5 h-5 text-gray-500" />
@@ -1514,7 +1515,7 @@ const AllOrders = () => {
                                       copyBilling(order?.billingInformation)
                                     }
                                   >
-                                    <Copy  size={8} />
+                                    <Copy size={8} />
                                     Copy
                                   </button>
 
@@ -1618,7 +1619,7 @@ const AllOrders = () => {
 
                                   <div className="flex items-center gap-2">
                                     {/* <Mail className="w-5 h-5 text-gray-500" /> */}
-                                    <Link className="text-[#6f8DFD] text-[13px]"  href={`mailto:${order.billingInformation.email}`}>
+                                    <Link className="text-[#6f8DFD] text-[13px]" href={`mailto:${order.billingInformation.email}`}>
                                       {order?.billingInformation?.email ||
                                         "N/A"}
                                     </Link>

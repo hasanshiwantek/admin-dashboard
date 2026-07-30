@@ -247,7 +247,7 @@ const SettingsPage = () => {
                 Advanced
               </h1>
 
-              {/* <div onClick={() => router.push("/manage/settings/storeLogs")} className="flex items-center justify-between border-b border-gray-200 pb-4 cursor-pointer group">
+              <div onClick={() => router.push("/manage/settings/storeLogs")} className="flex items-center justify-between border-b border-gray-200 pb-4 cursor-pointer group">
                 <div className="flex items-center gap-25">
                   <span className="!text-black !font-bold 2xl:!text-[1.6rem]">
                     Store logs
@@ -274,7 +274,7 @@ const SettingsPage = () => {
                     d="M9 6l6 6-6 6"
                   />
                 </svg>
-              </div> */}
+              </div>
               <div onClick={() => router.push("/manage/settings/user-permission")} className="flex items-center justify-between border-b border-gray-200 pb-4 cursor-pointer group">
                 <div className="flex items-center gap-25">
                   <span className="!text-black !font-bold 2xl:!text-[1.6rem]">
