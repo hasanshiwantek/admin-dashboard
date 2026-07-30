@@ -43,7 +43,7 @@ function SelectTrigger({
       data-slot="select-trigger"
       data-size={size}
       className={cn(
-        "w-full max-w-md", // ✅ Matches Input field size
+        "w-full ", // ✅ Matches Input field size
         "text-xl border border-gray-400 data-[placeholder]:text-muted-foreground [&_svg:not([class*='text-'])]:text-muted-foreground font-medium",
         "focus:border-blue-400 focus:ring-blue-300 focus:ring-2 focus:border-1",
         "focus-visible:border-blue-300 focus-visible:ring-blue-300 focus-visible:ring-1 focus-visible:border-1",
