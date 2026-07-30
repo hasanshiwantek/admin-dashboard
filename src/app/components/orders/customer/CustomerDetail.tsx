@@ -333,20 +333,20 @@ const CustomerDetail = () => {
                         <PlusIcon className="!w-5 !h-5" /> Add
                     </Button>
                 </Link>
-                <Button
+                {/* <Button
                     variant="outline"
                     className="flex items-center gap-2 !p-6 btn-outline-primary"
                     onClick={deleteCustomerHandler}
                 >
                     <Trash className="!w-5 !h-5" />
-                </Button>
-                <Button
+                </Button> */}
+                {/* <Button
                     onClick={handleExport}
                     variant="outline"
                     className="flex items-center gap-2 !p-6 btn-outline-primary 2xl:!text-2xl"
                 >
                     <DownloadIcon className="!w-5 !h-5" /> Export selected customers
-                </Button>
+                </Button> */}
             </div>
 
             {/* Table */}
@@ -354,13 +354,6 @@ const CustomerDetail = () => {
                 <Table>
                     <TableHeader className="!bg-gray-50 ">
                         <TableRow className="h-18">
-                            <TableHead>
-                                <Checkbox
-                                    checked={selectedCustomers.length === [singleCustomer?.customer]?.length}
-                                    onCheckedChange={handleSelectAll}
-                                />
-                            </TableHead>
-                            <TableHead></TableHead>
                             <TableHead className="2xl:!text-[1.6rem]">Name</TableHead>
                             <TableHead className="2xl:!text-[1.6rem]">Email</TableHead>
                             <TableHead className="2xl:!text-[1.6rem]">Phone</TableHead>
@@ -391,26 +384,7 @@ const CustomerDetail = () => {
                             [singleCustomer?.customer]?.map((customer: any, index: number) => {
                                 return <Fragment key={customer?.id}>
                                     <TableRow key={customer?.id} className="h-26 ">
-                                        <TableCell>
-                                            <Checkbox
-                                                checked={selectedCustomers.some(
-                                                    (c) => c.id === customer?.id
-                                                )}
-                                                onCheckedChange={() => handleSelectOne(customer)}
-                                            />
-                                        </TableCell>
-                                        {/* <TableCell>
-                                            <button
-                                                onClick={() => toggleRow(customer, singleCustomer)}
-                                                className="mt-3"
-                                            >
-                                                {expandedRow === customer?.id ? (
-                                                    <FaCircleMinus className="h-7 w-7 fill-blue-500" />
-                                                ) : (
-                                                    <FaCirclePlus className="h-7 w-7 fill-blue-500" />
-                                                )}
-                                            </button>
-                                        </TableCell> */}
+                                     
                                         <TableCell>
                                             <div className=" text-blue-600 cursor-pointer hover:underline">
                                                 <Link className="2xl:!text-2xl" href={`/manage/customers/edit/${customer?.id}`}>

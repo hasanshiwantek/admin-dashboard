@@ -187,6 +187,38 @@ export const importCustomerCsv = createAsyncThunk(
   }
 );
 
+export const fetchCustomerAddresses = createAsyncThunk(
+  "customer/fetchCustomerAddresses",
+  async ({ customerId }: { customerId: number }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.get(
+        `dashboard/customer-address/list?customer_id=${customerId}`
+      );
+      return res.data;
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to fetch customer addresses"
+      );
+    }
+  }
+);
+// DELETE customerAddressesDeleteMultiple THUNK
+export const customerAddressesDeleteMultiple = createAsyncThunk(
+  "customer/delete-multiple",
+  async ({ data }: { data: any }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.delete(
+        `dashboard/customer-address/delete-multiple`,
+        { data }
+      );
+      return res.data;
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to delete Customer"
+      );
+    }
+  }
+);
 // EXPORT CSV THUNK
 export const exportCustomerCsv = createAsyncThunk(
   "customer/exportCustomerCsv",
@@ -199,7 +231,7 @@ export const exportCustomerCsv = createAsyncThunk(
 
       // Create a blob URL for the file
       const blob = new Blob([response.data], {
-        type:  String(response.headers["content-type"] ?? ""),
+        type: String(response.headers["content-type"] ?? ""),
       });
       const downloadUrl = URL.createObjectURL(blob);
 
@@ -227,12 +259,67 @@ export const exportCustomerCsv = createAsyncThunk(
     }
   }
 );
+// ADD CUSTOMER ADDRESS
+export const addCustomerAddress = createAsyncThunk(
+  "customer/addCustomerAddress",
+  async ({ data }: { data: any }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.post(
+        `dashboard/customer-address/store`,
+        data
+      );
+      return res.data;
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to add address"
+      );
+    }
+  }
+);
+// GET SINGLE ADDRESS
+export const fetchCustomerAddressById = createAsyncThunk(
+  "customer/fetchCustomerAddressById",
+  async ({ addressId }: { addressId: number }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.get(
+        `dashboard/customer-address/show/${addressId}` // or adjust if backend uses different param
+      );
+      return res.data;
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to fetch address"
+      );
+    }
+  }
+);
 
+// UPDATE ADDRESS
+export const updateCustomerAddress = createAsyncThunk(
+  "customer/updateCustomerAddress",
+  async (
+    { addressId, data }: { addressId: number | string; data: any },
+    thunkAPI
+  ) => {
+    try {
+      const res = await axiosInstance.put(
+        `dashboard/customer-address/update/${addressId}`,
+        data
+      );
+      return res.data;
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to update address"
+      );
+    }
+  }
+);
 // 2. Initial State
 const initialState = {
   customers: [],
   singleCustomer: null,
+  customerAddresses: [],
   loading: false,
+  addressesLoading: false,
   error: null as string | null,
 };
 
@@ -288,6 +375,22 @@ const categorySlice = createSlice({
         state.loading = false;
         state.error =
           (action.payload as string) || action.error.message || "Failed";
+      })
+
+
+      // Customer Addresses
+      .addCase(fetchCustomerAddresses.pending, (state) => {
+        state.addressesLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchCustomerAddresses.fulfilled, (state, action) => {
+        state.addressesLoading = false;
+        state.customerAddresses = action.payload?.data?.customer_addresses || action.payload?.customer_addresses || [];
+      })
+      .addCase(fetchCustomerAddresses.rejected, (state, action) => {
+        state.addressesLoading = false;
+        state.error =
+          (action.payload as string) || action.error.message || "Failed to fetch addresses";
       })
   },
 });
