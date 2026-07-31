@@ -130,7 +130,7 @@ const EditCustomer = () => {
                         password: "",
                         confirmPassword: "",
                         analytics: c.analytics || "",
-                        functional: c.fuctional || "",
+                        functional: c.functional || "",
                         targeting: c.targeting || "",
                         address: c.address || "",
                         state: c.state || "",
