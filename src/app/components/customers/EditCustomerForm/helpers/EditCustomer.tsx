@@ -225,14 +225,14 @@ const EditCustomer = () => {
                     <button
                         type="button"
                         onClick={() => router.back()}
-                        className="flex items-center gap-2 text-[#6b7280] text-[14px] hover:text-black mb-5"
+                        className="flex items-center gap-2 text-[#8C93AD] !text-[15px] hover:text-black mb-5"
                     >
-                        <ArrowLeft size={14} />
-                        <span>Customers</span>
+                        <ArrowLeft size={17} />
+                        <span className=" text-[#8C93AD] !text-[15px] !font-normal">Customers</span>
                     </button>
 
                     {/* Title */}
-                    <h1 className="text-[32px] font-light text-[#222] mb-6">
+                    <h1 className="!text-[30px] !font-normal text-[#313440] mb-6">
                         {isEdit
                             ? `${formData.firstName} ${formData.lastName}`.trim() ||
                             "Update customer"
@@ -240,7 +240,7 @@ const EditCustomer = () => {
                     </h1>
 
                     {/* Info Banner (only on edit) */}
-                    {isEdit && (
+                    {/* {isEdit && (
                         <div className="bg-[#eef3ff] border border-[#d0dcff] rounded-md p-4 mb-6 flex gap-3 items-start">
                             <Info size={18} className="text-[#4361ee] mt-0.5 shrink-0" />
                             <div className="flex-1">
@@ -272,35 +272,35 @@ const EditCustomer = () => {
                                 </div>
                             </div>
                         </div>
-                    )}
+                    )} */}
 
                     {/* ==================== LOGIN DETAILS ==================== */}
-                    <div className="bg-white border border-[#e5e7eb] rounded-md p-6 mb-5">
-                        <h2 className="text-[16px] font-semibold text-[#222] mb-5">
+                    <div className="bg-white border border-[#e5e7eb] rounded-md p-6 mb-5 w-full shadow-sm">
+                        <h2 className="text-[22px] font-semibold text-[#313440] mb-5">
                             Login details
                         </h2>
 
-                        <div className="space-y-5 max-w-2xl">
+                        <div className="space-y-5 w-full">
                             {/* Email */}
-                            <div>
-                                <Label className="text-[13px] text-[#333] mb-1.5 block">
-                                    Address e-mail <span className="text-red-500">*</span>
+                            <div className="w-full">
+                                <Label className="text-[15px] text-[#313440] mb-1.5 block">
+                                    Address e-mail <span className="!text-red-500">*</span>
                                 </Label>
                                 <Input
                                     type="email"
                                     value={formData.email}
                                     onChange={(e) => updateField("email", e.target.value)}
                                     required
-                                    className="h-10"
+                                    className="h-12 w-full max-w-none"
                                 />
                             </div>
 
                             {/* Password */}
                             <div>
-                                <Label className="text-[13px] text-[#333] mb-1.5 block">
+                                <Label className=" text-[15px] text-[#313440] mb-1.5 block">
                                     Mot de passe
                                 </Label>
-                                <p className="text-[12px] text-gray-500 mb-1.5">
+                                <p className="text-[12px] text-[#5E637A] mb-1.5">
                                     Words must be at least 5 characters and contain: lowercase
                                     letters, uppercase letters, at least 1 number, at least 1
                                     special character
@@ -311,15 +311,18 @@ const EditCustomer = () => {
                                     onChange={(e) => updateField("password", e.target.value)}
                                     required={!isEdit}
                                     disabled={isEdit}
-                                    className="h-10"
+                                    className="h-12 w-full max-w-none"
                                     placeholder="••••••••"
                                 />
                             </div>
 
                             {/* Confirm Password */}
                             <div>
-                                <Label className="text-[13px] text-[#333] mb-1.5 block">
-                                    Confirmer le mot de passe
+                                <p className="text-[15px] text-[#313440] mb-1.5 block">
+                                   Confirmer le mot de passe
+                                </p>
+                                <Label  className="text-[12px] text-[#5E637A] mb-1.5" >
+                                   Re-enter the password
                                 </Label>
                                 <Input
                                     type="password"
@@ -329,8 +332,8 @@ const EditCustomer = () => {
                                     }
                                     required={!isEdit}
                                     disabled={isEdit}
-                                    className="h-10"
-                                    placeholder="Re-enter the password"
+                                   className="h-12 w-full max-w-none"
+                                     placeholder="••••••••"
                                 />
                             </div>
 
@@ -345,7 +348,7 @@ const EditCustomer = () => {
                                 />
                                 <label
                                     htmlFor="forceReset"
-                                    className="text-[13px] text-[#333] cursor-pointer"
+                                    className="text-[15px] text-[#313440] cursor-pointer"
                                 >
                                     Request customer to set their password on next login
                                 </label>
@@ -355,52 +358,52 @@ const EditCustomer = () => {
 
                     {/* ==================== CUSTOMER DETAILS ==================== */}
                     <div className="bg-white border border-[#e5e7eb] rounded-md p-6 mb-5">
-                        <h2 className="text-[16px] font-semibold text-[#222] mb-5">
+                        <h2 className="!text-[22px] font-semibold text-[#313440] mb-5">
                             Customer details
                         </h2>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5 max-w-3xl">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5  w-full">
                             {/* First Name */}
                             <div>
-                                <Label className="text-[13px] text-[#333] mb-1.5 block">
+                                <Label className="text-[15px] text-[#313440] mb-1.5 block">
                                     First name <span className="text-red-500">*</span>
                                 </Label>
                                 <Input
                                     value={formData.firstName}
                                     onChange={(e) => updateField("firstName", e.target.value)}
                                     required
-                                    className="h-10"
+                                    className="h-12 max-w-none w-full"
                                 />
                             </div>
 
                             {/* Last Name */}
                             <div>
-                                <Label className="text-[13px] text-[#333] mb-1.5 block">
+                                <Label className="text-[15px] text-[#313440] mb-1.5 block">
                                     Last name <span className="text-red-500">*</span>
                                 </Label>
                                 <Input
                                     value={formData.lastName}
                                     onChange={(e) => updateField("lastName", e.target.value)}
                                     required
-                                    className="h-10"
+                                     className="h-12 max-w-none w-full"
                                 />
                             </div>
 
                             {/* Phone */}
                             <div>
-                                <Label className="text-[13px] text-[#333] mb-1.5 block">
+                                <Label className="text-[15px] text-[#313440] mb-1.5 block">
                                     Phone number
                                 </Label>
                                 <Input
                                     value={formData.phone}
                                     onChange={(e) => updateField("phone", e.target.value)}
-                                    className="h-10"
+                                    className="h-12 max-w-none w-full"
                                 />
                             </div>
 
                             {/* Store Credit */}
                             <div>
-                                <Label className="text-[13px] text-[#333] mb-1.5 block">
+                                <Label className="text-[15px] text-[#313440] mb-1.5 block">
                                     Store credit
                                 </Label>
                                 <div className="relative">
@@ -410,14 +413,14 @@ const EditCustomer = () => {
                                     <Input
                                         value={formData.storeCredit}
                                         onChange={(e) => updateField("storeCredit", e.target.value)}
-                                        className="h-10 pl-7"
+                                        className="h-10 pl-7 max-w-none w-full"
                                     />
                                 </div>
                             </div>
 
                             {/* Customer Group */}
                             <div>
-                                <Label className="text-[13px] text-[#333] mb-1.5 block">
+                                <Label className="text-[15px] text-[#313440] mb-1.5 block">
                                     Customer group <span className="text-red-500">*</span>
                                 </Label>
                                 <Select
@@ -438,25 +441,25 @@ const EditCustomer = () => {
 
                             {/* Company Name */}
                             <div>
-                                <Label className="text-[13px] text-[#333] mb-1.5 block">
+                                <Label className="text-[15px] text-[#313440]mb-1.5 block">
                                     Company name
                                 </Label>
                                 <Input
                                     value={formData.companyName}
                                     onChange={(e) => updateField("companyName", e.target.value)}
-                                    className="h-10"
+                                    className="h-14 max-w-none w-full"
                                 />
                             </div>
 
                             {/* Tax Exempt */}
                             <div className="md:col-span-2">
-                                <Label className="text-[13px] text-[#333] mb-1.5 block">
+                                <Label className="text-[15px] text-[#313440] mb-1.5 block">
                                     Tax exempt code
                                 </Label>
                                 <Input
                                     value={formData.taxCode}
                                     onChange={(e) => updateField("taxCode", e.target.value)}
-                                    className="h-10 max-w-md"
+                                    className="h-12 max-w-none"
                                 />
                             </div>
                         </div>
@@ -478,29 +481,29 @@ const EditCustomer = () => {
                     </div>
 
                     {/* ==================== DATA PREFERENCES ==================== */}
-                    <div className="bg-white border border-[#e5e7eb] rounded-md p-6 mb-5">
-                        <h2 className="text-[16px] font-semibold text-[#222] mb-5">
+                    <div className="bg-white border border-[#e5e7eb] rounded-md p-6 mb-5 shadow-sm w-full">
+                        <h2 className="!text-[22px] font-semibold text-[#313440] mb-5">
                             Data preferences
                         </h2>
 
-                        <div className="space-y-4 max-w-md">
+                        <div className="space-y-4 w-full mb-2">
                             {[
                                 { label: "Analytics", key: "analytics" },
                                 { label: "Functional", key: "functional" },
                                 { label: "Targeting / Advertising", key: "targeting" },
                             ].map((item) => (
                                 <div key={item.key}>
-                                    <Label className="text-[13px] text-[#333] mb-1.5 block">
+                                    <Label className="text-[15px]  !text-[#313440] mb-1.5 block">
                                         {item.label}
                                     </Label>
                                     <Select
                                         value={formData[item.key]}
                                         onValueChange={(value) => updateField(item.key, value)}
                                     >
-                                        <SelectTrigger className="h-10">
+                                        <SelectTrigger className="h-10 !font-normal">
                                             <SelectValue placeholder="Not set" />
                                         </SelectTrigger>
-                                        <SelectContent>
+                                        <SelectContent className="!font-normal">
                                             <SelectItem value="notSet">Not Set</SelectItem>
                                             <SelectItem value="accepted">Accepted</SelectItem>
                                             <SelectItem value="rejected">Rejected</SelectItem>
@@ -513,8 +516,8 @@ const EditCustomer = () => {
                     {/* ==================== ADDRESS BOOK ==================== */}
                     <div className="bg-white border border-[#e5e7eb] rounded-md p-6 mb-5">
                         {/* Header */}
-                        <div className="flex items-center justify-between mb-4">
-                            <h2 className="text-[16px] font-semibold text-[#222]">Address book</h2>
+                        <div className="flex items-center justify-between mb-6">
+                            <h2 className="!text-[22px] font-semibold text-[#313440]">Address book</h2>
                             <button
                                 type="button"
                                 onClick={() => {
@@ -698,10 +701,10 @@ const EditCustomer = () => {
                     </div>
                     {/* ==================== NOTES ==================== */}
                     <div className="bg-white border border-[#e5e7eb] rounded-md p-6 mb-8">
-                        <h2 className="text-[16px] font-semibold text-[#222] mb-2">
+                        <h2 className="!text-[22px] font-semibold text-[#313440] mb-2">
                             Notes
                         </h2>
-                        <p className="text-[12px] text-gray-500 mb-3">
+                        <p className="text-[15px] text-[#5E637A] mb-3">
                             Notes on this customer will only be visible to staff
                         </p>
                         <Textarea
@@ -709,7 +712,7 @@ const EditCustomer = () => {
                             onChange={(e) => updateField("notes", e.target.value)}
                             placeholder="Enter your notes here"
                             rows={4}
-                            className="resize-none"
+                            className="resize-none h-56"
                         />
                     </div>
                 </div>
