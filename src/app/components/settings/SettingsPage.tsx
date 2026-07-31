@@ -254,7 +254,7 @@ const SettingsPage = () => {
                   </span>
                 </div>
                 <div>
-                  <span className="text-gray-600 2xl:!text-[1.6rem]">
+                  <span className="text-gray-600 !font-normal 2xl:!text-[1.6rem]">
                     System logs and staff action logs rules
                   </span>
                 </div>
@@ -282,7 +282,7 @@ const SettingsPage = () => {
                   </span>
                 </div>
                 <div>
-                  <span className="text-gray-600 2xl:!text-[1.6rem]">
+                  <span className="text-gray-600 !font-normal 2xl:!text-[1.6rem]">
                     System Permissions
                   </span>
                 </div>

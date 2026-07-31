@@ -413,7 +413,7 @@ const EditCustomer = () => {
                                     <Input
                                         value={formData.storeCredit}
                                         onChange={(e) => updateField("storeCredit", e.target.value)}
-                                        className="h-10 pl-7 max-w-none w-full"
+                                        className="h-12 pl-7 max-w-none w-full"
                                     />
                                 </div>
                             </div>
@@ -427,7 +427,7 @@ const EditCustomer = () => {
                                     value={formData.customerGroup}
                                     onValueChange={(value) => updateField("customerGroup", value)}
                                 >
-                                    <SelectTrigger className="h-10">
+                                    <SelectTrigger className="h-11 max-w-none">
                                         <SelectValue placeholder="Select group" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -500,7 +500,7 @@ const EditCustomer = () => {
                                         value={formData[item.key]}
                                         onValueChange={(value) => updateField(item.key, value)}
                                     >
-                                        <SelectTrigger className="h-10 !font-normal">
+                                        <SelectTrigger className="h-10 max-w-none !font-normal">
                                             <SelectValue placeholder="Not set" />
                                         </SelectTrigger>
                                         <SelectContent className="!font-normal">
