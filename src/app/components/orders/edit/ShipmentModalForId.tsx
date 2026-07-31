@@ -445,12 +445,48 @@ export default function ShipmentModalForId({
                                                                 {shipment?.orderProducts?.map(
                                                                     (item: any, idx: number) => (
                                                                         <div key={idx} className="min-w-0">
-                                                                            <p className="font-semibold">
-                                                                                {item?.quantity} x
-                                                                            </p>
-                                                                            <p className="text-blue-600 text-sm leading-snug break-words ">
-                                                                                {item?.productName}
-                                                                            </p>
+                                                                             <p className="font-semibold">
+                                                                                
+                                              {item?.quantity} x{" "}
+                                              <span
+                                                onClick={() => {
+
+          console.log("ITEM:", item);
+          console.log("productUrl:", item?.productUrl);
+          console.log("productName:", item?.productName);
+                                                  const availableStores =
+                                                    JSON.parse(
+                                                      localStorage.getItem(
+                                                        "availableStores",
+                                                      ) || "[]",
+                                                    );
+                                                  const selectedStoreId =
+                                                    Number(
+                                                      localStorage.getItem(
+                                                        "storeId",
+                                                      ),
+                                                    );
+                                                  const selectedStore =
+                                                    availableStores.find(
+                                                      (s: any) =>
+                                                        s.id ===
+                                                        selectedStoreId,
+                                                    );
+                                                  if (selectedStore?.baseUrl)
+                                                    window.open(
+                                                      `${selectedStore.baseUrl.replace(/\/$/, "")}${item?.productUrl == "/" ? item?.productUrl.slice(1) : item?.productUrl}`,
+                                                      "_blank",
+                                                    );
+                                                  else
+                                                    alert(
+                                                      "Store URL or Product SKU not found",
+                                                    );
+                                                }}
+                                                className="!text-[#6F8DFD] font-light cursor-pointer hover:underline whitespace-normal break-words leading-snug max-w-[300px]"
+                                              >
+                                                {item?.productName}
+                                              </span>
+                                            </p>
                                                                             <p className="text-sm text-gray-500 mt-0.5">
                                                                                 {item?.sku || ""}
                                                                             </p>
