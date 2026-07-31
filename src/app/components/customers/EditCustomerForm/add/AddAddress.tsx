@@ -138,7 +138,7 @@ export default function AddAddress() {
                                     value={form.first_name}
                                     onChange={(e) => updateField("first_name", e.target.value)}
                                     required
-                                    className="h-12 rounded-sm "
+                                    className="h-12 max-w-none rounded-sm "
                                 />
                             </div>
                             <div>
@@ -149,7 +149,7 @@ export default function AddAddress() {
                                     value={form.last_name}
                                     onChange={(e) => updateField("last_name", e.target.value)}
                                     required
-                                    className="h-12 w-full"
+                                    className="h-12 max-w-none w-full"
                                 />
                             </div>
                         </div>
@@ -163,7 +163,7 @@ export default function AddAddress() {
                                 <Input
                                     value={form.company_name}
                                     onChange={(e) => updateField("company_name", e.target.value)}
-                                    className="h-12 w-full"
+                                    className="h-12 max-w-none w-full"
                                 />
                             </div>
                             <div>
@@ -173,7 +173,7 @@ export default function AddAddress() {
                                 <Input
                                     value={form.phone_number}
                                     onChange={(e) => updateField("phone_number", e.target.value)}
-                                    className="h-12 w-full"
+                                    className="h-12 max-w-none w-full"
                                 />
                             </div>
                         </div>
@@ -181,25 +181,25 @@ export default function AddAddress() {
                         {/* Address Line 1 */}
                         <div className="mb-5">
                             <Label className="text-[15px] mb-1.5 block">
-                                Address Line 1<span className="text-red-500">*</span>
+                                Address Line 1<span className="!text-red-500">*</span>
                             </Label>
                             <Input
                                 value={form.address_line_1}
                                 onChange={(e) => updateField("address_line_1", e.target.value)}
                                 required
-                                className="h-12 w-full"
+                                className="h-12 max-w-none w-full"
                             />
                         </div>
 
                         {/* Address Line 2 */}
                         <div className="mb-5  !text-[#313440]">
                             <Label className="text-[15px] mb-1.5 block">
-                                Address Line 1
+                                Address Line 2
                             </Label>
                             <Input
                                 value={form.address_line_2}
                                 onChange={(e) => updateField("address_line_2", e.target.value)}
-                                className="h-12 w-full"
+                                className="h-12 max-w-none w-full"
                             />
                         </div>
 
@@ -213,7 +213,7 @@ export default function AddAddress() {
                                     value={form.city}
                                     onChange={(e) => updateField("city", e.target.value)}
                                     required
-                                    className="h-12 w-full"
+                                    className="h-12 max-w-none w-full"
                                 />
                             </div>
                             <div>
@@ -225,7 +225,7 @@ export default function AddAddress() {
                                     onValueChange={(val) => updateField("state", val)}
                                     disabled={!form.country}
                                 >
-                                    <SelectTrigger className="h-12 w-full">
+                                    <SelectTrigger className="h-12 max-w-none w-full">
                                         <SelectValue placeholder="Choose state" />
                                     </SelectTrigger>
                                     <SelectContent className="max-h-72 overflow-y-auto">
@@ -252,7 +252,7 @@ export default function AddAddress() {
                                         updateField("state", ""); // clear state when country changes
                                     }}
                                 >
-                                    <SelectTrigger className="h-12 w-full">
+                                    <SelectTrigger className="h-12 max-w-none w-full">
                                         <SelectValue placeholder="Choose country" />
                                     </SelectTrigger>
                                     <SelectContent className="max-h-72 overflow-y-auto">
@@ -271,7 +271,7 @@ export default function AddAddress() {
                                 <Input
                                     value={form.zip}
                                     onChange={(e) => updateField("zip", e.target.value)}
-                                    className="h-12 w-full"
+                                    className="h-12  max-w-none w-full"
                                 />
                             </div>
                         </div>

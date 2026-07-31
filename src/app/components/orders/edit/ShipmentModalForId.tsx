@@ -273,7 +273,7 @@ export default function ShipmentModalForId({
                                                                 </p>
                                                                 <div className="flex items-center gap-2">
                                                                     {/* <Globe className="w-5 h-5 text-gray-500 flex-shrink-0" /> */}
-                                                                    {counrtyBilling?.flag ? (
+                                                                    {/* {counrtyBilling?.flag ? (
                                                                         <Image
                                                                             src={counrtyBilling?.flag as string}
                                                                             width={22}
@@ -283,7 +283,7 @@ export default function ShipmentModalForId({
                                                                         />
                                                                     ) : (
                                                                         <span className="">🏳️</span>
-                                                                    )}
+                                                                    )} */}
                                                                     <span>
                                                                         {orderDetails?.billingAddress
                                                                             ?.country || "N/A"}
@@ -365,7 +365,7 @@ export default function ShipmentModalForId({
                                                                 </p>
                                                                 <div className="flex items-center gap-2">
                                                                     {/* <Globe className="w-5 h-5 text-gray-500 flex-shrink-0" /> */}
-                                                                    {counrtyShipping?.flag ? (
+                                                                    {/* {counrtyShipping?.flag ? (
                                                                         <Image
                                                                             src={counrtyShipping?.flag as string}
                                                                             width={22}
@@ -375,7 +375,7 @@ export default function ShipmentModalForId({
                                                                         />
                                                                     ) : (
                                                                         <span className="">🏳️</span>
-                                                                    )}
+                                                                    )} */}
                                                                     <span>
                                                                         {orderDetails?.billingInformation
                                                                             ?.country || "N/A"}

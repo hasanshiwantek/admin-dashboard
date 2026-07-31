@@ -158,7 +158,7 @@ export default function UpdateAddress() {
                                     value={form.first_name}
                                     onChange={(e) => updateField("first_name", e.target.value)}
                                     required
-                                    className="h-12 rounded-sm "
+                                    className="h-12 max-w-none rounded-sm "
                                 />
                             </div>
                             <div>
@@ -169,7 +169,7 @@ export default function UpdateAddress() {
                                     value={form.last_name}
                                     onChange={(e) => updateField("last_name", e.target.value)}
                                     required
-                                    className="h-12 w-full"
+                                    className="h-12 max-w-none w-full"
                                 />
                             </div>
                         </div>
@@ -183,7 +183,7 @@ export default function UpdateAddress() {
                                 <Input
                                     value={form.company_name}
                                     onChange={(e) => updateField("company_name", e.target.value)}
-                                    className="h-12 w-full"
+                                    className="h-12 max-w-none w-full"
                                 />
                             </div>
                             <div>
@@ -193,7 +193,7 @@ export default function UpdateAddress() {
                                 <Input
                                     value={form.phone_number}
                                     onChange={(e) => updateField("phone_number", e.target.value)}
-                                    className="h-12 w-full"
+                                    className="h-12 max-w-none w-full"
                                 />
                             </div>
                         </div>
@@ -207,7 +207,7 @@ export default function UpdateAddress() {
                                 value={form.address_line_1}
                                 onChange={(e) => updateField("address_line_1", e.target.value)}
                                 required
-                                className="h-12 w-full"
+                                className="h-12 max-w-none w-full"
                             />
                         </div>
 
@@ -219,7 +219,7 @@ export default function UpdateAddress() {
                             <Input
                                 value={form.address_line_2}
                                 onChange={(e) => updateField("address_line_2", e.target.value)}
-                                className="h-12 w-full"
+                                className="h-12 max-w-none w-full"
                             />
                         </div>
 
@@ -233,7 +233,7 @@ export default function UpdateAddress() {
                                     value={form.city}
                                     onChange={(e) => updateField("city", e.target.value)}
                                     required
-                                    className="h-12 w-full"
+                                    className="h-12 max-w-none w-full"
                                 />
                             </div>
                             <div>
@@ -245,7 +245,7 @@ export default function UpdateAddress() {
                                     onValueChange={(val) => updateField("state", val)}
                                     disabled={!form.country}
                                 >
-                                    <SelectTrigger className="h-12 w-full">
+                                    <SelectTrigger className="h-12 max-w-none w-full">
                                         <SelectValue placeholder="Choose state" />
                                     </SelectTrigger>
                                     <SelectContent className="max-h-72 overflow-y-auto">
@@ -272,7 +272,7 @@ export default function UpdateAddress() {
                                         updateField("state", ""); // clear state when country changes
                                     }}
                                 >
-                                    <SelectTrigger className="h-12 w-full">
+                                    <SelectTrigger className="h-12  max-w-none w-full">
                                         <SelectValue placeholder="Choose country" />
                                     </SelectTrigger>
                                     <SelectContent className="max-h-72 overflow-y-auto">
@@ -291,7 +291,7 @@ export default function UpdateAddress() {
                                 <Input
                                     value={form.zip}
                                     onChange={(e) => updateField("zip", e.target.value)}
-                                    className="h-12 w-full"
+                                    className="h-12 max-w-none w-full"
                                 />
                             </div>
                         </div>
