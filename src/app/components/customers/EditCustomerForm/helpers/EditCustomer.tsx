@@ -240,7 +240,7 @@ const EditCustomer = () => {
                     </h1>
 
                     {/* Info Banner (only on edit) */}
-                    {isEdit && (
+                    {/* {isEdit && (
                         <div className="bg-[#eef3ff] border border-[#d0dcff] rounded-md p-4 mb-6 flex gap-3 items-start">
                             <Info size={18} className="text-[#4361ee] mt-0.5 shrink-0" />
                             <div className="flex-1">
@@ -272,7 +272,7 @@ const EditCustomer = () => {
                                 </div>
                             </div>
                         </div>
-                    )}
+                    )} */}
 
                     {/* ==================== LOGIN DETAILS ==================== */}
                     <div className="bg-white border border-[#e5e7eb] rounded-md p-6 mb-5">
