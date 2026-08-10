@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Cookies from "js-cookie";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -136,20 +137,15 @@ export default function LoginPage() {
             {loading ? "Logging in..." : "Log In"}
           </Button>
 
-          <div className="flex justify-between w-full max-w-full sm:max-w-lg text-gray-100 mt-2 whitespace-nowrap">
-            {/* Left group */}
-            <a href="#" className="hover:underline !text-2xl">
-              Log in with SSO
-            </a>
+          <div className="flex justify-center w-full max-w-full sm:max-w-lg text-gray-100 mt-2 whitespace-nowrap">
+
 
             {/* Right group */}
             <div className="space-x-3">
-              <a href="#" className="hover:underline !text-2xl">
+              <Link href="/recover/new" className="hover:underline !text-2xl">
                 Forgot?
-              </a>
-              <a href="/register" className="hover:underline !text-2xl">
-                Sign up
-              </a>
+              </Link>
+
             </div>
           </div>
         </div>
