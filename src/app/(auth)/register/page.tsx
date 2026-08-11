@@ -7,7 +7,6 @@ import { registerUser } from "@/redux/slices/authSlice";
 import { RegisterPayload } from "@/redux/slices/authSlice";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { countriesList } from "@/const/location";
 import {
   Select,
   SelectTrigger,

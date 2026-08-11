@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { resetPasswordUser } from "@/redux/slices/authSlice";
@@ -8,7 +8,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-export default function ForgotPasswordPage() {
+function ForgotPasswordForm() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const dispatch = useDispatch<AppDispatch>();
@@ -193,5 +193,14 @@ export default function ForgotPasswordPage() {
                 </form>
             </div>
         </div>
+    );
+}
+
+// This is the important part
+export default function ForgotPasswordPage() {
+    return (
+        <Suspense fallback={<div className="bg-black min-h-screen flex items-center justify-center text-white text-2xl">Loading...</div>}>
+            <ForgotPasswordForm />
+        </Suspense>
     );
 }
