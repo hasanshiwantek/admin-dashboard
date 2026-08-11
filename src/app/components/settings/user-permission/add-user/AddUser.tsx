@@ -218,7 +218,7 @@ const AddUser = () => {
                         </div>
 
                         {/* Password */}
-                        <div className="flex items-center gap-3 mb-5">
+                        {/* <div className="flex items-center gap-3 mb-5">
                             <Label
                                 htmlFor="password"
                                 className="text-[12px] text-gray-600 text-right w-[110px] shrink-0"
@@ -245,7 +245,7 @@ const AddUser = () => {
                         </div>
 
                         {/* Confirm Password */}
-                        <div className="flex items-center gap-3 mb-5">
+                        {/* <div className="flex items-center gap-3 mb-5">
                             <Label
                                 htmlFor="password_confirmation"
                                 className="text-[12px] text-gray-600 text-right w-[110px] shrink-0"
@@ -269,197 +269,9 @@ const AddUser = () => {
                                     </span>
                                 )}
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
-
-                {/* ── Business Information ── */}
-                {/* <div className="px-0 py-4 mt-4">
-                    <h2 className="text-base font-semibold text-gray-800">
-                        Business Information
-                    </h2>
-                </div>
-
-                <div className="bg-white border border-gray-200 rounded-sm">
-                    <div className="px-8 py-6">
-
-                        <div className="flex items-center gap-3 mb-5">
-                            <Label
-                                htmlFor="companyName"
-                                className="text-[12px] text-gray-600 text-right w-[110px] shrink-0"
-                            >
-                                Company Name:
-                            </Label>
-                            <Input
-                                id="companyName"
-                                {...register("companyName")}
-                                className="w-[280px] h-8 text-sm border-gray-300"
-                            />
-                        </div>
-
-                        <div className="flex items-center gap-3 mb-5">
-                            <Label
-                                htmlFor="storeName"
-                                className="text-[12px] text-gray-600 text-right w-[110px] shrink-0"
-                            >
-                                Store Name:
-                            </Label>
-                            <Input
-                                id="storeName"
-                                {...register("storeName")}
-                                className="w-[280px] h-8 text-sm border-gray-300"
-                            />
-                        </div>
-
-                        <div className="flex items-center gap-3 mb-5">
-                            <Label
-                                htmlFor="businessSize"
-                                className="text-[12px] text-gray-600 text-right w-[110px] shrink-0"
-                            >
-                                Business Size:
-                            </Label>
-                            <div className="w-[280px]">
-                                <Select onValueChange={(v) => setValue("businessSize", v)}>
-                                    <SelectTrigger className="h-8 text-sm border-gray-300">
-                                        <SelectValue placeholder="Select business size" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="Small">Small (1-10)</SelectItem>
-                                        <SelectItem value="Medium">Medium (11-50)</SelectItem>
-                                        <SelectItem value="Large">Large (51+)</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center gap-3 mb-5">
-                            <Label
-                                htmlFor="region"
-                                className="text-[12px] text-gray-600 text-right w-[110px] shrink-0"
-                            >
-                                Region:
-                            </Label>
-                            <Input
-                                id="region"
-                                {...register("region")}
-                                className="w-[280px] h-8 text-sm border-gray-300"
-                            />
-                        </div>
-
-                        <div className="flex items-center gap-3 mb-5">
-                            <Label
-                                htmlFor="base_url"
-                                className="text-[12px] text-gray-600 text-right w-[110px] shrink-0"
-                            >
-                                Base URL:
-                            </Label>
-                            <Input
-                                id="base_url"
-                                placeholder="https://example.com"
-                                {...register("base_url")}
-                                className="w-[280px] h-8 text-sm border-gray-300"
-                            />
-                        </div>
-                    </div>
-                </div> */}
-
-                {/* ── Address ── */}
-                {/* <div className="px-0 py-4 mt-4">
-                    <h2 className="text-base font-semibold text-gray-800">
-                        Address
-                    </h2>
-                </div>
-
-                <div className="bg-white border border-gray-200 rounded-sm">
-                    <div className="px-8 py-6">
-
-                        <div className="flex items-center gap-3 mb-5">
-                            <Label
-                                htmlFor="addressLine1"
-                                className="text-[12px] text-gray-600 text-right w-[110px] shrink-0"
-                            >
-                                Address Line 1:
-                            </Label>
-                            <Input
-                                id="addressLine1"
-                                {...register("addressLine1")}
-                                className="w-[280px] h-8 text-sm border-gray-300"
-                            />
-                        </div>
-
-                        <div className="flex items-center gap-3 mb-5">
-                            <Label
-                                htmlFor="addressLine2"
-                                className="text-[12px] text-gray-600 text-right w-[110px] shrink-0"
-                            >
-                                Address Line 2:
-                            </Label>
-                            <Input
-                                id="addressLine2"
-                                {...register("addressLine2")}
-                                className="w-[280px] h-8 text-sm border-gray-300"
-                            />
-                        </div>
-
-                        <div className="flex items-center gap-3 mb-5">
-                            <Label
-                                htmlFor="suburb"
-                                className="text-[12px] text-gray-600 text-right w-[110px] shrink-0"
-                            >
-                                Suburb:
-                            </Label>
-                            <Input
-                                id="suburb"
-                                {...register("suburb")}
-                                className="w-[280px] h-8 text-sm border-gray-300"
-                            />
-                        </div>
-
-                        <div className="flex items-center gap-3 mb-5">
-                            <Label
-                                htmlFor="country"
-                                className="text-[12px] text-gray-600 text-right w-[110px] shrink-0"
-                            >
-                                Country:
-                            </Label>
-                            <Input
-                                id="country"
-                                {...register("country")}
-                                className="w-[280px] h-8 text-sm border-gray-300"
-                            />
-                        </div>
-
-                        <div className="flex items-center gap-3 mb-5">
-                            <Label
-                                htmlFor="state"
-                                className="text-[12px] text-gray-600 text-right w-[110px] shrink-0"
-                            >
-                                State / Province:
-                            </Label>
-                            <Input
-                                id="state"
-                                {...register("state")}
-                                className="w-[280px] h-8 text-sm border-gray-300"
-                            />
-                        </div>
-
-                        <div className="flex items-center gap-3 mb-5">
-                            <Label
-                                htmlFor="zip"
-                                className="text-[12px] text-gray-600 text-right w-[110px] shrink-0"
-                            >
-                                ZIP / Postal Code:
-                            </Label>
-                            <Input
-                                id="zip"
-                                {...register("zip")}
-                                className="w-[280px] h-8 text-sm border-gray-300"
-                            />
-                        </div>
-                    </div>
-                </div> */}
-
-                {/* ── Permissions ── */}
                 {/* ── Permissions ── */}
                 <div className="px-0 py-4 mt-4">
                     <h2 className="text-base font-semibold text-gray-800">
