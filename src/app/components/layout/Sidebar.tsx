@@ -25,6 +25,7 @@ export const SideBar = ({ onClose }: { onClose?: () => void }) => {
   const pathname = usePathname();
   const router = useRouter();
   const sidebarData = useSidebarData();
+  console.log(sidebarData,"ya side bar ka code hy")
   const [openMenus, setOpenMenus] = useState<boolean[]>(
     sidebarData.map(() => false)
   );
@@ -65,7 +66,11 @@ export const SideBar = ({ onClose }: { onClose?: () => void }) => {
               >
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
-                    <SidebarMenuButton className="group w-full flex items-center p-8 cursor-pointer text-xl 2xl:!text-2xl">
+                    <SidebarMenuButton className="group w-full flex items-center p-8 cursor-pointer text-xl 2xl:!text-2xl"  onClick={() => {
+      if (item.children?.length > 0) {
+        router.push(item.children[0].url);
+      }
+    }}>
                       {item.icon && <item.icon className="mr-2 !h-8 !w-8" />}
                       {item.title}
                       <ChevronDown className="ml-auto !h-7 !w-7 transition-transform group-data-[state=open]:rotate-180" />

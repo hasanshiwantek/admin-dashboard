@@ -273,7 +273,7 @@ const SettingsPage = () => {
                     strokeLinejoin="round"
                     d="M9 6l6 6-6 6"
                   />
-                </svg>
+                </svg>bas
               </div>
               <div onClick={() => router.push("/manage/settings/user-permission")} className="flex items-center justify-between border-b border-gray-200 pb-4 cursor-pointer group">
                 <div className="flex items-center gap-25">
