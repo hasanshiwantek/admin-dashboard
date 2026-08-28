@@ -81,4 +81,3 @@ export interface MappingField  {
   options?: string[]; // For radio
 };
 
-
