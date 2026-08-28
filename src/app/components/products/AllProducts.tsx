@@ -49,7 +49,7 @@ const filterTabs = [
   "Free shipping",
   "Out of stock",
   "Inventory low",
-  "Last imported",
+  // "Last imported",
   "Visible",
   "Not visible",
 ];
@@ -104,7 +104,7 @@ export default function AllProducts() {
           return product.currentStock === 0;
 
         case "Inventory low":
-          return product.currentStock <= product.lowStock;
+          return product
 
         case "Visible":
           return product.isVisible === true;
