@@ -803,13 +803,13 @@ export const StoreSettings = ({
           className="mb-6"
         >
           <TabsList className="border-b  w-80 justify-start rounded-none h-auto p-0">
-            {/* <TabsTrigger
+            <TabsTrigger
               value="website"
               className="rounded-none border-b-2 border-transparent data-[state=active]:border-b-blue-600 data-[state=active]:bg-transparent px-4 py-3"
             >
               Website
             </TabsTrigger>
-            <TabsTrigger
+            {/* <TabsTrigger
               value="display"
               className="rounded-none border-b-2 border-transparent data-[state=active]:border-b-blue-600 data-[state=active]:bg-transparent px-4 py-3"
             >

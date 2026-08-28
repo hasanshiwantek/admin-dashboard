@@ -30,7 +30,9 @@ export const WebsiteSettings = ({
 
   return (
     <div className="space-y-8">
-      <div className="bg-white rounded-sm border border-gray-200 p-6">
+
+      {/* Temp comment */}
+      {/* <div className="bg-white rounded-sm border border-gray-200 p-6">
         <h2 className="mb-6 !font-semibold 2xl:!text-[2.4rem]">Physical Dimension Settings</h2>
 
         <FormField label="Weight Measurement">
@@ -107,7 +109,7 @@ export const WebsiteSettings = ({
             </SelectContent>
           </Select>
         </FormField>
-      </div>
+      </div> */}
 
       <div className="bg-white rounded-sm border border-gray-200 p-6">
         <h2 className="!font-semibold  mb-6 2xl:!text-[2.4rem]">Search Engine Optimization</h2>
