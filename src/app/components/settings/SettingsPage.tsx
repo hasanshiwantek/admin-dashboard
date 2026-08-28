@@ -50,12 +50,12 @@ const SettingsPage = () => {
   const initialTab = searchParams.get("tab") || "website";
 
   const generalItems = [
-    {
-      id: "website",
-      title: "Website",
-      description:
-        "Physical dimension settings, search engine optimization, HTTPS, search engine robots",
-    },
+    // {
+    //   id: "website",
+    //   title: "Website",
+    //   description:
+    //     "Physical dimension settings, search engine optimization, HTTPS, search engine robots",
+    // },
     // {
     //   id: "display",
     //   title: "Display",
