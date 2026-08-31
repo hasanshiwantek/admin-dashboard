@@ -93,7 +93,7 @@ export default function AddProductPage() {
 
   const methods: any = useForm({ defaultValues });
 
-  const { reset, formState: { isDirty }, } = methods;
+  const { reset,  setValue,formState: { isDirty }, } = methods;
   const { id } = useParams();
   const isEditModeRef = useRef(!!id);
   useEffect(() => {
@@ -101,6 +101,11 @@ export default function AddProductPage() {
       dispatch(fetchSingleProduct({ id }));
     }
   }, [dispatch, id]);
+  useEffect(() => {
+  if (!id) {
+    setValue("isVisible", true);
+  }
+}, [id, setValue]);
 
   const editProduct = useAppSelector(
     (state: any) => state.product.singleProduct
@@ -207,12 +212,13 @@ export default function AddProductPage() {
     setShowLeaveModal(false);
     router.push(pendingNavUrl);
   };
-  useEffect(() => {
-    if (!id) {
-      setProduct(undefined); // Clear previous product state
-      reset();
-    }
-  }, [id, reset]);
+useEffect(() => {
+  if (!id) {
+    setProduct(undefined);
+    reset();
+    setValue("isVisible", true);
+  }
+}, [id, reset, setValue]);
 
 
   const onSubmit = methods.handleSubmit(async (data: Record<string, any>) => {
@@ -575,7 +581,7 @@ export default function AddProductPage() {
           <SidebarNavigation />
           <FormProvider {...methods}>
             <form onSubmit={onSubmit} className="flex-1  p-6 space-y-8 ">
-              <BasicInfoForm />
+              <BasicInfoForm isEdit={!!id} />
               {/* <DescriptionEditor />
             FAQ section
             <DescriptionEditor fieldName="faq" label="FAQ" height={300} /> */}

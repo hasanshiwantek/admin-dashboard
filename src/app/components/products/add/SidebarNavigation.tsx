@@ -24,10 +24,43 @@ const sections = [
 ];
 
 export default function SidebarNavigation() {
-  const scrollTo = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  };
+ const scrollTo = (id: string) => {
+  const el = document.getElementById(id);
+
+  if (!el) return;
+
+  const scrollContainer =
+    document.querySelector("main") as HTMLElement | null;
+
+  const headerOffset = 70; 
+
+  if (scrollContainer) {
+    const containerRect = scrollContainer.getBoundingClientRect();
+    const elementRect = el.getBoundingClientRect();
+
+    const scrollTop =
+      scrollContainer.scrollTop +
+      (elementRect.top - containerRect.top) -
+      headerOffset;
+
+    scrollContainer.scrollTo({
+      top: scrollTop,
+      behavior: "smooth",
+    });
+
+    return;
+  }
+
+  const elementPosition = el.getBoundingClientRect().top;
+
+  const offsetPosition =
+    elementPosition + window.scrollY - headerOffset;
+
+  window.scrollTo({
+    top: offsetPosition,
+    behavior: "smooth",
+  });
+};
 
   return (
     <aside className="w-[20rem] shadow-xs h-[calc(80vh-5.5rem)]  sticky top-[4rem] border-r bg-[var(--store-bg)] ">
