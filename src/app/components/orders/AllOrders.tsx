@@ -106,8 +106,6 @@ const AllOrders = () => {
   const dispatch = useAppDispatch();
   const orders = useAppSelector((state: any) => state?.order?.orders);
   const pagination = orders?.pagination;
-  // const [currentPage, setCurrentPage] = useState(1);
-  // const [perPage, setPerPage] = useState("50");
   const total = pagination?.total;
   const totalPages = pagination?.totalPages;
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
@@ -1145,8 +1143,8 @@ const AllOrders = () => {
                                 }
                                 className="2xl:!text-2xl !text-blue-500 cursor-pointer hover:underline"
                               >
-                                {order.billingAddress?.name}{" "}
-                                {/* {order.customer?.lastName} */}
+                                {order.customer?.firstName}{" "}
+                                {order.customer?.lastName}
                               </Link>
                             )}
 
