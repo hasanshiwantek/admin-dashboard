@@ -1143,8 +1143,8 @@ const AllOrders = () => {
                                 }
                                 className="2xl:!text-2xl !text-blue-500 cursor-pointer hover:underline"
                               >
-                                {order.customer?.firstName}{" "}
-                                {order.customer?.lastName}
+                                {order?.customer?.firstName}{" "}
+                                {order?.customer?.lastName}
                               </Link>
                             )}
 
