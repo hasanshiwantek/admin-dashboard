@@ -85,18 +85,55 @@ overflow-y-hidden overflow-x-hidden
                 }}
               >
                 <SidebarMenuItem>
-                  <CollapsibleTrigger asChild>
-                    <SidebarMenuButton className="group w-full flex items-center p-8 cursor-pointer text-xl 2xl:!text-2xl"  onClick={() => {
+               <div className="group flex items-center w-full rounded-md hover:bg-sidebar-accent"> 
+  <SidebarMenuButton 
+    className={` 
+       flex-1 items-center cursor-pointer 
+      transition-all duration-200  group-hover:!text-black
+      ${ 
+        isCollapsed && !isHovered 
+          ? "justify-center !p-0 h-[64px]" 
+          : "p-8 text-xl 2xl:!text-2xl" 
+      } 
+    `}
+    onClick={() => {
       if (item.children?.length > 0) {
         router.push(item.children[0].url);
       }
-    }}>
-                      {item.icon && <item.icon className="mr-2 !h-8 !w-8" />}
-                      {item.title}
-                      <ChevronDown className="ml-auto !h-7 !w-7 transition-transform group-data-[state=open]:rotate-180" />
-                    </SidebarMenuButton>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
+    }}
+  >
+    {item.icon && ( 
+      <item.icon 
+        className={` 
+          shrink-0 
+          transition-all duration-200 
+          ${ 
+            isCollapsed && !isHovered 
+              ? "!h-7 !w-7 !m-0" 
+              : "mr-2 !h-8 !w-8" 
+          } 
+        `} 
+      />
+    )}
+
+    {(!isCollapsed || isHovered) && item.title}
+  </SidebarMenuButton>
+
+  {(!isCollapsed || isHovered) && (
+    <CollapsibleTrigger asChild>
+      <button
+        type="button"
+        className="p-2 rounded-md hover:bg-transparent"
+
+      >
+      <ChevronDown className="!h-7 !w-7 text-white group-hover:text-black transition-transform group-data-[state=open]:rotate-180" />
+      </button>
+    </CollapsibleTrigger>
+  )}
+</div>
+                  <CollapsibleContent   className={`
+    ${isCollapsed && !isHovered ? "hidden" : ""}
+  `}>
                     <SidebarMenuSub className="ml-16">
                       {item.children.map((child: any) => (
                         <SidebarMenuSubItem key={child.title}>
@@ -127,16 +164,40 @@ overflow-y-hidden overflow-x-hidden
               </Collapsible>
             ) : (
               <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton
-                  asChild
-                  className={`p-8 cursor-pointer text-xl 2xl:!text-2xl rounded-md ${pathname === item.url ? "bg-[#24345c]" : ""
-                    }`}
-                >
-                  <Link href={item.url || "#"} className="flex items-center">
-                    {item.icon && <item.icon className="mr-2 !h-8 !w-8" />}
-                    {item.title}
-                  </Link>
-                </SidebarMenuButton>
+          <SidebarMenuButton
+  asChild
+  className={`
+    cursor-pointer rounded-md
+    transition-all duration-200 
+
+    ${
+      isCollapsed && !isHovered
+        ? "justify-center !p-0 h-[30px]"
+        : "p-8 text-xl 2xl:!text-2xl"
+    }
+    ${pathname === item.url ? "bg-[#24345c]" : ""}
+  `}
+>
+  <Link
+    href={item.url || "#"}
+    className="flex items-center"
+  >
+    {item.icon && (
+      <item.icon
+        className={`
+          shrink-0 transition-all duration-200 
+          ${
+            isCollapsed && !isHovered
+              ? "!h-7 !w-7 !m-0"
+              : "mr-2 !h-8 !w-8"
+          }
+        `}
+      />
+    )}
+
+    {(!isCollapsed || isHovered) && item.title}
+  </Link>
+</SidebarMenuButton>
               </SidebarMenuItem>
             )
           )}

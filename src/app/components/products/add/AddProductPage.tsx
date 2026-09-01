@@ -93,7 +93,7 @@ export default function AddProductPage() {
 
   const methods: any = useForm({ defaultValues });
 
-  const { reset,  setValue,formState: { isDirty }, } = methods;
+  const { reset, formState: { isDirty }, } = methods;
   const { id } = useParams();
   const isEditModeRef = useRef(!!id);
   useEffect(() => {
@@ -101,11 +101,6 @@ export default function AddProductPage() {
       dispatch(fetchSingleProduct({ id }));
     }
   }, [dispatch, id]);
-  useEffect(() => {
-  if (!id) {
-    setValue("isVisible", true);
-  }
-}, [id, setValue]);
 
   const editProduct = useAppSelector(
     (state: any) => state.product.singleProduct
@@ -212,13 +207,12 @@ export default function AddProductPage() {
     setShowLeaveModal(false);
     router.push(pendingNavUrl);
   };
-useEffect(() => {
-  if (!id) {
-    setProduct(undefined);
-    reset();
-    setValue("isVisible", true);
-  }
-}, [id, reset, setValue]);
+  useEffect(() => {
+    if (!id) {
+      setProduct(undefined); // Clear previous product state
+      reset();
+    }
+  }, [id, reset]);
 
 
   const onSubmit = methods.handleSubmit(async (data: Record<string, any>) => {
@@ -424,39 +418,65 @@ useEffect(() => {
 
   });
 
-  useLayoutEffect(() => {
-    const scrollEl =
-      document.querySelector("main") ||
-      document.querySelector("#__next > div") ||
-      window;
+ useLayoutEffect(() => {
+  const main = document.querySelector("main");
 
-    if (scrollEl === window) {
-      window.scrollTo(0, 0);
-    } else {
-      (scrollEl as Element).scrollTop = 0;
-    }
+  const scrollEl =
+    main && main.scrollHeight > main.clientHeight
+      ? main
+      : window;
 
-    setIsScrolled(false);
+  const getScrollTop = () =>
+    scrollEl === window
+      ? window.scrollY
+      : (scrollEl as HTMLElement).scrollTop;
 
-    const handleScroll = () => {
-      const scrollTop =
-        scrollEl === window
-          ? window.scrollY
-          : (scrollEl as Element).scrollTop;
-      setIsScrolled(scrollTop > 60);
-    };
+  if (scrollEl === window) {
+    window.scrollTo(0, 0);
+  } else {
+    (scrollEl as HTMLElement).scrollTop = 0;
+  }
 
-    const timer = setTimeout(() => {
-      handleScroll();
-    }, 50);
+  setIsScrolled(false);
 
-    scrollEl.addEventListener("scroll", handleScroll);
+  let ticking = false;
 
-    return () => {
-      clearTimeout(timer);
-      scrollEl.removeEventListener("scroll", handleScroll);
-    };
-  }, [pathname]); // ✅ pat
+  const handleScroll = () => {
+    if (ticking) return;
+
+    ticking = true;
+
+    requestAnimationFrame(() => {
+      const scrollTop = getScrollTop();
+
+      setIsScrolled((prev) => {
+        // Enter compact header
+        if (!prev && scrollTop > 60) {
+          return true;
+        }
+
+        // Return to normal header only when clearly back near top
+        if (prev && scrollTop < 20) {
+          return false;
+        }
+
+        return prev;
+      });
+
+      ticking = false;
+    });
+  };
+
+  scrollEl.addEventListener("scroll", handleScroll, {
+    passive: true,
+  });
+
+  handleScroll();
+
+  return () => {
+    scrollEl.removeEventListener("scroll", handleScroll);
+  };
+}, [pathname]);// ✅ pat
   return (
     <React.Fragment>
       {showLeaveModal && (
@@ -486,30 +506,42 @@ useEffect(() => {
         </div>
       )}
       <div className="my-5" >
-        <div className={`!sticky !top-2 z-40 bg-[#f6f7f9] w-full overflow-visible transition-all duration-300 px-6 ${isScrolled ? "py-1" : "py-3"}`}>
+        <div className="sticky top-2 z-40 bg-[#f6f7f9] w-full overflow-visible px-6">
 
           {/* Back link — scroll pe hide */}
           {!isScrolled && (
-            <div className="flex items-center gap-2 text-gray-500 cursor-pointer mb-1"
-              // onClick={() => router.push("/manage/products")}
-              onClick={() => handleBackNavigation("/manage/products")}
-            >
-              <FaArrowLeftLong size={14} />
-              <span className="text-sm uppercase tracking-wide">View Products</span>
-            </div>
+            <div
+  className={`flex items-center gap-2 text-gray-500 cursor-pointer mb-1 transition-opacity duration-200 ${
+    isScrolled
+      ? "opacity-0 pointer-events-none"
+      : "opacity-100"
+  }`}
+  onClick={() => handleBackNavigation("/manage/products")}
+>
+  <FaArrowLeftLong size={14} />
+  <span className="text-sm uppercase tracking-wide">
+    View Products
+  </span>
+</div>
           )}
 
           {/* Title Row */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 min-w-0">
               {/* scroll pe back arrow show karo */}
-              {isScrolled && (
-                <FaArrowLeftLong
-                  size={14}
-                  className="text-gray-500 cursor-pointer flex-shrink-0"
-                  onClick={() => router.push("/manage/products")}
-                />
-              )}
+             <div
+  className={`w-[14px] flex-shrink-0 transition-opacity duration-200 ${
+    isScrolled
+      ? "opacity-100"
+      : "opacity-0 pointer-events-none"
+  }`}
+>
+  <FaArrowLeftLong
+    size={14}
+    className="text-gray-500 cursor-pointer"
+    onClick={() => handleBackNavigation("/manage/products")}
+  />
+</div>
               <h1 className={`!font-semibold !text-gray-800 truncate transition-all duration-300 ${isScrolled ? "!text-base" : "!text-2xl"}`}>
                 {product?.name && !isDuplicate ? product?.name : isDuplicate ? "Duplicate Product" : "Add Product"}
               </h1>
@@ -575,13 +607,13 @@ useEffect(() => {
             )}
           </div>
 
-          {!isScrolled && <hr className="mt-3" />}
+           <hr className="mt-3" />
         </div>
         <div className="flex ">
           <SidebarNavigation />
           <FormProvider {...methods}>
             <form onSubmit={onSubmit} className="flex-1  p-6 space-y-8 ">
-              <BasicInfoForm isEdit={!!id} />
+              <BasicInfoForm />
               {/* <DescriptionEditor />
             FAQ section
             <DescriptionEditor fieldName="faq" label="FAQ" height={300} /> */}
