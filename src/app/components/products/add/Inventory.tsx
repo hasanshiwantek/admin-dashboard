@@ -57,12 +57,13 @@ export default function InventorySection({ isEdit = false }: { isEdit?: boolean 
                     On the product level
                   </Label>
                 </div>
-                <div className="flex items-center space-x-2">
+                {/* shehroze bhii said commit it */}
+                {/* <div className="flex items-center space-x-2">
                   <RadioGroupItem value="variant" id="variant" />
                   <Label className="2xl:!text-2xl" htmlFor="variant">
                     On the variant level
                   </Label>
-                </div>
+                </div> */}
               </RadioGroup>
             )}
           />
@@ -97,8 +98,9 @@ export default function InventorySection({ isEdit = false }: { isEdit?: boolean 
             </div>
           ) : (
             <p className="text-sm text-muted-foreground pt-2 2xl:!text-2xl">
-              Add variant options to create variants and manage inventory{" "}
-              <span className="!text-blue-600 cursor-pointer">below</span>.
+              {/* shehroze bhii said commit it */}
+              {/* Add variant options to create variants and manage inventory{" "}
+              <span className="!text-blue-600 cursor-pointer">below</span>. */}
             </p>
           )}
         </>

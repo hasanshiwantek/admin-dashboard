@@ -85,46 +85,52 @@ overflow-y-hidden overflow-x-hidden
                 }}
               >
                 <SidebarMenuItem>
-                  <CollapsibleTrigger asChild>
-                    <SidebarMenuButton
-  className={`
-    group w-full flex items-center cursor-pointer
-    transition-all duration-200
-    ${
-      isCollapsed && !isHovered
-        ? "justify-center !p-0 h-[64px]"
-        : "p-8 text-xl 2xl:!text-2xl"
-    }
-  `}
-  onClick={() => {
-    if (item.children?.length > 0) {
-      router.push(item.children[0].url);
-    }
-  }}
->
-  {item.icon && (
-    <item.icon
-      className={`
-        shrink-0
-        transition-all duration-200
-        ${
-          isCollapsed && !isHovered
-            ? "!h-7 !w-7 !m-0"
-            : "mr-2 !h-8 !w-8"
-        }
-      `}
-    />
-  )}
+               <div className="group flex items-center w-full rounded-md hover:bg-sidebar-accent"> 
+  <SidebarMenuButton 
+    className={` 
+       flex-1 items-center cursor-pointer 
+      transition-all duration-200  group-hover:!text-black
+      ${ 
+        isCollapsed && !isHovered 
+          ? "justify-center !p-0 h-[64px]" 
+          : "p-8 text-xl 2xl:!text-2xl" 
+      } 
+    `}
+    onClick={() => {
+      if (item.children?.length > 0) {
+        router.push(item.children[0].url);
+      }
+    }}
+  >
+    {item.icon && ( 
+      <item.icon 
+        className={` 
+          shrink-0 
+          transition-all duration-200 
+          ${ 
+            isCollapsed && !isHovered 
+              ? "!h-7 !w-7 !m-0" 
+              : "mr-2 !h-8 !w-8" 
+          } 
+        `} 
+      />
+    )}
+
+    {(!isCollapsed || isHovered) && item.title}
+  </SidebarMenuButton>
 
   {(!isCollapsed || isHovered) && (
-    <>
-      {item.title}
+    <CollapsibleTrigger asChild>
+      <button
+        type="button"
+        className="p-2 rounded-md hover:bg-transparent"
 
-      <ChevronDown className="ml-auto !h-7 !w-7 transition-transform group-data-[state=open]:rotate-180" />
-    </>
+      >
+      <ChevronDown className="!h-7 !w-7 text-white group-hover:text-black transition-transform group-data-[state=open]:rotate-180" />
+      </button>
+    </CollapsibleTrigger>
   )}
-</SidebarMenuButton>
-                  </CollapsibleTrigger>
+</div>
                   <CollapsibleContent   className={`
     ${isCollapsed && !isHovered ? "hidden" : ""}
   `}>
@@ -162,7 +168,8 @@ overflow-y-hidden overflow-x-hidden
   asChild
   className={`
     cursor-pointer rounded-md
-    transition-all duration-200
+    transition-all duration-200 
+
     ${
       isCollapsed && !isHovered
         ? "justify-center !p-0 h-[30px]"
@@ -178,7 +185,7 @@ overflow-y-hidden overflow-x-hidden
     {item.icon && (
       <item.icon
         className={`
-          shrink-0 transition-all duration-200
+          shrink-0 transition-all duration-200 
           ${
             isCollapsed && !isHovered
               ? "!h-7 !w-7 !m-0"
