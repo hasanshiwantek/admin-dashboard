@@ -509,24 +509,6 @@ export default function OrderReview({ step, setStep }: any) {
                 <span>${total.toFixed(2)}</span>
               </div>
 
-              {/* Discount input */}
-              <div className="flex items-center gap-2">
-                <Input placeholder="Manual discount" className="text-sm" />
-                <Button type="button" className="btn-outline-primary">
-                  Apply
-                </Button>
-              </div>
-
-              {/* Gift/coupon */}
-              <div className="flex items-center gap-2">
-                <Input
-                  placeholder="Coupon or gift certificate"
-                  className="text-sm"
-                />
-                <Button type="button" className="btn-outline-primary">
-                  Apply
-                </Button>
-              </div>
             </div>
           </div>
         </div>
