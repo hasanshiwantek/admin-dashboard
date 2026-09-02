@@ -222,23 +222,23 @@ export default function OrderReview({ step, setStep }: any) {
             <div className=" grid grid-cols-[150px_1fr] gap-y-2 text-[14px]">
               <div className="font-medium">Name</div>
               <div>
-                {billing.firstName} {billing.lastName}
+                {billing.billingFirstName} {billing.billingLastName}
               </div>
 
               <div className="font-medium">Address</div>
-              <div>{billing.address1}</div>
+              <div>{billing.billingAddress1}</div>
 
               <div className="font-medium">Suburb/City</div>
-              <div>{billing.city}</div>
+              <div>{billing.billingCity}</div>
 
               <div className="font-medium">State/Province</div>
-              <div>{billing.state}</div>
+              <div>{billing.billingState}</div>
 
               <div className="font-medium">Country</div>
-              <div>{billing.country}</div>
+              <div>{billing.billingCountry}</div>
 
               <div className="font-medium">ZIP/Postcode</div>
-              <div>{billing.zip}</div>
+              <div>{billing.billingZip}</div>
             </div>
           </div>
 

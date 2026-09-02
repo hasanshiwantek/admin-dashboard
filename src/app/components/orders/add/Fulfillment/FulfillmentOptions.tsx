@@ -78,17 +78,17 @@ export default function FulfillmentOptions() {
             <Label htmlFor="dest-single">New single address</Label>
           </div>
 
-          <div className="flex items-center space-x-2">
+          {/* <div className="flex items-center space-x-2">
             <RadioGroupItem value="multiple" id="dest-multiple" />
             <Label htmlFor="dest-multiple">New multiple address</Label>
-          </div>
+          </div> */}
         </RadioGroup>
       </div>
 
       {/* 👇 Conditionally render the right form */}
       {destinationType === "billing" && <BillingAddressForm />}
       {destinationType === "single" && <SingleAddressForm />}
-      {destinationType === "multiple" && <MultipleAddressForm />}
+      {/* {destinationType === "multiple" && <MultipleAddressForm />} */}
     </div>
   );
 }

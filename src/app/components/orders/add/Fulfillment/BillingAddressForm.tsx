@@ -10,27 +10,27 @@ export default function BillingAddressForm() {
     <div className="space-y-8">
       <div className="border rounded-md p-5 space-y-2 text-[15px]">
         <h2 className="!font-semibold">
-            Billing Address
+          Billing Address
         </h2>
         <div className="flex gap-6">
           <div className="w-40 text-muted-foreground font-medium">Name</div>
-          <div>{`${data.firstName || "-"} ${data.lastName || ""}`}</div>
+          <div>{`${data.billingFirstName || "-"} ${data.billingLastName || ""}`}</div>
         </div>
         <div className="flex gap-6">
           <div className="w-40 text-muted-foreground font-medium">Address</div>
-          <div>{data.address1 || "-"}</div>
+          <div>{data.billingAddress1 || "-"}</div>
         </div>
         <div className="flex gap-6">
           <div className="w-40 text-muted-foreground font-medium">Suburb/City</div>
-          <div>{data.city || "-"}</div>
+          <div>{data.billingCity || "-"}</div>
         </div>
         <div className="flex gap-6">
           <div className="w-40 text-muted-foreground font-medium">Country</div>
-          <div>{data.country || "-"}</div>
+          <div>{data.billingCountry || "-"}</div>
         </div>
         <div className="flex gap-6">
           <div className="w-40 text-muted-foreground font-medium">ZIP/Postcode</div>
-          <div>{data.zip || "-"}</div>
+          <div>{data.billingZip || "-"}</div>
         </div>
       </div>
 

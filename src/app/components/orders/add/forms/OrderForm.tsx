@@ -41,19 +41,19 @@ export default function OrderForm({ orderId }: { orderId: string }) {
         }
 
 
-      // Create a customer object from billing information
-      const customerFromBilling = order.customer || {
-        firstName: order.billingInformation?.firstName,
-        lastName: order.billingInformation?.lastName,
-        email: order.billingInformation?.email,
-        phone: order.billingInformation?.phone,
-        companyName: order.billingInformation?.companyName,
-        address: order.billingInformation?.addressLine1,
-        city: order.billingInformation?.city,
-        state: order.billingInformation?.state,
-        zip: order.billingInformation?.zip,
-        country: order.billingInformation?.country,
-      };
+        // Create a customer object from billing information
+        const customerFromBilling = order.customer || {
+          firstName: order.billingInformation?.firstName,
+          lastName: order.billingInformation?.lastName,
+          email: order.billingInformation?.email,
+          phone: order.billingInformation?.phone,
+          companyName: order.billingInformation?.companyName,
+          address: order.billingInformation?.addressLine1,
+          city: order.billingInformation?.city,
+          state: order.billingInformation?.state,
+          zip: order.billingInformation?.zip,
+          country: order.billingInformation?.country,
+        };
 
         // Transform API response to match your form structure
         const transformed = {
@@ -70,6 +70,20 @@ export default function OrderForm({ orderId }: { orderId: string }) {
           state: order.billingInformation?.state || "",
           zip: order.billingInformation?.zip || "",
           country: order.billingInformation?.country || "",
+
+          // billing
+          billingFirstName: order.billingAddress?.firstName || "",
+          billingLastName: order.billingAddress?.lastName || "",
+          billingCompanyName: order.billingAddress?.companyName || "",
+          billingPhoneNumber: order.billingAddress?.phone || "",
+          billingAddress1: order.billingAddress?.addressLine1 || "",
+          billingAddress2: order.billingAddress?.addressLine2 || "",
+          billingCity: order.billingAddress?.city || "",
+          billingCountry: order.billingAddress?.country || "",
+          billingState: order.billingAddress?.state || "",
+          billingZip: order.billingAddress?.zip || "",
+
+          // 
           selectedProducts: (order.products || []).map((p: any) => ({
             id: p.id,
             quantity: p.qty ?? p.quantity ?? 1,
