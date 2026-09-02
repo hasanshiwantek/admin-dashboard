@@ -510,15 +510,15 @@ export default function OrderReview({ step, setStep }: any) {
               </div>
 
               {/* Discount input */}
-              <div className="flex items-center gap-2">
+              {/* <div className="flex items-center gap-2">
                 <Input placeholder="Manual discount" className="text-sm" />
                 <Button type="button" className="btn-outline-primary">
                   Apply
                 </Button>
-              </div>
+              </div> */}
 
               {/* Gift/coupon */}
-              <div className="flex items-center gap-2">
+              {/* <div className="flex items-center gap-2">
                 <Input
                   placeholder="Coupon or gift certificate"
                   className="text-sm"
@@ -526,7 +526,7 @@ export default function OrderReview({ step, setStep }: any) {
                 <Button type="button" className="btn-outline-primary">
                   Apply
                 </Button>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
