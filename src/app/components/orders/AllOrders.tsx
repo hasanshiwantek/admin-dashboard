@@ -242,7 +242,10 @@ const AllOrders = () => {
 
             if (payload instanceof Blob) {
               blob = payload;
-            } else if (payload instanceof ArrayBuffer || payload instanceof Uint8Array) {
+            } else if (
+              payload instanceof ArrayBuffer ||
+              payload instanceof Uint8Array
+            ) {
               // Fixed the TypeScript error here
               blob = new Blob([new Uint8Array(payload as ArrayBuffer)], {
                 type: "application/pdf",
@@ -250,7 +253,7 @@ const AllOrders = () => {
             } else if (typeof payload === "string") {
               // If backend returns base64 string
               const byteCharacters = atob(
-                payload.replace(/^data:application\/pdf;base64,/, "")
+                payload.replace(/^data:application\/pdf;base64,/, ""),
               );
               const byteNumbers = new Array(byteCharacters.length);
               for (let i = 0; i < byteCharacters.length; i++) {
@@ -278,8 +281,8 @@ const AllOrders = () => {
       },
     },
     {
-      label: "Print packing slip"
-      , onClick: async () => {
+      label: "Print packing slip",
+      onClick: async () => {
         try {
           const orderId = order?.id;
           if (!orderId) {
@@ -296,7 +299,10 @@ const AllOrders = () => {
 
             if (payload instanceof Blob) {
               blob = payload;
-            } else if (payload instanceof ArrayBuffer || payload instanceof Uint8Array) {
+            } else if (
+              payload instanceof ArrayBuffer ||
+              payload instanceof Uint8Array
+            ) {
               // Fixed the TypeScript error here
               blob = new Blob([new Uint8Array(payload as ArrayBuffer)], {
                 type: "application/pdf",
@@ -304,7 +310,7 @@ const AllOrders = () => {
             } else if (typeof payload === "string") {
               // If backend returns base64 string
               const byteCharacters = atob(
-                payload.replace(/^data:application\/pdf;base64,/, "")
+                payload.replace(/^data:application\/pdf;base64,/, ""),
               );
               const byteNumbers = new Array(byteCharacters.length);
               for (let i = 0; i < byteCharacters.length; i++) {
@@ -325,12 +331,11 @@ const AllOrders = () => {
           } else if (printPackingSlipPdf.rejected.match(resultAction)) {
             console.error("Failed to print invoice:", resultAction.error);
             // You can add toast notification here
-          toast.error(
-    (resultAction.payload as string) ||
-    resultAction.error?.message ||
-    "Failed to print packing slip"
-  );
-
+            toast.error(
+              (resultAction.payload as string) ||
+                resultAction.error?.message ||
+                "Failed to print packing slip",
+            );
           }
         } catch (error) {
           console.error("Unexpected error:", error);
@@ -352,15 +357,16 @@ const AllOrders = () => {
         }
       },
     },
-    ...(order.isMessage && !order?.userType ? [
-      {
-        label: "Send Message",
-        onClick: () => {
-          router.push(
-            `/manage/orders/message/${order?.id}`,
-          )
-        }
-      }] : []),
+    ...(order.isMessage && !order?.userType
+      ? [
+          {
+            label: "Send Message",
+            onClick: () => {
+              router.push(`/manage/orders/message/${order?.id}`);
+            },
+          },
+        ]
+      : []),
     {
       label: "View notes",
       onClick: () => {
@@ -368,17 +374,20 @@ const AllOrders = () => {
         setShowNotes(true);
       },
     },
-    ...(String(order?.status || "")?.toLowerCase() !== "shipped" ? [{
-      label: "Ship items",
-      onClick: () => {
-        setSelectedOrder(order); // store in state
-        setShowShipmentModal(true);
-      },
-    }] : []),
-    ...(
-      String(order?.status || "").toLowerCase() !== "awaiting fulfillment" &&
-        String(order?.status || "").toLowerCase() !== "shipped"
-        ? [
+    ...(String(order?.status || "")?.toLowerCase() !== "shipped"
+      ? [
+          {
+            label: "Ship items",
+            onClick: () => {
+              setSelectedOrder(order); // store in state
+              setShowShipmentModal(true);
+            },
+          },
+        ]
+      : []),
+    ...(String(order?.status || "").toLowerCase() !== "awaiting fulfillment" &&
+    String(order?.status || "").toLowerCase() !== "shipped"
+      ? [
           {
             label: "Capture Funds",
             onClick: () => {
@@ -387,8 +396,7 @@ const AllOrders = () => {
             },
           },
         ]
-        : []
-    ),
+      : []),
     // {
     //   label: "Shipment table",
     //   onClick: () => {
@@ -398,43 +406,57 @@ const AllOrders = () => {
     // },
     // Shipment table - show only when Shipped
 
-    ...(
-      String(order?.status || "").toLowerCase() !== "cancelled" && String(order?.status || "").toLowerCase() !== "awaiting payment" && String(order?.status || "").toLowerCase() !== "awaiting fulfillment"
-        ? [{
-          label: "View shipments",
-          onClick: () => {
-            setSelectedOrderId(order.id);
-            setShowShipmentTable(true);
+    ...(String(order?.status || "").toLowerCase() !== "cancelled" &&
+    String(order?.status || "").toLowerCase() !== "awaiting payment" &&
+    String(order?.status || "").toLowerCase() !== "awaiting fulfillment"
+      ? [
+          {
+            label: "View shipments",
+            onClick: () => {
+              setSelectedOrderId(order.id);
+              setShowShipmentTable(true);
+            },
           },
-        }] : []),
+        ]
+      : []),
     // {
     //   label: "View shipments",
     //   onClick: () => {
     //     router.push("/manage/orders/shipments");
     //   },
     // },
-    ...(String(order?.status || "")?.toLowerCase() !== "shipped" && String(order?.status || "").toLowerCase() !== "awaiting fulfillment" ? [{
-      label: "Void Transaction",
-      onClick: async () => {
-        setSelectedOrderId(order?.id);
-        setShowVoidConfirm(true);
-      },
-    }] : []),
-    ...(String(order?.status || "")?.toLowerCase() !== "cancelled" && String(order?.status || "").toLowerCase() !== "awaiting payment" ? [{
-      label: "Refund",
-      onClick: async () => {
-        const orderId = order?.id;
-        try {
-          const resulAction = await dispatch(refundOrder({ orderId }));
-          if (refundOrder.fulfilled.match(resulAction)) {
-            setTimeout(() => {
-              refetchOrders(dispatch);
-            }, 3000);
-          } else {
-          }
-        } catch (err) { }
-      },
-    }] : []),
+    ...(String(order?.status || "")?.toLowerCase() !== "shipped" &&
+    String(order?.status || "").toLowerCase() !== "awaiting fulfillment"
+      ? [
+          {
+            label: "Void Transaction",
+            onClick: async () => {
+              setSelectedOrderId(order?.id);
+              setShowVoidConfirm(true);
+            },
+          },
+        ]
+      : []),
+    ...(String(order?.status || "")?.toLowerCase() !== "cancelled" &&
+    String(order?.status || "").toLowerCase() !== "awaiting payment"
+      ? [
+          {
+            label: "Refund",
+            onClick: async () => {
+              const orderId = order?.id;
+              try {
+                const resulAction = await dispatch(refundOrder({ orderId }));
+                if (refundOrder.fulfilled.match(resulAction)) {
+                  setTimeout(() => {
+                    refetchOrders(dispatch);
+                  }, 3000);
+                } else {
+                }
+              } catch (err) {}
+            },
+          },
+        ]
+      : []),
     {
       label: "View order timeline",
       onClick: () => {
@@ -482,7 +504,6 @@ const AllOrders = () => {
     } catch (err) {
       console.error("🚨 Unexpected error updating", err);
     }
-
   };
 
   // UPDATE ORDER STATUS LOGIC
@@ -655,7 +676,6 @@ const AllOrders = () => {
     }
   }, [searchParams]); // ✅ triggers when URL changes
 
-
   // useEffect(() => {
   //   if (!productId) {
   //     dispatch(fetchAllOrders({ page: currentPage, perPage, status: activeTab }));
@@ -669,13 +689,13 @@ const AllOrders = () => {
       // dispatch(advanceOrderSearch({ data: query }));
     } else {
       if (!productId) {
-
-        dispatch(fetchAllOrders({ page: currentPage, perPage, status: activeTab }));
+        dispatch(
+          fetchAllOrders({ page: currentPage, perPage, status: activeTab }),
+        );
       }
       // dispatch(fetchAllOrders({ page: currentPage, perPage, status: activeTab }));
     }
   }, [searchParams]);
-
 
   const selectedOrderDetails = filteredOrders.find(
     (item: any) => Number(item.id) === Number(selectedOrderId),
@@ -765,20 +785,22 @@ const AllOrders = () => {
         {tabs.map((tab) => (
           <button
             key={tab}
-            className={`!text-2xl pb-3 border-b-3 whitespace-nowrap ${activeTab === tab
-              ? "border-blue-600 font-semibold"
-              : "border-transparent text-gray-500 hover:text-black"
-              }`}
+            className={`!text-2xl pb-3 border-b-3 whitespace-nowrap ${
+              activeTab === tab
+                ? "border-blue-600 font-semibold"
+                : "border-transparent text-gray-500 hover:text-black"
+            }`}
             onClick={() => {
               const query = Object.fromEntries(searchParams.entries());
               if (Object.keys(query).length > 0) {
-                setActiveTab(tab)
+                setActiveTab(tab);
                 router.push(`/manage/orders`);
-
               } else {
-                dispatch(fetchAllOrders({ page: currentPage, perPage, status: tab }));
-                setFilterProductId("")
-                setActiveTab(tab)
+                dispatch(
+                  fetchAllOrders({ page: currentPage, perPage, status: tab }),
+                );
+                setFilterProductId("");
+                setActiveTab(tab);
               }
             }}
           >
@@ -1093,23 +1115,27 @@ const AllOrders = () => {
                           {order.id}
                         </TableCell>
                         <TableCell>
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2  ">
                             {/* Verification Badge Icon */}
                             {/* {order?.payment?.risk_level == "normal" ?
                               <BadgeCheck className="w-8 h-8 text-white fill-green-500 " /> : order?.payment?.risk_level == "elevated" ? <TriangleAlert className="w-8 h-8 text-white fill-yellow-500 " /> : order?.payment?.risk_level == "highest" ? <BadgeX className="w-8 h-8 text-white fill-red-500 " /> : <></>
                             } */}
-                            {risk && (
-                              <TooltipProvider>
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <span className="cursor-pointer">
-                                      {risk.icon}
-                                    </span>
-                                  </TooltipTrigger>
-                                  <TooltipContent>{risk.label}</TooltipContent>
-                                </Tooltip>
-                              </TooltipProvider>
-                            )}
+                            <div className="w-6 shrink-0">
+                              {risk && (
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <span className="cursor-pointer">
+                                        {risk.icon}
+                                      </span>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      {risk.label}
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
+                              )}
+                            </div>
                             {/* Country Flag Icon */}
 
                             <TooltipProvider>
@@ -1180,8 +1206,9 @@ const AllOrders = () => {
                               return (
                                 <>
                                   <span
-                                    className={`w-7 h-9 inline-block rounded-sm ${currentStatus?.color || "bg-gray-400"
-                                      }`}
+                                    className={`w-7 h-9 inline-block rounded-sm ${
+                                      currentStatus?.color || "bg-gray-400"
+                                    }`}
                                   />
                                   <Select
                                     defaultValue={normalizedStatus}
@@ -1317,7 +1344,9 @@ const AllOrders = () => {
                               <div className="flex">
                                 {/* Left Side: Billing Title & Copy Button */}
                                 <div className="flex flex-col border-r pr-3 mr-3 space-y-2">
-                                  <h4 className="font-semibold text-[18px] #[34313f]">Billing</h4>
+                                  <h4 className="font-semibold text-[18px] #[34313f]">
+                                    Billing
+                                  </h4>
                                   <button
                                     className="!px-2 !py-1 flex items-center gap-1 text-[#4B71FC] border border-[#4B71FC]  text-base"
                                     onClick={() =>
@@ -1355,16 +1384,17 @@ const AllOrders = () => {
                                       <Monitor className="w-5 h-5 text-gray-500" />
                                     )}
 
-
                                     <CreditCard className="w-5 h-5 text-gray-500" />
 
-                                    {["Shipped", "Awaiting Fulfillment"].includes(order?.status) && (
+                                    {[
+                                      "Shipped",
+                                      "Awaiting Fulfillment",
+                                    ].includes(order?.status) && (
                                       <CreditCard className="w-5 h-5 text-gray-500" />
                                     )}
-                                    {order?.status ===
-                                      "Awaiting Payment" && (
-                                        <CreditCard className="w-5 h-5 text-gray-500" />
-                                      )}
+                                    {order?.status === "Awaiting Payment" && (
+                                      <CreditCard className="w-5 h-5 text-gray-500" />
+                                    )}
 
                                     {order?.payment?.payment_intent_id && (
                                       <CreditCard className="w-5 h-5 text-gray-500" />
@@ -1432,7 +1462,10 @@ const AllOrders = () => {
 
                                   <div className="flex items-center gap-2">
                                     {/* <Mail className="w-5 h-5 text-gray-500" /> */}
-                                    <Link className="!text-blue-400" href={`mailto:${order.billingAddress.email}`}>
+                                    <Link
+                                      className="!text-blue-400"
+                                      href={`mailto:${order.billingAddress.email}`}
+                                    >
                                       {order?.billingAddress?.email || "N/A"}
                                     </Link>
                                   </div>
@@ -1441,16 +1474,20 @@ const AllOrders = () => {
                                     <span>
                                       {order?.billingInformation?.updatedAt
                                         ? dayjs(
-                                          order?.billingInformation
-                                            ?.updatedAt,
-                                        ).format("DD MMM YYYY HH:mm:ss")
+                                            order?.billingInformation
+                                              ?.updatedAt,
+                                          ).format("DD MMM YYYY HH:mm:ss")
                                         : "N/A"}
                                     </span>
                                   </div>
                                   {order?.ipAddress && (
                                     <div className="flex items-center gap-2">
                                       {/* {<MonitorCheck className="h-5 w-5 text-gray-500" />} */}
-                                      <Link href={`https://whatismyipaddress.com/ip/${order?.ipAddress}`} target="_blank" className="!text-blue-400">
+                                      <Link
+                                        href={`https://whatismyipaddress.com/ip/${order?.ipAddress}`}
+                                        target="_blank"
+                                        className="!text-blue-400"
+                                      >
                                         {order?.ipAddress}
                                       </Link>
                                     </div>
@@ -1458,9 +1495,7 @@ const AllOrders = () => {
                                   <div className="flex items-center gap-2">
                                     {/* {order?.deviceType === "tablet" || order?.deviceType === "mobile" ?
                                      <Smartphone className="h-5 w-5 text-gray-500" /> : <Monitor className="h-5 w-5 text-gray-500" />} */}
-                                    <span>
-                                      {order?.deviceType}
-                                    </span>
+                                    <span>{order?.deviceType}</span>
                                   </div>
 
                                   <div className="flex items-center gap-2">
@@ -1470,7 +1505,9 @@ const AllOrders = () => {
                                         ?.paymentMethod || "N/A"}
                                     </span>
                                   </div>
-                                  {["Shipped", "Awaiting Fulfillment"].includes(order?.status) && (
+                                  {["Shipped", "Awaiting Fulfillment"].includes(
+                                    order?.status,
+                                  ) && (
                                     <div className="flex items-center gap-2">
                                       {/* <CreditCard className="w-5 h-5 text-gray-500" /> */}
                                       <span>Captued</span>
@@ -1478,10 +1515,17 @@ const AllOrders = () => {
                                   )}
                                   {order?.status == "Awaiting Payment" && (
                                     <div className="flex items-center gap-2">
-                                      <span onClick={() => {
-                                        setSelectedOrderId(order?.payment?.payment_intent_id);
-                                        setShowConfirm(true);
-                                      }} className="!text-blue-400  cursor-pointer" >Capture Funds</span>
+                                      <span
+                                        onClick={() => {
+                                          setSelectedOrderId(
+                                            order?.payment?.payment_intent_id,
+                                          );
+                                          setShowConfirm(true);
+                                        }}
+                                        className="!text-blue-400  cursor-pointer"
+                                      >
+                                        Capture Funds
+                                      </span>
                                     </div>
                                   )}
                                   {order?.payment?.payment_intent_id && (
@@ -1495,8 +1539,7 @@ const AllOrders = () => {
                                   {order?.comments && (
                                     <div className="flex items-center gap-2">
                                       <span className="">
-                                        {order?.comments ||
-                                          "N/A"}
+                                        {order?.comments || "N/A"}
                                       </span>
                                     </div>
                                   )}
@@ -1514,7 +1557,9 @@ const AllOrders = () => {
                               <div className="flex">
                                 {/* Left Side: Shipping Title & Copy Button */}
                                 <div className="flex flex-col border-r pr-3 mr-3 space-y-2">
-                                  <h4 className="font-semibold text-[18px] text-[#34313f]">Shipping</h4>
+                                  <h4 className="font-semibold text-[18px] text-[#34313f]">
+                                    Shipping
+                                  </h4>
                                   <button
                                     className="!px-2 !py-1 flex items-center gap-1  text-[#4B71FC] border border-[#4B71FC]  text-base"
                                     onClick={() =>
@@ -1552,23 +1597,23 @@ const AllOrders = () => {
                                       <br />
                                       {order?.billingInformation
                                         ?.addressLine1 && (
-                                          <>
-                                            {
-                                              order.billingInformation
-                                                .addressLine1
-                                            }
-                                          </>
-                                        )}
+                                        <>
+                                          {
+                                            order.billingInformation
+                                              .addressLine1
+                                          }
+                                        </>
+                                      )}
                                       {order?.billingInformation
                                         ?.addressLine2 && (
-                                          <>
-                                            ,{" "}
-                                            {
-                                              order.billingInformation
-                                                .addressLine2
-                                            }
-                                          </>
-                                        )}
+                                        <>
+                                          ,{" "}
+                                          {
+                                            order.billingInformation
+                                              .addressLine2
+                                          }
+                                        </>
+                                      )}
                                       <br />
                                       {order?.billingInformation?.state}
                                       <br />
@@ -1625,7 +1670,10 @@ const AllOrders = () => {
 
                                   <div className="flex items-center gap-2">
                                     {/* <Mail className="w-5 h-5 text-gray-500" /> */}
-                                    <Link className="text-[#6f8DFD] text-[13px]" href={`mailto:${order.billingInformation.email}`}>
+                                    <Link
+                                      className="text-[#6f8DFD] text-[13px]"
+                                      href={`mailto:${order.billingInformation.email}`}
+                                    >
                                       {order?.billingInformation?.email ||
                                         "N/A"}
                                     </Link>
@@ -1643,28 +1691,38 @@ const AllOrders = () => {
 
                                 {/* Right - Details */}
                                 <div className="flex flex-col flex-1 min-w-0">
-                                  {["Shipped", "Completed"].includes(order?.status) && <div className="bg-gray-100 p-4 text-sm space-y-0">
-                                    {order?.shipmentId && <div className="flex ">
-                                      <span onClick={() => {
-                                        setSelectedOrderId(order.id);
-                                        setShowShipmentIdTable(true);
-
-                                      }} className="!text-blue-400 cursor-pointer">Shipment #{order?.shipmentId}</span>
-                                    </div>}
-                                    <div className="flex ">
-                                      <span> {order?.products?.length} items @  {dayjs(order?.updatedAt).format(
-                                        "DD MMM YYYY HH:mm:ss",
-                                      ) || "N/A"} </span>
-
+                                  {["Shipped", "Completed"].includes(
+                                    order?.status,
+                                  ) && (
+                                    <div className="bg-gray-100 p-4 text-sm space-y-0">
+                                      {order?.shipmentId && (
+                                        <div className="flex ">
+                                          <span
+                                            onClick={() => {
+                                              setSelectedOrderId(order.id);
+                                              setShowShipmentIdTable(true);
+                                            }}
+                                            className="!text-blue-400 cursor-pointer"
+                                          >
+                                            Shipment #{order?.shipmentId}
+                                          </span>
+                                        </div>
+                                      )}
+                                      <div className="flex ">
+                                        <span>
+                                          {" "}
+                                          {order?.products?.length} items @{" "}
+                                          {dayjs(order?.updatedAt).format(
+                                            "DD MMM YYYY HH:mm:ss",
+                                          ) || "N/A"}{" "}
+                                        </span>
+                                      </div>
+                                      <div className="flex ">
+                                        <span>Tracking #: </span>
+                                        <span>{order?.trackingNumber}</span>
+                                      </div>
                                     </div>
-                                    <div className="flex ">
-                                      <span>Tracking #: </span>
-                                      <span>
-                                        {order?.trackingNumber}
-                                      </span>
-                                    </div>
-
-                                  </div>}
+                                  )}
                                   {/* Product list */}
                                   <div className="p-4 border-b space-y-4">
                                     {order?.products?.map(
@@ -1735,24 +1793,28 @@ const AllOrders = () => {
                                       ),
                                     )}
 
-                                    {!["shipped", "completed"].includes(String(order?.status || "").toLowerCase()) && <button
-                                      onClick={() => {
-                                        setSelectedOrder(order); // store in state
-                                        setShowShipmentModal(true);
-                                      }}
-                                      className="flex items-center mt-4 px-3 py-1.5 text-base font-semibold border border-blue-500 text-blue-600 hover:bg-blue-50 rounded w-fit"
-                                    >
-                                      <svg
-                                        className="w-4 h-4 mr-2"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeWidth="2"
-                                        viewBox="0 0 24 24"
+                                    {!["shipped", "completed"].includes(
+                                      String(order?.status || "").toLowerCase(),
+                                    ) && (
+                                      <button
+                                        onClick={() => {
+                                          setSelectedOrder(order); // store in state
+                                          setShowShipmentModal(true);
+                                        }}
+                                        className="flex items-center mt-4 px-3 py-1.5 text-base font-semibold border border-blue-500 text-blue-600 hover:bg-blue-50 rounded w-fit"
                                       >
-                                        <path d="M3 3h2l.4 2M7 13h14l-1.5 8H6L4.5 5H20"></path>
-                                      </svg>
-                                      Ship Items
-                                    </button>}
+                                        <svg
+                                          className="w-4 h-4 mr-2"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          strokeWidth="2"
+                                          viewBox="0 0 24 24"
+                                        >
+                                          <path d="M3 3h2l.4 2M7 13h14l-1.5 8H6L4.5 5H20"></path>
+                                        </svg>
+                                        Ship Items
+                                      </button>
+                                    )}
                                   </div>
 
                                   {/* Totals */}
