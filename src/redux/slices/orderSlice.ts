@@ -277,9 +277,22 @@ export const printPackingSlipPdf = createAsyncThunk(
 
       return response.data; // This will be a Blob
     } catch (err: any) {
-      return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to download PDF",
-      );
+      let message = "Failed to download PDF";
+
+  if (err.response?.data instanceof Blob) {
+    try {
+      const text = await err.response.data.text();
+      const errorData = JSON.parse(text);
+
+      message = errorData?.message || message;
+    } catch {
+      // fallback message
+    }
+  } else {
+    message = err.response?.data?.message || message;
+  }
+
+  return thunkAPI.rejectWithValue(message);
     }
   },
 );
