@@ -594,7 +594,7 @@ export const getReturnOrders = createAsyncThunk(
   "orders/getReturnOrders",
   async (_, thunkAPI) => {
     try {
-      const res = await axiosInstance.get(`dashboard/orders/admin-return-requests`);
+      const res = await axiosInstance.get(`dashboard/orders/get-return-order`);
       return res.data;
     } catch (err: any) {
       console.error("❌ Error fetching returns:", err);
