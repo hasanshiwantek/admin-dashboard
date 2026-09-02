@@ -77,12 +77,12 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
                   Existing customer
                 </Label>
               </div>
-              <div className="flex items-center space-x-2">
+              {!isEditMode && <div className="flex items-center space-x-2">
                 <RadioGroupItem value="new" id="new" />
                 <Label className="2xl:!text-2xl" htmlFor="new">
                   New customer
                 </Label>
-              </div>
+              </div>}
             </RadioGroup>
           </div>
           {orderType === "existing" && (
@@ -97,11 +97,8 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
 
                   // Always deep-clone or pick fields to avoid proxy issues
                   const safeCustomer = JSON.parse(JSON.stringify(customer));
-                  console.log("Selected customer: ", safeCustomer, customer);
-
                   // Store safely in local state
                   setSelectedCustomer(safeCustomer);
-
                   // Only save the customer ID or minimal info in form state
                   setValue("selectedCustomer", safeCustomer || "");
                 }}
@@ -177,7 +174,7 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
                   </p>
                 </div>
 
-                <div className="flex items-center space-x-2">
+                {/* <div className="flex items-center space-x-2">
                   <Checkbox
                     id="exclusiveOffers"
                     {...register("exclusiveOffers")}
@@ -185,9 +182,9 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
                   <Label className="2xl:!text-2xl" htmlFor="exclusiveOffers">
                     I would like to receive updates and offers.
                   </Label>
-                </div>
+                </div> */}
 
-                <div>
+                {/* <div>
                   <Label className="2xl:!text-2xl" htmlFor="customerGroup">
                     Customer group
                   </Label>
@@ -204,7 +201,7 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
                       </SelectItem>
                     </SelectContent>
                   </Select>
-                </div>
+                </div> */}
               </div>
             </div>
           )}
