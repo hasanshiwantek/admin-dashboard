@@ -12,6 +12,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import ShippingMethod from "./ShippingMethod";
+import { countriesList } from "@/const/location";
 
 export default function SingleAddressForm() {
   const { register, control, watch, setValue, getValues } = useFormContext();
@@ -134,9 +135,11 @@ export default function SingleAddressForm() {
                     <SelectValue placeholder="Country" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="PK">Pakistan</SelectItem>
-                    <SelectItem value="US">United States</SelectItem>
-                    <SelectItem value="UK">United Kingdom</SelectItem>
+                    {countriesList?.map((c) => (
+                      <SelectItem key={c.value} value={c.value}>
+                        {c.label}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               )}
