@@ -27,6 +27,8 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
 
     return "desktop";
   };
+
+
   const onSubmit = async () => {
     const values = getValues(); // ✅ collect all step data
 
@@ -63,7 +65,6 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
           return baseData;
       }
     };
-    console.log(values);
 
     // Main payload function (keeps payload exactly as original)
     const finalPayload = (() => {
@@ -154,6 +155,7 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
             state: values.billingState || "",
             zip: values.billingZip || "",
             country: values.billingCountry || "",
+            saveAddress: values.saveAddress == "on" ? true : false,
           },
           billingInformation: { //shipping address is same as billing address
             "firstName": values?.shipping?.firstName,
