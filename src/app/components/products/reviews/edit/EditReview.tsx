@@ -115,7 +115,7 @@ const EditReview = () => {
             </div>
             {/* Card Header */}
             <div className="px-6 py-4 border-gray-200">
-                <h2 className="text-base font-semibold text-gray-800">
+                <h2 className="text-[16px] !font-bold text-gray-800">
                     Review Details
                 </h2>
             </div>
@@ -131,7 +131,7 @@ const EditReview = () => {
                         <div className="px-8 py-6">
 
                             {/* Review Title */}
-                            <div className="flex items-center gap-3 mb-5">
+                            <div className="flex items-center mb-5">
                                 <Label
                                     htmlFor="name"
                                     className="text-[12px] text-gray-600 text-right w-[110px] shrink-0"
@@ -141,7 +141,7 @@ const EditReview = () => {
                                 <Input
                                     id="name"
                                     {...register("name")}
-                                    className="w-[280px] h-8 text-sm border-gray-300"
+                                    className="w-[280px] h-8 text-sm !font-medium border-gray-300"
                                 />
                                 <Info className="w-4 h-4 text-gray-400 shrink-0" />
                             </div>
@@ -158,7 +158,7 @@ const EditReview = () => {
                                     id="comment"
                                     {...register("comment")}
                                     rows={5}
-                                    className="w-[280px] border border-gray-300 rounded-sm px-2 py-1 text-sm resize-y focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-blue-400 transition"
+                                    className="w-[280px] border border-gray-300 rounded-sm px-2 py-1 text-[13px] resize-y focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-blue-400 transition"
                                 />
                                 <Info className="w-4 h-4 text-gray-400 shrink-0 mt-1" />
                             </div>
@@ -174,7 +174,7 @@ const EditReview = () => {
                                 <Input
                                     id="userName"
                                     {...register("userName")}
-                                    className="w-[280px] h-8 text-sm border-gray-300"
+                                    className="w-[280px] h-8 text-sm !font-normal border-gray-300"
                                 />
                                 <Info className="w-4 h-4 text-gray-400 shrink-0" />
                             </div>
@@ -190,10 +190,10 @@ const EditReview = () => {
                                 <select
                                     id="approved"
                                     {...register("approved")}
-                                    className="w-[180px] h-8 border border-gray-300 rounded-sm px-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-blue-400 transition bg-white"
+                                    className="w-[180px] h-8 border border-gray-300 rounded-sm px-2 !text-[13px]  focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-blue-400 transition bg-white"
                                 >
-                                    <option value="0">Pending</option>
-                                    <option value="1">Approved</option>
+                                    <option value="0" className="!text-[13px]">Pending</option>
+                                    <option value="1" className="!text-[13px]">Approved</option>
                                 </select>
                                 <Info className="w-4 h-4 text-gray-400 shrink-0" />
                             </div>
@@ -209,7 +209,7 @@ const EditReview = () => {
                                 <select
                                     id="rating"
                                     {...register("rating")}
-                                    className="w-[180px] h-8 border border-gray-300 rounded-sm px-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-blue-400 transition bg-white"
+                                    className="w-[180px] h-8 border border-gray-300 rounded-sm px-2 !text-[13px] focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-blue-400 transition bg-white"
                                 >
                                     {RATING_OPTIONS.map((opt) => (
                                         <option key={opt.value} value={opt.value}>
@@ -226,14 +226,14 @@ const EditReview = () => {
                                 type="button"
                                 onClick={() => router.push("/manage/products/reviews")}
                                 disabled={isSubmitting || isLoading}
-                                className="text-sm text-blue-600 hover:underline px-3 py-1 disabled:opacity-50"
+                                className="text-[11px] text-blue-600 hover:underline px-3 py-1 disabled:opacity-50"
                             >
                                 Cancel
                             </button>
                             <button
                                 type="submit"
                                 disabled={isSubmitting || isLoading}
-                                className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-5 py-1.5 rounded-sm flex items-center gap-2 disabled:opacity-50 transition"
+                                className="bg-blue-600 hover:bg-blue-700 text-white text-[11px] px-5 py-1.5 rounded-sm flex items-center gap-2 disabled:opacity-50 transition"
                             >
                                 {isSubmitting ? (
                                     <>
