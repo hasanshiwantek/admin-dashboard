@@ -101,11 +101,11 @@ export default function StepTwo({ step, setStep }: any) {
               onSelect={handleAddProduct}
               register={register}
             />
-            <AddCustomProductModal onAdd={handleAddCustomProduct} />
+            {/* <AddCustomProductModal onAdd={handleAddCustomProduct} /> */}
           </div>
 
           <div className="flex items-center gap-2">
-            <span>or</span>
+            {/* <span>or</span> */}
             <button
               className="btn-outline-primary !whitespace-nowrap"
               type="button"

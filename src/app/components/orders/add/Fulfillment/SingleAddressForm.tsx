@@ -151,7 +151,7 @@ export default function SingleAddressForm() {
 
           {/* Address preview */}
           <div>
-            <div className="max-w-md rounded-md border border-gray-300 bg-[#F8F9FB] p-4 flex justify-between items-start">
+            {/* <div className="max-w-md rounded-md border border-gray-300 bg-[#F8F9FB] p-4 flex justify-between items-start">
               <div className="flex gap-2">
                 <img src="https://flagcdn.com/gb.svg" alt="UK" className="w-5 h-5 mt-0.5" />
                 <div className="text-gray-800 leading-snug flex flex-col gap-1">
@@ -186,7 +186,7 @@ export default function SingleAddressForm() {
                   </button>
                 )}
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
 
