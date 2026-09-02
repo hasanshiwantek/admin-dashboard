@@ -37,18 +37,20 @@ export const SideBar = ({
   const pathname = usePathname();
   const router = useRouter();
   const sidebarData = useSidebarData();
+  console.log("SIDEBAR DATA:", sidebarData);
 
   const [openMenus, setOpenMenus] = useState<boolean[]>(
     sidebarData.map(() => false)
   );
   
   useEffect(() => {
-    const newOpenMenus = sidebarData.map(
-      (item) =>
-        item.children?.some((child: any) => child.url === pathname) || false
-    );
-    setOpenMenus(newOpenMenus);
-  }, [pathname]);
+  const newOpenMenus = sidebarData.map(
+    (item) =>
+      item.children?.some((child: any) => child.url === pathname) || false
+  );
+
+  setOpenMenus(newOpenMenus);
+}, [sidebarData, pathname]);
 
   return (
     <div

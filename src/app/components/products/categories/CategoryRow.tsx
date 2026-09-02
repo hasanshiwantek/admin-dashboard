@@ -208,12 +208,28 @@ const CategoryRow = ({
             className="flex items-center gap-2 "
           >
             <Folder className="text-indigo-300 w-8 h-8" fill="lightblue" />
-            <div
-              // href={`/manage/products/categories/edit/${category?.id}`}
-              className=" hover:text-blue-800 2xl:!text-[1.6rem]"
-            >
-              {category.name}
-            </div>
+            <button
+  type="button"
+  onClick={() => {
+    const mainRootId = rootId;
+    const findCategory = categories?.find(
+      (item: any) => item?.id == mainRootId
+    );
+
+    if (rootId != category?.id) {
+      router.push(
+        `/manage/products/categories/edit/${category?.id}?rootParent=${findCategory?.name}`
+      );
+    } else {
+      router.push(
+        `/manage/products/categories/edit/${category?.id}`
+      );
+    }
+  }}
+  className="hover:text-blue-800 2xl:!text-[1.6rem] cursor-pointer"
+>
+  {category.name}
+</button>
           </div>
         </TableCell>
         <TableCell className="text-left text-xl 2xl:!text-[1.6rem]">{category?.total_products}</TableCell>
