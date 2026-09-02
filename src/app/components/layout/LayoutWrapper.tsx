@@ -36,7 +36,7 @@ const LayoutWrapper: React.FC<LayoutWrapperProps> = ({ children }) => {
       setIsHovered(false);
     }          
   }}
-  className={`hidden md:block shrink-0 overflow-visible border-r bg-white transition-[width] duration-200 ease-in-out ${
+  className={`hidden md:block shrink-0 h-full overflow-visible border-r bg-white transition-[width] duration-200 ease-in-out ${
     isCollapsed
       ? isHovered
         ? "w-[26.8rem]"
