@@ -43,7 +43,7 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
       router.push("/manage/orders/");
     }
   };
-  const country = watch("country");
+  const country = watch("billingCountry");
   const orderType = watch("orderType");
   useEffect(() => {
     setValue("orderType", "existing");
@@ -240,7 +240,7 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
                   First Name
                 </Label>
                 <Input
-                  {...register("firstName")}
+                  {...register("billingFirstName")}
                   id="firstName"
                   className="mt-1"
                   required={!isEditMode}
@@ -252,7 +252,7 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
                   Last Name
                 </Label>
                 <Input
-                  {...register("lastName")}
+                  {...register("billingLastName")}
                   id="lastName"
                   className="mt-1"
                   required={!isEditMode}
@@ -265,7 +265,7 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
                   <span className="text-gray-400 text-xs">(Optional)</span>
                 </Label>
                 <Input
-                  {...register("companyName")}
+                  {...register("billingCompanyName")}
                   id="companyName"
                   className="mt-1"
                 />
@@ -277,7 +277,7 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
                   <span className="text-gray-400 text-xs">(Optional)</span>
                 </Label>
                 <Input
-                  {...register("phoneNumber")}
+                  {...register("billingPhoneNumber")}
                   id="phoneNumber"
                   className="mt-1"
                 />
@@ -288,7 +288,7 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
                   Address Line 1
                 </Label>
                 <Input
-                  {...register("address1")}
+                  {...register("billingAddress1")}
                   id="address1"
                   className="mt-1"
                   required={!isEditMode}
@@ -301,7 +301,7 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
                   <span className="text-gray-400 text-xs">(Optional)</span>
                 </Label>
                 <Input
-                  {...register("address2")}
+                  {...register("billingAddress2")}
                   id="address2"
                   className="mt-1"
                 />
@@ -312,7 +312,7 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
                   Suburb/City
                 </Label>
                 <Input
-                  {...register("city")}
+                  {...register("billingCity")}
                   id="city"
                   className="mt-1"
                   required={!isEditMode}
@@ -325,7 +325,7 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
                 </Label>
                 <Select
                   value={country}
-                  onValueChange={(value) => setValue("country", value)}
+                  onValueChange={(value) => setValue("billingCountry", value)}
                   required={!isEditMode}
                 >
                   <SelectTrigger>
@@ -346,7 +346,7 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
                   State/Province
                 </Label>
                 <Input
-                  {...register("state")}
+                  {...register("billingState")}
                   id="state"
                   className="mt-1"
                   required={!isEditMode}
@@ -357,7 +357,7 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
                 <Label className="2xl:!text-2xl" htmlFor="zip">
                   Zip/Postcode
                 </Label>
-                <Input {...register("zip")} id="zip" className="mt-1" />
+                <Input {...register("billingZip")} id="zip" className="mt-1" />
               </div>
             </div>
 
@@ -397,18 +397,18 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
                     type="button"
                     className="btn-primary mt-4"
                     onClick={() => {
-                      setValue("firstName", selectedCustomer.firstName);
-                      setValue("lastName", selectedCustomer.lastName);
+                      setValue("billingFirstName", selectedCustomer.firstName);
+                      setValue("billingLastName", selectedCustomer.lastName);
                       setValue(
-                        "companyName",
+                        "billingCompanyName",
                         selectedCustomer.companyName || ""
                       );
-                      setValue("phoneNumber", selectedCustomer.phone || "");
-                      setValue("address1", selectedCustomer.address || "");
-                      setValue("city", selectedCustomer.city || "");
-                      setValue("state", selectedCustomer.state || "");
-                      setValue("zip", selectedCustomer.zip || "");
-                      setValue("country", selectedCustomer.country || "");
+                      setValue("billingPhoneNumber", selectedCustomer.phone || "");
+                      setValue("billingAddress1", selectedCustomer.address || "");
+                      setValue("billingCity", selectedCustomer.city || "");
+                      setValue("billingState", selectedCustomer.state || "");
+                      setValue("billingZip", selectedCustomer.zip || "");
+                      setValue("billingCountry", selectedCustomer.country || "");
                     }}
                   >
                     Use this address

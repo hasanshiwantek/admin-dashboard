@@ -63,6 +63,7 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
           return baseData;
       }
     };
+    console.log(values);
 
     // Main payload function (keeps payload exactly as original)
     const finalPayload = (() => {
@@ -136,26 +137,41 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
         };
       } else {
         return {
-          deviceType: getDeviceType(),
           customerId: values.selectedCustomer?.id || null,
-          billingInformation: {
-            firstName: values.firstName || "",
-            lastName: values.lastName || "",
+          deviceType: getDeviceType(),
+          isDraft,
+          comments: values.customerComments || "",
+          staffNotes: values.staffNotes || "",
+          "billingAddress": { //billing address is same as billing address
+            firstName: values.billingFirstName || "",
+            lastName: values.billingLastName || "",
             email: values.selectedCustomer?.email || "",
-            phone: values.phoneNumber || "",
-            companyName: values.companyName || "",
-            addressLine1: values.address1 || "",
-            addressLine2: values.address2 || "",
-            city: values.city || "",
-            state: values.state || "",
-            zip: values.zip || "",
-            country: values.country || "",
+            phone: values.billingPhoneNumber || "",
+            companyName: values.billingCompanyName || "",
+            addressLine1: values.billingAddress1 || "",
+            addressLine2: values.billingAddress2 || "",
+            city: values.billingCity || "",
+            state: values.billingState || "",
+            zip: values.billingZip || "",
+            country: values.billingCountry || "",
+          },
+          billingInformation: { //shipping address is same as billing address
+            "firstName": values?.shipping?.firstName,
+            "lastName": values?.shipping?.lastName,
+            "companyName": values?.shipping?.companyName,
+            "email": values.selectedCustomer?.email,
+            "phone": values?.shipping?.phoneNumber,
+            "addressLine1": values?.shipping?.address1,
+            "addressLine2": values?.shipping?.address2,
+            "city": values?.shipping?.city,
+            "state": values?.shipping?.state,
+            "zip": values?.shipping?.zip,
+            "country": values?.shipping?.country,
+            "saveToAddressBook": values?.shipping?.saveToAddressBook
+            // customerGroup: values.selectedCustomer?.customerGroup || "",
+            // receiveOffers:
+            //   values.selectedCustomer?.receiveMarketingEmails || false,
 
-            customerGroup: values.selectedCustomer?.customerGroup || "",
-            receiveOffers:
-              values.selectedCustomer?.receiveMarketingEmails || false,
-            comments: values.customerComments || "",
-            staffNotes: values.staffNotes || "",
           },
           paymentMethod: buildPaymentMethod(),
           shippingMethod: {
@@ -163,7 +179,6 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
             method: values.shippingMethod?.method || "",
             cost: values.shippingMethod?.cost || "0.00",
           },
-          isDraft,
           products:
             values.selectedProducts?.map((product: any) => ({
               productId: product.id,
@@ -195,6 +210,7 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
 
     try {
       let resultAction;
+      console.log("finalPayload", finalPayload);
 
       if (isEditMode && orderId) {
         resultAction = await dispatch(
