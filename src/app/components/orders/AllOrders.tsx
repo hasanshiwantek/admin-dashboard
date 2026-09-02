@@ -325,6 +325,12 @@ const AllOrders = () => {
           } else if (printPackingSlipPdf.rejected.match(resultAction)) {
             console.error("Failed to print invoice:", resultAction.error);
             // You can add toast notification here
+          toast.error(
+    (resultAction.payload as string) ||
+    resultAction.error?.message ||
+    "Failed to print packing slip"
+  );
+
           }
         } catch (error) {
           console.error("Unexpected error:", error);
