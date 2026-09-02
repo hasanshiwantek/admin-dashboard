@@ -25,7 +25,7 @@ const LayoutWrapper: React.FC<LayoutWrapperProps> = ({ children }) => {
 
       <div className="flex flex-1 min-w-0 overflow-hidden">
           {/* Desktop Sidebar */}
-<aside
+<aside 
   onMouseEnter={() => {
     if (isCollapsed) {
       setIsHovered(true);
@@ -34,7 +34,7 @@ const LayoutWrapper: React.FC<LayoutWrapperProps> = ({ children }) => {
   onMouseLeave={() => {
     if (isCollapsed) {
       setIsHovered(false);
-    }
+    }          
   }}
   className={`hidden md:block shrink-0 overflow-visible border-r bg-white transition-[width] duration-200 ease-in-out ${
     isCollapsed

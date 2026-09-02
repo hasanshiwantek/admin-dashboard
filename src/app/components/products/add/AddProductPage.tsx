@@ -84,6 +84,7 @@ export default function AddProductPage() {
       inventoryLevel: "product",// ✅ default level
       // ✅ OpenGraph defaults
       // objectType: "physical",
+         isVisible: true,
       useProductName: 1,
       graphDescription: 1,
       imageOption: "useThumbnail", // ✅ Default value for radio
