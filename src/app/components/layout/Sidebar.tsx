@@ -71,7 +71,7 @@ overflow-y-hidden overflow-x-hidden
   transition-[width] duration-200 ease-in-out`}
     >
       <SidebarProvider>
-        <SidebarMenu>
+        <SidebarMenu  className="gap-0">
           {sidebarData.map((item, index) =>
             item.children ? (
               <Collapsible
@@ -92,7 +92,7 @@ overflow-y-hidden overflow-x-hidden
       transition-all duration-200  group-hover:!text-black
       ${ 
         isCollapsed && !isHovered 
-          ? "justify-center !p-0 h-[64px]" 
+          ? "justify-center !p-0 h-[54px]" 
           : "p-8 text-xl 2xl:!text-2xl" 
       } 
     `}
@@ -172,7 +172,7 @@ overflow-y-hidden overflow-x-hidden
 
     ${
       isCollapsed && !isHovered
-        ? "justify-center !p-0 h-[30px]"
+        ? "justify-center !p-0 h-[54px]"
         : "p-8 text-xl 2xl:!text-2xl"
     }
     ${pathname === item.url ? "bg-[#24345c]" : ""}
