@@ -1,131 +1,18 @@
-// "use client";
-// import React, { useState } from "react";
-// import Header from "./Header";
-// import { SideBar } from "./Sidebar";
-// import NavigationLoader from "../loader/NavigationLoader";
-
-// interface LayoutWrapperProps {
-//   children: React.ReactNode;
-// }
-
-// const LayoutWrapper: React.FC<LayoutWrapperProps> = ({ children }) => {
-//   const [sidebarOpen, setSidebarOpen] = useState(false);
-//   return (
-//     <div className="flex flex-col h-screen overflow-hidden">
-//       {/* Header */}
-//       <Header onMenuClick={() => setSidebarOpen(true)} />
-//       <NavigationLoader />
-
-//       {/* Main body */}
-//       <div className="flex flex-1 overflow-hidden relative">
-//         {/* Overlay (mobile only) */}
-//         {sidebarOpen && (
-//           <div
-//             className="fixed inset-0 bg-black/40 z-40 md:hidden"
-//             onClick={() => setSidebarOpen(false)}
-//           />
-//         )}
-
-//         {/* Sidebar */}
-//         <aside
-//        className={`
-//             fixed md:relative
-//             z-50 md:z-0
-//             top-0 left-0 
-//             h-screen md:h-auto
-//             w-[26.8rem]
-//             bg-[rgb(3,16,51)] border-r border-[#2d3748]
-//             transform transition-transform duration-300
-//             ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
-//             md:translate-x-0
-//             overflow-y-auto overflow-x-hidden
-//           `}
-//         >
-//           <SideBar onClose={() => setSidebarOpen(false)} />
-//         </aside>
-
-//         {/* Main content */}
-//         <main className="flex-1 overflow-y-auto bg-[var(--store-bg)] mt-20">
-//           {children}
-//         </main>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default LayoutWrapper;
-
-
-
-
-
-
-
-
-
-
-
-// import React from "react";
-// import Header from "./Header";
-// import { SideBar } from "./Sidebar";
-// import NavigationLoader from "../loader/NavigationLoader";
-
-// interface LayoutWrapperProps {
-//   children: React.ReactNode;
-// }
-
-
-
-// const LayoutWrapper: React.FC<LayoutWrapperProps> = ({ children }) => {
-//   return (
-//     <>
-//       <div className="flex flex-col h-screen overflow-hidden">
-//         {/* Header */}
-//         <Header />
-//         <NavigationLoader />
-
-//         {/* Main body (Sidebar + Page Content) */}
-//         <div className="flex flex-1 overflow-hidden">
-//           {/* Sidebar */}
-//           <aside className="w-[26.8rem] shrink-0 overflow-y-auto border-r bg-white">
-//             <SideBar />
-//           </aside>
-
-//           {/* Main content with scroll */}
-//           <main className="flex-1 overflow-y-auto bg-[var(--store-bg)] mt-20 ">
-//             {children}
-//           </main>
-//         </div>
-//       </div>
-//     </>
-//   );
-// };
-
-// export default LayoutWrapper;
-
-
-
-
-
-
-
-
-
-
-
-
 "use client";
 import React, { useState } from "react";
 import Header from "./Header";
 import { SideBar } from "./Sidebar";
 import NavigationLoader from "../loader/NavigationLoader";
 import { createPortal } from "react-dom";
+import { ChevronRight } from "lucide-react";
+
 interface LayoutWrapperProps {
   children: React.ReactNode;
 }
 
 const LayoutWrapper: React.FC<LayoutWrapperProps> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [desktopCollapsed, setDesktopCollapsed] = useState(false);
 
   return (
     <>
@@ -133,33 +20,62 @@ const LayoutWrapper: React.FC<LayoutWrapperProps> = ({ children }) => {
         <Header onMenuClick={() => setSidebarOpen(true)} />
         <NavigationLoader />
 
-        <div className="flex flex-1 overflow-hidden">
-          {/* Desktop Sidebar */}
-          <aside className="hidden md:block w-[26.8rem] shrink-0 overflow-y-auto border-r bg-white">
-            <SideBar />
+        <div className="flex flex-1 overflow-hidden mt-20">
+          <aside
+            className={`hidden md:block shrink-0 h-full transition-all duration-300 ease-in-out ${desktopCollapsed ? "w-0" : "w-[26.8rem]"
+              }`}
+          >
+            <div
+              className={`h-full w-[26.8rem] ${desktopCollapsed ? "hidden" : "block"
+                }`}
+            >
+              <SideBar />
+            </div>
           </aside>
 
-          <main className="flex-1 overflow-y-auto bg-[var(--store-bg)] mt-20">
+          <button
+            type="button"
+            onClick={() => setDesktopCollapsed((v) => !v)}
+            className="hidden md:flex items-center justify-center
+      fixed z-50 h-11 w-11 rounded-full
+      bg-[rgb(3,16,51)] text-white
+      border-2 border-white/20 shadow-lg
+      hover:bg-[#0a1a42]
+      bottom-24"
+            style={{
+              left: desktopCollapsed ? 8 : "26.8rem",
+              transform: "translateX(-50%)",
+            }}
+            aria-label={desktopCollapsed ? "Open sidebar" : "Close sidebar"}
+          >
+            <ChevronRight
+              className={`h-5 w-5 transition-transform duration-300 ${desktopCollapsed ? "rotate-0" : "rotate-180"
+                }`}
+            />
+          </button>
+
+          <main className="flex-1 overflow-y-auto bg-[var(--store-bg)]">
             {children}
           </main>
         </div>
-
       </div>
 
-      {/* Mobile Sidebar via Portal */}
-      {sidebarOpen && typeof window !== "undefined" && createPortal(
-        <>
-          <div
-            className="fixed inset-0 bg-black/40 z-40"
-            onClick={() => setSidebarOpen(false)}
-          />
-          <aside className="fixed top-0 left-0 h-full w-[26.8rem] z-50 bg-white border-r overflow-y-auto animate-in slide-in-from-left">
-            <SideBar onClose={() => setSidebarOpen(false)} />
-          </aside>
-        </>,
-        document.body
-      )}
+      {sidebarOpen &&
+        typeof window !== "undefined" &&
+        createPortal(
+          <>
+            <div
+              className="fixed inset-0 bg-black/40 z-40"
+              onClick={() => setSidebarOpen(false)}
+            />
+            <aside className="fixed top-0 left-0 h-full w-[26.8rem] z-50 overflow-y-auto animate-in slide-in-from-left">
+              <SideBar onClose={() => setSidebarOpen(false)} />
+            </aside>
+          </>,
+          document.body
+        )}
     </>
   );
 };
-export default LayoutWrapper
+
+export default LayoutWrapper;
