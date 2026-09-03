@@ -274,7 +274,7 @@ export default function AllReviews() {
                                                 const availableStores = JSON.parse(localStorage.getItem("availableStores") || "[]");
                                                 const selectedStoreId = Number(localStorage.getItem("storeId"));
                                                 const selectedStore = availableStores.find((s: any) => s.id === selectedStoreId);
-                                                if (selectedStore?.baseUrl) window.open(`${selectedStore.baseUrl}${review?.product[0] == "/" ? review?.product.slice(1) : review?.product}`, "_blank");
+                                                if (selectedStore?.baseUrl) window.open(`${selectedStore.baseUrl}${review?.product?.product_url[0] == "/" ? review?.product?.product_url.slice(1) : review?.product?.product_url}`, "_blank");
                                                 else alert("Store URL or Product SKU not found");
                                             }}
                                             //  onClick={() => router.push(`/manage/products/reviews/edit/${review.id}`)}
