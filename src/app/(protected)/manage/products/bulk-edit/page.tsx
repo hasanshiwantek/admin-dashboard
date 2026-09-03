@@ -144,14 +144,14 @@ export default function BulkEdit() {
                 <TableHead>Brand</TableHead>
                 <TableHead>Categories</TableHead>
                 <TableHead>SKU</TableHead>
-                <TableHead>UPC/EAN</TableHead>
+                {/* <TableHead>UPC/EAN</TableHead> */}
                 <TableHead>Default Price</TableHead>
                 <TableHead>Sale Price</TableHead>
                 <TableHead>Track Inventory</TableHead>
                 <TableHead>Current Stock</TableHead>
                 <TableHead>Visible</TableHead>
                 <TableHead>Featured</TableHead>
-                <TableHead>Free Shipping</TableHead>
+                {/* <TableHead>Free Shipping</TableHead> */}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -227,7 +227,7 @@ export default function BulkEdit() {
                     />
                   </TableCell>
 
-                  <TableCell>
+                  {/* <TableCell>
                     <Input
                       type="text"
                       className="w-50"
@@ -236,7 +236,7 @@ export default function BulkEdit() {
                         handleChange(product.id, "upc", e.target.value)
                       }
                     />
-                  </TableCell>
+                  </TableCell> */}
 
                   <TableCell>
                     <Input
@@ -298,14 +298,14 @@ export default function BulkEdit() {
                     />
                   </TableCell>
 
-                  <TableCell>
+                  {/* <TableCell>
                     <Checkbox
                       checked={product.freeShipping}
                       onCheckedChange={(checked) =>
                         handleChange(product.id, "freeShipping", checked)
                       }
                     />
-                  </TableCell>
+                  </TableCell> */}
                 </TableRow>
               ))}
             </TableBody>
