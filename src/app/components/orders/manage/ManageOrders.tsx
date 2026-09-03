@@ -271,10 +271,10 @@ const ManageOrders = () => {
                   {/* Main Row */}
                   <TableRow>
                     <TableCell>
-                      <Checkbox
+                      {/* <Checkbox
                         checked={selectedRows.includes(ret.id)}
                         onCheckedChange={() => handleRowSelect(ret.id)}
-                      />
+                      /> */}
                     </TableCell>
                     <TableCell>
                       <button onClick={() => toggleRow(ret.id)}>
