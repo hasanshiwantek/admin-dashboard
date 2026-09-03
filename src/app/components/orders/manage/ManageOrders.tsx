@@ -39,7 +39,7 @@ const ManageOrders = () => {
   );
 
   const filterTabs = ["All returns",
-    
+
   ];
   const dispatch = useAppDispatch();
 
@@ -172,15 +172,14 @@ const ManageOrders = () => {
       <div className="bg-white p-4 shadow-md">
         {/* Tabs */}
         <div className="flex gap-5 mb-4 border-b border-gray-300">
-          {filterTabs.map((tab) => (
+          {filterTabs?.map((tab) => (
             <button
               key={tab}
               onClick={() => setSelectedTab(tab)}
-              className={`!text-2xl px-5 py-2 -mb-1 transition ${
-                selectedTab === tab
+              className={`!text-2xl px-5 py-2 -mb-1 transition ${selectedTab === tab
                   ? "border-b-4 border-blue-600"
                   : "text-gray-600"
-              }`}
+                }`}
             >
               {tab}
             </button>
@@ -251,10 +250,10 @@ const ManageOrders = () => {
             <TableHeader className="h-18">
               <TableRow>
                 <TableHead className="w-[50px]">
-                  <Checkbox
+                  {/* <Checkbox
                     checked={isAllSelected}
                     onCheckedChange={handleSelectAll}
-                  />
+                  /> */}
                 </TableHead>
                 <TableHead> </TableHead>
                 <TableHead>Return ID</TableHead>
@@ -262,7 +261,7 @@ const ManageOrders = () => {
                 <TableHead>Order #</TableHead>
                 <TableHead>Customer</TableHead>
                 <TableHead>Date</TableHead>
-                <TableHead>Status</TableHead>
+                {/* <TableHead>Status</TableHead> */}
                 {/* <TableHead>Action</TableHead> */}
               </TableRow>
             </TableHeader>
@@ -301,7 +300,7 @@ const ManageOrders = () => {
                     <TableCell className="2xl:!text-2xl">
                       {formatDate(ret.createdAt)}
                     </TableCell>
-                    <TableCell>
+                    {/* <TableCell>
                       <Select
                         value={ret.status}
                         onValueChange={(value) =>
@@ -319,7 +318,7 @@ const ManageOrders = () => {
                           <SelectItem value="Refunded">Refunded</SelectItem>
                         </SelectContent>
                       </Select>
-                    </TableCell>
+                    </TableCell> */}
                     <TableCell>
                       {/* <Button variant="ghost" size="icon">
                         <Pencil className="!w-6 !h-6" />
@@ -398,7 +397,7 @@ const ManageOrders = () => {
                                     )}
                                     <div className="flex-1">
                                       <p className="font-medium text-base ">
-                                        {product.name.slice(0,60)}...
+                                        {product.name.slice(0, 60)}...
                                       </p>
                                       <p className="text-sm text-gray-600">
                                         SKU: {product.sku}
@@ -432,12 +431,12 @@ const ManageOrders = () => {
                                   })
                                 }
                               />
-                              <button
+                              {/* <button
                                 onClick={() => handleUpdateStaffNote(ret.id)}
                                 className="px-4 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors self-end"
                               >
                                 Update Notes
-                              </button>
+                              </button> */}
                             </div>
                           </div>
                         </div>
