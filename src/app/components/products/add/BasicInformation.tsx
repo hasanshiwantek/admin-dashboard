@@ -21,8 +21,8 @@ import Link from "next/link";
 
 export default function BasicInfoForm({
   isEdit = false,
-}:{
-  isEdit?:boolean
+}: {
+  isEdit?: boolean
 }) {
   const { register, setValue, watch } = useFormContext();
   const productType = watch("productType");
@@ -34,7 +34,7 @@ export default function BasicInfoForm({
   useEffect(() => {
     dispatch(fetchBrands({ page: 1, pageSize: 50 }));
   }, [dispatch]);
-  
+
 
   return (
     <section id="basic-info" className="space-y-4 scroll-mt-20">
@@ -60,7 +60,7 @@ export default function BasicInfoForm({
             <div>
               <Label className="2xl:!text-2xl" htmlFor="name">Product Name</Label>
               <Input
-              
+
                 className="!max-w-[90%] w-full"
                 id="name"
                 placeholder="Sample Product Name"
@@ -145,6 +145,7 @@ export default function BasicInfoForm({
                 id="weight"
                 placeholder="0"
                 {...register("dimensions.weight", { valueAsNumber: true })}
+                required
               />
             </div>
           </div>
