@@ -1628,7 +1628,7 @@ const AllOrders = () => {
     {/* Method Data */}
   <div
   className={`flex items-center gap-2 min-w-0 ${
-    (order?.billingInformation?.shippingData?.length ?? 0) > 20
+    (order?.billingInformation?.shippingData?.length ?? 0) > 40
       ? "pt-[46px]"
       : "pt-[55px]"
   }`}
