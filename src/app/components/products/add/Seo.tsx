@@ -145,7 +145,7 @@ export default function Seo() {
                 onChange: (e) => {
                   setIsUrlManuallyEdited(true);
                 },
-              })} />
+              })}  />
             <button className="btn-outline-primary !py-2" type="button" onClick={() => {
               setIsUrlManuallyEdited(false)
               if (urlSettingData?.format_type == "seo_optimized_short") {
