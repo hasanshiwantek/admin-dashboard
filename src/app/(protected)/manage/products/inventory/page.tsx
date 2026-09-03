@@ -110,12 +110,12 @@ export default function EditInventoryPage() {
               <TableRow>
                 <TableHead>Product name</TableHead>
                 <TableHead>SKU</TableHead>
-                <TableHead>Adjust by</TableHead>
+                {/* <TableHead>Adjust by</TableHead> */}
                 <TableHead>Current stock</TableHead>
                 <TableHead>Low stock</TableHead>
                 <TableHead>Price</TableHead>
-                <TableHead>BPN</TableHead>
-                <TableHead>Safety stock</TableHead>
+                {/* <TableHead>BPN</TableHead>
+                <TableHead>Safety stock</TableHead> */}
                 <TableHead>Availability</TableHead>
               </TableRow>
             </TableHeader>
@@ -123,11 +123,10 @@ export default function EditInventoryPage() {
               {products.map((product) => (
                 <TableRow key={product.id}>
                   <TableCell
-                    className={`max-w-[300px] cursor-pointer ${
-                      expandedProductId === product.id
+                    className={`max-w-[300px] cursor-pointer ${expandedProductId === product.id
                         ? "whitespace-normal"
                         : "truncate"
-                    }`}
+                      }`}
                     onClick={() =>
                       setExpandedProductId((prev) =>
                         prev === product.id ? null : product.id
@@ -156,7 +155,7 @@ export default function EditInventoryPage() {
 
                   <TableCell>{product.sku}</TableCell>
 
-                  <TableCell>
+                  {/* <TableCell>
                     <Input
                       type="number"
                       className="w-50"
@@ -165,7 +164,7 @@ export default function EditInventoryPage() {
                         handleChange(product.id, "adjustBy", e.target.value)
                       }
                     />
-                  </TableCell>
+                  </TableCell> */}
 
                   <TableCell>
                     <Input
@@ -210,7 +209,7 @@ export default function EditInventoryPage() {
                     />
                   </TableCell>
 
-                  <TableCell>
+                  {/* <TableCell>
                     <Input
                       type="text"
                       className="w-50"
@@ -219,9 +218,9 @@ export default function EditInventoryPage() {
                         handleChange(product.id, "bpn", e.target.value)
                       }
                     />
-                  </TableCell>
+                  </TableCell> */}
 
-                  <TableCell>
+                  {/* <TableCell>
                     <Input
                       type="number"
                       className="w-50"
@@ -230,7 +229,7 @@ export default function EditInventoryPage() {
                         handleChange(product.id, "safetyStock", e.target.value)
                       }
                     />
-                  </TableCell>
+                  </TableCell> */}
 
                   <TableCell>
                     <Checkbox

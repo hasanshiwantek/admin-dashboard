@@ -269,7 +269,15 @@ export default function AllReviews() {
 
                                     {/* Product name + type */}
                                     <TableCell className="py-2">
-                                        <span onClick={() => router.push(`/manage/products/reviews/edit/${review.id}`)}
+                                        <span
+                                            onClick={() => {
+                                                const availableStores = JSON.parse(localStorage.getItem("availableStores") || "[]");
+                                                const selectedStoreId = Number(localStorage.getItem("storeId"));
+                                                const selectedStore = availableStores.find((s: any) => s.id === selectedStoreId);
+                                                if (selectedStore?.baseUrl) window.open(`${selectedStore.baseUrl}${review?.product[0] == "/" ? review?.product.slice(1) : review?.product}`, "_blank");
+                                                else alert("Store URL or Product SKU not found");
+                                            }}
+                                            //  onClick={() => router.push(`/manage/products/reviews/edit/${review.id}`)}
                                             className="!text-blue-600 hover:underline cursor-pointer !text-[1rem]  block max-w-[500px] leading-snug whitespace-normal break-words">
                                             {review?.product?.name}
                                         </span>

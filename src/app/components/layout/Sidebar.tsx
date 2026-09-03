@@ -53,7 +53,7 @@ export const SideBar = ({
 
   return (
     <div
-  className={`relative h-full
+  className={`shrink-0 h-auto
   fixed top-0 md:top-22
   z-30 md:z-30
 ${

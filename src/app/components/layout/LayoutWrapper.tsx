@@ -23,7 +23,7 @@ const LayoutWrapper: React.FC<LayoutWrapperProps> = ({ children }) => {
 
         <NavigationLoader />
 
-      <div className="flex flex-1 min-w-0 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden">
           {/* Desktop Sidebar */}
 <aside 
   onMouseEnter={() => {
@@ -36,7 +36,7 @@ const LayoutWrapper: React.FC<LayoutWrapperProps> = ({ children }) => {
       setIsHovered(false);
     }          
   }}
-  className={`hidden md:block shrink-0 h-full overflow-visible border-r bg-white transition-[width] duration-200 ease-in-out ${
+  className={`hidden md:block shrink-0  overflow-y-auto border-r bg-white transition-[width] duration-200 ease-in-out ${
     isCollapsed
       ? isHovered
         ? "w-[26.8rem]"
