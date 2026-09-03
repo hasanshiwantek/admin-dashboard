@@ -168,7 +168,27 @@ button{
   @apply border-[#418ce7] bg-white text-[#2c83ec];
 }
 
+/* for order ui  */
+.shipping-data-scroll {
+  scrollbar-width: thin;
+}
 
+.shipping-data-scroll::-webkit-scrollbar {
+  height: 0px;
+}
+
+.shipping-data-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.shipping-data-scroll::-webkit-scrollbar-thumb {
+  background: #999;
+  border-radius: 10px;
+}
+
+.shipping-data-scroll::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}
 
 
 /* Input & Text */

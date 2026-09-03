@@ -1554,132 +1554,129 @@ const AllOrders = () => {
                                 </div>
                               </div>
 
-                              <div className="flex">
-                                {/* Left Side: Shipping Title & Copy Button */}
-                                <div className="flex flex-col border-r pr-3 mr-3 space-y-2">
-                                  <h4 className="font-semibold text-[18px] text-[#34313f]">
-                                    Shipping
-                                  </h4>
-                                  <button
-                                    className="!px-2 !py-1 flex items-center gap-1  text-[#4B71FC] border border-[#4B71FC]  text-base"
-                                    onClick={() =>
-                                      copyBilling(order?.billingInformation)
-                                    }
-                                  >
-                                    <Copy size={8} />
-                                    Copy
-                                  </button>
+                             <div className="flex">
+  {/* Left Side: Shipping Title, Labels & Icons */}
+  <div className="flex flex-col border-r pr-3 mr-3 space-y-2">
+    <h4 className="font-semibold text-[18px] text-[#34313f]">
+      Shipping
+    </h4>
 
-                                  <div className="flex flex-col items-end mt-38 space-y-4">
-                                    <Ship className="w-5 h-5 text-gray-500" />
+    <button
+      className="!px-2 !py-1 flex items-center gap-1 text-[#4B71FC] border border-[#4B71FC] text-base"
+      onClick={() =>
+        copyBilling(order?.billingInformation)
+      }
+    >
+      <Copy size={8} />
+      Copy
+    </button>
 
-                                    <DollarSign className="w-5 h-5 text-gray-500" />
+    {/* Method */}
+    <div className="flex flex-col items-end mt-38">
+      <h4 className="font-semibold text-[18px] text-[#34313f] mb-3">
+        Method
+      </h4>
 
-                                    <Mail className="w-5 h-5 text-gray-500" />
+      <div className="flex flex-col items-end space-y-4">
+        <Ship className="w-5 h-5 text-gray-500" />
+        <DollarSign className="w-5 h-5 text-gray-500" />
+        <Mail className="w-5 h-5 text-gray-500" />
+        <Calendar className="w-5 h-5 text-gray-500" />
+      </div>
 
-                                    <Calendar className="w-5 h-5 text-gray-500" />
-                                  </div>
+      {/* Contact */}
+      <h4 className="font-semibold text-[18px] text-[#34313f] mt-6 mb-3">
+        Contact
+      </h4>
 
-                                  <div className="flex flex-col items-end mt-14 space-y-4">
-                                    <Phone className="w-5 h-5 text-gray-500" />
+      <div className="flex flex-col items-end space-y-4">
+        <Phone className="w-5 h-5 text-gray-500" />
+        <Mail className="w-5 h-5 text-gray-500" />
+      </div>
+    </div>
+  </div>
 
-                                    <Mail className="w-5 h-5 text-gray-500" />
-                                  </div>
-                                </div>
+  {/* Right Side: Shipping Info */}
+  <div className="flex flex-col space-y-2 overflow-hidden">
+    {/* Customer Info */}
+    <div className="w-[180px] min-w-[180px] h-[120px] overflow-y-auto pr-1">
+      <p className="w-full whitespace-normal break-words overflow-wrap-anywhere">
+        {order?.billingInformation?.firstName}{" "}
+        {order?.billingInformation?.lastName}
+        <br />
 
-                                {/* Right Side: Shipping Info with Icons */}
-                                <div className="flex flex-col space-y-2">
-                                  {/* Customer Info */}
-                                  <div className="w-[180px] min-w-[180px] h-[120px] overflow-y-auto pr-1">
-                                    <p className="w-full whitespace-normal break-words overflow-wrap-anywhere">
-                                      {order?.billingInformation?.firstName}{" "}
-                                      {order?.billingInformation?.lastName}
-                                      <br />
-                                      {order?.billingInformation
-                                        ?.addressLine1 && (
-                                        <>
-                                          {
-                                            order.billingInformation
-                                              .addressLine1
-                                          }
-                                        </>
-                                      )}
-                                      {order?.billingInformation
-                                        ?.addressLine2 && (
-                                        <>
-                                          ,{" "}
-                                          {
-                                            order.billingInformation
-                                              .addressLine2
-                                          }
-                                        </>
-                                      )}
-                                      <br />
-                                      {order?.billingInformation?.state}
-                                      <br />
-                                      {countryDataForCustomer?.label || "N/A"}
-                                    </p>
-                                  </div>
-                                  {/* Method Section */}
-                                  <h4 className="font-semibold">Method</h4>
+        {order?.billingInformation?.addressLine1 && (
+          <>
+            {order.billingInformation.addressLine1}
+          </>
+        )}
 
-                                  <div className="flex items-center gap-2">
-                                    {/* <Ship className="w-5 h-5 text-gray-500" /> */}
-                                    <span>
-                                      {order?.billingInformation
-                                        ?.shippingData || "N/A"}
-                                    </span>
-                                  </div>
+        {order?.billingInformation?.addressLine2 && (
+          <>
+            ,{" "}
+            {order.billingInformation.addressLine2}
+          </>
+        )}
 
-                                  <div className="flex items-center gap-2">
-                                    {/* <DollarSign className="w-5 h-5 text-gray-500" /> */}
-                                    <span>
-                                      {order?.shippingCost
-                                        ? `$${order.shippingCost}`
-                                        : "N/A"}
-                                    </span>
-                                  </div>
+        <br />
+        {order?.billingInformation?.state}
+        <br />
+        {countryDataForCustomer?.label || "N/A"}
+      </p>
+    </div>
 
-                                  <div className="flex items-center gap-2">
-                                    {/* <Mail className="w-5 h-5 text-gray-500" /> */}
-                                    <span>
-                                      {order?.billingInformation?.email ||
-                                        "N/A"}
-                                    </span>
-                                  </div>
+    {/* Method Data */}
+  <div
+  className={`flex items-center gap-2 min-w-0 ${
+    (order?.billingInformation?.shippingData?.length ?? 0) > 20
+      ? "pt-[46px]"
+      : "pt-[55px]"
+  }`}
+>
+  <div className="shipping-data-scroll w-[420px] max-w-full overflow-x-auto overflow-y-hidden whitespace-nowrap">
+    {order?.billingInformation?.shippingData || "N/A"}
+  </div>
+</div>
 
-                                  <div className="flex items-center gap-2">
-                                    {/* <Calendar className="w-5 h-5 text-gray-500" /> */}
-                                    <span>
-                                      {dayjs(order?.updatedAt).format(
-                                        "DD MMM YYYY HH:mm:ss",
-                                      ) || "N/A"}
-                                    </span>
-                                  </div>
+    <div className="flex items-center gap-2">
+      <span>
+        {order?.shippingCost
+          ? `$${order.shippingCost}`
+          : "N/A"}
+      </span>
+    </div>
 
-                                  {/* Contact Section */}
-                                  <h4 className="font-semibold">Contact</h4>
+    <div className="flex items-center gap-2">
+      <span>
+        {order?.billingInformation?.email || "N/A"}
+      </span>
+    </div>
 
-                                  <div className="flex items-center gap-2">
-                                    {/* <Phone className="w-5 h-5 text-gray-500" /> */}
-                                    <span>
-                                      {order?.billingInformation?.phone ||
-                                        "N/A"}
-                                    </span>
-                                  </div>
+    <div className="flex items-center gap-2">
+      <span>
+        {dayjs(order?.updatedAt).format(
+          "DD MMM YYYY HH:mm:ss",
+        ) || "N/A"}
+      </span>
+    </div>
 
-                                  <div className="flex items-center gap-2">
-                                    {/* <Mail className="w-5 h-5 text-gray-500" /> */}
-                                    <Link
-                                      className="text-[#6f8DFD] text-[13px]"
-                                      href={`mailto:${order.billingInformation.email}`}
-                                    >
-                                      {order?.billingInformation?.email ||
-                                        "N/A"}
-                                    </Link>
-                                  </div>
-                                </div>
-                              </div>
+    {/* Contact Data */}
+    <div className="flex items-center gap-2 pt-[33px]">
+      <span>
+        {order?.billingInformation?.phone || "N/A"}
+      </span>
+    </div>
+
+    <div className="flex items-center gap-2">
+      <Link
+        className="text-[#6f8DFD] text-[13px]"
+        href={`mailto:${order.billingInformation.email}`}
+      >
+        {order?.billingInformation?.email || "N/A"}
+      </Link>
+    </div>
+  </div>
+</div>
 
                               <div className="flex flex-wrap max-w-full ">
                                 {/* Left - Item count */}
