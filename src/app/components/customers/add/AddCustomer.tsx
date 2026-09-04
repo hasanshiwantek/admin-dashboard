@@ -34,6 +34,7 @@ const AddCustomer = () => {
   const [loading, setLoading] = useState(false);
   const isEdit = !!id;
   const [saveAndAddAnother, setSaveAndAddAnother] = useState(false);
+  const [passwordMismatch, setPasswordMismatch] = useState(false);
 
   const [formData, setFormData] = useState<any>({
     firstName: "",
@@ -489,13 +490,22 @@ const AddCustomer = () => {
                     Passwords must be at least 7 characters long and contain
                     both alphabetic and numeric characters.
                   </p>
-                  <Input
-                    type="password"
-                    value={formData.password}
-                    onChange={(e) => updateField("password", e.target.value)}
-                    required={!isEdit}
-                    disabled={isEdit}
-                  />
+                 <Input
+  type="password"
+  value={formData.password}
+  onChange={(e) => {
+    const password = e.target.value;
+
+    updateField("password", password);
+
+    setPasswordMismatch(
+      formData.confirmPassword.length > 0 &&
+        password !== formData.confirmPassword
+    );
+  }}
+  required={!isEdit}
+  disabled={isEdit}
+/>
                 </div>
 
                 {/* Confirm Password Field */}
@@ -515,14 +525,27 @@ const AddCustomer = () => {
                     </Tooltip>
                   </div>
                   <Input
-                    type="password"
-                    value={formData.confirmPassword}
-                    onChange={(e) =>
-                      updateField("confirmPassword", e.target.value)
-                    }
-                    required={!isEdit}
-                    disabled={isEdit}
-                  />
+  type="password"
+  value={formData.confirmPassword}
+  onChange={(e) => {
+    const confirmPassword = e.target.value;
+
+    updateField("confirmPassword", confirmPassword);
+
+    setPasswordMismatch(
+      confirmPassword.length > 0 &&
+        confirmPassword !== formData.password
+    );
+  }}
+  required={!isEdit}
+  disabled={isEdit}
+/>
+
+{passwordMismatch && (
+  <p className="text-sm !text-red-500 mt-1">
+    Passwords do not match.
+  </p>
+)}
                 </div>
               </TooltipProvider>
             </div>
