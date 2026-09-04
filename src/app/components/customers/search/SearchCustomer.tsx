@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -19,9 +19,18 @@ import {
 import { advanceCustomerSearch } from "@/redux/slices/customerSlice";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { useRouter } from "next/navigation";
-import { countriesList } from "@/const/location";
+import { Country, State } from "country-state-city";
 const SearchCustomer = () => {
   const dispatch = useAppDispatch();
+
+  // Dynamic country list
+  const countryList = Country.getAllCountries().map((c) => ({
+    name: c.name,
+    code: c.isoCode,
+  }));
+
+  // Dynamic states/provinces based on selected country
+
   const router = useRouter();
   const [formData, setFormData] = useState({
     // Advanced Search
@@ -49,6 +58,14 @@ const SearchCustomer = () => {
     sortBy: "",
     sortOrder: "",
   });
+    const stateList = useMemo(() => {
+    if (!formData.country) return [];
+
+    return State.getStatesOfCountry(formData.country).map((s) => ({
+      name: s.name,
+      code: s.isoCode,
+    }));
+  }, [formData.country]);
 
   const handleChange = (e: any) => {
     const { name, value } = e.target;
@@ -172,17 +189,18 @@ const SearchCustomer = () => {
                     <Select
                       name="country"
                       value={formData?.country || ""}
-                      onValueChange={(value) =>
-                        handleChange({ target: { name: "country", value } })
-                      }
+                      onValueChange={(value) => {
+                        handleChange({ target: { name: "country", value } });
+                        handleChange({ target: { name: "stateProvince", value: "" } });
+                      }}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="-- Choose a country --" />
                       </SelectTrigger>
-                      <SelectContent>
-                        {countriesList?.map((c, index) => (
-                          <SelectItem key={index} value={c.value}>
-                            {c.label}
+                      <SelectContent className="overflow-y-scroll h-96">
+                        {countryList.map((country) => (
+                          <SelectItem key={country.code} value={country.code}>
+                            {country.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -192,12 +210,27 @@ const SearchCustomer = () => {
                   {/* State / Province */}
                   <div className="space-y-1">
                     <Label className="2xl:!text-2xl" htmlFor="stateProvince">State/Province</Label>
-                    <Input
-                      id="stateProvince"
+                    <Select
                       name="stateProvince"
                       value={formData?.stateProvince || ""}
-                      onChange={handleChange}
-                    />
+                      onValueChange={(value) =>
+                        handleChange({
+                          target: { name: "stateProvince", value },
+                        })
+                      }
+                      disabled={!formData.country}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="-- Choose a state/province --" />
+                      </SelectTrigger>
+                      <SelectContent className="overflow-y-scroll h-96">
+                        {stateList.map((state) => (
+                          <SelectItem key={state.code} value={state.code}>
+                            {state.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </TooltipProvider>
               </div>
