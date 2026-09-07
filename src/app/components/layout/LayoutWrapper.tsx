@@ -23,37 +23,36 @@ const LayoutWrapper: React.FC<LayoutWrapperProps> = ({ children }) => {
 
         <NavigationLoader />
 
-      <div className="flex flex-1 overflow-hidden">
+        <div className="flex flex-1 overflow-hidden">
           {/* Desktop Sidebar */}
-<aside 
-  onMouseEnter={() => {
-    if (isCollapsed) {
-      setIsHovered(true);
-    }
-  }}
-  onMouseLeave={() => {
-    if (isCollapsed) {
-      setIsHovered(false);
-    }          
-  }}
-  className={`hidden md:block shrink-0  overflow-y-auto border-r bg-white transition-[width] duration-200 ease-in-out ${
-    isCollapsed
-      ? isHovered
-        ? "w-[26.8rem]"
-        : "w-[4.3rem]"
-      : "w-[26.8rem]"
-  }`}
->
-  <SideBar
-    isCollapsed={isCollapsed}
-    setIsCollapsed={setIsCollapsed}
-    isHovered={isHovered}
-     setIsHovered={setIsHovered}
-  />
-</aside>
+          <aside
+            onMouseEnter={() => {
+              if (isCollapsed) {
+                setIsHovered(true);
+              }
+            }}
+            onMouseLeave={() => {
+              if (isCollapsed) {
+                setIsHovered(false);
+              }
+            }}
+            className={`hidden md:block shrink-0  overflow-y-auto border-r bg-white transition-[width] duration-200 ease-in-out ${isCollapsed
+                ? isHovered
+                  ? "w-[26.8rem]"
+                  : "w-[4.3rem]"
+                : "w-[26.8rem]"
+              }`}
+          >
+            <SideBar
+              isCollapsed={isCollapsed}
+              setIsCollapsed={setIsCollapsed}
+              isHovered={isHovered}
+              setIsHovered={setIsHovered}
+            />
+          </aside>
 
           {/* Main Content */}
-       <main className="min-w-0 flex-1 overflow-y-auto overflow-x-hidden bg-[var(--store-bg)] mt-20">
+          <main className="min-w-0 flex-1 overflow-y-auto overflow-x-hidden bg-[var(--store-bg)] mt-20">
             {children}
           </main>
 

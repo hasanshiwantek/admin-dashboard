@@ -24,24 +24,58 @@ import { useRouter } from "next/navigation";
 import { advanceShipmentSearch } from "@/redux/slices/orderSlice";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import Link from "next/link";
+
+const toSearchParams = (formData: Record<string, any>) => {
+  const map: Record<string, string> = {
+    keywords: "keyword",
+    keyword: "keyword",
+    orderIdTo: "orderIdTo",
+    shippingDate: "shippingDate",
+    orderDate: "orderDate",
+    orderDateFrom: "orderDateFrom",
+    orderDateTo: "orderDateTo",
+    sortBy: "sortField",
+    sortField: "sortField",
+    sortDirection: "sortDirection",
+    page: "page",
+    pageSize: "pageSize",
+  };
+
+  const params = new URLSearchParams();
+
+  Object.entries(formData).forEach(([key, value]) => {
+    const apiKey = map[key];
+    if (!apiKey) return;
+    if (key === "shippingDate" && value === "Custom period") return;
+    if (key === "orderDate" && value === "Custom period") return;
+
+    const empty =
+      value === "" ||
+      value === null ||
+      value === undefined ||
+      (Array.isArray(value) && value.length === 0);
+
+    if (empty && !["page", "pageSize"].includes(apiKey)) return;
+    params.set(apiKey, String(value));
+  });
+
+  if (!params.has("page")) params.set("page", "1");
+  if (!params.has("pageSize")) params.set("pageSize", "20");
+  return params;
+};
 const SearchShipments = () => {
   const [formData, setFormData] = useState<any>({
-    keywords: null,
-    // status: "",
-    // paymentMethod: "",
-    // shippingProvider: "",
-    // shippingMethod: "",
-    // fulfillmentSource: "",
-    // coupon: "",
-    // guest: false,
-    // preorderNo: true,
-    // preorderYes: true,
-    // deletedOrder: "ignore",
+    keywords: "",
     orderIdFrom: "",
     orderIdTo: "",
     shipmentIdFrom: "",
     shipmentIdTo: "",
-    dateRange: "",
+    shippingDate: "",
+    shippingDateFrom: "",
+    shippingDateTo: "",
+    orderDate: "",
+    orderDateFrom: "",
+    orderDateTo: "",
     sortBy: "id",
     sortDirection: "asc",
   });
@@ -49,54 +83,67 @@ const SearchShipments = () => {
   const dispatch = useAppDispatch();
 
   const handleChange = (key: string, value: any) => {
-    setFormData((prev: any) => ({
-      ...prev,
-      [key]: value,
-    }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const filteredData = Object.entries(formData).reduce(
-      (acc, [key, value]) => {
-        const isEmptyArray = Array.isArray(value) && value.length === 0;
-        const isEmpty =
-          value === "" || value === null || value === undefined || isEmptyArray;
-
-        const alwaysInclude = ["page", "pageSize"];
-        if (!isEmpty || alwaysInclude.includes(key)) {
-          acc[key] = value;
-        }
-        return acc;
-      },
-      {} as Record<string, any>
-    );
-
-    try {
-      const result = await dispatch(
-        advanceShipmentSearch({ data: filteredData })
-      );
-
-      if (advanceShipmentSearch.fulfilled.match(result)) {
-        // ✅ Push ALL filters to URL — not just page & limit
-        const queryParams = new URLSearchParams();
-        Object.entries(filteredData).forEach(([key, value]) => {
-          if (Array.isArray(value)) {
-            value.forEach((v) => queryParams.append(key, v));
-          } else {
-            queryParams.set(key, String(value));
-          }
-        });
-
-        router.push(`/manage/orders/shipments?${queryParams.toString()}`);
-      } else {
-        console.error("❌ Search Failed:", result.error);
+    setFormData((prev: any) => {
+      const next = { ...prev, [key]: value };
+      if (key === "shippingDate" && value !== "Custom period") {
+        next.shippingDateFrom = "";
+        next.shippingDateTo = "";
       }
-    } catch (error) {
-      console.error("🔥 Unexpected Error:", error);
-    }
+      if (key === "orderDate" && value !== "Custom period") {
+        next.orderDateFrom = "";
+        next.orderDateTo = "";
+      }
+      return next;
+    });
   };
 
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   const filteredData = Object.entries(formData).reduce(
+  //     (acc, [key, value]) => {
+  //       const isEmptyArray = Array.isArray(value) && value.length === 0;
+  //       const isEmpty =
+  //         value === "" || value === null || value === undefined || isEmptyArray;
+
+  //       const alwaysInclude = ["page", "pageSize"];
+  //       if (!isEmpty || alwaysInclude.includes(key)) {
+  //         acc[key] = value;
+  //       }
+  //       return acc;
+  //     },
+  //     {} as Record<string, any>
+  //   );
+
+  //   try {
+  //     const result = await dispatch(
+  //       advanceShipmentSearch({ data: filteredData })
+  //     );
+
+  //     if (advanceShipmentSearch.fulfilled.match(result)) {
+  //       // ✅ Push ALL filters to URL — not just page & limit
+  //       const queryParams = new URLSearchParams();
+  //       Object.entries(filteredData).forEach(([key, value]) => {
+  //         if (Array.isArray(value)) {
+  //           value.forEach((v) => queryParams.append(key, v));
+  //         } else {
+  //           queryParams.set(key, String(value));
+  //         }
+  //       });
+
+  //       router.push(`/manage/orders/shipments?${queryParams.toString()}`);
+  //     } else {
+  //       console.error("❌ Search Failed:", result.error);
+  //     }
+  //   } catch (error) {
+  //     console.error("🔥 Unexpected Error:", error);
+  //   }
+  // };
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    router.push(
+      `/manage/orders/shipments?${toSearchParams({ ...formData, page: 1 }).toString()}`
+    );
+  };
   return (
     <form onSubmit={handleSubmit}>
       <div className="">
@@ -193,7 +240,7 @@ const SearchShipments = () => {
           </div>
 
           {/* SEARCH BY DATE */}
-          <div>
+          {/* <div>
             <h1 className="my-5">Search by date</h1>
             <div className="bg-white shadow-md  p-10 space-y-10">
               <div className="space-y-2 flex items-center gap-4">
@@ -252,8 +299,46 @@ const SearchShipments = () => {
                 </Select>
               </div>
             </div>
-          </div>
+          </div> */}
+          {/* SEARCH BY DATE */}
+          <div>
+            <h1 className="my-5">Search by date</h1>
+            <div className="bg-white shadow-md p-10 space-y-10">
+              <div className="flex items-center gap-4">
+                <Label className="w-[140px] text-right">Shipping Date</Label>
+                <Input
+                  type="date"
+                  className="w-[180px]"
+                  value={formData.shippingDate}
+                  onChange={(e) => handleChange("shippingDate", e.target.value)}
+                />
+                {/* <span className="text-sm text-gray-600">to</span>
+                <Input
+                  type="date"
+                  className="w-[180px]"
+                  value={formData.shippingDateTo}
+                  onChange={(e) => handleChange("shippingDateTo", e.target.value)}
+                /> */}
+              </div>
 
+              <div className="flex items-center gap-4">
+                <Label className="w-[140px] text-right">Order Date</Label>
+                <Input
+                  type="date"
+                  className="w-[180px]"
+                  value={formData.orderDate}
+                  onChange={(e) => handleChange("orderDate", e.target.value)}
+                />
+                {/* <span className="text-sm text-gray-600">to</span>
+                <Input
+                  type="date"
+                  className="w-[180px]"
+                  value={formData.orderDateTo}
+                  onChange={(e) => handleChange("orderDateTo", e.target.value)}
+                /> */}
+              </div>
+            </div>
+          </div>
           {/* SORT ORDER */}
           <div className="my-10">
             <h1 className="my-5">Sort Order</h1>

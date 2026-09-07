@@ -283,30 +283,65 @@ Updated: ${billing.updatedAt}`;
     }
   });
 
+  // useEffect(() => {
+  //   const page = Number(queryObject.page || 1);
+  //   const pageSize = Number(queryObject.limit || queryObject.pageSize || 50);
+
+  //   const filterKeys = Object.keys(queryObject).filter(
+  //     (key) => !["page", "limit", "pageSize"].includes(key)
+  //   );
+
+  //   if (filterKeys.length > 0) {
+  //     // 🔍 Run filtered search if extra filters exist
+  //     dispatch(
+  //       advanceShipmentSearch({
+  //         data: {
+  //           ...queryObject,
+  //           page,
+  //           perPage: pageSize,
+  //         },
+  //       })
+  //     );
+  //   } else {
+  //     // 📦 Default: Fetch all products
+  //     dispatch(fetchAllShipments({ page: currentPage, perPage: perPage }));
+  //   }
+  // }, [searchParams]); // reruns whenever URL changes
   useEffect(() => {
     const page = Number(queryObject.page || 1);
-    const pageSize = Number(queryObject.limit || queryObject.pageSize || 50);
+    const pageSize = Number(queryObject.pageSize || queryObject.limit || 50);
 
     const filterKeys = Object.keys(queryObject).filter(
       (key) => !["page", "limit", "pageSize"].includes(key)
     );
 
     if (filterKeys.length > 0) {
-      // 🔍 Run filtered search if extra filters exist
       dispatch(
         advanceShipmentSearch({
           data: {
-            ...queryObject,
+            keyword: queryObject.keyword ?? queryObject.keywords,
+            shipmentIdFrom: queryObject.shipmentIdFrom,
+            shipmentIdTo: queryObject.shipmentIdTo,
+            orderIdFrom: queryObject.orderIdFrom,
+            orderIdTo: queryObject.orderIdTo,
+            shippingDate: queryObject.shippingDate,
+            shippingDateFrom: queryObject.shippingDateFrom,
+            shippingDateTo: queryObject.shippingDateTo,
+            orderDate: queryObject.orderDate,
+            orderDateFrom: queryObject.orderDateFrom,
+            orderDateTo: queryObject.orderDateTo,
+            sortField: queryObject.sortField ?? queryObject.sortBy ?? "id",
+            sortDirection: queryObject.sortDirection ?? "asc",
             page,
-            perPage: pageSize,
+            pageSize,
           },
         })
       );
     } else {
-      // 📦 Default: Fetch all products
       dispatch(fetchAllShipments({ page: currentPage, perPage: perPage }));
     }
-  }, [searchParams]); // reruns whenever URL changes
+  }, [searchParams]);
+
   useEffect(() => {
     if (!shipmentLoader) {
       setSavingId(null);

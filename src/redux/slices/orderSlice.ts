@@ -279,20 +279,20 @@ export const printPackingSlipPdf = createAsyncThunk(
     } catch (err: any) {
       let message = "Failed to download PDF";
 
-  if (err.response?.data instanceof Blob) {
-    try {
-      const text = await err.response.data.text();
-      const errorData = JSON.parse(text);
+      if (err.response?.data instanceof Blob) {
+        try {
+          const text = await err.response.data.text();
+          const errorData = JSON.parse(text);
 
-      message = errorData?.message || message;
-    } catch {
-      // fallback message
-    }
-  } else {
-    message = err.response?.data?.message || message;
-  }
+          message = errorData?.message || message;
+        } catch {
+          // fallback message
+        }
+      } else {
+        message = err.response?.data?.message || message;
+      }
 
-  return thunkAPI.rejectWithValue(message);
+      return thunkAPI.rejectWithValue(message);
     }
   },
 );
@@ -438,21 +438,65 @@ export const addShipmentOrder = createAsyncThunk(
 );
 
 // ADVANCE SEARCH SHIPMENT THUNK
+// export const advanceShipmentSearch = createAsyncThunk(
+//   "orders/advanceShipmentSearch",
+//   async ({ data }: { data: any }, thunkAPI) => {
+//     try {
+//       const response = await axiosInstance.post(
+//         `dashboard/shipments/advanced-search`,
+//         data,
+//       );
+//       return response.data;
+//     } catch (error: any) {
+//       return thunkAPI.rejectWithValue(
+//         error.response?.data?.message || "Failed in advancing search",
+//       );
+//     }
+//   },
+// );
+
 export const advanceShipmentSearch = createAsyncThunk(
   "orders/advanceShipmentSearch",
   async ({ data }: { data: any }, thunkAPI) => {
     try {
+      const params: Record<string, any> = {};
+
+      const keyword = data.keyword ?? data.keywords;
+      if (keyword) params.keyword = keyword;
+
+      if (data.shipmentIdFrom) params.shipmentIdFrom = data.shipmentIdFrom;
+      if (data.shipmentIdTo) params.shipmentIdTo = data.shipmentIdTo;
+      if (data.orderIdFrom) params.orderIdFrom = data.orderIdFrom;
+      if (data.orderIdTo) params.orderIdTo = data.orderIdTo;
+
+      if (data.shippingDate && data.shippingDate !== "Custom period") {
+        params.shippingDate = data.shippingDate;
+      }
+      if (data.shippingDateFrom) params.shippingDateFrom = data.shippingDateFrom;
+      if (data.shippingDateTo) params.shippingDateTo = data.shippingDateTo;
+
+      if (data.orderDate && data.orderDate !== "Custom period") {
+        params.orderDate = data.orderDate;
+      }
+      if (data.orderDateFrom) params.orderDateFrom = data.orderDateFrom;
+      if (data.orderDateTo) params.orderDateTo = data.orderDateTo;
+
+      params.sortField = data.sortField ?? data.sortBy ?? "id";
+      params.sortDirection = data.sortDirection ?? "asc";
+      params.page = Number(data.page || 1);
+      params.pageSize = Number(data.pageSize ?? data.perPage ?? data.limit ?? 20);
+
       const response = await axiosInstance.post(
-        `dashboard/shipments/advanced-search`,
-        data,
+        "dashboard/shipments/advanced-search",
+        params
       );
       return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message || "Failed in advancing search",
+        error.response?.data?.message || "Failed in advancing search"
       );
     }
-  },
+  }
 );
 
 // FETCH ORDER BY KEYWORD
