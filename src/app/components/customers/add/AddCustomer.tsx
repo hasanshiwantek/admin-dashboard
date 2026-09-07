@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -19,7 +19,8 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { addCustomer } from "@/redux/slices/customerSlice";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
-import { countriesList, statesList } from "@/const/location";
+
+import { Country, State } from "country-state-city";
 import { useRouter, useParams } from "next/navigation";
 import {
   fetchCustomerById,
@@ -34,7 +35,7 @@ const AddCustomer = () => {
   const [loading, setLoading] = useState(false);
   const isEdit = !!id;
   const [saveAndAddAnother, setSaveAndAddAnother] = useState(false);
-
+  const [passwordMismatch, setPasswordMismatch] = useState(false);
   const [formData, setFormData] = useState<any>({
     firstName: "",
     lastName: "",
@@ -55,6 +56,22 @@ const AddCustomer = () => {
     state: "",
     country: "",
   });
+
+  // Country list — same dynamic logic as Add Address
+  const countryList = Country.getAllCountries().map((c) => ({
+    name: c.name,
+    code: c.isoCode,
+  }));
+
+  // States/Provinces load dynamically from the selected country
+  const stateList = useMemo(() => {
+    if (!formData.country) return [];
+
+    return State.getStatesOfCountry(formData.country).map((s) => ({
+      name: s.name,
+      code: s.isoCode,
+    }));
+  }, [formData.country]);
 
   const updateField = (field: any, value: any) => {
     setFormData((prev: any) => ({ ...prev, [field]: value }));
@@ -251,15 +268,18 @@ const AddCustomer = () => {
                 <Label className="2xl:!text-2xl">Country</Label>
                 <Select
                   value={formData.country}
-                  onValueChange={(value) => updateField("country", value)}
+                onValueChange={(value) => {
+  updateField("country", value);
+  updateField("state", "");
+}}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select country" />
                   </SelectTrigger>
                   <SelectContent className="overflow-y-scroll h-96">
-                    {countriesList?.map((c, index) => (
-                      <SelectItem key={index} value={c.value}>
-                        {c.label}
+                    {countryList.map((c) => (
+                      <SelectItem key={c.code} value={c.code}>
+                        {c.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -271,14 +291,15 @@ const AddCustomer = () => {
                 <Select
                   value={formData.state}
                   onValueChange={(value) => updateField("state", value)}
+                  disabled={!formData.country}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select state" />
                   </SelectTrigger>
                   <SelectContent className="overflow-y-scroll h-96">
-                    {statesList?.map((c) => (
-                      <SelectItem key={c.value} value={c.label}>
-                        {c.label}
+                    {stateList.map((state) => (
+                      <SelectItem key={state.code} value={state.code}>
+                        {state.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -489,13 +510,22 @@ const AddCustomer = () => {
                     Passwords must be at least 7 characters long and contain
                     both alphabetic and numeric characters.
                   </p>
-                  <Input
-                    type="password"
-                    value={formData.password}
-                    onChange={(e) => updateField("password", e.target.value)}
-                    required={!isEdit}
-                    disabled={isEdit}
-                  />
+                 <Input
+  type="password"
+  value={formData.password}
+  onChange={(e) => {
+    const password = e.target.value;
+
+    updateField("password", password);
+
+    setPasswordMismatch(
+      formData.confirmPassword.length > 0 &&
+        password !== formData.confirmPassword
+    );
+  }}
+  required={!isEdit}
+  disabled={isEdit}
+/>
                 </div>
 
                 {/* Confirm Password Field */}
@@ -515,14 +545,27 @@ const AddCustomer = () => {
                     </Tooltip>
                   </div>
                   <Input
-                    type="password"
-                    value={formData.confirmPassword}
-                    onChange={(e) =>
-                      updateField("confirmPassword", e.target.value)
-                    }
-                    required={!isEdit}
-                    disabled={isEdit}
-                  />
+  type="password"
+  value={formData.confirmPassword}
+  onChange={(e) => {
+    const confirmPassword = e.target.value;
+
+    updateField("confirmPassword", confirmPassword);
+
+    setPasswordMismatch(
+      confirmPassword.length > 0 &&
+        confirmPassword !== formData.password
+    );
+  }}
+  required={!isEdit}
+  disabled={isEdit}
+/>
+
+{passwordMismatch && (
+  <p className="text-sm !text-red-500 mt-1">
+    Passwords do not match.
+  </p>
+)}
                 </div>
               </TooltipProvider>
             </div>
