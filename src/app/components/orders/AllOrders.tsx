@@ -1622,17 +1622,18 @@ const AllOrders = () => {
                                     </p>
                                   </div>
 
-                                  {/* Method Data */}
-                                  <div
-                                    className={`flex items-center gap-2 min-w-0 ${(order?.billingInformation?.shippingData?.length ?? 0) > 20
-                                        ? "pt-[46px]"
-                                        : "pt-[55px]"
-                                      }`}
-                                  >
-                                    <div className="shipping-data-scroll w-[420px] max-w-full overflow-x-auto overflow-y-hidden whitespace-nowrap">
-                                      {order?.billingInformation?.shippingData || "N/A"}
-                                    </div>
-                                  </div>
+    {/* Method Data */}
+  <div
+  className={`flex items-center gap-2 min-w-0 ${
+    (order?.billingInformation?.shippingData?.length ?? 0) > 40
+      ? "pt-[46px]"
+      : "pt-[55px]"
+  }`}
+>
+  <div className="shipping-data-scroll w-[420px] max-w-full overflow-x-auto overflow-y-hidden whitespace-nowrap">
+    {order?.billingInformation?.shippingData || "N/A"}
+  </div>
+</div>
 
                                   <div className="flex items-center gap-2">
                                     <span>
