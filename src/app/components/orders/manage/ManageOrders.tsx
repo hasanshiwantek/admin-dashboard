@@ -177,8 +177,8 @@ const ManageOrders = () => {
               key={tab}
               onClick={() => setSelectedTab(tab)}
               className={`!text-2xl px-5 py-2 -mb-1 transition ${selectedTab === tab
-                  ? "border-b-4 border-blue-600"
-                  : "text-gray-600"
+                ? "border-b-4 border-blue-600"
+                : "text-gray-600"
                 }`}
             >
               {tab}
@@ -430,6 +430,7 @@ const ManageOrders = () => {
                                     [ret.id]: e.target.value,
                                   })
                                 }
+                                disabled
                               />
                               {/* <button
                                 onClick={() => handleUpdateStaffNote(ret.id)}

@@ -94,12 +94,9 @@ const AllCustomers = () => {
 
           const token = res?.token || res?.data?.token;
 
-
-          console.log(token, selectedStore);
-
           if (token && selectedStore.baseUrl) {
-              const baseUrl = selectedStore.baseUrl.replace(/\/$/, ""); // ✅ trailing slash remove
-  window.open(`${baseUrl}/?token=${token}`, "_blank");
+            const baseUrl = selectedStore.baseUrl.replace(/\/$/, ""); // ✅ trailing slash remove
+            window.open(`${baseUrl}/?token=${token}`, "_blank");
           }
         } catch (err) {
           toast.error("Failed to login as customer");
@@ -408,7 +405,7 @@ const AllCustomers = () => {
               <TableHead className="2xl:!text-[1.6rem]">Email</TableHead>
               <TableHead className="2xl:!text-[1.6rem]">Phone</TableHead>
               <TableHead className="2xl:!text-[1.6rem]">Group</TableHead>
-              <TableHead className="2xl:!text-[1.6rem]">Store credit</TableHead>
+              {/* <TableHead className="2xl:!text-[1.6rem]">Store credit</TableHead> */}
               <TableHead className="2xl:!text-[1.6rem]">Orders</TableHead>
               <TableHead className="2xl:!text-[1.6rem]">Join date</TableHead>
               <TableHead className="2xl:!text-[1.6rem]">Action</TableHead>
@@ -486,7 +483,7 @@ const AllCustomers = () => {
                       </Select>
                     </TableCell>
 
-                    <TableCell>
+                    {/* <TableCell>
                       <div className="flex items-center">
                         <span className="mr-1 2xl:!text-2xl">$</span>
                         <Input
@@ -510,7 +507,7 @@ const AllCustomers = () => {
                           Save
                         </Button>
                       </div>
-                    </TableCell>
+                    </TableCell> */}
 
                     <TableCell className="2xl:!text-2xl">{customer?.totalOrders}</TableCell>
                     <TableCell className="2xl:!text-2xl">

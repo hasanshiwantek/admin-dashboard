@@ -230,7 +230,7 @@ const OrderSearch = () => {
             </div>
 
             {/* Guest checkbox */}
-            <div className="flex items-center space-x-3">
+            {/* <div className="flex items-center space-x-3">
               <Checkbox
                 id="guest"
                 checked={formData.guest}
@@ -239,7 +239,7 @@ const OrderSearch = () => {
               <Label className="2xl:!text-2xl" htmlFor="guest">
                 Guest orders which match emails of registered accounts
               </Label>
-            </div>
+            </div> */}
 
             {/* Pre-orders checkboxes */}
             <div className="space-y-2">
