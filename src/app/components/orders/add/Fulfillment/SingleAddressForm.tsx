@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState ,useMemo} from "react";
 import { useFormContext, Controller } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,7 +12,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import ShippingMethod from "./ShippingMethod";
-import { countriesList } from "@/const/location";
+import { Country, State } from "country-state-city";
 
 export default function SingleAddressForm() {
   const { register, control, watch, setValue, getValues } = useFormContext();
@@ -20,6 +20,22 @@ export default function SingleAddressForm() {
   const [isAddressOverridden, setIsAddressOverridden] = useState(false);
 
   const selectedCustomer = watch("selectedCustomer");
+const selectedCountry = watch("shipping.country");
+
+const countryList = Country.getAllCountries().map((c) => ({
+  name: c.name,
+  code: c.isoCode,
+}));
+
+const stateList = useMemo(() => {
+  if (!selectedCountry) return [];
+
+  return State.getStatesOfCountry(selectedCountry).map((s) => ({
+    name: s.name,
+    code: s.isoCode,
+  }));
+}, [selectedCountry]);
+
 
   // ⬇️ Extract customer info (used in preview)
   const {
@@ -126,26 +142,57 @@ export default function SingleAddressForm() {
             <Input {...register("shipping.address2")} placeholder="Address Line 2 (Optional)" />
             <Input {...register("shipping.city")} placeholder="Suburb/City" />
 
-            <Controller
-              name="shipping.country"
-              control={control}
-              render={({ field }) => (
-                <Select value={field.value || ""} onValueChange={field.onChange}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Country" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {countriesList?.map((c) => (
-                      <SelectItem key={c.value} value={c.value}>
-                        {c.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            />
+          <Controller
+  name="shipping.country"
+  control={control}
+  render={({ field }) => (
+    <Select
+      value={field.value || ""}
+      onValueChange={(value) => {
+        field.onChange(value);
 
-            <Input {...register("shipping.state")} placeholder="State/Province" />
+        // Country change hone par old state clear
+        setValue("shipping.state", "");
+      }}
+    >
+      <SelectTrigger>
+        <SelectValue placeholder="Country" />
+      </SelectTrigger>
+
+      <SelectContent>
+        {countryList.map((country) => (
+          <SelectItem key={country.code} value={country.code}>
+            {country.name}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  )}
+/>
+
+            <Controller
+  name="shipping.state"
+  control={control}
+  render={({ field }) => (
+    <Select
+      value={field.value || ""}
+      onValueChange={field.onChange}
+      disabled={!selectedCountry}
+    >
+      <SelectTrigger>
+        <SelectValue placeholder="State/Province" />
+      </SelectTrigger>
+
+      <SelectContent>
+        {stateList.map((state) => (
+          <SelectItem key={state.code} value={state.code}>
+            {state.name}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  )}
+/>
             <Input {...register("shipping.zip")} placeholder="Zip/Postcode" />
           </div>
 
