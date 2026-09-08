@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,9 +14,28 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { countriesList } from "@/const/location";
 import CustomerSearchDropdown, { Customer } from "./CustomerSearchDropdown";
+import { fetchCustomerAddresses } from "@/redux/slices/customerSlice";
+import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
+import { Country, State } from "country-state-city";
 import { useFormContext } from "react-hook-form";
 export default function StepOne({ step, setStep, isEditMode }: any) {
+   interface CustomerAddress {
+  id: number;
+  customer_id: number;
+  first_name: string;
+  last_name: string;
+  company_name?: string | null;
+  phone_number?: string | null;
+  address_line_1?: string | null;
+  address_line_2?: string | null;
+  city?: string | null;
+  state?: string | null;
+  zip?: string | null;
+  country?: string | null;
+  address_type?: string | null;
+  is_default?: boolean;
+}
   const {
     register,
     handleSubmit,
@@ -25,6 +44,75 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
     formState: { errors },
   } = useFormContext();
   const router = useRouter();
+const dispatch = useDispatch<any>();
+  const [customerAddresses, setCustomerAddresses] = useState<CustomerAddress[]>([]);
+  const [pendingState, setPendingState] = useState("");
+const [loadingAddresses, setLoadingAddresses] = useState(false);
+    const countryList = Country.getAllCountries().map((c) => ({
+    name: c.name,
+    code: c.isoCode,
+  }));
+ 
+   const [formData, setFormData] = useState({
+      // Advanced Search
+      searchKeywords: "",
+      startsWith: "",
+      phone: "",
+      country: "",
+      stateProvince: "",
+  
+      // Range Search
+      customerIdFrom: "",
+      customerIdTo: "",
+      ordersFrom: "",
+      ordersTo: "",
+      creditFrom: "",
+      creditTo: "",
+  
+      // Date Search
+      dateJoined: "",
+  
+      // Group Search
+      customerGroup: "",
+  
+      // Sort Order
+      sortBy: "",
+      sortOrder: "",
+    });
+      const stateList = useMemo(() => {
+      if (!formData.country) return [];
+  
+      return State.getStatesOfCountry(formData.country).map((s) => ({
+        name: s.name,
+        code: s.isoCode,
+      }));
+    }, [formData.country]);
+  
+  useEffect(() => {
+  if (!pendingState || stateList.length === 0) return;
+
+  const stateExists = stateList.some(
+    (state) => state.code === pendingState
+  );
+
+  if (stateExists) {
+    setFormData((prev) => ({
+      ...prev,
+      stateProvince: pendingState,
+    }));
+
+    setValue("billingState", pendingState);
+
+    setPendingState("");
+  }
+}, [stateList, pendingState, setValue]);
+    const handleChange = (e: any) => {
+      const { name, value } = e.target;
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    };
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(
     null
   );
@@ -56,6 +144,31 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
       setSelectedCustomer(formCustomer);
     }
   }, [watch("selectedBillingCustomer"), isEditMode]);
+const handleUseAddress = (address: CustomerAddress) => {
+  setValue("billingFirstName", address.first_name ?? "");
+  setValue("billingLastName", address.last_name ?? "");
+  setValue("billingCompanyName", address.company_name ?? "");
+  setValue("billingPhoneNumber", address.phone_number ?? "");
+
+  setValue("billingAddress1", address.address_line_1 ?? "");
+  setValue("billingAddress2", address.address_line_2 ?? "");
+
+  setValue("billingCity", address.city ?? "");
+  setValue("billingZip", address.zip ?? "");
+
+  // Country
+  setValue("billingCountry", address.country ?? "");
+
+  // State ko temporarily save karo
+  setPendingState(address.state ?? "");
+
+  // Existing Country/State formData
+  setFormData((prev) => ({
+    ...prev,
+    country: address.country ?? "",
+    stateProvince: "",
+  }));
+};
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="space-y-8 p-10">
@@ -93,15 +206,39 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
               <CustomerSearchDropdown
                 value={watch("search")}
                 onChange={(val) => setValue("search", val)}
-                onSelect={(customer) => {
+               onSelect={async (customer) => {
+  const safeCustomer = JSON.parse(JSON.stringify(customer));
 
-                  // Always deep-clone or pick fields to avoid proxy issues
-                  const safeCustomer = JSON.parse(JSON.stringify(customer));
-                  // Store safely in local state
-                  setSelectedCustomer(safeCustomer);
-                  // Only save the customer ID or minimal info in form state
-                  setValue("selectedCustomer", safeCustomer || "");
-                }}
+  setSelectedCustomer(safeCustomer);
+  setValue("selectedCustomer", safeCustomer);
+
+  const customerId = Number(safeCustomer?.id);
+
+  if (!customerId) {
+    console.log("Customer ID not found");
+    setCustomerAddresses([]);
+    return;
+  }
+
+  try {
+    setLoadingAddresses(true);
+
+    const response = await dispatch(
+      fetchCustomerAddresses({ customerId })
+    ).unwrap();
+
+    console.log("Customer Addresses:", response);
+
+    setCustomerAddresses(
+  response?.data?.customer_addresses || []
+);
+  } catch (error) {
+    console.error("Failed to fetch customer addresses:", error);
+    setCustomerAddresses([]);
+  } finally {
+    setLoadingAddresses(false);
+  }
+}}
               />
             </div>
           )}
@@ -320,34 +457,52 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
                 <Label className="2xl:!text-2xl" htmlFor="country">
                   Country
                 </Label>
-                <Select
-                  value={country}
-                  onValueChange={(value) => setValue("billingCountry", value)}
-                  required={!isEditMode}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Choose a country" />
-                  </SelectTrigger>
-                  <SelectContent className="overflow-y-scroll h-96">
-                    {countriesList.map((c) => (
-                      <SelectItem key={c.value} value={c.value}>
-                        {c.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+           <Select
+                      name="country"
+                      value={formData?.country || ""}
+                      onValueChange={(value) => {
+                        handleChange({ target: { name: "country", value } });
+                        handleChange({ target: { name: "stateProvince", value: "" } });
+                      }}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="-- Choose a country --" />
+                      </SelectTrigger>
+                      <SelectContent className="overflow-y-scroll h-96">
+                        {countryList.map((country) => (
+                          <SelectItem key={country.code} value={country.code}>
+                            {country.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
               </div>
 
               <div>
                 <Label className="2xl:!text-2xl" htmlFor="state">
                   State/Province
                 </Label>
-                <Input
-                  {...register("billingState")}
-                  id="state"
-                  className="mt-1"
-                  required={!isEditMode}
-                />
+                 <Select
+                      name="stateProvince"
+                      value={formData?.stateProvince || ""}
+                      onValueChange={(value) =>
+                        handleChange({
+                          target: { name: "stateProvince", value },
+                        })
+                      }
+                      disabled={!formData.country}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="-- Choose a state/province --" />
+                      </SelectTrigger>
+                      <SelectContent className="overflow-y-scroll h-96">
+                        {stateList.map((state) => (
+                          <SelectItem key={state.code} value={state.code}>
+                            {state.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
               </div>
 
               <div>
@@ -358,61 +513,105 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
               </div>
             </div>
 
-            <div>
-              {/* Right side: Selected Customer Box */}
-              {selectedCustomer && (
-                <div className="w-96 text-center border p-4 bg-gray-100 rounded-md  flex flex-col justify-between">
-                  <div className=" flex flex-col gap-2">
-                    <div className="font-semibold text-2xl">
-                      {selectedCustomer.firstName} {selectedCustomer.lastName}
-                    </div>
-                    <div className="text-gray-800  text-xl">
-                      {selectedCustomer.email}
-                    </div>
-                    {selectedCustomer.phone && (
-                      <div className="text-gray-800 text-xl">
-                        {selectedCustomer.phone}
-                      </div>
-                    )}
-                    {selectedCustomer.companyName && (
-                      <div className="text-gray-800 text-xl">
-                        {selectedCustomer.companyName}
-                      </div>
-                    )}
-                    {selectedCustomer.address && (
-                      <div className="text-gray-800 text-xl">
-                        {selectedCustomer.address}
-                      </div>
-                    )}
-                    {selectedCustomer.state && (
-                      <div className="text-gray-800 text-xl">
-                        {selectedCustomer.state}
-                      </div>
-                    )}
-                  </div>
-                  <button
-                    type="button"
-                    className="btn-primary mt-4"
-                    onClick={() => {
-                      setValue("billingFirstName", selectedCustomer.firstName);
-                      setValue("billingLastName", selectedCustomer.lastName);
-                      setValue(
-                        "billingCompanyName",
-                        selectedCustomer.companyName || ""
-                      );
-                      setValue("billingPhoneNumber", selectedCustomer.phone || "");
-                      setValue("billingAddress1", selectedCustomer.address || "");
-                      setValue("billingCity", selectedCustomer.city || "");
-                      setValue("billingState", selectedCustomer.state || "");
-                      setValue("billingZip", selectedCustomer.zip || "");
-                      setValue("billingCountry", selectedCustomer.country || "");
-                    }}
-                  >
-                    Use this address
-                  </button>
-                </div>
-              )}
-            </div>
+           <div>
+  {selectedCustomer && (
+    <div className="w-full space-y-4">
+      <h2 className="text-2xl font-semibold">
+        Customer Addresses
+      </h2>
+
+      {loadingAddresses ? (
+        <div className="border rounded-md p-6 bg-gray-100 text-center">
+          Loading addresses...
+        </div>
+      ) : customerAddresses.length > 0 ? (
+        
+       <div className="max-h-[600px] overflow-y-auto pr-2 space-y-4">
+  {customerAddresses.map((address) => (
+    <div
+      key={address.id}
+      className="border p-5 bg-gray-100 rounded-md"
+    >
+      <div className="space-y-2">
+        <div className="font-semibold text-2xl">
+          {address.first_name} {address.last_name}
+        </div>
+
+        {address.company_name && (
+          <div className="text-gray-800 text-xl">
+            {address.company_name}
+          </div>
+        )}
+
+        {address.phone_number && (
+          <div className="text-gray-800 text-xl">
+            {address.phone_number}
+          </div>
+        )}
+
+        {address.address_line_1 && (
+          <div className="text-gray-800 text-xl">
+            {address.address_line_1}
+          </div>
+        )}
+
+        {address.address_line_2 && (
+          <div className="text-gray-800 text-xl">
+            {address.address_line_2}
+          </div>
+        )}
+
+        {address.city && (
+          <div className="text-gray-800 text-xl">
+            {address.city}
+          </div>
+        )}
+
+        {address.state && (
+          <div className="text-gray-800 text-xl">
+            {address.state}
+          </div>
+        )}
+
+        {address.zip && (
+          <div className="text-gray-800 text-xl">
+            {address.zip}
+          </div>
+        )}
+
+        {address.country && (
+          <div className="text-gray-800 text-xl">
+            {address.country}
+          </div>
+        )}
+
+        {address.address_type && (
+          <div className="text-gray-800 text-xl">
+            {address.address_type}
+          </div>
+        )}
+      </div>
+
+      <button
+        type="button"
+        className="btn-primary mt-4 w-full"
+        onClick={() => handleUseAddress(address)}
+      >
+        Use this address
+      </button>
+    </div>
+  ))}
+</div>
+      ) : (
+        <div className="border rounded-md p-6 bg-gray-100 text-center">
+          <p className="text-gray-500 text-xl">
+            No saved addresses found.
+          </p>
+        </div>
+      )}
+    </div>
+  )}
+</div>
           </div>
 
           <div className="flex items-center space-x-2 mt-4">

@@ -18,7 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { PlusIcon, DownloadIcon, SearchIcon, Trash } from "lucide-react";
+import { PlusIcon, DownloadIcon, SearchIcon, Trash, CalendarDays, StickyNote } from "lucide-react";
 import React, { useState, useEffect, Fragment } from "react";
 import OrderActionsDropdown from "../../orders/OrderActionsDropdown";
 import Pagination from "@/components/ui/pagination";
@@ -536,78 +536,130 @@ const AllCustomers = () => {
                   {expandedRow === customer.id && (
                     <TableRow>
                       <TableCell colSpan={11}>
-                        <div className="grid grid-cols-3 bg-gray-50 p-4">
+                        <div className="grid grid-cols-[15%_40%_45%]  bg-gray-50 p-4">
 
                           {/* Current Orders Title */}
-                          <div className="border-r pr-4">
-                            <h4 className="font-semibold text-lg">
+                          <div className="border-r pr-4 !text-right">
+                            <h4 className="font-semibold text-[16px]">
                               Current Orders
                             </h4>
                           </div>
 
                           {/* Current Order Details */}
-                          <div className="border-r px-4">
-                            {customer?.currentOrders?.length > 0 ? (
-                              customer.currentOrders.map((order: any) => (
-                                <div key={order.id} className="mb-4">
-                                  <h4 className="font-semibold text-blue-600">
-                                    Order #{order.orderNumber}
-                                  </h4>
+                         <div className=" px-4 ">
+  {customer?.currentOrders?.length > 0 ? (
+    customer.currentOrders.map((order: any) => (
+      <div key={order.id} className="mb-8">
 
-                                  <div className="grid grid-cols-[120px_1fr] gap-y-2 mt-2">
-                                    <span>Status</span>
-                                    <span>{order.status}</span>
+        {/* Order Number - Center */}
+        <h4 className=" text-[15px]  relative left-[85px] font-medium text-gray-900 mb-3 ">
+          Order{" "}
+          <span className="!text-blue-600 !text-[15px]">
+            #{order.orderNumber}
+          </span>
+        </h4>
 
-                                    <span>Order total</span>
-                                    <span>${order.totalAmount}</span>
+        {/* Details */}
+        <div className="grid grid-cols-[120px_1fr] gap-y-2">
 
-                                    <span>Date ordered</span>
-                                    <span>
-                                      {new Date(order.createdAt).toLocaleDateString()}
-                                    </span>
+  {/* Status */}
+  <span className="text-right pr-4 font-medium text-gray-600">
+    Status
+  </span>
 
-                                    <span>Notes</span>
-                                    <span onClick={() => {
-                                      setSelectedCustomerId(customer?.id);
-                                      setShowCustomerNotes(true);
-                                    }} className="text-blue-600 cursor-pointer">
-                                      View Notes
-                                    </span>
-                                  </div>
-                                </div>
-                              ))
-                            ) : (
-                              <p>No current orders</p>
-                            )}
-                          </div>
+  <span className="border-l-4 border-cyan-400 pl-2 font-medium text-gray-600">
+    {order.status}
+  </span>
+
+  {/* Order Total */}
+  <span className="text-right pr-4 font-medium text-gray-600">
+    Order total
+  </span>
+
+  <span className="font-medium text-gray-600">
+    ${order.totalAmount}
+  </span>
+
+  {/* Date */}
+  <span className="text-right pr-4 font-medium text-gray-600">
+    Date ordered
+  </span>
+
+  <span className="font-medium text-gray-600">
+    {new Date(order.createdAt).toLocaleDateString()}
+  </span>
+
+  {/* Notes */}
+  <span className="flex items-center justify-end pr-4 text-gray-600">
+    <StickyNote size={16} strokeWidth={1.5} />
+  </span>
+
+  <span
+    onClick={() => {
+      setSelectedCustomerId(customer?.id);
+      setShowCustomerNotes(true);
+    }}
+    className="!text-blue-600 font-medium cursor-pointer hover:underline"
+  >
+    View Notes
+  </span>
+
+</div>
+       
+      </div>
+    ))
+  ) : (
+    <p>No current orders</p>
+  )}
+</div>
 
                           {/* Past Orders */}
-                          <div className="px-4">
-                            <h4 className="font-semibold text-lg mb-3">
-                              Past Orders
-                            </h4>
+       <div className="px-4">
+  <div className="flex items-stretch">
 
-                            {customer?.pastOrders?.length > 0 ? (
-                              customer.pastOrders.map((order: any) => (
-                                <div key={order.id} className="mb-2">
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-blue-600">
-                                      Order #{order.orderNumber}
-                                    </span>
+    {/* Past Orders Heading */}
+    <h4 className="font-semibold text-[12px] whitespace-nowrap pr-3">
+      Past Orders
+    </h4>
 
-                                    <span onClick={() => {
-                                      setSelectedCustomerId(customer?.id);
-                                      setShowCustomerNotes(true);
-                                    }} className="text-blue-600 cursor-pointer">
-                                      View Notes
-                                    </span>
-                                  </div>
-                                </div>
-                              ))
-                            ) : (
-                              <p>No past orders</p>
-                            )}
-                          </div>
+    {/* Vertical Line + Orders */}
+    <div className="border-l border-gray-200 pl-3">
+      {customer?.pastOrders?.length > 0 ? (
+        customer.pastOrders.map((order: any) => (
+          <div
+            key={order.id}
+            className="flex items-center h-8"
+          >
+            {/* Order Number */}
+            <span className=" whitespace-nowrap pr-2">
+              Order <span className="!text-blue-600">#{order.orderNumber}</span>
+            </span>
+
+            {/* View Notes */}
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedCustomerId(customer?.id);
+                setShowCustomerNotes(true);
+              }}
+              className="flex items-center gap-2 !text-blue-600 cursor-pointer whitespace-nowrap"
+            >
+              <StickyNote
+                size={18}
+                strokeWidth={1.5}
+                className="text-gray-500"
+              />
+
+              <span className="!text-blue-600">View Notes</span>
+            </button>
+          </div>
+        ))
+      ) : (
+        <p>No past orders</p>
+      )}
+    </div>
+  </div>
+</div>
                         </div>
                       </TableCell>
                     </TableRow>

@@ -39,13 +39,13 @@ export const SideBar = ({
   const sidebarData = useSidebarData();
 
   const [openMenus, setOpenMenus] = useState<boolean[]>(
-    sidebarData.map(() => false)
+    sidebarData.map(() => false),
   );
 
   useEffect(() => {
     const newOpenMenus = sidebarData.map(
       (item) =>
-        item.children?.some((child: any) => child.url === pathname) || false
+        item.children?.some((child: any) => child.url === pathname) || false,
     );
 
     setOpenMenus(newOpenMenus);
@@ -56,12 +56,7 @@ export const SideBar = ({
       className={`shrink-0 h-auto
   fixed top-0 md:top-22
   z-30 md:z-30
-${isCollapsed
-          ? isHovered
-            ? "w-[26.7rem]"
-            : "w-[4.3rem]"
-          : "w-[26.7rem]"
-        }
+${isCollapsed ? (isHovered ? "w-[26.7rem]" : "w-[4.3rem]") : "w-[26.7rem]"}
   max-h-full
 overflow-y-hidden overflow-x-hidden
   bg-[rgb(3,16,51)]
@@ -79,9 +74,19 @@ overflow-y-hidden overflow-x-hidden
                 className="group/collapsible"
                 open={openMenus[index]}
                 onOpenChange={(isOpen) => {
-                  const newState = [...openMenus];
-                  newState[index] = isOpen;
-                  setOpenMenus(newState);
+                  if (isOpen) {
+                    // Sirf jis menu par click hua hai usko open rakho
+                    // baqi sab close kar do
+                    const newState = sidebarData.map((_, i) => i === index);
+
+                    setOpenMenus(newState);
+                  } else {
+                    // Current menu close
+                    const newState = [...openMenus];
+                    newState[index] = false;
+
+                    setOpenMenus(newState);
+                  }
                 }}
               >
                 <SidebarMenuItem>
@@ -90,10 +95,11 @@ overflow-y-hidden overflow-x-hidden
                       className={`
        flex-1 items-center cursor-pointer
       transition-all duration-200  group-hover:!text-black
-      ${isCollapsed && !isHovered
-                          ? "justify-center !p-0 h-[54px]"
-                          : "p-8 text-xl 2xl:!text-2xl"
-                        }
+      ${
+        isCollapsed && !isHovered
+          ? "justify-center !p-0 h-[54px]"
+          : "p-8 text-xl 2xl:!text-2xl"
+      }
     `}
                       onClick={() => {
                         if (item.children?.length > 0) {
@@ -106,10 +112,7 @@ overflow-y-hidden overflow-x-hidden
                           className={`
           shrink-0
           transition-all duration-200
-          ${isCollapsed && !isHovered
-                              ? "!h-7 !w-7 !m-0"
-                              : "mr-2 !h-8 !w-8"
-                            }
+          ${isCollapsed && !isHovered ? "!h-7 !w-7 !m-0" : "mr-2 !h-8 !w-8"}
         `}
                         />
                       )}
@@ -122,32 +125,42 @@ overflow-y-hidden overflow-x-hidden
                         <button
                           type="button"
                           className="p-2 rounded-md hover:bg-transparent"
-
                         >
                           <ChevronDown className="!h-7 !w-7 text-white group-hover:text-black transition-transform group-data-[state=open]:rotate-180" />
                         </button>
                       </CollapsibleTrigger>
                     )}
                   </div>
-                  <CollapsibleContent className={`
+                  <CollapsibleContent
+                    className={`
     ${isCollapsed && !isHovered ? "hidden" : ""}
-  `}>
+  `}
+                  >
                     <SidebarMenuSub className="ml-16">
                       {item.children.map((child: any) => (
                         <SidebarMenuSubItem key={child.title}>
                           <Link
                             href={child.url}
-                            className={`text-xl 2xl:!text-2xl !leading-8 cursor-pointer px-4 py-2 rounded-md block ${pathname === child.url ? "bg-[#24345c]" : ""
-                              }`}
+                            className={`text-xl 2xl:!text-2xl !leading-8 cursor-pointer px-4 py-2 rounded-md block ${
+                              pathname === child.url ? "bg-[#24345c]" : ""
+                            }`}
                             onClick={(e) => {
-                              const link = ["/manage/products", "/manage/products/brands", "/manage/products/categories", "/manage/orders", "/manage/products/export", "/manage/orders/export", "/manage/customers/export"]
+                              const link = [
+                                "/manage/products",
+                                "/manage/products/brands",
+                                "/manage/products/categories",
+                                "/manage/orders",
+                                "/manage/products/export",
+                                "/manage/orders/export",
+                                "/manage/customers/export",
+                              ];
                               // console.log(pathname, child.url);
 
                               if (pathname === child.url) {
                                 e.preventDefault();
                                 // if (link.includes(child.url)) {
                                 // router.push(`${child.url}?t=${Date.now()}`);
-                                window.location.reload()
+                                window.location.reload();
                                 // }
                               }
                             }}
@@ -168,25 +181,20 @@ overflow-y-hidden overflow-x-hidden
     cursor-pointer rounded-md
     transition-all duration-200
  
-    ${isCollapsed && !isHovered
-                      ? "justify-center !p-0 h-[54px]"
-                      : "p-8 text-xl 2xl:!text-2xl"
-                    }
+    ${
+      isCollapsed && !isHovered
+        ? "justify-center !p-0 h-[54px]"
+        : "p-8 text-xl 2xl:!text-2xl"
+    }
     ${pathname === item.url ? "bg-[#24345c]" : ""}
   `}
                 >
-                  <Link
-                    href={item.url || "#"}
-                    className="flex items-center"
-                  >
+                  <Link href={item.url || "#"} className="flex items-center">
                     {item.icon && (
                       <item.icon
                         className={`
           shrink-0 transition-all duration-200
-          ${isCollapsed && !isHovered
-                            ? "!h-7 !w-7 !m-0"
-                            : "mr-2 !h-8 !w-8"
-                          }
+          ${isCollapsed && !isHovered ? "!h-7 !w-7 !m-0" : "mr-2 !h-8 !w-8"}
         `}
                       />
                     )}
@@ -195,7 +203,7 @@ overflow-y-hidden overflow-x-hidden
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
-            )
+            ),
           )}
         </SidebarMenu>
       </SidebarProvider>
@@ -211,17 +219,19 @@ overflow-y-hidden overflow-x-hidden
     rounded-full border border-gray-300
     bg-[#24345c] shadow-md
     transition-[left] duration-200 ease-in-out
-    ${isCollapsed
-            ? isHovered
-              ? "left-[26.7rem]"
-              : "left-[6rem]"
-            : "left-[26.7rem]"
-          }
+    ${
+      isCollapsed
+        ? isHovered
+          ? "left-[26.7rem]"
+          : "left-[6rem]"
+        : "left-[26.7rem]"
+    }
 `}
       >
         <ChevronRight
-          className={`h-7 w-7 text-white transition-transform duration-200 ${isCollapsed ? "rotate-180" : ""
-            }`}
+          className={`h-7 w-7 text-white transition-transform duration-200 ${
+            isCollapsed ? "rotate-180" : ""
+          }`}
         />
       </button>
       <div className="md:hidden sticky bottom-0 bg-[rgb(3,16,51)] border-t border-[#2d3748] p-4">
