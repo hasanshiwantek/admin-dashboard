@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,6 +15,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { countriesList } from "@/const/location";
 import CustomerSearchDropdown, { Customer } from "./CustomerSearchDropdown";
 import { useRouter } from "next/navigation";
+import { Country, State } from "country-state-city";
 import { useFormContext } from "react-hook-form";
 export default function StepOne({ step, setStep, isEditMode }: any) {
   const {
@@ -25,6 +26,52 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
     formState: { errors },
   } = useFormContext();
   const router = useRouter();
+    const countryList = Country.getAllCountries().map((c) => ({
+    name: c.name,
+    code: c.isoCode,
+  }));
+   const [formData, setFormData] = useState({
+      // Advanced Search
+      searchKeywords: "",
+      startsWith: "",
+      phone: "",
+      country: "",
+      stateProvince: "",
+  
+      // Range Search
+      customerIdFrom: "",
+      customerIdTo: "",
+      ordersFrom: "",
+      ordersTo: "",
+      creditFrom: "",
+      creditTo: "",
+  
+      // Date Search
+      dateJoined: "",
+  
+      // Group Search
+      customerGroup: "",
+  
+      // Sort Order
+      sortBy: "",
+      sortOrder: "",
+    });
+      const stateList = useMemo(() => {
+      if (!formData.country) return [];
+  
+      return State.getStatesOfCountry(formData.country).map((s) => ({
+        name: s.name,
+        code: s.isoCode,
+      }));
+    }, [formData.country]);
+  
+    const handleChange = (e: any) => {
+      const { name, value } = e.target;
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    };
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(
     null
   );
@@ -320,34 +367,52 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
                 <Label className="2xl:!text-2xl" htmlFor="country">
                   Country
                 </Label>
-                <Select
-                  value={country}
-                  onValueChange={(value) => setValue("billingCountry", value)}
-                  required={!isEditMode}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Choose a country" />
-                  </SelectTrigger>
-                  <SelectContent className="overflow-y-scroll h-96">
-                    {countriesList.map((c) => (
-                      <SelectItem key={c.value} value={c.value}>
-                        {c.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+           <Select
+                      name="country"
+                      value={formData?.country || ""}
+                      onValueChange={(value) => {
+                        handleChange({ target: { name: "country", value } });
+                        handleChange({ target: { name: "stateProvince", value: "" } });
+                      }}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="-- Choose a country --" />
+                      </SelectTrigger>
+                      <SelectContent className="overflow-y-scroll h-96">
+                        {countryList.map((country) => (
+                          <SelectItem key={country.code} value={country.code}>
+                            {country.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
               </div>
 
               <div>
                 <Label className="2xl:!text-2xl" htmlFor="state">
                   State/Province
                 </Label>
-                <Input
-                  {...register("billingState")}
-                  id="state"
-                  className="mt-1"
-                  required={!isEditMode}
-                />
+                 <Select
+                      name="stateProvince"
+                      value={formData?.stateProvince || ""}
+                      onValueChange={(value) =>
+                        handleChange({
+                          target: { name: "stateProvince", value },
+                        })
+                      }
+                      disabled={!formData.country}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="-- Choose a state/province --" />
+                      </SelectTrigger>
+                      <SelectContent className="overflow-y-scroll h-96">
+                        {stateList.map((state) => (
+                          <SelectItem key={state.code} value={state.code}>
+                            {state.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
               </div>
 
               <div>
