@@ -479,7 +479,7 @@ export default function OrderReview({ step, setStep }: any) {
                 <SelectContent>
                   <SelectItem value="cash">Manual payment</SelectItem>{" "}
                   {/* Renamed for image clarity */}
-                  <SelectItem value="stripe">Stripe</SelectItem>
+                  <SelectItem value="credit_card">Stripe</SelectItem>
                   <SelectItem value="bank">Bank Transfer</SelectItem>{" "}
                   {/* Grouped with manual payment for field display */}
                   <SelectItem value="credit_card">Credit Card</SelectItem>{" "}
