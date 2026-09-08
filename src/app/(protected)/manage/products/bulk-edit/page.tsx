@@ -115,6 +115,7 @@ export default function BulkEdit() {
       const payload = prepareUpdatePayload(products);
       await dispatch(updateProduct({ body: payload })).unwrap();
       localStorage.removeItem("bulkEditProducts"); // ✅ clean up
+      router.push("/manage/products");
     } catch (err) {
       console.error("❌ Failed to update:", err);
     }
@@ -122,8 +123,6 @@ export default function BulkEdit() {
 
   const handleSaveAndExit = () => {
     handleSave();
-    // TODO: Navigate back or close modal
-    router.push("/manage/products");
   };
 
   return (
@@ -198,8 +197,8 @@ export default function BulkEdit() {
                       <span className="truncate max-w-[150px]">
                         {Array.isArray(product.categories)
                           ? product.categories
-                              .map((c: any) => c.name)
-                              .join(", ")
+                            .map((c: any) => c.name)
+                            .join(", ")
                           : ""}
                       </span>
                       <button
@@ -314,9 +313,9 @@ export default function BulkEdit() {
       </div>
       {/* Sticky Footer */}
       <div className="sticky bottom-0 w-full border-t p-6 bg-white flex justify-end gap-4">
-        <button className="btn-outline-primary" onClick={handleSave}>
+        {/* <button className="btn-outline-primary" onClick={handleSave}>
           Save
-        </button>
+        </button> */}
         <button className="btn-primary" onClick={handleSaveAndExit}>
           Save and exit
         </button>
