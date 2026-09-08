@@ -87,7 +87,10 @@ export default function EditInventoryPage() {
   const handleSave = async () => {
     try {
       const payload = prepareUpdatePayload(products);
-      const res = await dispatch(updateProduct({ body: payload })).unwrap();
+      await dispatch(updateProduct({ body: payload })).unwrap();
+      // TODO: Navigate back or close modal
+      localStorage.removeItem("selectedProducts");
+      router.push("/manage/products");
     } catch (err) {
     }
   };
@@ -95,8 +98,8 @@ export default function EditInventoryPage() {
   const handleSaveAndExit = () => {
     handleSave();
     // TODO: Navigate back or close modal
-    localStorage.removeItem("selectedProducts");
-    router.push("/manage/products");
+    // localStorage.removeItem("selectedProducts");
+    // router.push("/manage/products");
   };
 
   return (
@@ -124,8 +127,8 @@ export default function EditInventoryPage() {
                 <TableRow key={product.id}>
                   <TableCell
                     className={`max-w-[300px] cursor-pointer ${expandedProductId === product.id
-                        ? "whitespace-normal"
-                        : "truncate"
+                      ? "whitespace-normal"
+                      : "truncate"
                       }`}
                     onClick={() =>
                       setExpandedProductId((prev) =>
@@ -247,9 +250,9 @@ export default function EditInventoryPage() {
       </div>
       {/* Sticky Footer */}
       <div className="sticky bottom-0 w-full border-t p-6 bg-white flex justify-end gap-4">
-        <button className="btn-outline-primary" onClick={handleSave}>
+        {/* <button className="btn-outline-primary" onClick={handleSave}>
           Save
-        </button>
+        </button> */}
         <button className="btn-primary" onClick={handleSaveAndExit}>
           Save and exit
         </button>
