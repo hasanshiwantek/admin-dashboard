@@ -20,8 +20,6 @@ import { updateProduct } from "@/redux/slices/productSlice";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { refetchProducts } from "@/lib/productUtils";
 export default function EditPriceSheet({ trigger, product }: any) {
-  // console.log("Product to edit: ", product);
-
   const [open, setOpen] = useState(false);
   const dispatch = useAppDispatch();
   const [values, setValues] = useState({
@@ -43,7 +41,7 @@ export default function EditPriceSheet({ trigger, product }: any) {
 
   const handleSubmit = async () => {
     try {
-      const response = await dispatch(
+      await dispatch(
         updateProduct({
           body: {
             products: [
