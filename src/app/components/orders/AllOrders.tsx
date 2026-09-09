@@ -531,6 +531,7 @@ const AllOrders = () => {
         "2": "Shipped",
         "6": "Declined",
         "4": "Refunded",
+        "5": "Cancelled",
         "13": "Disputed",
         "12": "Manual Verification Required",
         "14": "Partially Refunded",
