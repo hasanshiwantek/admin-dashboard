@@ -35,6 +35,9 @@ import {
   capturePayment,
   shipmentByOrderId,
   printPackingSlipPdf,
+  printMultiInvoicePdf,
+  printMultiPackingSlipPdf,
+  captureMultiplePayment,
 } from "@/redux/slices/orderSlice";
 import {
   Ellipsis,
@@ -550,27 +553,22 @@ const AllOrders = () => {
     // 🧾 PRINT INVOICES
     if (selectedAction === "printMultiOrderInvoices") {
       try {
-        const printResults = await Promise.all(
-          selectedOrderIds.map((id) =>
-            dispatch(printInvoicePdf({ orderId: id?.id })),
-          ),
-        );
+        const resultAction = await dispatch(printMultiInvoicePdf(selectedOrderIds));
 
-        printResults.forEach((resultAction) => {
-          if (printInvoicePdf.fulfilled.match(resultAction)) {
-            const blob = new Blob([resultAction.payload], {
-              type: "application/pdf",
-            });
-            const url = URL.createObjectURL(blob);
-            window.open(url, "_blank");
-          } else {
-            console.error(
-              "Failed to generate invoice PDF for order:",
-              resultAction.meta.arg.orderId,
-            );
-          }
-        });
-
+        if (printMultiInvoicePdf.fulfilled.match(resultAction)) {
+          const blob = new Blob([resultAction.payload], {
+            type: "application/pdf",
+          });
+          const url = URL.createObjectURL(blob);
+          window.open(url, "_blank");
+          setTimeout(() => URL.revokeObjectURL(url), 60_000);
+        } else {
+          console.error(
+            "Failed to generate multi-order invoice PDF:",
+            resultAction.payload || resultAction.error,
+          );
+        }
+        dispatch(fetchAllOrders({ page: currentPage, perPage }));
         setSelectedAction("");
         setSelectedOrderIds([]);
       } catch (error) {
@@ -580,11 +578,35 @@ const AllOrders = () => {
       return;
     }
     // 📦 PRINT PACKING SLIPS
-    // if (selectedAction === "printOrderPackingSlips") {
-    //   dispatch(printPackingSlipsForOrders({ orderIds: selectedOrderIds }));
-    //   return;
-    // }
+    if (selectedAction === "printOrderPackingSlips") {
+      try {
+        const resultAction = await dispatch(
+          printMultiPackingSlipPdf(selectedOrderIds),
+        );
 
+        if (printMultiPackingSlipPdf.fulfilled.match(resultAction)) {
+          const blob = new Blob([resultAction.payload], {
+            type: "application/pdf",
+          });
+          const url = URL.createObjectURL(blob);
+          window.open(url, "_blank");
+          setTimeout(() => URL.revokeObjectURL(url), 60_000);
+        } else {
+          console.error(
+            "Failed to generate multi packing slip PDF:",
+            resultAction.payload || resultAction.error,
+          );
+        }
+        dispatch(fetchAllOrders({ page: currentPage, perPage }));
+
+        setSelectedAction("");
+        setSelectedOrderIds([]);
+      } catch (error) {
+        console.error("Unexpected error during packing slip PDF generation:", error);
+      }
+
+      return;
+    }
     // 📧 RESEND INVOICES
     if (selectedAction === "resendOrderInvoices") {
       selectedOrderIds.forEach((id) => {
@@ -601,7 +623,46 @@ const AllOrders = () => {
     //   dispatch(captureFundsForOrders({ orderIds: selectedOrderIds }));
     //   return;
     // }
+    if (selectedAction === "bulkCapture") {
+      try {
+        const paymentIntentIds = selectedOrderIds
+          .map((item) =>
+            typeof item === "object" && item !== null
+              ? item?.payment?.payment_intent_id
+              : item?.payment?.payment_intent_id,
+          )
+          .filter((id): id is string => typeof id === "string" && id.length > 0);
 
+        if (!paymentIntentIds.length) {
+          console.warn("No payment intent IDs found for capture");
+          setSelectedAction("");
+          return;
+        }
+
+        const resultAction = await dispatch(
+          captureMultiplePayment({
+            payment_intent_id:
+              paymentIntentIds.length === 1
+                ? paymentIntentIds[0]
+                : paymentIntentIds,
+          }),
+        );
+
+        if (captureMultiplePayment.fulfilled.match(resultAction)) {
+          dispatch(fetchAllOrders({ page: currentPage, perPage }));
+
+        } else {
+          console.error("Failed to capture payment(s):", resultAction.payload);
+        }
+
+        setSelectedAction("");
+        setSelectedOrderIds([]);
+      } catch (error) {
+        console.error("Unexpected error during payment capture:", error);
+      }
+
+      return;
+    }
     // 📤 EXPORT ORDERS
     // if (selectedAction === "startExport") {
     //   dispatch(exportSelectedOrders({ orderIds: selectedOrderIds }));
@@ -1384,13 +1445,10 @@ const AllOrders = () => {
 
                                     <CreditCard className="w-5 h-5 text-gray-500" />
 
-                                    {[
-                                      "Shipped",
-                                      "Awaiting Fulfillment",
-                                    ].includes(order?.status) && (
-                                        <CreditCard className="w-5 h-5 text-gray-500" />
-                                      )}
-                                    {order?.status === "Awaiting Payment" && (
+                                    {order?.payment?.payment_status == completed && (
+                                      <CreditCard className="w-5 h-5 text-gray-500" />
+                                    )}
+                                    {order?.payment?.payment_intent_id && order?.payment?.payment_status !== completed && (
                                       <CreditCard className="w-5 h-5 text-gray-500" />
                                     )}
 
