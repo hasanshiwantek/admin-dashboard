@@ -93,11 +93,11 @@ export default function EditStockSheet({ trigger, product }: any) {
               <TableRow>
                 <TableHead>Product name</TableHead>
                 <TableHead>SKU</TableHead>
-                <TableHead>Adjust by</TableHead>
+                {/* <TableHead>Adjust by</TableHead> */}
                 <TableHead>Current stock</TableHead>
                 <TableHead>Low stock</TableHead>
-                <TableHead>BPN</TableHead>
-                <TableHead>Safety stock</TableHead>
+                {/* <TableHead>BPN</TableHead> */}
+                {/* <TableHead>Safety stock</TableHead> */}
                 <TableHead>Availabilty</TableHead>
               </TableRow>
             </TableHeader>
@@ -120,13 +120,13 @@ export default function EditStockSheet({ trigger, product }: any) {
                   />
                 </TableCell>
 
-                <TableCell className=" align-top">
+                {/* <TableCell className=" align-top">
                   <Input
                     className=" border border-gray-300"
                     value={values.adjustBy}
                     onChange={(e) => handleChange("adjustBy", e.target.value)}
                   />
-                </TableCell>
+                </TableCell> */}
                 <TableCell className=" align-top">
                   <Input
                     type="number"
@@ -147,14 +147,14 @@ export default function EditStockSheet({ trigger, product }: any) {
                   />
                 </TableCell>
 
-                <TableCell className=" align-top">
+                {/* <TableCell className=" align-top">
                   <Input
                     className=" border border-gray-300"
                     value={values.bpn}
                     onChange={(e) => handleChange("bpn", e.target.value)}
                   />
-                </TableCell>
-
+                </TableCell> */}
+                {/* 
                 <TableCell className=" align-top">
                   <Input
                     type="number"
@@ -164,7 +164,7 @@ export default function EditStockSheet({ trigger, product }: any) {
                       handleChange("safetyStock", e.target.value)
                     }
                   />
-                </TableCell>
+                </TableCell> */}
 
                 <TableCell className="align-top  ">
                   <Checkbox

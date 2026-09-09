@@ -92,7 +92,8 @@ const getISO2 = (code: string) => {
   if (upper.length === 2) return upper; // AF → AF
   return countries.alpha3ToAlpha2(upper) || upper; // AFG → AF
 };
-
+const completed = "completed"
+const authorized = "authorized"
 // map mein bhi getISO2 use karo
 export const countriesListIcons = countriesListIconsRaw?.map((country) => {
   const iso2 = getISO2(country?.value);
@@ -102,6 +103,8 @@ export const countriesListIcons = countriesListIconsRaw?.map((country) => {
     flag: `https://purecatamphetamine.github.io/country-flag-icons/3x2/${iso2}.svg`,
   };
 });
+
+
 const AllOrders = () => {
   const dispatch = useAppDispatch();
   const orders = useAppSelector((state: any) => state?.order?.orders);
@@ -374,7 +377,7 @@ const AllOrders = () => {
         setShowNotes(true);
       },
     },
-    ...(String(order?.status || "")?.toLowerCase() !== "shipped"
+    ...(!order?.shipmentId
       ? [
         {
           label: "Ship items",
@@ -385,7 +388,7 @@ const AllOrders = () => {
         },
       ]
       : []),
-    ...(String(order?.status || "").toLowerCase() == "awaiting payment"
+    ...(order?.payment?.payment_intent_id && order?.payment?.payment_status !== completed
       ? [
         {
           label: "Capture Funds",
@@ -1179,7 +1182,7 @@ const AllOrders = () => {
                             )}
 
                             {/* Payment Method Icon */}
-                            {order.status === "Awaiting Payment" && (
+                            {order?.payment?.payment_intent_id && order?.payment?.payment_status !== completed && (
                               <CreditCard
                                 onClick={() => {
                                   setSelectedOrderId(
@@ -1502,15 +1505,13 @@ const AllOrders = () => {
                                         ?.paymentMethod || "N/A"}
                                     </span>
                                   </div>
-                                  {["Shipped", "Awaiting Fulfillment"].includes(
-                                    order?.status,
-                                  ) && (
-                                      <div className="flex items-center gap-2">
-                                        {/* <CreditCard className="w-5 h-5 text-gray-500" /> */}
-                                        <span>Captured</span>
-                                      </div>
-                                    )}
-                                  {order?.status == "Awaiting Payment" && (
+                                  {order?.payment?.payment_status == completed && (
+                                    <div className="flex items-center gap-2">
+                                      {/* <CreditCard className="w-5 h-5 text-gray-500" /> */}
+                                      <span>Captured</span>
+                                    </div>
+                                  )}
+                                  {order?.payment?.payment_intent_id && order?.payment?.payment_status !== completed && (
                                     <div className="flex items-center gap-2">
                                       <span
                                         onClick={() => {
@@ -1528,8 +1529,7 @@ const AllOrders = () => {
                                   {order?.payment?.payment_intent_id && (
                                     <div className="flex items-center gap-2">
                                       <span className="!text-blue-400">
-                                        {order?.payment?.payment_intent_id ||
-                                          "N/A"}
+                                        {order?.payment?.payment_intent_id}
                                       </span>
                                     </div>
                                   )}
@@ -1622,18 +1622,17 @@ const AllOrders = () => {
                                     </p>
                                   </div>
 
-    {/* Method Data */}
-  <div
-  className={`flex items-center gap-2 min-w-0 ${
-    (order?.billingInformation?.shippingData?.length ?? 0) > 40
-      ? "pt-[46px]"
-      : "pt-[55px]"
-  }`}
->
-  <div className="shipping-data-scroll w-[420px] max-w-full overflow-x-auto overflow-y-hidden whitespace-nowrap">
-    {order?.billingInformation?.shippingData || "N/A"}
-  </div>
-</div>
+                                  {/* Method Data */}
+                                  <div
+                                    className={`flex items-center gap-2 min-w-0 ${(order?.billingInformation?.shippingData?.length ?? 0) > 40
+                                      ? "pt-[46px]"
+                                      : "pt-[55px]"
+                                      }`}
+                                  >
+                                    <div className="shipping-data-scroll w-[420px] max-w-full overflow-x-auto overflow-y-hidden whitespace-nowrap">
+                                      {order?.billingInformation?.shippingData || "N/A"}
+                                    </div>
+                                  </div>
 
                                   <div className="flex items-center gap-2">
                                     <span>
@@ -1685,38 +1684,36 @@ const AllOrders = () => {
 
                                 {/* Right - Details */}
                                 <div className="flex flex-col flex-1 min-w-0">
-                                  {["Shipped", "Completed"].includes(
-                                    order?.status,
-                                  ) && (
-                                      <div className="bg-gray-100 p-4 text-sm space-y-0">
-                                        {order?.shipmentId && (
-                                          <div className="flex ">
-                                            <span
-                                              onClick={() => {
-                                                setSelectedOrderId(order.id);
-                                                setShowShipmentIdTable(true);
-                                              }}
-                                              className="!text-blue-400 cursor-pointer"
-                                            >
-                                              Shipment #{order?.shipmentId}
-                                            </span>
-                                          </div>
-                                        )}
+                                  {order?.shipmentId && (
+                                    <div className="bg-gray-100 p-4 text-sm space-y-0">
+                                      {order?.shipmentId && (
                                         <div className="flex ">
-                                          <span>
-                                            {" "}
-                                            {order?.products?.length} items @{" "}
-                                            {dayjs(order?.updatedAt).format(
-                                              "DD MMM YYYY HH:mm:ss",
-                                            ) || "N/A"}{" "}
+                                          <span
+                                            onClick={() => {
+                                              setSelectedOrderId(order.id);
+                                              setShowShipmentIdTable(true);
+                                            }}
+                                            className="!text-blue-400 cursor-pointer"
+                                          >
+                                            Shipment #{order?.shipmentId}
                                           </span>
                                         </div>
-                                        <div className="flex ">
-                                          <span>Tracking #: </span>
-                                          <span>{order?.trackingNumber}</span>
-                                        </div>
+                                      )}
+                                      <div className="flex ">
+                                        <span>
+                                          {" "}
+                                          {order?.products?.length} items @{" "}
+                                          {dayjs(order?.updatedAt).format(
+                                            "DD MMM YYYY HH:mm:ss",
+                                          ) || "N/A"}{" "}
+                                        </span>
                                       </div>
-                                    )}
+                                      <div className="flex ">
+                                        <span>Tracking #: </span>
+                                        <span>{order?.trackingNumber}</span>
+                                      </div>
+                                    </div>
+                                  )}
                                   {/* Product list */}
                                   <div className="p-4 border-b space-y-4">
                                     {order?.products?.map(
@@ -1787,28 +1784,26 @@ const AllOrders = () => {
                                       ),
                                     )}
 
-                                    {!["shipped", "completed"].includes(
-                                      String(order?.status || "").toLowerCase(),
-                                    ) && (
-                                        <button
-                                          onClick={() => {
-                                            setSelectedOrder(order); // store in state
-                                            setShowShipmentModal(true);
-                                          }}
-                                          className="flex items-center mt-4 px-3 py-1.5 text-base font-semibold border border-blue-500 text-blue-600 hover:bg-blue-50 rounded w-fit"
+                                    {!order?.shipmentId && (
+                                      <button
+                                        onClick={() => {
+                                          setSelectedOrder(order); // store in state
+                                          setShowShipmentModal(true);
+                                        }}
+                                        className="flex items-center mt-4 px-3 py-1.5 text-base font-semibold border border-blue-500 text-blue-600 hover:bg-blue-50 rounded w-fit"
+                                      >
+                                        <svg
+                                          className="w-4 h-4 mr-2"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          strokeWidth="2"
+                                          viewBox="0 0 24 24"
                                         >
-                                          <svg
-                                            className="w-4 h-4 mr-2"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            strokeWidth="2"
-                                            viewBox="0 0 24 24"
-                                          >
-                                            <path d="M3 3h2l.4 2M7 13h14l-1.5 8H6L4.5 5H20"></path>
-                                          </svg>
-                                          Ship Items
-                                        </button>
-                                      )}
+                                          <path d="M3 3h2l.4 2M7 13h14l-1.5 8H6L4.5 5H20"></path>
+                                        </svg>
+                                        Ship Items
+                                      </button>
+                                    )}
                                   </div>
 
                                   {/* Totals */}
