@@ -1557,7 +1557,7 @@ const AllOrders = () => {
                                   </h4>
 
                                   <button
-                                    className="!px-2 !py-1 flex items-center gap-1 text-[#4B71FC] border border-[#4B71FC] text-base"
+                                    className="w-[48px] !px-2 !py-1 flex items-center gap-1 text-[#4B71FC] border border-[#4B71FC] text-base"
                                     onClick={() =>
                                       copyBilling(order?.billingInformation)
                                     }
