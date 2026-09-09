@@ -43,6 +43,7 @@ import {
 } from "lucide-react";
 import SearchShipments from "./SearchShipments";
 import ExportShipmentsDialog from "./ExportShipmentsDialog";
+import { toast } from "react-toastify";
 
 const Shipments = () => {
   const shipments = useAppSelector((state: any) => state.order.shipments);
@@ -133,28 +134,41 @@ Updated: ${billing.updatedAt}`;
   };
 
   const orderActions = (shipment: any) => [
-    {
-      label: "Print Packaging Slip",
-      onClick: async () => {
-        try {
-          const shipmentId = shipment?.id;
-          const resultAction = await dispatch(
-            fetchPackingSlipPdf({ shipmentId })
-          );
+  {
+    label: "Print Packaging Slip",
 
-          if (fetchPackingSlipPdf.fulfilled.match(resultAction)) {
-            const blob = new Blob([resultAction.payload], {
-              type: "application/pdf",
-            });
-            const url = URL.createObjectURL(blob);
-            window.open(url, "_blank");
-          } else {
-          }
-        } catch (error) {
+    onClick: async () => {
+      try {
+        const shipmentId = shipment?.id;
+
+        const resultAction = await dispatch(
+          fetchPackingSlipPdf({ shipmentId })
+        );
+
+        if (fetchPackingSlipPdf.fulfilled.match(resultAction)) {
+          const blob = new Blob([resultAction.payload], {
+            type: "application/pdf",
+          });
+
+          const url = URL.createObjectURL(blob);
+
+          window.open(url, "_blank");
+
+          // Optional cleanup
+          setTimeout(() => {
+            URL.revokeObjectURL(url);
+          }, 1000);
+        } else {
+        toast.error(
+  String(resultAction.payload || "Failed to download PDF")
+);
         }
-      },
+      } catch (error) {
+        toast.error("Failed to download PDF");
+      }
     },
-  ];
+  },
+];
 
   const handleTracking = () => {
   };
