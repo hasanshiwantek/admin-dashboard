@@ -408,9 +408,7 @@ const AllOrders = () => {
     // },
     // Shipment table - show only when Shipped
 
-    ...(String(order?.status || "").toLowerCase() !== "cancelled" &&
-      String(order?.status || "").toLowerCase() !== "awaiting payment" &&
-      String(order?.status || "").toLowerCase() !== "awaiting fulfillment"
+    ...(order?.shipmentId
       ? [
         {
           label: "View shipments",
