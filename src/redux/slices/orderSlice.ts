@@ -126,6 +126,28 @@ export const capturePayment = createAsyncThunk(
     }
   }
 );
+export const captureMultiplePayment = createAsyncThunk(
+  "orders/capturePayment",
+  async (
+    {
+      payment_intent_id,
+    }: {
+      payment_intent_id: string | string[];
+    },
+    thunkAPI,
+  ) => {
+    try {
+      const response = await axiosInstance.post("dashboard/stripe/capture", {
+        payment_intent_id,
+      });
+      return response.data;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to capture payment",
+      );
+    }
+  },
+);
 // ADD ORDER FOR NEW CUSTOMER  THUNK
 export const addOrderForNewCustomer = createAsyncThunk(
   "orders/addOrderForNewCustomer",
@@ -259,6 +281,36 @@ export const printInvoicePdf = createAsyncThunk(
     }
   },
 );
+export const printMultiInvoicePdf = createAsyncThunk(
+  "orders/printMultiInvoicePdf",
+  async (orderIds: Array<number | string | { id?: number | string }>, thunkAPI) => {
+    try {
+      const ids = orderIds
+        .map((item) => (typeof item === "object" && item !== null ? item.id : item))
+        .filter((id): id is number | string => id !== undefined && id !== null && id !== "");
+
+      if (!ids.length) {
+        return thunkAPI.rejectWithValue("No order IDs provided");
+      }
+
+      const response = await axiosInstance.get(
+        `dashboard/orders/invoice/${ids.join(",")}`,
+        {
+          responseType: "blob",
+          headers: {
+            Accept: "application/pdf",
+          },
+        },
+      );
+
+      return response.data;
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to download PDF",
+      );
+    }
+  },
+);
 export const printPackingSlipPdf = createAsyncThunk(
   "orders/printPackingSlipPdf",
   async ({ orderId }: { orderId: number | string }, thunkAPI) => {
@@ -296,7 +348,56 @@ export const printPackingSlipPdf = createAsyncThunk(
     }
   },
 );
+export const printMultiPackingSlipPdf = createAsyncThunk(
+  "orders/printMultiPackingSlipPdf",
+  async (
+    orderIds: Array<number | string | { id?: number | string }>,
+    thunkAPI,
+  ) => {
+    try {
+      const ids = orderIds
+        .map((item) =>
+          typeof item === "object" && item !== null ? item.id : item,
+        )
+        .filter(
+          (id): id is number | string =>
+            id !== undefined && id !== null && id !== "",
+        );
 
+      if (!ids.length) {
+        return thunkAPI.rejectWithValue("No order IDs provided");
+      }
+
+      const response = await axiosInstance.get(
+        `dashboard/shipments/packing-slip/${ids.join(",")}`,
+        {
+          responseType: "blob",
+          headers: {
+            Accept: "application/pdf",
+          },
+        },
+      );
+
+      return response.data;
+    } catch (err: any) {
+      let message = "Failed to download PDF";
+
+      if (err.response?.data instanceof Blob) {
+        try {
+          const text = await err.response.data.text();
+          const errorData = JSON.parse(text);
+          message = errorData?.message || message;
+        } catch {
+          // fallback message
+        }
+      } else {
+        message = err.response?.data?.message || message;
+      }
+
+      return thunkAPI.rejectWithValue(message);
+    }
+  },
+);
 //PAYMENT INVOICE THUNK
 
 export const refundOrder = createAsyncThunk(
