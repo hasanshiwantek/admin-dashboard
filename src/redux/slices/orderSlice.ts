@@ -647,29 +647,46 @@ export const deleteShipment = createAsyncThunk(
 );
 
 //PRINT PACKAGE SLIP LOGIC
-
 export const fetchPackingSlipPdf = createAsyncThunk(
   "orders/fetchPackingSlipPdf",
-  async ({ shipmentId }: { shipmentId: number | string }, thunkAPI) => {
+  async (
+    { shipmentId }: { shipmentId: number | string },
+    thunkAPI
+  ) => {
     try {
       const response = await axiosInstance.get(
         `/dashboard/shipments/packing-slip/${shipmentId}`,
         {
-          // ✅✅✅ This must be inside the request config
           responseType: "blob",
           headers: {
             Accept: "application/pdf",
           },
-        },
+        }
       );
 
-      return response.data; // This will be a Blob
+      return response.data;
     } catch (err: any) {
-      return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to download PDF",
-      );
+      let message = "Failed to download PDF";
+
+      if (err.response?.data instanceof Blob) {
+        try {
+          const text = await err.response.data.text();
+          const data = JSON.parse(text);
+
+          message = data?.message || message;
+        } catch {
+          // Blob JSON parse failed
+        }
+      } else {
+        message =
+          err.response?.data?.message ||
+          err.message ||
+          message;
+      }
+
+      return thunkAPI.rejectWithValue(message);
     }
-  },
+  }
 );
 
 // IMPORT CSV THUNK
