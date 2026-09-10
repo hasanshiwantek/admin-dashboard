@@ -337,7 +337,7 @@ export function ShipmentModal({
             {/* -----------------------------------------------------
                 PACKAGE WEIGHT
             ----------------------------------------------------- */}
-          <div className="grid grid-cols-[173px_1fr] items-start mb-4 mt-3">
+          <div className="grid grid-cols-[153px_1fr] items-start mb-4 mt-3">
   <Label
     className="
       text-[16px]
@@ -345,7 +345,7 @@ export function ShipmentModal({
       leading-[20px]
       text-[#202b4c]
       text-right
-      pr-[26px]
+      pr-[20px]
       pt-[3px]
     "
   >
@@ -545,7 +545,7 @@ export function ShipmentModal({
             <div
               className="
                 grid
-                grid-cols-[173px_1fr]
+                grid-cols-[152px_1fr]
                 items-start
                 pb-[35px]
                 border-b
@@ -612,7 +612,7 @@ export function ShipmentModal({
             <div
               className="
                 grid
-                grid-cols-[173px_1fr]
+                grid-cols-[158px_1fr]
                 items-start
                 pt-[25px]
               "

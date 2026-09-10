@@ -1,43 +1,52 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { fetchAllOrders } from "@/redux/slices/orderSlice";
+import { fetchAllOrders,fetchDashboardOrderOverview, } from "@/redux/slices/orderSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { OrderItem, OrderListResponse } from "@/types/types";
 import Spinner from "../loader/Spinner";
 const tabs = [{ tab: "Recent", queryIndex: 0 }, { tab: "Pending", queryIndex: 1 }, { tab: "Completed", queryIndex: 2 }, { tab: "Refunded", queryIndex: 3 }];
 const query = [
-  "All orders",            // Recent
-  "Awaiting Payment",      // Pending
-  "Shipped",  // Completed
-  "Cancelled",              // Refunded
+  "recent",      // Recent
+  "pending",     // Pending
+  "completed",   // Completed
+  "refunded",    // Refunded
 ];
 
 
 const OrderTable = () => {
   const dispatch = useAppDispatch();
-  const { loading, error, orders } = useAppSelector(
-    (state) => state.order
-  ) as unknown as {
-    loading: boolean;
-    error: string | null;
-    orders: OrderListResponse;
-  };
-  const filteredOrders = orders?.data || [];
-  const [activeTab, setActiveTab] = useState<any>("0");
+
+  const { error } = useAppSelector((state) => state.order);
+  const dashboardOrders = useAppSelector(
+  (state: any) => state?.order?.dashboardOrders
+);
+
+const dashboardOrdersLoading = useAppSelector(
+
+  (state: any) => state?.order?.dashboardOrdersLoading
+);
+const filteredOrders = dashboardOrders?.data || [];
+  const [activeTab, setActiveTab] = useState("0");
   // const [filteredOrders, setFilteredOrders] = useState<OrderItem[]>([]);
 
   // Fetch all orders on mount
 
-  useEffect(() => {
-    dispatch(
-      fetchAllOrders({
-        page: 1,
-        perPage: 20,
-        status: query[activeTab],
-      })
-    );
-  }, [activeTab]);
+ useEffect(() => {
+  dispatch(
+    fetchDashboardOrderOverview({
+      page: 1,
+      perPage: 20,
+     status: query[Number(activeTab)],
+    })
+  );
+}, [activeTab, dispatch]);
+
+
+
+
+
+
   // Filter orders based on active tab
   // useEffect(() => {
   //   if (!orders?.data) return;
@@ -82,7 +91,7 @@ const OrderTable = () => {
         </div>
 
         {/* Loading Spinner */}
-        {loading ? (
+        {dashboardOrdersLoading ? (
           <div className="text-center py-10">
             <Spinner />
           </div>
@@ -93,7 +102,7 @@ const OrderTable = () => {
             </p>
           )}
 
-          {filteredOrders.map((order) => {
+          {filteredOrders.map((order:any) => {
             const colorMap: Record<string, string> = {
               Pending: "bg-gray-400",
               "Awaiting Payment": "bg-orange-400",
@@ -152,23 +161,17 @@ const OrderTable = () => {
         </div>}
 
         {/* Error Message */}
-        {!loading && error && (
+        {!dashboardOrdersLoading && error && (
           <div className="text-center py-10 text-red-500 text-lg">
             Error: {error}
           </div>
         )}
 
-        {/* Orders */}
-        <div className="divide-y">
-          {filteredOrders.length === 0 && (
-            <p className="text-center  py-10">
-              No orders found for <strong>{tabs[activeTab].tab}</strong>.
-            </p>
-          )}
-        </div>
+      
       </div>
     </div>
   );
 };
 
 export default OrderTable;
+
