@@ -23,6 +23,9 @@ import {
 } from "@/components/ui/table";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
+import { useState } from "react";
+import { applyCoupon } from "@/redux/slices/orderSlice";
 
 // Utility arrays for Select options
 const cardTypes = ["Visa", "Mastercard", "American Express", "Discover"];
@@ -45,8 +48,15 @@ const years = Array.from({ length: 10 }, (_, i) => currentYear + i);
 
 export default function OrderReview({ step, setStep }: any) {
   const { watch, register, setValue, getValues } = useFormContext();
+  const dispatch = useAppDispatch();
+  const { appliedCoupon, loading } = useAppSelector(
+    (state: any) => state.order,
+  );
+  const [couponCode, setCouponCode] = useState(watch("couponCode") || "");
+  const [manualDiscountInput, setManualDiscountInput] = useState(
+    watch("manualDiscount") ? String(watch("manualDiscount")) : ""
+  );
   const shipping = watch("shipping");
-  const allValues = getValues();
   const billing = watch();
   const selectedProducts = watch("selectedProducts") || [];
   const paymentMethod = watch("paymentMethod");
@@ -54,12 +64,36 @@ export default function OrderReview({ step, setStep }: any) {
     (sum: number, p: any) => sum + parseFloat(p.price || 0) * (p.quantity || 1),
     0
   );
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) {
+      return;
+    }
+    await dispatch(applyCoupon(couponCode.trim()));
+  };
+  const handleRemoveCoupon = () => {
+    setCouponCode("");
+    setValue("couponCode", "");
+    setValue("coupon", null);
+  };
+  const shippingCost = Number(watch("shippingMethod.cost") || 0);
+  const manualDiscount = Number(watch("manualDiscount") || 0);
+  const couponDiscount = Number(
+    appliedCoupon?.discountAmount || 0
+  );
+  // const total = subtotal + shippingCost;
+  const grandTotal = Math.max(
+    subtotal - couponDiscount - manualDiscount + shippingCost,
+    0
+  );
 
-  const shippingCost = 0;
-  const total = subtotal + shippingCost;
   const shippingDestinations = watch("shippingDestinations") || [];
   const destinationType = watch("destinationType"); // "billing" | "single" | "multiple"
   const isMultiple = destinationType === "multiple" || shippingDestinations.length > 0;
+  const handleApplyManualDiscount = () => {
+    const amount = Math.max(Number(manualDiscountInput) || 0, 0);
+    setValue("manualDiscount", amount, { shouldDirty: true });
+  };
+
   // Function to render specific payment fields based on the selected method
   const renderPaymentFields = () => {
     const customerEmail = billing.email || "customer@example.com"; // Use the actual email from the form data
@@ -377,7 +411,7 @@ export default function OrderReview({ step, setStep }: any) {
                 <div>{billing?.shippingMethod?.provider ?? "None"}</div>
 
                 <div className="font-medium">Shipping cost</div>
-                <div>$0.00</div>
+                <div>${billing?.shippingMethod?.cost}</div>
               </div>
 
               {/* Product Table */}
@@ -478,14 +512,8 @@ export default function OrderReview({ step, setStep }: any) {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="cash">Manual payment</SelectItem>{" "}
-                  {/* Renamed for image clarity */}
                   <SelectItem value="stripe">Stripe</SelectItem>
-                  <SelectItem value="bank">Bank Transfer</SelectItem>{" "}
-                  {/* Grouped with manual payment for field display */}
                   <SelectItem value="credit_card">Credit Card</SelectItem>{" "}
-                  {/* Grouped with Stripe for field display */}
-                  <SelectItem value="draft">Create draft order</SelectItem>{" "}
-                  {/* Added option for draft order */}
                 </SelectContent>
               </Select>
 
@@ -500,13 +528,54 @@ export default function OrderReview({ step, setStep }: any) {
                 <span>Subtotal</span>
                 <span>${subtotal.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between border-b pb-1">
-                <span>Shipping</span>
-                <span>${shippingCost.toFixed(2)}</span>
-              </div>
+              {appliedCoupon && (
+                <div className="flex justify-between items-start">
+                  <div>
+                    <div>
+                      Coupon ({appliedCoupon.couponCode})
+                    </div>
+                    <button
+                      type="button"
+                      className="text-blue-600 text-sm underline"
+                      onClick={handleRemoveCoupon}
+                    >
+                      (remove)
+                    </button>
+                  </div>
+                  <span>-${couponDiscount.toFixed(2)}</span>
+                </div>
+              )}
+              {manualDiscount > 0 && (
+                <div className="flex justify-between">
+                  <span>Discount</span>
+                  <span>-${manualDiscount.toFixed(2)}</span>
+                </div>
+              )}
               <div className="flex justify-between font-bold">
                 <span>Grand total</span>
-                <span>${total.toFixed(2)}</span>
+                <span>${grandTotal.toFixed(2)}</span>
+              </div>
+
+
+              {/* Discount input */}
+              <div className="flex items-center gap-2">
+                <Input onChange={(e) => setManualDiscountInput(e.target.value)} placeholder="Manual discount" className="text-sm" />
+                <Button onClick={handleApplyManualDiscount} type="button" className="btn-outline-primary">
+                  Apply
+                </Button>
+              </div>
+              {/* Gift/coupon */}
+              <div className="flex items-center gap-2">
+                <Input
+                  placeholder="Coupon or gift certificate"
+                  className="text-sm"
+                  onChange={(e) => {
+                    setCouponCode(e.target.value);
+                  }}
+                />
+                <Button onClick={handleApplyCoupon} type="button" className="btn-outline-primary">
+                  {loading ? "Loading.." : "Apply"}
+                </Button>
               </div>
 
             </div>

@@ -4,7 +4,6 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { fetchAllProducts } from "@/redux/slices/productSlice";
 import ProductSearchInput from "../ProductSearchInput";
 import ProductTable from "../ProductTable";
-import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import AddCustomProductModal from "../AddCustomProductModal";
 import ProductSelectModal from "../ProductSelectModal";
@@ -83,8 +82,20 @@ export default function StepTwo({ step, setStep }: any) {
       )
     );
   };
-
+  const handlePriceChange = (id: number | string, price: number) => {
+    setSelectedProducts((prev) => {
+      const next = prev.map((p) =>
+        p.id === id ? { ...p, price: Number(price) } : p
+      );
+      setValue("selectedProducts", next, { shouldDirty: true });
+      return next;
+    });
+  };
   const onSubmit = () => {
+    if (!selectedProducts?.length) {
+      alert("Please add any product")
+      return
+    }
     setStep(step + 1);
   };
 
@@ -101,11 +112,11 @@ export default function StepTwo({ step, setStep }: any) {
               onSelect={handleAddProduct}
               register={register}
             />
-            {/* <AddCustomProductModal onAdd={handleAddCustomProduct} /> */}
+            <AddCustomProductModal onAdd={handleAddCustomProduct} />
           </div>
 
           <div className="flex items-center gap-2">
-            {/* <span>or</span> */}
+            <span>or</span>
             <button
               className="btn-outline-primary !whitespace-nowrap"
               type="button"
@@ -116,11 +127,12 @@ export default function StepTwo({ step, setStep }: any) {
           </div>
         </div>
 
-        {selectedProducts.length > 0 && (
+        {selectedProducts?.length > 0 && (
           <ProductTable
             products={selectedProducts}
             onDelete={handleDeleteProduct}
             onQtyChange={handleQtyChange}
+            onPriceChange={handlePriceChange}
           />
         )}
 

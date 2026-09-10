@@ -779,6 +779,34 @@ export const getReturnOrders = createAsyncThunk(
     }
   },
 );
+export const fetchShippingRates = createAsyncThunk(
+  "shippingZone/fetchShippingRates",
+  async ({ data }: { data: any }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.post(`web/checkout/get-shipping-rates`, data);
+      return res.data;
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to fetch shipping rates"
+      );
+    }
+  }
+);
+export const applyCoupon = createAsyncThunk(
+  "order/fetchCouponByCode",
+  async (couponCode: string, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.get("web/coupons/get-couponcode", {
+        params: { couponCode },
+      });
+      return res.data;
+    } catch (err: any) {
+      return rejectWithValue(
+        err?.response?.data || { message: "Coupon request failed" }
+      );
+    }
+  }
+);
 
 // 2. Initial State
 const initialState = {
@@ -792,6 +820,9 @@ const initialState = {
   returnLoader: false,
   returnOrders: [],
   shipmentLoader: false,
+  shippingRates: [] as any[],
+  ratesLoader: false,
+  appliedCoupon: null
 };
 
 // 3. Slice
@@ -911,12 +942,36 @@ const orderSlice = createSlice({
       .addCase(updateShipment.fulfilled, (state, action) => {
         state.shipmentLoader = false;
         state.returnOrders = action.payload;
+      })
+
+
+      .addCase(fetchShippingRates.pending, (state) => {
+        state.ratesLoader = true;
+      })
+      .addCase(fetchShippingRates.fulfilled, (state, action) => {
+        state.ratesLoader = false;
+        state.shippingRates = action.payload?.rates;
+      })
+      .addCase(fetchShippingRates.rejected, (state, action) => {
+        state.ratesLoader = false;
+        state.error = "Shipping is not available in your region.";
+      })
+
+
+
+      .addCase(applyCoupon.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(applyCoupon.fulfilled, (state, action) => {
+        state.loading = false;
+        state.appliedCoupon = action.payload.data
+        state.error = null;
+      })
+      .addCase(applyCoupon.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
       });
-    // builder.addCase(deleteDraftOrders.fulfilled, (state, action) => {
-    //   state.draftOrder = state.draftOrder?.data?.filter(
-    //     (order: any) => order?.order?.id !== action.meta.arg.id
-    //   );
-    // });
   },
 });
 export default orderSlice.reducer;

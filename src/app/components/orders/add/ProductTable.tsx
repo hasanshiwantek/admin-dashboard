@@ -22,10 +22,12 @@ export default function ProductTable({
   products,
   onQtyChange,
   onDelete,
+  onPriceChange
 }: {
   products: any[];
   onQtyChange: (id: number, quantity: number) => void;
   onDelete: (id: number) => void;
+  onPriceChange: (id: number | string, price: number) => void;
 }) {
   const getTotal = (p: any) => parseFloat(p.price || "0") * (p.quantity || 1);
 
@@ -84,8 +86,19 @@ export default function ProductTable({
                 </TableCell>
 
                 {/* Price */}
-                <TableCell>${parseFloat(product.price).toFixed(2)}</TableCell>
-
+                {/* <TableCell>${parseFloat(product.price).toFixed(2)}</TableCell> */}
+                <TableCell>
+                  <Input
+                    type="number"
+                    min={0}
+                    step="0.01"
+                    value={product.price ?? 0}
+                    onChange={(e) =>
+                      onPriceChange(product.id, parseFloat(e.target.value) || 0)
+                    }
+                    className="w-28"
+                  />
+                </TableCell>
                 {/* Total */}
                 <TableCell className="font-medium">
                   ${getTotal(product).toFixed(2)}
@@ -113,13 +126,12 @@ export default function ProductTable({
             ))}
           </TableBody>
         </Table>
-
-
       </div>
       {/* Subtotal */}
-      <div className="flex justify-end font-semibold my-5 items-center bg-gray-700 text-white p-4 text-xl w-fit rounded-md">
-        Subtotal:
-        <span className="ml-2 !text-xl font-semibold !text-white">${subtotal.toFixed(2)}</span>
+      <div className="flex justify-end w-full">
+        <div className="flex justify-end font-semibold my-5 items-center bg-gray-700 text-white p-4 text-xl w-fit rounded-md">
+          <span className="ml-2 !text-xl font-semibold !text-white"> Subtotal: ${subtotal.toFixed(2)}</span>
+        </div>
       </div>
     </div>
 
