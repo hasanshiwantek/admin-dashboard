@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState ,useMemo} from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useFormContext, Controller } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,23 +18,35 @@ export default function SingleAddressForm() {
   const { register, control, watch, setValue, getValues } = useFormContext();
   const [originalShippingValues, setOriginalShippingValues] = useState<any>(null);
   const [isAddressOverridden, setIsAddressOverridden] = useState(false);
-
+  const {
+    billingFirstName,
+    billingLastName,
+    billingCompanyName,
+    billingPhoneNumber,
+    billingAddress1,
+    billingAddress2,
+    billingCity,
+    // billingCountry,
+    // billingState,
+    billingZip,
+  } = getValues();
   const selectedCustomer = watch("selectedCustomer");
-const selectedCountry = watch("shipping.country");
-
-const countryList = Country.getAllCountries().map((c) => ({
-  name: c.name,
-  code: c.isoCode,
-}));
-
-const stateList = useMemo(() => {
-  if (!selectedCountry) return [];
-
-  return State.getStatesOfCountry(selectedCountry).map((s) => ({
-    name: s.name,
-    code: s.isoCode,
+  const selectedCountry = watch("shipping.country");
+  const billingCountry = watch("billingCountry");
+  const billingState = watch("billingState");
+  const countryList = Country.getAllCountries().map((c) => ({
+    name: c.name,
+    code: c.isoCode,
   }));
-}, [selectedCountry]);
+
+  const stateList = useMemo(() => {
+    if (!selectedCountry) return [];
+
+    return State.getStatesOfCountry(selectedCountry).map((s) => ({
+      name: s.name,
+      code: s.isoCode,
+    }));
+  }, [selectedCountry]);
 
 
   // ⬇️ Extract customer info (used in preview)
@@ -52,6 +64,26 @@ const stateList = useMemo(() => {
 
   // ⬇️ Auto-fill shipping from billing info ONCE on mount
   useEffect(() => {
+    // const {
+    //   firstName,
+    //   lastName,
+    //   companyName,
+    //   phoneNumber,
+    //   address1,
+    //   address2,
+    //   city,
+    //   country,
+    //   state,
+    //   zip,
+    // } = getValues();
+
+    const values = getValues();
+
+    // console.log("values", values);
+
+
+    // Only set if shipping is empty
+    const shipping = values?.shipping || {};
     const {
       firstName,
       lastName,
@@ -63,23 +95,53 @@ const stateList = useMemo(() => {
       country,
       state,
       zip,
-    } = getValues();
+    } = shipping
 
-    setValue("shipping.firstName", firstName || "");
-    setValue("shipping.lastName", lastName || "");
-    setValue("shipping.companyName", companyName || "");
-    setValue("shipping.phoneNumber", phoneNumber || "");
-    setValue("shipping.address1", address1 || "");
-    setValue("shipping.address2", address2 || "");
-    setValue("shipping.city", city || "");
-    setValue("shipping.country", country || "");
-    setValue("shipping.state", state || "");
-    setValue("shipping.zip", zip || "");
-
-    // Mark as overridden so "Revert" won't reset this default
-    // setIsAddressOverridden(true);
+    if (firstName && lastName && address1 && city && country && state && zip) {
+      setValue("shipping.firstName", firstName || "");
+      setValue("shipping.lastName", lastName || "");
+      setValue("shipping.companyName", companyName || "");
+      setValue("shipping.phoneNumber", phoneNumber || "");
+      setValue("shipping.address1", address1 || "");
+      setValue("shipping.address2", address2 || "");
+      setValue("shipping.city", city || "");
+      setValue("shipping.zip", zip || "");
+    } else {
+      setValue("shipping.firstName", billingFirstName || "");
+      setValue("shipping.lastName", billingLastName || "");
+      setValue("shipping.companyName", billingCompanyName || "");
+      setValue("shipping.phoneNumber", billingPhoneNumber || "");
+      setValue("shipping.address1", billingAddress1 || "");
+      setValue("shipping.address2", billingAddress2 || "");
+      setValue("shipping.city", billingCity || "");
+      setValue("shipping.zip", billingZip || "");
+    }
   }, []);
 
+  useEffect(() => {
+    if (!billingCountry) return;
+    setValue("shipping.country", String(billingCountry), {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
+    // setValue("shipping.state", "");
+    // setPendingState(billingState || "");
+  }, [billingCountry, setValue]);
+  useEffect(() => {
+    if (!billingCountry || !billingState) return;
+
+    const match = State.getStatesOfCountry(String(billingCountry)).find(
+      (s) => s.isoCode === billingState
+    );
+
+    if (!match) return;
+
+    setValue("shipping.state", String(match.isoCode), {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
+  }, [billingCountry, billingState, setValue]);
+  // setValue("shipping.state", billingState || "");
   // ⬇️ Manually override shipping fields from selectedCustomer
   const handleUseThisAddress = () => {
     if (!selectedCustomer) return;
@@ -142,98 +204,57 @@ const stateList = useMemo(() => {
             <Input {...register("shipping.address2")} placeholder="Address Line 2 (Optional)" />
             <Input {...register("shipping.city")} placeholder="Suburb/City" />
 
-          <Controller
-  name="shipping.country"
-  control={control}
-  render={({ field }) => (
-    <Select
-      value={field.value || ""}
-      onValueChange={(value) => {
-        field.onChange(value);
-
-        // Country change hone par old state clear
-        setValue("shipping.state", "");
-      }}
-    >
-      <SelectTrigger>
-        <SelectValue placeholder="Country" />
-      </SelectTrigger>
-
-      <SelectContent>
-        {countryList.map((country) => (
-          <SelectItem key={country.code} value={country.code}>
-            {country.name}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
-  )}
-/>
+            <Controller
+              name="shipping.country"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  key={field.value || "country"}
+                  value={field.value ? String(field.value) : undefined}
+                  onValueChange={(value) => {
+                    field.onChange(value);
+                    setValue("shipping.state", "");
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Country" />
+                  </SelectTrigger>
+                  <SelectContent className="h-96 overflow-y-auto">
+                    {countryList.map((country) => (
+                      <SelectItem key={country.code} value={String(country.code)}>
+                        {country.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
 
             <Controller
-  name="shipping.state"
-  control={control}
-  render={({ field }) => (
-    <Select
-      value={field.value || ""}
-      onValueChange={field.onChange}
-      disabled={!selectedCountry}
-    >
-      <SelectTrigger>
-        <SelectValue placeholder="State/Province" />
-      </SelectTrigger>
+              name="shipping.state"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  key={field.value || "state"}
+                  value={field.value ? String(field.value) : undefined}
+                  onValueChange={field.onChange}
+                  disabled={!selectedCountry}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="State/Province" />
+                  </SelectTrigger>
 
-      <SelectContent>
-        {stateList.map((state) => (
-          <SelectItem key={state.code} value={state.code}>
-            {state.name}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
-  )}
-/>
+                  <SelectContent>
+                    {stateList.map((state) => (
+                      <SelectItem key={state.code} value={state.code}>
+                        {state.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
             <Input {...register("shipping.zip")} placeholder="Zip/Postcode" />
-          </div>
-
-          {/* Address preview */}
-          <div>
-            {/* <div className="max-w-md rounded-md border border-gray-300 bg-[#F8F9FB] p-4 flex justify-between items-start">
-              <div className="flex gap-2">
-                <img src="https://flagcdn.com/gb.svg" alt="UK" className="w-5 h-5 mt-0.5" />
-                <div className="text-gray-800 leading-snug flex flex-col gap-1">
-                  <h3 className="font-semibold">{firstName + " " + lastName}</h3>
-                  {companyName && <span>{companyName}</span>}
-                  {phone && <span>{phone}</span>}
-                  {address && <span>{address}</span>}
-                  {city && <span>{city}</span>}
-                  {country && <span>{country}</span>}
-                  {zip && <span>{zip}</span>}
-                  {state && <span>{state}</span>}
-                </div>
-              </div>
-
-              <div className="flex flex-col items-end gap-1">
-                {!isAddressOverridden && (
-                  <button
-                    type="button"
-                    className="text-blue-600 hover:underline text-lg font-medium"
-                    onClick={handleUseThisAddress}
-                  >
-                    Use this address
-                  </button>
-                )}
-                {isAddressOverridden && (
-                  <button
-                    type="button"
-                    className="text-red-600 hover:underline text-lg font-medium"
-                    onClick={handleRevert}
-                  >
-                    Revert changes
-                  </button>
-                )}
-              </div>
-            </div> */}
           </div>
         </div>
 

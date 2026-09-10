@@ -14,24 +14,36 @@ export default function BillingAddressForm() {
         </h2>
         <div className="flex gap-6">
           <div className="w-40 text-muted-foreground font-medium">Name</div>
-          <div>{`${data.billingFirstName || "-"} ${data.billingLastName || ""}`}</div>
+          <div>{`${data.billingFirstName || ""} ${data.billingLastName || ""}`}</div>
         </div>
-        <div className="flex gap-6">
+        {data?.billingCompanyName && <div className="flex gap-6">
+          <div className="w-40 text-muted-foreground font-medium">Company</div>
+          <div>{data?.billingCompanyName}</div>
+        </div>}
+        {data?.billingPhoneNumber && <div className="flex gap-6">
+          <div className="w-40 text-muted-foreground font-medium">Phone</div>
+          <div>{data?.billingPhoneNumber}</div>
+        </div>}
+        {data.billingAddress1 && <div className="flex gap-6">
           <div className="w-40 text-muted-foreground font-medium">Address</div>
-          <div>{data.billingAddress1 || "-"}</div>
-        </div>
-        <div className="flex gap-6">
+          <div>{data.billingAddress1}</div>
+        </div>}
+        {data.billingCity && <div className="flex gap-6">
           <div className="w-40 text-muted-foreground font-medium">Suburb/City</div>
-          <div>{data.billingCity || "-"}</div>
-        </div>
-        <div className="flex gap-6">
+          <div>{data.billingCity}</div>
+        </div>}
+        {data.billingState && <div className="flex gap-6">
+          <div className="w-40 text-muted-foreground font-medium">State/Province</div>
+          <div>{data.billingState}</div>
+        </div>}
+        {data.billingCountry && <div className="flex gap-6">
           <div className="w-40 text-muted-foreground font-medium">Country</div>
-          <div>{data.billingCountry || "-"}</div>
-        </div>
-        <div className="flex gap-6">
+          <div>{data.billingCountry}</div>
+        </div>}
+        {data.billingZip && <div className="flex gap-6">
           <div className="w-40 text-muted-foreground font-medium">ZIP/Postcode</div>
-          <div>{data.billingZip || "-"}</div>
-        </div>
+          <div>{data.billingZip}</div>
+        </div>}
       </div>
 
       <ShippingMethod />

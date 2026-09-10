@@ -42,19 +42,41 @@ export default function FulfillmentOptions() {
   useEffect(() => {
     const values = getValues();
 
+    // console.log("values", values);
+
+
     // Only set if shipping is empty
     const shipping = values.shipping || {};
-    if (!shipping.firstName) {
-      setValue("shipping.firstName", values.firstName || "");
-      setValue("shipping.lastName", values.lastName || "");
-      setValue("shipping.companyName", values.companyName || "");
-      setValue("shipping.phoneNumber", values.phoneNumber || "");
-      setValue("shipping.address1", values.address1 || "");
-      setValue("shipping.address2", values.address2 || "");
-      setValue("shipping.city", values.city || "");
-      setValue("shipping.state", values.state || "");
-      setValue("shipping.zip", values.zip || "");
-      setValue("shipping.country", values.country || "");
+    const isshipping = shipping.firstName && shipping.lastName && shipping.phoneNumber && shipping.address1 && shipping.city && shipping.state && shipping.zip && shipping.country
+    if (isshipping) {
+      setValue("shipping.firstName", shipping.firstName || "");
+      setValue("shipping.lastName", shipping.lastName || "");
+      setValue("shipping.address1", shipping.address1 || "");
+
+      setValue("shipping.city", shipping.city || "");
+      setValue("shipping.state", shipping.state || "");
+      setValue("shipping.zip", shipping.zip || "");
+      setValue("shipping.country", shipping.country || "");
+
+      // optional 
+      setValue("shipping.companyName", shipping.companyName || "");
+      setValue("shipping.phoneNumber", shipping.phoneNumber || "");
+      setValue("shipping.address2", shipping.address2 || "");
+
+    } else {
+      setValue("shipping.firstName", values.billingFirstName || "");
+      setValue("shipping.lastName", values.billingLastName || "");
+      setValue("shipping.address1", values.billingAddress1 || "");
+
+      setValue("shipping.city", values.billingCity || "");
+      setValue("shipping.state", values.billingState || "");
+      setValue("shipping.zip", values.billingZip || "");
+      setValue("shipping.country", values.billingCountry || "");
+
+      // optional 
+      setValue("shipping.companyName", values.billingCompanyName || "");
+      setValue("shipping.phoneNumber", values.billingPhoneNumber || "");
+      setValue("shipping.address2", values.billingAddress2 || "");
     }
   }, []);
 

@@ -63,7 +63,7 @@ export const fetchDashboardOrderOverview = createAsyncThunk(
 
       return thunkAPI.rejectWithValue(
         error.response?.data?.message ||
-          "Failed to fetch dashboard orders",
+        "Failed to fetch dashboard orders",
       );
     }
   },
@@ -821,6 +821,34 @@ export const getReturnOrders = createAsyncThunk(
     }
   },
 );
+export const fetchShippingRates = createAsyncThunk(
+  "shippingZone/fetchShippingRates",
+  async ({ data }: { data: any }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.post(`web/checkout/get-shipping-rates`, data);
+      return res.data;
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to fetch shipping rates"
+      );
+    }
+  }
+);
+export const applyCoupon = createAsyncThunk(
+  "order/fetchCouponByCode",
+  async (couponCode: string, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.get("web/coupons/get-couponcode", {
+        params: { couponCode },
+      });
+      return res.data;
+    } catch (err: any) {
+      return rejectWithValue(
+        err?.response?.data || { message: "Coupon request failed" }
+      );
+    }
+  }
+);
 
 // 2. Initial State
 const initialState = {
@@ -834,8 +862,11 @@ const initialState = {
   returnLoader: false,
   returnOrders: [],
   shipmentLoader: false,
+  shippingRates: [] as any[],
+  ratesLoader: false,
+  appliedCoupon: null,
   dashboardOrders: [],
-dashboardOrdersLoading: false,
+  dashboardOrdersLoading: false,
 };
 
 // 3. Slice
@@ -957,21 +988,52 @@ const orderSlice = createSlice({
         state.returnOrders = action.payload;
       })
 
+
+      .addCase(fetchShippingRates.pending, (state) => {
+        state.ratesLoader = true;
+      })
+      .addCase(fetchShippingRates.fulfilled, (state, action) => {
+        state.ratesLoader = false;
+        state.shippingRates = action.payload?.rates;
+      })
+      .addCase(fetchShippingRates.rejected, (state, action) => {
+        state.ratesLoader = false;
+        state.error = "Shipping is not available in your region.";
+      })
+
+
+
+      .addCase(applyCoupon.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(applyCoupon.fulfilled, (state, action) => {
+        state.loading = false;
+        state.appliedCoupon = action.payload.data
+        state.error = null;
+      })
+      .addCase(applyCoupon.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+
+
+
       .addCase(fetchDashboardOrderOverview.pending, (state) => {
-  state.dashboardOrdersLoading = true;
-  state.error = null;
-})
-.addCase(fetchDashboardOrderOverview.fulfilled, (state, action) => {
-  state.dashboardOrdersLoading = false;
-  state.dashboardOrders = action.payload;
-})
-.addCase(fetchDashboardOrderOverview.rejected, (state, action) => {
-  state.dashboardOrdersLoading = false;
-  state.error =
-    (action.payload as string) ||
-    action.error.message ||
-    "Failed to fetch dashboard orders";
-})
+        state.dashboardOrdersLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchDashboardOrderOverview.fulfilled, (state, action) => {
+        state.dashboardOrdersLoading = false;
+        state.dashboardOrders = action.payload;
+      })
+      .addCase(fetchDashboardOrderOverview.rejected, (state, action) => {
+        state.dashboardOrdersLoading = false;
+        state.error =
+          (action.payload as string) ||
+          action.error.message ||
+          "Failed to fetch dashboard orders";
+      })
     // builder.addCase(deleteDraftOrders.fulfilled, (state, action) => {
     //   state.draftOrder = state.draftOrder?.data?.filter(
     //     (order: any) => order?.order?.id !== action.meta.arg.id

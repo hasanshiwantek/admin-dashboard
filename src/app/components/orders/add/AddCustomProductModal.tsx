@@ -23,7 +23,7 @@ export default function AddCustomProductModal({
   const [name, setName] = useState("");
   const [sku, setSku] = useState("");
   const [priceType, setPriceType] = useState("manual");
-  const [price, setPrice] = useState("0.00");
+  const [price, setPrice] = useState("0");
   const [qty, setQty] = useState("1");
 
   const handleAdd = () => {
@@ -33,7 +33,7 @@ export default function AddCustomProductModal({
       name,
       sku,
       price,
-      qty: parseInt(qty),
+      quantity: parseInt(qty),
       image: [],
       isCustom: true,
     };
@@ -68,7 +68,7 @@ export default function AddCustomProductModal({
 
           <div>
             <Label>SKU</Label>
-            <Input value={sku} onChange={(e) => setSku(e.target.value)} className="!max-w-full"/>
+            <Input value={sku} onChange={(e) => setSku(e.target.value)} className="!max-w-full" />
           </div>
 
           <div className="space-y-2">
@@ -79,7 +79,7 @@ export default function AddCustomProductModal({
               className="flex flex-col space-y-1"
             >
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="store" id="store" />
+                <RadioGroupItem disabled value="store" id="store" />
                 <Label htmlFor="store">Use current store pricing</Label>
               </div>
               <div className="flex items-center space-x-2">
@@ -92,7 +92,7 @@ export default function AddCustomProductModal({
 
             {priceType === "manual" && (
               <div className="flex items-center gap-2">
-                <span>£</span>
+                {/* <span>$</span> */}
                 <Input
                   type="number"
                   value={price}
