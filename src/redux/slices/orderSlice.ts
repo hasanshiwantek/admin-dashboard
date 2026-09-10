@@ -27,6 +27,48 @@ export const fetchAllOrders = createAsyncThunk(
     }
   },
 );
+
+// FETCH DASHBOARD ORDER OVERVIEW
+export const fetchDashboardOrderOverview = createAsyncThunk(
+  "orders/fetchDashboardOrderOverview",
+  async (
+    {
+      status,
+      page = 1,
+      perPage = 10,
+    }: {
+      status?: string;
+      page?: number;
+      perPage?: number | string;
+    },
+    thunkAPI,
+  ) => {
+    try {
+      const params = new URLSearchParams({
+        page: String(page),
+        perPage: String(perPage),
+        ...(status && { status }),
+      });
+
+      const response = await axiosInstance.get(
+        `dashboard/orders/dashboard/overview?${params.toString()}`,
+      );
+
+      return response.data;
+    } catch (error: any) {
+      console.error(
+        "❌ Error fetching dashboard order overview:",
+        error,
+      );
+
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message ||
+        "Failed to fetch dashboard orders",
+      );
+    }
+  },
+);
+
 // FETCH ORDER BY ID
 export const fetchOrderById = createAsyncThunk(
   "orders/fetchOrderById",
@@ -822,7 +864,9 @@ const initialState = {
   shipmentLoader: false,
   shippingRates: [] as any[],
   ratesLoader: false,
-  appliedCoupon: null
+  appliedCoupon: null,
+  dashboardOrders: [],
+  dashboardOrdersLoading: false,
 };
 
 // 3. Slice
@@ -971,7 +1015,30 @@ const orderSlice = createSlice({
       .addCase(applyCoupon.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
-      });
+      })
+
+
+
+      .addCase(fetchDashboardOrderOverview.pending, (state) => {
+        state.dashboardOrdersLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchDashboardOrderOverview.fulfilled, (state, action) => {
+        state.dashboardOrdersLoading = false;
+        state.dashboardOrders = action.payload;
+      })
+      .addCase(fetchDashboardOrderOverview.rejected, (state, action) => {
+        state.dashboardOrdersLoading = false;
+        state.error =
+          (action.payload as string) ||
+          action.error.message ||
+          "Failed to fetch dashboard orders";
+      })
+    // builder.addCase(deleteDraftOrders.fulfilled, (state, action) => {
+    //   state.draftOrder = state.draftOrder?.data?.filter(
+    //     (order: any) => order?.order?.id !== action.meta.arg.id
+    //   );
+    // });
   },
 });
 export default orderSlice.reducer;

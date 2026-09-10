@@ -139,7 +139,11 @@ Updated: ${billing.updatedAt}`;
 
     onClick: async () => {
       try {
-        const shipmentId = shipment?.id;
+    
+
+ const shipmentId = shipment?.orderId;
+
+
 
         const resultAction = await dispatch(
           fetchPackingSlipPdf({ shipmentId })
@@ -361,7 +365,7 @@ Updated: ${billing.updatedAt}`;
       setSavingId(null);
     }
   }, [shipmentLoader]);
-
+console.log(filteredOrders,"ya rahy orders")
   // ERROR LOGIC
   if (error) {
     return (
