@@ -177,48 +177,48 @@ const AllOrders = () => {
   };
 
   const statusOptions = [
-    { label: "Pending", value: "Pending", color: "bg-gray-400" },
+    { label: "Pending", value: "Pending", color: "bg-[#879193]" },
     {
       label: "Awaiting Payment",
       value: "Awaiting Payment",
-      color: "bg-orange-400",
+       color: "bg-[#ff9000]",
     },
     {
       label: "Awaiting Fulfillment",
       // value: "Paid",
       value: "Awaiting Fulfillment",
-      color: "bg-blue-300",
+      color: "bg-[#72cdfa]",
     },
     {
       label: "Awaiting Shipment",
       value: "Awaiting Shipment",
-      color: "bg-blue-500",
+      color: "bg-[#cd3101]",
     },
     {
       label: "Awaiting Pickup",
       value: "Awaiting Pickup",
-      color: "bg-blue-600",
+      color: "bg-[#c979f2]",
     },
     {
       label: "Partially Shipped",
       value: "Partially Shipped",
-      color: "bg-teal-400",
+      color: "bg-[#4a6fb3]",
     },
-    { label: "Completed", value: "Completed", color: "bg-green-600" },
-    { label: "Shipped", value: "Shipped", color: "bg-lime-500" },
-    { label: "Cancelled", value: "Cancelled", color: "bg-black" },
-    { label: "Declined", value: "Declined", color: "bg-red-600" },
-    { label: "Refunded", value: "Refunded", color: "bg-yellow-400" },
-    { label: "Disputed", value: "Disputed", color: "bg-pink-600" },
+    { label: "Completed", value: "Completed", color: "bg-[#BDDF57]" },
+    { label: "Shipped", value: "Shipped", color: "bg-[##BDDF57]" },
+    { label: "Cancelled", value: "Cancelled", color: "bg-[##000000]" },
+    { label: "Declined", value: "Declined", color: "bg-[#7F5F3C]" },
+    { label: "Refunded", value: "Refunded", color: "bg-[#FCCB05]" },
+    { label: "Disputed", value: "Disputed", color: "bg-[#9966FF]" },
     {
       label: "Manual Verification Required",
       value: "Manual Verification Required",
-      color: "bg-purple-400",
+      color: "bg-[##E7A0AE]",
     },
     {
       label: "Partially Refunded",
       value: "Partially Refunded",
-      color: "bg-yellow-300",
+      color: "bg-[#FCCB05]",
     },
   ];
 
@@ -1267,7 +1267,7 @@ const AllOrders = () => {
                               return (
                                 <>
                                   <span
-                                    className={`w-7 h-9 inline-block rounded-sm ${currentStatus?.color || "bg-gray-400"
+                                    className={`w-7 h-9 inline-block rounded-none ${currentStatus?.color || "bg-gray-400"
                                       }`}
                                   />
                                   <Select
