@@ -308,7 +308,7 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
             {orderType === "existing" ? (
               selectedCustomer ? (
                 <span className="text-blue-600 2xl:!text-2xl">
-                  {selectedCustomer.firstName} {selectedCustomer.lastName}
+                  {selectedCustomer.email}
                 </span>
               ) : (
                 <span className="text-gray-400 2xl:!text-2xl">None</span>
