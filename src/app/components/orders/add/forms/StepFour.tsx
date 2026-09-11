@@ -262,7 +262,7 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
         addOrderForNewCustomer.fulfilled.match(resultAction)
       ) {
         setTimeout(() => {
-          router.push("/manage/orders/");
+            window.location.href = "/manage/orders";
         }, 2000);
       } else {
         alert(resultAction.payload || "Order failed");
