@@ -420,7 +420,7 @@ export default function OrderReview({ step, setStep }: any) {
 
                 {billing?.shippingMethod?.display_name && <>
                   <div className="font-medium">Shipping method</div>
-                  <div>{billing?.shippingMethod?.display_name} {`${billing?.shippingMethod?.total_charge ? `: $${billing?.shippingMethod?.total_charge}` : <></>} `}</div>
+                  <div>{billing?.shippingMethod?.display_name} {billing?.shippingMethod?.total_charge > 0 ? `: $${billing?.shippingMethod?.total_charge}` : <></>}</div>
                 </>}
               </div>
 
