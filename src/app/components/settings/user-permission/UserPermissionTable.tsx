@@ -115,12 +115,12 @@ export default function UserPermissionTable() {
 
                                     {/* Email */}
                                     <TableCell className="py-4 px-4 align-top">
-                                        <Link
-                                            href={`/manage/settings/user-permission/${item.id}`}
-                                            className="!text-[16px] text-[#4a64d8] hover:underline break-all"
+                                        <span
+                                            
+                                            className="!text-[16px]  "
                                         >
                                             {item.email}
-                                        </Link>
+                                        </span>
                                     </TableCell>
 
                                     {/* Date */}
