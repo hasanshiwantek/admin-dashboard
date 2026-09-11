@@ -268,6 +268,36 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
                     </p>
                   )}
                 </div>
+
+
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="exclusiveOffers"
+                    {...register("exclusiveOffers")}
+                  />
+                  <Label className="2xl:!text-2xl" htmlFor="exclusiveOffers">
+                    I would like to receive updates and offers.
+                  </Label>
+                </div>
+
+                <div>
+                  <Label className="2xl:!text-2xl" htmlFor="customerGroup">
+                    Customer group
+                  </Label>
+                  <Select
+                    onValueChange={(value) => setValue("customerGroup", value)}
+                    defaultValue="none"
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="-- Do not assign to any group --" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">
+                        -- Do not assign to any group --
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </div>
           )}

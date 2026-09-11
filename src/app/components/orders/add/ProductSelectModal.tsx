@@ -131,19 +131,38 @@ export default function ProductSelectModal({
                     return (
                       <label
                         key={product.id}
-                        className={`flex items-start  gap-3  p-2 cursor-pointer rounded-sm border-b hover:bg-muted ${checked ? "bg-blue-50" : ""
+                        className={`flex items-start justify-between gap-3 p-2 cursor-pointer rounded-sm border-b hover:bg-muted ${checked ? "bg-blue-50" : ""
                           }`}
                       >
-                        <input
-                          type="radio"
-                          name="selectedProduct"
-                          className="mt-1 h-4 w-4"
-                          checked={checked}
-                          onChange={() => setSelectedProductId(product.id)}
-                        />
-                        <span className="text-lg">
-                          {product.sku} - {product.name}
-                        </span>
+                        <div className="flex items-start gap-3">
+                          <input
+                            type="radio"
+                            name="selectedProduct"
+                            className="mt-1 h-4 w-4"
+                            checked={checked}
+                            onChange={() => setSelectedProductId(product.id)}
+                          />
+                          <span className="text-lg">
+                            {product.sku} - {product.name}
+                          </span>
+                        </div>
+
+                        <button
+                          type="button"
+                          className="text-blue-600 text-sm underline whitespace-nowrap"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+
+                            const availableStores = JSON.parse(localStorage.getItem("availableStores") || "[]");
+                            const selectedStoreId = Number(localStorage.getItem("storeId"));
+                            const selectedStore = availableStores.find((s: any) => s.id === selectedStoreId);
+                            if (selectedStore?.baseUrl) window.open(`${selectedStore.baseUrl}${product?.productUrl[0] == "/" ? product?.productUrl.slice(1) : product?.productUrl}`, "_blank");
+                            else alert("Store URL or Product SKU not found");
+                          }}
+                        >
+                          View
+                        </button>
                       </label>
                     );
                   })
