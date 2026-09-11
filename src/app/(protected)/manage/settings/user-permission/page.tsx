@@ -21,17 +21,17 @@ export default function Page() {
 
                 <button className="flex items-center gap-2 text-[#6b7280] text-[14px] hover:text-black mb-5" onClick={() => router.back()}>
                     <ArrowLeft size={12} />
-                    <span>Settings</span>
+                    <span className="!text-[16px]">Settings</span>
                 </button>
 
                 {/* Title */}
 
-                <h1 className="text-[38px] font-light text-[#222]">
-                    Users
+                <h1 className="!text-[39px] !font-light ">
+                  View Users
                 </h1>
 
-                <p className="text-[14px] text-[#555] mt-3">
-                    Store Users
+                <p className="!text-[16px] text-[#555] mt-3">
+                    A user is someone who has access to the administration area of your store. Each user account also has its own customizable access permissions.
                 </p>
 
                 {/* Filters */}

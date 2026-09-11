@@ -108,9 +108,9 @@ const AddUser = () => {
 
             {/* ── Page Header (outside white box) ── */}
             <div className="px-6 pt-6 pb-3">
-                <h1 className="text-2xl font-normal text-gray-800">Create a User Account</h1>
-                <p className="text-sm text-gray-500 mt-1">
-                    Add the details of the user below. Assign the permissions this user should have access to, then click 'Save'.
+                <h1 className="!text-[34px] font-normal text-gray-800">Create a User Account</h1>
+                <p className="!text-[14px] text-gray-500 mt-3">
+                   A user is someone who has access to the administration area of your store. Each user account also has its own customizable access permissions, which you can setup below.
                 </p>
             </div>
 
