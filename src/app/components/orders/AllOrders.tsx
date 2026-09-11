@@ -1585,9 +1585,14 @@ const AllOrders = () => {
                                   )}
                                   {order?.payment?.payment_intent_id && (
                                     <div className="flex items-center gap-2">
-                                      <span className="!text-blue-400">
-                                        {order?.payment?.payment_intent_id}
-                                      </span>
+                                      <Link
+                                        href={`https://dashboard.stripe.com/test/payments/${order.payment.payment_intent_id}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-blue-500 underline break-all"
+                                      >
+                                        {order.payment.payment_intent_id}
+                                      </Link>
                                     </div>
                                   )}
                                   {order?.comments && (
