@@ -577,9 +577,10 @@ export default function OrderReview({ step, setStep }: any) {
                   <SelectValue placeholder="Select..." />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="cash">Manual payment</SelectItem>{" "}
+                  {/* <SelectItem value="cash">Manual payment</SelectItem>{" "} */}
                   <SelectItem value="stripe">Stripe</SelectItem>
                   <SelectItem value="credit_card">Credit Card</SelectItem>{" "}
+                   <SelectItem value="draft">Create draft order</SelectItem>{" "}
                 </SelectContent>
               </Select>
 

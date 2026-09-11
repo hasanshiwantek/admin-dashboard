@@ -66,16 +66,16 @@ export default function UserPermissionTable() {
                 <Table>
                     <TableHeader className="h-18">
                         <TableRow className="border-b border-[#e5e5e5] bg-white hover:bg-white">
-                            <TableHead className="w-[180px] text-left py-4 px-4 font-semibold text-[13px] text-[#333]">
+                            <TableHead className="w-[180px] text-left py-4 px-4 font-semibold !text-[14px] text-[#333]">
                                 Name
                             </TableHead>
-                            <TableHead className="text-left py-4 px-4 font-semibold text-[13px] text-[#333]">
+                            <TableHead className="text-left py-4 px-4 font-semibold !text-[14px] text-[#333]">
                                 Email
                             </TableHead>
-                            <TableHead className="w-[260px] text-left py-4 px-4 font-semibold text-[13px] text-[#333]">
+                            <TableHead className="w-[260px] text-left py-4 px-4 font-semibold !text-[14px] text-[#333]">
                                 Date
                             </TableHead>
-                            <TableHead className="w-[100px] text-center py-4 px-4 font-semibold text-[13px] text-[#333]">
+                            <TableHead className="w-[100px] text-center py-4 px-4 font-semibold !text-[14px] text-[#333]">
                                 Actions
                             </TableHead>
                         </TableRow>
@@ -108,24 +108,24 @@ export default function UserPermissionTable() {
                                 >
                                     {/* Name */}
                                     <TableCell className="py-4 px-4 align-top whitespace-nowrap">
-                                        <span className="text-[13px] text-[#222] capitalize">
+                                        <span className="!text-[15px] !text-[#34313f] capitalize">
                                             {item.name || "-"}
                                         </span>
                                     </TableCell>
 
                                     {/* Email */}
                                     <TableCell className="py-4 px-4 align-top">
-                                        <Link
-                                            href={`/manage/settings/user-permission/${item.id}`}
-                                            className="text-[13px] text-[#4a64d8] hover:underline break-all"
+                                        <span
+                                            
+                                            className="!text-[16px]  "
                                         >
                                             {item.email}
-                                        </Link>
+                                        </span>
                                     </TableCell>
 
                                     {/* Date */}
                                     <TableCell className="py-4 px-4 align-top whitespace-nowrap">
-                                        <span className="text-[13px] text-[#222]">
+                                        <span className="!text-[15px] !text-[#34313f]">
                                             {formatDate(item.created_at)}
                                         </span>
                                     </TableCell>
