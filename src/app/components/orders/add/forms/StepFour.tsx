@@ -6,6 +6,7 @@ import { addOrder, addOrderForNewCustomer } from "@/redux/slices/orderSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { updateOrder } from "@/redux/slices/orderSlice";
 import { useFormContext } from "react-hook-form";
+import { toast } from "react-toastify";
 export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
   const dispatch = useAppDispatch();
   const { handleSubmit, getValues } = useFormContext();
@@ -242,7 +243,7 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
     })();
 
     try {
-      let resultAction;
+      let resultAction: any;
 
       if (isEditMode && orderId) {
         resultAction = await dispatch(
@@ -262,13 +263,14 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
         addOrderForNewCustomer.fulfilled.match(resultAction)
       ) {
         setTimeout(() => {
-            window.location.href = "/manage/orders";
+          window.location.href = "/manage/orders";
         }, 2000);
       } else {
-        alert(resultAction.payload || "Order failed");
+        toast.error(resultAction.payload || "Order failed")
+
       }
     } catch (error) {
-      alert("Unexpected error. Please try again.");
+      toast.error("Unexpected error. Please try again.")
     }
   };
   useEffect(() => {
