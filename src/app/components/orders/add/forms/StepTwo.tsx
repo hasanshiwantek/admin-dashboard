@@ -9,6 +9,7 @@ import AddCustomProductModal from "../AddCustomProductModal";
 import ProductSelectModal from "../ProductSelectModal";
 import { useRouter } from "next/navigation";
 import { useFormContext, useWatch } from "react-hook-form";
+import { toast } from "react-toastify";
 
 export default function StepTwo({ step, setStep }: any) {
   const dispatch = useAppDispatch();
@@ -93,7 +94,7 @@ export default function StepTwo({ step, setStep }: any) {
   };
   const onSubmit = () => {
     if (!selectedProducts?.length) {
-      alert("Please add any product")
+      toast.error("Please add atleast one product")
       return
     }
     setStep(step + 1);
