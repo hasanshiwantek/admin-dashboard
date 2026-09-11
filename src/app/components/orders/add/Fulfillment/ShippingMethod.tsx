@@ -52,10 +52,10 @@ export default function ShippingMethod() {
   const dispatch = useAppDispatch()
   const values = getValues()
 
-  const selectedMethod = watch("shippingMethod");
-  const provider = selectedMethod?.method_id
+  const selectedMethod = watch("shippingMethod") || {};
+  const provider = selectedMethod.method_id
     ? String(selectedMethod.method_id)
-    : selectedMethod?.service_type || "none";
+    : selectedMethod.service_type || "none";
   const method = watch("shippingMethod.method")
   const cost = watch("shippingMethod.cost")
   const cart = values?.selectedProducts
@@ -66,16 +66,25 @@ export default function ShippingMethod() {
 
 
   const handleMethodChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue("shippingMethod.method", e.target.value, { shouldDirty: true });
+    setValue("shippingMethod", {
+      ...selectedMethod,
+      method_type: "custom",
+      service_type: "custom",
+      display_name: e.target.value,
+    }, { shouldDirty: true });
   };
-
   const handleCostChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const rawValue = e.target.value;
-    // Allow only numbers and one decimal
-    const formatted = rawValue
+    const formatted = e.target.value
       .replace(/[^\d.]/g, "")
-      .replace(/^(\d*\.)(.*)$/, (m, p1, p2) => p1 + p2.replace(/\./g, ""));
-    setValue("shippingMethod.cost", formatted, { shouldDirty: true });
+      .replace(/^(\d*\.)(.*)$/, (_m, p1, p2) => p1 + p2.replace(/\./g, ""));
+
+    setValue("shippingMethod", {
+      ...selectedMethod,
+      method_type: "custom",
+      service_type: "custom",
+      total_charge: formatted,
+      cost: formatted,
+    }, { shouldDirty: true });
   };
   useEffect(() => {
     const payload = {
@@ -210,20 +219,24 @@ export default function ShippingMethod() {
           </Link>
         </div> */}
 
-        <div className="w-full max-w-xl">
+        <div className="w-full max-w-2xl">
           <Select value={provider} onValueChange={handleProviderChange}>
-            <SelectTrigger id="provider" className="h-auto min-h-10 py-2 text-left">
-              <SelectValue placeholder="Select Shipping Provider">
+            <SelectTrigger className="h-auto min-h-10 w-full py-2 text-left">
+              <span className="line-clamp-2 whitespace-normal break-words text-left">
                 {selectedMethod?.display_name
                   ? `${selectedMethod.display_name} — ${Number(selectedMethod.total_charge) === 0
                     ? "Free"
                     : `$${Number(selectedMethod.total_charge).toFixed(2)}`
                   }`
                   : "Select Shipping Provider"}
-              </SelectValue>
+              </span>
             </SelectTrigger>
 
-            <SelectContent className="min-w-[520px]">
+            <SelectContent
+              position="popper"
+              side="bottom"
+              className="w-[var(--radix-select-trigger-width)]"
+            >
               {rates.map((rate: any) => {
                 const label = rate.is_fedex
                   ? `FedEx (${rate.service_name})`
@@ -235,7 +248,9 @@ export default function ShippingMethod() {
 
                 return (
                   <SelectItem key={rate.method_id} value={String(rate.method_id)}>
-                    {label} — {price}
+                    <span className="block truncate">
+                      {label} — {price}
+                    </span>
                   </SelectItem>
                 );
               })}

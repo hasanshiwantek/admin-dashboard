@@ -69,13 +69,14 @@ export default function OrderReview({ step, setStep }: any) {
       return;
     }
     await dispatch(applyCoupon(couponCode.trim()));
+    setCouponCode("")
   };
   const handleRemoveCoupon = () => {
     setCouponCode("");
     setValue("couponCode", "");
     setValue("coupon", null);
   };
-  const shippingCost = Number(watch("shippingMethod.cost") || 0);
+  const shippingCost = Number(watch("shippingMethod.total_charge") || 0);
   const manualDiscount = Number(watch("manualDiscount") || 0);
   const couponDiscount = Number(
     appliedCoupon?.discountAmount || 0
@@ -96,7 +97,7 @@ export default function OrderReview({ step, setStep }: any) {
 
   // Function to render specific payment fields based on the selected method
   const renderPaymentFields = () => {
-    const customerEmail = billing.email || "customer@example.com"; // Use the actual email from the form data
+    const customerEmail = billing.email || billing?.selectedCustomer?.email || "customer@example.com"; // Use the actual email from the form data
 
     switch (paymentMethod) {
       case "stripe":
@@ -407,11 +408,10 @@ export default function OrderReview({ step, setStep }: any) {
                 <div className="font-medium">ZIP/Postcode</div>
                 <div>{shipping?.zip}</div>
 
-                <div className="font-medium">Shipping method</div>
-                <div>{billing?.shippingMethod?.provider ?? "None"}</div>
-
-                <div className="font-medium">Shipping cost</div>
-                <div>${billing?.shippingMethod?.cost}</div>
+                {billing?.shippingMethod?.display_name && <>
+                  <div className="font-medium">Shipping method</div>
+                  <div>{billing?.shippingMethod?.display_name} {`${billing?.shippingMethod?.total_charge ? billing?.shippingMethod?.total_charge : <></>} `}</div>
+                </>}
               </div>
 
               {/* Product Table */}
@@ -528,19 +528,26 @@ export default function OrderReview({ step, setStep }: any) {
                 <span>Subtotal</span>
                 <span>${subtotal.toFixed(2)}</span>
               </div>
+
+              {billing?.shippingMethod?.total_charge ? (
+                <div className="flex justify-between">
+                  <span>Shipping</span>
+                  <span>${billing?.shippingMethod?.total_charge}</span>
+                </div>
+              ) : <></>}
               {appliedCoupon && (
                 <div className="flex justify-between items-start">
                   <div>
                     <div>
                       Coupon ({appliedCoupon.couponCode})
                     </div>
-                    <button
+                    {/* <button
                       type="button"
                       className="text-blue-600 text-sm underline"
                       onClick={handleRemoveCoupon}
                     >
                       (remove)
-                    </button>
+                    </button> */}
                   </div>
                   <span>-${couponDiscount.toFixed(2)}</span>
                 </div>
@@ -551,6 +558,7 @@ export default function OrderReview({ step, setStep }: any) {
                   <span>-${manualDiscount.toFixed(2)}</span>
                 </div>
               )}
+
               <div className="flex justify-between font-bold">
                 <span>Grand total</span>
                 <span>${grandTotal.toFixed(2)}</span>

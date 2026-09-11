@@ -1,7 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useForm, FormProvider } from "react-hook-form";
-import { Button } from "@/components/ui/button";
 import OrderReview from "../OrderReview.tsx/OrderReview";
 import { useRouter } from "next/navigation";
 import { addOrder, addOrderForNewCustomer } from "@/redux/slices/orderSlice";
@@ -22,14 +20,14 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
     }
   };
   const getDeviceType = () => {
-    if (typeof window === "undefined") return "desktop";
+    if (typeof window === "undefined") return "Dashboard (Desktop)";
 
     const userAgent = navigator.userAgent;
 
-    if (/mobile/i.test(userAgent)) return "mobile";
-    if (/tablet/i.test(userAgent)) return "tablet";
+    if (/mobile/i.test(userAgent)) return "Dashboard (Mobile)";
+    if (/tablet/i.test(userAgent)) return "Dashboard (Tablet)";
 
-    return "desktop";
+    return "Dashboard (Desktop)";
   };
 
 
@@ -75,12 +73,15 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
       if (isNewCustomer) {
         return {
           deviceType: getDeviceType(),
-          userType: null,
-          "ipAddress": ipAddress,
           email: values.email || "",
           password: values.password || "",
           password_confirmation: values.password_confirmation || "",
+          firstName: values.billingFirstName || "",
+          lastName: values.billingLastName || "",
+          phone: values.billingPhoneNumber || "",
+          companyName: values.billingCompanyName || "",
           customerGroup: values.customerGroup || "",
+          "ipAddress": ipAddress,
           "couponCode": appliedCoupon?.couponCode,
           "discountAmount": appliedCoupon?.discountAmount,
           manualDiscount: manualDiscount,
@@ -111,8 +112,6 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
             "country": values?.shipping?.country,
           },
           isDraft,
-          "isSaveAddressForBilling": values.saveAddress == "on" ? true : false,
-          "isSaveAddressForShipping": values?.shipping?.saveToAddressBook ? true : false,
           paymentMethod: buildPaymentMethod(),
           comments: values.customerComments || "",
           staffNotes: values.staffNotes || "",
@@ -133,7 +132,6 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
               quantity: product.quantity || 1,
               price: Number(product.price ?? product.Price ?? 0),
             })) || [],
-
           shippingDestinations:
             values.shippingDestinations?.map((dest: any) => ({
               address: {
@@ -164,7 +162,7 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
       } else {
         return {
           isDraft,
-          customerId: values.selectedCustomer?.id || null,
+          customerId: values.selectedCustomer?.id,
           deviceType: getDeviceType(),
           userType: null,
           "ipAddress": ipAddress,
