@@ -31,7 +31,7 @@ export default function AddAddress() {
     const [form, setForm] = useState({
         first_name: "",
         last_name: "",
-        company_name: "",
+        companyName: "",
         phone_number: "",
         address_line_1: "",
         address_line_2: "",
@@ -104,7 +104,7 @@ export default function AddAddress() {
             customer_id: Number(customerId),
             firstName: form.first_name,
             lastName: form.last_name,
-            company_name: form.company_name,
+            companyName: form.companyName,
             phoneNumber: form.phone_number,
             addressLine1: form.address_line_1,
             address_line_2: form.address_line_2,
@@ -126,7 +126,7 @@ export default function AddAddress() {
                     setForm({
                         first_name: "",
                         last_name: "",
-                        company_name: "",
+                        companyName: "",
                         phone_number: "",
                         address_line_1: "",
                         address_line_2: "",
@@ -205,9 +205,9 @@ export default function AddAddress() {
                                     Company Name
                                 </Label>
                                 <Input
-                                    value={form.company_name}
-                                    onChange={(e) => updateField("company_name", e.target.value)}
-                                    className="h-12 max-w-none w-full"
+                                    value={form.companyName}
+                                    onChange={(e) => updateField("companyName", e.target.value)}
+                                    className="h-12 max-w-none w-full "
                                 />
                             </div>
                             <div>
