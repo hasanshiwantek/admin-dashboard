@@ -269,9 +269,7 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
                     </p>
                   )}
                 </div>
-
-
-                <div className="flex items-center space-x-2">
+                {/* <div className="flex items-center space-x-2">
                   <Checkbox
                     id="exclusiveOffers"
                     {...register("exclusiveOffers")}
@@ -298,7 +296,7 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
                       </SelectItem>
                     </SelectContent>
                   </Select>
-                </div>
+                </div> */}
               </div>
             </div>
           )}
