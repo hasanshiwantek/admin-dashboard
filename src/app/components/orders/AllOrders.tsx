@@ -181,7 +181,7 @@ const AllOrders = () => {
     {
       label: "Awaiting Payment",
       value: "Awaiting Payment",
-       color: "bg-[#ff9000]",
+      color: "bg-[#ff9000]",
     },
     {
       label: "Awaiting Fulfillment",
@@ -1883,6 +1883,24 @@ const AllOrders = () => {
                                           .toFixed(2)}
                                       </span>
                                     </div>
+                                    {Number(order?.manualDiscount) > 0 && <div className="flex justify-between">
+                                      <span>Discount</span>
+                                      <span>
+                                        -$
+                                        {Number(
+                                          order?.manualDiscount,
+                                        ).toFixed(2)}
+                                      </span>
+                                    </div>}
+                                    {order?.couponCode && <div className="flex justify-between">
+                                      <span>Coupon Code ({order?.couponCode})</span>
+                                      <span>
+                                        -$
+                                        {Number(
+                                          order?.discountAmount,
+                                        ).toFixed(2)}
+                                      </span>
+                                    </div>}
                                     <div className="flex justify-between">
                                       <span>Shipping</span>
                                       <span>
@@ -1893,7 +1911,7 @@ const AllOrders = () => {
                                       </span>
                                     </div>
                                     <div className="flex justify-between">
-                                      <span>VAT / TAX</span>
+                                      <span>TAX</span>
                                       <span>
                                         ${Number(order?.tax || 0).toFixed(2)}
                                       </span>

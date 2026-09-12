@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/select";
 import ShippingMethod from "./ShippingMethod";
 import { Country, State } from "country-state-city";
+import { useAppSelector } from "@/hooks/useReduxHooks";
 
 export default function SingleAddressForm() {
   const { register, control, watch, setValue, getValues } = useFormContext();
@@ -30,6 +31,9 @@ export default function SingleAddressForm() {
     // billingState,
     billingZip,
   } = getValues();
+  const { customerAddresses, addressesLoading } = useAppSelector(
+    (state: any) => state.customer
+  );
   const selectedCustomer = watch("selectedCustomer");
   const selectedCountry = watch("shipping.country");
   const billingCountry = watch("billingCountry");
@@ -38,6 +42,7 @@ export default function SingleAddressForm() {
     name: c.name,
     code: c.isoCode,
   }));
+  const [pendingState, setPendingState] = useState("");
 
   const stateList = useMemo(() => {
     if (!selectedCountry) return [];
@@ -187,7 +192,27 @@ export default function SingleAddressForm() {
     setIsAddressOverridden(false);
     setOriginalShippingValues(null);
   };
-
+  const handleUseAddress = (address: any) => {
+    setValue("shipping.firstName", address.first_name ?? "");
+    setValue("shipping.lastName", address.last_name ?? "");
+    setValue("shipping.companyName", address.company_name ?? "");
+    setValue("shipping.phoneNumber", address.phone_number ?? "");
+    setValue("shipping.address1", address.address_line_1 ?? "");
+    setValue("shipping.address2", address.address_line_2 ?? "");
+    setValue("shipping.city", address.city ?? "");
+    setValue("shipping.zip", address.zip ?? "");
+    setValue("shipping.country", address.country ?? "");
+    setPendingState(address.state ?? "");
+    setValue("shipping.state", "");
+  };
+  useEffect(() => {
+    if (!pendingState || stateList.length === 0) return;
+    const stateExists = stateList.some((s) => s.code === pendingState);
+    if (stateExists) {
+      setValue("shipping.state", pendingState);
+      setPendingState("");
+    }
+  }, [stateList, pendingState, setValue]);
   return (
     <div className="space-y-8">
       <div className="rounded-md space-y-5">
@@ -256,6 +281,94 @@ export default function SingleAddressForm() {
             />
             <Input {...register("shipping.zip")} placeholder="Zip/Postcode" />
           </div>
+          {/* <div className="max-w-md rounded-md border border-gray-300 bg-[#F8F9FB] p-4 flex justify-between items-start">
+            <div className="flex gap-2">
+              <img src="https://flagcdn.com/gb.svg" alt="UK" className="w-5 h-5 mt-0.5" />
+              <div className="text-gray-800 leading-snug flex flex-col gap-1">
+                <h3 className="font-semibold">{firstName + " " + lastName}</h3>
+                {companyName && <span>{companyName}</span>}
+                {phone && <span>{phone}</span>}
+                {address && <span>{address}</span>}
+                {city && <span>{city}</span>}
+                {country && <span>{country}</span>}
+                {zip && <span>{zip}</span>}
+                {state && <span>{state}</span>}
+              </div>
+            </div>
+
+            <div className="flex flex-col items-end gap-1">
+              {!isAddressOverridden && (
+                <button
+                  type="button"
+                  className="text-blue-600 hover:underline text-lg font-medium"
+                  onClick={handleUseThisAddress}
+                >
+                  Use this address
+                </button>
+              )}
+              
+            </div>
+          </div> */}
+          {selectedCustomer && (
+            <div className="w-full space-y-4">
+              <h2 className="text-2xl font-semibold">Customer Addresses</h2>
+              {addressesLoading ? (
+                <div className="border rounded-md p-6 bg-gray-100 text-center">
+                  Loading addresses...
+                </div>
+              ) : customerAddresses.length > 0 ? (
+                <div className="max-h-[600px] overflow-y-auto pr-2 space-y-4">
+                  {customerAddresses.map((address: any) => (
+                    <div key={address.id} className="border p-5 bg-gray-100 rounded-md">
+                      <div className="space-y-2">
+                        <div className="font-semibold text-2xl">
+                          {address.first_name} {address.last_name}
+                        </div>
+                        {address.company_name && (
+                          <div className="text-gray-800 text-xl">{address.company_name}</div>
+                        )}
+                        {address.phone_number && (
+                          <div className="text-gray-800 text-xl">{address.phone_number}</div>
+                        )}
+                        {address.address_line_1 && (
+                          <div className="text-gray-800 text-xl">{address.address_line_1}</div>
+                        )}
+                        {address.address_line_2 && (
+                          <div className="text-gray-800 text-xl">{address.address_line_2}</div>
+                        )}
+                        {address.city && (
+                          <div className="text-gray-800 text-xl">{address.city}</div>
+                        )}
+                        {address.state && (
+                          <div className="text-gray-800 text-xl">{address.state}</div>
+                        )}
+                        {address.zip && (
+                          <div className="text-gray-800 text-xl">{address.zip}</div>
+                        )}
+                        {address.country && (
+                          <div className="text-gray-800 text-xl">{address.country}</div>
+                        )}
+                        {address.address_type && (
+                          <div className="text-gray-800 text-xl">{address.address_type}</div>
+                        )}
+                      </div>
+                      <button
+                        type="button"
+                        className="btn-primary mt-4 w-full"
+                        onClick={() => handleUseAddress(address)}
+                      >
+                        Use this address
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="border rounded-md p-6 bg-gray-100 text-center">
+                  <p className="text-gray-500 text-xl">No saved addresses found.</p>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Save to address book */}

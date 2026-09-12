@@ -269,7 +269,7 @@ export default function ShippingMethod() {
             <Label htmlFor="shipping-method-name">Shipping method</Label>
             <Input
               id="shipping-method-name"
-              value={method}
+              value={method || selectedMethod.display_name}
               onChange={handleMethodChange}
               className="mt-1 w-full max-w-md"
               placeholder="Enter custom method"

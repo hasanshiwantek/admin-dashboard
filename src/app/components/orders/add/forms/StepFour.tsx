@@ -85,6 +85,8 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
           "ipAddress": ipAddress,
           "couponCode": appliedCoupon?.couponCode,
           "discountAmount": appliedCoupon?.discountAmount,
+          "isSaveAddressForBilling": values.saveAddress == "on" ? true : false,
+          "isSaveAddressForShipping": values?.shipping?.saveToAddressBook ? true : false,
           manualDiscount: manualDiscount,
           "billingAddress": { //billing address is same as billing address
             firstName: values.billingFirstName || "",
@@ -126,6 +128,11 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
             delivery_date: values.shippingMethod?.delivery_date ?? null,
             service_type: values.shippingMethod?.service_type || "",
             is_fedex: !!values.shippingMethod?.is_fedex,
+
+            "provider": values.shippingMethod?.display_name || values.shippingMethod?.method || "",
+            "method": values.shippingMethod?.display_name || values.shippingMethod?.method || "",
+            "cost": Number(values.shippingMethod?.total_charge ?? values.shippingMethod?.cost ?? 0),
+            "data": values.shippingMethod?.display_name || values.shippingMethod?.method || "",
           },
           products:
             values.selectedProducts?.map((product: any) => ({
@@ -209,6 +216,11 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
             delivery_date: values.shippingMethod?.delivery_date ?? null,
             service_type: values.shippingMethod?.service_type || "",
             is_fedex: !!values.shippingMethod?.is_fedex,
+
+            "provider": values.shippingMethod?.display_name || values.shippingMethod?.method || "",
+            "method": values.shippingMethod?.display_name || values.shippingMethod?.method || "",
+            "cost": Number(values.shippingMethod?.total_charge ?? values.shippingMethod?.cost ?? 0),
+            "data": values.shippingMethod?.display_name || values.shippingMethod?.method || "",
           },
           "isSaveAddressForBilling": values.saveAddress == "on" ? true : false,
           "isSaveAddressForShipping": values?.shipping?.saveToAddressBook ? true : false,
