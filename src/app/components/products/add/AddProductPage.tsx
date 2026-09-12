@@ -41,17 +41,20 @@ import { useSearchParams } from "next/navigation";
 import DescriptionEditorQuill from "./DescriptionEditorQuill";
 
 const buildCopyNameSku = (name: string, sku: string, productUrl: string) => {
-  const baseName = name.replace(/^Copy of\s+/, "");
-
+  const generateSlug = (text: string) => {
+    return text
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+  };
+  const copyName = `Copy of ${name}`;
   return {
-    name: `Copy of ${baseName}`,
+    name: copyName,
     sku: `${sku}-1`,
-    ...(productUrl && {
-      productUrl: `${productUrl}-1`,
-    }),
+    productUrl: generateSlug(copyName),
   };
 };
-
 
 export default function AddProductPage() {
   const dispatch = useAppDispatch();
@@ -64,6 +67,9 @@ export default function AddProductPage() {
   const exitAfterSaveRef = useRef(false);
   const [redirectUpdateScreen, setRedirectUpdateScreen] = useState<any>(null);
   const copyAfterSaveRef = useRef(false);
+  const submitActionRef = useRef<"duplicate" | "addAnother" | "viewProducts">(
+    "viewProducts",
+  );
   const hasUpdatedOriginalRef = useRef(false); // ✅ tracks if update already happened
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -80,6 +86,7 @@ export default function AddProductPage() {
       // ✅ OpenGraph defaults
       // objectType: "physical",
       isVisible: true,
+      isRedirect: false,
       useProductName: 1,
       graphDescription: 1,
       imageOption: "useThumbnail", // ✅ Default value for radio
@@ -104,7 +111,7 @@ export default function AddProductPage() {
   const editProduct = useAppSelector(
     (state: any) => state.product.singleProduct,
   );
-
+  console.log({ editProduct });
   // const allProducts = useAppSelector((state: any) => state.product.products);
   const [product, setProduct] = useState<any>();
   // const product = editProduct?.data;
@@ -213,6 +220,25 @@ export default function AddProductPage() {
     }
   }, [id, reset]);
 
+  const navigateAfterSave = (savedProductId?: number | string) => {
+    const action = submitActionRef.current;
+
+    if (action === "duplicate") {
+      const targetId = savedProductId ?? product?.id;
+      if (targetId) {
+        router.push(`/manage/products/dublicate/${targetId}?isDuplicate=true`);
+        return;
+      }
+    }
+
+    if (action === "addAnother") {
+      router.push("/manage/products/add");
+      return;
+    }
+
+    router.push("/manage/products");
+  };
+
   const onSubmit = methods.handleSubmit(async (data: Record<string, any>) => {
     setIsLoading(true);
     const isEdit = isEditModeRef.current;
@@ -255,6 +281,8 @@ export default function AddProductPage() {
           dontUse: imageOption === "dontUse" ? 1 : 0,
           manageCustoms: data.manageCustoms ? 1 : 0,
           callForPricing: data.callForPricing ? 1 : 0,
+          isRedirect: data.isRedirect ? 1 : 0,
+          isDuplicate: isDuplicate ? 1 : 0,
         };
 
         if (copyAfterSaveRef.current && isEdit) {
@@ -309,11 +337,8 @@ export default function AddProductPage() {
           const result = await dispatch(addProduct({ data: formData }));
 
           if (addProduct.fulfilled.match(result)) {
-            if (exitAfterSaveRef.current) {
-              router.push("/manage/products");
-            } else {
-              router.push(`/manage/products/edit/${result?.payload?.data?.id}`);
-            }
+            const savedProductId = result?.payload?.data?.id;
+            navigateAfterSave(savedProductId);
           } else {
             console.error("Product save failed:", result.error);
           }
@@ -365,6 +390,7 @@ export default function AddProductPage() {
           dontUse: imageOption === "dontUse" ? 1 : 0,
           manageCustoms: data.manageCustoms ? 1 : 0,
           callForPricing: data.callForPricing ? 1 : 0,
+          isRedirect: data.isRedirect ? 1 : 0,
         };
 
         if (copyAfterSaveRef.current && isEdit) {
@@ -425,12 +451,12 @@ export default function AddProductPage() {
           const actionCreator = isEdit ? updateProductFormData : addProduct;
 
           if (actionCreator.fulfilled.match(result)) {
-            if (exitAfterSaveRef.current) {
-              router.push("/manage/products");
-            } else if (!isEdit) {
-              router.push(`/manage/products/edit/${result?.payload?.data?.id}`);
+            const savedProductId = result?.payload?.data?.id ?? product?.id;
+            if (submitActionRef.current === "addAnother" || submitActionRef.current === "viewProducts") {
+              navigateAfterSave(savedProductId);
+            } else if (submitActionRef.current === "duplicate") {
+              navigateAfterSave(savedProductId);
             }
-            // isEdit + !exitAfterSaveRef → stays on edit page
           } else {
             console.error("Product save failed:", result.error);
           }
@@ -438,8 +464,9 @@ export default function AddProductPage() {
       } catch (error) {
         console.error("Unexpected error during save:", error);
       } finally {
-        setIsLoading(false);
+          setIsLoading(false);
         exitAfterSaveRef.current = false;
+        submitActionRef.current = "viewProducts";
         hasUpdatedOriginalRef.current = false;
         copyAfterSaveRef.current = false;
       }
@@ -698,122 +725,57 @@ export default function AddProductPage() {
               <CustomsInformation />
               <Seo />
               <OpenGraph isEdit={isEdit} />
-              {isDuplicate ? (
-                <div className="flex justify-end gap-4 items-center fixed w-full bottom-0 right-0 bg-white/90 z-10 shadow-xs border-t p-4">
-                  {/* Cancel */}
-                  <button
-                    className="btn-outline-primary"
-                    type="button"
-                    onClick={() => handleBackNavigation("/manage/products")}
-                  >
-                    Cancel
-                  </button>
+              <div className="flex justify-end gap-4 items-center fixed w-full bottom-0 right-0 bg-white/90 z-10 shadow-xs border-t p-4">
+                <button
+                  className="btn-outline-primary"
+                  type="button"
+                  onClick={() => handleBackNavigation("/manage/products")}
+                >
+                  Cancel
+                </button>
 
-                  <button
-                    type="submit"
-                    disabled={isLoading}
-                    className="btn-outline-primary flex items-center gap-2"
-                    onClick={() => {
-                      exitAfterSaveRef.current = true;
-                    }}
-                  >
-                    {isLoading && exitAfterSaveRef.current && (
-                      <span className="h-4 w-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                    )}
-                    Duplicate & Exit
-                  </button>
-
-                  {/* Duplicate */}
-                  <button
-                    type="submit"
-                    disabled={isLoading}
-                    className="btn-primary flex items-center gap-2"
-                    onClick={() => {
-                      exitAfterSaveRef.current = false;
-                    }}
-                  >
-                    {isLoading && (
-                      <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    )}
-                    {isLoading ? "Duplicating..." : "Duplicate Product"}
-                  </button>
-                </div>
-              ) : (
-                <div className="flex justify-end gap-4 items-center fixed w-full bottom-0 right-0 bg-white/90 z-10 shadow-xs border-t p-4">
-                  {/* Cancel */}
-                  <button
-                    onClick={() => handleBackNavigation("/manage/products")}
-                    className="btn-outline-primary"
-                    type="button"
-                  >
-                    Cancel
-                  </button>
-                  {/* Save & Copy */}
-
-                  <button
-                    type="submit"
-                    disabled={isLoading}
-                    className="btn-outline-primary flex items-center gap-2"
-                    onClick={() => {
-                      if (!isEdit) {
-                        exitAfterSaveRef.current = false; // ✅ not exit
-                      }
-
-                      copyAfterSaveRef.current = true; // ✅ copy mode
-                    }}
-                  >
-                    {isLoading && exitAfterSaveRef.current && (
-                      <span className="h-4 w-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                    )}
-                    {isEdit ? "Update & Copy" : "Save & Copy"}
-                  </button>
-                  {/* Save & Exit */}
-                  <button
-                    type="submit"
-                    disabled={isLoading}
-                    className="btn-outline-primary flex items-center gap-2"
-                    onClick={() => {
-                      exitAfterSaveRef.current = true;
-                    }}
-                  >
-                    {isLoading && exitAfterSaveRef.current && (
-                      <span className="h-4 w-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                    )}
-                    {isEdit ? "Update & Exit" : "Save & Exit"}
-                  </button>
-
-                  {/* Save / Update — same page pe raho */}
-                  {isEdit ? (
-                    <button
-                      type="submit"
-                      disabled={isLoading}
-                      className="btn-primary flex items-center gap-2"
-                      onClick={() => {
-                        exitAfterSaveRef.current = false;
-                      }}
-                    >
-                      {isLoading && (
-                        <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      )}
-                      {isLoading ? "Saving..." : "Save"}
-                    </button>
-                  ) : (
-                    <button
-                      type="submit"
-                      disabled={isLoading}
-                      className="btn-primary flex items-center gap-2"
-                      onClick={() => {
-                        exitAfterSaveRef.current = false;
-                      }}
-                    >
-                      {isLoading && (
-                        <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      )}
-                      {isLoading ? "Saving..." : "Save"}
-                    </button>
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="btn-outline-primary flex items-center gap-2"
+                  onClick={() => {
+                    submitActionRef.current = "duplicate";
+                  }}
+                >
+                  {isLoading && submitActionRef.current === "duplicate" && (
+                    <span className="h-4 w-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
                   )}
-                </div>
-              )}
+                  Save & Duplicate
+                </button>
+
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="btn-outline-primary flex items-center gap-2"
+                  onClick={() => {
+                    submitActionRef.current = "addAnother";
+                  }}
+                >
+                  {isLoading && submitActionRef.current === "addAnother" && (
+                    <span className="h-4 w-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                  )}
+                  Save & Add Another
+                </button>
+
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="btn-primary flex items-center gap-2"
+                  onClick={() => {
+                    submitActionRef.current = "viewProducts";
+                  }}
+                >
+                  {isLoading && submitActionRef.current === "viewProducts" && (
+                    <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  )}
+                  {isLoading ? "Saving..." : "Save & View Products"}
+                </button>
+              </div>
             </form>
           </FormProvider>
         </div>
