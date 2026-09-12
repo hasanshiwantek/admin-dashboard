@@ -213,7 +213,7 @@ const AllOrders = () => {
     {
       label: "Manual Verification Required",
       value: "Manual Verification Required",
-      color: "bg-[##E7A0AE]",
+      color: "bg-[#E7A0AE]",
     },
     {
       label: "Partially Refunded",
