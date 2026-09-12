@@ -23,6 +23,7 @@ export default function AddAddress() {
     const dispatch = useAppDispatch();
     const [loading, setLoading] = useState(false);
     const [saveAndAddAnother, setSaveAndAddAnother] = useState(false);
+    const [errors, setErrors] = useState<Record<string, string>>({});
     const countryList = Country.getAllCountries().map((c) => ({
         name: c.name,
         code: c.isoCode,
@@ -62,10 +63,42 @@ export default function AddAddress() {
 
     const updateField = (field: string, value: any) => {
         setForm((prev) => ({ ...prev, [field]: value }));
+
+        if (value?.toString().trim()) {
+            setErrors((prev) => {
+                const next = { ...prev };
+                delete next[field];
+                return next;
+            });
+        }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        const newErrors: Record<string, string> = {};
+
+        if (!form.first_name.trim()) {
+            newErrors.first_name = "First name is required";
+        }
+        if (!form.last_name.trim()) {
+            newErrors.last_name = "Last name is required";
+        }
+        if (!form.address_line_1.trim()) {
+            newErrors.address_line_1 = "Address line 1 is required";
+        }
+        if (!form.city.trim()) {
+            newErrors.city = "City is required";
+        }
+        if (!form.country) {
+            newErrors.country = "Country is required";
+        }
+
+        setErrors(newErrors);
+
+        if (Object.keys(newErrors).length > 0) {
+            return;
+        }
 
         const payload = {
             customer_id: Number(customerId),
@@ -105,6 +138,7 @@ export default function AddAddress() {
                         is_default: false,
                     });
                     setSaveAndAddAnother(false);
+                    setErrors({});
                 } else {
                     router.back(); // go back to customer edit page
                 }
@@ -137,9 +171,14 @@ export default function AddAddress() {
                                 <Input
                                     value={form.first_name}
                                     onChange={(e) => updateField("first_name", e.target.value)}
-                                    required
-                                    className="h-12 max-w-none rounded-sm "
+                                    className={`h-12 max-w-none rounded-sm ${errors.first_name ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                                 />
+                                {errors.first_name && (
+                                    <p className="mt-2 flex items-center gap-1.5 text-[12px] !text-red-500">
+                                        <span className="flex h-[18px] w-[18px] items-center justify-center rounded-full bg-red-500 text-[11px] font-bold !text-white">!</span>
+                                        {errors.first_name}
+                                    </p>
+                                )}
                             </div>
                             <div>
                                 <Label className="text-[15px] text-[#313440] mb-1.5 block">
@@ -148,9 +187,14 @@ export default function AddAddress() {
                                 <Input
                                     value={form.last_name}
                                     onChange={(e) => updateField("last_name", e.target.value)}
-                                    required
-                                    className="h-12 max-w-none w-full"
+                                    className={`h-12 max-w-none w-full ${errors.last_name ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                                 />
+                                {errors.last_name && (
+                                    <p className="mt-2 flex items-center gap-1.5 text-[12px] !text-red-500">
+                                        <span className="flex h-[18px] w-[18px] items-center justify-center rounded-full bg-red-500 text-[11px] font-bold !text-white">!</span>
+                                        {errors.last_name}
+                                    </p>
+                                )}
                             </div>
                         </div>
 
@@ -186,9 +230,14 @@ export default function AddAddress() {
                             <Input
                                 value={form.address_line_1}
                                 onChange={(e) => updateField("address_line_1", e.target.value)}
-                                required
-                                className="h-12 max-w-none w-full"
+                                className={`h-12 max-w-none w-full ${errors.address_line_1 ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                             />
+                            {errors.address_line_1 && (
+                                <p className="mt-2 flex items-center gap-1.5 text-[12px] !text-red-500">
+                                    <span className="flex h-[18px] w-[18px] items-center justify-center rounded-full bg-red-500 text-[11px] font-bold !text-white">!</span>
+                                    {errors.address_line_1}
+                                </p>
+                            )}
                         </div>
 
                         {/* Address Line 2 */}
@@ -212,9 +261,14 @@ export default function AddAddress() {
                                 <Input
                                     value={form.city}
                                     onChange={(e) => updateField("city", e.target.value)}
-                                    required
-                                    className="h-12 max-w-none w-full"
+                                    className={`h-12 max-w-none w-full ${errors.city ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                                 />
+                                {errors.city && (
+                                    <p className="mt-2 flex items-center gap-1.5 text-[12px] !text-red-500">
+                                        <span className="flex h-[18px] w-[18px] items-center justify-center rounded-full bg-red-500 text-[11px] font-bold !text-white">!</span>
+                                        {errors.city}
+                                    </p>
+                                )}
                             </div>
                             <div>
                                 <Label className="text-[15px]  text-[#313440] mb-1.5 block">
@@ -252,7 +306,7 @@ export default function AddAddress() {
                                         updateField("state", ""); // clear state when country changes
                                     }}
                                 >
-                                    <SelectTrigger className="h-12 max-w-none w-full">
+                                    <SelectTrigger className={`h-12 max-w-none w-full ${errors.country ? "border-red-500 focus:ring-red-500" : ""}`}>
                                         <SelectValue placeholder="Choose country" />
                                     </SelectTrigger>
                                     <SelectContent className="max-h-72 overflow-y-auto">
@@ -263,6 +317,12 @@ export default function AddAddress() {
                                         ))}
                                     </SelectContent>
                                 </Select>
+                                {errors.country && (
+                                    <p className="mt-2 flex items-center gap-1.5 text-[12px] !text-red-500">
+                                        <span className="flex h-[18px] w-[18px] items-center justify-center rounded-full bg-red-500 text-[11px] font-bold !text-white">!</span>
+                                        {errors.country}
+                                    </p>
+                                )}
                             </div>
                             <div>
                                 <Label className="text-[15px]  text-[#313440] mb-1.5 block">
