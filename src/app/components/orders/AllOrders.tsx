@@ -1826,22 +1826,22 @@ const AllOrders = () => {
                                               {item?.optionSet?.title}
                                             </p>
                                             <p className="text-sm mt-1">
-                                              {/* <strong>Model:</strong>{" "} */}
                                               {item?.sku}
                                               <br />
-                                              <strong>Brand:</strong>{" "}
-                                              {item?.brand?.name ||
-                                                item?.brand ||
-                                                "N/A"}
+
+                                              {item?.brand?.name && <>
+                                                <strong>Brand:</strong>{" "}
+                                                {item?.brand?.name}
+                                              </>}
                                             </p>
                                           </div>
 
-                                          {/* <div className="text-sm font-medium whitespace-nowrap">
-                                          £
-                                          {(item.price * item.quantity).toFixed(
-                                            2
-                                          )}
-                                        </div> */}
+                                          <div className="font-medium whitespace-nowrap">
+
+                                            ${(item.price * item.quantity).toFixed(
+                                              2
+                                            )}
+                                          </div>
                                         </div>
                                       ),
                                     )}
