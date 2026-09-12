@@ -10,12 +10,7 @@ import AddCustomProductModal from "../AddCustomProductModal";
 import ProductSelectModal from "../ProductSelectModal";
 
 export default function StepTwo({ step, setStep }: any) {
-  const {
-    register,
-    setValue,
-    handleSubmit,
-    control,
-  } = useFormContext();
+  const { register, setValue, handleSubmit, control } = useFormContext();
 
   const watchedProducts = useWatch({
     control,
@@ -39,7 +34,7 @@ export default function StepTwo({ step, setStep }: any) {
     setSelectedProducts((prev) =>
       prev.find((p) => p.id === product.id)
         ? prev
-        : [...prev, { ...product, quantity: 1 }]
+        : [...prev, { ...product, quantity: 1 }],
     );
   };
 
@@ -66,15 +61,15 @@ export default function StepTwo({ step, setStep }: any) {
   const handleQtyChange = (id: number, quantity: number) => {
     setSelectedProducts((prev) =>
       prev.map((p) =>
-        p.id === id ? { ...p, quantity: Math.max(quantity, 1) } : p
-      )
+        p.id === id ? { ...p, quantity: Math.max(quantity, 1) } : p,
+      ),
     );
   };
 
   const handlePriceChange = (id: number | string, price: number) => {
     setSelectedProducts((prev) => {
       const next = prev.map((p) =>
-        p.id === id ? { ...p, price: Number(price) } : p
+        p.id === id ? { ...p, price: Number(price) } : p,
       );
       setValue("selectedProducts", next, { shouldDirty: true });
       return next;
@@ -95,14 +90,12 @@ export default function StepTwo({ step, setStep }: any) {
         <h1 className="!text-4xl !font-bold">Add Products</h1>
 
         <div className="bg-white p-5 flex justify-between gap-10 items-center">
-          <div className="flex items-center gap-2 w-full">
+          <div className="flex items-center gap-2 ">
             <Label>Search</Label>
             <ProductSearchInput onSelect={handleAddProduct} />
-            {/* <AddCustomProductModal onAdd={handleAddCustomProduct} /> */}
           </div>
 
           <div className="flex items-center gap-2">
-            {/* <span>or</span> */}
             <button
               className="btn-outline-primary !whitespace-nowrap"
               type="button"
