@@ -34,8 +34,6 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
 
   const onSubmit = async () => {
     const values = getValues(); // ✅ collect all step data
-    console.log("values", values, values?.shipping);
-
     const isNewCustomer = !values.selectedCustomer?.id;
     const isDraft = values.paymentMethod === "draft";
     const manualDiscount = Number(values.manualDiscount || 0);
