@@ -105,28 +105,32 @@ export default function StepTwo({ step, setStep }: any) {
       <div className="space-y-6 p-10 pb-26">
         <h1 className="!text-4xl !font-bold">Add Products</h1>
 
-        <div className="bg-white p-5 flex justify-between gap-10 items-center">
-          <div className="flex items-center gap-2 w-full">
-            <Label>Search</Label>
-            <ProductSearchInput
-              allProducts={allProducts}
-              onSelect={handleAddProduct}
-              register={register}
-            />
-            <AddCustomProductModal onAdd={handleAddCustomProduct} />
-          </div>
+      <div className="bg-white p-5 flex justify-between gap-10 items-center">
+  <div className="flex items-center gap-2">
+    <Label>Search</Label>
 
-          <div className="flex items-center gap-2">
-            <span>or</span>
-            <button
-              className="btn-outline-primary !whitespace-nowrap"
-              type="button"
-              onClick={() => setShowModal(true)}
-            >
-              Browse Categories
-            </button>
-          </div>
-        </div>
+    <ProductSearchInput
+      allProducts={allProducts}
+      onSelect={handleAddProduct}
+      register={register}
+    />
+
+   
+  </div>
+
+  <div className="flex items-center gap-2">
+     <AddCustomProductModal onAdd={handleAddCustomProduct} />
+    <span>or</span>
+
+    <button
+      className="btn-outline-primary !whitespace-nowrap"
+      type="button"
+      onClick={() => setShowModal(true)}
+    >
+      Browse Categories
+    </button>
+  </div>
+</div>
 
         {selectedProducts?.length > 0 && (
           <ProductTable
