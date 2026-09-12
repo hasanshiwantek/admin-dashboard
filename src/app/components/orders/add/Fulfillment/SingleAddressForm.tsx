@@ -319,47 +319,63 @@ export default function SingleAddressForm() {
               ) : customerAddresses.length > 0 ? (
                 <div className="max-h-[600px] overflow-y-auto pr-2 space-y-4">
                   {customerAddresses.map((address: any) => (
-                    <div key={address.id} className="border p-5 bg-gray-100 rounded-md">
-                      <div className="space-y-2">
-                        <div className="font-semibold text-2xl">
-                          {address.first_name} {address.last_name}
+                   <div
+                          key={address.id}
+                          className="relative w-full max-w-[470px] bg-[#f5f6f8] px-5 py-2.5 rounded-sm pt-2"
+                        >
+                          <div className="flex items-start gap-2.5">
+                            {/* Address Details */}
+                            <div className="min-w-0 pr-24">
+                              <div className="text-[15px] leading-[21px] font-medium text-[#172033] mb-1">
+                                {address.first_name} {address.last_name}
+                              </div>
+
+                              {address.company_name && (
+                                <div className="text-[15px] leading-[21px] text-[#172033] mb-1">
+                                  {address.company_name}
+                                </div>
+                              )}
+
+                              {address.address_line_1 && (
+                                <div className="text-[15px] leading-[21px] text-[#172033] mb-1">
+                                  {address.address_line_1}
+                                </div>
+                              )}
+
+                              {address.address_line_2 && (
+                                <div className="text-[15px] leading-[21px] text-[#172033]">
+                                  {address.address_line_2}
+                                </div>
+                              )}
+
+                              {(address.city ||
+                                address.state ||
+                                address.zip) && (
+                                <div className="text-[15px] leading-[21px] text-[#172033]">
+                                  {address.city}
+                                  {address.city && address.state ? ", " : ""}
+                                  {address.state}
+                                  {address.zip ? `, ${address.zip}` : ""}
+                                </div>
+                              )}
+
+                              {address.country && (
+                                <div className="text-[15px] leading-[21px] text-[#172033] mb-1">
+                                  {address.country}
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Use this address */}
+                            <button
+                              type="button"
+                              onClick={() => handleUseAddress(address)}
+                              className="absolute right-3 top-3 text-[14px] text-[#536dfe] whitespace-nowrap"
+                            >
+                              Use this address
+                            </button>
+                          </div>
                         </div>
-                        {address.company_name && (
-                          <div className="text-gray-800 text-xl">{address.company_name}</div>
-                        )}
-                        {address.phone_number && (
-                          <div className="text-gray-800 text-xl">{address.phone_number}</div>
-                        )}
-                        {address.address_line_1 && (
-                          <div className="text-gray-800 text-xl">{address.address_line_1}</div>
-                        )}
-                        {address.address_line_2 && (
-                          <div className="text-gray-800 text-xl">{address.address_line_2}</div>
-                        )}
-                        {address.city && (
-                          <div className="text-gray-800 text-xl">{address.city}</div>
-                        )}
-                        {address.state && (
-                          <div className="text-gray-800 text-xl">{address.state}</div>
-                        )}
-                        {address.zip && (
-                          <div className="text-gray-800 text-xl">{address.zip}</div>
-                        )}
-                        {address.country && (
-                          <div className="text-gray-800 text-xl">{address.country}</div>
-                        )}
-                        {address.address_type && (
-                          <div className="text-gray-800 text-xl">{address.address_type}</div>
-                        )}
-                      </div>
-                      <button
-                        type="button"
-                        className="btn-primary mt-4 w-full"
-                        onClick={() => handleUseAddress(address)}
-                      >
-                        Use this address
-                      </button>
-                    </div>
                   ))}
                 </div>
               ) : (

@@ -48,11 +48,13 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
   const router = useRouter();
   const dispatch = useDispatch<any>();
 
-  const [customerAddresses, setCustomerAddresses] = useState<CustomerAddress[]>([]);
+  const [customerAddresses, setCustomerAddresses] = useState<CustomerAddress[]>(
+    [],
+  );
   const [pendingState, setPendingState] = useState("");
   const [loadingAddresses, setLoadingAddresses] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(
-    watch("selectedCustomer") || null
+    watch("selectedCustomer") || null,
   );
 
   const orderType = watch("orderType") || "existing";
@@ -81,7 +83,7 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
     try {
       setLoadingAddresses(true);
       const response = await dispatch(
-        fetchCustomerAddresses({ customerId })
+        fetchCustomerAddresses({ customerId }),
       ).unwrap();
       setCustomerAddresses(response?.data?.customer_addresses || []);
     } catch (error) {
@@ -124,16 +126,16 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
 
   const onSubmit = () => {
     if (orderType === "existing" && !selectedCustomer) {
-      toast.error("Please select a customer before proceeding.")
+      toast.error("Please select a customer before proceeding.");
       return;
     }
 
     if (!billingCountry) {
-      toast.error("Please select a Country before proceeding.")
+      toast.error("Please select a Country before proceeding.");
       return;
     }
     if (!billingState) {
-      toast.error("Please select a State before proceeding.")
+      toast.error("Please select a State before proceeding.");
       return;
     }
     setStep(step + 1);
@@ -205,7 +207,7 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
                   setValue("selectedCustomer", safeCustomer);
                   setValue(
                     "search",
-                    `${safeCustomer.firstName || ""} ${safeCustomer.lastName || ""}`.trim()
+                    `${safeCustomer.firstName || ""} ${safeCustomer.lastName || ""}`.trim(),
                   );
                   await loadAddresses(safeCustomer);
                 }}
@@ -248,7 +250,10 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
                   )}
                 </div>
                 <div>
-                  <Label className="2xl:!text-2xl" htmlFor="password_confirmation">
+                  <Label
+                    className="2xl:!text-2xl"
+                    htmlFor="password_confirmation"
+                  >
                     Confirm Password
                   </Label>
                   <Input
@@ -263,12 +268,14 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
                     })}
                     id="password_confirmation"
                   />
-                  {typeof errors.password_confirmation?.message === "string" && (
-                    <p className="!text-red-500 text-sm">
-                      {errors.password_confirmation.message}
-                    </p>
-                  )}
+                  {typeof errors.password_confirmation?.message ===
+                    "string" && (
+                      <p className="!text-red-500 text-sm">
+                        {errors.password_confirmation.message}
+                      </p>
+                    )}
                 </div>
+
                 {/* <div className="flex items-center space-x-2">
                   <Checkbox
                     id="exclusiveOffers"
@@ -302,7 +309,9 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
           )}
 
           <div className="mt-4">
-            <span className="2xl:!text-2xl font-medium">Selected customer: </span>
+            <span className="2xl:!text-2xl font-medium">
+              Selected customer:{" "}
+            </span>
             {orderType === "existing" ? (
               selectedCustomer ? (
                 <span className="text-blue-600 2xl:!text-2xl">
@@ -352,14 +361,22 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
                   Company Name{" "}
                   <span className="text-gray-400 text-xs">(Optional)</span>
                 </Label>
-                <Input {...register("billingCompanyName")} id="companyName" className="mt-1" />
+                <Input
+                  {...register("billingCompanyName")}
+                  id="companyName"
+                  className="mt-1"
+                />
               </div>
               <div>
                 <Label className="2xl:!text-2xl" htmlFor="phoneNumber">
                   Phone Number{" "}
                   <span className="text-gray-400 text-xs">(Optional)</span>
                 </Label>
-                <Input {...register("billingPhoneNumber")} id="phoneNumber" className="mt-1" />
+                <Input
+                  {...register("billingPhoneNumber")}
+                  id="phoneNumber"
+                  className="mt-1"
+                />
               </div>
               <div>
                 <Label className="2xl:!text-2xl" htmlFor="address1">
@@ -377,7 +394,11 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
                   Address Line 2{" "}
                   <span className="text-gray-400 text-xs">(Optional)</span>
                 </Label>
-                <Input {...register("billingAddress2")} id="address2" className="mt-1" />
+                <Input
+                  {...register("billingAddress2")}
+                  id="address2"
+                  className="mt-1"
+                />
               </div>
               <div>
                 <Label className="2xl:!text-2xl" htmlFor="city">
@@ -434,7 +455,12 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
                 <Label className="2xl:!text-2xl" htmlFor="zip">
                   Zip/Postcode
                 </Label>
-                <Input required {...register("billingZip")} id="zip" className="mt-1" />
+                <Input
+                  required
+                  {...register("billingZip")}
+                  id="zip"
+                  className="mt-1"
+                />
               </div>
             </div>
 
@@ -447,54 +473,72 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
                       Loading addresses...
                     </div>
                   ) : customerAddresses.length > 0 ? (
-                    <div className="max-h-[600px] overflow-y-auto pr-2 space-y-4">
+                    <div className="max-h-[600px] overflow-y-auto pr-2 space-y-4 pt-2">
                       {customerAddresses.map((address) => (
-                        <div key={address.id} className="border p-5 bg-gray-100 rounded-md">
-                          <div className="space-y-2">
-                            <div className="font-semibold text-2xl">
-                              {address.first_name} {address.last_name}
+                        <div
+                          key={address.id}
+                          className="relative w-full max-w-[470px] bg-[#f5f6f8] px-5 py-2.5 rounded-sm pt-2"
+                        >
+                          <div className="flex items-start gap-2.5">
+                            {/* Address Details */}
+                            <div className="min-w-0 pr-24">
+                              <div className="text-[15px] leading-[21px] font-medium text-[#172033] mb-1">
+                                {address.first_name} {address.last_name}
+                              </div>
+
+                              {address.company_name && (
+                                <div className="text-[15px] leading-[21px] text-[#172033] mb-1">
+                                  {address.company_name}
+                                </div>
+                              )}
+
+                              {address.address_line_1 && (
+                                <div className="text-[15px] leading-[21px] text-[#172033] mb-1">
+                                  {address.address_line_1}
+                                </div>
+                              )}
+
+                              {address.address_line_2 && (
+                                <div className="text-[15px] leading-[21px] text-[#172033]">
+                                  {address.address_line_2}
+                                </div>
+                              )}
+
+                              {(address.city ||
+                                address.state ||
+                                address.zip) && (
+                                  <div className="text-[15px] leading-[21px] text-[#172033]">
+                                    {address.city}
+                                    {address.city && address.state ? ", " : ""}
+                                    {address.state}
+                                    {address.zip ? `, ${address.zip}` : ""}
+                                  </div>
+                                )}
+
+                              {address.country && (
+                                <div className="text-[15px] leading-[21px] text-[#172033] mb-1">
+                                  {address.country}
+                                </div>
+                              )}
                             </div>
-                            {address.company_name && (
-                              <div className="text-gray-800 text-xl">{address.company_name}</div>
-                            )}
-                            {address.phone_number && (
-                              <div className="text-gray-800 text-xl">{address.phone_number}</div>
-                            )}
-                            {address.address_line_1 && (
-                              <div className="text-gray-800 text-xl">{address.address_line_1}</div>
-                            )}
-                            {address.address_line_2 && (
-                              <div className="text-gray-800 text-xl">{address.address_line_2}</div>
-                            )}
-                            {address.city && (
-                              <div className="text-gray-800 text-xl">{address.city}</div>
-                            )}
-                            {address.state && (
-                              <div className="text-gray-800 text-xl">{address.state}</div>
-                            )}
-                            {address.zip && (
-                              <div className="text-gray-800 text-xl">{address.zip}</div>
-                            )}
-                            {address.country && (
-                              <div className="text-gray-800 text-xl">{address.country}</div>
-                            )}
-                            {address.address_type && (
-                              <div className="text-gray-800 text-xl">{address.address_type}</div>
-                            )}
+
+                            {/* Use this address */}
+                            <button
+                              type="button"
+                              onClick={() => handleUseAddress(address)}
+                              className="absolute right-3 top-3 text-[14px] text-[#536dfe] whitespace-nowrap"
+                            >
+                              Use this address
+                            </button>
                           </div>
-                          <button
-                            type="button"
-                            className="btn-primary mt-4 w-full"
-                            onClick={() => handleUseAddress(address)}
-                          >
-                            Use this address
-                          </button>
                         </div>
                       ))}
                     </div>
                   ) : (
                     <div className="border rounded-md p-6 bg-gray-100 text-center">
-                      <p className="text-gray-500 text-xl">No saved addresses found.</p>
+                      <p className="text-gray-500 text-xl">
+                        No saved addresses found.
+                      </p>
                     </div>
                   )}
                 </div>
@@ -503,7 +547,11 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
           </div>
 
           <div className="flex items-center space-x-2 mt-4">
-            <Checkbox {...register("saveAddress")} id="saveAddress" defaultChecked />
+            <Checkbox
+              {...register("saveAddress")}
+              id="saveAddress"
+              defaultChecked
+            />
             <Label className="2xl:!text-2xl" htmlFor="saveAddress">
               Save to customer’s address book
             </Label>
@@ -512,7 +560,11 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
       </div>
 
       <div className="sticky bottom-0 w-full border-t p-6 bg-white flex justify-end gap-4">
-        <button type="button" onClick={handleCancel} className="btn-outline-primary">
+        <button
+          type="button"
+          onClick={handleCancel}
+          className="btn-outline-primary"
+        >
           Cancel
         </button>
         <button type="submit" className="btn-primary">
