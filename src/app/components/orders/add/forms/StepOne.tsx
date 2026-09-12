@@ -270,13 +270,13 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
                   />
                   {typeof errors.password_confirmation?.message ===
                     "string" && (
-                    <p className="!text-red-500 text-sm">
-                      {errors.password_confirmation.message}
-                    </p>
-                  )}
+                      <p className="!text-red-500 text-sm">
+                        {errors.password_confirmation.message}
+                      </p>
+                    )}
                 </div>
 
-                <div className="flex items-center space-x-2">
+                {/* <div className="flex items-center space-x-2">
                   <Checkbox
                     id="exclusiveOffers"
                     {...register("exclusiveOffers")}
@@ -303,7 +303,7 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
                       </SelectItem>
                     </SelectContent>
                   </Select>
-                </div>
+                </div> */}
               </div>
             </div>
           )}
@@ -507,13 +507,13 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
                               {(address.city ||
                                 address.state ||
                                 address.zip) && (
-                                <div className="text-[15px] leading-[21px] text-[#172033]">
-                                  {address.city}
-                                  {address.city && address.state ? ", " : ""}
-                                  {address.state}
-                                  {address.zip ? `, ${address.zip}` : ""}
-                                </div>
-                              )}
+                                  <div className="text-[15px] leading-[21px] text-[#172033]">
+                                    {address.city}
+                                    {address.city && address.state ? ", " : ""}
+                                    {address.state}
+                                    {address.zip ? `, ${address.zip}` : ""}
+                                  </div>
+                                )}
 
                               {address.country && (
                                 <div className="text-[15px] leading-[21px] text-[#172033] mb-1">

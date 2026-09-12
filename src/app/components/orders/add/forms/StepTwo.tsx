@@ -1,27 +1,16 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
-import { fetchAllProducts } from "@/redux/slices/productSlice";
+import { useFormContext, useWatch } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 import ProductSearchInput from "../ProductSearchInput";
 import ProductTable from "../ProductTable";
 import { Label } from "@/components/ui/label";
 import AddCustomProductModal from "../AddCustomProductModal";
 import ProductSelectModal from "../ProductSelectModal";
-import { useRouter } from "next/navigation";
-import { useFormContext, useWatch } from "react-hook-form";
-import { toast } from "react-toastify";
 
 export default function StepTwo({ step, setStep }: any) {
-  const dispatch = useAppDispatch();
-  const Products = useAppSelector((state: any) => state.product.products);
-  const allProducts = Products?.data;
-
-  const {
-    register,
-    setValue,
-    handleSubmit,
-    control,
-  } = useFormContext();
+  const { register, setValue, handleSubmit, control } = useFormContext();
 
   const watchedProducts = useWatch({
     control,
@@ -33,17 +22,10 @@ export default function StepTwo({ step, setStep }: any) {
   const [showModal, setShowModal] = useState(false);
   const router = useRouter();
 
-  // Sync form data → local state on mount
   useEffect(() => {
     setSelectedProducts(watchedProducts || []);
   }, []);
 
-  // Fetch products from API
-  useEffect(() => {
-    dispatch(fetchAllProducts({ page: 1, pageSize: 100 }));
-  }, [dispatch]);
-
-  // Sync local state → form data whenever changed
   useEffect(() => {
     setValue("selectedProducts", selectedProducts);
   }, [selectedProducts, setValue]);
@@ -52,7 +34,7 @@ export default function StepTwo({ step, setStep }: any) {
     setSelectedProducts((prev) =>
       prev.find((p) => p.id === product.id)
         ? prev
-        : [...prev, { ...product, quantity: 1 }]
+        : [...prev, { ...product, quantity: 1 }],
     );
   };
 
@@ -64,7 +46,7 @@ export default function StepTwo({ step, setStep }: any) {
 
   const handleProductSelect = (product: any) => {
     if (!selectedProducts.some((p) => p.id === product.id)) {
-      setSelectedProducts((prev) => [...prev, product]);
+      setSelectedProducts((prev) => [...prev, { ...product, quantity: 1 }]);
     }
   };
 
@@ -79,23 +61,25 @@ export default function StepTwo({ step, setStep }: any) {
   const handleQtyChange = (id: number, quantity: number) => {
     setSelectedProducts((prev) =>
       prev.map((p) =>
-        p.id === id ? { ...p, quantity: Math.max(quantity, 1) } : p
-      )
+        p.id === id ? { ...p, quantity: Math.max(quantity, 1) } : p,
+      ),
     );
   };
+
   const handlePriceChange = (id: number | string, price: number) => {
     setSelectedProducts((prev) => {
       const next = prev.map((p) =>
-        p.id === id ? { ...p, price: Number(price) } : p
+        p.id === id ? { ...p, price: Number(price) } : p,
       );
       setValue("selectedProducts", next, { shouldDirty: true });
       return next;
     });
   };
+
   const onSubmit = () => {
     if (!selectedProducts?.length) {
-      toast.error("Please add atleast one product")
-      return
+      toast.error("Please add atleast one product");
+      return;
     }
     setStep(step + 1);
   };
@@ -105,32 +89,22 @@ export default function StepTwo({ step, setStep }: any) {
       <div className="space-y-6 p-10 pb-26">
         <h1 className="!text-4xl !font-bold">Add Products</h1>
 
-      <div className="bg-white p-5 flex justify-between gap-10 items-center">
-  <div className="flex items-center gap-2">
-    <Label>Search</Label>
+        <div className="bg-white p-5 flex justify-between gap-10 items-center">
+          <div className="flex items-center gap-2 ">
+            <Label>Search</Label>
+            <ProductSearchInput onSelect={handleAddProduct} />
+          </div>
 
-    <ProductSearchInput
-      allProducts={allProducts}
-      onSelect={handleAddProduct}
-      register={register}
-    />
-
-   
-  </div>
-
-  <div className="flex items-center gap-2">
-     <AddCustomProductModal onAdd={handleAddCustomProduct} />
-    <span>or</span>
-
-    <button
-      className="btn-outline-primary !whitespace-nowrap"
-      type="button"
-      onClick={() => setShowModal(true)}
-    >
-      Browse Categories
-    </button>
-  </div>
-</div>
+          <div className="flex items-center gap-2">
+            <button
+              className="btn-outline-primary !whitespace-nowrap"
+              type="button"
+              onClick={() => setShowModal(true)}
+            >
+              Browse Categories
+            </button>
+          </div>
+        </div>
 
         {selectedProducts?.length > 0 && (
           <ProductTable
