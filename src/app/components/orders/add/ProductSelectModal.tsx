@@ -89,7 +89,7 @@ export default function ProductSelectModal({
   const products = productList;
 
   const handleConfirm = () => {
-    const product = products.find((p: any) => p.id === selectedProductId);
+    const product = products?.find((p: any) => p.id === selectedProductId);
     if (product) onSelectProduct(product);
     onClose();
   };
@@ -146,23 +146,6 @@ export default function ProductSelectModal({
                             {product.sku} - {product.name}
                           </span>
                         </div>
-
-                        <button
-                          type="button"
-                          className="text-blue-600 text-sm underline whitespace-nowrap"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-
-                            const availableStores = JSON.parse(localStorage.getItem("availableStores") || "[]");
-                            const selectedStoreId = Number(localStorage.getItem("storeId"));
-                            const selectedStore = availableStores.find((s: any) => s.id === selectedStoreId);
-                            if (selectedStore?.baseUrl) window.open(`${selectedStore.baseUrl}${product?.productUrl[0] == "/" ? product?.productUrl.slice(1) : product?.productUrl}`, "_blank");
-                            else alert("Store URL or Product SKU not found");
-                          }}
-                        >
-                          View
-                        </button>
                       </label>
                     );
                   })

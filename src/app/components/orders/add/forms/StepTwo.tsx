@@ -1,21 +1,15 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
-import { fetchAllProducts } from "@/redux/slices/productSlice";
+import { useFormContext, useWatch } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 import ProductSearchInput from "../ProductSearchInput";
 import ProductTable from "../ProductTable";
 import { Label } from "@/components/ui/label";
 import AddCustomProductModal from "../AddCustomProductModal";
 import ProductSelectModal from "../ProductSelectModal";
-import { useRouter } from "next/navigation";
-import { useFormContext, useWatch } from "react-hook-form";
-import { toast } from "react-toastify";
 
 export default function StepTwo({ step, setStep }: any) {
-  const dispatch = useAppDispatch();
-  const Products = useAppSelector((state: any) => state.product.products);
-  const allProducts = Products?.data;
-
   const {
     register,
     setValue,
@@ -33,17 +27,10 @@ export default function StepTwo({ step, setStep }: any) {
   const [showModal, setShowModal] = useState(false);
   const router = useRouter();
 
-  // Sync form data → local state on mount
   useEffect(() => {
     setSelectedProducts(watchedProducts || []);
   }, []);
 
-  // Fetch products from API
-  useEffect(() => {
-    dispatch(fetchAllProducts({ page: 1, pageSize: 100 }));
-  }, [dispatch]);
-
-  // Sync local state → form data whenever changed
   useEffect(() => {
     setValue("selectedProducts", selectedProducts);
   }, [selectedProducts, setValue]);
@@ -64,7 +51,7 @@ export default function StepTwo({ step, setStep }: any) {
 
   const handleProductSelect = (product: any) => {
     if (!selectedProducts.some((p) => p.id === product.id)) {
-      setSelectedProducts((prev) => [...prev, product]);
+      setSelectedProducts((prev) => [...prev, { ...product, quantity: 1 }]);
     }
   };
 
@@ -83,6 +70,7 @@ export default function StepTwo({ step, setStep }: any) {
       )
     );
   };
+
   const handlePriceChange = (id: number | string, price: number) => {
     setSelectedProducts((prev) => {
       const next = prev.map((p) =>
@@ -92,10 +80,11 @@ export default function StepTwo({ step, setStep }: any) {
       return next;
     });
   };
+
   const onSubmit = () => {
     if (!selectedProducts?.length) {
-      toast.error("Please add atleast one product")
-      return
+      toast.error("Please add atleast one product");
+      return;
     }
     setStep(step + 1);
   };
@@ -108,16 +97,12 @@ export default function StepTwo({ step, setStep }: any) {
         <div className="bg-white p-5 flex justify-between gap-10 items-center">
           <div className="flex items-center gap-2 w-full">
             <Label>Search</Label>
-            <ProductSearchInput
-              allProducts={allProducts}
-              onSelect={handleAddProduct}
-              register={register}
-            />
-            <AddCustomProductModal onAdd={handleAddCustomProduct} />
+            <ProductSearchInput onSelect={handleAddProduct} />
+            {/* <AddCustomProductModal onAdd={handleAddCustomProduct} /> */}
           </div>
 
           <div className="flex items-center gap-2">
-            <span>or</span>
+            {/* <span>or</span> */}
             <button
               className="btn-outline-primary !whitespace-nowrap"
               type="button"
