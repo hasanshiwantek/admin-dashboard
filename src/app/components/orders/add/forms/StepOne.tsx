@@ -548,9 +548,11 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
 
           <div className="flex items-center space-x-2 mt-4">
             <Checkbox
-              {...register("saveAddress")}
               id="saveAddress"
-              defaultChecked
+              checked={!!watch("saveAddress")}
+              onCheckedChange={(checked) =>
+                setValue("saveAddress", checked === true, { shouldDirty: true })
+              }
             />
             <Label className="2xl:!text-2xl" htmlFor="saveAddress">
               Save to customer’s address book
