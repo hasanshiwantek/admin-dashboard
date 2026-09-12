@@ -95,19 +95,38 @@ export default function ProductSearchInput({
           filtered.map((product) => (
             <li
               key={product?.id || product?.sku}
-              className="flex items-center justify-between gap-3 px-4 py-2 hover:bg-gray-100 text-sm"
+              className="flex items-center justify-between gap-3 px-4 py-3 hover:bg-blue-50 text-sm"
             >
               <button
                 type="button"
                 onClick={() => handleSelect(product)}
-                className="flex-1 text-left truncate cursor-pointer"
+                className="flex min-w-0 flex-1 items-center gap-3 text-left"
               >
-                {product?.name || "Unnamed Product"} – {product?.sku || "No SKU"}
+                {product?.image?.[0]?.path || product?.image ? (
+                  <img
+                    src={product?.image?.[0]?.path || product?.image}
+                    alt=""
+                    className="h-9 w-9 rounded object-cover shrink-0 bg-gray-100"
+                  />
+                ) : (
+                  <div className="h-9 w-9 rounded bg-gray-200 flex items-center justify-center shrink-0 text-gray-500">
+                    ▢
+                  </div>
+                )}
+
+                <span className="min-w-0">
+                  <span className="block truncate font-medium text-gray-900">
+                    {product?.name || "Unnamed Product"}
+                  </span>
+                  <span className="block truncate text-gray-500">
+                    {product?.sku || "No SKU"} / ${Number(product?.price || 0).toFixed(2)}
+                  </span>
+                </span>
               </button>
 
               <button
                 type="button"
-                className="text-blue-600 text-sm underline whitespace-nowrap shrink-0"
+                className="text-blue-600 text-sm font-medium whitespace-nowrap shrink-0"
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
@@ -120,11 +139,12 @@ export default function ProductSearchInput({
                     (s: any) => s.id === selectedStoreId
                   );
 
-                  const path = product?.productUrl
-                    ? product.productUrl.startsWith("/")
-                      ? product.productUrl.slice(1)
-                      : product.productUrl
-                    : "";
+                  const raw =
+                    product?.productUrl ||
+                    product?.product_url ||
+                    product?.url ||
+                    "";
+                  const path = raw.startsWith("/") ? raw.slice(1) : raw;
 
                   if (selectedStore?.baseUrl && path) {
                     window.open(`${selectedStore.baseUrl}${path}`, "_blank");
@@ -133,7 +153,7 @@ export default function ProductSearchInput({
                   }
                 }}
               >
-                View
+                View product
               </button>
             </li>
           ))
