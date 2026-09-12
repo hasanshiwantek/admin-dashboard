@@ -34,6 +34,7 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
 
   const onSubmit = async () => {
     const values = getValues(); // ✅ collect all step data
+    console.log("values", values, values?.shipping);
 
     const isNewCustomer = !values.selectedCustomer?.id;
     const isDraft = values.paymentMethod === "draft";
@@ -52,7 +53,7 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
             cardholderName: values.cardholderName,
             creditCardNo: values.creditCardNo,
             ccv2Value: values.ccv2Value,
-            expirationMonth: values.expirationMonth ? values.expirationMonth : "Jan",
+            expirationMonth: values.expirationMonth,
             expirationYear: values.expirationYear,
             emailInvoice: values.emailInvoice ?? true,
           };
@@ -85,8 +86,9 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
           "ipAddress": ipAddress,
           "couponCode": appliedCoupon?.couponCode,
           "discountAmount": appliedCoupon?.discountAmount,
-          "isSaveAddressForBilling": values.saveAddress == "on" ? true : false,
+          "isSaveAddressForBilling": values.saveAddress ? true : false,
           "isSaveAddressForShipping": values?.shipping?.saveToAddressBook ? true : false,
+          "emailInvoice": values.emailInvoice,
           manualDiscount: manualDiscount,
           "billingAddress": { //billing address is same as billing address
             firstName: values.billingFirstName || "",
@@ -222,8 +224,9 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
             "cost": Number(values.shippingMethod?.total_charge ?? values.shippingMethod?.cost ?? 0),
             "data": values.shippingMethod?.display_name || values.shippingMethod?.method || "",
           },
-          "isSaveAddressForBilling": values.saveAddress == "on" ? true : false,
+          "isSaveAddressForBilling": values.saveAddress ? true : false,
           "isSaveAddressForShipping": values?.shipping?.saveToAddressBook ? true : false,
+          "emailInvoice": values?.emailInvoice,
           products:
             values.selectedProducts?.map((product: any) => ({
               productId: product.id,
@@ -285,6 +288,8 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
       toast.error("Unexpected error. Please try again.")
     }
   };
+
+
   useEffect(() => {
     fetch("/api/get-ip")
       .then((res) => res.json())

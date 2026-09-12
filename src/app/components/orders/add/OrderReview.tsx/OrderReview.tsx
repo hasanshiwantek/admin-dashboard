@@ -25,7 +25,7 @@ import {
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { applyCoupon } from "@/redux/slices/orderSlice";
 
 // Utility arrays for Select options
@@ -53,6 +53,9 @@ export default function OrderReview({ step, setStep }: any) {
   const { appliedCoupon, loading } = useAppSelector(
     (state: any) => state.order,
   );
+  const expirationMonth = watch("expirationMonth") || months[0];
+  const expirationYear = watch("expirationYear") || currentYear.toString();
+
   const [couponCode, setCouponCode] = useState(watch("couponCode") || "");
   const [manualDiscountInput, setManualDiscountInput] = useState(
     watch("manualDiscount") ? String(watch("manualDiscount")) : ""
@@ -105,6 +108,20 @@ export default function OrderReview({ step, setStep }: any) {
     setValue("manualDiscount", amount, { shouldDirty: true });
   };
 
+  useEffect(() => {
+    if (!watch("expirationMonth")) {
+      setValue("expirationMonth", months[0]);
+    }
+    if (!watch("expirationYear")) {
+      setValue("expirationYear", currentYear.toString());
+    }
+  }, [setValue, watch]);
+
+  useEffect(() => {
+    if (getValues("emailInvoice") === undefined) {
+      setValue("emailInvoice", true);
+    }
+  }, [getValues, setValue]);
   // Function to render specific payment fields based on the selected method
   const renderPaymentFields = () => {
     const customerEmail = billing.email || billing?.selectedCustomer?.email || "customer@example.com"; // Use the actual email from the form data
@@ -158,7 +175,7 @@ export default function OrderReview({ step, setStep }: any) {
               <div className="flex-1 items-center">
                 <Label htmlFor="expirationMonth">Expiration Date:</Label>
                 <Select
-                  defaultValue={months[0]}
+                  value={expirationMonth}
                   onValueChange={(val) => setValue("expirationMonth", val)}
                 >
                   <SelectTrigger id="expirationMonth">
@@ -176,7 +193,7 @@ export default function OrderReview({ step, setStep }: any) {
 
               <div className="flex-1 mt-9">
                 <Select
-                  defaultValue={currentYear.toString()}
+                  value={expirationYear}
                   onValueChange={(val) => setValue("expirationYear", val)}
                 >
                   <SelectTrigger>
@@ -194,10 +211,13 @@ export default function OrderReview({ step, setStep }: any) {
             </div>
 
             <div className="flex items-center space-x-2 pt-4">
-              <Checkbox id="emailInvoice" defaultChecked />
+              <Checkbox id="emailInvoice"
+                checked={!!watch("emailInvoice")}
+                onCheckedChange={(checked) =>
+                  setValue("emailInvoice", checked === true, { shouldDirty: true })
+                } defaultChecked />
               <Label
                 htmlFor="emailInvoice"
-                className=""
               >
                 Email invoice to customer
                 <span className="ml-1 ">
@@ -580,7 +600,7 @@ export default function OrderReview({ step, setStep }: any) {
                   {/* <SelectItem value="cash">Manual payment</SelectItem>{" "} */}
                   <SelectItem value="stripe">Stripe</SelectItem>
                   <SelectItem value="credit_card">Credit Card</SelectItem>{" "}
-                   <SelectItem value="draft">Create draft order</SelectItem>{" "}
+                  <SelectItem value="draft">Create draft order</SelectItem>{" "}
                 </SelectContent>
               </Select>
 
