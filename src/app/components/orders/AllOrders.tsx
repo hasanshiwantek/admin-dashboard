@@ -1836,7 +1836,7 @@ const AllOrders = () => {
                                             </p>
                                           </div>
 
-                                          <div className="text-base font-medium whitespace-nowrap">
+                                          <div className="font-medium whitespace-nowrap">
 
                                             ${(item.price * item.quantity).toFixed(
                                               2
