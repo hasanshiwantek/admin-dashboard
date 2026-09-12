@@ -92,14 +92,14 @@ export const fetchAllProducts = createAsyncThunk(
 export const fetchFilterProducts = createAsyncThunk(
   "product/fetchFilterProducts",
   async (
-    { category, search }: { category: any; search: string },
+    { category, isName }: { category: any; isName: string },
     thunkAPI
   ) => {
     try {
-      const res = await axiosInstance.get("dashboard/products/products-filter?page=1&pageSize=100", {
+      const res = await axiosInstance.get("dashboard/products/products-filter", {
         params: {
           ...(category?.length ? { isCategory: Array.isArray(category) ? category.join(",") : category } : {}),
-          ...(search ? { search } : {}),
+          ...(isName ? { isName } : {}),
 
         },
       });

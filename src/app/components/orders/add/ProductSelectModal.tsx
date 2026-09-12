@@ -72,7 +72,7 @@ export default function ProductSelectModal({
       dispatch(
         fetchFilterProducts({
           category: selectedCategories?.map((id: string) => id) || [],
-          search: searchTerm,
+          isName: searchTerm,
         })
       );
     }, 300);
