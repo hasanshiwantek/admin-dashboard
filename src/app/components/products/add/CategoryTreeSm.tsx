@@ -33,11 +33,43 @@ export default function CategoryTreeSm({ name }: CategoryTreeProps) {
     dispatch(fetchCategories());
   }, [dispatch]);
 
-  const { control, setValue, getValues } = useFormContext();
+  const { control, setValue, getValues, watch } = useFormContext();
   const [openMap, setOpenMap] = useState<Record<string, boolean>>({});
   const categoriesDataRaw = allCategories?.data || [];
 
   const categories: Category[] = normalizeCategories(categoriesDataRaw);
+  const selectedIds = (watch(name) ?? []) as string[];
+
+  useEffect(() => {
+    const selected = selectedIds.map(String);
+    const nextOpenMap: Record<string, boolean> = {};
+
+    const markAncestorPath = (nodes: Category[], ancestorChain: string[] = []) => {
+      nodes.forEach((node) => {
+        const currentPath = [...ancestorChain, node.id];
+
+        if (selected.includes(node.id)) {
+          currentPath.forEach((id) => {
+            nextOpenMap[id] = true;
+          });
+        }
+
+        if (node.children?.length) {
+          markAncestorPath(node.children, currentPath);
+        }
+      });
+    };
+
+    markAncestorPath(categories);
+    setOpenMap((prev) => {
+      const merged = { ...prev, ...nextOpenMap };
+      const isSame =
+        Object.keys(prev).length === Object.keys(merged).length &&
+        Object.entries(merged).every(([key, value]) => prev[key] === value);
+
+      return isSame ? prev : merged;
+    });
+  }, [categories, name, selectedIds]);
 
   const toggleCategory = (id: string) => {
     const selected = getValues(name) || [];

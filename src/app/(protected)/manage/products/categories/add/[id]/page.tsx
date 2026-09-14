@@ -23,11 +23,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Spinner from "@/app/components/loader/Spinner";
-import { generateSlug } from "@/const/data";
 import { fetchUrlSettings } from "@/redux/slices/homeSlice";
 import { useSearchParams } from "next/navigation";
 import DescriptionEditorQuillForCat from "@/app/components/products/categories/DescriptionEditorQuillForCat";
 import { UrlSettingEnums } from "@/const/appConstants";
+import { generateSlug } from "@/lib/productUtils";
 
 type FormVals = {
   name: string;

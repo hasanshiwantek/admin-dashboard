@@ -26,11 +26,11 @@ import {
 } from "@/components/ui/select";
 import Spinner from "@/app/components/loader/Spinner";
 import { fetchUrlSettings } from "@/redux/slices/homeSlice";
-import { generateSlug } from "@/const/data";
 import { useSearchParams } from 'next/navigation';
 import DescriptionEditorQuill from "@/app/components/products/add/DescriptionEditorQuill";
 import DescriptionEditorQuillForCat from "@/app/components/products/categories/DescriptionEditorQuillForCat";
 import { UrlSettingEnums } from "@/const/appConstants";
+import { generateSlug } from "@/lib/productUtils";
 type FormVals = {
   name: string;
   slug: string;

@@ -88,24 +88,58 @@
 //   return newSelected;
 // }
 
-
-
-
-
-
-
-
-
 // Minimal types you can adjust to your actual shapes
 export type Category = { id: number; name: string };
-export type Product = { id: number; categories?: Category[] };
+export type Product = {
+  id: number;
+  categories?: Category[];
+  categoryIds?: Array<
+    | number
+    | string
+    | { id?: number | string; categoryId?: number | string; name?: string }
+  >;
+};
 
-export const isRealCategory = (c?: Category) =>
-  !!c && c.name !== "Uncategorized";
+export const isRealCategory = (
+  c?: Category | { id?: number | string; name?: string },
+) =>
+  !!c &&
+  c.name !== "Uncategorized" &&
+  c.id !== undefined &&
+  c.id !== null &&
+  c.id !== "";
 
 /** Return category IDs (as strings) for a single product, excluding "Uncategorized". */
-export const getProductCategoryIds = (p: Product): string[] =>
-  (p?.categories || []).filter(isRealCategory).map((c) => String(c.id));
+export const getProductCategoryIds = (p: Product): string[] => {
+  const categoryList = p?.categories || p?.categoryIds || [];
+
+  return (categoryList as any[])
+    .filter((item) => {
+      if (typeof item === "object" && item !== null) {
+        const candidateId = item.id ?? item.categoryId ?? item.value;
+        return (
+          candidateId !== undefined &&
+          candidateId !== null &&
+          candidateId !== "" &&
+          item.name !== "Uncategorized"
+        );
+      }
+
+      return (
+        item !== undefined &&
+        item !== null &&
+        item !== "" &&
+        item !== "Uncategorized"
+      );
+    })
+    .map((item) => {
+      if (typeof item === "object" && item !== null) {
+        return String(item.id ?? item.categoryId ?? item.value);
+      }
+
+      return String(item);
+    });
+};
 
 /** Intersection of category IDs across products. */
 export const getCommonCategoryIds = (products: Product[]): string[] => {
@@ -117,17 +151,20 @@ export const getCommonCategoryIds = (products: Product[]): string[] => {
 /** Union of category IDs across products. */
 export const getUnionCategoryIds = (products: Product[]): string[] => {
   const set = new Set<string>();
-  products.forEach((p) => getProductCategoryIds(p).forEach((id) => set.add(id)));
+  products.forEach((p) =>
+    getProductCategoryIds(p).forEach((id) => set.add(id)),
+  );
   return Array.from(set);
 };
 
 // 👉 new: numeric version (handy sometimes)
 export const getProductCategoryIdsNum = (p: Product): number[] =>
-  (p?.categories || []).filter(c => c?.name !== "Uncategorized").map(c => Number(c.id));
+  (p?.categories || [])
+    .filter((c) => c?.name !== "Uncategorized")
+    .map((c) => Number(c.id));
 
 // small util
-export const unique = <T,>(arr: T[]) => Array.from(new Set(arr));
-
+export const unique = <T>(arr: T[]) => Array.from(new Set(arr));
 
 /**
  * Derive defaults for category modal based on selection.
@@ -137,8 +174,11 @@ export const unique = <T,>(arr: T[]) => Array.from(new Set(arr));
  */
 export const deriveDefaultsForSelection = (
   products: Product[],
-  mode: "intersection" | "union" = "intersection"
+  mode: "intersection" | "union" = "intersection",
 ): string[] => {
-  if (products.length <= 1) return products[0] ? getProductCategoryIds(products[0]) : [];
-  return mode === "union" ? getUnionCategoryIds(products) : getCommonCategoryIds(products);
+  if (products.length <= 1)
+    return products[0] ? getProductCategoryIds(products[0]) : [];
+  return mode === "union"
+    ? getUnionCategoryIds(products)
+    : getCommonCategoryIds(products);
 };
