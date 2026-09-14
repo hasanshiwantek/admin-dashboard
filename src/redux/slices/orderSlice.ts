@@ -898,7 +898,7 @@ const orderSlice = createSlice({
       })
       .addCase(fetchOrderById.fulfilled, (state, action) => {
         state.loading = false;
-        state.singleOrder = action.payload.orders;
+        state.singleOrder = action.payload.data;
       })
       .addCase(shipmentByOrderId.fulfilled, (state, action) => {
         state.loading = false;
