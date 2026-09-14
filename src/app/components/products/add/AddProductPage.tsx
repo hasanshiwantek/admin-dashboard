@@ -1,14 +1,21 @@
 "use client";
-// AddProductPage.tsx
+
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import objectToFormData from "@/lib/formDataUtils";
+import { buildCopyNameSku } from "@/lib/productUtils";
+import { fetchUrlSettings } from "@/redux/slices/homeSlice";
 import {
   addProduct,
   deleteProduct,
   fetchSingleProduct,
   updateProductFormData,
 } from "@/redux/slices/productSlice";
-import { useParams, usePathname, useRouter } from "next/navigation";
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
 import React, {
   useEffect,
   useLayoutEffect,
@@ -23,6 +30,7 @@ import { HiDotsHorizontal } from "react-icons/hi";
 import BasicInfoForm from "./BasicInformation";
 import CustomFields from "./CustomFieldsSection";
 import CustomsInformation from "./CustomsInformation";
+import DescriptionEditorQuill from "./DescriptionEditorQuill";
 import Dimensions from "./Dimensions";
 import ImageVideoUploader from "./ImageVideoUploader";
 import Inventory from "./Inventory";
@@ -35,37 +43,15 @@ import Seo from "./Seo";
 import ShippingDetails from "./ShippingDetails";
 import SidebarNavigation from "./SidebarNavigation";
 import StoreFront from "./StoreFront";
-// import { updateProductFormData } from "@/redux/slices/productSlice";
-import { fetchUrlSettings } from "@/redux/slices/homeSlice";
-import { useSearchParams } from "next/navigation";
-import DescriptionEditorQuill from "./DescriptionEditorQuill";
-
-const buildCopyNameSku = (name: string, sku: string, productUrl: string) => {
-  const generateSlug = (text: string) => {
-    return text
-      .toLowerCase()
-      .trim()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "");
-  };
-  const copyName = `Copy of ${name}`;
-  return {
-    name: copyName,
-    sku: `${sku}-1`,
-    productUrl: generateSlug(copyName),
-  };
-};
 
 export default function AddProductPage() {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const exitAfterSaveRef = useRef(false);
-  const [redirectUpdateScreen, setRedirectUpdateScreen] = useState<any>(null);
   const copyAfterSaveRef = useRef(false);
   const submitActionRef = useRef<"duplicate" | "addAnother" | "viewProducts">(
     "viewProducts",
@@ -111,14 +97,9 @@ export default function AddProductPage() {
   const editProduct = useAppSelector(
     (state: any) => state.product.singleProduct,
   );
-  console.log({ editProduct });
-  // const allProducts = useAppSelector((state: any) => state.product.products);
   const [product, setProduct] = useState<any>();
-  // const product = editProduct?.data;
-  // const product = allProducts.data?.find((p: any) => p.id === Number(id));
 
   const isEdit = !!product?.id;
-  // const isEdit = !!id;
 
   useEffect(() => {
     dispatch(fetchUrlSettings("product"));
@@ -131,11 +112,11 @@ export default function AddProductPage() {
           name: copyName,
           sku: copySku,
           productUrl: copyProductUrl,
-        } = buildCopyNameSku(
-          editProduct.data.name,
-          editProduct.data.sku,
-          editProduct.data?.productUrl,
-        );
+        } = buildCopyNameSku({
+          name: editProduct.data.name,
+          sku: editProduct.data.sku,
+          hasDuplicate: Boolean(editProduct.data?.hasDuplicate),
+        });
         const updatedProduct = {
           ...editProduct.data,
           name: copyName,
@@ -282,7 +263,7 @@ export default function AddProductPage() {
           manageCustoms: data.manageCustoms ? 1 : 0,
           callForPricing: data.callForPricing ? 1 : 0,
           isRedirect: data.isRedirect ? 1 : 0,
-          isDuplicate: isDuplicate ? 1 : 0,
+          parentId: isDuplicate ? parseInt(product?.id) : undefined,
         };
 
         if (copyAfterSaveRef.current && isEdit) {
@@ -298,7 +279,11 @@ export default function AddProductPage() {
               name: copyName,
               sku: copySku,
               productUrl: copyProductUrl,
-            } = buildCopyNameSku(data.name, data.sku, data?.productUrl);
+            } = buildCopyNameSku({
+              name: data.name,
+              sku: data.sku,
+              productUrl: data?.productUrl,
+            });
             methods.reset({
               ...data,
               name: copyName,
@@ -320,7 +305,11 @@ export default function AddProductPage() {
               name: copyName,
               sku: copySku,
               productUrl: copyProductUrl,
-            } = buildCopyNameSku(data.name, data.sku, data?.productUrl);
+            } = buildCopyNameSku({
+              name: data.name,
+              sku: data.sku,
+              productUrl: data?.productUrl,
+            });
             methods.reset({
               ...data,
               name: copyName,
@@ -406,7 +395,11 @@ export default function AddProductPage() {
               name: copyName,
               sku: copySku,
               productUrl: copyProductUrl,
-            } = buildCopyNameSku(data.name, data.sku, data?.productUrl);
+            } = buildCopyNameSku({
+              name: data.name,
+              sku: data.sku,
+              productUrl: data?.productUrl,
+            });
             methods.reset({
               ...data,
               name: copyName,
@@ -428,7 +421,11 @@ export default function AddProductPage() {
               name: copyName,
               sku: copySku,
               productUrl: copyProductUrl,
-            } = buildCopyNameSku(data.name, data.sku, data?.productUrl);
+            } = buildCopyNameSku({
+              name: data.name,
+              sku: data.sku,
+              productUrl: data?.productUrl,
+            });
             methods.reset({
               ...data,
               name: copyName,
@@ -452,7 +449,10 @@ export default function AddProductPage() {
 
           if (actionCreator.fulfilled.match(result)) {
             const savedProductId = result?.payload?.data?.id ?? product?.id;
-            if (submitActionRef.current === "addAnother" || submitActionRef.current === "viewProducts") {
+            if (
+              submitActionRef.current === "addAnother" ||
+              submitActionRef.current === "viewProducts"
+            ) {
               navigateAfterSave(savedProductId);
             } else if (submitActionRef.current === "duplicate") {
               navigateAfterSave(savedProductId);
@@ -464,7 +464,7 @@ export default function AddProductPage() {
       } catch (error) {
         console.error("Unexpected error during save:", error);
       } finally {
-          setIsLoading(false);
+        setIsLoading(false);
         exitAfterSaveRef.current = false;
         submitActionRef.current = "viewProducts";
         hasUpdatedOriginalRef.current = false;
@@ -723,7 +723,7 @@ export default function AddProductPage() {
               <ShippingDetails />
               <Purchasability />
               <CustomsInformation />
-              <Seo />
+              <Seo hasDuplicate={Boolean(product?.hasDuplicate)} />
               <OpenGraph isEdit={isEdit} />
               <div className="flex justify-end gap-4 items-center fixed w-full bottom-0 right-0 bg-white/90 z-10 shadow-xs border-t p-4">
                 <button

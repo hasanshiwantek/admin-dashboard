@@ -32,6 +32,7 @@ import { useRouter, useParams } from "next/navigation";
 import DescriptionEditorQuill from "../products/add/DescriptionEditorQuill";
 import { fetchUrlSettings } from "@/redux/slices/homeSlice";
 import { generateSlug } from "@/const/data";
+import { UrlSettingEnums } from "@/const/appConstants";
 
 type FormValues = {
   pageType: string; // add this
@@ -162,12 +163,12 @@ const WebPage = () => {
 
   useEffect(() => {
     if (!isUrlManuallyEdited) {
-      if (urlSettingData?.format_type == "seo_optimized_short") {
+      if (urlSettingData?.format_type == UrlSettingEnums.SEO_OPTIMIZED_SHORT) {
         if (watchedName) {
           const slug = generateSlug(watchedName);
           setValue("pageUrl", `/${slug}`);
         }
-      } else if (urlSettingData?.format_type == "seo_optimized_long") {
+      } else if (urlSettingData?.format_type == UrlSettingEnums.SEO_OPTIMIZED_LONG) {
         if (watchedName) {
           const slug = generateSlug(watchedName);
           setValue("pageUrl", `/pages/${slug}`);
@@ -322,7 +323,7 @@ const WebPage = () => {
                     onClick={() => {
                       setIsUrlManuallyEdited(false);
                       if (
-                        urlSettingData?.format_type == "seo_optimized_short"
+                        urlSettingData?.format_type == UrlSettingEnums.SEO_OPTIMIZED_SHORT
                       ) {
                         if (watchedName) {
                           const slug = generateSlug(watchedName);

@@ -1,40 +1,44 @@
 // BasicInfoForm.tsx
-import { useFormContext } from "react-hook-form";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { HiQuestionMarkCircle } from "react-icons/hi2";
-import { useEffect, useRef, useState } from "react";
-import { generateSlug } from "@/const/data";
 import { useAppSelector } from "@/hooks/useReduxHooks";
-import { useParams, useSearchParams } from "next/navigation";
-export default function Seo() {
+import {
+  generateDuplicateProductUrl,
+  generateFormattedProductUrl,
+  normalizeProductUrl,
+} from "@/lib/productUtils";
+import { useParams } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { useFormContext } from "react-hook-form";
+import { HiQuestionMarkCircle } from "react-icons/hi2";
+
+export default function Seo({ hasDuplicate }: { hasDuplicate: boolean }) {
   const { register, setValue, watch } = useFormContext();
-  const productType = watch("productType");
   const { id } = useParams();
-  const searchParams = useSearchParams();
-  const isDuplicate = searchParams.get("isDuplicate") === "true";
   const [isUrlManuallyEdited, setIsUrlManuallyEdited] =
     useState<boolean>(false);
   const [showRedirectCheckbox, setShowRedirectCheckbox] =
     useState<boolean>(false);
   const initialDuplicateUrlRef = useRef<string>("");
-  const productUrlValue = watch("productUrl");
-  const isRedirectValue = watch("isRedirect");
+  const [productUrlValue, isRedirectValue, brandId, watchedName, watchedSku] = [
+    watch("productUrl"),
+    watch("isRedirect"),
+    watch("brandId"),
+    watch("name"),
+    watch("sku"),
+  ];
+
   const urlSettingData = useAppSelector(
     (state: any) => state.home?.urlSettingData,
   );
   const { brands } = useAppSelector((state: any) => state.product);
-  const brandId = watch("brandId");
-  const watchedName = watch("name");
-  const watchedSku = watch("sku");
   const brandName = brands?.data?.find(
     (item: any) => item?.brand?.id == brandId,
   )?.brand?.name;
@@ -46,11 +50,6 @@ export default function Seo() {
   }, [id]);
 
   useEffect(() => {
-    if (!isDuplicate) {
-      setShowRedirectCheckbox(false);
-      return;
-    }
-
     if (productUrlValue && !initialDuplicateUrlRef.current) {
       initialDuplicateUrlRef.current = productUrlValue;
     }
@@ -61,57 +60,54 @@ export default function Seo() {
 
     const hasManualRedirectChange =
       isUrlManuallyEdited && productUrlValue !== initialDuplicateUrlRef.current;
-    console.log({
-      isDuplicate,
-      showRedirectCheckbox,
-      productUrlValue,
-      initialDuplicateUrlRef,
-      isUrlManuallyEdited,
-      isRedirectValue,
-      hasManualRedirectChange,
-    });
+
     setShowRedirectCheckbox(hasManualRedirectChange);
-  }, [isDuplicate, isUrlManuallyEdited, productUrlValue]);
+  }, [isUrlManuallyEdited, productUrlValue]);
 
   useEffect(() => {
-    if (!isUrlManuallyEdited) {
-      if (urlSettingData?.format_type == "seo_optimized_short") {
-        if (watchedName) {
-          const slug = generateSlug(watchedName);
-          setValue("productUrl", `/${slug}`);
-        }
-      } else if (urlSettingData?.format_type == "seo_optimized_long") {
-        if (watchedName) {
-          const slug = generateSlug(watchedName);
-          setValue("productUrl", `/product/${slug}`);
-        }
-      }
-      const formatType = urlSettingData?.format_type;
-      const customFormat = urlSettingData?.custom_format;
+    if (isUrlManuallyEdited || hasDuplicate) return;
 
-      if (formatType === "custom" && customFormat) {
-        if (brandName || watchedName || watchedSku) {
-          const replacements = {
-            "%title%": watchedName ? generateSlug(watchedName) : "",
-            "%sku%": watchedSku ? generateSlug(watchedSku) : "",
-            "%brand%": brandName ? generateSlug(brandName) : "",
-          };
+    const productUrl = generateFormattedProductUrl({
+      formatType: urlSettingData?.format_type,
+      customFormat: urlSettingData?.custom_format,
+      name: watchedName,
+      sku: watchedSku,
+      brand: brandName,
+    });
 
-          const finalUrl = Object.entries(replacements)
-            .reduce(
-              (url, [key, value]) => url.replace(new RegExp(key, "gi"), value),
-              customFormat,
-            )
-            .replace(/%[^%]+%/g, "")
-            .replace(/\/+/g, "/")
-            .replace(/\/$/g, "");
-          if (finalUrl) {
-            setValue("productUrl", finalUrl);
-          }
-        }
-      }
+    if (productUrl) {
+      setValue("productUrl", normalizeProductUrl(productUrl));
     }
-  }, [watchedName, watchedSku, isUrlManuallyEdited, brandId]);
+  }, [
+    watchedName,
+    watchedSku,
+    brandName,
+    isUrlManuallyEdited,
+    urlSettingData?.format_type,
+    urlSettingData?.custom_format,
+  ]);
+
+  const handleResetProductUrl = () => {
+    setIsUrlManuallyEdited(false);
+
+    if (hasDuplicate) {
+      const duplicateUrl = generateDuplicateProductUrl(watchedName || "copy");
+      setValue("productUrl", normalizeProductUrl(duplicateUrl));
+      return;
+    }
+
+    const productUrl = generateFormattedProductUrl({
+      formatType: urlSettingData?.format_type,
+      customFormat: urlSettingData?.custom_format,
+      name: watchedName,
+      sku: watchedSku,
+      brand: brandName,
+    });
+
+    if (productUrl) {
+      setValue("productUrl", normalizeProductUrl(productUrl));
+    }
+  };
 
   return (
     <section id="seo" className="space-y-4 scroll-mt-20">
@@ -193,52 +189,12 @@ export default function Seo() {
               <button
                 className="btn-outline-primary"
                 type="button"
-                onClick={() => {
-                  setIsUrlManuallyEdited(false);
-                  if (urlSettingData?.format_type == "seo_optimized_short") {
-                    if (watchedName) {
-                      const slug = generateSlug(watchedName);
-                      setValue("productUrl", `/${slug}`);
-                    }
-                  } else if (
-                    urlSettingData?.format_type == "seo_optimized_long"
-                  ) {
-                    if (watchedName) {
-                      const slug = generateSlug(watchedName);
-                      setValue("productUrl", `/product/${slug}`);
-                    }
-                  }
-                  const formatType = urlSettingData?.format_type;
-                  const customFormat = urlSettingData?.custom_format;
-
-                  if (formatType === "custom" && customFormat) {
-                    if (brandName || watchedName || watchedSku) {
-                      const replacements = {
-                        "%title%": watchedName ? generateSlug(watchedName) : "",
-                        "%sku%": watchedSku ? generateSlug(watchedSku) : "",
-                        "%brand%": brandName ? generateSlug(brandName) : "",
-                      };
-
-                      const finalUrl = Object.entries(replacements)
-                        .reduce(
-                          (url, [key, value]) =>
-                            url.replace(new RegExp(key, "gi"), value),
-                          customFormat,
-                        )
-                        .replace(/%[^%]+%/g, "")
-                        .replace(/\/+/g, "/")
-                        .replace(/\/$/g, "");
-                      if (finalUrl) {
-                        setValue("productUrl", finalUrl);
-                      }
-                    }
-                  }
-                }}
+                onClick={handleResetProductUrl}
               >
                 Reset
               </button>
             </div>
-            {isDuplicate && showRedirectCheckbox && (
+            {showRedirectCheckbox && (
               <div className="mt-3 flex items-center gap-3 pl-1">
                 <Checkbox
                   id="isRedirect"

@@ -14,15 +14,8 @@ export const brandOptions = [
 // export const generateSlug = (value: string) => {
 //   return value
 //     .toLowerCase()
-//     .replace(/[#$*&@!=+%`'"|/]/g, "")   
-//     .replace(/\s+/g, "-")               
-//     .replace(/-+/g, "-")                
-//     .replace(/^-|-$/g, "");             
+//     .replace(/[#$*&@!=+%`'"|/]/g, "")
+//     .replace(/\s+/g, "-")
+//     .replace(/-+/g, "-")
+//     .replace(/^-|-$/g, "");
 // };
-export const generateSlug = (value: string) => {
-  return value
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-") // replace everything non-alphanumeric with -
-    .replace(/-+/g, "-")         // remove multiple dashes
-    .replace(/^-|-$/g, "");      // trim dashes
-};
