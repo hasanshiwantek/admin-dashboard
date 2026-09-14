@@ -1,0 +1,12 @@
+export const REGEX = {
+  // Slug
+  PRODUCT_SLUG_INVALID_CHARS: /[^a-z0-9]+/g,
+  PRODUCT_SLUG_CONSECUTIVE_HYPHENS: /-+/g,
+  PRODUCT_SLUG_EDGE_HYPHENS: /^-+|-+$/g,
+
+  // URL
+  PRODUCT_URL_PLACEHOLDER: /%[^%]+%/g,
+  PRODUCT_URL_MULTIPLE_SLASHES: /\/+/g,
+  PRODUCT_URL_TRAILING_SLASH: /\/$/g,
+  PRODUCT_URL_NORMALIZE: /^\/+|\/+$/g,
+};

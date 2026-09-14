@@ -29,6 +29,7 @@ import {
   fetchUrlSettings,
   urlSettings,
 } from "@/redux/slices/homeSlice";
+import { UrlSettingEnums } from "@/const/appConstants";
 // FormField Component
 export const FormField = ({
   label,
@@ -695,9 +696,9 @@ export const StoreSettings = ({
               };
             }
             return {
-              format_type: format === "seo-optimized-short"
-                ? "seo_optimized_short"
-                : "seo_optimized_long",
+              format_type: format === UrlSettingEnums.SEO_OPTIMIZED_SHORT
+                ? UrlSettingEnums.SEO_OPTIMIZED_SHORT
+                : UrlSettingEnums.SEO_OPTIMIZED_LONG,
             };
           })(),
 
@@ -710,9 +711,9 @@ export const StoreSettings = ({
               };
             }
             return {
-              format_type: format === "seo-optimized-short"
-                ? "seo_optimized_short"
-                : "seo_optimized_long",   // as per your requirement
+              format_type: format === UrlSettingEnums.SEO_OPTIMIZED_SHORT
+                ? UrlSettingEnums.SEO_OPTIMIZED_SHORT
+                : UrlSettingEnums.SEO_OPTIMIZED_LONG,   // as per your requirement
             };
           })(),
 
