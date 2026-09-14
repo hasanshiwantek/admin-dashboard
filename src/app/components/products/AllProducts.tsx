@@ -10,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { ActionEnums } from "@/const/appConstants";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { refetchProducts } from "@/lib/productUtils";
 import {
@@ -81,7 +82,9 @@ export default function AllProducts() {
   const [categoryModalDefaults, setCategoryModalDefaults] = useState<string[]>(
     [],
   );
-  const [categoryAction, setCategoryAction] = useState<"add" | "delete">("add");
+  const [categoryAction, setCategoryAction] = useState<
+    ActionEnums.ADD | ActionEnums.DELETE
+  >(ActionEnums.ADD);
 
   const products = allProducts?.data;
 
@@ -123,52 +126,61 @@ export default function AllProducts() {
       return 0;
     });
 
+  console.log({ filteredProducts });
+
   const handleApplyCategories = async (pickedIdsStr: string[]) => {
-    if (categoryAction === "add") {
-      // ✅ keep your existing add logic EXACTLY the same as before
-      dispatch(
-        updateProduct({
-          body: {
-            products: [
-              {
-                id: categoryProductIds,
-                fields: { categoryIds: pickedIdsStr.map(Number) },
-              },
-            ],
-          },
-        }),
-      );
-      setTimeout(
-        () => refetchProducts(dispatch, currentPage, Number(perPage)),
-        300,
-      );
-    } else if (categoryAction === "delete") {
-      const picked = pickedIdsStr.map(Number);
-      if (!picked.length) return;
+    try {
+      if (categoryAction === ActionEnums.ADD) {
+        // Wait for the API to successfully complete before refetching
+        await dispatch(
+          updateProduct({
+            body: {
+              products: [
+                {
+                  id: categoryProductIds,
+                  fields: { categoryIds: pickedIdsStr.map(Number) },
+                },
+              ],
+            },
+          }),
+        ).unwrap();
 
-      const ok = window.confirm(
-        `This will permanently delete ${picked.length} categor${
-          picked.length > 1 ? "ies" : "y"
-        } for ALL products. Continue?`,
-      );
-      if (!ok) return;
+        // API has completed successfully, so refetch is now safe
+        await refetchProducts(dispatch, currentPage, Number(perPage));
+      } else if (categoryAction === ActionEnums.DELETE) {
+        const picked = pickedIdsStr.map(Number);
 
-      await dispatch(
-        deleteProductCategory({
-          data: { productIds: categoryProductIds, categoryIds: picked },
-        }),
-      );
-      // refresh categories (and products if needed)
-      setTimeout(() => {
-        refetchProducts(dispatch, currentPage, Number(perPage));
-      }, 300);
+        if (!picked.length) return;
+
+        const ok = window.confirm(
+          `This will permanently delete ${picked.length} categor${
+            picked.length > 1 ? "ies" : "y"
+          } for ALL products. Continue?`,
+        );
+
+        if (!ok) return;
+
+        await dispatch(
+          deleteProductCategory({
+            data: {
+              productIds: categoryProductIds,
+              categoryIds: picked,
+            },
+          }),
+        ).unwrap();
+
+        // Delete API has completed successfully
+        await refetchProducts(dispatch, currentPage, Number(perPage));
+      }
+    } catch (error) {
+      console.error("Failed to update product categories:", error);
+    } finally {
+      // Cleanup
+      setCategoryModalOpen(false);
+      setCategoryProductIds([]);
+      setCategoryModalDefaults([]);
+      setSelectedProductIds([]);
     }
-
-    // cleanup
-    setCategoryModalOpen(false);
-    setCategoryProductIds([]);
-    setCategoryModalDefaults([]);
-    setSelectedProductIds([]);
   };
 
   const getDropdownActions = (product: any) => [
@@ -184,7 +196,7 @@ export default function AllProducts() {
       label: "Add to categories",
       onClick: () => {
         const defaults = getProductCategoryIds(product); // preselect current of that row
-        setCategoryAction("add");
+        setCategoryAction(ActionEnums.ADD);
         setCategoryProductIds([product.id]);
         setCategoryModalDefaults(defaults);
         setCategoryModalOpen(true);
@@ -194,8 +206,9 @@ export default function AllProducts() {
     {
       label: "Remove from categories",
       onClick: () => {
+        console.log({ product });
         const defaults = getProductCategoryIds(product); // preselect current categories to delete
-        setCategoryAction("delete");
+        setCategoryAction(ActionEnums.DELETE);
         setCategoryProductIds([product.id]); // not used by delete, but harmless
         setCategoryModalDefaults(defaults);
         setCategoryModalOpen(true);
@@ -356,7 +369,7 @@ export default function AllProducts() {
           selectedProductIds.includes(p.id),
         );
         const defaults = deriveDefaultsForSelection(selected, "intersection"); // safe prefill
-        setCategoryAction("add");
+        setCategoryAction(ActionEnums.ADD);
         setCategoryProductIds(selectedProductIds);
         setCategoryModalDefaults(defaults);
         setCategoryModalOpen(true);
@@ -371,7 +384,7 @@ export default function AllProducts() {
         );
         // show union so user can see every category used across selection
         const defaults = deriveDefaultsForSelection(selected, "union");
-        setCategoryAction("delete");
+        setCategoryAction(ActionEnums.DELETE);
         setCategoryProductIds(selectedProductIds); // not needed for delete, but fine
         setCategoryModalDefaults(defaults);
         setCategoryModalOpen(true);
@@ -838,171 +851,184 @@ export default function AllProducts() {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  filteredProducts?.map((product: any) => (
-                    <TableRow key={product.id}>
-                      <TableCell>
-                        <Checkbox
-                          checked={selectedProductIds.includes(product.id)}
-                          onCheckedChange={(checked: boolean) =>
-                            handleProductCheckboxChange(product.id, checked)
-                          }
-                        />
-                      </TableCell>
-                      <TableCell className="flex items-center gap-2 ">
-                        {(product.image ||
-                          product.image?.[1]?.path ||
-                          product.image?.[0]?.path) && (
-                          <Image
-                            src={
-                              product.image?.[1]?.path ||
-                              product.image?.[0]?.path ||
-                              "/default-product-image.svg"
+                  filteredProducts?.map((product: any) => {
+                    console.log({
+                      product,
+                      filter:
+                        product?.categoryIds
+                          ?.filter((cat: any) => cat.name !== "Uncategorized")
+                          .map((cat: any) => cat.name)
+                          .join(", ") || "-",
+                    });
+                    return (
+                      <TableRow key={product.id}>
+                        <TableCell>
+                          <Checkbox
+                            checked={selectedProductIds.includes(product.id)}
+                            onCheckedChange={(checked: boolean) =>
+                              handleProductCheckboxChange(product.id, checked)
                             }
-                            alt={product.name}
-                            width={60}
-                            height={60}
-                            className="rounded !border object-contain !border-gray-300 p-2 shrink-0 w-28 h-24"
                           />
-                        )}
-                        <span
-                          onClick={() => {
-                            router.push(`/manage/products/edit/${product.id}`);
-                          }}
-                          className="!text-blue-600 hover:underline !text-xl 2xl:!text-[1.6rem] !font-medium capitalize  cursor-pointer whitespace-normal break-words leading-snug max-w-[350px]"
-                        >
-                          {product.name}
-                        </span>
-                      </TableCell>
+                        </TableCell>
+                        <TableCell className="flex items-center gap-2 ">
+                          {(product.image ||
+                            product.image?.[1]?.path ||
+                            product.image?.[0]?.path) && (
+                            <Image
+                              src={
+                                product.image?.[1]?.path ||
+                                product.image?.[0]?.path ||
+                                "/default-product-image.svg"
+                              }
+                              alt={product.name}
+                              width={60}
+                              height={60}
+                              className="rounded !border object-contain !border-gray-300 p-2 shrink-0 w-28 h-24"
+                            />
+                          )}
+                          <span
+                            onClick={() => {
+                              router.push(
+                                `/manage/products/edit/${product.id}`,
+                              );
+                            }}
+                            className="!text-blue-600 hover:underline !text-xl 2xl:!text-[1.6rem] !font-medium capitalize  cursor-pointer whitespace-normal break-words leading-snug max-w-[350px]"
+                          >
+                            {product.name}
+                          </span>
+                        </TableCell>
 
-                      <TableCell className="relative  mx-4 ">
-                        <FeaturedToggle
-                          productId={product.id}
-                          isFeatured={
-                            featuredMap[product.id] ?? product.isFeatured
-                          }
-                          onChange={(id: any, value) => {
-                            setFeaturedMap((prev) => ({
-                              ...prev,
-                              [id]: value,
-                            }));
+                        <TableCell className="relative  mx-4 ">
+                          <FeaturedToggle
+                            productId={product.id}
+                            isFeatured={
+                              featuredMap[product.id] ?? product.isFeatured
+                            }
+                            onChange={(id: any, value) => {
+                              setFeaturedMap((prev) => ({
+                                ...prev,
+                                [id]: value,
+                              }));
 
-                            dispatch(
-                              updateProduct({
-                                body: {
-                                  products: [
-                                    {
-                                      id: [id],
-                                      fields: {
-                                        isFeatured: value,
-                                        // categoryIds:[1]
+                              dispatch(
+                                updateProduct({
+                                  body: {
+                                    products: [
+                                      {
+                                        id: [id],
+                                        fields: {
+                                          isFeatured: value,
+                                          // categoryIds:[1]
+                                        },
                                       },
-                                    },
-                                  ],
-                                },
-                              }),
-                            );
-                            refetchProducts(
-                              dispatch,
-                              currentPage,
-                              Number(perPage),
-                            );
-                          }}
-                        />
-                      </TableCell>
+                                    ],
+                                  },
+                                }),
+                              );
+                              refetchProducts(
+                                dispatch,
+                                currentPage,
+                                Number(perPage),
+                              );
+                            }}
+                          />
+                        </TableCell>
 
-                      <TableCell className="2xl:!text-[1.6rem]">
-                        {product.sku}
-                      </TableCell>
-                      <TableCell className="whitespace-normal break-words leading-snug 2xl:!text-[1.6rem] max-w-[300px]">
-                        {product?.categoryIds?.find(
-                          (cat: any) => cat.name !== "Uncategorized",
-                        )?.name || "-"}
-                      </TableCell>
+                        <TableCell className="2xl:!text-[1.6rem]">
+                          {product.sku}
+                        </TableCell>
+                        <TableCell className="whitespace-normal break-words leading-snug 2xl:!text-[1.6rem] max-w-[300px]">
+                          {product?.categoryIds
+                            ?.filter((cat: any) => cat.name !== "Uncategorized")
+                            .map((cat: any) => cat.name)
+                            .join(", ") || "-"}
+                        </TableCell>
 
-                      <TableCell>
-                        <EditStockSheet
-                          product={product}
-                          trigger={
-                            <div className="group hover:text-blue-600 flex items-center gap-1 hover:bg-blue-100 p-4 rounded-md cursor-pointer transition-colors">
-                              <a className="text-xl group-hover:opacity-100 2xl:!text-[1.6rem]">
-                                {product.currentStock}
-                              </a>
-                              <Pencil className="w-5 h-5 text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
-                            </div>
-                          }
-                        />
-                      </TableCell>
+                        <TableCell>
+                          <EditStockSheet
+                            product={product}
+                            trigger={
+                              <div className="group hover:text-blue-600 flex items-center gap-1 hover:bg-blue-100 p-4 rounded-md cursor-pointer transition-colors">
+                                <a className="text-xl group-hover:opacity-100 2xl:!text-[1.6rem]">
+                                  {product.currentStock}
+                                </a>
+                                <Pencil className="w-5 h-5 text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                              </div>
+                            }
+                          />
+                        </TableCell>
 
-                      <TableCell>
-                        <EditPriceSheet
-                          product={product}
-                          trigger={
-                            <div className="group hover:text-blue-600 flex items-center gap-1 hover:bg-blue-100 p-4 rounded-md cursor-pointer transition-colors">
-                              <a className="text-xl group-hover:opacity-100 2xl:!text-[1.6rem]">
-                                {product.price}
-                              </a>
-                              <Pencil className="w-5 h-5 text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
-                            </div>
-                          }
-                        />
-                      </TableCell>
+                        <TableCell>
+                          <EditPriceSheet
+                            product={product}
+                            trigger={
+                              <div className="group hover:text-blue-600 flex items-center gap-1 hover:bg-blue-100 p-4 rounded-md cursor-pointer transition-colors">
+                                <a className="text-xl group-hover:opacity-100 2xl:!text-[1.6rem]">
+                                  {product.price}
+                                </a>
+                                <Pencil className="w-5 h-5 text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                              </div>
+                            }
+                          />
+                        </TableCell>
 
-                      <TableCell className="2xl:!text-[1.6rem]">
-                        {product.channels}
-                      </TableCell>
-                      <TableCell className="relative hover:bg-blue-100 transition-all">
-                        <VisibilityToggle
-                          productId={product.id}
-                          value={
-                            (visibilityMap[product.id] ?? product.isVisible)
-                              ? "ENABLED"
-                              : "DISABLED"
-                          }
-                          onChange={(id, value) => {
-                            const isVisible = value === "ENABLED";
-                            setVisibilityMap((prev: any) => ({
-                              ...prev,
-                              [id]: isVisible,
-                            }));
-                            dispatch(
-                              updateProduct({
-                                body: {
-                                  products: [
-                                    {
-                                      id: [id],
-                                      fields: {
-                                        isVisible,
+                        <TableCell className="2xl:!text-[1.6rem]">
+                          {product.channels}
+                        </TableCell>
+                        <TableCell className="relative hover:bg-blue-100 transition-all">
+                          <VisibilityToggle
+                            productId={product.id}
+                            value={
+                              (visibilityMap[product.id] ?? product.isVisible)
+                                ? "ENABLED"
+                                : "DISABLED"
+                            }
+                            onChange={(id, value) => {
+                              const isVisible = value === "ENABLED";
+                              setVisibilityMap((prev: any) => ({
+                                ...prev,
+                                [id]: isVisible,
+                              }));
+                              dispatch(
+                                updateProduct({
+                                  body: {
+                                    products: [
+                                      {
+                                        id: [id],
+                                        fields: {
+                                          isVisible,
+                                        },
                                       },
-                                    },
-                                  ],
-                                },
-                              }),
-                            );
-                            refetchProducts(
-                              dispatch,
-                              currentPage,
-                              Number(perPage),
-                            );
-                          }}
-                        />
-                      </TableCell>
+                                    ],
+                                  },
+                                }),
+                              );
+                              refetchProducts(
+                                dispatch,
+                                currentPage,
+                                Number(perPage),
+                              );
+                            }}
+                          />
+                        </TableCell>
 
-                      <TableCell>
-                        <OrderActionsDropdown
-                          actions={getDropdownActions(product)}
-                          trigger={
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="text-xl cursor-pointer"
-                            >
-                              <Ellipsis className="!w-7 !h-7" />
-                            </Button>
-                          }
-                        />
-                      </TableCell>
-                    </TableRow>
-                  ))
+                        <TableCell>
+                          <OrderActionsDropdown
+                            actions={getDropdownActions(product)}
+                            trigger={
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="text-xl cursor-pointer"
+                              >
+                                <Ellipsis className="!w-7 !h-7" />
+                              </Button>
+                            }
+                          />
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })
                 )}
               </TableBody>
             </Table>

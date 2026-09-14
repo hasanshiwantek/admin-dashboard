@@ -31,8 +31,8 @@ import {
 import { useRouter, useParams } from "next/navigation";
 import DescriptionEditorQuill from "../products/add/DescriptionEditorQuill";
 import { fetchUrlSettings } from "@/redux/slices/homeSlice";
-import { generateSlug } from "@/const/data";
 import { UrlSettingEnums } from "@/const/appConstants";
+import { generateSlug } from "@/lib/productUtils";
 
 type FormValues = {
   pageType: string; // add this
