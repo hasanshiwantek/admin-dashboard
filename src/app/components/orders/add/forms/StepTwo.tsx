@@ -1,26 +1,16 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
-import { fetchAllProducts } from "@/redux/slices/productSlice";
+import { useFormContext, useWatch } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 import ProductSearchInput from "../ProductSearchInput";
 import ProductTable from "../ProductTable";
 import { Label } from "@/components/ui/label";
 import AddCustomProductModal from "../AddCustomProductModal";
 import ProductSelectModal from "../ProductSelectModal";
-import { useRouter } from "next/navigation";
-import { useFormContext, useWatch } from "react-hook-form";
 
 export default function StepTwo({ step, setStep }: any) {
-  const dispatch = useAppDispatch();
-  const Products = useAppSelector((state: any) => state.product.products);
-  const allProducts = Products?.data;
-
-  const {
-    register,
-    setValue,
-    handleSubmit,
-    control,
-  } = useFormContext();
+  const { register, setValue, handleSubmit, control } = useFormContext();
 
   const watchedProducts = useWatch({
     control,
@@ -32,26 +22,41 @@ export default function StepTwo({ step, setStep }: any) {
   const [showModal, setShowModal] = useState(false);
   const router = useRouter();
 
-  // Sync form data → local state on mount
   useEffect(() => {
     setSelectedProducts(watchedProducts || []);
   }, []);
 
-  // Fetch products from API
-  useEffect(() => {
-    dispatch(fetchAllProducts({ page: 1, pageSize: 100 }));
-  }, [dispatch]);
-
-  // Sync local state → form data whenever changed
   useEffect(() => {
     setValue("selectedProducts", selectedProducts);
   }, [selectedProducts, setValue]);
 
+  // const handleAddProduct = (product: any) => {
+  //   setSelectedProducts((prev) =>
+  //     prev.find((p) => p.id === product.id)
+  //       ? prev
+  //       : [...prev, { ...product, quantity: 1 }],
+  //   );
+  // };
   const handleAddProduct = (product: any) => {
+    const minQty = Number(product?.minPurchaseQuantity) > 0
+      ? Number(product.minPurchaseQuantity)
+      : 1;
+    const maxQty = Number(product?.maxPurchaseQuantity) > 0
+      ? Number(product.maxPurchaseQuantity)
+      : null;
+
     setSelectedProducts((prev) =>
       prev.find((p) => p.id === product.id)
         ? prev
-        : [...prev, { ...product, quantity: 1 }]
+        : [
+          ...prev,
+          {
+            ...product,
+            quantity: minQty,
+            minPurchaseQuantity: minQty,
+            maxPurchaseQuantity: maxQty,
+          },
+        ]
     );
   };
 
@@ -61,12 +66,33 @@ export default function StepTwo({ step, setStep }: any) {
     }
   };
 
+  // const handleProductSelect = (product: any) => {
+  //   if (!selectedProducts.some((p) => p.id === product.id)) {
+  //     setSelectedProducts((prev) => [...prev, { ...product, quantity: 1 }]);
+  //   }
+  // };
   const handleProductSelect = (product: any) => {
-    if (!selectedProducts.some((p) => p.id === product.id)) {
-      setSelectedProducts((prev) => [...prev, product]);
-    }
-  };
+    if (selectedProducts.some((p) => p.id === product.id)) return;
 
+    const minQty =
+      Number(product?.minPurchaseQuantity) > 0
+        ? Number(product.minPurchaseQuantity)
+        : 1;
+    const maxQty =
+      Number(product?.maxPurchaseQuantity) > 0
+        ? Number(product.maxPurchaseQuantity)
+        : null;
+
+    setSelectedProducts((prev) => [
+      ...prev,
+      {
+        ...product,
+        quantity: minQty,
+        minPurchaseQuantity: minQty,
+        maxPurchaseQuantity: maxQty,
+      },
+    ]);
+  };
   const handleDeleteProduct = (id: number) => {
     setSelectedProducts((prev) => prev.filter((p) => p.id !== id));
   };
@@ -75,26 +101,41 @@ export default function StepTwo({ step, setStep }: any) {
     setSelectedProducts((prev) => [...prev, product]);
   };
 
+  // const handleQtyChange = (id: number, quantity: number) => {
+  //   setSelectedProducts((prev) =>
+  //     prev.map((p) =>
+  //       p.id === id ? { ...p, quantity: Math.max(quantity, 1) } : p,
+  //     ),
+  //   );
+  // };
   const handleQtyChange = (id: number, quantity: number) => {
     setSelectedProducts((prev) =>
-      prev.map((p) =>
-        p.id === id ? { ...p, quantity: Math.max(quantity, 1) } : p
-      )
+      prev.map((p) => {
+        if (p.id !== id) return p;
+
+        const minQty = Number(p.minPurchaseQuantity) > 0 ? Number(p.minPurchaseQuantity) : 1;
+        const maxQty = Number(p.maxPurchaseQuantity) > 0 ? Number(p.maxPurchaseQuantity) : Infinity;
+        const nextQty = Math.min(Math.max(Number(quantity) || minQty, minQty), maxQty);
+
+        return { ...p, quantity: nextQty };
+      })
     );
   };
+
   const handlePriceChange = (id: number | string, price: number) => {
     setSelectedProducts((prev) => {
       const next = prev.map((p) =>
-        p.id === id ? { ...p, price: Number(price) } : p
+        p.id === id ? { ...p, price: Number(price) } : p,
       );
       setValue("selectedProducts", next, { shouldDirty: true });
       return next;
     });
   };
+
   const onSubmit = () => {
     if (!selectedProducts?.length) {
-      alert("Please add any product")
-      return
+      toast.error("Please add atleast one product");
+      return;
     }
     setStep(step + 1);
   };
@@ -105,18 +146,12 @@ export default function StepTwo({ step, setStep }: any) {
         <h1 className="!text-4xl !font-bold">Add Products</h1>
 
         <div className="bg-white p-5 flex justify-between gap-10 items-center">
-          <div className="flex items-center gap-2 w-full">
+          <div className="flex items-center gap-2 ">
             <Label>Search</Label>
-            <ProductSearchInput
-              allProducts={allProducts}
-              onSelect={handleAddProduct}
-              register={register}
-            />
-            <AddCustomProductModal onAdd={handleAddCustomProduct} />
+            <ProductSearchInput onSelect={handleAddProduct} />
           </div>
 
           <div className="flex items-center gap-2">
-            <span>or</span>
             <button
               className="btn-outline-primary !whitespace-nowrap"
               type="button"

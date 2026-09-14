@@ -873,7 +873,14 @@ const initialState = {
 const orderSlice = createSlice({
   name: "orders",
   initialState,
-  reducers: {},
+  reducers: {
+    resetCoupon: (state) => {
+      state.appliedCoupon = null;
+      state.loading = false;
+      state.error = null;
+    },
+  },
+
   extraReducers: (builder) => {
     builder
       .addCase(fetchAllOrders.pending, (state) => {
@@ -1042,6 +1049,7 @@ const orderSlice = createSlice({
   },
 });
 export default orderSlice.reducer;
+export const { resetCoupon } = orderSlice.actions;
 function rejectWithValue(arg0: any): any {
   throw new Error("Function not implemented.");
 }

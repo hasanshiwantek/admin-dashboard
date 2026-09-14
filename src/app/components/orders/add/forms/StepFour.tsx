@@ -1,13 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useForm, FormProvider } from "react-hook-form";
-import { Button } from "@/components/ui/button";
 import OrderReview from "../OrderReview.tsx/OrderReview";
 import { useRouter } from "next/navigation";
 import { addOrder, addOrderForNewCustomer } from "@/redux/slices/orderSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { updateOrder } from "@/redux/slices/orderSlice";
 import { useFormContext } from "react-hook-form";
+import { toast } from "react-toastify";
+import { addCustomerAddress } from "@/redux/slices/customerSlice";
 export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
   const dispatch = useAppDispatch();
   const { handleSubmit, getValues } = useFormContext();
@@ -22,20 +22,19 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
     }
   };
   const getDeviceType = () => {
-    if (typeof window === "undefined") return "desktop";
+    if (typeof window === "undefined") return "Dashboard (Desktop)";
 
     const userAgent = navigator.userAgent;
 
-    if (/mobile/i.test(userAgent)) return "mobile";
-    if (/tablet/i.test(userAgent)) return "tablet";
+    if (/mobile/i.test(userAgent)) return "Dashboard (Mobile)";
+    if (/tablet/i.test(userAgent)) return "Dashboard (Tablet)";
 
-    return "desktop";
+    return "Dashboard (Desktop)";
   };
 
 
   const onSubmit = async () => {
     const values = getValues(); // ✅ collect all step data
-
     const isNewCustomer = !values.selectedCustomer?.id;
     const isDraft = values.paymentMethod === "draft";
     const manualDiscount = Number(values.manualDiscount || 0);
@@ -53,7 +52,7 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
             cardholderName: values.cardholderName,
             creditCardNo: values.creditCardNo,
             ccv2Value: values.ccv2Value,
-            expirationMonth: values.expirationMonth ? values.expirationMonth : "Jan",
+            expirationMonth: values.expirationMonth,
             expirationYear: values.expirationYear,
             emailInvoice: values.emailInvoice ?? true,
           };
@@ -75,14 +74,20 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
       if (isNewCustomer) {
         return {
           deviceType: getDeviceType(),
-          userType: null,
-          "ipAddress": ipAddress,
           email: values.email || "",
           password: values.password || "",
           password_confirmation: values.password_confirmation || "",
+          firstName: values.billingFirstName || "",
+          lastName: values.billingLastName || "",
+          phone: values.billingPhoneNumber || "",
+          companyName: values.billingCompanyName || "",
           customerGroup: values.customerGroup || "",
+          "ipAddress": ipAddress,
           "couponCode": appliedCoupon?.couponCode,
           "discountAmount": appliedCoupon?.discountAmount,
+          "isSaveAddressForBilling": values.saveAddress ? true : false,
+          "isSaveAddressForShipping": values?.shipping?.saveToAddressBook ? true : false,
+          "emailInvoice": values.emailInvoice,
           manualDiscount: manualDiscount,
           "billingAddress": { //billing address is same as billing address
             firstName: values.billingFirstName || "",
@@ -111,8 +116,6 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
             "country": values?.shipping?.country,
           },
           isDraft,
-          "isSaveAddressForBilling": values.saveAddress == "on" ? true : false,
-          "isSaveAddressForShipping": values?.shipping?.saveToAddressBook ? true : false,
           paymentMethod: buildPaymentMethod(),
           comments: values.customerComments || "",
           staffNotes: values.staffNotes || "",
@@ -126,6 +129,11 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
             delivery_date: values.shippingMethod?.delivery_date ?? null,
             service_type: values.shippingMethod?.service_type || "",
             is_fedex: !!values.shippingMethod?.is_fedex,
+
+            "provider": values.shippingMethod?.display_name || values.shippingMethod?.method || "",
+            "method": values.shippingMethod?.display_name || values.shippingMethod?.method || "",
+            "cost": Number(values.shippingMethod?.total_charge ?? values.shippingMethod?.cost ?? 0),
+            "data": values.shippingMethod?.display_name || values.shippingMethod?.method || "",
           },
           products:
             values.selectedProducts?.map((product: any) => ({
@@ -133,7 +141,6 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
               quantity: product.quantity || 1,
               price: Number(product.price ?? product.Price ?? 0),
             })) || [],
-
           shippingDestinations:
             values.shippingDestinations?.map((dest: any) => ({
               address: {
@@ -164,7 +171,7 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
       } else {
         return {
           isDraft,
-          customerId: values.selectedCustomer?.id || null,
+          customerId: values.selectedCustomer?.id,
           deviceType: getDeviceType(),
           userType: null,
           "ipAddress": ipAddress,
@@ -210,9 +217,15 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
             delivery_date: values.shippingMethod?.delivery_date ?? null,
             service_type: values.shippingMethod?.service_type || "",
             is_fedex: !!values.shippingMethod?.is_fedex,
+
+            "provider": values.shippingMethod?.display_name || values.shippingMethod?.method || "",
+            "method": values.shippingMethod?.display_name || values.shippingMethod?.method || "",
+            "cost": Number(values.shippingMethod?.total_charge ?? values.shippingMethod?.cost ?? 0),
+            "data": values.shippingMethod?.display_name || values.shippingMethod?.method || "",
           },
-          "isSaveAddressForBilling": values.saveAddress == "on" ? true : false,
+          "isSaveAddressForBilling": values.saveAddress ? true : false,
           "isSaveAddressForShipping": values?.shipping?.saveToAddressBook ? true : false,
+          "emailInvoice": values?.emailInvoice,
           products:
             values.selectedProducts?.map((product: any) => ({
               productId: product.id,
@@ -244,7 +257,7 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
     })();
 
     try {
-      let resultAction;
+      let resultAction: any;
 
       if (isEditMode && orderId) {
         resultAction = await dispatch(
@@ -263,16 +276,54 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
         updateOrder.fulfilled.match(resultAction) ||
         addOrderForNewCustomer.fulfilled.match(resultAction)
       ) {
+
+        const customerId = resultAction?.payload?.data[0]?.customer?.id || resultAction?.payload?.data?.customer?.id
+
+        if (values.saveAddress == true) {
+          const billingAddress = {
+            customer_id: Number(customerId),
+            firstName: values.billingFirstName,
+            lastName: values.billingLastName,
+            phoneNumber: values.billingPhoneNumber,
+            companyName: values.billingCompanyName,
+            addressLine1: values.billingAddress1,
+            address_line_2: values.billingAddress2,
+            city: values.billingCity,
+            state: values.billingState,
+            zip: values.billingZip,
+            country: values.billingCountry,
+          }
+          await dispatch(addCustomerAddress({ data: billingAddress }));
+        }
+        if (values?.shipping?.saveToAddressBook == true) {
+          const billingInformation = { //shipping address is same as billing address
+            customer_id: Number(customerId),
+            "firstName": values?.shipping?.firstName,
+            "lastName": values?.shipping?.lastName,
+            "companyName": values?.shipping?.companyName,
+            "phoneNumber": values?.shipping?.phoneNumber,
+            "addressLine1": values?.shipping?.address1,
+            "address_line_2": values?.shipping?.address2,
+            "city": values?.shipping?.city,
+            "state": values?.shipping?.state,
+            "zip": values?.shipping?.zip,
+            "country": values?.shipping?.country,
+          }
+          await dispatch(addCustomerAddress({ data: billingInformation }));
+        }
         setTimeout(() => {
-          router.push("/manage/orders/");
+          window.location.href = "/manage/orders";
         }, 2000);
       } else {
-        alert(resultAction.payload || "Order failed");
+        toast.error(resultAction.payload || "Order failed")
+
       }
     } catch (error) {
-      alert("Unexpected error. Please try again.");
+      toast.error("Unexpected error. Please try again.")
     }
   };
+
+
   useEffect(() => {
     fetch("/api/get-ip")
       .then((res) => res.json())

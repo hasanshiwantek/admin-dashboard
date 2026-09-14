@@ -92,13 +92,17 @@ export const fetchAllProducts = createAsyncThunk(
 export const fetchFilterProducts = createAsyncThunk(
   "product/fetchFilterProducts",
   async (
-    { category, sku }: { category: any; sku: string },
+    { category, isName }: { category: any; isName: string },
     thunkAPI
   ) => {
     try {
-      const res = await axiosInstance.get(
-        `dashboard/products/products-filter?isCategory=${category}&isSku=${sku}`
-      );
+      const res = await axiosInstance.get("dashboard/products/products-filter", {
+        params: {
+          ...(category?.length ? { isCategory: Array.isArray(category) ? category.join(",") : category } : {}),
+          ...(isName ? { isName } : {}),
+
+        },
+      });
       return res.data;
     } catch (err: any) {
       console.error("❌ Error in fetchFilterProducts:", err);
@@ -414,7 +418,7 @@ export const exportCsv = createAsyncThunk(
 
       // Create a blob URL for the file
       const blob = new Blob([response.data], {
-               type:  String(response.headers["content-type"] ?? ""),
+        type: String(response.headers["content-type"] ?? ""),
       });
       const downloadUrl = URL.createObjectURL(blob);
 

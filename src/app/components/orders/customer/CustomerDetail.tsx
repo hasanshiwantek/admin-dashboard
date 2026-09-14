@@ -358,7 +358,7 @@ const CustomerDetail = () => {
                             <TableHead className="2xl:!text-[1.6rem]">Email</TableHead>
                             <TableHead className="2xl:!text-[1.6rem]">Phone</TableHead>
                             <TableHead className="2xl:!text-[1.6rem]">Group</TableHead>
-                            <TableHead className="2xl:!text-[1.6rem]">Store credit</TableHead>
+                            {/* <TableHead className="2xl:!text-[1.6rem]">Store credit</TableHead> */}
                             <TableHead className="2xl:!text-[1.6rem]">Orders</TableHead>
                             <TableHead className="2xl:!text-[1.6rem]">Join date</TableHead>
                             <TableHead className="2xl:!text-[1.6rem]">Action</TableHead>
@@ -384,7 +384,7 @@ const CustomerDetail = () => {
                             [singleCustomer?.customer]?.map((customer: any, index: number) => {
                                 return <Fragment key={customer?.id}>
                                     <TableRow key={customer?.id} className="h-26 ">
-                                     
+
                                         <TableCell>
                                             <div className=" text-blue-600 cursor-pointer hover:underline">
                                                 <Link className="2xl:!text-2xl" href={`/manage/customers/edit/${customer?.id}`}>
@@ -396,7 +396,7 @@ const CustomerDetail = () => {
                                         <TableCell className="text-blue-500 2xl:!text-2xl">
                                             {customer?.email}
                                         </TableCell>
-                                        <TableCell className="2xl:!text-2xl">{customer?.phone}</TableCell>
+                                        <TableCell className="2xl:!text-2xl">{customer?.phone || "-"}</TableCell>
 
                                         <TableCell>
                                             <Select
@@ -417,7 +417,7 @@ const CustomerDetail = () => {
                                             </Select>
                                         </TableCell>
 
-                                        <TableCell>
+                                        {/* <TableCell>
                                             <div className="flex items-center">
                                                 <span className="mr-1 2xl:!text-2xl">$</span>
                                                 <Input
@@ -441,7 +441,7 @@ const CustomerDetail = () => {
                                                     Save
                                                 </Button>
                                             </div>
-                                        </TableCell>
+                                        </TableCell> */}
 
                                         <TableCell className="2xl:!text-2xl">{customer?.totalOrders}</TableCell>
                                         <TableCell className="2xl:!text-2xl">
@@ -466,53 +466,6 @@ const CustomerDetail = () => {
                                             />
                                         </TableCell>
                                     </TableRow>
-
-                                    {/* {expandedRow === customer?.id && (
-                                        <TableRow>
-                                            <TableCell colSpan={11}>
-                                                <div className="grid grid-cols-3 gap-2 bg-gray-50 p-4 ">
-                                                    <div className="flex">
-                                                        <div className="flex flex-col border-r pr-3 mr-3 space-y-1">
-                                                            <h4 className="font-semibold 2xl:!text-[2rem]">Current Orders</h4>
-                                                        </div>
-                                                    </div>
-
-                                                    <div className="flex">
-                                                        <div className="flex flex-col border-r pr-3 mr-3 space-y-1">
-                                                            <h4 className="font-semibold 2xl:!text-[1.8rem]">Order#500041</h4>
-                                                            <div className="flex flex-col gap-2.5 ">
-                                                                <span className="ml-4 2xl:!text-2xl">Status</span>
-                                                                <span className="2xl:!text-2xl">Order total</span>
-
-                                                                <span className="2xl:!text-2xl">Date orderd</span>
-                                                                <span className="2xl:!text-2xl">Notes</span>
-                                                            </div>
-                                                        </div>
-
-                                                        <div className="flex flex-col space-y-1">
-                                                            <p>.</p>
-                                                            <p className="2xl:!text-2xl">Awaiting Payment</p>
-                                                            <p className="2xl:!text-2xl">£1,461.00</p>
-                                                            <p className="2xl:!text-2xl">Jul 17th, 2025</p>
-                                                            <p className="2xl:!text-2xl">View Notes</p>
-                                                        </div>
-                                                    </div>
-
-                                                    <div className="flex">
-                                                        <div className="flex flex-col border-r pr-3 mr-3 space-y-1">
-                                                            <div className="flex flex-col gap-2.5 ">
-                                                                <h4 className="font-semibold 2xl:!text-[2rem]">Past Orders</h4>
-                                                            </div>
-                                                        </div>
-
-                                                        <div className="flex flex-col space-y-1 2xl:!text-2xl">
-                                                            <p>No past orders</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </TableCell>
-                                        </TableRow>
-                                    )} */}
                                     {expandedRow === customer?.id && (
                                         <TableRow>
                                             <TableCell colSpan={11}>

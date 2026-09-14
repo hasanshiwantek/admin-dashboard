@@ -72,7 +72,7 @@ export default function ProductSelectModal({
       dispatch(
         fetchFilterProducts({
           category: selectedCategories?.map((id: string) => id) || [],
-          sku: searchTerm,
+          isName: searchTerm,
         })
       );
     }, 300);
@@ -89,7 +89,7 @@ export default function ProductSelectModal({
   const products = productList;
 
   const handleConfirm = () => {
-    const product = products.find((p: any) => p.id === selectedProductId);
+    const product = products?.find((p: any) => p.id === selectedProductId);
     if (product) onSelectProduct(product);
     onClose();
   };
@@ -131,19 +131,21 @@ export default function ProductSelectModal({
                     return (
                       <label
                         key={product.id}
-                        className={`flex items-start  gap-3  p-2 cursor-pointer rounded-sm border-b hover:bg-muted ${checked ? "bg-blue-50" : ""
+                        className={`flex items-start justify-between gap-3 p-2 cursor-pointer rounded-sm border-b hover:bg-muted ${checked ? "bg-blue-50" : ""
                           }`}
                       >
-                        <input
-                          type="radio"
-                          name="selectedProduct"
-                          className="mt-1 h-4 w-4"
-                          checked={checked}
-                          onChange={() => setSelectedProductId(product.id)}
-                        />
-                        <span className="text-lg">
-                          {product.sku} - {product.name}
-                        </span>
+                        <div className="flex items-start gap-3">
+                          <input
+                            type="radio"
+                            name="selectedProduct"
+                            className="mt-1 h-4 w-4"
+                            checked={checked}
+                            onChange={() => setSelectedProductId(product.id)}
+                          />
+                          <span className="text-lg">
+                            {product.sku} - {product.name}
+                          </span>
+                        </div>
                       </label>
                     );
                   })

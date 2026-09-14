@@ -141,7 +141,7 @@ const AllOrders = () => {
     "Awaiting Fulfillment",
     "Awaiting Shipment",
     "High Risk",
-    "Pre-orders",
+    // "Pre-orders",
     "Refunded",
     "Shipped",
     "Incomplete",
@@ -177,48 +177,48 @@ const AllOrders = () => {
   };
 
   const statusOptions = [
-    { label: "Pending", value: "Pending", color: "bg-gray-400" },
+    { label: "Pending", value: "Pending", color: "bg-[#879193]" },
     {
       label: "Awaiting Payment",
       value: "Awaiting Payment",
-      color: "bg-orange-400",
+      color: "bg-[#ff9000]",
     },
     {
       label: "Awaiting Fulfillment",
       // value: "Paid",
       value: "Awaiting Fulfillment",
-      color: "bg-blue-300",
+      color: "bg-[#72cdfa]",
     },
     {
       label: "Awaiting Shipment",
       value: "Awaiting Shipment",
-      color: "bg-blue-500",
+      color: "bg-[#cd3101]",
     },
     {
       label: "Awaiting Pickup",
       value: "Awaiting Pickup",
-      color: "bg-blue-600",
+      color: "bg-[#c979f2]",
     },
     {
       label: "Partially Shipped",
       value: "Partially Shipped",
-      color: "bg-teal-400",
+      color: "bg-[#4a6fb3]",
     },
-    { label: "Completed", value: "Completed", color: "bg-green-600" },
-    { label: "Shipped", value: "Shipped", color: "bg-lime-500" },
-    { label: "Cancelled", value: "Cancelled", color: "bg-black" },
-    { label: "Declined", value: "Declined", color: "bg-red-600" },
-    { label: "Refunded", value: "Refunded", color: "bg-yellow-400" },
-    { label: "Disputed", value: "Disputed", color: "bg-pink-600" },
+    { label: "Completed", value: "Completed", color: "bg-[#BDDF57]" },
+    { label: "Shipped", value: "Shipped", color: "bg-[#BDDF57]" },
+    { label: "Cancelled", value: "Cancelled", color: "bg-[#000000]" },
+    { label: "Declined", value: "Declined", color: "bg-[#7F5F3C]" },
+    { label: "Refunded", value: "Refunded", color: "bg-[#FCCB05]" },
+    { label: "Disputed", value: "Disputed", color: "bg-[#9966FF]" },
     {
       label: "Manual Verification Required",
       value: "Manual Verification Required",
-      color: "bg-purple-400",
+      color: "bg-[#E7A0AE]",
     },
     {
       label: "Partially Refunded",
       value: "Partially Refunded",
-      color: "bg-yellow-300",
+      color: "bg-[#FCCB05]",
     },
   ];
 
@@ -1267,7 +1267,7 @@ const AllOrders = () => {
                               return (
                                 <>
                                   <span
-                                    className={`w-7 h-9 inline-block rounded-sm ${currentStatus?.color || "bg-gray-400"
+                                    className={`w-7 h-9 inline-block rounded-none ${currentStatus?.color || "bg-gray-400"
                                       }`}
                                   />
                                   <Select
@@ -1585,9 +1585,14 @@ const AllOrders = () => {
                                   )}
                                   {order?.payment?.payment_intent_id && (
                                     <div className="flex items-center gap-2">
-                                      <span className="!text-blue-400">
-                                        {order?.payment?.payment_intent_id}
-                                      </span>
+                                      <Link
+                                        href={`https://dashboard.stripe.com/payments/${order.payment.payment_intent_id}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-blue-500 underline break-all"
+                                      >
+                                        {order.payment.payment_intent_id}
+                                      </Link>
                                     </div>
                                   )}
                                   {order?.comments && (
@@ -1821,22 +1826,22 @@ const AllOrders = () => {
                                               {item?.optionSet?.title}
                                             </p>
                                             <p className="text-sm mt-1">
-                                              {/* <strong>Model:</strong>{" "} */}
                                               {item?.sku}
                                               <br />
-                                              <strong>Brand:</strong>{" "}
-                                              {item?.brand?.name ||
-                                                item?.brand ||
-                                                "N/A"}
+
+                                              {item?.brand?.name && <>
+                                                <strong>Brand:</strong>{" "}
+                                                {item?.brand?.name}
+                                              </>}
                                             </p>
                                           </div>
 
-                                          {/* <div className="text-sm font-medium whitespace-nowrap">
-                                          £
-                                          {(item.price * item.quantity).toFixed(
-                                            2
-                                          )}
-                                        </div> */}
+                                          <div className="font-medium whitespace-nowrap">
+
+                                            ${(item.price * item.quantity).toFixed(
+                                              2
+                                            )}
+                                          </div>
                                         </div>
                                       ),
                                     )}
@@ -1878,6 +1883,24 @@ const AllOrders = () => {
                                           .toFixed(2)}
                                       </span>
                                     </div>
+                                    {Number(order?.manualDiscount) > 0 && <div className="flex justify-between">
+                                      <span>Discount</span>
+                                      <span>
+                                        -$
+                                        {Number(
+                                          order?.manualDiscount,
+                                        ).toFixed(2)}
+                                      </span>
+                                    </div>}
+                                    {order?.couponCode && <div className="flex justify-between">
+                                      <span>Coupon Code ({order?.couponCode})</span>
+                                      <span>
+                                        -$
+                                        {Number(
+                                          order?.discountAmount,
+                                        ).toFixed(2)}
+                                      </span>
+                                    </div>}
                                     <div className="flex justify-between">
                                       <span>Shipping</span>
                                       <span>
@@ -1888,7 +1911,7 @@ const AllOrders = () => {
                                       </span>
                                     </div>
                                     <div className="flex justify-between">
-                                      <span>VAT / TAX</span>
+                                      <span>TAX</span>
                                       <span>
                                         ${Number(order?.tax || 0).toFixed(2)}
                                       </span>

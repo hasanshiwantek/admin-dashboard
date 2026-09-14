@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { fetchAllOrders,fetchDashboardOrderOverview, } from "@/redux/slices/orderSlice";
+import { fetchAllOrders, fetchDashboardOrderOverview, } from "@/redux/slices/orderSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { OrderItem, OrderListResponse } from "@/types/types";
 import Spinner from "../loader/Spinner";
@@ -19,47 +19,29 @@ const OrderTable = () => {
 
   const { error } = useAppSelector((state) => state.order);
   const dashboardOrders = useAppSelector(
-  (state: any) => state?.order?.dashboardOrders
-);
+    (state: any) => state?.order?.dashboardOrders
+  );
 
-const dashboardOrdersLoading = useAppSelector(
+  const dashboardOrdersLoading = useAppSelector(
 
-  (state: any) => state?.order?.dashboardOrdersLoading
-);
-const filteredOrders = dashboardOrders?.data || [];
+    (state: any) => state?.order?.dashboardOrdersLoading
+  );
+  const filteredOrders = dashboardOrders?.data || [];
   const [activeTab, setActiveTab] = useState("0");
   // const [filteredOrders, setFilteredOrders] = useState<OrderItem[]>([]);
 
   // Fetch all orders on mount
 
- useEffect(() => {
-  dispatch(
-    fetchDashboardOrderOverview({
-      page: 1,
-      perPage: 20,
-     status: query[Number(activeTab)],
-    })
-  );
-}, [activeTab, dispatch]);
+  useEffect(() => {
+    dispatch(
+      fetchDashboardOrderOverview({
+        page: 1,
+        perPage: 20,
+        status: query[Number(activeTab)],
+      })
+    );
+  }, [activeTab, dispatch]);
 
-
-
-
-
-
-  // Filter orders based on active tab
-  // useEffect(() => {
-  //   if (!orders?.data) return;
-
-  //   if (activeTab === "Recent") {
-  //     setFilteredOrders(orders.data);
-  //   } else {
-  //     const filtered = orders.data.filter(
-  //       (order) => order?.status?.toLowerCase() === activeTab?.toLowerCase()
-  //     );
-  //     setFilteredOrders(filtered);
-  //   }
-  // }, [activeTab, orders]);
 
   return (
     <div>
@@ -102,22 +84,22 @@ const filteredOrders = dashboardOrders?.data || [];
             </p>
           )}
 
-          {filteredOrders.map((order:any) => {
+          {filteredOrders.map((order: any) => {
             const colorMap: Record<string, string> = {
-              Pending: "bg-gray-400",
-              "Awaiting Payment": "bg-orange-400",
-              "Awaiting Fulfillment": "bg-blue-300",
-              "Awaiting Shipment": "bg-blue-500",
-              "Awaiting Pickup": "bg-blue-600",
-              "Partially Shipped": "bg-teal-400",
-              Completed: "bg-green-600",
-              Shipped: "bg-lime-500",
-              Cancelled: "bg-black",
-              Declined: "bg-red-600",
-              Refunded: "bg-yellow-400",
-              Disputed: "bg-pink-600",
-              "Manual Verification Required": "bg-purple-400",
-              "Partially Refunded": "bg-yellow-300",
+              Pending: "bg-[#879193]",
+              "Awaiting Payment": "bg-[#ff9000]",
+              "Awaiting Fulfillment": "bg-[#72cdfa]",
+              "Awaiting Shipment": "bg-[#cd3101]",
+              "Awaiting Pickup": "bg-[#c979f2]",
+              "Partially Shipped": "bg-[#4a6fb3]",
+              Completed: "bg-[#BDDF57]",
+              Shipped: "bg-[#BDDF57]",
+              Cancelled: "bg-[#000000]",
+              Declined: "bg-[#7F5F3C]",
+              Refunded: "bg-[#FCCB05]",
+              Disputed: "bg-[#9966FF]",
+              "Manual Verification Required": "bg-[#E7A0AE]",
+              "Partially Refunded": "bg-[#FCCB05]",
             };
 
             const color = colorMap[order.status] || "bg-gray-400";
@@ -141,7 +123,7 @@ const filteredOrders = dashboardOrders?.data || [];
                     {order.status}
                   </span>
                 </div>
-                <Link href={`/manage/orders/edit/${order?.id}`}>
+                <Link href={`/manage/orders?orderIdFrom=${order?.id}&orderIdTo=${order?.id}`}>
                   <div className=" text-xl lg:text-2xl text-blue-600 hover:underline cursor-pointer">
                     Order #{order.id} - {order.billingInformation?.firstName}{" "}
                     {order.billingInformation?.lastName}
@@ -167,7 +149,7 @@ const filteredOrders = dashboardOrders?.data || [];
           </div>
         )}
 
-      
+
       </div>
     </div>
   );

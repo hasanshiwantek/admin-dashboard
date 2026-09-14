@@ -5,6 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox"; // Added Checkbox component
+import { resetCoupon } from "@/redux/slices/orderSlice";
 import {
   // Added Select components
   Select,
@@ -24,7 +25,7 @@ import {
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { applyCoupon } from "@/redux/slices/orderSlice";
 
 // Utility arrays for Select options
@@ -52,6 +53,9 @@ export default function OrderReview({ step, setStep }: any) {
   const { appliedCoupon, loading } = useAppSelector(
     (state: any) => state.order,
   );
+  const expirationMonth = watch("expirationMonth") || months[0];
+  const expirationYear = watch("expirationYear") || currentYear.toString();
+
   const [couponCode, setCouponCode] = useState(watch("couponCode") || "");
   const [manualDiscountInput, setManualDiscountInput] = useState(
     watch("manualDiscount") ? String(watch("manualDiscount")) : ""
@@ -69,16 +73,26 @@ export default function OrderReview({ step, setStep }: any) {
       return;
     }
     await dispatch(applyCoupon(couponCode.trim()));
+    setCouponCode("")
   };
   const handleRemoveCoupon = () => {
+    dispatch(resetCoupon());
     setCouponCode("");
     setValue("couponCode", "");
     setValue("coupon", null);
+    setValue("discountAmount", 0);
   };
-  const shippingCost = Number(watch("shippingMethod.cost") || 0);
+  const shippingCost = Number(watch("shippingMethod.total_charge") || 0);
   const manualDiscount = Number(watch("manualDiscount") || 0);
   const couponDiscount = Number(
     appliedCoupon?.discountAmount || 0
+  );
+  const totalDiscount = couponDiscount + manualDiscount;
+
+  const productsSubtotal = selectedProducts?.reduce(
+    (sum: number, p: any) =>
+      sum + Number(p?.price || 0) * Number(p?.quantity || 1),
+    0
   );
   // const total = subtotal + shippingCost;
   const grandTotal = Math.max(
@@ -94,9 +108,23 @@ export default function OrderReview({ step, setStep }: any) {
     setValue("manualDiscount", amount, { shouldDirty: true });
   };
 
+  useEffect(() => {
+    if (!watch("expirationMonth")) {
+      setValue("expirationMonth", months[0]);
+    }
+    if (!watch("expirationYear")) {
+      setValue("expirationYear", currentYear.toString());
+    }
+  }, [setValue, watch]);
+
+  useEffect(() => {
+    if (getValues("emailInvoice") === undefined) {
+      setValue("emailInvoice", true);
+    }
+  }, [getValues, setValue]);
   // Function to render specific payment fields based on the selected method
   const renderPaymentFields = () => {
-    const customerEmail = billing.email || "customer@example.com"; // Use the actual email from the form data
+    const customerEmail = billing.email || billing?.selectedCustomer?.email || "customer@example.com"; // Use the actual email from the form data
 
     switch (paymentMethod) {
       case "stripe":
@@ -147,7 +175,7 @@ export default function OrderReview({ step, setStep }: any) {
               <div className="flex-1 items-center">
                 <Label htmlFor="expirationMonth">Expiration Date:</Label>
                 <Select
-                  defaultValue={months[0]}
+                  value={expirationMonth}
                   onValueChange={(val) => setValue("expirationMonth", val)}
                 >
                   <SelectTrigger id="expirationMonth">
@@ -165,7 +193,7 @@ export default function OrderReview({ step, setStep }: any) {
 
               <div className="flex-1 mt-9">
                 <Select
-                  defaultValue={currentYear.toString()}
+                  value={expirationYear}
                   onValueChange={(val) => setValue("expirationYear", val)}
                 >
                   <SelectTrigger>
@@ -183,10 +211,13 @@ export default function OrderReview({ step, setStep }: any) {
             </div>
 
             <div className="flex items-center space-x-2 pt-4">
-              <Checkbox id="emailInvoice" defaultChecked />
+              <Checkbox id="emailInvoice"
+                checked={!!watch("emailInvoice")}
+                onCheckedChange={(checked) =>
+                  setValue("emailInvoice", checked === true, { shouldDirty: true })
+                } defaultChecked />
               <Label
                 htmlFor="emailInvoice"
-                className=""
               >
                 Email invoice to customer
                 <span className="ml-1 ">
@@ -407,11 +438,10 @@ export default function OrderReview({ step, setStep }: any) {
                 <div className="font-medium">ZIP/Postcode</div>
                 <div>{shipping?.zip}</div>
 
-                <div className="font-medium">Shipping method</div>
-                <div>{billing?.shippingMethod?.provider ?? "None"}</div>
-
-                <div className="font-medium">Shipping cost</div>
-                <div>${billing?.shippingMethod?.cost}</div>
+                {billing?.shippingMethod?.display_name && <>
+                  <div className="font-medium">Shipping method</div>
+                  <div>{billing?.shippingMethod?.display_name} {billing?.shippingMethod?.total_charge > 0 ? `: $${billing?.shippingMethod?.total_charge}` : <></>}</div>
+                </>}
               </div>
 
               {/* Product Table */}
@@ -430,7 +460,7 @@ export default function OrderReview({ step, setStep }: any) {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {selectedProducts.map((p: any, idx: number) => {
+                    {/* {selectedProducts.map((p: any, idx: number) => {
                       const quantity = p.quantity || 1;
                       const price = parseFloat(p.price || 0);
                       const total = (price * quantity).toFixed(2);
@@ -459,6 +489,62 @@ export default function OrderReview({ step, setStep }: any) {
                           </TableCell>
                           <TableCell className="text-center align-top">
                             ${total}
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })} */}
+                    {selectedProducts.map((p: any, idx: number) => {
+                      const quantity = Number(p.quantity || 1);
+                      const price = Number(p.price || 0);
+                      const originalTotal = price * quantity;
+                      const share =
+                        productsSubtotal > 0 ? originalTotal / productsSubtotal : 0;
+                      const lineDiscount = totalDiscount * share;
+                      const discountedTotal = Math.max(originalTotal - lineDiscount, 0);
+                      const discountedPrice = quantity > 0 ? discountedTotal / quantity : 0;
+                      const hasDiscount = lineDiscount > 0.009;
+                      const imagePath = p.image?.[1]?.path || p.image?.[0]?.path;
+                      return (
+                        <TableRow key={idx}>
+                          <TableCell className="align-top">
+                            {imagePath ? (
+                              <Image
+                                src={imagePath}
+                                alt={p.name}
+                                width={70}
+                                height={70}
+                                className="border rounded-md object-contain"
+                              />
+                            ) : (
+                              <div className="w-[70px] h-[70px] border rounded-md bg-gray-100 flex items-center justify-center text-[10px] text-gray-400 text-center px-1">
+                                Image
+                              </div>
+                            )}
+                          </TableCell>
+                          <TableCell className="align-top">
+                            <div className="font-medium">{p.name}</div>
+                            <div className="text-base text-gray-500">{p.sku}</div>
+                          </TableCell>
+                          <TableCell className="text-center align-top">{quantity}</TableCell>
+                          <TableCell className="text-center align-top">
+                            {hasDiscount && (
+                              <div className="text-gray-400 line-through">
+                                ${price.toFixed(2)}
+                              </div>
+                            )}
+                            <div className={hasDiscount ? "font-medium" : ""}>
+                              ${discountedPrice.toFixed(2)}
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-center align-top">
+                            {hasDiscount && (
+                              <div className="text-gray-400 line-through">
+                                ${originalTotal.toFixed(2)}
+                              </div>
+                            )}
+                            <div className={hasDiscount ? "font-medium" : ""}>
+                              ${discountedTotal.toFixed(2)}
+                            </div>
                           </TableCell>
                         </TableRow>
                       );
@@ -511,9 +597,10 @@ export default function OrderReview({ step, setStep }: any) {
                   <SelectValue placeholder="Select..." />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="cash">Manual payment</SelectItem>{" "}
+                  {/* <SelectItem value="cash">Manual payment</SelectItem>{" "} */}
                   <SelectItem value="stripe">Stripe</SelectItem>
                   <SelectItem value="credit_card">Credit Card</SelectItem>{" "}
+                  <SelectItem value="draft">Create draft order</SelectItem>{" "}
                 </SelectContent>
               </Select>
 
@@ -528,6 +615,13 @@ export default function OrderReview({ step, setStep }: any) {
                 <span>Subtotal</span>
                 <span>${subtotal.toFixed(2)}</span>
               </div>
+
+              {billing?.shippingMethod?.total_charge ? (
+                <div className="flex justify-between">
+                  <span>Shipping</span>
+                  <span>${billing?.shippingMethod?.total_charge}</span>
+                </div>
+              ) : <></>}
               {appliedCoupon && (
                 <div className="flex justify-between items-start">
                   <div>
@@ -551,6 +645,7 @@ export default function OrderReview({ step, setStep }: any) {
                   <span>-${manualDiscount.toFixed(2)}</span>
                 </div>
               )}
+
               <div className="flex justify-between font-bold">
                 <span>Grand total</span>
                 <span>${grandTotal.toFixed(2)}</span>
@@ -567,6 +662,7 @@ export default function OrderReview({ step, setStep }: any) {
               {/* Gift/coupon */}
               <div className="flex items-center gap-2">
                 <Input
+                  value={couponCode}
                   placeholder="Coupon or gift certificate"
                   className="text-sm"
                   onChange={(e) => {

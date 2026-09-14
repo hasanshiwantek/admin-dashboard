@@ -77,8 +77,9 @@ export default function ProductTable({
                 <TableCell>
                   <Input
                     type="number"
-                    min={1}
-                    value={product.quantity ?? 1}
+                    min={product.minPurchaseQuantity || 1}
+                    max={product.maxPurchaseQuantity || undefined}
+                    value={product.quantity}
                     onChange={(e) =>
                       onQtyChange(product.id, parseInt(e.target.value) || 1)
                     }
