@@ -307,7 +307,7 @@ const AddCustomer = () => {
               </div>
 
               {/* Customer Group */}
-              <div className="space-y-1">
+              {/* <div className="space-y-1">
                 <Label className="2xl:!text-2xl">Customer group</Label>
                 <Select
                   value={formData.customerGroup}
@@ -322,7 +322,7 @@ const AddCustomer = () => {
                     <SelectItem value="wholesale">Wholesale</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
+              </div> */}
 
               {/* Phone */}
               <div className="space-y-1">
@@ -340,7 +340,7 @@ const AddCustomer = () => {
               </div>
 
               {/* Store Credit */}
-              <div className="space-y-1">
+              {/* <div className="space-y-1">
                 <div className="flex items-center gap-2">
                   <Label className="flex items-center gap-1 2xl:!text-2xl">
                     Store credit
@@ -358,7 +358,7 @@ const AddCustomer = () => {
                     onChange={(e) => updateField("storeCredit", e.target.value)}
                   />
                 </div>
-              </div>
+              </div> */}
 
               {/* ACS Emails */}
               <div className="space-y-1">
@@ -421,7 +421,7 @@ const AddCustomer = () => {
             </div>
           </div>
 
-          <div className="p-6">
+          {/* <div className="p-6">
             <h1 className=" !font-semibold mb-4 2xl:!text-[2.4rem]">Data Prefernces</h1>
 
             <div className="bg-white p-6 border rounded-md space-y-7 ">
@@ -482,7 +482,7 @@ const AddCustomer = () => {
                 </Select>
               </div>
             </div>
-          </div>
+          </div> */}
 
           <div className="p-6">
             <h1 className=" !font-semibold mb-4 2xl:!text-[2.4rem]">Password</h1>

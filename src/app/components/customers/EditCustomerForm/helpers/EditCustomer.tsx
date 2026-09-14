@@ -298,7 +298,7 @@ const EditCustomer = () => {
                             {/* Password */}
                             <div>
                                 <Label className=" text-[15px] text-[#313440] mb-1.5 block">
-                                    Mot de passe
+                                    Password 
                                 </Label>
                                 <p className="text-[12px] text-[#5E637A] mb-1.5">
                                     Words must be at least 5 characters and contain: lowercase
@@ -319,7 +319,7 @@ const EditCustomer = () => {
                             {/* Confirm Password */}
                             <div>
                                 <p className="text-[15px] text-[#313440] mb-1.5 block">
-                                   Confirmer le mot de passe
+                                   Confirm Password 
                                 </p>
                                 <Label  className="text-[12px] text-[#5E637A] mb-1.5" >
                                    Re-enter the password
