@@ -141,7 +141,7 @@ const AllOrders = () => {
     "Awaiting Fulfillment",
     "Awaiting Shipment",
     "High Risk",
-    "Pre-orders",
+    // "Pre-orders",
     "Refunded",
     "Shipped",
     "Incomplete",
