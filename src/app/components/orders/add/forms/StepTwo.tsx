@@ -30,11 +30,33 @@ export default function StepTwo({ step, setStep }: any) {
     setValue("selectedProducts", selectedProducts);
   }, [selectedProducts, setValue]);
 
+  // const handleAddProduct = (product: any) => {
+  //   setSelectedProducts((prev) =>
+  //     prev.find((p) => p.id === product.id)
+  //       ? prev
+  //       : [...prev, { ...product, quantity: 1 }],
+  //   );
+  // };
   const handleAddProduct = (product: any) => {
+    const minQty = Number(product?.minPurchaseQuantity) > 0
+      ? Number(product.minPurchaseQuantity)
+      : 1;
+    const maxQty = Number(product?.maxPurchaseQuantity) > 0
+      ? Number(product.maxPurchaseQuantity)
+      : null;
+
     setSelectedProducts((prev) =>
       prev.find((p) => p.id === product.id)
         ? prev
-        : [...prev, { ...product, quantity: 1 }],
+        : [
+          ...prev,
+          {
+            ...product,
+            quantity: minQty,
+            minPurchaseQuantity: minQty,
+            maxPurchaseQuantity: maxQty,
+          },
+        ]
     );
   };
 
@@ -44,12 +66,33 @@ export default function StepTwo({ step, setStep }: any) {
     }
   };
 
+  // const handleProductSelect = (product: any) => {
+  //   if (!selectedProducts.some((p) => p.id === product.id)) {
+  //     setSelectedProducts((prev) => [...prev, { ...product, quantity: 1 }]);
+  //   }
+  // };
   const handleProductSelect = (product: any) => {
-    if (!selectedProducts.some((p) => p.id === product.id)) {
-      setSelectedProducts((prev) => [...prev, { ...product, quantity: 1 }]);
-    }
-  };
+    if (selectedProducts.some((p) => p.id === product.id)) return;
 
+    const minQty =
+      Number(product?.minPurchaseQuantity) > 0
+        ? Number(product.minPurchaseQuantity)
+        : 1;
+    const maxQty =
+      Number(product?.maxPurchaseQuantity) > 0
+        ? Number(product.maxPurchaseQuantity)
+        : null;
+
+    setSelectedProducts((prev) => [
+      ...prev,
+      {
+        ...product,
+        quantity: minQty,
+        minPurchaseQuantity: minQty,
+        maxPurchaseQuantity: maxQty,
+      },
+    ]);
+  };
   const handleDeleteProduct = (id: number) => {
     setSelectedProducts((prev) => prev.filter((p) => p.id !== id));
   };
@@ -58,11 +101,24 @@ export default function StepTwo({ step, setStep }: any) {
     setSelectedProducts((prev) => [...prev, product]);
   };
 
+  // const handleQtyChange = (id: number, quantity: number) => {
+  //   setSelectedProducts((prev) =>
+  //     prev.map((p) =>
+  //       p.id === id ? { ...p, quantity: Math.max(quantity, 1) } : p,
+  //     ),
+  //   );
+  // };
   const handleQtyChange = (id: number, quantity: number) => {
     setSelectedProducts((prev) =>
-      prev.map((p) =>
-        p.id === id ? { ...p, quantity: Math.max(quantity, 1) } : p,
-      ),
+      prev.map((p) => {
+        if (p.id !== id) return p;
+
+        const minQty = Number(p.minPurchaseQuantity) > 0 ? Number(p.minPurchaseQuantity) : 1;
+        const maxQty = Number(p.maxPurchaseQuantity) > 0 ? Number(p.maxPurchaseQuantity) : Infinity;
+        const nextQty = Math.min(Math.max(Number(quantity) || minQty, minQty), maxQty);
+
+        return { ...p, quantity: nextQty };
+      })
     );
   };
 
