@@ -82,9 +82,6 @@ export default function OrderNotesModal({
     }, 100);
   };
 
-  console.log("order", order);
-
-
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent
