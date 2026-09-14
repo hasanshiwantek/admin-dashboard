@@ -1,6 +1,7 @@
 "use client";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import Pagination from "@/components/ui/pagination";
 import {
   Table,
   TableBody,
@@ -9,39 +10,36 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Plus, Pencil, Filter, Ellipsis, X } from "lucide-react";
-import { IoSearchOutline } from "react-icons/io5";
-import Image from "next/image";
-import { useEffect, useState } from "react";
-import Pagination from "@/components/ui/pagination";
-import OrderActionsDropdown from "../orders/OrderActionsDropdown";
-import VisibilityToggle from "../dropdowns/VisibilityToggle";
-import FeaturedToggle from "../dropdowns/FeaturedToggle";
-import {
-  fetchAllProducts,
-  setSelectedProducts,
-  searchAllProducts,
-  updateProduct,
-  deleteProduct,
-} from "@/redux/slices/productSlice";
+import { ActionEnums } from "@/const/appConstants";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
-import { Checkbox } from "@/components/ui/checkbox";
-import EditPriceSheet from "./EditPriceSheet";
-import EditStockSheet from "./EditStockSheet";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import Spinner from "../loader/Spinner";
 import { refetchProducts } from "@/lib/productUtils";
-import { useSearchParams } from "next/navigation";
-import { advanceSearchProduct } from "@/redux/slices/productSlice";
-import AddToCategories from "./AddToCategories";
-import defaultImage from "../../../../public/default-product-image.svg";
 import {
   deriveDefaultsForSelection,
   getProductCategoryIds,
 } from "@/lib/toggleCategoryHelper";
-import { deleteProductCategory } from "@/redux/slices/productSlice";
+import {
+  advanceSearchProduct,
+  deleteProduct,
+  deleteProductCategory,
+  fetchAllProducts,
+  searchAllProducts,
+  setSelectedProducts,
+  updateProduct,
+} from "@/redux/slices/productSlice";
+import { Ellipsis, Filter, Pencil, Plus, X } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { IoSearchOutline } from "react-icons/io5";
 import * as XLSX from "xlsx";
+import FeaturedToggle from "../dropdowns/FeaturedToggle";
+import VisibilityToggle from "../dropdowns/VisibilityToggle";
+import Spinner from "../loader/Spinner";
+import OrderActionsDropdown from "../orders/OrderActionsDropdown";
+import AddToCategories from "./AddToCategories";
+import EditPriceSheet from "./EditPriceSheet";
+import EditStockSheet from "./EditStockSheet";
 
 const filterTabs = [
   "All",
@@ -72,7 +70,7 @@ export default function AllProducts() {
   const dispatch = useAppDispatch();
   const searchParams = useSearchParams();
   const [featuredMap, setFeaturedMap] = useState<{ [key: number]: boolean }>(
-    {}
+    {},
   );
   const [visibilityMap, setVisibilityMap] = useState<{
     [key: number]: "ENABLED" | "DISABLED";
@@ -82,9 +80,11 @@ export default function AllProducts() {
   const [categoryModalOpen, setCategoryModalOpen] = useState(false);
   const [categoryProductIds, setCategoryProductIds] = useState<number[]>([]);
   const [categoryModalDefaults, setCategoryModalDefaults] = useState<string[]>(
-    []
+    [],
   );
-  const [categoryAction, setCategoryAction] = useState<"add" | "delete">("add");
+  const [categoryAction, setCategoryAction] = useState<
+    ActionEnums.ADD | ActionEnums.DELETE
+  >(ActionEnums.ADD);
 
   const products = allProducts?.data;
 
@@ -97,14 +97,15 @@ export default function AllProducts() {
         case "Free shipping":
           return (
             product.fixedShippingCost === 0 ||
-            product.fixedShippingCost === null || product.fixedShippingCost === undefined
+            product.fixedShippingCost === null ||
+            product.fixedShippingCost === undefined
           );
 
         case "Out of stock":
           return product.currentStock === 0;
 
         case "Inventory low":
-          return product
+          return product;
 
         case "Visible":
           return product.isVisible === true;
@@ -125,49 +126,61 @@ export default function AllProducts() {
       return 0;
     });
 
+  console.log({ filteredProducts });
 
   const handleApplyCategories = async (pickedIdsStr: string[]) => {
-    if (categoryAction === "add") {
-      // ✅ keep your existing add logic EXACTLY the same as before
-      dispatch(
-        updateProduct({
-          body: {
-            products: [
-              {
-                id: categoryProductIds,
-                fields: { categoryIds: pickedIdsStr.map(Number) },
-              },
-            ],
-          },
-        })
-      );
-      setTimeout(() => refetchProducts(dispatch, currentPage, Number(perPage)), 300);
-    } else if (categoryAction === "delete") {
-      const picked = pickedIdsStr.map(Number);
-      if (!picked.length) return;
+    try {
+      if (categoryAction === ActionEnums.ADD) {
+        // Wait for the API to successfully complete before refetching
+        await dispatch(
+          updateProduct({
+            body: {
+              products: [
+                {
+                  id: categoryProductIds,
+                  fields: { categoryIds: pickedIdsStr.map(Number) },
+                },
+              ],
+            },
+          }),
+        ).unwrap();
 
-      const ok = window.confirm(
-        `This will permanently delete ${picked.length} categor${picked.length > 1 ? "ies" : "y"
-        } for ALL products. Continue?`
-      );
-      if (!ok) return;
+        // API has completed successfully, so refetch is now safe
+        await refetchProducts(dispatch, currentPage, Number(perPage));
+      } else if (categoryAction === ActionEnums.DELETE) {
+        const picked = pickedIdsStr.map(Number);
 
-      await dispatch(
-        deleteProductCategory({
-          data: { productIds: categoryProductIds, categoryIds: picked },
-        })
-      );
-      // refresh categories (and products if needed)
-      setTimeout(() => {
-        refetchProducts(dispatch, currentPage, Number(perPage));
-      }, 300);
+        if (!picked.length) return;
+
+        const ok = window.confirm(
+          `This will permanently delete ${picked.length} categor${
+            picked.length > 1 ? "ies" : "y"
+          } for ALL products. Continue?`,
+        );
+
+        if (!ok) return;
+
+        await dispatch(
+          deleteProductCategory({
+            data: {
+              productIds: categoryProductIds,
+              categoryIds: picked,
+            },
+          }),
+        ).unwrap();
+
+        // Delete API has completed successfully
+        await refetchProducts(dispatch, currentPage, Number(perPage));
+      }
+    } catch (error) {
+      console.error("Failed to update product categories:", error);
+    } finally {
+      // Cleanup
+      setCategoryModalOpen(false);
+      setCategoryProductIds([]);
+      setCategoryModalDefaults([]);
+      setSelectedProductIds([]);
     }
-
-    // cleanup
-    setCategoryModalOpen(false);
-    setCategoryProductIds([]);
-    setCategoryModalDefaults([]);
-    setSelectedProductIds([]);
   };
 
   const getDropdownActions = (product: any) => [
@@ -183,7 +196,7 @@ export default function AllProducts() {
       label: "Add to categories",
       onClick: () => {
         const defaults = getProductCategoryIds(product); // preselect current of that row
-        setCategoryAction("add");
+        setCategoryAction(ActionEnums.ADD);
         setCategoryProductIds([product.id]);
         setCategoryModalDefaults(defaults);
         setCategoryModalOpen(true);
@@ -193,8 +206,9 @@ export default function AllProducts() {
     {
       label: "Remove from categories",
       onClick: () => {
+        console.log({ product });
         const defaults = getProductCategoryIds(product); // preselect current categories to delete
-        setCategoryAction("delete");
+        setCategoryAction(ActionEnums.DELETE);
         setCategoryProductIds([product.id]); // not used by delete, but harmless
         setCategoryModalDefaults(defaults);
         setCategoryModalOpen(true);
@@ -215,7 +229,7 @@ export default function AllProducts() {
                 },
               ],
             },
-          })
+          }),
         );
         setTimeout(() => {
           refetchProducts(dispatch, currentPage, Number(perPage));
@@ -237,7 +251,7 @@ export default function AllProducts() {
                 },
               ],
             },
-          })
+          }),
         );
         setTimeout(() => {
           refetchProducts(dispatch, currentPage, Number(perPage));
@@ -259,7 +273,7 @@ export default function AllProducts() {
                 },
               ],
             },
-          })
+          }),
         );
         setTimeout(() => {
           refetchProducts(dispatch, currentPage, Number(perPage));
@@ -281,7 +295,7 @@ export default function AllProducts() {
                 },
               ],
             },
-          })
+          }),
         );
         setTimeout(() => {
           refetchProducts(dispatch, currentPage, Number(perPage));
@@ -305,27 +319,35 @@ export default function AllProducts() {
     {
       label: "Edit",
       onClick: () => {
-        router.push(`/manage/products/edit/${product?.id}`)
+        router.push(`/manage/products/edit/${product?.id}`);
       },
     },
     {
       label: "Duplicate",
       onClick: () => {
-        router.push(`/manage/products/dublicate/${product?.id}?isDuplicate=true`)
+        router.push(
+          `/manage/products/dublicate/${product?.id}?isDuplicate=true`,
+        );
       },
     },
     {
       label: "View Storefront",
       onClick: () => {
         // Get the base URL from selected store
-        const selectedStore = JSON.parse(localStorage.getItem('availableStores') || '[]')
-          .find((store: any) => store.id === Number(localStorage.getItem('storeId')));
+        const selectedStore = JSON.parse(
+          localStorage.getItem("availableStores") || "[]",
+        ).find(
+          (store: any) => store.id === Number(localStorage.getItem("storeId")),
+        );
 
         if (selectedStore?.baseUrl && product?.productUrl) {
           // Open product page on storefront
-          window.open(`${selectedStore.baseUrl}${product.productUrl}`, '_blank');
+          window.open(
+            `${selectedStore.baseUrl}${product.productUrl}`,
+            "_blank",
+          );
         } else {
-          alert('Store URL or Product SKU not found');
+          alert("Store URL or Product SKU not found");
         }
       },
     },
@@ -344,10 +366,10 @@ export default function AllProducts() {
       label: "Add to categories",
       onClick: () => {
         const selected = filteredProducts.filter((p: any) =>
-          selectedProductIds.includes(p.id)
+          selectedProductIds.includes(p.id),
         );
         const defaults = deriveDefaultsForSelection(selected, "intersection"); // safe prefill
-        setCategoryAction("add");
+        setCategoryAction(ActionEnums.ADD);
         setCategoryProductIds(selectedProductIds);
         setCategoryModalDefaults(defaults);
         setCategoryModalOpen(true);
@@ -358,11 +380,11 @@ export default function AllProducts() {
       label: "Remove from categories",
       onClick: () => {
         const selected = filteredProducts.filter((p: any) =>
-          selectedProductIds.includes(p.id)
+          selectedProductIds.includes(p.id),
         );
         // show union so user can see every category used across selection
         const defaults = deriveDefaultsForSelection(selected, "union");
-        setCategoryAction("delete");
+        setCategoryAction(ActionEnums.DELETE);
         setCategoryProductIds(selectedProductIds); // not needed for delete, but fine
         setCategoryModalDefaults(defaults);
         setCategoryModalOpen(true);
@@ -383,7 +405,7 @@ export default function AllProducts() {
                 },
               ],
             },
-          })
+          }),
         );
 
         if (updateProduct.fulfilled.match(result)) {
@@ -407,7 +429,7 @@ export default function AllProducts() {
                 },
               ],
             },
-          })
+          }),
         );
 
         if (updateProduct.fulfilled.match(result)) {
@@ -431,7 +453,7 @@ export default function AllProducts() {
                 },
               ],
             },
-          })
+          }),
         );
         if (updateProduct.fulfilled.match(result)) {
           refetchProducts(dispatch, currentPage, Number(perPage));
@@ -455,7 +477,7 @@ export default function AllProducts() {
                 },
               ],
             },
-          })
+          }),
         );
         if (updateProduct.fulfilled.match(result)) {
           refetchProducts(dispatch, currentPage, Number(perPage));
@@ -475,7 +497,9 @@ export default function AllProducts() {
           //   refetchProducts(dispatch, currentPage, Number(perPage));
           // }, 3000);
           // setSelectedProductIds([]);
-          const result = await dispatch(deleteProduct({ ids: selectedProductIds }));
+          const result = await dispatch(
+            deleteProduct({ ids: selectedProductIds }),
+          );
           if (deleteProduct.fulfilled.match(result)) {
             refetchProducts(dispatch, currentPage, Number(perPage));
             setSelectedProductIds([]);
@@ -503,7 +527,7 @@ export default function AllProducts() {
 
   const handleEditInventory = () => {
     const selected = filteredProducts.filter((p: any) =>
-      selectedProductIds.includes(p.id)
+      selectedProductIds.includes(p.id),
     );
     localStorage.setItem("selectedProducts", JSON.stringify(selected)); // <-- store here
     dispatch(setSelectedProducts(selected));
@@ -512,7 +536,7 @@ export default function AllProducts() {
 
   const handlebulkEdit = () => {
     const selected = filteredProducts.filter((p: any) =>
-      selectedProductIds.includes(p.id)
+      selectedProductIds.includes(p.id),
     );
 
     localStorage.setItem("bulkEditProducts", JSON.stringify(selected)); // ✅ save here
@@ -524,7 +548,7 @@ export default function AllProducts() {
   const totalPages = pagination?.lastPage;
   const [currentPage, setCurrentPage] = useState(pagination?.page || 1);
   const [perPage, setPerPage] = useState(
-    pagination?.pageSize?.toString() || "20"
+    pagination?.pageSize?.toString() || "20",
   );
   const fetchWithFilters = (tab: string, search: string) => {
     const tabParams = TAB_FILTERS[tab] || {};
@@ -535,7 +559,7 @@ export default function AllProducts() {
         ...(search.trim() && { search: search.trim() }),
         ...tabParams,
         // result → { page:1, pageSize:20, search:"tes", isFeatured:true }
-      })
+      }),
     );
   };
   const handlePageChange = (page: number) => {
@@ -549,7 +573,6 @@ export default function AllProducts() {
     router.push(`?page=1&limit=${value}`);
   };
 
-
   const queryObject: Record<string, any> = {};
   searchParams.forEach((value, key) => {
     if (queryObject[key]) {
@@ -560,7 +583,7 @@ export default function AllProducts() {
   });
   const handleExport = () => {
     const selectedProducts = products?.filter((item: any) =>
-      selectedProductIds.includes(item.id)
+      selectedProductIds.includes(item.id),
     );
 
     const exportData = selectedProducts.map((item: any) => ({
@@ -593,7 +616,7 @@ export default function AllProducts() {
     const pageSize = Number(queryObject.limit || queryObject.pageSize || 20);
 
     const filterKeys = Object.keys(queryObject).filter(
-      (key) => !["page", "limit", "pageSize"].includes(key)
+      (key) => !["page", "limit", "pageSize"].includes(key),
     );
 
     if (filterKeys.length > 0) {
@@ -606,7 +629,7 @@ export default function AllProducts() {
             page,
             pageSize,
           },
-        })
+        }),
       );
     } else {
       //  Default: Fetch all products
@@ -660,10 +683,11 @@ export default function AllProducts() {
                   setCurrentPage(1);
                   fetchWithFilters(tab, searchTerm); // ✅ fire API with tab + current search
                 }}
-                className={`!text-2xl 2xl:!text-[1.6rem] px-5 py-2 rounded  cursor-pointer transition hover:bg-blue-100 ${selectedTab === tab
-                  ? "bg-blue-100 border-blue-600 text-blue-600"
-                  : " text-blue-600"
-                  }`}
+                className={`!text-2xl 2xl:!text-[1.6rem] px-5 py-2 rounded  cursor-pointer transition hover:bg-blue-100 ${
+                  selectedTab === tab
+                    ? "bg-blue-100 border-blue-600 text-blue-600"
+                    : " text-blue-600"
+                }`}
               >
                 {tab}
               </button>
@@ -675,7 +699,11 @@ export default function AllProducts() {
              focus-within:ring-3 focus-within:ring-blue-200 focus-within:border-blue-200 border border-gray-200 transition hover:border-blue-200 "
             >
               <i onClick={() => fetchWithFilters(selectedTab, searchTerm)}>
-                <IoSearchOutline size={20} color="gray" className="cursor-pointer" />
+                <IoSearchOutline
+                  size={20}
+                  color="gray"
+                  className="cursor-pointer"
+                />
               </i>
               <input
                 type="text"
@@ -690,17 +718,19 @@ export default function AllProducts() {
                 }}
               />
 
-              {searchTerm && <button
-                disabled={!searchTerm.trim()}
-                type="button"
-                onClick={() => {
-                  setSearchTerm("");
-                  fetchWithFilters(selectedTab, ""); // ✅ reset search, keep current tab
-                }}
-                className="ml-2 text-gray-400 hover:text-gray-600 transition"
-              >
-                <X size={18} />
-              </button>}
+              {searchTerm && (
+                <button
+                  disabled={!searchTerm.trim()}
+                  type="button"
+                  onClick={() => {
+                    setSearchTerm("");
+                    fetchWithFilters(selectedTab, ""); // ✅ reset search, keep current tab
+                  }}
+                  className="ml-2 text-gray-400 hover:text-gray-600 transition"
+                >
+                  <X size={18} />
+                </button>
+              )}
             </div>
 
             {/* <Input placeholder="Search products" className="max-w-[80%] !p-7 " /> */}
@@ -730,7 +760,12 @@ export default function AllProducts() {
 
               {selectedProductIds?.length > 0 && (
                 <div>
-                  <button className="btn-outline-primary" onClick={handleExport}>Export</button>
+                  <button
+                    className="btn-outline-primary"
+                    onClick={handleExport}
+                  >
+                    Export
+                  </button>
                   <button
                     className="btn-outline-primary"
                     onClick={handlebulkEdit}
@@ -785,11 +820,17 @@ export default function AllProducts() {
                   <TableHead className="2xl:!text-[1.6rem]">Name</TableHead>
                   <TableHead></TableHead>
                   <TableHead className="2xl:!text-[1.6rem]">SKU</TableHead>
-                  <TableHead className="2xl:!text-[1.6rem]">Categories</TableHead>
-                  <TableHead className="2xl:!text-[1.6rem]">Current stock</TableHead>
+                  <TableHead className="2xl:!text-[1.6rem]">
+                    Categories
+                  </TableHead>
+                  <TableHead className="2xl:!text-[1.6rem]">
+                    Current stock
+                  </TableHead>
                   <TableHead className="2xl:!text-[1.6rem]">Price</TableHead>
                   <TableHead className="2xl:!text-[1.6rem]">Channels</TableHead>
-                  <TableHead className="2xl:!text-[1.6rem]">Visibility</TableHead>
+                  <TableHead className="2xl:!text-[1.6rem]">
+                    Visibility
+                  </TableHead>
                   <TableHead className="2xl:!text-[1.6rem]"></TableHead>
                 </TableRow>
               </TableHeader>
@@ -810,20 +851,29 @@ export default function AllProducts() {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  filteredProducts?.map((product: any) => (
-                    <TableRow key={product.id}>
-                      <TableCell>
-                        <Checkbox
-                          checked={selectedProductIds.includes(product.id)}
-                          onCheckedChange={(checked: boolean) =>
-                            handleProductCheckboxChange(product.id, checked)
-                          }
-                        />
-                      </TableCell>
-                      <TableCell className="flex items-center gap-2 ">
-                        {(product.image ||
-                          product.image?.[1]?.path ||
-                          product.image?.[0]?.path) && (
+                  filteredProducts?.map((product: any) => {
+                    console.log({
+                      product,
+                      filter:
+                        product?.categoryIds
+                          ?.filter((cat: any) => cat.name !== "Uncategorized")
+                          .map((cat: any) => cat.name)
+                          .join(", ") || "-",
+                    });
+                    return (
+                      <TableRow key={product.id}>
+                        <TableCell>
+                          <Checkbox
+                            checked={selectedProductIds.includes(product.id)}
+                            onCheckedChange={(checked: boolean) =>
+                              handleProductCheckboxChange(product.id, checked)
+                            }
+                          />
+                        </TableCell>
+                        <TableCell className="flex items-center gap-2 ">
+                          {(product.image ||
+                            product.image?.[1]?.path ||
+                            product.image?.[0]?.path) && (
                             <Image
                               src={
                                 product.image?.[1]?.path ||
@@ -836,133 +886,149 @@ export default function AllProducts() {
                               className="rounded !border object-contain !border-gray-300 p-2 shrink-0 w-28 h-24"
                             />
                           )}
-                        <span
-                          onClick={() => {
-                            router.push(`/manage/products/edit/${product.id}`);
-                          }}
-                          className="!text-blue-600 hover:underline !text-xl 2xl:!text-[1.6rem] !font-medium capitalize  cursor-pointer whitespace-normal break-words leading-snug max-w-[350px]"
-                        >
-                          {product.name}
-                        </span>
-                      </TableCell>
+                          <span
+                            onClick={() => {
+                              router.push(
+                                `/manage/products/edit/${product.id}`,
+                              );
+                            }}
+                            className="!text-blue-600 hover:underline !text-xl 2xl:!text-[1.6rem] !font-medium capitalize  cursor-pointer whitespace-normal break-words leading-snug max-w-[350px]"
+                          >
+                            {product.name}
+                          </span>
+                        </TableCell>
 
-                      <TableCell className="relative  mx-4 ">
-                        <FeaturedToggle
-                          productId={product.id}
-                          isFeatured={
-                            featuredMap[product.id] ?? product.isFeatured
-                          }
-                          onChange={(id: any, value) => {
-                            setFeaturedMap((prev) => ({
-                              ...prev,
-                              [id]: value,
-                            }));
+                        <TableCell className="relative  mx-4 ">
+                          <FeaturedToggle
+                            productId={product.id}
+                            isFeatured={
+                              featuredMap[product.id] ?? product.isFeatured
+                            }
+                            onChange={(id: any, value) => {
+                              setFeaturedMap((prev) => ({
+                                ...prev,
+                                [id]: value,
+                              }));
 
-                            dispatch(
-                              updateProduct({
-                                body: {
-                                  products: [
-                                    {
-                                      id: [id],
-                                      fields: {
-                                        isFeatured: value,
-                                        // categoryIds:[1]
+                              dispatch(
+                                updateProduct({
+                                  body: {
+                                    products: [
+                                      {
+                                        id: [id],
+                                        fields: {
+                                          isFeatured: value,
+                                          // categoryIds:[1]
+                                        },
                                       },
-                                    },
-                                  ],
-                                },
-                              })
-                            );
-                            refetchProducts(dispatch, currentPage, Number(perPage));
-                          }}
-                        />
-                      </TableCell>
+                                    ],
+                                  },
+                                }),
+                              );
+                              refetchProducts(
+                                dispatch,
+                                currentPage,
+                                Number(perPage),
+                              );
+                            }}
+                          />
+                        </TableCell>
 
-                      <TableCell className="2xl:!text-[1.6rem]">{product.sku}</TableCell>
-                      <TableCell className="whitespace-normal break-words leading-snug 2xl:!text-[1.6rem] max-w-[300px]">
-                        {product?.categoryIds?.find(
-                          (cat: any) => cat.name !== "Uncategorized"
-                        )?.name || "-"}
-                      </TableCell>
+                        <TableCell className="2xl:!text-[1.6rem]">
+                          {product.sku}
+                        </TableCell>
+                        <TableCell className="whitespace-normal break-words leading-snug 2xl:!text-[1.6rem] max-w-[300px]">
+                          {product?.categoryIds
+                            ?.filter((cat: any) => cat.name !== "Uncategorized")
+                            .map((cat: any) => cat.name)
+                            .join(", ") || "-"}
+                        </TableCell>
 
-                      <TableCell>
-                        <EditStockSheet
-                          product={product}
-                          trigger={
-                            <div className="group hover:text-blue-600 flex items-center gap-1 hover:bg-blue-100 p-4 rounded-md cursor-pointer transition-colors">
-                              <a className="text-xl group-hover:opacity-100 2xl:!text-[1.6rem]">
-                                {product.currentStock}
-                              </a>
-                              <Pencil className="w-5 h-5 text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
-                            </div>
-                          }
-                        />
-                      </TableCell>
+                        <TableCell>
+                          <EditStockSheet
+                            product={product}
+                            trigger={
+                              <div className="group hover:text-blue-600 flex items-center gap-1 hover:bg-blue-100 p-4 rounded-md cursor-pointer transition-colors">
+                                <a className="text-xl group-hover:opacity-100 2xl:!text-[1.6rem]">
+                                  {product.currentStock}
+                                </a>
+                                <Pencil className="w-5 h-5 text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                              </div>
+                            }
+                          />
+                        </TableCell>
 
-                      <TableCell>
-                        <EditPriceSheet
-                          product={product}
-                          trigger={
-                            <div className="group hover:text-blue-600 flex items-center gap-1 hover:bg-blue-100 p-4 rounded-md cursor-pointer transition-colors">
-                              <a className="text-xl group-hover:opacity-100 2xl:!text-[1.6rem]">
-                                {product.price}
-                              </a>
-                              <Pencil className="w-5 h-5 text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
-                            </div>
-                          }
-                        />
-                      </TableCell>
+                        <TableCell>
+                          <EditPriceSheet
+                            product={product}
+                            trigger={
+                              <div className="group hover:text-blue-600 flex items-center gap-1 hover:bg-blue-100 p-4 rounded-md cursor-pointer transition-colors">
+                                <a className="text-xl group-hover:opacity-100 2xl:!text-[1.6rem]">
+                                  {product.price}
+                                </a>
+                                <Pencil className="w-5 h-5 text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                              </div>
+                            }
+                          />
+                        </TableCell>
 
-                      <TableCell className="2xl:!text-[1.6rem]">{product.channels}</TableCell>
-                      <TableCell className="relative hover:bg-blue-100 transition-all">
-                        <VisibilityToggle
-                          productId={product.id}
-                          value={
-                            visibilityMap[product.id] ?? product.isVisible
-                              ? "ENABLED"
-                              : "DISABLED"
-                          }
-                          onChange={(id, value) => {
-                            const isVisible = value === "ENABLED";
-                            setVisibilityMap((prev: any) => ({
-                              ...prev,
-                              [id]: isVisible,
-                            }));
-                            dispatch(
-                              updateProduct({
-                                body: {
-                                  products: [
-                                    {
-                                      id: [id],
-                                      fields: {
-                                        isVisible,
+                        <TableCell className="2xl:!text-[1.6rem]">
+                          {product.channels}
+                        </TableCell>
+                        <TableCell className="relative hover:bg-blue-100 transition-all">
+                          <VisibilityToggle
+                            productId={product.id}
+                            value={
+                              (visibilityMap[product.id] ?? product.isVisible)
+                                ? "ENABLED"
+                                : "DISABLED"
+                            }
+                            onChange={(id, value) => {
+                              const isVisible = value === "ENABLED";
+                              setVisibilityMap((prev: any) => ({
+                                ...prev,
+                                [id]: isVisible,
+                              }));
+                              dispatch(
+                                updateProduct({
+                                  body: {
+                                    products: [
+                                      {
+                                        id: [id],
+                                        fields: {
+                                          isVisible,
+                                        },
                                       },
-                                    },
-                                  ],
-                                },
-                              })
-                            );
-                            refetchProducts(dispatch, currentPage, Number(perPage));
-                          }}
-                        />
-                      </TableCell>
+                                    ],
+                                  },
+                                }),
+                              );
+                              refetchProducts(
+                                dispatch,
+                                currentPage,
+                                Number(perPage),
+                              );
+                            }}
+                          />
+                        </TableCell>
 
-                      <TableCell>
-                        <OrderActionsDropdown
-                          actions={getDropdownActions(product)}
-                          trigger={
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="text-xl cursor-pointer"
-                            >
-                              <Ellipsis className="!w-7 !h-7" />
-                            </Button>
-                          }
-                        />
-                      </TableCell>
-                    </TableRow>
-                  ))
+                        <TableCell>
+                          <OrderActionsDropdown
+                            actions={getDropdownActions(product)}
+                            trigger={
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="text-xl cursor-pointer"
+                              >
+                                <Ellipsis className="!w-7 !h-7" />
+                              </Button>
+                            }
+                          />
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })
                 )}
               </TableBody>
             </Table>

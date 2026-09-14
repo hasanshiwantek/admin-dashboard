@@ -1,83 +1,113 @@
 // BasicInfoForm.tsx
-import { useFormContext } from "react-hook-form";
-import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { HiQuestionMarkCircle } from "react-icons/hi2";
-import { useEffect, useState } from "react";
-import { generateSlug } from "@/const/data";
 import { useAppSelector } from "@/hooks/useReduxHooks";
+import {
+  generateDuplicateProductUrl,
+  generateFormattedProductUrl,
+  normalizeProductUrl,
+} from "@/lib/productUtils";
 import { useParams } from "next/navigation";
-export default function Seo() {
+import { useEffect, useRef, useState } from "react";
+import { useFormContext } from "react-hook-form";
+import { HiQuestionMarkCircle } from "react-icons/hi2";
+
+export default function Seo({ hasDuplicate }: { hasDuplicate: boolean }) {
   const { register, setValue, watch } = useFormContext();
-  const productType = watch("productType");
   const { id } = useParams();
-  const [isUrlManuallyEdited, setIsUrlManuallyEdited] = useState<boolean>(false);
+  const [isUrlManuallyEdited, setIsUrlManuallyEdited] =
+    useState<boolean>(false);
+  const [showRedirectCheckbox, setShowRedirectCheckbox] =
+    useState<boolean>(false);
+  const initialDuplicateUrlRef = useRef<string>("");
+  const [productUrlValue, isRedirectValue, brandId, watchedName, watchedSku] = [
+    watch("productUrl"),
+    watch("isRedirect"),
+    watch("brandId"),
+    watch("name"),
+    watch("sku"),
+  ];
+
   const urlSettingData = useAppSelector(
-    (state: any) => state.home?.urlSettingData
+    (state: any) => state.home?.urlSettingData,
   );
   const { brands } = useAppSelector((state: any) => state.product);
-  const brandId = watch("brandId");
-  const watchedName = watch("name");
-  const watchedSku = watch("sku");
   const brandName = brands?.data?.find(
-    (item: any) => item?.brand?.id == brandId
+    (item: any) => item?.brand?.id == brandId,
   )?.brand?.name;
-
 
   useEffect(() => {
     if (id) {
-      setIsUrlManuallyEdited(true)
+      setIsUrlManuallyEdited(true);
     }
-  }, [id])
+  }, [id]);
 
   useEffect(() => {
-    if (!isUrlManuallyEdited) {
-      if (urlSettingData?.format_type == "seo_optimized_short") {
-        if (watchedName) {
-          const slug = generateSlug(watchedName);
-          setValue("productUrl", `/${slug}`);
-        }
-      } else if (urlSettingData?.format_type == "seo_optimized_long") {
-        if (watchedName) {
-          const slug = generateSlug(watchedName);
-          setValue("productUrl", `/product/${slug}`);
-        }
-      }
-      const formatType = urlSettingData?.format_type;
-      const customFormat = urlSettingData?.custom_format;
-
-
-      if (formatType === "custom" && customFormat) {
-        if (brandName || watchedName || watchedSku) {
-          const replacements = {
-            "%title%": watchedName ? generateSlug(watchedName) : "",
-            "%sku%": watchedSku ? generateSlug(watchedSku) : "",
-            "%brand%": brandName ? generateSlug(brandName) : "",
-          };
-
-          const finalUrl = Object.entries(replacements)
-            .reduce(
-              (url, [key, value]) => url.replace(new RegExp(key, "gi"), value),
-              customFormat
-            )
-            .replace(/%[^%]+%/g, "")
-            .replace(/\/+/g, "/")
-            .replace(/\/$/g, "");
-          if (finalUrl) {
-            setValue("productUrl", finalUrl);
-          }
-        }
-      }
-
+    if (productUrlValue && !initialDuplicateUrlRef.current) {
+      initialDuplicateUrlRef.current = productUrlValue;
     }
-  }, [watchedName, watchedSku, isUrlManuallyEdited, brandId]);
+
+    if (!initialDuplicateUrlRef.current) {
+      return;
+    }
+
+    const hasManualRedirectChange =
+      isUrlManuallyEdited && productUrlValue !== initialDuplicateUrlRef.current;
+
+    setShowRedirectCheckbox(hasManualRedirectChange);
+  }, [isUrlManuallyEdited, productUrlValue]);
+
+  useEffect(() => {
+    if (isUrlManuallyEdited || hasDuplicate) return;
+
+    const productUrl = generateFormattedProductUrl({
+      formatType: urlSettingData?.format_type,
+      customFormat: urlSettingData?.custom_format,
+      name: watchedName,
+      sku: watchedSku,
+      brand: brandName,
+    });
+
+    if (productUrl) {
+      setValue("productUrl", normalizeProductUrl(productUrl));
+    }
+  }, [
+    watchedName,
+    watchedSku,
+    brandName,
+    isUrlManuallyEdited,
+    urlSettingData?.format_type,
+    urlSettingData?.custom_format,
+  ]);
+
+  const handleResetProductUrl = () => {
+    setIsUrlManuallyEdited(false);
+
+    if (hasDuplicate) {
+      const duplicateUrl = generateDuplicateProductUrl(watchedName || "copy");
+      setValue("productUrl", normalizeProductUrl(duplicateUrl));
+      return;
+    }
+
+    const productUrl = generateFormattedProductUrl({
+      formatType: urlSettingData?.format_type,
+      customFormat: urlSettingData?.custom_format,
+      name: watchedName,
+      sku: watchedSku,
+      brand: brandName,
+    });
+
+    if (productUrl) {
+      setValue("productUrl", normalizeProductUrl(productUrl));
+    }
+  };
 
   return (
     <section id="seo" className="space-y-4 scroll-mt-20">
@@ -97,94 +127,90 @@ export default function Seo() {
                     <HiQuestionMarkCircle />
                     {/* <HiMiniQuestionMarkCircle /> */}
                   </TooltipTrigger>
-                  <TooltipContent >
+                  <TooltipContent>
                     Specify a page title, or leave blank to use the products
                     name as the page title.
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
             </Label>
-            <Input className="!max-w-[85%] w-full" id="pageTitle" placeholder="" {...register("pageTitle")} />
+            <Input
+              className="!max-w-[85%] w-full"
+              id="pageTitle"
+              placeholder=""
+              {...register("pageTitle")}
+            />
           </div>
 
           <div className="space-x-6">
-            <Label className="2xl:!text-2xl" htmlFor="productUrl">
-              Product URL <span className="!text-red-500">*</span>{" "}
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <HiQuestionMarkCircle />
-                    {/* <HiMiniQuestionMarkCircle /> */}
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    The URL shown here is how people can access the product on
-                    your website. To change the URL, just click in the text box
-                    and type in your changes. <br />
-                    To change the default URL format, go to the settings - Store
-                    Settings menu and click the URL Structure tab. click on the
-                    reset button to return the URL to its default format.
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </Label>
-            <Input
-              onKeyDown={(e) => {
-                if (/[#$*&@!=+%`'":;<>{}[]|]/.test(e.key)) {
-                  e.preventDefault();
-                }
-              }}
-              onPaste={(e) => {
-                const pasted = e.clipboardData.getData("text");
-                if (/[#$*&@!=+%`'":;<>{}[]|]/.test(pasted)) {
-                  e.preventDefault();
-                }
-              }}
-              required
-              className="!max-w-[85%] w-full" id="ProductUrl" placeholder=""
-              {...register("productUrl", {
-                onChange: (e) => {
-                  setIsUrlManuallyEdited(true);
-                },
-              })}  />
-            <button className="btn-outline-primary !py-2" type="button" onClick={() => {
-              setIsUrlManuallyEdited(false)
-              if (urlSettingData?.format_type == "seo_optimized_short") {
-                if (watchedName) {
-                  const slug = generateSlug(watchedName);
-                  setValue("productUrl", `/${slug}`);
-                }
-              } else if (urlSettingData?.format_type == "seo_optimized_long") {
-                if (watchedName) {
-                  const slug = generateSlug(watchedName);
-                  setValue("productUrl", `/product/${slug}`);
-                }
-              }
-              const formatType = urlSettingData?.format_type;
-              const customFormat = urlSettingData?.custom_format;
-
-              if (formatType === "custom" && customFormat) {
-                if (brandName || watchedName || watchedSku) {
-                  const replacements = {
-                    "%title%": watchedName ? generateSlug(watchedName) : "",
-                    "%sku%": watchedSku ? generateSlug(watchedSku) : "",
-                    "%brand%": brandName ? generateSlug(brandName) : "",
-                  };
-
-                  const finalUrl = Object.entries(replacements)
-                    .reduce(
-                      (url, [key, value]) => url.replace(new RegExp(key, "gi"), value),
-                      customFormat
-                    )
-                    .replace(/%[^%]+%/g, "")
-                    .replace(/\/+/g, "/")
-                    .replace(/\/$/g, "");
-                  if (finalUrl) {
-                    setValue("productUrl", finalUrl);
+            <div>
+              <Label className="2xl:!text-2xl" htmlFor="productUrl">
+                Product URL <span className="!text-red-500">*</span>{" "}
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <HiQuestionMarkCircle />
+                      {/* <HiMiniQuestionMarkCircle /> */}
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      The URL shown here is how people can access the product on
+                      your website. To change the URL, just click in the text
+                      box and type in your changes. <br />
+                      To change the default URL format, go to the settings -
+                      Store Settings menu and click the URL Structure tab. click
+                      on the reset button to return the URL to its default
+                      format.
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </Label>
+              <Input
+                onKeyDown={(e) => {
+                  if (/[#$*&@!=+%`'":;<>{}[]|]/.test(e.key)) {
+                    e.preventDefault();
                   }
-                }
-              }
-            }}
-            >Reset</button>
+                }}
+                onPaste={(e) => {
+                  const pasted = e.clipboardData.getData("text");
+                  if (/[#$*&@!=+%`'":;<>{}[]|]/.test(pasted)) {
+                    e.preventDefault();
+                  }
+                }}
+                required
+                className="!max-w-[85%] w-full"
+                id="ProductUrl"
+                placeholder=""
+                {...register("productUrl", {
+                  onChange: (e) => {
+                    setIsUrlManuallyEdited(true);
+                  },
+                })}
+              />
+              <button
+                className="btn-outline-primary"
+                type="button"
+                onClick={handleResetProductUrl}
+              >
+                Reset
+              </button>
+            </div>
+            {showRedirectCheckbox && (
+              <div className="mt-3 flex items-center gap-3 pl-1">
+                <Checkbox
+                  id="isRedirect"
+                  checked={!!isRedirectValue}
+                  onCheckedChange={(checked) =>
+                    setValue("isRedirect", checked === true)
+                  }
+                />
+                <Label
+                  htmlFor="isRedirect"
+                  className="2xl:!text-xl cursor-pointer text-sm font-medium text-gray-700"
+                >
+                  Redirect old URLs to this URL automatically (recommended)
+                </Label>
+              </div>
+            )}
           </div>
         </div>
 
@@ -209,7 +235,7 @@ export default function Seo() {
             id="metaDescription"
             placeholder=""
             {...register("metaDescription")}
-          // className="!min-w-[75rem]"
+            // className="!min-w-[75rem]"
           />
         </div>
       </div>

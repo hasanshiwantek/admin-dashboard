@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { useSearchParams } from "next/navigation";
 
 const templates = [
-  { label: "Bulk Edit", value: "bulkEdit" },
+  // { label: "Bulk Edit", value: "bulkEdit" },
   { label: "Default", value: "default" },
 ];
 
@@ -18,11 +18,13 @@ export default function ExportOptions() {
   const selected = watch("template");
   useEffect(() => {
     if (!searchParams.get("t")) return;
-    reset()
+    reset();
   }, [searchParams]);
   return (
     <div>
-      <h1 className="my-5 2xl:!text-[2.4rem]">Template and File format options</h1>
+      <h1 className="my-5 2xl:!text-[2.4rem]">
+        Template and File format options
+      </h1>
       <div className="bg-white border p-10 rounded-md shadow-sm space-y-6">
         <div className="space-y-4">
           {/* Template */}
@@ -42,12 +44,12 @@ export default function ExportOptions() {
                     onClick={() =>
                       setValue(
                         "template",
-                        selected === tpl.value ? "" : tpl.value
+                        selected === tpl.value ? "" : tpl.value,
                       )
                     }
                     className={cn(
                       "cursor-pointer px-3 py-1 2xl:!text-2xl",
-                      isSelected && "bg-blue-600 text-white"
+                      isSelected && "bg-blue-600 text-white",
                     )}
                   >
                     {tpl.label}
@@ -69,31 +71,33 @@ export default function ExportOptions() {
                   defaultValue="csv"
                   render={({ field }) => (
                     <RadioGroup
-                      className="flex gap-10 mt-2"
+                      className="flex gap-10"
                       onValueChange={field.onChange}
                       value={field.value}
                     >
-                      <div className="flex flex-col mt-10 space-y-4">
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="csv" id="csv" />
-                          <Label className="2xl:!text-2xl" htmlFor="csv">Export as CSV</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
+                      {/* <div className="flex flex-col mt-10 space-y-4"> */}
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="csv" id="csv" />
+                        <Label className="2xl:!text-2xl" htmlFor="csv">
+                          Export as CSV
+                        </Label>
+                      </div>
+                      {/* <div className="flex items-center space-x-2">
                           <RadioGroupItem value="xml" id="xml" />
                           <Label className="2xl:!text-2xl" htmlFor="xml">Export as XML</Label>
                         </div>
-                      </div>
+                      </div> */}
                     </RadioGroup>
                   )}
                 />
               </div>
               {/* Save export checkbox */}
-              <div className="flex items-center space-x-2 pt-2 mt-10">
+              {/* <div className="flex items-center space-x-2 pt-2 mt-10">
                 <Checkbox id="saveExport" {...register("saveExport")} />
                 <Label className="2xl:!text-2xl" htmlFor="saveExport">
                   Save export to the server for later download
                 </Label>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
