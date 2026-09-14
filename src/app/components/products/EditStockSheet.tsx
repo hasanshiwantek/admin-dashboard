@@ -1,5 +1,7 @@
 "use client";
 
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import {
   Sheet,
   SheetContent,
@@ -15,162 +17,267 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
-import { useState } from "react";
-import { updateProduct } from "@/redux/slices/productSlice";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
-import { refetchProducts } from "@/lib/productUtils";
-export default function EditStockSheet({ trigger, product }: any) {
-  const [open, setOpen] = useState(false);
-  const dispatch = useAppDispatch();
-  const [values, setValues] = useState({
-    name: product?.name || "",
-    sku: product?.sku || "",
-    adjustBy: product?.adjustBy || "",
-    currentStock: product?.currentStock || "",
-    lowStock: product?.lowStock || "",
-    bpn: product?.bpn || "",
-    safetyStock: product?.safetyStock || "",
-    allowPurchase: product?.allowPurchase,
-  });
+import { refetchProducts, sanitizeNumberInput } from "@/lib/productUtils";
+import { updateProduct } from "@/redux/slices/productSlice";
+import { useEffect, useRef, useState } from "react";
+import ValidationTooltip from "./TableCellValidationTooltip";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
-  const handleChange = (key: string, val: string | boolean) => {
-    setValues((prev) => ({
-      ...prev,
-      [key]: val,
+const INVALID_STOCK_MESSAGE = "Please enter a whole number";
+
+const STOCK_FIELDS = ["currentStock", "lowStock"] as const;
+
+type StockField = (typeof STOCK_FIELDS)[number];
+
+type Product = {
+  id: string;
+  name: string;
+  sku: string;
+  currentStock?: string | number;
+  lowStock?: string | number;
+  allowPurchase?: boolean;
+};
+
+type FormValues = {
+  name: string;
+  sku: string;
+  currentStock: string;
+  lowStock: string;
+  allowPurchase: boolean;
+};
+
+type EditStockSheetProps = {
+  trigger: React.ReactNode;
+  product: Product;
+};
+
+const createInitialValues = (product: Product): FormValues => ({
+  name: product.name ?? "",
+  sku: product.sku ?? "",
+  currentStock: String(product.currentStock ?? ""),
+  lowStock: String(product.lowStock ?? ""),
+  allowPurchase: Boolean(product.allowPurchase),
+});
+
+const isInvalidStock = (value: string): boolean => {
+  return value.startsWith("-");
+};
+
+type IntegerInputCellProps = {
+  value: string;
+  error?: string;
+  inputRef?: React.Ref<HTMLInputElement>;
+  onChange: (value: string) => void;
+};
+
+const IntegerInputCell = ({
+  value,
+  error,
+  inputRef,
+  onChange,
+}: IntegerInputCellProps) => (
+  <TableCell className="relative align-top">
+    {error && <ValidationTooltip message={error} />}
+
+    <Input
+      ref={inputRef}
+      type="text"
+      inputMode="numeric"
+      pattern="-?[0-9]*"
+      value={value}
+      aria-invalid={Boolean(error)}
+      aria-errormessage={error ? "validation-error" : undefined}
+      onChange={(event) => onChange(sanitizeNumberInput(event.target.value))}
+      className="
+        border
+        border-gray-300
+        aria-invalid:border-red-500
+        aria-invalid:bg-warning-cell-bg
+      "
+    />
+  </TableCell>
+);
+
+export default function EditStockSheet({
+  trigger,
+  product,
+}: EditStockSheetProps) {
+  const dispatch = useAppDispatch();
+
+  const [open, setOpen] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const firstInputRef = useRef<HTMLInputElement>(null);
+
+  const [values, setValues] = useState<FormValues>(() =>
+    createInitialValues(product),
+  );
+
+  /**
+   * Reset the form when a different product is provided.
+   */
+  useEffect(() => {
+    setValues(createInitialValues(product));
+  }, [product.id]);
+
+  /**
+   * Focus and select the first editable field
+   * whenever the Sheet opens.
+   */
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      firstInputRef.current?.focus();
+      firstInputRef.current?.select();
+    }, 50);
+
+    return () => window.clearTimeout(timer);
+  }, [open]);
+
+  const handleChange = <K extends keyof FormValues>(
+    key: K,
+    value: FormValues[K],
+  ) => {
+    setValues((current) => ({
+      ...current,
+      [key]: value,
     }));
   };
 
-  const handleSubmit = async () => {
+  /**
+   * Validation is derived from the current values.
+   * No separate error state is necessary.
+   */
+  const hasValidationErrors = STOCK_FIELDS.some((field) =>
+    isInvalidStock(values[field]),
+  );
+
+  const handleSubmit = async (): Promise<boolean> => {
+    if (hasValidationErrors || isSaving) {
+      return false;
+    }
+
     try {
-      const response = await dispatch(
+      setIsSaving(true);
+
+      await dispatch(
         updateProduct({
           body: {
             products: [
               {
-                id: [product?.id],
+                id: [product.id],
                 fields: {
-                  name: values?.name,
-                  sku: values?.sku,
-                  // adjustBy: values?.adjustBy || "",
-                  currentStock: values?.currentStock,
-                  lowStock: values?.lowStock,
-                  // bpn: values?.bpn || "",
-                  // safetyStock: values?.safetyStock || "",
-                  allowPurchase: values?.allowPurchase,
+                  name: values.name,
+                  sku: values.sku,
+                  currentStock: values.currentStock,
+                  lowStock: values.lowStock,
+                  allowPurchase: values.allowPurchase,
                 },
               },
             ],
           },
-        })
-      ).unwrap(); // ✅ unwrap for error handling
+        }),
+      ).unwrap();
 
-      // Refetch products after successful update
       await refetchProducts(dispatch);
-    } catch (err) {
-      console.error("❌ Error Updating:", err);
+
+      return true;
+    } catch (error) {
+      console.error("Error updating product:", error);
+
+      return false;
+    } finally {
+      setIsSaving(false);
     }
   };
 
-  const handleSaveAndExit = () => {
-    handleSubmit();
-    setOpen(false); // close the Sheet
+  const handleSave = async () => {
+    await handleSubmit();
+  };
+
+  const handleSaveAndExit = async () => {
+    const success = await handleSubmit();
+
+    if (success) {
+      setOpen(false);
+    }
   };
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>{trigger}</SheetTrigger>
+
       <SheetContent side="right">
-        <SheetHeader className="p-6 border-b">
+        <SheetHeader className="border-b p-6">
           <SheetTitle>Edit Inventory</SheetTitle>
         </SheetHeader>
 
-        {/* Scrollable Editable Table */}
-        <div className="overflow-x-auto h-[calc(100vh-180px)] p-10">
-          <Table className="min-w-[900px] min-h-[150px] text-left border">
-            <TableHeader className=" font-semibold border-b">
+        <div className="h-[calc(100vh-80px)] overflow-x-auto p-10">
+          <Table className="min-h-[150px] min-w-[900px] border text-left">
+            <TableHeader className="border-b font-semibold">
               <TableRow>
                 <TableHead>Product name</TableHead>
                 <TableHead>SKU</TableHead>
-                {/* <TableHead>Adjust by</TableHead> */}
                 <TableHead>Current stock</TableHead>
                 <TableHead>Low stock</TableHead>
-                {/* <TableHead>BPN</TableHead> */}
-                {/* <TableHead>Safety stock</TableHead> */}
-                <TableHead>Availabilty</TableHead>
+                <TableHead>Availability</TableHead>
               </TableRow>
             </TableHeader>
+
             <TableBody>
-              <TableRow className="border-b ">
-                <TableCell className=" align-top">
+              <TableRow className="border-b">
+                {/* Product name */}
+                <TableCell className="align-top">
                   <Input
-                    className=" border border-gray-300"
                     value={values.name}
-                    onChange={(e) => handleChange("name", e.target.value)}
                     readOnly
+                    className="border border-gray-300"
                   />
                 </TableCell>
-                <TableCell className=" align-top">
+
+                {/* SKU */}
+                <TableCell className="align-top">
                   <Input
-                    className=" border border-gray-300"
                     value={values.sku}
-                    onChange={(e) => handleChange("sku", e.target.value)}
                     readOnly
+                    className="border border-gray-300"
                   />
                 </TableCell>
 
-                {/* <TableCell className=" align-top">
-                  <Input
-                    className=" border border-gray-300"
-                    value={values.adjustBy}
-                    onChange={(e) => handleChange("adjustBy", e.target.value)}
-                  />
-                </TableCell> */}
-                <TableCell className=" align-top">
-                  <Input
-                    type="number"
-                    className=" border border-gray-300"
-                    value={values.currentStock}
-                    onChange={(e) =>
-                      handleChange("currentStock", e.target.value)
-                    }
-                  />
-                </TableCell>
+                {/* Current stock */}
+                <IntegerInputCell
+                  value={values.currentStock}
+                  error={
+                    isInvalidStock(values.currentStock)
+                      ? INVALID_STOCK_MESSAGE
+                      : undefined
+                  }
+                  inputRef={firstInputRef}
+                  onChange={(value) => handleChange("currentStock", value)}
+                />
 
-                <TableCell className=" align-top">
-                  <Input
-                    type="number"
-                    className=" border border-gray-300"
-                    value={values.lowStock}
-                    onChange={(e) => handleChange("lowStock", e.target.value)}
-                  />
-                </TableCell>
+                {/* Low stock */}
+                <IntegerInputCell
+                  value={values.lowStock}
+                  error={
+                    isInvalidStock(values.lowStock)
+                      ? INVALID_STOCK_MESSAGE
+                      : undefined
+                  }
+                  onChange={(value) => handleChange("lowStock", value)}
+                />
 
-                {/* <TableCell className=" align-top">
-                  <Input
-                    className=" border border-gray-300"
-                    value={values.bpn}
-                    onChange={(e) => handleChange("bpn", e.target.value)}
-                  />
-                </TableCell> */}
-                {/* 
-                <TableCell className=" align-top">
-                  <Input
-                    type="number"
-                    className=" border border-gray-300"
-                    value={values.safetyStock}
-                    onChange={(e) =>
-                      handleChange("safetyStock", e.target.value)
-                    }
-                  />
-                </TableCell> */}
-
-                <TableCell className="align-top  ">
+                {/* Availability */}
+                <TableCell className="align-top">
                   <Checkbox
                     checked={values.allowPurchase}
-                    onCheckedChange={(checked: boolean) =>
-                      handleChange("allowPurchase", checked)
+                    onCheckedChange={(checked) =>
+                      handleChange("allowPurchase", checked === true)
                     }
                   />
                 </TableCell>
@@ -179,17 +286,31 @@ export default function EditStockSheet({ trigger, product }: any) {
           </Table>
         </div>
 
-        {/* Sticky Buttons */}
-        <div className="flex justify-between w-full sticky border-t bottom-0 gap-3 p-6 bg-white">
-          <button
-            className="btn-outline-primary w-[50%]"
-            onClick={handleSubmit}
+        {/* Actions */}
+        <div className="sticky bottom-0 flex w-full gap-3 border-t bg-white p-6">
+          <Button
+            size={"xl"}
+            type="button"
+            className={cn("btn-outline-primary w-1/2", {
+              "cursor-not-allowed! opacity-60": hasValidationErrors,
+            })}
+            onClick={handleSave}
+            disabled={isSaving || hasValidationErrors}
           >
-            Save
-          </button>
-          <button className="btn-primary w-[50%]" onClick={handleSaveAndExit}>
-            Save and exit
-          </button>
+            {isSaving ? "Saving..." : "Save"}
+          </Button>
+
+          <Button
+            size={"xl"}
+            type="button"
+            className={cn("btn-primary w-1/2", {
+              "cursor-not-allowed! opacity-60": hasValidationErrors,
+            })}
+            onClick={handleSaveAndExit}
+            disabled={isSaving || hasValidationErrors}
+          >
+            {isSaving ? "Saving..." : "Save and exit"}
+          </Button>
         </div>
       </SheetContent>
     </Sheet>
