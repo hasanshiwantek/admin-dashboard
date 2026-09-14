@@ -402,7 +402,7 @@ const EditCustomer = () => {
                             </div>
 
                             {/* Store Credit */}
-                            <div>
+                            {/* <div>
                                 <Label className="text-[15px] text-[#313440] mb-1.5 block">
                                     Store credit
                                 </Label>
@@ -416,10 +416,10 @@ const EditCustomer = () => {
                                         className="h-12 pl-7 max-w-none w-full"
                                     />
                                 </div>
-                            </div>
+                            </div> */}
 
                             {/* Customer Group */}
-                            <div>
+                            {/* <div>
                                 <Label className="text-[15px] text-[#313440] mb-1.5 block">
                                     Customer group <span className="text-red-500">*</span>
                                 </Label>
@@ -437,7 +437,7 @@ const EditCustomer = () => {
                                         <SelectItem value="No group">No group</SelectItem>
                                     </SelectContent>
                                 </Select>
-                            </div>
+                            </div> */}
 
                             {/* Company Name */}
                             <div>
@@ -481,7 +481,7 @@ const EditCustomer = () => {
                     </div>
 
                     {/* ==================== DATA PREFERENCES ==================== */}
-                    <div className="bg-white border border-[#e5e7eb] rounded-md p-6 mb-5 shadow-sm w-full">
+                    {/* <div className="bg-white border border-[#e5e7eb] rounded-md p-6 mb-5 shadow-sm w-full">
                         <h2 className="!text-[22px] font-semibold text-[#313440] mb-5">
                             Data preferences
                         </h2>
@@ -512,7 +512,7 @@ const EditCustomer = () => {
                                 </div>
                             ))}
                         </div>
-                    </div>
+                    </div> */}
                     {/* ==================== ADDRESS BOOK ==================== */}
                     <div className="bg-white border border-[#e5e7eb] rounded-md p-6 mb-5">
                         {/* Header */}
