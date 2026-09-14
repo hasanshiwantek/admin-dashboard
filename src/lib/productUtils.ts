@@ -133,7 +133,7 @@ export const buildCopyNameSku = ({
 export const normalizeProductUrl = (value: string) => {
   const trimmed = value.trim();
   const clean = trimmed.replace(REGEX.PRODUCT_URL_NORMALIZE, "");
-  return `/${clean}/`;
+  return `/${clean}`;
 };
 
 export const sanitizeNumberInput = (value: string, allowDecimal = true): string => {

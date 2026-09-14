@@ -29,3 +29,15 @@ export function toBase62(num: number): string {
 
   return result;
 }
+
+export function convertOptionsToObject(
+  options: { value: string; label: string }[],
+): Record<string, string> {
+  return options.reduce(
+    (acc, option) => {
+      acc[option.value] = option.label;
+      return acc;
+    },
+    {} as Record<string, string>,
+  );
+}
