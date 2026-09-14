@@ -130,41 +130,41 @@ const AllOrders = () => {
   const { loading, error, singleShipmentByOrder } = useAppSelector(
     (state) => state.order,
   );
- const [activeTab, setActiveTab] = useState(() => {
-  if (typeof window !== "undefined") {
-    return sessionStorage.getItem("ordersActiveTab") || "All orders";
-  }
+  const [activeTab, setActiveTab] = useState(() => {
+    if (typeof window !== "undefined") {
+      return sessionStorage.getItem("ordersActiveTab") || "All orders";
+    }
 
-  return "All orders";
-});
+    return "All orders";
+  });
   const [filterProductId, setFilterProductId] = useState<string>("");
 
- const [dynamicTab, setDynamicTab] = useState<string | null>(() => {
-  if (typeof window !== "undefined") {
-    return sessionStorage.getItem("ordersDynamicTab");
-  }
-
-  return null;
-});
-
-const [showMoreTabs, setShowMoreTabs] = useState(false);
-
-
-useEffect(() => {
-  const handleClickOutside = (event: MouseEvent) => {
-    const target = event.target as HTMLElement;
-
-    if (!target.closest(".orders-more-dropdown")) {
-      setShowMoreTabs(false);
+  const [dynamicTab, setDynamicTab] = useState<string | null>(() => {
+    if (typeof window !== "undefined") {
+      return sessionStorage.getItem("ordersDynamicTab");
     }
-  };
 
-  document.addEventListener("mousedown", handleClickOutside);
+    return null;
+  });
 
-  return () => {
-    document.removeEventListener("mousedown", handleClickOutside);
-  };
-}, []);
+  const [showMoreTabs, setShowMoreTabs] = useState(false);
+
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+
+      if (!target.closest(".orders-more-dropdown")) {
+        setShowMoreTabs(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const filteredOrders = orders?.data || [];
 
@@ -181,11 +181,11 @@ useEffect(() => {
     "Archived",
     // "Custom views",
   ];
-const fixedTabs = tabs.slice(0, 7);
+  const fixedTabs = tabs.slice(0, 7);
 
-const moreTabs = tabs.filter(
-  (tab) => !fixedTabs.includes(tab) && tab !== dynamicTab
-);
+  const moreTabs = tabs.filter(
+    (tab) => !fixedTabs.includes(tab) && tab !== dynamicTab
+  );
   const [selectedOrderIds, setSelectedOrderIds] = useState<any[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<any>();
   const [showShipmentModal, setShowShipmentModal] = useState(false);
@@ -400,7 +400,7 @@ const moreTabs = tabs.filter(
         }
       },
     },
-    ...(order.isMessage && !order?.userType
+    ...(!order?.userType
       ? [
         {
           label: "Send Message",
@@ -899,7 +899,7 @@ const moreTabs = tabs.filter(
                 );
                 setFilterProductId("");
                 setActiveTab(tab);
-           sessionStorage.setItem("ordersActiveTab", tab);
+                sessionStorage.setItem("ordersActiveTab", tab);
               }
             }}
           >
@@ -907,53 +907,53 @@ const moreTabs = tabs.filter(
           </button>
         ))}
         {moreTabs.length > 0 && (
-  <div className="relative orders-more-dropdown">
-    <button
-      type="button"
-      className="!text-2xl pb-3 whitespace-nowrap text-gray-500 hover:text-black"
-      onClick={() => setShowMoreTabs((prev) => !prev)}
-    >
-      More
-    </button>
+          <div className="relative orders-more-dropdown">
+            <button
+              type="button"
+              className="!text-2xl pb-3 whitespace-nowrap text-gray-500 hover:text-black"
+              onClick={() => setShowMoreTabs((prev) => !prev)}
+            >
+              More
+            </button>
 
-    {showMoreTabs && (
-      <div className="absolute right-0 top-full z-50 mt-2 min-w-[220px] rounded-md border bg-white shadow-lg">
-        {moreTabs.map((tab) => (
-         <button
-  key={tab}
-  type="button"
-  className="block w-full px-4 py-3 text-left text-lg hover:bg-gray-100"
-  onClick={() => {
-    setDynamicTab(tab);
-    setActiveTab(tab);
-      sessionStorage.setItem("ordersDynamicTab", tab);
-      sessionStorage.setItem("ordersActiveTab", tab);
+            {showMoreTabs && (
+              <div className="absolute right-0 top-full z-50 mt-2 min-w-[220px] rounded-md border bg-white shadow-lg">
+                {moreTabs.map((tab) => (
+                  <button
+                    key={tab}
+                    type="button"
+                    className="block w-full px-4 py-3 text-left text-lg hover:bg-gray-100"
+                    onClick={() => {
+                      setDynamicTab(tab);
+                      setActiveTab(tab);
+                      sessionStorage.setItem("ordersDynamicTab", tab);
+                      sessionStorage.setItem("ordersActiveTab", tab);
 
-    setShowMoreTabs(false);
+                      setShowMoreTabs(false);
 
-    const query = Object.fromEntries(searchParams.entries());
+                      const query = Object.fromEntries(searchParams.entries());
 
-    if (Object.keys(query).length > 0) {
-      router.push(`/manage/orders`);
-    } else {
-      dispatch(
-        fetchAllOrders({
-          page: currentPage,
-          perPage,
-          status: tab,
-        }),
-      );
-      setFilterProductId("");
-    }
-  }}
->
-  {tab}
-</button>
-        ))}
-      </div>
-    )}
-  </div>
-)}
+                      if (Object.keys(query).length > 0) {
+                        router.push(`/manage/orders`);
+                      } else {
+                        dispatch(
+                          fetchAllOrders({
+                            page: currentPage,
+                            perPage,
+                            status: tab,
+                          }),
+                        );
+                        setFilterProductId("");
+                      }
+                    }}
+                  >
+                    {tab}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Top Actions */}
@@ -1852,8 +1852,8 @@ const moreTabs = tabs.filter(
                                           {" "}
                                           {order?.products?.length} items @{" "}
                                           {dayjs(order?.updatedAt).format(
-                                            "DD MMM YYYY HH:mm:ss",
-                                          ) || "N/A"}{" "}
+                                            "DD MMM YYYY",
+                                          )}{" "}
                                         </span>
                                       </div>
                                       <div className="flex ">
