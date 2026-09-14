@@ -41,7 +41,17 @@ export const SideBar = ({
   const [openMenus, setOpenMenus] = useState<boolean[]>(
     sidebarData.map(() => false),
   );
+  
+useEffect(() => {
+  if (pathname === "/manage/orders") {
+    // Orders page → session values rehne do
+    return;
+  }
 
+  // Kisi bhi doosre page par → sirf orders ki tabs clear
+  sessionStorage.removeItem("ordersDynamicTab");
+  sessionStorage.removeItem("ordersActiveTab");
+}, [pathname]);
   useEffect(() => {
     const newOpenMenus = sidebarData.map(
       (item) =>
