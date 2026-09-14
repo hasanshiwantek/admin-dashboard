@@ -30,6 +30,7 @@ import { generateSlug } from "@/const/data";
 import { useSearchParams } from 'next/navigation';
 import DescriptionEditorQuill from "@/app/components/products/add/DescriptionEditorQuill";
 import DescriptionEditorQuillForCat from "@/app/components/products/categories/DescriptionEditorQuillForCat";
+import { UrlSettingEnums } from "@/const/appConstants";
 type FormVals = {
   name: string;
   slug: string;
@@ -216,13 +217,13 @@ export default function EditCategoryPage() {
   const onResetSlug = () => {
     if (!nameVal) return;
     setIsUrlManuallyEdited(false)
-    if (urlSettingData?.format_type == "seo_optimized_short") {
+    if (urlSettingData?.format_type == UrlSettingEnums.SEO_OPTIMIZED_SHORT) {
       if (nameVal) {
         const slug = generateSlug(nameVal);
         setValue("slug", `/${slug}`, { shouldDirty: true });
 
       }
-    } else if (urlSettingData?.format_type == "seo_optimized_long") {
+    } else if (urlSettingData?.format_type == UrlSettingEnums.SEO_OPTIMIZED_LONG) {
       if (nameVal) {
         const slug = generateSlug(nameVal);
         setValue("slug", `/categories/${slug}`, { shouldDirty: true });
@@ -254,12 +255,12 @@ export default function EditCategoryPage() {
   };
   useEffect(() => {
     if (!isUrlManuallyEdited) {
-      if (urlSettingData?.format_type == "seo_optimized_short") {
+      if (urlSettingData?.format_type == UrlSettingEnums.SEO_OPTIMIZED_SHORT) {
         if (nameVal) {
           const slug = generateSlug(nameVal);
           setValue("slug", `/${slug}`);
         }
-      } else if (urlSettingData?.format_type == "seo_optimized_long") {
+      } else if (urlSettingData?.format_type == UrlSettingEnums.SEO_OPTIMIZED_LONG) {
         if (nameVal) {
           const slug = generateSlug(nameVal);
           setValue("slug", `/categories/${slug}`);

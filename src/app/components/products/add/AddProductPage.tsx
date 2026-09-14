@@ -1,74 +1,61 @@
 "use client";
-// AddProductPage.tsx
-import React, { useEffect, useState, useMemo, useRef, useLayoutEffect } from "react";
-import { FormProvider, useForm } from "react-hook-form";
-import SidebarNavigation from "./SidebarNavigation";
-import BasicInfoForm from "./BasicInformation";
-import Link from "next/link";
-import { FaArrowLeftLong } from "react-icons/fa6";
-import { HiDotsHorizontal } from "react-icons/hi";
-import { FiExternalLink } from "react-icons/fi";
-import DescriptionEditor from "./DescriptionEditor";
-import ImageVideoUploader from "./ImageVideoUploader";
-import ProductIdentifiers from "./ProductIdentifiers";
-import Inventory from "./Inventory";
-import Seo from "./Seo";
-import Dimensions from "./Dimensions";
-import OpenGraph from "./OpenGraph";
-import Pricing from "./Pricing";
-import StoreFront from "./StoreFront";
-import ShippingDetails from "./ShippingDetails";
-import Purchasability from "./Purchasibility";
-import CustomFields from "./CustomFieldsSection";
-import CustomsInformation from "./CustomsInformation";
-import RelatedProducts from "./RelatedProducts";
-import Variations from "./Variations";
-import Customizations from "./Customizations";
+
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
+import objectToFormData from "@/lib/formDataUtils";
+import { buildCopyNameSku } from "@/lib/productUtils";
+import { fetchUrlSettings } from "@/redux/slices/homeSlice";
 import {
   addProduct,
-  updateProductFormData,
-  fetchSingleProduct,
   deleteProduct,
-  resetSingleProduct,
+  fetchSingleProduct,
+  updateProductFormData,
 } from "@/redux/slices/productSlice";
-import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
-import { useParams, usePathname } from "next/navigation";
-import { useRouter } from "next/navigation";
-import objectToFormData from "@/lib/formDataUtils";
-import { buildUpdateProductFormData } from "@/lib/formDataUtils";
-// import { updateProductFormData } from "@/redux/slices/productSlice";
-import { useSearchParams } from "next/navigation";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import { fetchUrlSettings } from "@/redux/slices/homeSlice";
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import { FaArrowLeftLong } from "react-icons/fa6";
+import { FiExternalLink } from "react-icons/fi";
+import { HiDotsHorizontal } from "react-icons/hi";
+import BasicInfoForm from "./BasicInformation";
+import CustomFields from "./CustomFieldsSection";
+import CustomsInformation from "./CustomsInformation";
 import DescriptionEditorQuill from "./DescriptionEditorQuill";
+import Dimensions from "./Dimensions";
+import ImageVideoUploader from "./ImageVideoUploader";
+import Inventory from "./Inventory";
+import OpenGraph from "./OpenGraph";
+import Pricing from "./Pricing";
+import ProductIdentifiers from "./ProductIdentifiers";
+import Purchasability from "./Purchasibility";
+import RelatedProducts from "./RelatedProducts";
+import Seo from "./Seo";
+import ShippingDetails from "./ShippingDetails";
+import SidebarNavigation from "./SidebarNavigation";
+import StoreFront from "./StoreFront";
 
-
-const buildCopyNameSku = (name: string, sku: string, productUrl: string) => {
-  const baseName = name.replace(/\s+Copy\s*\d*$/, "");
-  const nameMatch = name.match(/Copy\s*(\d+)$/);
-  const nextNameNum = nameMatch ? parseInt(nameMatch[1]) + 1 : 1;
-
-  const baseSku = sku.replace(/-\d+$/, "");
-  const baseProductUrl = productUrl.replace(/-\d+$/, "");
-  const randomNum = Math.floor(1000 + Math.random() * 9000);
-
-  return {
-    name: `${baseName} Copy ${nextNameNum}`,
-    sku: `${baseSku}-${randomNum}`,
-    ...(productUrl && { productUrl: `${baseProductUrl}-${randomNum}` }), // ✅
-  };
-};
 export default function AddProductPage() {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const exitAfterSaveRef = useRef(false);
-  const [redirectUpdateScreen, setRedirectUpdateScreen] = useState<any>(null)
-  const copyAfterSaveRef = useRef(false)
+  const copyAfterSaveRef = useRef(false);
+  const submitActionRef = useRef<"duplicate" | "addAnother" | "viewProducts">(
+    "viewProducts",
+  );
   const hasUpdatedOriginalRef = useRef(false); // ✅ tracks if update already happened
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -80,21 +67,25 @@ export default function AddProductPage() {
     () => ({
       price: "",
       dimensions: { weight: "" },
-      trackInventory: true,     // ✅ default checked for new product
-      inventoryLevel: "product",// ✅ default level
+      trackInventory: true, // ✅ default checked for new product
+      inventoryLevel: "product", // ✅ default level
       // ✅ OpenGraph defaults
       // objectType: "physical",
-         isVisible: true,
+      isVisible: true,
+      isRedirect: false,
       useProductName: 1,
       graphDescription: 1,
       imageOption: "useThumbnail", // ✅ Default value for radio
     }),
-    []
+    [],
   );
 
   const methods: any = useForm({ defaultValues });
 
-  const { reset, formState: { isDirty }, } = methods;
+  const {
+    reset,
+    formState: { isDirty },
+  } = methods;
   const { id } = useParams();
   const isEditModeRef = useRef(!!id);
   useEffect(() => {
@@ -104,21 +95,15 @@ export default function AddProductPage() {
   }, [dispatch, id]);
 
   const editProduct = useAppSelector(
-    (state: any) => state.product.singleProduct
+    (state: any) => state.product.singleProduct,
   );
-
-  // const allProducts = useAppSelector((state: any) => state.product.products);
   const [product, setProduct] = useState<any>();
-  // const product = editProduct?.data;
-  // const product = allProducts.data?.find((p: any) => p.id === Number(id));
 
   const isEdit = !!product?.id;
-  // const isEdit = !!id;
-
 
   useEffect(() => {
     dispatch(fetchUrlSettings("product"));
-  }, [])
+  }, []);
 
   useEffect(() => {
     if (editProduct?.data) {
@@ -126,31 +111,32 @@ export default function AddProductPage() {
         const {
           name: copyName,
           sku: copySku,
-          productUrl: copyProductUrl
-        } = buildCopyNameSku(
-          editProduct.data.name,
-          editProduct.data.sku,
-          editProduct.data?.productUrl
-        );
+          productUrl: copyProductUrl,
+        } = buildCopyNameSku({
+          name: editProduct.data.name,
+          sku: editProduct.data.sku,
+          hasDuplicate: Boolean(editProduct.data?.hasDuplicate),
+        });
         const updatedProduct = {
           ...editProduct.data,
           name: copyName,
           sku: copySku,
           productUrl: copyProductUrl,
-          callForPricing: editProduct.data?.callPricing
+          callForPricing: editProduct.data?.callPricing,
         };
         setProduct(updatedProduct);
       } else {
-        setProduct({ ...editProduct?.data, callForPricing: editProduct?.data?.callPricing });
+        setProduct({
+          ...editProduct?.data,
+          callForPricing: editProduct?.data?.callPricing,
+        });
       }
     }
   }, [editProduct, isDuplicate]);
 
-
   useEffect(() => {
     if (product) reset(product);
   }, [product, reset]);
-
 
   // ✅ Map backend response to form fields
   useEffect(() => {
@@ -215,6 +201,24 @@ export default function AddProductPage() {
     }
   }, [id, reset]);
 
+  const navigateAfterSave = (savedProductId?: number | string) => {
+    const action = submitActionRef.current;
+
+    if (action === "duplicate") {
+      const targetId = savedProductId ?? product?.id;
+      if (targetId) {
+        router.push(`/manage/products/dublicate/${targetId}?isDuplicate=true`);
+        return;
+      }
+    }
+
+    if (action === "addAnother") {
+      router.push("/manage/products/add");
+      return;
+    }
+
+    router.push("/manage/products");
+  };
 
   const onSubmit = methods.handleSubmit(async (data: Record<string, any>) => {
     setIsLoading(true);
@@ -223,11 +227,11 @@ export default function AddProductPage() {
       try {
         const imageData = Array.isArray(data.image)
           ? data.image.map((img: any) => ({
-            file: img.file || null,
-            url: typeof img.path === "string" ? img.path : "",
-            description: img.description || "",
-            isPrimary: img.isPrimary ? 1 : 0,
-          }))
+              file: img.file || null,
+              url: typeof img.path === "string" ? img.path : "",
+              description: img.description || "",
+              isPrimary: img.isPrimary ? 1 : 0,
+            }))
           : [];
 
         const { id, imageOption, exitAfterSave, ...rest } = data;
@@ -258,53 +262,76 @@ export default function AddProductPage() {
           dontUse: imageOption === "dontUse" ? 1 : 0,
           manageCustoms: data.manageCustoms ? 1 : 0,
           callForPricing: data.callForPricing ? 1 : 0,
+          isRedirect: data.isRedirect ? 1 : 0,
+          parentId: isDuplicate ? parseInt(product?.id) : undefined,
         };
 
         if (copyAfterSaveRef.current && isEdit) {
-
           const updateFormData = objectToFormData(normalizedFields);
-          const updateResult = await dispatch(addProduct({ data: updateFormData }));
+          const updateResult = await dispatch(
+            addProduct({ data: updateFormData }),
+          );
 
           if (addProduct.fulfilled.match(updateResult)) {
             isEditModeRef.current = false;
             setProduct(undefined);
-            const { name: copyName, sku: copySku, productUrl: copyProductUrl } = buildCopyNameSku(data.name, data.sku, data?.productUrl);
-            methods.reset({ ...data, name: copyName, sku: copySku, productUrl: copyProductUrl });
+            const {
+              name: copyName,
+              sku: copySku,
+              productUrl: copyProductUrl,
+            } = buildCopyNameSku({
+              name: data.name,
+              sku: data.sku,
+              productUrl: data?.productUrl,
+            });
+            methods.reset({
+              ...data,
+              name: copyName,
+              sku: copySku,
+              productUrl: copyProductUrl,
+            });
           } else {
             console.error("Create copy failed:", updateResult.error);
           }
 
           // ─── CASE 2: Copy — 2nd click = CREATE only ─────────────────
         } else if (copyAfterSaveRef.current && !isEdit) {
-
           const formData = objectToFormData(normalizedFields);
           const result = await dispatch(addProduct({ data: formData }));
 
           if (addProduct.fulfilled.match(result)) {
             hasUpdatedOriginalRef.current = false; // ✅ reset for next time
-            const { name: copyName, sku: copySku, productUrl: copyProductUrl } = buildCopyNameSku(data.name, data.sku, data?.productUrl);
-            methods.reset({ ...data, name: copyName, sku: copySku, productUrl: copyProductUrl });
+            const {
+              name: copyName,
+              sku: copySku,
+              productUrl: copyProductUrl,
+            } = buildCopyNameSku({
+              name: data.name,
+              sku: data.sku,
+              productUrl: data?.productUrl,
+            });
+            methods.reset({
+              ...data,
+              name: copyName,
+              sku: copySku,
+              productUrl: copyProductUrl,
+            });
           } else {
             console.error("Create failed:", result.error);
           }
 
           // ─── CASE 3: Normal Save / Update ───────────────────────────
         } else {
-
           const formData = objectToFormData(normalizedFields);
           const result = await dispatch(addProduct({ data: formData }));
 
           if (addProduct.fulfilled.match(result)) {
-            if (exitAfterSaveRef.current) {
-              router.push("/manage/products");
-            } else {
-              router.push(`/manage/products/edit/${result?.payload?.data?.id}`);
-            }
+            const savedProductId = result?.payload?.data?.id;
+            navigateAfterSave(savedProductId);
           } else {
             console.error("Product save failed:", result.error);
           }
         }
-
       } catch (error) {
         console.error("Unexpected error during save:", error);
       } finally {
@@ -317,11 +344,11 @@ export default function AddProductPage() {
       try {
         const imageData = Array.isArray(data.image)
           ? data.image.map((img: any) => ({
-            file: img.file || null,
-            url: typeof img.path === "string" ? img.path : "",
-            description: img.description || "",
-            isPrimary: img.isPrimary ? 1 : 0,
-          }))
+              file: img.file || null,
+              url: typeof img.path === "string" ? img.path : "",
+              description: img.description || "",
+              isPrimary: img.isPrimary ? 1 : 0,
+            }))
           : [];
 
         const { id, imageOption, exitAfterSave, ...rest } = data;
@@ -352,138 +379,165 @@ export default function AddProductPage() {
           dontUse: imageOption === "dontUse" ? 1 : 0,
           manageCustoms: data.manageCustoms ? 1 : 0,
           callForPricing: data.callForPricing ? 1 : 0,
+          isRedirect: data.isRedirect ? 1 : 0,
         };
 
-
         if (copyAfterSaveRef.current && isEdit) {
-
           const updateFormData = objectToFormData(normalizedFields);
           const updateResult = await dispatch(
-            updateProductFormData({ id: product.id, data: updateFormData })
+            updateProductFormData({ id: product.id, data: updateFormData }),
           );
 
           if (updateProductFormData.fulfilled.match(updateResult)) {
             isEditModeRef.current = false;
             setProduct(undefined);
-            const { name: copyName, sku: copySku, productUrl: copyProductUrl } = buildCopyNameSku(data.name, data.sku, data?.productUrl);
-            methods.reset({ ...data, name: copyName, sku: copySku, productUrl: copyProductUrl });
+            const {
+              name: copyName,
+              sku: copySku,
+              productUrl: copyProductUrl,
+            } = buildCopyNameSku({
+              name: data.name,
+              sku: data.sku,
+              productUrl: data?.productUrl,
+            });
+            methods.reset({
+              ...data,
+              name: copyName,
+              sku: copySku,
+              productUrl: copyProductUrl,
+            });
           } else {
             console.error("Update failed:", updateResult.error);
           }
 
           // ─── CASE 2: Copy — 2nd click = CREATE only ─────────────────
         } else if (copyAfterSaveRef.current && !isEdit) {
-
           const formData = objectToFormData(normalizedFields);
           const result = await dispatch(addProduct({ data: formData }));
 
           if (addProduct.fulfilled.match(result)) {
             hasUpdatedOriginalRef.current = false; // ✅ reset for next time
-            const { name: copyName, sku: copySku, productUrl: copyProductUrl } = buildCopyNameSku(data.name, data.sku, data?.productUrl);
-            methods.reset({ ...data, name: copyName, sku: copySku, productUrl: copyProductUrl });
+            const {
+              name: copyName,
+              sku: copySku,
+              productUrl: copyProductUrl,
+            } = buildCopyNameSku({
+              name: data.name,
+              sku: data.sku,
+              productUrl: data?.productUrl,
+            });
+            methods.reset({
+              ...data,
+              name: copyName,
+              sku: copySku,
+              productUrl: copyProductUrl,
+            });
           } else {
             console.error("Create failed:", result.error);
           }
 
           // ─── CASE 3: Normal Save / Update ───────────────────────────
         } else {
-
           const formData = objectToFormData(normalizedFields);
           const result = isEdit
-            ? await dispatch(updateProductFormData({ id: product.id, data: formData }))
+            ? await dispatch(
+                updateProductFormData({ id: product.id, data: formData }),
+              )
             : await dispatch(addProduct({ data: formData }));
 
           const actionCreator = isEdit ? updateProductFormData : addProduct;
 
           if (actionCreator.fulfilled.match(result)) {
-            if (exitAfterSaveRef.current) {
-              router.push("/manage/products");
-            } else if (!isEdit) {
-              router.push(`/manage/products/edit/${result?.payload?.data?.id}`);
+            const savedProductId = result?.payload?.data?.id ?? product?.id;
+            if (
+              submitActionRef.current === "addAnother" ||
+              submitActionRef.current === "viewProducts"
+            ) {
+              navigateAfterSave(savedProductId);
+            } else if (submitActionRef.current === "duplicate") {
+              navigateAfterSave(savedProductId);
             }
-            // isEdit + !exitAfterSaveRef → stays on edit page
           } else {
             console.error("Product save failed:", result.error);
           }
         }
-
       } catch (error) {
         console.error("Unexpected error during save:", error);
       } finally {
         setIsLoading(false);
         exitAfterSaveRef.current = false;
+        submitActionRef.current = "viewProducts";
         hasUpdatedOriginalRef.current = false;
         copyAfterSaveRef.current = false;
       }
     }
-
   });
 
- useLayoutEffect(() => {
-  const main = document.querySelector("main");
+  useLayoutEffect(() => {
+    const main = document.querySelector("main");
 
-  const scrollEl =
-    main && main.scrollHeight > main.clientHeight
-      ? main
-      : window;
+    const scrollEl =
+      main && main.scrollHeight > main.clientHeight ? main : window;
 
-  const getScrollTop = () =>
-    scrollEl === window
-      ? window.scrollY
-      : (scrollEl as HTMLElement).scrollTop;
+    const getScrollTop = () =>
+      scrollEl === window
+        ? window.scrollY
+        : (scrollEl as HTMLElement).scrollTop;
 
-  if (scrollEl === window) {
-    window.scrollTo(0, 0);
-  } else {
-    (scrollEl as HTMLElement).scrollTop = 0;
-  }
+    if (scrollEl === window) {
+      window.scrollTo(0, 0);
+    } else {
+      (scrollEl as HTMLElement).scrollTop = 0;
+    }
 
-  setIsScrolled(false);
+    setIsScrolled(false);
 
-  let ticking = false;
+    let ticking = false;
 
-  const handleScroll = () => {
-    if (ticking) return;
+    const handleScroll = () => {
+      if (ticking) return;
 
-    ticking = true;
+      ticking = true;
 
-    requestAnimationFrame(() => {
-      const scrollTop = getScrollTop();
+      requestAnimationFrame(() => {
+        const scrollTop = getScrollTop();
 
-      setIsScrolled((prev) => {
-        // Enter compact header
-        if (!prev && scrollTop > 60) {
-          return true;
-        }
+        setIsScrolled((prev) => {
+          // Enter compact header
+          if (!prev && scrollTop > 60) {
+            return true;
+          }
 
-        // Return to normal header only when clearly back near top
-        if (prev && scrollTop < 20) {
-          return false;
-        }
+          // Return to normal header only when clearly back near top
+          if (prev && scrollTop < 20) {
+            return false;
+          }
 
-        return prev;
+          return prev;
+        });
+
+        ticking = false;
       });
+    };
 
-      ticking = false;
+    scrollEl.addEventListener("scroll", handleScroll, {
+      passive: true,
     });
-  };
 
-  scrollEl.addEventListener("scroll", handleScroll, {
-    passive: true,
-  });
+    handleScroll();
 
-  handleScroll();
-
-  return () => {
-    scrollEl.removeEventListener("scroll", handleScroll);
-  };
-}, [pathname]);// ✅ pat
+    return () => {
+      scrollEl.removeEventListener("scroll", handleScroll);
+    };
+  }, [pathname]); // ✅ pat
   return (
     <React.Fragment>
       {showLeaveModal && (
         <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/50">
           <div className="bg-white rounded-lg shadow-xl w-[600px] p-6">
-            <h2 className="text-3xl font-semibold text-gray-800 mb-2">Leave site?</h2>
+            <h2 className="text-3xl font-semibold text-gray-800 mb-2">
+              Leave site?
+            </h2>
             <p className="text-2xl text-gray-600 mb-6">
               Changes you made may not be saved.
             </p>
@@ -506,55 +560,66 @@ export default function AddProductPage() {
           </div>
         </div>
       )}
-      <div className="my-5" >
+      <div className="my-5">
         <div className="sticky top-2 z-40 bg-[#f6f7f9] w-full overflow-visible px-6">
-
           {/* Back link — scroll pe hide */}
           {!isScrolled && (
             <div
-  className={`flex items-center gap-2 text-gray-500 cursor-pointer mb-1 transition-opacity duration-200 ${
-    isScrolled
-      ? "opacity-0 pointer-events-none"
-      : "opacity-100"
-  }`}
-  onClick={() => handleBackNavigation("/manage/products")}
->
-  <FaArrowLeftLong size={14} />
-  <span className="text-sm uppercase tracking-wide">
-    View Products
-  </span>
-</div>
+              className={`flex items-center gap-2 text-gray-500 cursor-pointer mb-1 transition-opacity duration-200 ${
+                isScrolled ? "opacity-0 pointer-events-none" : "opacity-100"
+              }`}
+              onClick={() => handleBackNavigation("/manage/products")}
+            >
+              <FaArrowLeftLong size={14} />
+              <span className="text-sm uppercase tracking-wide">
+                View Products
+              </span>
+            </div>
           )}
 
           {/* Title Row */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 min-w-0">
               {/* scroll pe back arrow show karo */}
-             <div
-  className={`w-[14px] flex-shrink-0 transition-opacity duration-200 ${
-    isScrolled
-      ? "opacity-100"
-      : "opacity-0 pointer-events-none"
-  }`}
->
-  <FaArrowLeftLong
-    size={14}
-    className="text-gray-500 cursor-pointer"
-    onClick={() => handleBackNavigation("/manage/products")}
-  />
-</div>
-              <h1 className={`!font-semibold !text-gray-800 truncate transition-all duration-300 ${isScrolled ? "!text-base" : "!text-2xl"}`}>
-                {product?.name && !isDuplicate ? product?.name : isDuplicate ? "Duplicate Product" : "Add Product"}
+              <div
+                className={`w-[14px] flex-shrink-0 transition-opacity duration-200 ${
+                  isScrolled ? "opacity-100" : "opacity-0 pointer-events-none"
+                }`}
+              >
+                <FaArrowLeftLong
+                  size={14}
+                  className="text-gray-500 cursor-pointer"
+                  onClick={() => handleBackNavigation("/manage/products")}
+                />
+              </div>
+              <h1
+                className={`!font-semibold !text-gray-800 truncate transition-all duration-300 ${isScrolled ? "!text-base" : "!text-2xl"}`}
+              >
+                {product?.name && !isDuplicate
+                  ? product?.name
+                  : isDuplicate
+                    ? "Duplicate Product"
+                    : "Add Product"}
               </h1>
               {product?.productUrl && !isDuplicate && (
                 <button
                   type="button"
                   className="flex items-center gap-1 text-blue-600 text-sm font-medium hover:underline whitespace-nowrap"
                   onClick={() => {
-                    const availableStores = JSON.parse(localStorage.getItem("availableStores") || "[]");
-                    const selectedStoreId = Number(localStorage.getItem("storeId"));
-                    const selectedStore = availableStores.find((s: any) => s.id === selectedStoreId);
-                    if (selectedStore?.baseUrl) window.open(`${selectedStore.baseUrl}${product?.productUrl[0] == "/" ? product?.productUrl.slice(1) : product?.productUrl}`, "_blank");
+                    const availableStores = JSON.parse(
+                      localStorage.getItem("availableStores") || "[]",
+                    );
+                    const selectedStoreId = Number(
+                      localStorage.getItem("storeId"),
+                    );
+                    const selectedStore = availableStores.find(
+                      (s: any) => s.id === selectedStoreId,
+                    );
+                    if (selectedStore?.baseUrl)
+                      window.open(
+                        `${selectedStore.baseUrl}${product?.productUrl[0] == "/" ? product?.productUrl.slice(1) : product?.productUrl}`,
+                        "_blank",
+                      );
                     else alert("Store URL or Product SKU not found");
                   }}
                 >
@@ -575,30 +640,49 @@ export default function AddProductPage() {
                   </button>
                   {dropdownOpen && (
                     <div className="absolute right-0 mt-1 w-48 bg-white border border-gray-200 rounded shadow-lg z-50">
-                      <button className="w-full text-left px-4 py-2 text-xl hover:bg-blue-50 text-gray-700"
+                      <button
+                        className="w-full text-left px-4 py-2 text-xl hover:bg-blue-50 text-gray-700"
                         onClick={() => {
-                          const availableStores = JSON.parse(localStorage.getItem("availableStores") || "[]");
-                          const selectedStoreId = Number(localStorage.getItem("storeId"));
-                          const selectedStore = availableStores.find((s: any) => s.id === selectedStoreId);
+                          const availableStores = JSON.parse(
+                            localStorage.getItem("availableStores") || "[]",
+                          );
+                          const selectedStoreId = Number(
+                            localStorage.getItem("storeId"),
+                          );
+                          const selectedStore = availableStores.find(
+                            (s: any) => s.id === selectedStoreId,
+                          );
                           setDropdownOpen(false);
-                          if (selectedStore?.baseUrl) window.open(`${selectedStore.baseUrl}${product?.productUrl[0] == "/" ? product?.productUrl.slice(1) : product?.productUrl}`, "_blank");
-                        }}>
+                          if (selectedStore?.baseUrl)
+                            window.open(
+                              `${selectedStore.baseUrl}${product?.productUrl[0] == "/" ? product?.productUrl.slice(1) : product?.productUrl}`,
+                              "_blank",
+                            );
+                        }}
+                      >
                         View on storefront
                       </button>
-                      <button className="w-full text-left px-4 py-2 text-xl hover:bg-gray-50 text-gray-700"
+                      <button
+                        className="w-full text-left px-4 py-2 text-xl hover:bg-gray-50 text-gray-700"
                         onClick={() => {
                           setDropdownOpen(false);
-                          localStorage.setItem("filterProductId", String(product.id));
+                          localStorage.setItem(
+                            "filterProductId",
+                            String(product.id),
+                          );
                           router.push("/manage/orders");
-                        }}>
+                        }}
+                      >
                         View orders
                       </button>
-                      <button className="w-full text-left px-4 py-2 text-xl hover:bg-gray-50 text-gray-700"
+                      <button
+                        className="w-full text-left px-4 py-2 text-xl hover:bg-gray-50 text-gray-700"
                         onClick={async () => {
                           setDropdownOpen(false);
                           await dispatch(deleteProduct({ ids: [product?.id] }));
                           router.push("/manage/products");
-                        }}>
+                        }}
+                      >
                         Delete
                       </button>
                     </div>
@@ -608,7 +692,7 @@ export default function AddProductPage() {
             )}
           </div>
 
-           <hr className="mt-3" />
+          <hr className="mt-3" />
         </div>
         <div className="flex ">
           <SidebarNavigation />
@@ -620,7 +704,11 @@ export default function AddProductPage() {
             <DescriptionEditor fieldName="faq" label="FAQ" height={300} /> */}
               <DescriptionEditorQuill />
               {/* FAQ section */}
-              <DescriptionEditorQuill fieldName="faq" label="FAQ" height={300} />
+              <DescriptionEditorQuill
+                fieldName="faq"
+                label="FAQ"
+                height={300}
+              />
 
               <ImageVideoUploader initialImages={product?.image || []} />
               <ProductIdentifiers />
@@ -635,11 +723,14 @@ export default function AddProductPage() {
               <ShippingDetails />
               <Purchasability />
               <CustomsInformation />
-              <Seo />
+              <Seo hasDuplicate={Boolean(product?.hasDuplicate)} />
               <OpenGraph isEdit={isEdit} />
-              {isDuplicate ? <div className="flex justify-end gap-4 items-center fixed w-full bottom-0 right-0 bg-white/90 z-10 shadow-xs border-t p-4">
-                {/* Cancel */}
-                <button className="btn-outline-primary" type="button" onClick={() => handleBackNavigation("/manage/products")}>
+              <div className="flex justify-end gap-4 items-center fixed w-full bottom-0 right-0 bg-white/90 z-10 shadow-xs border-t p-4">
+                <button
+                  className="btn-outline-primary"
+                  type="button"
+                  onClick={() => handleBackNavigation("/manage/products")}
+                >
                   Cancel
                 </button>
 
@@ -647,88 +738,44 @@ export default function AddProductPage() {
                   type="submit"
                   disabled={isLoading}
                   className="btn-outline-primary flex items-center gap-2"
-                  onClick={() => { exitAfterSaveRef.current = true; }}
+                  onClick={() => {
+                    submitActionRef.current = "duplicate";
+                  }}
                 >
-                  {isLoading && exitAfterSaveRef.current && (
+                  {isLoading && submitActionRef.current === "duplicate" && (
                     <span className="h-4 w-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
                   )}
-                  Duplicate & Exit
+                  Save & Duplicate
                 </button>
-
-                {/* Duplicate */}
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="btn-primary flex items-center gap-2"
-                  onClick={() => { exitAfterSaveRef.current = false; }}
-                >
-                  {isLoading && (
-                    <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  )}
-                  {isLoading ? "Duplicating..." : "Duplicate Product"}
-                </button>
-              </div> : <div className="flex justify-end gap-4 items-center fixed w-full bottom-0 right-0 bg-white/90 z-10 shadow-xs border-t p-4">
-                {/* Cancel */}
-                <button onClick={() => handleBackNavigation("/manage/products")} className="btn-outline-primary" type="button">
-                  Cancel
-                </button>
-                {/* Save & Copy */}
 
                 <button
                   type="submit"
                   disabled={isLoading}
                   className="btn-outline-primary flex items-center gap-2"
                   onClick={() => {
-                    if (!isEdit) {
-                      exitAfterSaveRef.current = false; // ✅ not exit
-                    }
-
-                    copyAfterSaveRef.current = true;  // ✅ copy mode
+                    submitActionRef.current = "addAnother";
                   }}
                 >
-                  {isLoading && exitAfterSaveRef.current && (
+                  {isLoading && submitActionRef.current === "addAnother" && (
                     <span className="h-4 w-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
                   )}
-                  {isEdit ? "Update & Copy" : "Save & Copy"}
-                </button>
-                {/* Save & Exit */}
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="btn-outline-primary flex items-center gap-2"
-                  onClick={() => { exitAfterSaveRef.current = true; }}
-                >
-                  {isLoading && exitAfterSaveRef.current && (
-                    <span className="h-4 w-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                  )}
-                  {isEdit ? "Update & Exit" : "Save & Exit"}
+                  Save & Add Another
                 </button>
 
-                {/* Save / Update — same page pe raho */}
-                {isEdit ? <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="btn-primary flex items-center gap-2"
-                  onClick={() => { exitAfterSaveRef.current = false; }}
-                >
-                  {isLoading && (
-                    <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  )}
-                  {isLoading ? "Saving..." : "Save"}
-                </button> : <button
+                <button
                   type="submit"
                   disabled={isLoading}
                   className="btn-primary flex items-center gap-2"
                   onClick={() => {
-                    exitAfterSaveRef.current = false;
+                    submitActionRef.current = "viewProducts";
                   }}
                 >
-                  {isLoading && (
+                  {isLoading && submitActionRef.current === "viewProducts" && (
                     <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                   )}
-                  {isLoading ? "Saving..." : "Save"}
-                </button>}
-              </div>}
+                  {isLoading ? "Saving..." : "Save & View Products"}
+                </button>
+              </div>
             </form>
           </FormProvider>
         </div>
@@ -736,12 +783,3 @@ export default function AddProductPage() {
     </React.Fragment>
   );
 }
-
-
-
-
-
-
-
-
-
