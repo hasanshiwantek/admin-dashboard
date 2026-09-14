@@ -31,7 +31,7 @@ export default function OrderNotesModal({
     (state: any) => state.order || {}
   );
 
-  const order = singleOrder?.[0];
+  const order = singleOrder
 
   const [comments, setComments] = useState("");
   const [staffNotes, setStaffNotes] = useState("");

@@ -22,14 +22,23 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
     }
   };
   const getDeviceType = () => {
-    if (typeof window === "undefined") return "Dashboard (Desktop)";
+    const availableStores = JSON.parse(
+      localStorage.getItem("availableStores") || "[]",
+    );
+    const selectedStoreId = Number(
+      localStorage.getItem("storeId"),
+    );
+    const selectedStore = availableStores.find(
+      (s: any) => s.id === selectedStoreId,
+    );
+    if (typeof window === "undefined") return `${selectedStore?.name} (Manual order)`;
 
     const userAgent = navigator.userAgent;
 
-    if (/mobile/i.test(userAgent)) return "Dashboard (Mobile)";
-    if (/tablet/i.test(userAgent)) return "Dashboard (Tablet)";
+    if (/mobile/i.test(userAgent)) return `${selectedStore?.name} (Manual order)`;
+    if (/tablet/i.test(userAgent)) return `${selectedStore?.name} (Manual order)`;
 
-    return "Dashboard (Desktop)";
+    return `${selectedStore?.name} (Manual order)`;
   };
 
 

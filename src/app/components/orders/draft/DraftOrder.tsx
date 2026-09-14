@@ -11,7 +11,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Copy, MoreHorizontal, Plus } from "lucide-react";
-import OrderActionsDropdown from "../OrderActionsDropdown";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { fetchDraftOrders, deleteDraftOrders } from "@/redux/slices/orderSlice";
 import Spinner from "../../loader/Spinner";
@@ -127,9 +126,9 @@ const DraftOrder = () => {
               <TableHead className="2xl:!text-[1.6rem]">URL</TableHead>
               <TableHead className="text-center">Channel</TableHead>
               <TableHead className="2xl:!text-[1.6rem]">Total</TableHead>
-              <TableHead className="text-right pr-10 2xl:!text-[1.6rem]">
+              {/* <TableHead className="text-right pr-10 2xl:!text-[1.6rem]">
                 Action
-              </TableHead>
+              </TableHead> */}
             </TableRow>
           </TableHeader>
 
@@ -158,11 +157,11 @@ const DraftOrder = () => {
                     <TableCell className="2xl:!text-2xl">
                       {row.created_at
                         ? new Date(row.created_at).toLocaleDateString("en-US", {
-                            weekday: "short",
-                            year: "numeric",
-                            month: "short",
-                            day: "numeric",
-                          })
+                          weekday: "short",
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })
                         : "N/A"}
                     </TableCell>
                     <TableCell className="2xl:!text-2xl">
@@ -178,15 +177,15 @@ const DraftOrder = () => {
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <Input
-                          value={row.cartUrl || row.url || ""}
+                          value={row.isDraftUrl}
                           className="h-12 w-[220px]"
                         />
                         <Button
                           variant="outline"
                           size="icon"
                           className="h-9 w-9 border-[#4f6ef7] text-[#4f6ef7]"
-                          onClick={() => handleCopyUrl(row.cartUrl || row.url)}
-                          disabled={!row.cartUrl && !row.url}
+                          onClick={() => handleCopyUrl(row.isDraftUrl)}
+                          disabled={!row.isDraftUrl}
                         >
                           <Copy className="!h-5 !w-5" />
                         </Button>
@@ -207,10 +206,10 @@ const DraftOrder = () => {
                     <TableCell className="2xl:!text-2xl">
                       <div className="font-semibold">${totalAmount}</div>
                       <div className="text-sm text-gray-500">
-                        {row.products?.length || 0} item(s)
+                        {row?.products?.length || 0} item(s)
                       </div>
                     </TableCell>
-                    <TableCell className="text-right pr-10">
+                    {/* <TableCell className="text-right pr-10">
                       <OrderActionsDropdown
                         actions={getDropdownActions(row)}
                         trigger={
@@ -223,7 +222,7 @@ const DraftOrder = () => {
                           </Button>
                         }
                       />
-                    </TableCell>
+                    </TableCell> */}
                   </TableRow>
                 );
               })
