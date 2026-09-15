@@ -3,6 +3,7 @@
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import objectToFormData from "@/lib/formDataUtils";
 import { buildCopyNameSku } from "@/lib/productUtils";
+import { removeEmptyValues } from "@/lib/utils";
 import { fetchUrlSettings } from "@/redux/slices/homeSlice";
 import {
   addProduct,
@@ -223,253 +224,143 @@ export default function AddProductPage() {
   const onSubmit = methods.handleSubmit(async (data: Record<string, any>) => {
     setIsLoading(true);
     const isEdit = isEditModeRef.current;
-    if (isDuplicate) {
-      try {
-        const imageData = Array.isArray(data.image)
-          ? data.image.map((img: any) => ({
-              file: img.file || null,
-              url: typeof img.path === "string" ? img.path : "",
-              description: img.description || "",
-              isPrimary: img.isPrimary ? 1 : 0,
-            }))
-          : [];
 
-        const { id, imageOption, exitAfterSave, ...rest } = data;
+    try {
+      // 1. Process Image Data
+      const imageData = Array.isArray(data.image)
+        ? data.image.map((img: any) => ({
+            file: img.file || null,
+            url: typeof img.path === "string" ? img.path : "",
+            description: img.description || "",
+            isPrimary: img.isPrimary ? 1 : 0,
+          }))
+        : [];
 
-        const normalizedFields = {
-          ...rest,
-          image: imageData,
-          fixedShippingCost: Number(data.fixedShippingCost || 0),
-          minPurchaseQuantity: Number(data?.minPurchaseQuantity || 0),
-          maxPurchaseQuantity: Number(data?.maxPurchaseQuantity || 0),
-          dimensions: {
-            width: Number(data.dimensions?.width || 0),
-            height: Number(data.dimensions?.height || 0),
-            depth: Number(data.dimensions?.depth || 0),
-            weight: Number(data.dimensions?.weight || 0),
-          },
-          isFeatured: data.isFeatured ? 1 : 0,
-          relatedProducts: data.relatedProducts ? 1 : 0,
-          showCondition: data.showCondition ? 1 : 0,
-          trackInventory: data.trackInventory ? 1 : 0,
-          freeShipping: data.freeShipping ? 1 : 0,
-          isVisible: data.isVisible ? 1 : 0,
-          allowPurchase: data.allowPurchase ? 1 : 0,
-          stopProcessingRules: data.stopProcessingRules ? 1 : 0,
-          useProductName: data.useProductName ? 1 : 0,
-          graphDescription: data.graphDescription ? 1 : 0,
-          useThumbnail: imageOption === "useThumbnail" ? 1 : 0,
-          dontUse: imageOption === "dontUse" ? 1 : 0,
-          manageCustoms: data.manageCustoms ? 1 : 0,
-          callForPricing: data.callForPricing ? 1 : 0,
-          isRedirect: data.isRedirect ? 1 : 0,
-          parentId: isDuplicate ? parseInt(product?.id) : undefined,
-        };
+      // 2. Destructure unused/form-specific properties
+      const { id, imageOption, exitAfterSave, ...rest } = data;
 
-        if (copyAfterSaveRef.current && isEdit) {
-          const updateFormData = objectToFormData(normalizedFields);
-          const updateResult = await dispatch(
-            addProduct({ data: updateFormData }),
-          );
+      // 3. Normalize Payload Fields (Shared for duplicate and normal flows)
+      const normalizedFields = {
+        ...rest,
+        image: imageData,
+        fixedShippingCost: Number(data.fixedShippingCost || 0),
+        minPurchaseQuantity: Number(data?.minPurchaseQuantity || 0),
+        maxPurchaseQuantity: Number(data?.maxPurchaseQuantity || 0),
+        dimensions: {
+          width: Number(data.dimensions?.width || 0),
+          height: Number(data.dimensions?.height || 0),
+          depth: Number(data.dimensions?.depth || 0),
+          weight: Number(data.dimensions?.weight || 0),
+        },
+        isFeatured: data.isFeatured ? 1 : 0,
+        relatedProducts: data.relatedProducts ? 1 : 0,
+        showCondition: data.showCondition ? 1 : 0,
+        trackInventory: data.trackInventory ? 1 : 0,
+        freeShipping: data.freeShipping ? 1 : 0,
+        isVisible: data.isVisible ? 1 : 0,
+        allowPurchase: data.allowPurchase ? 1 : 0,
+        stopProcessingRules: data.stopProcessingRules ? 1 : 0,
+        useProductName: data.useProductName ? 1 : 0,
+        graphDescription: data.graphDescription ? 1 : 0,
+        useThumbnail: imageOption === "useThumbnail" ? 1 : 0,
+        dontUse: imageOption === "dontUse" ? 1 : 0,
+        manageCustoms: data.manageCustoms ? 1 : 0,
+        callForPricing: data.callForPricing ? 1 : 0,
+        isRedirect: data.isRedirect ? 1 : 0,
+        ...(isDuplicate && { parentId: parseInt(product?.id) }),
+      };
+      const normalizePayload = removeEmptyValues(normalizedFields, true);
+      const formData = objectToFormData(normalizePayload);
 
-          if (addProduct.fulfilled.match(updateResult)) {
-            isEditModeRef.current = false;
-            setProduct(undefined);
-            const {
-              name: copyName,
-              sku: copySku,
-              productUrl: copyProductUrl,
-            } = buildCopyNameSku({
-              name: data.name,
-              sku: data.sku,
-              productUrl: data?.productUrl,
-            });
-            methods.reset({
-              ...data,
-              name: copyName,
-              sku: copySku,
-              productUrl: copyProductUrl,
-            });
-          } else {
-            console.error("Create copy failed:", updateResult.error);
-          }
+      // ─── CASE 1: Copy / Duplicate After Save (Edit Mode) ────────────────
+      if (copyAfterSaveRef.current && isEdit) {
+        // If we are duplicating and it's a duplicate branch vs normal edit branch
+        const action = isDuplicate ? addProduct : updateProductFormData;
+        const payload = isDuplicate
+          ? { data: formData }
+          : { id: product.id, data: formData };
 
-          // ─── CASE 2: Copy — 2nd click = CREATE only ─────────────────
-        } else if (copyAfterSaveRef.current && !isEdit) {
-          const formData = objectToFormData(normalizedFields);
-          const result = await dispatch(addProduct({ data: formData }));
+        const updateResult = await dispatch(action(payload as any));
 
-          if (addProduct.fulfilled.match(result)) {
-            hasUpdatedOriginalRef.current = false; // ✅ reset for next time
-            const {
-              name: copyName,
-              sku: copySku,
-              productUrl: copyProductUrl,
-            } = buildCopyNameSku({
-              name: data.name,
-              sku: data.sku,
-              productUrl: data?.productUrl,
-            });
-            methods.reset({
-              ...data,
-              name: copyName,
-              sku: copySku,
-              productUrl: copyProductUrl,
-            });
-          } else {
-            console.error("Create failed:", result.error);
-          }
-
-          // ─── CASE 3: Normal Save / Update ───────────────────────────
+        if (action.fulfilled.match(updateResult)) {
+          isEditModeRef.current = false;
+          setProduct(undefined);
+          const {
+            name: copyName,
+            sku: copySku,
+            productUrl: copyProductUrl,
+          } = buildCopyNameSku({
+            name: data.name,
+            sku: data.sku,
+            productUrl: data?.productUrl,
+          });
+          methods.reset({
+            ...data,
+            name: copyName,
+            sku: copySku,
+            productUrl: copyProductUrl,
+          });
         } else {
-          const formData = objectToFormData(normalizedFields);
-          const result = await dispatch(addProduct({ data: formData }));
+          console.error("Create/Update copy failed:", updateResult.error);
+        }
 
-          if (addProduct.fulfilled.match(result)) {
-            const savedProductId = result?.payload?.data?.id;
+        // ─── CASE 2: Copy — 2nd click = CREATE only ────────────────────────
+      } else if (copyAfterSaveRef.current && !isEdit) {
+        const result = await dispatch(addProduct({ data: formData }));
+
+        if (addProduct.fulfilled.match(result)) {
+          hasUpdatedOriginalRef.current = false;
+          const {
+            name: copyName,
+            sku: copySku,
+            productUrl: copyProductUrl,
+          } = buildCopyNameSku({
+            name: data.name,
+            sku: data.sku,
+            productUrl: data?.productUrl,
+          });
+          methods.reset({
+            ...data,
+            name: copyName,
+            sku: copySku,
+            productUrl: copyProductUrl,
+          });
+        } else {
+          console.error("Create failed:", result.error);
+        }
+
+        // ─── CASE 3: Normal Save / Update ───────────────────────────────────
+      } else {
+        // If it's a duplicate, it's always a new creation (`addProduct`), otherwise respect `isEdit`
+        const shouldUpdate = isEdit && !isDuplicate;
+        const action = shouldUpdate ? updateProductFormData : addProduct;
+        const payload = shouldUpdate
+          ? { id: product.id, data: formData }
+          : { data: formData };
+
+        const result = await dispatch(action(payload as any));
+
+        if (action.fulfilled.match(result)) {
+          const savedProductId = result?.payload?.data?.id ?? product?.id;
+          if (
+            submitActionRef.current === "addAnother" ||
+            submitActionRef.current === "viewProducts" ||
+            submitActionRef.current === "duplicate"
+          ) {
             navigateAfterSave(savedProductId);
-          } else {
-            console.error("Product save failed:", result.error);
           }
-        }
-      } catch (error) {
-        console.error("Unexpected error during save:", error);
-      } finally {
-        setIsLoading(false);
-        exitAfterSaveRef.current = false;
-        hasUpdatedOriginalRef.current = false;
-        copyAfterSaveRef.current = false;
-      }
-    } else {
-      try {
-        const imageData = Array.isArray(data.image)
-          ? data.image.map((img: any) => ({
-              file: img.file || null,
-              url: typeof img.path === "string" ? img.path : "",
-              description: img.description || "",
-              isPrimary: img.isPrimary ? 1 : 0,
-            }))
-          : [];
-
-        const { id, imageOption, exitAfterSave, ...rest } = data;
-
-        const normalizedFields = {
-          ...rest,
-          image: imageData,
-          fixedShippingCost: Number(data.fixedShippingCost || 0),
-          minPurchaseQuantity: Number(data?.minPurchaseQuantity || 0),
-          maxPurchaseQuantity: Number(data?.maxPurchaseQuantity || 0),
-          dimensions: {
-            width: Number(data.dimensions?.width || 0),
-            height: Number(data.dimensions?.height || 0),
-            depth: Number(data.dimensions?.depth || 0),
-            weight: Number(data.dimensions?.weight || 0),
-          },
-          isFeatured: data.isFeatured ? 1 : 0,
-          relatedProducts: data.relatedProducts ? 1 : 0,
-          showCondition: data.showCondition ? 1 : 0,
-          trackInventory: data.trackInventory ? 1 : 0,
-          freeShipping: data.freeShipping ? 1 : 0,
-          isVisible: data.isVisible ? 1 : 0,
-          allowPurchase: data.allowPurchase ? 1 : 0,
-          stopProcessingRules: data.stopProcessingRules ? 1 : 0,
-          useProductName: data.useProductName ? 1 : 0,
-          graphDescription: data.graphDescription ? 1 : 0,
-          useThumbnail: imageOption === "useThumbnail" ? 1 : 0,
-          dontUse: imageOption === "dontUse" ? 1 : 0,
-          manageCustoms: data.manageCustoms ? 1 : 0,
-          callForPricing: data.callForPricing ? 1 : 0,
-          isRedirect: data.isRedirect ? 1 : 0,
-        };
-
-        if (copyAfterSaveRef.current && isEdit) {
-          const updateFormData = objectToFormData(normalizedFields);
-          const updateResult = await dispatch(
-            updateProductFormData({ id: product.id, data: updateFormData }),
-          );
-
-          if (updateProductFormData.fulfilled.match(updateResult)) {
-            isEditModeRef.current = false;
-            setProduct(undefined);
-            const {
-              name: copyName,
-              sku: copySku,
-              productUrl: copyProductUrl,
-            } = buildCopyNameSku({
-              name: data.name,
-              sku: data.sku,
-              productUrl: data?.productUrl,
-            });
-            methods.reset({
-              ...data,
-              name: copyName,
-              sku: copySku,
-              productUrl: copyProductUrl,
-            });
-          } else {
-            console.error("Update failed:", updateResult.error);
-          }
-
-          // ─── CASE 2: Copy — 2nd click = CREATE only ─────────────────
-        } else if (copyAfterSaveRef.current && !isEdit) {
-          const formData = objectToFormData(normalizedFields);
-          const result = await dispatch(addProduct({ data: formData }));
-
-          if (addProduct.fulfilled.match(result)) {
-            hasUpdatedOriginalRef.current = false; // ✅ reset for next time
-            const {
-              name: copyName,
-              sku: copySku,
-              productUrl: copyProductUrl,
-            } = buildCopyNameSku({
-              name: data.name,
-              sku: data.sku,
-              productUrl: data?.productUrl,
-            });
-            methods.reset({
-              ...data,
-              name: copyName,
-              sku: copySku,
-              productUrl: copyProductUrl,
-            });
-          } else {
-            console.error("Create failed:", result.error);
-          }
-
-          // ─── CASE 3: Normal Save / Update ───────────────────────────
         } else {
-          const formData = objectToFormData(normalizedFields);
-          const result = isEdit
-            ? await dispatch(
-                updateProductFormData({ id: product.id, data: formData }),
-              )
-            : await dispatch(addProduct({ data: formData }));
-
-          const actionCreator = isEdit ? updateProductFormData : addProduct;
-
-          if (actionCreator.fulfilled.match(result)) {
-            const savedProductId = result?.payload?.data?.id ?? product?.id;
-            if (
-              submitActionRef.current === "addAnother" ||
-              submitActionRef.current === "viewProducts"
-            ) {
-              navigateAfterSave(savedProductId);
-            } else if (submitActionRef.current === "duplicate") {
-              navigateAfterSave(savedProductId);
-            }
-          } else {
-            console.error("Product save failed:", result.error);
-          }
+          console.error("Product save failed:", result.error);
         }
-      } catch (error) {
-        console.error("Unexpected error during save:", error);
-      } finally {
-        setIsLoading(false);
-        exitAfterSaveRef.current = false;
-        submitActionRef.current = "viewProducts";
-        hasUpdatedOriginalRef.current = false;
-        copyAfterSaveRef.current = false;
       }
+    } catch (error) {
+      console.error("Unexpected error during save:", error);
+    } finally {
+      setIsLoading(false);
+      exitAfterSaveRef.current = false;
+      submitActionRef.current = "viewProducts";
+      hasUpdatedOriginalRef.current = false;
+      copyAfterSaveRef.current = false;
     }
   });
 

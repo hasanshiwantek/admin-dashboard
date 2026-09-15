@@ -176,7 +176,7 @@ const WebPageTable = () => {
                   </TableCell>
 
                   <TableCell className="2xl:!text-2xl">
-                    {page.showInNavigation ? (
+                    {page.isPageVisible ? (
                       <Check
                         className="text-green-500 w-8 h-8 cursor-pointer"
                         onClick={() => {
@@ -184,7 +184,7 @@ const WebPageTable = () => {
                             updateNavigation({
                               id: page.id,
                               data: {
-                                showInNavigation: false,
+                                isPageVisible: false,
                               },
                             }),
                           )
@@ -202,7 +202,7 @@ const WebPageTable = () => {
                             updateNavigation({
                               id: page.id,
                               data: {
-                                showInNavigation: true,
+                                isPageVisible: true,
                               },
                             }),
                           )

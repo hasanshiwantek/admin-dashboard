@@ -833,6 +833,12 @@ export default function AllProducts() {
                   </TableRow>
                 ) : (
                   filteredProducts?.map((product: any) => {
+                    const imageSrc =
+                      product.image?.find((img: any) => img?.isPrimary === 1)
+                        ?.path ||
+                      product.image?.[0]?.path ||
+                      product.image?.[1]?.path ||
+                      "/default-product-image.svg";
                     return (
                       <TableRow key={product.id}>
                         <TableCell>
@@ -844,15 +850,9 @@ export default function AllProducts() {
                           />
                         </TableCell>
                         <TableCell className="flex items-center gap-2 ">
-                          {(product.image ||
-                            product.image?.[1]?.path ||
-                            product.image?.[0]?.path) && (
+                          {imageSrc && (
                             <Image
-                              src={
-                                product.image?.[1]?.path ||
-                                product.image?.[0]?.path ||
-                                "/default-product-image.svg"
-                              }
+                              src={imageSrc}
                               alt={product.name}
                               width={60}
                               height={60}

@@ -23,7 +23,7 @@ import {
   updateWebPage,
 } from "@/redux/slices/storefrontSlice";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Controller,
   FormProvider,
@@ -63,6 +63,7 @@ const WebPage = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { id } = useParams();
+  const submitActionRef = useRef<"exit" | "keepEditing" | "addAnother">("exit");
   const [pageType, showTheseFields, watchedName] = watch([
     "pageType",
     "showTheseFields",
@@ -98,8 +99,19 @@ const WebPage = () => {
 
       if ((isEdit ? updateWebPage : createWebpage).fulfilled.match(result)) {
         dispatch(getWebPages());
-        router.push("/manage/storefront/web-pages");
-        reset();
+
+        if (submitActionRef.current === "keepEditing" && isEdit && id) {
+          const refreshedPage = await dispatch(getWebPageById({ id }));
+          if (getWebPageById.fulfilled.match(refreshedPage)) {
+            reset(refreshedPage.payload.data);
+          }
+        } else if (submitActionRef.current === "addAnother") {
+          reset(DefaultWebPageValues);
+          setIsUrlManuallyEdited(false);
+        } else {
+          reset();
+          router.push("/manage/storefront/web-pages");
+        }
       } else {
       }
     } catch (err) {
@@ -230,12 +242,30 @@ const WebPage = () => {
                 <Controller
                   name="pageName"
                   control={control}
+                  rules={{
+                    required: "Page name is required",
+                    validate: (value) =>
+                      value.trim().length > 0 || "Page name is required",
+                  }}
                   render={({ field }) => (
-                    <Input
-                      id="pageName"
-                      {...field}
-                      placeholder="Enter Page Name"
-                    />
+                    <div className="flex-1">
+                      <Input
+                        id="pageName"
+                        {...field}
+                        value={field.value ?? ""}
+                        placeholder="Enter Page Name"
+                        aria-invalid={!!errors.pageName}
+                        className={cn(
+                          errors.pageName &&
+                            "border-red-500 focus-visible:ring-red-500",
+                        )}
+                      />
+                      {errors.pageName && (
+                        <p className="mt-1 text-sm text-red-500">
+                          {String(errors.pageName.message)}
+                        </p>
+                      )}
+                    </div>
                   )}
                 />
               </div>
@@ -696,14 +726,16 @@ const WebPage = () => {
               Cancel
             </button>
             <button type="submit" className="btn-primary">
-              {isEdit ? "Update Page" : "Save and Exit"}
+              Save and Exit
             </button>
             <button
               type="submit"
               className="btn-primary"
-              onClick={() => router.push("/manage/storefront/web-pages")}
+              onClick={() => {
+                submitActionRef.current = isEdit ? "keepEditing" : "addAnother";
+              }}
             >
-              {isEdit ? "Update Page and Add Another" : "Save and Add Another"}
+              {isEdit ? "Save & Keep Editing" : "Save & Add Another"}
             </button>
           </div>
         </div>

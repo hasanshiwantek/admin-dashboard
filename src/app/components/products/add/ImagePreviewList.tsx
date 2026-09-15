@@ -16,7 +16,7 @@ export default function ImagePreviewList({
   previews,
   setPreviews,
   setValue,
-  inputRef
+  inputRef,
 }: Props) {
   // const fileListFromArray = (files: File[]): FileList => {
   //   const dt = new DataTransfer();
@@ -42,7 +42,8 @@ export default function ImagePreviewList({
   const handleDeleteSelected = () => {
     const updated = previews.filter((p: any) => !p.selected);
     previews.forEach(
-      (p: any) => p.selected && p.path instanceof File && URL.revokeObjectURL(p.path)
+      (p: any) =>
+        p.selected && p.path instanceof File && URL.revokeObjectURL(p.path),
     );
     setPreviews(updated);
     syncForm(updated);
@@ -61,7 +62,7 @@ export default function ImagePreviewList({
             checked={previews.every((p) => p.selected)}
             onChange={(e) =>
               setPreviews(
-                previews.map((p) => ({ ...p, selected: e.target.checked }))
+                previews.map((p) => ({ ...p, selected: e.target.checked })),
               )
             }
           />
@@ -148,6 +149,7 @@ export default function ImagePreviewList({
                   isPrimary: i === index,
                 }));
                 setPreviews(updated);
+                syncForm(updated);
               }}
             />
             <button

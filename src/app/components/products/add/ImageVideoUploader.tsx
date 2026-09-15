@@ -33,7 +33,7 @@ export default function ImageVideoUploader({ initialImages }: Props) {
         path: img.path, // full image URL
         description: img.altText || img.description || "",
         selected: false,
-        isPrimary: img.isPrimary === 1,
+        isPrimary: img.isPrimary === 1 || img.isPrimary === "1",
         type:
           img.path.includes(".mp4") || img.path.includes("video")
             ? "video"

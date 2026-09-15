@@ -18,13 +18,22 @@ import {
   TooltipContent,
 } from "@/components/ui/tooltip";
 import { HiQuestionMarkCircle } from "react-icons/hi2";
+import { ValidationError } from "@/components/ui/validation-error";
+import { wholeNumberValidation } from "@/validations/validations";
 
 const StoreFront = () => {
-  const { register, control } = useFormContext();
+  const {
+    register,
+    control,
+    formState: { errors },
+  } = useFormContext();
 
   return (
     <div>
-      <div className="flex justify-center items-center flex-col my-5" id="storefrontDetails">
+      <div
+        className="flex justify-center items-center flex-col my-5"
+        id="storefrontDetails"
+      >
         <h1 className="2xl:!text-[2.4rem]">Storefront</h1>
         <p className="text-muted-foreground 2xl:!text-2xl">
           Setup what customers will see on the storefront.
@@ -109,8 +118,9 @@ const StoreFront = () => {
                 id="sortOrder"
                 type="number"
                 defaultValue={0}
-                {...register("sortOrder", { valueAsNumber: true })}
+                {...register("sortOrder", wholeNumberValidation("Sort Order"))}
               />
+              <ValidationError message={errors.sortOrder?.message} />
             </div>
             <div className="space-y-4">
               <Label className="2xl:!text-2xl" htmlFor="templateLayout">
