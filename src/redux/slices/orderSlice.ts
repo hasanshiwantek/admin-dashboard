@@ -1001,7 +1001,7 @@ const orderSlice = createSlice({
       })
       .addCase(fetchShippingRates.fulfilled, (state, action) => {
         state.ratesLoader = false;
-        state.shippingRates = action.payload?.rates;
+        state.shippingRates = action.payload?.data?.rates?.rates;
       })
       .addCase(fetchShippingRates.rejected, (state, action) => {
         state.ratesLoader = false;
