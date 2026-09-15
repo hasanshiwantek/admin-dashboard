@@ -28,6 +28,13 @@ const SearchProduct = () => {
     dispatch(fetchBrands({ page: 1, pageSize: 50 }));
   }, [dispatch]);
 
+  const searchSettingsOptions = [
+    { label: "Product Visibility", name: "isVisible" },
+    { label: "Featured Product", name: "isFeatured" },
+    { label: "Free Shipping", name: "freeShipping" },
+    // { label: "Status", name: "status" },
+  ];
+
   return (
     <div className="p-10 ">
       <div className="flex flex-col space-y-5">
@@ -68,13 +75,13 @@ const SearchProduct = () => {
 
           <div className="flex items-center gap-4">
             <Label
-              htmlFor="searchKeywords"
+              htmlFor="brandId"
               className="w-[150px] text-right 2xl:!text-2xl"
             >
               Brand Name:
             </Label>
             <Controller
-              name="searchKeywords"
+              name="brandId"
               control={control}
               render={({ field }) => (
                 <Select onValueChange={field.onChange} value={field.value}>
@@ -187,12 +194,7 @@ const SearchProduct = () => {
       <div className="my-10">
         <h1 className="my-5 2xl:!text-[2.4rem]">Search by Setting</h1>
         <div className="bg-white shadow-md p-10 space-y-10">
-          {[
-            { label: "Product Visibility", name: "isVisible" },
-            { label: "Featured Product", name: "isFeatured" },
-            { label: "Free Shipping", name: "freeShipping" },
-            // { label: "Status", name: "status" },
-          ].map(({ label, name }) => (
+          {searchSettingsOptions.map(({ label, name }) => (
             <div className="flex items-center gap-4" key={name}>
               <Label
                 htmlFor={name}
@@ -227,9 +229,7 @@ const SearchProduct = () => {
                         </>
                       )}
                       {name === "freeShipping" && (
-                        <SelectItem value="freeShipping">
-                          Only Free Shipping
-                        </SelectItem>
+                        <SelectItem value="true">Only Free Shipping</SelectItem>
                       )}
                       {/* {name === "status" && (
                         <>
