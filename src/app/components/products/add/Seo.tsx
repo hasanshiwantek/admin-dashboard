@@ -50,6 +50,10 @@ export default function Seo({ hasDuplicate }: { hasDuplicate: boolean }) {
   }, [id]);
 
   useEffect(() => {
+    setValue("pageTitle", watchedName || "");
+  }, [setValue, watchedName]);
+
+  useEffect(() => {
     if (productUrlValue && !initialDuplicateUrlRef.current) {
       initialDuplicateUrlRef.current = productUrlValue;
     }
