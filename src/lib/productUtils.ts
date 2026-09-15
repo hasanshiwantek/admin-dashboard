@@ -35,12 +35,12 @@ export const generateFormattedProductUrl = ({
     case UrlSettingEnums.SEO_OPTIMIZED_SHORT:
       if (!name) return "";
 
-      return `/${generateSlug(name)}/`;
+      return `/${generateSlug(name)}`;
 
     case UrlSettingEnums.SEO_OPTIMIZED_LONG:
       if (!name) return "";
 
-      return `/product/${generateSlug(name)}/`;
+      return `/product/${generateSlug(name)}`;
 
     case UrlSettingEnums.CUSTOM:
       if (!customFormat || (!brand && !name && !sku)) {
@@ -53,7 +53,7 @@ export const generateFormattedProductUrl = ({
         brand,
       });
 
-      return finalUrl ? `/${finalUrl}/` : "";
+      return finalUrl ? `/${finalUrl}` : "";
 
     default:
       return "";
@@ -120,8 +120,8 @@ export const buildCopyNameSku = ({
   const copyProductUrl = productUrl
     ? productUrl
     : hasDuplicate
-      ? `/${duplicateProductUrl}/`
-      : `/${slug}/`;
+      ? `/${duplicateProductUrl}`
+      : `/${slug}`;
 
   return {
     name: copyName,
@@ -133,7 +133,7 @@ export const buildCopyNameSku = ({
 export const normalizeProductUrl = (value: string) => {
   const trimmed = value.trim();
   const clean = trimmed.replace(REGEX.PRODUCT_URL_NORMALIZE, "");
-  return `/${clean}/`;
+  return `/${clean}`;
 };
 
 export const sanitizeNumberInput = (value: string, allowDecimal = true): string => {

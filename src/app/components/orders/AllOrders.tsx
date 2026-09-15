@@ -401,7 +401,7 @@ const moreTabs = tabs.filter(
         }
       },
     },
-    ...(order.isMessage && !order?.userType
+    ...(!order?.userType
       ? [
         {
           label: "Send Message",
