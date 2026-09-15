@@ -834,7 +834,7 @@ export default function AllProducts() {
                 ) : (
                   filteredProducts?.map((product: any) => {
                     const imageSrc =
-                      product.image?.find((img) => img?.isPrimary === 1)
+                      product.image?.find((img: any) => img?.isPrimary === 1)
                         ?.path ||
                       product.image?.[0]?.path ||
                       product.image?.[1]?.path ||
