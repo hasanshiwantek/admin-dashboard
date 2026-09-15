@@ -5,16 +5,30 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { wholeNumberValidation } from "@/validations/validations";
+import { ValidationError } from "@/components/ui/validation-error";
 
-export default function InventorySection({ isEdit = false }: { isEdit?: boolean }) {
-  const { control, watch, register } = useFormContext();
+export default function InventorySection({
+  isEdit = false,
+}: {
+  isEdit?: boolean;
+}) {
+  const {
+    control,
+    watch,
+    register,
+    formState: { errors },
+  } = useFormContext();
 
   // Watch form values
   const trackInventory = watch("trackInventory");
   const inventoryLevel = watch("inventoryLevel") || "product";
 
   return (
-    <div className="p-10 border rounded-md bg-white space-y-4 scroll-mt-20" id="inventory">
+    <div
+      className="p-10 border rounded-md bg-white space-y-4 scroll-mt-20"
+      id="inventory"
+    >
       <h1 className="2xl:!text-[2.4rem]">Inventory</h1>
 
       {/* Track Inventory Switch */}
@@ -48,7 +62,6 @@ export default function InventorySection({ isEdit = false }: { isEdit?: boolean 
               <RadioGroup
                 value={field.value}
                 onValueChange={field.onChange}
-                
                 className="flex flex-col space-y-2"
               >
                 <div className="flex items-center space-x-2">
@@ -80,8 +93,12 @@ export default function InventorySection({ isEdit = false }: { isEdit?: boolean 
                   type="number"
                   placeholder="0"
                   className="!max-w-[100%] 2xl:!max-w-[90%] w-full"
-                  {...register("currentStock")}
+                  {...register(
+                    "currentStock",
+                    wholeNumberValidation("Current Stock"),
+                  )}
                 />
+                <ValidationError message={errors.currentStock?.message} />
               </div>
               <div>
                 <Label className="2xl:!text-2xl" htmlFor="lowStock">
@@ -92,8 +109,9 @@ export default function InventorySection({ isEdit = false }: { isEdit?: boolean 
                   type="number"
                   placeholder="0"
                   className="!max-w-[100%] 2xl:!max-w-[90%] w-full"
-                  {...register("lowStock")}
+                  {...register("lowStock", wholeNumberValidation("Low Stock"))}
                 />
+                <ValidationError message={errors.lowStock?.message} />
               </div>
             </div>
           ) : (
