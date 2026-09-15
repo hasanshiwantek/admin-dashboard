@@ -1,20 +1,20 @@
 "use client";
-import Link from "next/link";
-import { useState, useEffect } from "react";
-import {
-  SidebarProvider,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-  SidebarMenuSub,
-  SidebarMenuSubItem,
-} from "@/components/ui/sidebar";
 import {
   Collapsible,
-  CollapsibleTrigger,
   CollapsibleContent,
+  CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import {
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubItem,
+  SidebarProvider,
+} from "@/components/ui/sidebar";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 // import { sidebarData } from "@/const/sidebarData";
 import { useSidebarData } from "@/const/sidebarDataDynamic"; // jahan file rakhi hai
 
@@ -41,17 +41,17 @@ export const SideBar = ({
   const [openMenus, setOpenMenus] = useState<boolean[]>(
     sidebarData.map(() => false),
   );
-  
-useEffect(() => {
-  if (pathname === "/manage/orders") {
-    // Orders page → session values rehne do
-    return;
-  }
 
-  // Kisi bhi doosre page par → sirf orders ki tabs clear
-  sessionStorage.removeItem("ordersDynamicTab");
-  sessionStorage.removeItem("ordersActiveTab");
-}, [pathname]);
+  useEffect(() => {
+    if (pathname === "/manage/orders") {
+      // Orders page → session values rehne do
+      return;
+    }
+
+    // Kisi bhi doosre page par → sirf orders ki tabs clear
+    sessionStorage.removeItem("ordersDynamicTab");
+    sessionStorage.removeItem("ordersActiveTab");
+  }, [pathname]);
   useEffect(() => {
     const newOpenMenus = sidebarData.map(
       (item) =>
@@ -155,23 +155,10 @@ overflow-y-hidden overflow-x-hidden
                               pathname === child.url ? "bg-[#24345c]" : ""
                             }`}
                             onClick={(e) => {
-                              const link = [
-                                "/manage/products",
-                                "/manage/products/brands",
-                                "/manage/products/categories",
-                                "/manage/orders",
-                                "/manage/products/export",
-                                "/manage/orders/export",
-                                "/manage/customers/export",
-                              ];
-                              // console.log(pathname, child.url);
-
                               if (pathname === child.url) {
                                 e.preventDefault();
-                                // if (link.includes(child.url)) {
-                                // router.push(`${child.url}?t=${Date.now()}`);
-                                window.location.reload();
-                                // }
+                                router.replace(child.url);
+                                router.refresh();
                               }
                             }}
                           >

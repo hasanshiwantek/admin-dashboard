@@ -18,9 +18,10 @@ import { useParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { HiQuestionMarkCircle } from "react-icons/hi2";
+import { ValidationError } from "@/components/ui/validation-error";
 
 export default function Seo({ hasDuplicate }: { hasDuplicate: boolean }) {
-  const { register, setValue, watch } = useFormContext();
+  const { register, setValue, watch, formState: { errors } } = useFormContext();
   const { id } = useParams();
   const [isUrlManuallyEdited, setIsUrlManuallyEdited] =
     useState<boolean>(false);
@@ -180,15 +181,19 @@ export default function Seo({ hasDuplicate }: { hasDuplicate: boolean }) {
                     e.preventDefault();
                   }
                 }}
-                required
                 className="!max-w-[85%] w-full"
                 id="ProductUrl"
                 placeholder=""
                 {...register("productUrl", {
+                  required: "Product URL is required",
                   onChange: (e) => {
                     setIsUrlManuallyEdited(true);
                   },
                 })}
+              />
+              <ValidationError
+                className="mt-1"
+                message={errors.productUrl?.message}
               />
               <button
                 className="btn-outline-primary"

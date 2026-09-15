@@ -18,6 +18,8 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
+import { wholeNumberValidation } from "@/validations/validations";
+import { ValidationError } from "@/components/ui/validation-error";
 import {
   Table,
   TableBody,
@@ -28,7 +30,8 @@ import {
 } from "@/components/ui/table";
 
 export default function BulkPricing() {
-  const { control, register, setValue } = useFormContext();
+  const { control, register, setValue, formState } = useFormContext();
+  const errors = formState.errors as any;
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -46,7 +49,7 @@ export default function BulkPricing() {
         discountType === "percent" || discountType === "%discount"
           ? basePrice * (1 - Math.min(Math.max(discount, 0), 100) / 100)
           : basePrice - Math.max(discount, 0);
-      const unitPrice = Math.max(0, Number(calculatedUnitPrice.toFixed(2)));
+      const unitPrice = Math.max(0, Math.round(calculatedUnitPrice));
 
       if (Number(tier?.unitPrice) !== unitPrice) {
         setValue(`bulkPricingTiers.${index}.unitPrice`, unitPrice, {
@@ -108,26 +111,40 @@ export default function BulkPricing() {
                 <TableCell className="border-r">
                   <Input
                     type="number"
-                    {...register(`bulkPricingTiers.${index}.minQty`, {
-                      valueAsNumber: true,
-                    })}
+                    {...register(
+                      `bulkPricingTiers.${index}.minQty`,
+                      wholeNumberValidation("Minimum Quantity"),
+                    )}
+                  />
+                  <ValidationError
+                    message={errors.bulkPricingTiers?.[index]?.minQty?.message}
                   />
                 </TableCell>
                 <TableCell className="border-r">
                   <Input
                     type="number"
-                    {...register(`bulkPricingTiers.${index}.price`, {
-                      valueAsNumber: true,
-                    })}
+                    {...register(
+                      `bulkPricingTiers.${index}.price`,
+                      wholeNumberValidation("Discount"),
+                    )}
+                  />
+                  <ValidationError
+                    message={errors.bulkPricingTiers?.[index]?.price?.message}
                   />
                 </TableCell>
                 <TableCell className="border-r">
                   <Input
                     type="number"
                     readOnly
-                    {...register(`bulkPricingTiers.${index}.unitPrice`, {
-                      valueAsNumber: true,
-                    })}
+                    {...register(
+                      `bulkPricingTiers.${index}.unitPrice`,
+                      wholeNumberValidation("Unit Price"),
+                    )}
+                  />
+                  <ValidationError
+                    message={
+                      errors.bulkPricingTiers?.[index]?.unitPrice?.message
+                    }
                   />
                 </TableCell>
                 <TableCell className="text-center">
