@@ -44,6 +44,7 @@ import { toast } from "react-toastify";
 const AllCustomers = () => {
   const dispatch = useAppDispatch();
   const { customers } = useAppSelector((state: any) => state.customer);
+  console.log(customers,"ya customers")
   const { loading, error } = useAppSelector((state: any) => state.customer);
   const router = useRouter();
   const pagination = customers.pagination;
@@ -56,9 +57,7 @@ const AllCustomers = () => {
     {}
   );
   const [showCustomerNotes, setShowCustomerNotes] = useState(false);
-  const [selectedCustomerId, setSelectedCustomerId] = useState<number | null>(
-    null
-  );
+const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
 
   const getDropdownActions = (customer: any) => [
     {
@@ -69,14 +68,15 @@ const AllCustomers = () => {
     //   label: "View Orders",
     //   onClick: () => console.log("View Orders clicked", customer),
     // },
-    {
-      label: "View Notes",
-      onClick: () => {
-        const customerId = customer?.id;
-        setSelectedCustomerId(customerId);
-        setShowCustomerNotes(true);
-      },
-    },
+    ///comment because shehroze bhii said
+    // {
+    //   label: "View Notes",
+    //   onClick: () => {
+    //     const customerId = customer?.id;
+       
+    //     setShowCustomerNotes(true);
+    //   },
+    // },
     {
       label: "Login",
       onClick: async () => {
@@ -596,7 +596,7 @@ const AllCustomers = () => {
 
                                     <span
                                       onClick={() => {
-                                        setSelectedCustomerId(customer?.id);
+                                        setSelectedOrderId(order?.id);
                                         setShowCustomerNotes(true);
                                       }}
                                       className="!text-blue-600 font-medium cursor-pointer hover:underline"
@@ -639,7 +639,7 @@ const AllCustomers = () => {
                                       <button
                                         type="button"
                                         onClick={() => {
-                                          setSelectedCustomerId(customer?.id);
+                                          setSelectedOrderId(order?.id);
                                           setShowCustomerNotes(true);
                                         }}
                                         className="flex items-center gap-2 !text-blue-600 cursor-pointer whitespace-nowrap"
@@ -683,7 +683,7 @@ const AllCustomers = () => {
       <CustomerNotesModal
         open={showCustomerNotes}
         onClose={() => setShowCustomerNotes(false)}
-        customerId={selectedCustomerId}
+        orderId={selectedOrderId}
       />
     </div>
   );
