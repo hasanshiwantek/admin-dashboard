@@ -549,7 +549,7 @@ const CustomerDetail = () => {
             <CustomerNotesModal
                 open={showCustomerNotes}
                 onClose={() => setShowCustomerNotes(false)}
-                customerId={selectedCustomerId}
+                orderId={selectedCustomerId}
             />
         </div>
     );
