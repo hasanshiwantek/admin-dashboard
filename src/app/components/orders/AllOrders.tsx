@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, ClipboardList, NotepadText } from "lucide-react";
 import {
   Select,
   SelectTrigger,
@@ -1123,9 +1123,10 @@ const moreTabs = tabs.filter(
     <col className="w-[90px]" />   {/* action */}
   </colgroup>
             <TableHeader>
-              <TableRow>
+              <TableRow className="bg-[#FBFBFC] h-[56px]">
                 <TableHead className="w-[50px]">
                   <Checkbox
+                     className="!w-8 !h-8 rounded-none mr-2"
                     checked={isAllSelected}
                     onCheckedChange={(checked: boolean) =>
                       handleSelectAllChange(checked as boolean)
@@ -1211,9 +1212,10 @@ const moreTabs = tabs.filter(
                     order?.deviceType?.includes("Tablet");
                   return (
                     <Fragment key={order?.id}>
-                      <TableRow key={order?.id}>
+                      <TableRow key={order?.id} className="h-[56px]">
                         <TableCell>
                           <Checkbox
+                          className="!w-8 !h-8 rounded-none mr-2"
                             checked={selectedOrderIds.some(
                               (o) => o.id === order.id,
                             )}
@@ -1229,9 +1231,9 @@ const moreTabs = tabs.filter(
                         <TableCell>
                           <button onClick={() => toggleRow(order.id)}>
                             {expandedRow === order.id ? (
-                              <FaCircleMinus className="h-7 w-7 fill-gray-600" />
+                              <FaCircleMinus className="h-7 w-7 !fill-[#999]" />
                             ) : (
-                              <FaCirclePlus className="h-7 w-7 fill-gray-600" />
+                              <FaCirclePlus className="h-7 w-7 !fill-[#999]" />
                             )}
                           </button>
                         </TableCell>
@@ -1367,7 +1369,7 @@ const moreTabs = tabs.filter(
                               return (
                                 <>
                                   <span
-                                    className={`w-7 h-9 inline-block rounded-none ${currentStatus?.color || "bg-gray-400"
+                                    className={`w-7 h-12 inline-block rounded-none ${currentStatus?.color || "bg-gray-400"
                                       }`}
                                   />
                                   <Select
@@ -1444,13 +1446,13 @@ const moreTabs = tabs.filter(
                             >
                               {order?.comments ? (
                                 <div className="relative">
-                                  <NotebookText
-                                    onClick={() => {
-                                      setSelectedOrderId(order.id);
-                                      setShowNotes(true);
-                                    }}
-                                    className="w-8 h-8"
-                                  />
+                                <NotepadText
+  onClick={() => {
+    setSelectedOrderId(order.id);
+    setShowNotes(true);
+  }}
+  className="w-8 h-8"
+/>
                                 </div>
                               ) : (
                                 <></>
@@ -1460,14 +1462,14 @@ const moreTabs = tabs.filter(
                               className="text-gray-500  flex gap-1 "
                               title="View Order Timeline"
                             >
-                              <Clock
-                                onClick={() =>
-                                  router.push(
-                                    `/manage/orders/order-timeline/${order?.id}`,
-                                  )
-                                }
-                                className="w-8 h-8"
-                              />
+                              <ClipboardList
+  onClick={() =>
+    router.push(
+      `/manage/orders/order-timeline/${order?.id}`,
+    )
+  }
+  className="w-8 h-8 cursor-pointer"
+/>
                             </button>
                           </div>
                         </TableCell>
@@ -1731,7 +1733,7 @@ const moreTabs = tabs.filter(
                                   </button>
 
                                   {/* Method */}
-                                  <div className="flex flex-col items-end mt-38">
+                                  <div className="flex flex-col items-end mt-30">
                                     <h4 className="font-semibold text-[18px] text-[#34313f] mb-3">
                                       Method
                                     </h4>
@@ -1787,12 +1789,13 @@ const moreTabs = tabs.filter(
                                   {/* Method Data */}
                                   <div
                                     className={`flex items-center gap-2 min-w-0 ${(order?.billingInformation?.shippingData?.length ?? 0) > 40
-                                      ? "pt-[46px]"
-                                      : "pt-[55px]"
+                                      ? "pt-[25px]"
+                                      : "pt-[35px]"
                                       }`}
                                   >
                                     <div className="shipping-data-scroll w-[420px] max-w-full overflow-x-auto overflow-y-hidden whitespace-nowrap">
-                                      {order?.billingInformation?.shippingData || "N/A"}
+                                      <span>   {order?.billingInformation?.shippingData || "N/A"} </span>
+
                                     </div>
                                   </div>
 
