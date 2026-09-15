@@ -1,6 +1,12 @@
 "use client";
 
-import { useFieldArray, useFormContext, Controller } from "react-hook-form";
+import { useEffect } from "react";
+import {
+  useFieldArray,
+  useFormContext,
+  Controller,
+  useWatch,
+} from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import {
@@ -22,21 +28,40 @@ import {
 } from "@/components/ui/table";
 
 export default function BulkPricing() {
-  const { control, register, setValue, watch } = useFormContext();
+  const { control, register, setValue } = useFormContext();
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: "bulkPricingTiers",
   });
 
-  const discountType = watch("discountType") || "fixed";
+  const discountType = useWatch({ control, name: "discountType" }) || "fixed";
+  const basePrice = Number(useWatch({ control, name: "salePrice" })) || 0;
+  const tiers = useWatch({ control, name: "bulkPricingTiers" }) || [];
+
+  useEffect(() => {
+    tiers.forEach((tier: any, index: number) => {
+      const discount = Number(tier?.price) || 0;
+      const calculatedUnitPrice =
+        discountType === "percent" || discountType === "%discount"
+          ? basePrice * (1 - Math.min(Math.max(discount, 0), 100) / 100)
+          : basePrice - Math.max(discount, 0);
+      const unitPrice = Math.max(0, Number(calculatedUnitPrice.toFixed(2)));
+
+      if (Number(tier?.unitPrice) !== unitPrice) {
+        setValue(`bulkPricingTiers.${index}.unitPrice`, unitPrice, {
+          shouldDirty: true,
+        });
+      }
+    });
+  }, [basePrice, discountType, setValue, tiers]);
 
   const discountLabel =
     discountType === "fixed"
       ? "$ Fixed Amount"
       : discountType === "percent"
-      ? "% Discount"
-      : "% Off/Unit";
+        ? "% Discount"
+        : "$ Off/Unit";
 
   return (
     <div className="space-y-4">
@@ -58,9 +83,9 @@ export default function BulkPricing() {
                 <SelectValue placeholder="Select Discount Type" />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="percent">% Discount</SelectItem>
                 <SelectItem value="fixed">$ Fixed Amount</SelectItem>
-                <SelectItem value="%discount">% Discount</SelectItem>
-                <SelectItem value="%off-unit">%Off/Unit</SelectItem>
+                <SelectItem value="off-unit">$ Off/Unit</SelectItem>
               </SelectContent>
             </Select>
           )}
@@ -99,6 +124,7 @@ export default function BulkPricing() {
                 <TableCell className="border-r">
                   <Input
                     type="number"
+                    readOnly
                     {...register(`bulkPricingTiers.${index}.unitPrice`, {
                       valueAsNumber: true,
                     })}
@@ -106,6 +132,7 @@ export default function BulkPricing() {
                 </TableCell>
                 <TableCell className="text-center">
                   <button
+                    type="button"
                     onClick={() => remove(index)}
                     className="text-gray-500 hover:text-red-500 cursor-pointer"
                   >
@@ -119,12 +146,10 @@ export default function BulkPricing() {
       </div>
 
       <Button
-      type="button"
+        type="button"
         variant="link"
         className="text-blue-600 !text-xl cursor-pointer font-medium p-0"
-        onClick={() =>
-          append({ minQty: 1, price: 0, unitPrice: 0 })
-        }
+        onClick={() => append({ minQty: 1, price: 0, unitPrice: 0 })}
       >
         + Add Tier
       </Button>

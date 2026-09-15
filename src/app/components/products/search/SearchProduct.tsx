@@ -1,7 +1,6 @@
 "use client";
-import React, { useEffect } from "react";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -15,11 +14,12 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { HiQuestionMarkCircle } from "react-icons/hi2";
-import { Controller, useFormContext } from "react-hook-form";
-import CategoryTreeSm from "../add/CategoryTreeSm";
-import { fetchBrands } from "@/redux/slices/productSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
+import { fetchBrands } from "@/redux/slices/productSlice";
+import { useEffect } from "react";
+import { Controller, useFormContext } from "react-hook-form";
+import { HiQuestionMarkCircle } from "react-icons/hi2";
+import CategoryTreeSm from "../add/CategoryTreeSm";
 const SearchProduct = () => {
   const { register, control } = useFormContext();
   const { brands } = useAppSelector((state: any) => state.product);
@@ -42,7 +42,10 @@ const SearchProduct = () => {
         <h1 className="my-5 2xl:!text-[2.4rem]">Advanced Search</h1>
         <div className="bg-white shadow-md p-10 space-y-10">
           <div className="flex items-center gap-4">
-            <Label htmlFor="searchKeywords" className="w-[150px] text-right 2xl:!text-2xl">
+            <Label
+              htmlFor="searchKeywords"
+              className="w-[150px] text-right 2xl:!text-2xl"
+            >
               Search Keywords:
               <TooltipProvider>
                 <Tooltip>
@@ -64,11 +67,14 @@ const SearchProduct = () => {
           </div>
 
           <div className="flex items-center gap-4">
-            <Label htmlFor="brandName" className="w-[150px] text-right 2xl:!text-2xl">
+            <Label
+              htmlFor="searchKeywords"
+              className="w-[150px] text-right 2xl:!text-2xl"
+            >
               Brand Name:
             </Label>
             <Controller
-              name="brandName"
+              name="searchKeywords"
               control={control}
               render={({ field }) => (
                 <Select onValueChange={field.onChange} value={field.value}>
@@ -76,7 +82,7 @@ const SearchProduct = () => {
                     <SelectValue placeholder="All Brand Names" />
                   </SelectTrigger>
                   <SelectContent>
-                    {brands?.data?.map((brand: any, ) => (
+                    {brands?.data?.map((brand: any) => (
                       <SelectItem
                         key={brand?.brand?.id}
                         value={String(brand.brand?.id)}
@@ -91,7 +97,10 @@ const SearchProduct = () => {
           </div>
 
           <div className="flex gap-4 items-start">
-            <Label htmlFor="categoryIds" className="w-[150px] text-right 2xl:!text-2xl">
+            <Label
+              htmlFor="categoryIds"
+              className="w-[150px] text-right 2xl:!text-2xl"
+            >
               Categories
             </Label>
             <CategoryTreeSm name="categoryIds" />
@@ -104,7 +113,10 @@ const SearchProduct = () => {
         <h1 className="my-5 2xl:!text-[2.4rem]">Search by Range</h1>
         <div className="bg-white shadow-md p-10 space-y-10">
           <div className="flex items-center gap-4">
-            <Label htmlFor="priceMin" className="w-[120px] text-right 2xl:!text-2xl">
+            <Label
+              htmlFor="priceMin"
+              className="w-[120px] text-right 2xl:!text-2xl"
+            >
               Price Range:
             </Label>
             <span className="text-sm text-gray-600 2xl:!text-2xl">From $</span>
@@ -124,42 +136,48 @@ const SearchProduct = () => {
           </div>
 
           <div className="flex items-center gap-4">
-            <Label htmlFor="qtyFrom" className="w-[120px] text-right 2xl:!text-2xl">
+            <Label
+              htmlFor="soldMin"
+              className="w-[120px] text-right 2xl:!text-2xl"
+            >
               Quantity Sold:
             </Label>
             <span className="text-sm text-gray-600 2xl:!text-2xl">From</span>
             <Input
-              id="qtyFrom"
+              id="soldMin"
               type="number"
               className="w-[100px]"
-              {...register("qtyFrom")}
+              {...register("soldMin")}
             />
             <span className="text-sm text-gray-600 2xl:!text-2xl ml-4">to</span>
             <Input
-              id="qtyTo"
+              id="soldMax"
               type="number"
               className="w-[100px]"
-              {...register("qtyTo")}
+              {...register("soldMax")}
             />
           </div>
 
           <div className="flex items-center gap-4">
-            <Label htmlFor="invFrom" className="w-[120px] text-right 2xl:!text-2xl">
+            <Label
+              htmlFor="inventoryMin"
+              className="w-[120px] text-right 2xl:!text-2xl"
+            >
               Inventory Level:
             </Label>
             <span className="text-sm text-gray-600 2xl:!text-2xl">From</span>
             <Input
-              id="invFrom"
+              id="inventoryMin"
               type="number"
               className="w-[100px]"
-              {...register("invFrom")}
+              {...register("inventoryMin")}
             />
             <span className="text-sm text-gray-600 2xl:!text-2xl ml-4">to</span>
             <Input
-              id="invTo"
+              id="inventoryMax"
               type="number"
               className="w-[100px]"
-              {...register("invTo")}
+              {...register("inventoryMax")}
             />
           </div>
         </div>
@@ -173,10 +191,13 @@ const SearchProduct = () => {
             { label: "Product Visibility", name: "isVisible" },
             { label: "Featured Product", name: "isFeatured" },
             { label: "Free Shipping", name: "freeShipping" },
-            { label: "Status", name: "status" },
+            // { label: "Status", name: "status" },
           ].map(({ label, name }) => (
             <div className="flex items-center gap-4" key={name}>
-              <Label htmlFor={name} className="w-[140px] text-right 2xl:!text-2xl">
+              <Label
+                htmlFor={name}
+                className="w-[140px] text-right 2xl:!text-2xl"
+              >
                 {label}:
               </Label>
               <Controller
@@ -210,7 +231,7 @@ const SearchProduct = () => {
                           Only Free Shipping
                         </SelectItem>
                       )}
-                      {name === "status" && (
+                      {/* {name === "status" && (
                         <>
                           <SelectItem value="purchased">
                             Can be Purchased
@@ -220,7 +241,7 @@ const SearchProduct = () => {
                             Cannot Purchase
                           </SelectItem>
                         </>
-                      )}
+                      )} */}
                     </SelectContent>
                   </Select>
                 )}
@@ -235,7 +256,10 @@ const SearchProduct = () => {
         <h1 className="my-5 2xl:!text-[2.4rem]">Sort Order</h1>
         <div className="bg-white shadow-md p-10 space-y-10">
           <div className="flex items-center gap-4">
-            <Label htmlFor="sortBy" className="w-[140px] text-right 2xl:!text-2xl">
+            <Label
+              htmlFor="sortBy"
+              className="w-[140px] text-right 2xl:!text-2xl"
+            >
               Sort Order:
             </Label>
 
