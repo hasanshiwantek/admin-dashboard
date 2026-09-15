@@ -1404,7 +1404,7 @@ const moreTabs = tabs.filter(
                               className="text-gray-500  flex gap-1 "
                               title="View messages for this order"
                             >
-                              {!userType ? (
+                              {order?.isMessage && !userType ? (
                                 <div
                                   className="relative cursor-pointer w-6 h-6"
                                   onClick={() =>
