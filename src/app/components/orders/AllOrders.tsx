@@ -9,6 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
+import { ChevronDown } from "lucide-react";
 import {
   Select,
   SelectTrigger,
@@ -400,7 +401,7 @@ const moreTabs = tabs.filter(
         }
       },
     },
-    ...(order.isMessage && !order?.userType
+    ...(!order?.userType
       ? [
         {
           label: "Send Message",
@@ -910,10 +911,11 @@ const moreTabs = tabs.filter(
   <div className="relative orders-more-dropdown">
     <button
       type="button"
-      className="!text-2xl pb-3 whitespace-nowrap text-gray-500 hover:text-black"
+      className="!text-2xl pb-3 whitespace-nowrap text-gray-500 flex items-center gap-2 hover:text-black"
       onClick={() => setShowMoreTabs((prev) => !prev)}
     >
-      More
+      More   <ChevronDown className="w-5 h-5" />
+
     </button>
 
     {showMoreTabs && (
@@ -1107,7 +1109,19 @@ const moreTabs = tabs.filter(
 
         {/* Table */}
         <div className="overflow-x-auto  rounded-md shadow">
-          <Table>
+          <Table className="w-full table-fixed">
+              <colgroup>
+    <col className="w-[50px]" />   {/* checkbox */}
+    <col className="w-[55px]" />   {/* expand */}
+    <col className="w-[65px]" />   {/* device */}
+    <col className="w-[135px]" />  {/* date */}
+    <col className="w-[90px]" />   {/* order id */}
+    <col className="w-[75px]" />   {/* risk/country */}
+    <col className="w-[190px]" />  {/* customer */}
+    <col className="w-[255px]" />  {/* status */}
+    <col className="w-[145px]" />  {/* total */}
+    <col className="w-[90px]" />   {/* action */}
+  </colgroup>
             <TableHeader>
               <TableRow>
                 <TableHead className="w-[50px]">
@@ -1485,7 +1499,7 @@ const moreTabs = tabs.filter(
 
                       {expandedRow === order?.id && (
                         <TableRow>
-                          <TableCell colSpan={11}>
+                          <TableCell colSpan={10}>
                             <div className="grid grid-cols-3 gap-4 bg-[#fcfcfb] p-4 ">
                               <div className="flex">
                                 {/* Left Side: Billing Title & Copy Button */}

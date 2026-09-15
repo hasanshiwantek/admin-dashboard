@@ -700,7 +700,7 @@ const EditCustomer = () => {
                         </div>
                     </div>
                     {/* ==================== NOTES ==================== */}
-                    <div className="bg-white border border-[#e5e7eb] rounded-md p-6 mb-8">
+                    {/* <div className="bg-white border border-[#e5e7eb] rounded-md p-6 mb-8">
                         <h2 className="!text-[22px] font-semibold text-[#313440] mb-2">
                             Notes
                         </h2>
@@ -714,7 +714,7 @@ const EditCustomer = () => {
                             rows={4}
                             className="resize-none h-56"
                         />
-                    </div>
+                    </div> */}
                 </div>
 
                 {/* Sticky Footer */}
