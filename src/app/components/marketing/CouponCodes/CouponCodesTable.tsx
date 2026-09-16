@@ -1,6 +1,15 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import Pagination from "@/components/ui/pagination";
 import {
   Table,
   TableBody,
@@ -9,33 +18,18 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import Spinner from "../../loader/Spinner";
-import {
-  Check,
-  MoreHorizontal,
-  Trash2,
-  SlidersHorizontal,
-  Loader2,
-} from "lucide-react";
-import { useRouter } from "next/navigation";
-import Pagination from "@/components/ui/pagination";
-import { IoFilterOutline } from "react-icons/io5";
-import Link from "next/link";
-import {
+  deleteCouponCodes,
   getCouponCodes,
   searchCouponcode,
-  deleteCouponCodes,
 } from "@/redux/slices/marketingSlice";
-import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
+import { Check, Loader2, MoreHorizontal, Trash2, X } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import { IoFilterOutline } from "react-icons/io5";
+import Spinner from "../../loader/Spinner";
 
 interface Coupon {
   id: string;
@@ -53,11 +47,11 @@ const CouponCodesTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState("10");
   const [deletingId, setDeletingId] = useState<string | null>(null);
-  
+
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { couponCodes, loading, error, deleteLoading } = useAppSelector(
-    (state: any) => state.marketingReducer
+    (state: any) => state.marketingReducer,
   );
 
   const couponsData = couponCodes?.couponcode?.data || [];
@@ -118,9 +112,9 @@ const CouponCodesTable = () => {
   // Delete single coupon
   const handleDeleteCoupon = async (id: string) => {
     const confirmDelete = window.confirm(
-      "Are you sure you want to delete this coupon code?"
+      "Are you sure you want to delete this coupon code?",
     );
-    
+
     if (!confirmDelete) return;
 
     setDeletingId(id);
@@ -143,7 +137,7 @@ const CouponCodesTable = () => {
     if (selectedCoupons.length === 0) return;
 
     const confirmDelete = window.confirm(
-      `Are you sure you want to delete ${selectedCoupons.length} coupon code(s)?`
+      `Are you sure you want to delete ${selectedCoupons.length} coupon code(s)?`,
     );
 
     if (!confirmDelete) return;
@@ -151,7 +145,9 @@ const CouponCodesTable = () => {
     try {
       // Delete all selected coupons
       await Promise.all(
-        selectedCoupons.map((id) => dispatch(deleteCouponCodes({ id })).unwrap())
+        selectedCoupons.map((id) =>
+          dispatch(deleteCouponCodes({ id })).unwrap(),
+        ),
       );
       // Refresh the list
       dispatch(getCouponCodes());
@@ -160,6 +156,9 @@ const CouponCodesTable = () => {
       console.error(error || "Failed to delete some coupon codes");
     }
   };
+
+  const goToEditPage = (id: number) =>
+    router.push(`/manage/marketing/coupon-codes/edit/${id}`);
 
   return (
     <div className="p-10">
@@ -379,8 +378,14 @@ const CouponCodesTable = () => {
                       />
                     </TableCell>
                     <TableCell className="text-blue-600 font-normal">
-                      {coupon?.couponName}
+                      <Link
+                        href={`/manage/marketing/coupon-codes/edit/${coupon?.id}`}
+                        className="text-inherit! [font-size:inherit]!"
+                      >
+                        {coupon?.couponName}
+                      </Link>
                     </TableCell>
+
                     <TableCell className="text-gray-700">
                       {coupon?.couponCode}
                     </TableCell>
@@ -396,8 +401,45 @@ const CouponCodesTable = () => {
                       {coupon?.uses || 0}
                     </TableCell>
                     <TableCell>
-                      {coupon?.enabled === "true" && (
+                      {/* {coupon?.enabled === "1" && (
                         <Check className="h-6 w-10 text-green-600" />
+                      )} */}
+                      {coupon?.enabled === "1" ? (
+                        <Check
+                          className="text-green-500 w-8 h-8 cursor-pointer"
+                          // onClick={() => {
+                          //   dispatch(
+                          //     updateNavigation({
+                          //       id: page.id,
+                          //       data: {
+                          //         isPageVisible: false,
+                          //       },
+                          //     }),
+                          //   )
+                          //     .unwrap()
+                          //     .then(() => {
+                          //       dispatch(getCouponCodes());
+                          //     });
+                          // }}
+                        />
+                      ) : (
+                        <X
+                          className="text-red-500 w-8 h-8 cursor-pointer"
+                          // onClick={() => {
+                          //   dispatch(
+                          //     updateNavigation({
+                          //       id: page.id,
+                          //       data: {
+                          //         isPageVisible: true,
+                          //       },
+                          //     }),
+                          //   )
+                          //     .unwrap()
+                          //     .then(() => {
+                          //       dispatch(getCouponCodes());
+                          //     });
+                          // }}
+                        />
                       )}
                     </TableCell>
                     <TableCell>
@@ -422,11 +464,7 @@ const CouponCodesTable = () => {
                         >
                           <DropdownMenuItem
                             className="cursor-pointer"
-                            onClick={() =>
-                              router.push(
-                                `/manage/marketing/coupon-codes/edit/${coupon?.id}`
-                              )
-                            }
+                            onClick={() => goToEditPage(coupon?.id)}
                           >
                             Edit
                           </DropdownMenuItem>

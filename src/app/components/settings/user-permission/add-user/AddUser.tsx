@@ -17,6 +17,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { useRouter } from "next/navigation";
 import { fetchPermissions, fetchMyPermissions } from "@/redux/slices/userPermission";
 import { registerUser } from "@/redux/slices/authSlice";
+import { UserRolesEnum } from "@/const/appConstants";
 
 type FormValues = {
     firstName: string;
@@ -59,7 +60,7 @@ const AddUser = () => {
         formState: { errors }, // ← add this
     } = useForm<FormValues>({
         defaultValues: {
-            userRole: 1,
+            userRole: UserRolesEnum.ADMIN,
             permissions: [],
         },
     });

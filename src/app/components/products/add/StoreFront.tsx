@@ -19,7 +19,11 @@ import {
 } from "@/components/ui/tooltip";
 import { HiQuestionMarkCircle } from "react-icons/hi2";
 import { ValidationError } from "@/components/ui/validation-error";
-import { wholeNumberValidation } from "@/validations/validations";
+import {
+  restrictWholeNumberInput,
+  restrictWholeNumberPaste,
+  wholeNumberValidation,
+} from "@/validations/validations";
 
 const StoreFront = () => {
   const {
@@ -118,6 +122,8 @@ const StoreFront = () => {
                 id="sortOrder"
                 type="number"
                 defaultValue={0}
+                onKeyDown={restrictWholeNumberInput}
+                onPaste={restrictWholeNumberPaste}
                 {...register("sortOrder", wholeNumberValidation("Sort Order"))}
               />
               <ValidationError message={errors.sortOrder?.message} />

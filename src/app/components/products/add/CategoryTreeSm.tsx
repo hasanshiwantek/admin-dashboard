@@ -1,12 +1,13 @@
 "use client";
-import { useState, useEffect } from "react";
-import { useFormContext, Controller } from "react-hook-form";
 import { Checkbox } from "@/components/ui/checkbox";
-import { productCategories } from "@/const/productCategories";
-import { PlusCircle, MinusCircle, Folder } from "lucide-react";
 import { Label } from "@/components/ui/label";
-import { fetchCategories } from "@/redux/slices/categorySlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
+import { fetchCategories } from "@/redux/slices/categorySlice";
+import { Folder, MinusCircle, PlusCircle } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Controller, useFormContext } from "react-hook-form";
+import type { RegisterOptions } from "react-hook-form";
+
 type Category = {
   id: string;
   name: string;
@@ -15,6 +16,7 @@ type Category = {
 
 interface CategoryTreeProps {
   name: string;
+  rules?: RegisterOptions;
 }
 const normalizeCategories = (data: any[]): Category[] => {
   return data.map((item) => ({
@@ -24,10 +26,10 @@ const normalizeCategories = (data: any[]): Category[] => {
   }));
 };
 
-export default function CategoryTreeSm({ name }: CategoryTreeProps) {
+export default function CategoryTreeSm({ name, rules }: CategoryTreeProps) {
   const dispatch = useAppDispatch();
   const allCategories = useAppSelector(
-    (state: any) => state.category.categories
+    (state: any) => state.category.categories,
   );
   useEffect(() => {
     dispatch(fetchCategories());
@@ -41,10 +43,14 @@ export default function CategoryTreeSm({ name }: CategoryTreeProps) {
   const selectedIds = (watch(name) ?? []) as string[];
 
   useEffect(() => {
-    const selected = selectedIds.map(String);
+    console.log({selectedIds,name})
+    const selected = selectedIds?.map(String);
     const nextOpenMap: Record<string, boolean> = {};
 
-    const markAncestorPath = (nodes: Category[], ancestorChain: string[] = []) => {
+    const markAncestorPath = (
+      nodes: Category[],
+      ancestorChain: string[] = [],
+    ) => {
       nodes.forEach((node) => {
         const currentPath = [...ancestorChain, node.id];
 
@@ -76,10 +82,14 @@ export default function CategoryTreeSm({ name }: CategoryTreeProps) {
     if (selected.includes(id)) {
       setValue(
         name,
-        selected.filter((cid: string) => cid !== id)
+        selected.filter((cid: string) => cid !== id),
+        { shouldValidate: true, shouldDirty: true },
       );
     } else {
-      setValue(name, [...selected, id]);
+      setValue(name, [...selected, id], {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
     }
   };
 
@@ -166,6 +176,7 @@ export default function CategoryTreeSm({ name }: CategoryTreeProps) {
       control={control}
       name={name}
       defaultValue={[]}
+      rules={rules}
       render={() => (
         <div className="p-4 border border-gray-200 rounded-md bg-white shadow-sm overflow-y-auto h-[200px]">
           <div className="pl-1">

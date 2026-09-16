@@ -13,7 +13,12 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { HiQuestionMarkCircle } from "react-icons/hi2";
-import { wholeNumberValidation } from "@/validations/validations";
+import {
+  normalizeWholeNumberValue,
+  restrictWholeNumberInput,
+  restrictWholeNumberPaste,
+  wholeNumberValidation,
+} from "@/validations/validations";
 import { ValidationError } from "@/components/ui/validation-error";
 export default function Purchasability() {
   const {
@@ -233,10 +238,19 @@ export default function Purchasability() {
             id="minPurchaseQty"
             {...register(
               "minPurchaseQuantity",
-              wholeNumberValidation("Minimum Purchase Quantity"),
+              {
+                ...wholeNumberValidation("Minimum Purchase Quantity"),
+                max: {
+                  value: 999999999,
+                  message:
+                    "Quantity must be less than 1,000,000,000",
+                },
+              },
             )}
             type="number"
-            // required
+            onKeyDown={restrictWholeNumberInput}
+            onPaste={restrictWholeNumberPaste}
+            onInput={normalizeWholeNumberValue}
           />
           <ValidationError message={errors.minPurchaseQuantity?.message} />
         </div>
@@ -261,10 +275,19 @@ export default function Purchasability() {
             id="maxPurchaseQty"
             {...register(
               "maxPurchaseQuantity",
-              wholeNumberValidation("Maximum Purchase Quantity"),
+              {
+                ...wholeNumberValidation("Maximum Purchase Quantity"),
+                max: {
+                  value: 999999999,
+                  message:
+                    "Quantity must be less than 1,000,000,000",
+                },
+              },
             )}
             type="number"
-            // required
+            onKeyDown={restrictWholeNumberInput}
+            onPaste={restrictWholeNumberPaste}
+            onInput={normalizeWholeNumberValue}
           />
           <ValidationError message={errors.maxPurchaseQuantity?.message} />
         </div>

@@ -16,7 +16,12 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { ValidationError } from "@/components/ui/validation-error";
-import { wholeNumberValidation } from "@/validations/validations";
+import {
+  decimalValidation,
+  restrictDecimalInput,
+  restrictDecimalPaste,
+  restrictDecimalValue,
+} from "@/validations/validations";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
@@ -50,6 +55,9 @@ export default function Pricing() {
         <Input
           className="!max-w-[100%] w-full"
           type="number"
+          onKeyDown={restrictDecimalInput}
+          onPaste={restrictDecimalPaste}
+          onInput={restrictDecimalValue}
           placeholder="$0"
           value={price ?? ""}
           onChange={(event) =>
@@ -106,9 +114,12 @@ export default function Pricing() {
                   className="!max-w-[90%] w-full"
                   type="number"
                   placeholder="$0"
+                  onKeyDown={restrictDecimalInput}
+                  onPaste={restrictDecimalPaste}
+                  onInput={restrictDecimalValue}
                   {...register(
                     "costPrice",
-                    wholeNumberValidation("Cost Price"),
+                    decimalValidation("Cost Price"),
                   )}
                 />
                 <ValidationError message={errors.costPrice?.message} />
@@ -119,7 +130,10 @@ export default function Pricing() {
                   className="!max-w-[90%] w-full"
                   type="number"
                   placeholder="$0"
-                  {...register("msrp", wholeNumberValidation("MSRP"))}
+                  onKeyDown={restrictDecimalInput}
+                  onPaste={restrictDecimalPaste}
+                  onInput={restrictDecimalValue}
+                  {...register("msrp", decimalValidation("MSRP"))}
                 />
                 <ValidationError message={errors.msrp?.message} />
               </div>
@@ -129,9 +143,12 @@ export default function Pricing() {
                   className="!max-w-[90%] w-full"
                   type="number"
                   placeholder="$0"
+                  onKeyDown={restrictDecimalInput}
+                  onPaste={restrictDecimalPaste}
+                  onInput={restrictDecimalValue}
                   {...register(
                     "salePrice",
-                    wholeNumberValidation("Sale Price"),
+                    decimalValidation("Sale Price"),
                   )}
                 />
                 <ValidationError message={errors.salePrice?.message} />
