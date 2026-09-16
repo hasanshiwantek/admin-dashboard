@@ -3,7 +3,7 @@ import { CouponCodeForm } from "./types";
 export const DefaultCouponCodeFormValues: CouponCodeForm = {
   couponCode: "",
   couponName: "",
-  discountType: "dollarAmountOrder",
+  discountType: "per_total_discount",
   discountAmount: "0.00",
   minimumPurchase: "0.00",
   limitTotalUses: false,

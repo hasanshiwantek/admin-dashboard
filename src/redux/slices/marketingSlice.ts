@@ -92,6 +92,26 @@ export const updateCouponCode = createAsyncThunk(
   }
 );
 
+export const toggleCouponEnabled = createAsyncThunk(
+  "marketing/toggleCouponEnabled",
+  async (
+    { id, enabled }: { id: any; enabled: boolean },
+    thunkAPI,
+  ) => {
+    try {
+      const res = await axiosInstance.put(
+        `dashboard/coupons/update-enabled/${id}`,
+        { enabled },
+      );
+      return { id, enabled, data: res?.data };
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to update coupon status",
+      );
+    }
+  },
+);
+
 export const deleteCouponCode = createAsyncThunk(
   "storefront/deleteWebPage",
   async ({ id }: { id: any }, thunkAPI) => {
@@ -257,6 +277,25 @@ const marketingSlice = createSlice({
       .addCase(deleteCouponCodes.rejected, (state, action) => {
         state.deleteLoading = false;
         state.error = action.error.message || "Failed to delete coupon code";
+      })
+      .addCase(toggleCouponEnabled.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(toggleCouponEnabled.fulfilled, (state, action) => {
+        state.loading = false;
+
+        if (!state.couponCodes?.couponcode?.data) return;
+
+        state.couponCodes.couponcode.data = state.couponCodes.couponcode.data.map(
+          (coupon: any) =>
+            coupon.id === action.payload.id
+              ? { ...coupon, enabled: action.payload.enabled ? 1 : 0 }
+              : coupon,
+        );
+      })
+      .addCase(toggleCouponEnabled.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string || "Failed to update coupon status";
       })
       .addCase(deleteAllSubscribers.pending, (state) => {
   state.deleteLoading = true;

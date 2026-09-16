@@ -17,6 +17,7 @@ import { Info, Loader2 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
+import { generateUniqueCode } from "@/lib/utils";
 import { DefaultCouponCodeFormValues } from "./constant";
 import { CouponCodeForm } from "./types";
 
@@ -26,7 +27,10 @@ const AddCouponCode = () => {
   const isEditMode = !!couponId;
 
   const methods = useForm<CouponCodeForm>({
-    defaultValues: DefaultCouponCodeFormValues,
+    defaultValues: {
+      ...DefaultCouponCodeFormValues,
+      couponCode: generateUniqueCode(10),
+    },
   });
 
   const { register, watch, setValue, reset } = methods;
@@ -72,7 +76,7 @@ const AddCouponCode = () => {
         reset({
           couponCode: couponData.couponCode || "",
           couponName: couponData.couponName || "",
-          discountType: couponData.discountType || "dollarAmountOrder",
+          discountType: couponData.discountType || "per_total_discount",
           discountAmount: couponData.discountAmount || "0.00",
           minimumPurchase: couponData.minimumPurchase || "0.00",
           limitTotalUses: toBoolean(couponData.limitTotalUses),
@@ -199,11 +203,18 @@ const AddCouponCode = () => {
                     <div className="flex items-center gap-2">
                       <Input
                         id="couponCode"
-                        {...register("couponCode")}
+                        {...register("couponCode", {
+                          required: "Coupon code is required",
+                          validate: (value) =>
+                            (value ?? "").trim().length > 0 ||
+                            "Coupon code is required",
+                        })}
                         placeholder="ZML08KZV57U"
+                        aria-invalid={!!errors.couponCode}
                         className="max-w-md"
                       />
                       <Info className="w-4 h-4 text-gray-400" />
+                      <ValidationError message={errors.couponCode?.message} />
                     </div>
                   </div>
 
@@ -245,11 +256,11 @@ const AddCouponCode = () => {
                     >
                       <div className="flex items-center space-x-2 mb-2">
                         <RadioGroupItem
-                          value="dollarAmountOrder"
-                          id="dollarAmountOrder"
+                          value="per_total_discount"
+                          id="per_total_discount"
                         />
                         <Label
-                          htmlFor="dollarAmountOrder"
+                          htmlFor="per_total_discount"
                           className="font-normal cursor-pointer flex items-center gap-2"
                         >
                           Dollar amount off the order total
@@ -258,11 +269,11 @@ const AddCouponCode = () => {
                       </div>
                       <div className="flex items-center space-x-2 mb-2">
                         <RadioGroupItem
-                          value="dollarAmountItem"
-                          id="dollarAmountItem"
+                          value="per_item_discount"
+                          id="per_item_discount"
                         />
                         <Label
-                          htmlFor="dollarAmountItem"
+                          htmlFor="per_item_discount"
                           className="font-normal cursor-pointer"
                         >
                           Dollar amount off each item in the order
@@ -270,11 +281,11 @@ const AddCouponCode = () => {
                       </div>
                       <div className="flex items-center space-x-2 mb-2">
                         <RadioGroupItem
-                          value="percentageItem"
-                          id="percentageItem"
+                          value="percentage_discount"
+                          id="percentage_discount"
                         />
                         <Label
-                          htmlFor="percentageItem"
+                          htmlFor="percentage_discount"
                           className="font-normal cursor-pointer"
                         >
                           Percentage off each item in the order
@@ -282,11 +293,11 @@ const AddCouponCode = () => {
                       </div>
                       <div className="flex items-center space-x-2 mb-2">
                         <RadioGroupItem
-                          value="dollarAmountShipping"
-                          id="dollarAmountShipping"
+                          value="shipping_discount"
+                          id="shipping_discount"
                         />
                         <Label
-                          htmlFor="dollarAmountShipping"
+                          htmlFor="shipping_discount"
                           className="font-normal cursor-pointer"
                         >
                           Dollar amount off the shipping total
@@ -294,11 +305,11 @@ const AddCouponCode = () => {
                       </div>
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem
-                          value="freeShipping"
-                          id="freeShipping"
+                          value="free_shipping"
+                          id="free_shipping"
                         />
                         <Label
-                          htmlFor="freeShipping"
+                          htmlFor="free_shipping"
                           className="font-normal cursor-pointer"
                         >
                           Free shipping
@@ -308,7 +319,7 @@ const AddCouponCode = () => {
                   </div>
 
                   {/* Discount Amount */}
-                  {discountType !== "freeShipping" && (
+                  {discountType !== "free_shipping" && (
                     <div className="grid grid-cols-[200px_1fr] items-center gap-4 mb-6">
                       <Label
                         htmlFor="discountAmount"
@@ -498,6 +509,7 @@ const AddCouponCode = () => {
                             <div className="ml-6 mt-3">
                               <CategoryTreeSm
                                 name="categoryIds"
+                                showSelectAll
                                 rules={{
                                   validate: (value) =>
                                     value?.length > 0 ||
