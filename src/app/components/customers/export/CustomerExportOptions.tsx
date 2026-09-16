@@ -7,7 +7,6 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { useSearchParams } from "next/navigation";
 const templates = [
-  // { label: "Bulk Edit", value: "bulkEdit" },
   { label: "Default", value: "default" },
 ];
 
@@ -61,42 +60,27 @@ export default function CustomerExportOptions() {
             {/* File Format */}
             <div>
               <div className="flex  justify-start gap-5">
-                <Label className=" mb-2 2xl:!text-2xl">File format</Label>
+                <Label className="2xl:!text-2xl mb-2">File format</Label>
                 <Controller
                   control={control}
                   name="fileFormat"
                   defaultValue="csv"
                   render={({ field }) => (
                     <RadioGroup
-                      className="flex gap-10 mt-2"
+                      className="flex gap-10 "
                       onValueChange={field.onChange}
                       value={field.value}
                     >
-                      <div className="flex flex-col mt-10 space-y-4">
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="csv" id="csv" />
-                          <Label className="2xl:!text-2xl" htmlFor="csv">
-                            Export to Microsoft Excel (csv)
-                          </Label>
-                        </div>
-                        {/* <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="xml" id="xml" />
-                          <Label className="2xl:!text-2xl" htmlFor="xml">
-                            Export to an xml file (advanced)
-                          </Label>
-                        </div> */}
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="csv" id="csv" />
+                        <Label className="2xl:!text-2xl" htmlFor="csv">
+                          Export to Microsoft Excel (csv)
+                        </Label>
                       </div>
                     </RadioGroup>
                   )}
                 />
               </div>
-              {/* Save export checkbox */}
-              {/* <div className="flex items-center space-x-2 pt-2 mt-10">
-                <Checkbox id="saveExport" {...register("saveExport")} />
-                <Label className="2xl:!text-2xl" htmlFor="saveExport">
-                  Save export to the server for later download
-                </Label>
-              </div> */}
             </div>
           </div>
         </div>
