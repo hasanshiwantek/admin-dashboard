@@ -214,13 +214,30 @@ export const exportSubscribers = createAsyncThunk(
   }
 );
 
+type CouponListResponse = {
+  couponcode?: {
+    data?: any[];
+    total?: number;
+    current_page?: number;
+    last_page?: number;
+  };
+};
+
+interface MarketingState {
+  loading: boolean;
+  error: string | null;
+  couponCodes: CouponListResponse | null;
+  emailMarketing: any[];
+  deleteLoading: boolean;
+}
+
 // 2. Initial State
-const initialState = {
+const initialState: MarketingState = {
   loading: false,
-  error: null as string | null,
-  couponCodes: [],
+  error: null,
+  couponCodes: null,
   emailMarketing: [],
-   deleteLoading: false,
+  deleteLoading: false,
 };
 
 // 3. Slice
