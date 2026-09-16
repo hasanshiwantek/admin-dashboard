@@ -18,12 +18,20 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { PlusIcon, DownloadIcon, SearchIcon, Trash, CalendarDays, StickyNote } from "lucide-react";
+import {
+  PlusIcon,
+  DownloadIcon,
+  SearchIcon,
+  Trash,
+  CalendarDays,
+  StickyNote,
+} from "lucide-react";
 import React, { useState, useEffect, Fragment } from "react";
 import OrderActionsDropdown from "../../orders/OrderActionsDropdown";
 import Pagination from "@/components/ui/pagination";
 import { FaCirclePlus, FaCircleMinus } from "react-icons/fa6";
 import { useSearchParams } from "next/navigation";
+import { advanceOrderSearch } from "@/redux/slices/orderSlice";
 import * as XLSX from "xlsx";
 import {
   fetchCustomers,
@@ -44,7 +52,7 @@ import { toast } from "react-toastify";
 const AllCustomers = () => {
   const dispatch = useAppDispatch();
   const { customers } = useAppSelector((state: any) => state.customer);
-  console.log(customers,"ya customers")
+  console.log(customers, "ya customers");
   const { loading, error } = useAppSelector((state: any) => state.customer);
   const router = useRouter();
   const pagination = customers.pagination;
@@ -54,10 +62,10 @@ const AllCustomers = () => {
   const totalPages = Math.ceil(total / pagination?.pageSize);
   const [selectedCustomers, setSelectedCustomers] = useState<any[]>([]);
   const [storeCredits, setStoreCredits] = useState<{ [id: number]: string }>(
-    {}
+    {},
   );
   const [showCustomerNotes, setShowCustomerNotes] = useState(false);
-const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
+  const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
 
   const getDropdownActions = (customer: any) => [
     {
@@ -73,7 +81,7 @@ const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
     //   label: "View Notes",
     //   onClick: () => {
     //     const customerId = customer?.id;
-       
+
     //     setShowCustomerNotes(true);
     //   },
     // },
@@ -81,9 +89,13 @@ const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
       label: "Login",
       onClick: async () => {
         const customerId = customer?.id;
-        const availableStores = JSON.parse(localStorage.getItem("availableStores") || "[]");
+        const availableStores = JSON.parse(
+          localStorage.getItem("availableStores") || "[]",
+        );
         const selectedStoreId = Number(localStorage.getItem("storeId"));
-        const selectedStore = availableStores.find((s: any) => s.id === selectedStoreId);
+        const selectedStore = availableStores.find(
+          (s: any) => s.id === selectedStoreId,
+        );
 
         if (!selectedStore?.baseUrl) {
           toast.error("Store not found");
@@ -101,7 +113,7 @@ const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
         } catch (err) {
           toast.error("Failed to login as customer");
         }
-      }
+      },
     },
   ];
 
@@ -115,7 +127,7 @@ const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
 
   const handleSelectOne = (customer: any) => {
     const isAlreadySelected = selectedCustomers.some(
-      (c) => c.id === customer.id
+      (c) => c.id === customer.id,
     );
 
     const updated = isAlreadySelected
@@ -156,13 +168,12 @@ const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
   const toggleRow = (id: number) => {
     setExpandedRow((prev) => (prev === id ? null : id));
   };
-  const copyBilling = () => {
-  };
+  const copyBilling = () => {};
 
   // CUSTOMER UPDATION LOGIC
   const updateCustomerGroupStatus = async (
     customerId: number | string,
-    group: string
+    group: string,
   ) => {
     const payload = {
       customerGroup: group === "none" ? null : group,
@@ -170,7 +181,7 @@ const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
 
     try {
       const result = await dispatch(
-        updateCustomer({ id: customerId, data: payload })
+        updateCustomer({ id: customerId, data: payload }),
       );
 
       if (updateCustomer.fulfilled.match(result)) {
@@ -200,7 +211,7 @@ const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
 
     try {
       const result = await dispatch(
-        updateCustomer({ id: customerId, data: payload })
+        updateCustomer({ id: customerId, data: payload }),
       );
 
       if (updateCustomer.fulfilled.match(result)) {
@@ -227,7 +238,7 @@ const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
           page: currentPage,
           pageSize: perPage,
           search: keyword,
-        })
+        }),
       );
       if (fetchCustomerByKeyword.fulfilled.match(resultAction)) {
         // setKeyword("");
@@ -256,7 +267,7 @@ const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
   const perPage = Number(queryObject.limit || queryObject.pageSize || 50);
   useEffect(() => {
     const filterKeys = Object.keys(queryObject).filter(
-      (key) => !["page", "limit", "pageSize"].includes(key)
+      (key) => !["page", "limit", "pageSize"].includes(key),
     );
 
     if (filterKeys.length > 0) {
@@ -267,33 +278,33 @@ const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
             page: currentPage,
             pageSize: perPage,
           },
-        })
+        }),
       );
     } else {
       dispatch(fetchCustomers({ page: currentPage, pageSize: perPage }));
     }
   }, [searchParams]);
 
-
   const handleExport = () => {
-    if (!selectedCustomers.length) return
+    if (!selectedCustomers.length) return;
     const selectedCustomer = customers?.data?.filter((item: any) =>
-      selectedCustomers?.some((selected: any) =>
-        Number(selected?.id || selected) === Number(item?.id)
-      )
+      selectedCustomers?.some(
+        (selected: any) =>
+          Number(selected?.id || selected) === Number(item?.id),
+      ),
     );
     const exportData = selectedCustomer.map((item: any) => ({
       ID: item?.id,
       "First Name": item?.firstName,
       "Last Name": item?.lastName,
-      "Email": item?.email,
-      "Phone": item?.phone,
-      "Address": item?.addresses,
+      Email: item?.email,
+      Phone: item?.phone,
+      Address: item?.addresses,
       "Company Name": item?.companyName,
       "Customer Group": item?.customerGroup,
       "Store Credit": item?.storeCredit,
-      "Country": item?.country,
-      "State": item?.state,
+      Country: item?.country,
+      State: item?.state,
       "Tax Exempt Code": item?.taxExemptCode,
       "Force Password Reset": item?.forcePasswordReset ? 1 : "",
       "Receive Review Emails": item?.receiveReviewEmails ? 1 : "",
@@ -434,7 +445,7 @@ const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
                     <TableCell>
                       <Checkbox
                         checked={selectedCustomers.some(
-                          (c) => c.id === customer.id
+                          (c) => c.id === customer.id,
                         )}
                         onCheckedChange={() => handleSelectOne(customer)}
                       />
@@ -453,16 +464,26 @@ const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
                     </TableCell>
                     <TableCell>
                       <div className=" text-blue-600 cursor-pointer hover:underline">
-                        <Link className="2xl:!text-2xl" href={`/manage/customers/edit/${customer.id}`}>
+                        <Link
+                          className="2xl:!text-2xl"
+                          href={`/manage/customers/edit/${customer.id}`}
+                        >
                           {customer.firstName} {customer.lastName}
                         </Link>
                       </div>
                     </TableCell>
 
-                    <TableCell className="text-blue-500 2xl:!text-2xl">
-                      {customer.email}
+                    <TableCell className="text-blue-500  2xl:!text-2xl">
+                      <Link
+                        href={`mailto:${customer?.email}`}
+                        className=" !text-[15px] hover:underline"
+                      >
+                        {customer?.email || "N/A"}
+                      </Link>
                     </TableCell>
-                    <TableCell className="2xl:!text-2xl">{customer.phone}</TableCell>
+                    <TableCell className="2xl:!text-2xl">
+                      {customer.phone}
+                    </TableCell>
 
                     {/* <TableCell>
                       <Select
@@ -509,7 +530,9 @@ const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
                       </div>
                     </TableCell> */}
 
-                    <TableCell className="2xl:!text-2xl">{customer?.totalOrders}</TableCell>
+                    <TableCell className="2xl:!text-2xl">
+                      {customer?.totalOrders}
+                    </TableCell>
                     <TableCell className="2xl:!text-2xl">
                       {new Date(customer?.joinDate).toLocaleString("en-US", {
                         dateStyle: "medium",
@@ -537,7 +560,6 @@ const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
                     <TableRow>
                       <TableCell colSpan={11}>
                         <div className="grid grid-cols-[15%_40%_45%]  bg-gray-50 p-4">
-
                           {/* Current Orders Title */}
                           <div className="border-r pr-4 !text-right">
                             <h4 className="font-semibold text-[16px]">
@@ -550,18 +572,20 @@ const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
                             {customer?.currentOrders?.length > 0 ? (
                               customer.currentOrders.map((order: any) => (
                                 <div key={order.id} className="mb-8">
-
                                   {/* Order Number - Center */}
-                                  <h4 className=" text-[15px]  relative left-[85px] font-medium text-gray-900 mb-3 ">
-                                    Order{" "}
-                                    <span className="!text-blue-600 !text-[15px]">
-                                      #{order.orderNumber}
-                                    </span>
-                                  </h4>
+                                  <Link
+                                    href={`/manage/orders?orderIdFrom=${order?.id}&orderIdTo=${order?.id}d}&expand=${order?.id}`}
+                                  >
+                                    <h4 className="text-[15px] relative left-[85px] font-medium text-gray-900 mb-3 cursor-pointer">
+                                      Order{" "}
+                                      <span className="!text-blue-600 !text-[15px] hover:underline">
+                                        #{order.orderNumber}
+                                      </span>
+                                    </h4>
+                                  </Link>
 
                                   {/* Details */}
                                   <div className="grid grid-cols-[120px_1fr] gap-y-2">
-
                                     {/* Status */}
                                     <span className="text-right pr-4 font-medium text-gray-600">
                                       Status
@@ -586,7 +610,9 @@ const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
                                     </span>
 
                                     <span className="font-medium text-gray-600">
-                                      {new Date(order.createdAt).toLocaleDateString()}
+                                      {new Date(
+                                        order.createdAt,
+                                      ).toLocaleDateString()}
                                     </span>
 
                                     {/* Notes */}
@@ -603,9 +629,7 @@ const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
                                     >
                                       View Notes
                                     </span>
-
                                   </div>
-
                                 </div>
                               ))
                             ) : (
@@ -616,7 +640,6 @@ const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
                           {/* Past Orders */}
                           <div className="px-4">
                             <div className="flex items-stretch">
-
                               {/* Past Orders Heading */}
                               <h4 className="font-semibold text-[12px] whitespace-nowrap pr-3">
                                 Past Orders
@@ -631,9 +654,16 @@ const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
                                       className="flex items-center h-8"
                                     >
                                       {/* Order Number */}
-                                      <span className=" whitespace-nowrap pr-2">
-                                        Order <span className="!text-blue-600">#{order.orderNumber}</span>
-                                      </span>
+                                      <Link
+                                        href={`/manage/orders?orderIdFrom=${order?.id}&orderIdTo=${order?.id}&expand=${order?.id}`}
+                                      >
+                                        <span className="whitespace-nowrap pr-2 cursor-pointer">
+                                          Order{" "}
+                                          <span className="!text-blue-600 hover:underline">
+                                            #{order.orderNumber}
+                                          </span>
+                                        </span>
+                                      </Link>
 
                                       {/* View Notes */}
                                       <button
@@ -650,7 +680,9 @@ const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
                                           className="text-gray-500"
                                         />
 
-                                        <span className="!text-blue-600">View Notes</span>
+                                        <span className="!text-blue-600">
+                                          View Notes
+                                        </span>
                                       </button>
                                     </div>
                                   ))

@@ -246,8 +246,8 @@ export default function ShippingMethod() {
                     ? "Free"
                     : `$${Number(rate.total_charge).toFixed(2)}`;
 
-                return (
-                  <SelectItem key={rate.method_id} value={String(rate.method_id)}>
+                   return (
+                  <SelectItem key={rate.service_type} value={String(rate.service_type)}>
                     <span className="block truncate">
                       {label} — {price}
                     </span>
