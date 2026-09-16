@@ -53,9 +53,9 @@ export default function ShippingMethod() {
   const values = getValues()
 
   const selectedMethod = watch("shippingMethod") || {};
-  const provider = selectedMethod.method_id
-    ? String(selectedMethod.method_id)
-    : selectedMethod.service_type || "none";
+  const provider =
+    selectedMethod.service_type ||
+    (selectedMethod.method_id ? String(selectedMethod.method_id) : "none");
   const method = watch("shippingMethod.method")
   const cost = watch("shippingMethod.cost")
   const cart = values?.selectedProducts
@@ -119,34 +119,6 @@ export default function ShippingMethod() {
       );
     }
   }, [values?.shipping?.country, values?.shipping?.state, values?.shipping?.city, values?.shipping?.zip])
-  // const handleProviderChange = (val: string) => {
-  //   setValue("shippingMethod.provider", val, { shouldDirty: true });
-
-  //   if (val === "none" || val === "custom") {
-  //     setValue("shippingMethod.method", val === "custom" ? method : "", {
-  //       shouldDirty: true,
-  //     });
-  //     setValue("shippingMethod.cost", val === "none" ? "0.00" : cost, {
-  //       shouldDirty: true,
-  //     });
-  //     return;
-  //   }
-
-  //   const rate = rates.find((r: any) => r.service_type === val);
-  //   if (!rate) return;
-
-  //   setValue(
-  //     "shippingMethod.method",
-  //     rate.is_fedex ? rate.service_name : rate.display_name,
-  //     { shouldDirty: true }
-  //   );
-  //   setValue("shippingMethod.cost", String(rate.total_charge ?? 0), {
-  //     shouldDirty: true,
-  //   });
-  //   setValue("shippingMethod.rate", rate, { shouldDirty: true });
-  // };
-
-
 
   const handleProviderChange = (val: string) => {
     if (val === "none") {
@@ -157,6 +129,7 @@ export default function ShippingMethod() {
           method_type: "none",
           display_name: "None",
           total_charge: 0,
+          cost: "0.00",
           currency: "USD",
           transit_days: null,
           delivery_date: null,
@@ -174,8 +147,9 @@ export default function ShippingMethod() {
         {
           method_id: null,
           method_type: "custom",
-          display_name: "Custom",
-          total_charge: Number(watch("shippingMethod.total_charge") || 0),
+          display_name: selectedMethod.display_name || "Custom",
+          total_charge: Number(selectedMethod.total_charge || 0),
+          cost: selectedMethod.cost || String(selectedMethod.total_charge || 0),
           currency: "USD",
           transit_days: null,
           delivery_date: null,
@@ -187,7 +161,7 @@ export default function ShippingMethod() {
       return;
     }
 
-    const rate = rates.find((r: any) => String(r.method_id) === String(val));
+    const rate = rates.find((r: any) => String(r.service_type) === String(val));
     if (!rate) return;
 
     setValue(
@@ -197,6 +171,7 @@ export default function ShippingMethod() {
         method_type: rate.method_type,
         display_name: rate.display_name || rate.service_name,
         total_charge: Number(rate.total_charge ?? 0),
+        cost: String(rate.total_charge ?? 0),
         currency: rate.currency || "USD",
         transit_days: rate.transit_days ?? null,
         delivery_date: rate.delivery_date ?? null,
@@ -246,7 +221,7 @@ export default function ShippingMethod() {
                     ? "Free"
                     : `$${Number(rate.total_charge).toFixed(2)}`;
 
-                   return (
+                return (
                   <SelectItem key={rate.service_type} value={String(rate.service_type)}>
                     <span className="block truncate">
                       {label} — {price}
