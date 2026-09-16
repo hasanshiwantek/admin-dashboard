@@ -357,7 +357,7 @@ const CustomerDetail = () => {
                             <TableHead className="2xl:!text-[1.6rem]">Name</TableHead>
                             <TableHead className="2xl:!text-[1.6rem]">Email</TableHead>
                             <TableHead className="2xl:!text-[1.6rem]">Phone</TableHead>
-                            <TableHead className="2xl:!text-[1.6rem]">Group</TableHead>
+                            {/* <TableHead className="2xl:!text-[1.6rem]">Group</TableHead> */}
                             {/* <TableHead className="2xl:!text-[1.6rem]">Store credit</TableHead> */}
                             <TableHead className="2xl:!text-[1.6rem]">Orders</TableHead>
                             <TableHead className="2xl:!text-[1.6rem]">Join date</TableHead>
@@ -398,7 +398,7 @@ const CustomerDetail = () => {
                                         </TableCell>
                                         <TableCell className="2xl:!text-2xl">{customer?.phone || "-"}</TableCell>
 
-                                        <TableCell>
+                                        {/* <TableCell>
                                             <Select
                                                 value={customer?.customerGroup || "none"}
                                                 onValueChange={(value) =>
@@ -415,7 +415,7 @@ const CustomerDetail = () => {
                                                     <SelectItem value="wholesale">Wholesale</SelectItem>
                                                 </SelectContent>
                                             </Select>
-                                        </TableCell>
+                                        </TableCell> */}
 
                                         {/* <TableCell>
                                             <div className="flex items-center">

@@ -23,6 +23,7 @@ import {
   advanceShipmentSearch,
   fetchShipmentByKeyword,
   updateShipment,
+   fetchShipmentById
 } from "@/redux/slices/orderSlice";
 import { useSearchParams } from "next/navigation";
 import { refetchOrders, refetchShipments } from "@/lib/orderUtils";
@@ -92,12 +93,13 @@ Updated: ${billing.updatedAt}`;
   const [selectedOrderIds, setSelectedOrderIds] = useState<number[]>([]);
   const [savingId, setSavingId] = useState<number | null>(null);
   const [keyword, setKeyword] = useState("");
+   const searchParams = useSearchParams();
 
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
   const total = pagination?.total;
   const totalPages = Math.ceil(pagination?.total / pagination?.pageSize || 1);
 
-  const { loading, error, shipmentLoader } = useAppSelector((state) => state.order);
+  const { loading, error, shipmentLoader,singleShipment  } = useAppSelector((state) => state.order);
   //   const filteredOrders = shipments?.data?.filter((order: any) => {
   //     if (activeTab === "All orders") return true;
   //     return order.status === activeTab;
@@ -105,10 +107,19 @@ Updated: ${billing.updatedAt}`;
 
   const [filteredOrders, setFilteredOrders] = useState<any[]>([]); // ✅ default to []
   useEffect(() => {
-    if (shipments?.data?.length) {
-      setFilteredOrders(shipments.data);
-    }
-  }, [shipments]);
+  const shipmentId = searchParams.get("shipmentId");
+
+  if (shipmentId) {
+    setFilteredOrders(singleShipment ? [singleShipment] : []);
+    return;
+  }
+
+  if (shipments?.data?.length) {
+    setFilteredOrders(shipments.data);
+  } else {
+    setFilteredOrders([]);
+  }
+}, [shipments, singleShipment, searchParams]);
 
   const tabs = ["All shipments",
     // "Custom Views"
@@ -262,8 +273,9 @@ Updated: ${billing.updatedAt}`;
       }
     }
   };
+/////////logic of get shipment by id////
 
-  // KEYWORD SEARCH LOGIC
+
 
 
   const handleSearch = async () => {
@@ -290,7 +302,7 @@ Updated: ${billing.updatedAt}`;
 
   // FETCH SHIPMENTS LOGIC
 
-  const searchParams = useSearchParams();
+ 
 
   const queryObject: Record<string, any> = {};
   searchParams.forEach((value, key) => {
@@ -326,6 +338,12 @@ Updated: ${billing.updatedAt}`;
   //   }
   // }, [searchParams]); // reruns whenever URL changes
   useEffect(() => {
+    const shipmentId = searchParams.get("shipmentId");
+
+if (shipmentId) {
+  dispatch(fetchShipmentById({ shipmentId }));
+  return;
+}
     const page = Number(queryObject.page || 1);
     const pageSize = Number(queryObject.pageSize || queryObject.limit || 50);
 
