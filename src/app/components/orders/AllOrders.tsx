@@ -167,6 +167,7 @@ useEffect(() => {
   };
 }, []);
 
+
   const filteredOrders = orders?.data || [];
 
   const tabs = [
@@ -714,6 +715,19 @@ const moreTabs = tabs.filter(
     //   return;
     // }
   };
+  useEffect(() => {
+  const orderToExpand = searchParams.get("expand");
+
+  if (!orderToExpand || filteredOrders?.length === 0) return;
+
+  const orderExists = filteredOrders.some(
+    (order: any) => Number(order.id) === Number(orderToExpand)
+  );
+
+  if (orderExists) {
+    setExpandedRow(Number(orderToExpand));
+  }
+}, [filteredOrders, searchParams]);
 
   // ✅ Enhanced close handler
   const handleCloseNotes = () => {

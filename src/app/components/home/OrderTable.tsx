@@ -123,7 +123,7 @@ const OrderTable = () => {
                     {order.status}
                   </span>
                 </div>
-                <Link href={`/manage/orders?orderIdFrom=${order?.id}&orderIdTo=${order?.id}`}>
+                <Link href={`/manage/orders?orderIdFrom=${order?.id}&orderIdTo=${order?.id}&expand=${order?.id}`}>
                   <div className=" text-xl lg:text-2xl text-blue-600 hover:underline cursor-pointer">
                     Order #{order.id} - {order.billingInformation?.firstName}{" "}
                     {order.billingInformation?.lastName}

@@ -6,8 +6,9 @@ import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import dayjs from "dayjs";
-import { Loader, ArrowRight, Percent } from "lucide-react";
+import { Loader, ArrowRight, Percent, } from "lucide-react";
 import { orderTimeline } from "@/redux/slices/orderSlice";
+import Link from "next/link";
 
 export default function OrderTimelinePage() {
   const { id } = useParams();
@@ -50,9 +51,12 @@ export default function OrderTimelinePage() {
 
           <h1 className="m-0 !text-[30px] leading-[36px] !font-light ">
             Order timeline -{" "}
-            <span className="!text-[#4d70ff] !font-normal !text-[30px]">
-              Order #{orderNumber}
-            </span>
+            <Link
+  href={`/manage/orders?orderIdFrom=${id}&orderIdTo=${id}&expand=${id}`}
+  className="!text-[#4d70ff] !font-normal !text-[30px] hover:!underline"
+>
+  Order #{orderNumber}
+</Link>
           </h1>
         </div>
       </div>
