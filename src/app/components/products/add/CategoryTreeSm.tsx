@@ -5,8 +5,8 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { fetchCategories } from "@/redux/slices/categorySlice";
 import { Folder, MinusCircle, PlusCircle } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Controller, useFormContext } from "react-hook-form";
 import type { RegisterOptions } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 
 type Category = {
   id: string;
@@ -17,6 +17,7 @@ type Category = {
 interface CategoryTreeProps {
   name: string;
   rules?: RegisterOptions;
+  showSelectAll?: boolean;
 }
 const normalizeCategories = (data: any[]): Category[] => {
   return data.map((item) => ({
@@ -26,7 +27,23 @@ const normalizeCategories = (data: any[]): Category[] => {
   }));
 };
 
-export default function CategoryTreeSm({ name, rules }: CategoryTreeProps) {
+const flattenCategoryIds = (nodes: Category[]): string[] => {
+  return nodes.reduce<string[]>((acc, node) => {
+    acc.push(node.id);
+
+    if (node.children?.length) {
+      acc.push(...flattenCategoryIds(node.children));
+    }
+
+    return acc;
+  }, []);
+};
+
+export default function CategoryTreeSm({
+  name,
+  rules,
+  showSelectAll = false,
+}: CategoryTreeProps) {
   const dispatch = useAppDispatch();
   const allCategories = useAppSelector(
     (state: any) => state.category.categories,
@@ -40,10 +57,14 @@ export default function CategoryTreeSm({ name, rules }: CategoryTreeProps) {
   const categoriesDataRaw = allCategories?.data || [];
 
   const categories: Category[] = normalizeCategories(categoriesDataRaw);
-  const selectedIds = (watch(name) ?? []) as string[];
+  const allCategoryIds = flattenCategoryIds(categories).map(String);
+  const selectedIds = ((watch(name) ?? []) as Array<string | number>).map(String);
+  const isAllSelected =
+    allCategoryIds.length > 0 &&
+    allCategoryIds.every((id) => selectedIds.includes(id));
 
   useEffect(() => {
-    console.log({selectedIds,name})
+    console.log({ selectedIds, name });
     const selected = selectedIds?.map(String);
     const nextOpenMap: Record<string, boolean> = {};
 
@@ -78,11 +99,13 @@ export default function CategoryTreeSm({ name, rules }: CategoryTreeProps) {
   }, [categories, name, selectedIds]);
 
   const toggleCategory = (id: string) => {
-    const selected = getValues(name) || [];
+    const selected = ((getValues(name) ?? []) as Array<string | number>).map(
+      String,
+    );
     if (selected.includes(id)) {
       setValue(
         name,
-        selected.filter((cid: string) => cid !== id),
+        selected.filter((cid) => cid !== id),
         { shouldValidate: true, shouldDirty: true },
       );
     } else {
@@ -97,13 +120,22 @@ export default function CategoryTreeSm({ name, rules }: CategoryTreeProps) {
     setOpenMap((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
+  const toggleAllCategories = (checked: boolean) => {
+    setValue(name, checked ? allCategoryIds : [], {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+  };
+
   const renderCategory = (category: Category, level = 0) => {
-    const selected = getValues(name) || [];
+    const selected = ((getValues(name) ?? []) as Array<string | number>).map(
+      String,
+    );
     const isOpen = openMap[category.id] || false;
 
     return (
       <div key={category.id} className="relative ">
-        <div className="flex items-center  hover:bg-blue-100 transition-all group relative w-[250px]  ">
+        <div className="flex items-center  hover:bg-blue-100 transition-all group relative w-[250px]">
           {/* Vertical line based on level */}
           <div
             className="absolute border-l border-dotted border-indigo-300 h-full"
@@ -138,7 +170,7 @@ export default function CategoryTreeSm({ name, rules }: CategoryTreeProps) {
             <div className="relative w-6 h-6 flex items-center justify-center">
               <Checkbox
                 id={category.id}
-                checked={selected.includes(category.id)}
+                checked={selected.includes(String(category.id))}
                 onCheckedChange={() => toggleCategory(category.id)}
                 className="rounded border-gray-300 z-10"
               />
@@ -179,6 +211,35 @@ export default function CategoryTreeSm({ name, rules }: CategoryTreeProps) {
       rules={rules}
       render={() => (
         <div className="p-4 border border-gray-200 rounded-md bg-white shadow-sm overflow-y-auto h-[200px]">
+          {showSelectAll && categories.length > 0 && (
+            <div className="pl-1 flex items-center gap-2 hover:bg-blue-100 transition-all group relative w-[250px]">
+              <div className="relative w-6 h-6 flex items-center justify-center">
+                <Checkbox
+                  id={`${name}-select-all`}
+                  checked={isAllSelected}
+                  onCheckedChange={(checked) =>
+                    toggleAllCategories(checked === true)
+                  }
+                  className="rounded border-gray-300"
+                />
+                {/* Horizontal line between checkbox and folder */}
+                <div className="absolute left-full top-1/2 -translate-y-1/2 w-6 h-px bg-indigo-300" />
+              </div>
+
+              <Folder
+                className="text-indigo-300 w-6 h-6 flex-shrink-0"
+                strokeWidth={1.5}
+                fill="lightblue"
+              />
+              <Label
+                htmlFor={`${name}-select-all`}
+                className="text-gray-700 text-lg font-light"
+              >
+                Select all categories
+              </Label>
+            </div>
+          )}
+
           <div className="pl-1">
             {categories.map((cat) => renderCategory(cat))}
           </div>
