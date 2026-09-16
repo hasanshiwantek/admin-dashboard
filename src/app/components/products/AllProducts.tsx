@@ -126,8 +126,6 @@ export default function AllProducts() {
       return 0;
     });
 
-  console.log({ filteredProducts });
-
   const handleApplyCategories = async (pickedIdsStr: string[]) => {
     try {
       if (categoryAction === ActionEnums.ADD) {
@@ -184,14 +182,6 @@ export default function AllProducts() {
   };
 
   const getDropdownActions = (product: any) => [
-    // {
-    //   label: "Add to channels",
-    //   onClick: () => console.log("Channel add clicked", product),
-    // },
-    // {
-    //   label: "Remove from channels",
-    //   onClick: () => console.log("Remove from channels clicked", product),
-    // },
     {
       label: "Add to categories",
       onClick: () => {
@@ -206,7 +196,6 @@ export default function AllProducts() {
     {
       label: "Remove from categories",
       onClick: () => {
-        console.log({ product });
         const defaults = getProductCategoryIds(product); // preselect current categories to delete
         setCategoryAction(ActionEnums.DELETE);
         setCategoryProductIds([product.id]); // not used by delete, but harmless
@@ -354,14 +343,6 @@ export default function AllProducts() {
   ];
 
   const editdropdownActions = [
-    // {
-    //   label: "Add to channels",
-    //   onClick: () => console.log("Channel add clicked"),
-    // },
-    // {
-    //   label: "Remove from channels",
-    //   onClick: () => console.log("remove clicked"),
-    // },
     {
       label: "Add to categories",
       onClick: () => {
@@ -852,14 +833,12 @@ export default function AllProducts() {
                   </TableRow>
                 ) : (
                   filteredProducts?.map((product: any) => {
-                    console.log({
-                      product,
-                      filter:
-                        product?.categoryIds
-                          ?.filter((cat: any) => cat.name !== "Uncategorized")
-                          .map((cat: any) => cat.name)
-                          .join(", ") || "-",
-                    });
+                    const imageSrc =
+                      product.image?.find((img: any) => img?.isPrimary === 1)
+                        ?.path ||
+                      product.image?.[0]?.path ||
+                      product.image?.[1]?.path ||
+                      "/default-product-image.svg";
                     return (
                       <TableRow key={product.id}>
                         <TableCell>
@@ -871,15 +850,9 @@ export default function AllProducts() {
                           />
                         </TableCell>
                         <TableCell className="flex items-center gap-2 ">
-                          {(product.image ||
-                            product.image?.[1]?.path ||
-                            product.image?.[0]?.path) && (
+                          {imageSrc && (
                             <Image
-                              src={
-                                product.image?.[1]?.path ||
-                                product.image?.[0]?.path ||
-                                "/default-product-image.svg"
-                              }
+                              src={imageSrc}
                               alt={product.name}
                               width={60}
                               height={60}

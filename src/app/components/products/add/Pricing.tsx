@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-import { Controller, useFormContext } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -11,21 +9,29 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { ChevronDown, ChevronUp } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { ValidationError } from "@/components/ui/validation-error";
+import { wholeNumberValidation } from "@/validations/validations";
+import { ChevronDown, ChevronUp } from "lucide-react";
+import { useState } from "react";
+import { Controller, useFormContext } from "react-hook-form";
 import { HiQuestionMarkCircle } from "react-icons/hi2";
 import BulkPricing from "./BulkPricing";
 
 export default function Pricing() {
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const { register, control, watch, setValue } = useFormContext();
-
+  const {
+    register,
+    control,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useFormContext();
   const price = watch("price");
 
   return (
@@ -45,9 +51,15 @@ export default function Pricing() {
           className="!max-w-[100%] w-full"
           type="number"
           placeholder="$0"
-          value={price}
-          onChange={(e) => setValue("price", e.target.value)}
+          value={price ?? ""}
+          onChange={(event) =>
+            setValue("price", event.target.value, {
+              shouldDirty: true,
+              shouldValidate: true,
+            })
+          }
         />
+        <ValidationError message={errors.price?.message} />
         <div className="space-y-1">
           <Label className="2xl:!text-2xl">Tax Class</Label>
           <Controller
@@ -93,36 +105,36 @@ export default function Pricing() {
                 <Input
                   className="!max-w-[90%] w-full"
                   type="number"
-                  step="any"
                   placeholder="$0"
-                  {...register("costPrice", {
-                    setValueAs: (v) => (v === "" ? 0 : parseFloat(v)),
-                  })}
+                  {...register(
+                    "costPrice",
+                    wholeNumberValidation("Cost Price"),
+                  )}
                 />
+                <ValidationError message={errors.costPrice?.message} />
               </div>
               <div>
                 <Label className="2xl:!text-2xl">MSRP</Label>
                 <Input
                   className="!max-w-[90%] w-full"
                   type="number"
-                  step="any"
                   placeholder="$0"
-                  {...register("msrp", {
-                    setValueAs: (v) => (v === "" ? 0 : parseFloat(v)),
-                  })}
+                  {...register("msrp", wholeNumberValidation("MSRP"))}
                 />
+                <ValidationError message={errors.msrp?.message} />
               </div>
               <div>
                 <Label className="2xl:!text-2xl">Sale Price</Label>
                 <Input
                   className="!max-w-[90%] w-full"
                   type="number"
-                  step="any"
                   placeholder="$0"
-                  {...register("salePrice", {
-                    setValueAs: (v) => (v === "" ? 0 : parseFloat(v)),
-                  })}
+                  {...register(
+                    "salePrice",
+                    wholeNumberValidation("Sale Price"),
+                  )}
                 />
+                <ValidationError message={errors.salePrice?.message} />
               </div>
             </div>
 
@@ -148,7 +160,6 @@ export default function Pricing() {
                 <Input
                   className="!max-w-[90%] w-full"
                   type="text"
-                  placeholder="Enter tax code"
                   {...register("taxCode")}
                 />
               </div>

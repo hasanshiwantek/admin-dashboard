@@ -9,6 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
+import { ChevronDown, ClipboardList, NotepadText } from "lucide-react";
 import {
   Select,
   SelectTrigger,
@@ -910,10 +911,11 @@ const AllOrders = () => {
           <div className="relative orders-more-dropdown">
             <button
               type="button"
-              className="!text-2xl pb-3 whitespace-nowrap text-gray-500 hover:text-black"
+              className="!text-2xl pb-3 whitespace-nowrap text-gray-500 flex items-center gap-2 hover:text-black"
               onClick={() => setShowMoreTabs((prev) => !prev)}
             >
-              More
+              More   <ChevronDown className="w-5 h-5" />
+
             </button>
 
             {showMoreTabs && (
@@ -1107,11 +1109,24 @@ const AllOrders = () => {
 
         {/* Table */}
         <div className="overflow-x-auto  rounded-md shadow">
-          <Table>
+          <Table className="w-full table-fixed">
+            <colgroup>
+              <col className="w-[50px]" />   {/* checkbox */}
+              <col className="w-[55px]" />   {/* expand */}
+              <col className="w-[65px]" />   {/* device */}
+              <col className="w-[135px]" />  {/* date */}
+              <col className="w-[90px]" />   {/* order id */}
+              <col className="w-[75px]" />   {/* risk/country */}
+              <col className="w-[190px]" />  {/* customer */}
+              <col className="w-[255px]" />  {/* status */}
+              <col className="w-[145px]" />  {/* total */}
+              <col className="w-[90px]" />   {/* action */}
+            </colgroup>
             <TableHeader>
-              <TableRow>
+              <TableRow className="bg-[#FBFBFC] h-[56px]">
                 <TableHead className="w-[50px]">
                   <Checkbox
+                    className="!w-8 !h-8 rounded-none mr-2"
                     checked={isAllSelected}
                     onCheckedChange={(checked: boolean) =>
                       handleSelectAllChange(checked as boolean)
@@ -1197,9 +1212,10 @@ const AllOrders = () => {
                     order?.deviceType?.includes("Tablet");
                   return (
                     <Fragment key={order?.id}>
-                      <TableRow key={order?.id}>
+                      <TableRow key={order?.id} className="h-[56px]">
                         <TableCell>
                           <Checkbox
+                            className="!w-8 !h-8 rounded-none mr-2"
                             checked={selectedOrderIds.some(
                               (o) => o.id === order.id,
                             )}
@@ -1215,9 +1231,9 @@ const AllOrders = () => {
                         <TableCell>
                           <button onClick={() => toggleRow(order.id)}>
                             {expandedRow === order.id ? (
-                              <FaCircleMinus className="h-7 w-7 fill-gray-600" />
+                              <FaCircleMinus className="h-7 w-7 !fill-[#999]" />
                             ) : (
-                              <FaCirclePlus className="h-7 w-7 fill-gray-600" />
+                              <FaCirclePlus className="h-7 w-7 !fill-[#999]" />
                             )}
                           </button>
                         </TableCell>
@@ -1353,7 +1369,7 @@ const AllOrders = () => {
                               return (
                                 <>
                                   <span
-                                    className={`w-7 h-9 inline-block rounded-none ${currentStatus?.color || "bg-gray-400"
+                                    className={`w-7 h-12 inline-block rounded-none ${currentStatus?.color || "bg-gray-400"
                                       }`}
                                   />
                                   <Select
@@ -1430,7 +1446,7 @@ const AllOrders = () => {
                             >
                               {order?.comments ? (
                                 <div className="relative">
-                                  <NotebookText
+                                  <NotepadText
                                     onClick={() => {
                                       setSelectedOrderId(order.id);
                                       setShowNotes(true);
@@ -1446,13 +1462,13 @@ const AllOrders = () => {
                               className="text-gray-500  flex gap-1 "
                               title="View Order Timeline"
                             >
-                              <Clock
+                              <ClipboardList
                                 onClick={() =>
                                   router.push(
                                     `/manage/orders/order-timeline/${order?.id}`,
                                   )
                                 }
-                                className="w-8 h-8"
+                                className="w-8 h-8 cursor-pointer"
                               />
                             </button>
                           </div>
@@ -1485,7 +1501,7 @@ const AllOrders = () => {
 
                       {expandedRow === order?.id && (
                         <TableRow>
-                          <TableCell colSpan={11}>
+                          <TableCell colSpan={10}>
                             <div className="grid grid-cols-3 gap-4 bg-[#fcfcfb] p-4 ">
                               <div className="flex">
                                 {/* Left Side: Billing Title & Copy Button */}
@@ -1717,7 +1733,7 @@ const AllOrders = () => {
                                   </button>
 
                                   {/* Method */}
-                                  <div className="flex flex-col items-end mt-38">
+                                  <div className="flex flex-col items-end mt-30">
                                     <h4 className="font-semibold text-[18px] text-[#34313f] mb-3">
                                       Method
                                     </h4>
@@ -1773,12 +1789,13 @@ const AllOrders = () => {
                                   {/* Method Data */}
                                   <div
                                     className={`flex items-center gap-2 min-w-0 ${(order?.billingInformation?.shippingData?.length ?? 0) > 40
-                                      ? "pt-[46px]"
-                                      : "pt-[55px]"
+                                      ? "pt-[25px]"
+                                      : "pt-[35px]"
                                       }`}
                                   >
                                     <div className="shipping-data-scroll w-[420px] max-w-full overflow-x-auto overflow-y-hidden whitespace-nowrap">
-                                      {order?.billingInformation?.shippingData || "N/A"}
+                                      <span>   {order?.billingInformation?.shippingData || "N/A"} </span>
+
                                     </div>
                                   </div>
 

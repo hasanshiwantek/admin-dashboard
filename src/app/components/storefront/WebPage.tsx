@@ -1,19 +1,9 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import {
-  useForm,
-  FormProvider,
-  Controller,
-  SubmitHandler,
-} from "react-hook-form";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Input } from "@/components/ui/input";
-// import { Editor } from "@tinymce/tinymce-react";
-
-import { Checkbox } from "@/components/ui/checkbox";
-import { cn } from "@/lib/utils";
 import {
   Select,
   SelectContent,
@@ -21,101 +11,65 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { UrlSettingEnums } from "@/const/appConstants";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
+import { generateSlug } from "@/lib/productUtils";
+import { cn } from "@/lib/utils";
+import { fetchUrlSettings } from "@/redux/slices/homeSlice";
 import {
   createWebpage,
   getWebPageById,
   getWebPages,
   updateWebPage,
 } from "@/redux/slices/storefrontSlice";
-import { useRouter, useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import {
+  Controller,
+  FormProvider,
+  SubmitHandler,
+  useForm,
+} from "react-hook-form";
 import DescriptionEditorQuill from "../products/add/DescriptionEditorQuill";
-import { fetchUrlSettings } from "@/redux/slices/homeSlice";
-import { UrlSettingEnums } from "@/const/appConstants";
-import { generateSlug } from "@/lib/productUtils";
+import {
+  AdvancedOptions,
+  ContactFields,
+  DefaultWebPageValues,
+  PageTypeEnums,
+  PageTypeOptions,
+} from "./constants";
+import { WebPageFormValues } from "./types";
 
-type FormValues = {
-  pageType: string; // add this
-  pageName: string;
-  pageUrl: string;
-  pageContent: string;
-  parentPage: string;
-  template: string;
-  pageTitle: string;
-  showInNavigation: boolean;
-  metaKeywords: string;
-  metaDescription: string;
-  searchKeywords: string;
-  templateLayoutFile: string;
-  displayAsHomePage: boolean;
-  restrictToCustomersOnly: boolean;
-  sortOrder: string | number;
-  // link type
-  link: string;
-  // contact type
-  emailQuestionsTo: string;
-  showTheseFields: string[];
-  // rawHtml type
-  rawHtml: string;
-};
-const CONTACT_FIELDS = [
-  { id: "email", label: "Email Address", locked: true },
-  { id: "comments", label: "Question/Comment", locked: true },
-  { id: "full_name", label: "Full Name", locked: false },
-  { id: "company_name", label: "Company Name", locked: false },
-  { id: "phone_number", label: "Phone Number", locked: false },
-  { id: "order_number", label: "Order Number", locked: false },
-  { id: "rma_number", label: "RMA Number", locked: false },
-];
 const WebPage = () => {
-  // const [pageType, setPageType] = useState("wysiwyg");
-  const methods = useForm<FormValues>({
-    defaultValues: {
-      pageName: "",
-      pageUrl: "",
-      pageContent: "",
-      templateLayoutFile: "default",
-      displayAsHomePage: false,
-      restrictToCustomersOnly: false,
-      sortOrder: 0,
-      //
-      link: "",
-      emailQuestionsTo: "",
-      showTheseFields: ["email", "comments"],
-      rawHtml: "",
-    },
+  const methods = useForm<WebPageFormValues>({
+    defaultValues: DefaultWebPageValues,
   });
 
-  const { control, setValue, watch, register, handleSubmit, reset } = methods;
-  const selected = watch("template");
-  const pageContent = watch("pageContent");
+  const {
+    control,
+    setValue,
+    watch,
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = methods;
   const webPages = useAppSelector((state: any) => state?.storefront?.webPages);
   const urlSettingData = useAppSelector(
     (state: any) => state.home?.urlSettingData,
   );
-  const pageType = watch("pageType");
-  const showTheseFields = watch("showTheseFields") || [];
   const [isUrlManuallyEdited, setIsUrlManuallyEdited] =
     useState<boolean>(false);
-  const editorRef = useRef<any>(null);
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { id } = useParams();
-  const watchedName = watch("pageName");
+  const submitActionRef = useRef<"exit" | "keepEditing" | "addAnother">("exit");
+  const [pageType, showTheseFields, watchedName] = watch([
+    "pageType",
+    "showTheseFields",
+    "pageName",
+  ]);
   const isEdit = !!id;
-
-  const options = [
-    {
-      id: "1",
-      label: "Contain content created using the WYSIWYG editor below",
-    },
-    { id: "2", label: "Link to another website or document" },
-    {
-      id: "3",
-      label: "Allow people to send questions/comments via a contact form",
-    },
-    { id: "4", label: "Contain raw HTML entered in the text area below" },
-  ];
 
   // Fetch page data if editing
   useEffect(() => {
@@ -134,7 +88,7 @@ const WebPage = () => {
   }, [isEdit, id, dispatch, reset]);
 
   // Submission handler
-  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+  const onSubmit: SubmitHandler<WebPageFormValues> = async (data) => {
     try {
       let result;
       if (isEdit && id) {
@@ -145,8 +99,19 @@ const WebPage = () => {
 
       if ((isEdit ? updateWebPage : createWebpage).fulfilled.match(result)) {
         dispatch(getWebPages());
-        router.push("/manage/storefront/web-pages");
-        reset();
+
+        if (submitActionRef.current === "keepEditing" && isEdit && id) {
+          const refreshedPage = await dispatch(getWebPageById({ id }));
+          if (getWebPageById.fulfilled.match(refreshedPage)) {
+            reset(refreshedPage.payload.data);
+          }
+        } else if (submitActionRef.current === "addAnother") {
+          reset(DefaultWebPageValues);
+          setIsUrlManuallyEdited(false);
+        } else {
+          reset();
+          router.push("/manage/storefront/web-pages");
+        }
       } else {
       }
     } catch (err) {
@@ -168,7 +133,9 @@ const WebPage = () => {
           const slug = generateSlug(watchedName);
           setValue("pageUrl", `/${slug}`);
         }
-      } else if (urlSettingData?.format_type == UrlSettingEnums.SEO_OPTIMIZED_LONG) {
+      } else if (
+        urlSettingData?.format_type == UrlSettingEnums.SEO_OPTIMIZED_LONG
+      ) {
         if (watchedName) {
           const slug = generateSlug(watchedName);
           setValue("pageUrl", `/pages/${slug}`);
@@ -198,15 +165,18 @@ const WebPage = () => {
       }
     }
   }, [watchedName, isUrlManuallyEdited]);
+
   useEffect(() => {
     dispatch(getWebPages());
     dispatch(fetchUrlSettings("webpage"));
   }, [dispatch]);
+
   useEffect(() => {
     if (id) {
       setIsUrlManuallyEdited(true);
     }
   }, [id]);
+
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -238,13 +208,13 @@ const WebPage = () => {
                     onValueChange={field.onChange}
                     className="space-y-2"
                   >
-                    {options.map((opt) => (
+                    {PageTypeOptions.map((opt) => (
                       <div
-                        key={opt.id}
+                        key={opt.value}
                         className="flex items-start space-x-3 ml-60"
                       >
-                        <RadioGroupItem id={opt.id} value={opt.id} />
-                        <Label className="2xl:!text-2xl" htmlFor={opt.id}>
+                        <RadioGroupItem id={opt.value} value={opt.value} />
+                        <Label className="2xl:!text-2xl" htmlFor={opt.value}>
                           {opt.label}
                         </Label>
                       </div>
@@ -272,18 +242,36 @@ const WebPage = () => {
                 <Controller
                   name="pageName"
                   control={control}
+                  rules={{
+                    required: "Page name is required",
+                    validate: (value) =>
+                      value.trim().length > 0 || "Page name is required",
+                  }}
                   render={({ field }) => (
-                    <Input
-                      id="pageName"
-                      {...field}
-                      placeholder="Enter Page Name"
-                    />
+                    <div className="flex-1">
+                      <Input
+                        id="pageName"
+                        {...field}
+                        value={field.value ?? ""}
+                        placeholder="Enter Page Name"
+                        aria-invalid={!!errors.pageName}
+                        className={cn(
+                          errors.pageName &&
+                            "border-red-500 focus-visible:ring-red-500",
+                        )}
+                      />
+                      {errors.pageName && (
+                        <p className="mt-1 text-sm text-red-500">
+                          {String(errors.pageName.message)}
+                        </p>
+                      )}
+                    </div>
                   )}
                 />
               </div>
 
               {/* Page URL — always visible */}
-              {pageType != "2" && (
+              {pageType != PageTypeEnums.Link && (
                 <div className="flex items-center gap-4">
                   <Label
                     htmlFor="pageUrl"
@@ -323,7 +311,8 @@ const WebPage = () => {
                     onClick={() => {
                       setIsUrlManuallyEdited(false);
                       if (
-                        urlSettingData?.format_type == UrlSettingEnums.SEO_OPTIMIZED_SHORT
+                        urlSettingData?.format_type ==
+                        UrlSettingEnums.SEO_OPTIMIZED_SHORT
                       ) {
                         if (watchedName) {
                           const slug = generateSlug(watchedName);
@@ -370,7 +359,7 @@ const WebPage = () => {
               )}
 
               {/* WYSIWYG */}
-              {pageType == "1" && (
+              {pageType == PageTypeEnums.WYSIWYG && (
                 <div className="flex items-start justify-start gap-4">
                   <Label className="w-[140px] text-right 2xl:!text-2xl">
                     Page Content:
@@ -384,7 +373,7 @@ const WebPage = () => {
               )}
 
               {/* LINK */}
-              {pageType == "2" && (
+              {pageType == PageTypeEnums.Link && (
                 <div className="flex items-center gap-4">
                   <Label
                     htmlFor="link"
@@ -392,18 +381,48 @@ const WebPage = () => {
                   >
                     Link:
                   </Label>
-                  <Controller
-                    name="link"
-                    control={control}
-                    render={({ field }) => (
-                      <Input id="link" {...field} placeholder="https://" />
+                  <div className="flex flex-col gap-1 flex-1 max-w-[500px]">
+                    <Controller
+                      name="link"
+                      control={control}
+                      rules={{
+                        required: "Link is required",
+                        validate: (value: string) => {
+                          const trimmed = value?.trim?.() ?? "";
+                          if (!trimmed) return "Link is required";
+                          return (
+                            /^https:\/\//i.test(trimmed) ||
+                            "Link must start with https://"
+                          );
+                        },
+                      }}
+                      render={({ field }) => (
+                        <Input
+                          id="link"
+                          {...field}
+                          type="url"
+                          value={field.value ?? ""}
+                          placeholder="https://"
+                          aria-invalid={!!errors.link}
+                          className={cn(
+                            errors.link &&
+                              "border-red-500 focus-visible:ring-red-500",
+                            "max-w-[500px]",
+                          )}
+                        />
+                      )}
+                    />
+                    {errors.link && (
+                      <p className="text-sm text-red-500">
+                        {String(errors.link.message)}
+                      </p>
                     )}
-                  />
+                  </div>
                 </div>
               )}
 
               {/* CONTACT FORM */}
-              {pageType == "3" && (
+              {pageType == PageTypeEnums.ContactForm && (
                 <div className="space-y-5">
                   {/* Page Content editor */}
                   <div className="flex items-start justify-start gap-4">
@@ -445,7 +464,7 @@ const WebPage = () => {
                       Show These Fields:
                     </Label>
                     <div className="space-y-2">
-                      {CONTACT_FIELDS.map((f) => (
+                      {ContactFields.map((f) => (
                         <div key={f.id} className="flex items-center gap-2">
                           <Checkbox
                             id={f.id}
@@ -489,7 +508,7 @@ const WebPage = () => {
               )}
 
               {/* RAW HTML */}
-              {pageType == "4" && (
+              {pageType == PageTypeEnums.RawHTML && (
                 <div className="flex items-start gap-4">
                   <Label
                     htmlFor="rawHtml"
@@ -593,12 +612,7 @@ const WebPage = () => {
               Advanced Options
             </h1>
             <div className="bg-white shadow-md p-10 space-y-5">
-              {[
-                { label: "Page Title", name: "pageTitle" },
-                { label: "Meta Keywords", name: "metaKeywords" },
-                { label: "Meta Description", name: "metaDescription" },
-                { label: "Search Keywords", name: "searchKeywords" },
-              ].map(({ label, name }) => (
+              {AdvancedOptions.map(({ label, name }) => (
                 <div className="flex items-center gap-4 ml-20" key={name}>
                   <Label
                     htmlFor={name}
@@ -607,7 +621,7 @@ const WebPage = () => {
                     {label} (Optional):
                   </Label>
                   <Controller
-                    name={name as keyof FormValues}
+                    name={name as keyof WebPageFormValues}
                     control={control}
                     render={({ field }) => (
                       <Input
@@ -712,14 +726,16 @@ const WebPage = () => {
               Cancel
             </button>
             <button type="submit" className="btn-primary">
-              {isEdit ? "Update Page" : "Save and Exit"}
+              Save and Exit
             </button>
             <button
               type="submit"
               className="btn-primary"
-              onClick={() => router.push("/manage/storefront/web-pages")}
+              onClick={() => {
+                submitActionRef.current = isEdit ? "keepEditing" : "addAnother";
+              }}
             >
-              {isEdit ? "Update Page and Add Another" : "Save and Add Another"}
+              {isEdit ? "Save & Keep Editing" : "Save & Add Another"}
             </button>
           </div>
         </div>

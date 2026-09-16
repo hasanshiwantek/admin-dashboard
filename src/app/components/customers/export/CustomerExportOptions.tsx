@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { useSearchParams } from "next/navigation";
 const templates = [
-  { label: "Bulk Edit", value: "bulkEdit" },
+  // { label: "Bulk Edit", value: "bulkEdit" },
   { label: "Default", value: "default" },
 ];
 
@@ -79,24 +79,24 @@ export default function CustomerExportOptions() {
                             Export to Microsoft Excel (csv)
                           </Label>
                         </div>
-                        <div className="flex items-center space-x-2">
+                        {/* <div className="flex items-center space-x-2">
                           <RadioGroupItem value="xml" id="xml" />
                           <Label className="2xl:!text-2xl" htmlFor="xml">
                             Export to an xml file (advanced)
                           </Label>
-                        </div>
+                        </div> */}
                       </div>
                     </RadioGroup>
                   )}
                 />
               </div>
               {/* Save export checkbox */}
-              <div className="flex items-center space-x-2 pt-2 mt-10">
+              {/* <div className="flex items-center space-x-2 pt-2 mt-10">
                 <Checkbox id="saveExport" {...register("saveExport")} />
                 <Label className="2xl:!text-2xl" htmlFor="saveExport">
                   Save export to the server for later download
                 </Label>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

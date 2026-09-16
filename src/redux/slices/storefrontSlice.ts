@@ -25,7 +25,7 @@ export const getWebPages = createAsyncThunk(
   "storefront/getWebPages",
   async (_, thunkAPI) => {
     try {
-      const res = await axiosInstance.get(`dashboard/webpages/web-pages`);
+      const res = await axiosInstance.get(`dashboard/webpages/dashboard-web-pages`);
       return res?.data?.data;
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

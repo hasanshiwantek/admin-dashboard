@@ -13,8 +13,16 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { HiQuestionMarkCircle } from "react-icons/hi2";
+import { wholeNumberValidation } from "@/validations/validations";
+import { ValidationError } from "@/components/ui/validation-error";
 export default function Purchasability() {
-  const { register, control, watch, setValue } = useFormContext();
+  const {
+    register,
+    control,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useFormContext();
 
   const status = watch("purchasabilityStatus");
   const callForPricing = watch("callForPricing");
@@ -56,7 +64,10 @@ export default function Purchasability() {
               {field.value === "preorder" && (
                 <div className="grid grid-cols-1 2xl:grid-cols-3 gap-4 ml-6">
                   <div>
-                    <Label  className="mb-1 2xl:!text-2xl" htmlFor="preorderMessage">
+                    <Label
+                      className="mb-1 2xl:!text-2xl"
+                      htmlFor="preorderMessage"
+                    >
                       Message
                       <TooltipProvider>
                         <Tooltip>
@@ -84,7 +95,9 @@ export default function Purchasability() {
                     />
                   </div>
                   <div className="mt-1">
-                    <Label className="mb-1 block 2xl:!text-2xl">Release Date</Label>
+                    <Label className="mb-1 block 2xl:!text-2xl">
+                      Release Date
+                    </Label>
                     <Controller
                       name="releaseDate"
                       control={control}
@@ -176,7 +189,10 @@ export default function Purchasability() {
 
                   {callForPricing && (
                     <div>
-                      <Label className="2xl:!text-2xl" htmlFor="callForPricingLabel">
+                      <Label
+                        className="2xl:!text-2xl"
+                        htmlFor="callForPricingLabel"
+                      >
                         Call for pricing label
                       </Label>
                       <Input
@@ -215,10 +231,14 @@ export default function Purchasability() {
           <Input
             className="!max-w-[90%] w-full"
             id="minPurchaseQty"
-            {...register("minPurchaseQuantity")}
+            {...register(
+              "minPurchaseQuantity",
+              wholeNumberValidation("Minimum Purchase Quantity"),
+            )}
             type="number"
             // required
           />
+          <ValidationError message={errors.minPurchaseQuantity?.message} />
         </div>
         <div>
           <Label className="2xl:!text-2xl" htmlFor="maxPurchaseQty">
@@ -239,10 +259,14 @@ export default function Purchasability() {
           <Input
             className="!max-w-[90%] w-full"
             id="maxPurchaseQty"
-            {...register("maxPurchaseQuantity")}
+            {...register(
+              "maxPurchaseQuantity",
+              wholeNumberValidation("Maximum Purchase Quantity"),
+            )}
             type="number"
             // required
           />
+          <ValidationError message={errors.maxPurchaseQuantity?.message} />
         </div>
       </div>
     </div>

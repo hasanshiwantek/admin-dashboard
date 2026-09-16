@@ -29,3 +29,65 @@ export function toBase62(num: number): string {
 
   return result;
 }
+
+export function convertOptionsToObject(
+  options: { value: string; label: string }[],
+): Record<string, string> {
+  return options.reduce(
+    (acc, option) => {
+      acc[option.value] = option.label;
+      return acc;
+    },
+    {} as Record<string, string>,
+  );
+}
+
+export function removeEmptyValues(data: any, keepEmptyArrays: boolean = false): any {
+  // 1. Handle null, undefined, or NaN
+  if (data === null || data === undefined || Number.isNaN(data)) {
+    return undefined;
+  }
+
+  // 2. Handle primitives (number, boolean, string, symbol, bigint)
+  if (typeof data !== "object") {
+    return data === "" ? undefined : data;
+  }
+
+  // 3. Handle special built-in objects that shouldn't be iterated as plain objects
+  if (
+    data instanceof File ||
+    data instanceof Blob ||
+    data instanceof Date ||
+    data instanceof RegExp
+  ) {
+    return data;
+  }
+
+  // 4. Handle Arrays recursively
+  if (Array.isArray(data)) {
+    const cleanedArray = data
+      .map((item) => removeEmptyValues(item, keepEmptyArrays))
+      .filter((item) => item !== undefined);
+
+    // Respect the boolean flag for empty arrays
+    if (keepEmptyArrays) {
+      return cleanedArray;
+    }
+    return cleanedArray.length > 0 ? cleanedArray : undefined;
+  }
+
+  // 5. Handle Plain Objects recursively
+  const cleanedObj: Record<string, any> = {};
+  let hasValidKeys = false;
+
+  for (const key of Object.keys(data)) {
+    const cleanedValue = removeEmptyValues(data[key], keepEmptyArrays);
+
+    if (cleanedValue !== undefined) {
+      cleanedObj[key] = cleanedValue;
+      hasValidKeys = true;
+    }
+  }
+
+  return hasValidKeys ? cleanedObj : undefined;
+}

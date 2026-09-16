@@ -11,12 +11,22 @@ import {
 } from "@/components/ui/tooltip";
 import { HiQuestionMarkCircle } from "react-icons/hi2";
 import { useFormContext, Controller } from "react-hook-form";
+import { wholeNumberValidation } from "@/validations/validations";
+import { ValidationError } from "@/components/ui/validation-error";
 
 export default function ShippingDetails() {
-  const { register, control, watch } = useFormContext();
+  const {
+    register,
+    control,
+    watch,
+    formState: { errors },
+  } = useFormContext();
 
   return (
-    <div className="bg-white shadow p-6 space-y-4 scroll-mt-20" id="shippingDetails">
+    <div
+      className="bg-white shadow p-6 space-y-4 scroll-mt-20"
+      id="shippingDetails"
+    >
       <h1 className="2xl:!text-[2.4rem]">Shipping Details</h1>
 
       <div className="flex flex-col 2xl:flex-row items-start 2xl:items-center gap-4">
@@ -47,11 +57,14 @@ export default function ShippingDetails() {
             className="!max-w-[90%] w-full"
             id="fixedShippingPrice"
             type="number"
-            step="0.01"
             placeholder="$ 0"
             disabled={watch("freeShipping")}
-            {...register("fixedShippingCost", { valueAsNumber: true })}
+            {...register(
+              "fixedShippingCost",
+              wholeNumberValidation("Fixed Shipping Price"),
+            )}
           />
+          <ValidationError message={errors.fixedShippingCost?.message} />
         </div>
 
         {/* Free Shipping */}
@@ -66,11 +79,12 @@ export default function ShippingDetails() {
                 checked={field.value}
                 onCheckedChange={(val) => field.onChange(val === true)}
               />
-              <Label className="2xl:!text-2xl" htmlFor="freeShipping">Free Shipping</Label>
+              <Label className="2xl:!text-2xl" htmlFor="freeShipping">
+                Free Shipping
+              </Label>
             </div>
           )}
         />
-
       </div>
     </div>
   );

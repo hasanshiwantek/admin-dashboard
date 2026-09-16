@@ -1,7 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { Trash } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table,
@@ -11,17 +9,22 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Settings } from "lucide-react";
-import OrderActionsDropdown from "../orders/OrderActionsDropdown";
-import { Button } from "@/components/ui/button";
-import Pagination from "@/components/ui/pagination";
-import Link from "next/link";
-import { getWebPages, deleteWebPage, updateNavigation } from "@/redux/slices/storefrontSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
-import { useRouter } from "next/navigation";
 import { refetchWebpages } from "@/lib/storeFrontUtils";
+import { convertOptionsToObject } from "@/lib/utils";
+import {
+  deleteWebPage,
+  getWebPages,
+  updateNavigation,
+} from "@/redux/slices/storefrontSlice";
+import { Check, Settings, Trash, X } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import Spinner from "../loader/Spinner";
-import { Check, X } from "lucide-react";
+import OrderActionsDropdown from "../orders/OrderActionsDropdown";
+import { PageTypeOptions } from "./constants";
+
 const WebPageTable = () => {
   const router = useRouter();
 
@@ -99,7 +102,9 @@ const WebPageTable = () => {
         </div>
         <div className="flex items-center gap-5 ">
           <Link href={"/manage/storefront/web-pages/add"}>
-            <button className="btn-outline-primary 2xl:!text-2xl">Create a Web Page</button>
+            <button className="btn-outline-primary 2xl:!text-2xl">
+              Create a Web Page
+            </button>
           </Link>
           <button
             className="btn-outline-primary"
@@ -122,8 +127,12 @@ const WebPageTable = () => {
                   aria-label="Select all"
                 />
               </TableHead>
-              <TableHead className="text-left 2xl:!text-2xl">Page Name</TableHead>
-              <TableHead className="text-left 2xl:!text-2xl">Page Type</TableHead>
+              <TableHead className="text-left 2xl:!text-2xl">
+                Page Name
+              </TableHead>
+              <TableHead className="text-left 2xl:!text-2xl">
+                Page Type
+              </TableHead>
               <TableHead className="text-left 2xl:!text-2xl">Visible</TableHead>
               <TableHead className="text-left 2xl:!text-2xl">Action</TableHead>
             </TableRow>
@@ -154,7 +163,7 @@ const WebPageTable = () => {
                       aria-label={`Select ${page.pageName}`}
                     />
                   </TableCell>
-                  <TableCell >
+                  <TableCell>
                     <Link
                       href={`/manage/storefront/web-pages/edit/${page.id}`}
                       className="text-blue-600 hover:border-b-blue-600 hover:border-b-2 2xl:!text-2xl"
@@ -162,29 +171,47 @@ const WebPageTable = () => {
                       {page.pageName}
                     </Link>
                   </TableCell>
-                  <TableCell className="2xl:!text-2xl">{page.pageType}</TableCell>
+                  <TableCell className="2xl:!text-2xl">
+                    {convertOptionsToObject(PageTypeOptions)[page.pageType]}
+                  </TableCell>
 
                   <TableCell className="2xl:!text-2xl">
-                    {page.showInNavigation ? (
-                      <Check className="text-green-500 w-8 h-8 cursor-pointer" onClick={() => {
-                        dispatch(updateNavigation({
-                          id: page.id, data: {
-                            "showInNavigation": false
-                          }
-                        })).unwrap().then(() => {
-                          dispatch(getWebPages());
-                        })
-                      }} />
+                    {page.isPageVisible ? (
+                      <Check
+                        className="text-green-500 w-8 h-8 cursor-pointer"
+                        onClick={() => {
+                          dispatch(
+                            updateNavigation({
+                              id: page.id,
+                              data: {
+                                isPageVisible: false,
+                              },
+                            }),
+                          )
+                            .unwrap()
+                            .then(() => {
+                              dispatch(getWebPages());
+                            });
+                        }}
+                      />
                     ) : (
-                      <X className="text-red-500 w-8 h-8 cursor-pointer" onClick={() => {
-                        dispatch(updateNavigation({
-                          id: page.id, data: {
-                            "showInNavigation": true
-                          }
-                        })).unwrap().then(() => {
-                          dispatch(getWebPages());
-                        })
-                      }} />
+                      <X
+                        className="text-red-500 w-8 h-8 cursor-pointer"
+                        onClick={() => {
+                          dispatch(
+                            updateNavigation({
+                              id: page.id,
+                              data: {
+                                isPageVisible: true,
+                              },
+                            }),
+                          )
+                            .unwrap()
+                            .then(() => {
+                              dispatch(getWebPages());
+                            });
+                        }}
+                      />
                     )}
                   </TableCell>
                   <TableCell>
