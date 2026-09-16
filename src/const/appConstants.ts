@@ -15,3 +15,13 @@ export enum ActionEnums {
   SAVE = "save",
   ADD = "add",
 }
+
+export enum UserRolesEnum {
+  ADMIN = 1,
+  USER = 2,
+}
+
+export const UserRoles = {
+  [UserRolesEnum.ADMIN]: "Admin",
+  [UserRolesEnum.USER]: "User",
+};

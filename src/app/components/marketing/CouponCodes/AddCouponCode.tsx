@@ -1,74 +1,36 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useForm, FormProvider } from "react-hook-form";
+import CategoryTreeSm from "@/app/components/products/add/CategoryTreeSm";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Info, Loader2 } from "lucide-react";
-import CategoryTreeSm from "@/app/components/products/add/CategoryTreeSm";
+import { ValidationError } from "@/components/ui/validation-error";
+import { useAppDispatch } from "@/hooks/useReduxHooks";
 import {
   createCoupon,
   getCouponById,
   updateCouponCode,
 } from "@/redux/slices/marketingSlice";
-import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
-import { useRouter, useParams } from "next/navigation";
-
-interface CouponFormData {
-  couponCode: string;
-  couponName: string;
-  discountType:
-    | "dollarAmountOrder"
-    | "dollarAmountItem"
-    | "percentageItem"
-    | "dollarAmountShipping"
-    | "freeShipping";
-  discountAmount: string;
-  minimumPurchase: string;
-  limitTotalUses: boolean;
-  limitUsesPerCustomer: boolean;
-  excludeCartDiscounts: boolean;
-  enabled: boolean;
-  expiration: string;
-  appliesToCategories: boolean;
-  appliesToProducts: boolean;
-  categoryIds: string;
-  productIds: string | null;
-  limitByLocation: boolean;
-  limitByShipping: boolean;
-}
+import { Info, Loader2 } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import { DefaultCouponCodeFormValues } from "./constant";
+import { CouponCodeForm } from "./types";
 
 const AddCouponCode = () => {
   const params = useParams();
   const couponId = params?.id; // Get ID from URL params
   const isEditMode = !!couponId;
 
-  const methods = useForm<CouponFormData>({
-    defaultValues: {
-      couponCode: "",
-      couponName: "",
-      discountType: "dollarAmountOrder",
-      discountAmount: "0.00",
-      minimumPurchase: "0.00",
-      limitTotalUses: false,
-      limitUsesPerCustomer: false,
-      excludeCartDiscounts: false,
-      enabled: true,
-      expiration: "",
-      appliesToCategories: true,
-      appliesToProducts: false,
-      categoryIds: "",
-      productIds: null,
-      limitByLocation: false,
-      limitByShipping: false,
-    },
+  const methods = useForm<CouponCodeForm>({
+    defaultValues: DefaultCouponCodeFormValues,
   });
 
   const { register, watch, setValue, reset } = methods;
+  const { errors } = methods.formState;
   const dispatch = useAppDispatch();
   const router = useRouter();
 
@@ -90,8 +52,6 @@ const AddCouponCode = () => {
     setIsLoading(true);
     try {
       const result = await dispatch(getCouponById({ id: couponId })).unwrap();
-
-      console.log("Fetched coupon data:", result);
 
       // Populate form with fetched data
       const couponData = result?.couponcode || result?.data;
@@ -122,7 +82,7 @@ const AddCouponCode = () => {
           expiration: couponData.expiration || "",
           appliesToCategories: toBoolean(couponData.appliesToCategories),
           appliesToProducts: toBoolean(couponData.appliesToProducts),
-          categoryIds: couponData.categoryIds || "",
+          categoryIds: couponData.categoryIds || [],
           productIds: couponData.productIds || null,
           limitByLocation: toBoolean(couponData.limitByLocation),
           limitByShipping: toBoolean(couponData.limitByShipping),
@@ -137,8 +97,7 @@ const AddCouponCode = () => {
     }
   };
 
-  const onSubmit = async (data: CouponFormData) => {
-    console.log("Coupon Data:", data);
+  const onSubmit = async (data: CouponCodeForm) => {
     setIsSubmitting(true);
 
     try {
@@ -147,7 +106,7 @@ const AddCouponCode = () => {
       if (isEditMode) {
         // Update existing coupon
         result = await dispatch(
-          updateCouponCode({ id: couponId, data })
+          updateCouponCode({ id: couponId, data }),
         ).unwrap();
         console.log("Coupon updated successfully:", result);
       } else {
@@ -163,7 +122,7 @@ const AddCouponCode = () => {
     } catch (error: any) {
       console.error(
         `Error ${isEditMode ? "updating" : "creating"} coupon:`,
-        error
+        error,
       );
     } finally {
       setIsSubmitting(false);
@@ -259,10 +218,17 @@ const AddCouponCode = () => {
                     <div className="flex items-center gap-2">
                       <Input
                         id="couponName"
-                        {...register("couponName")}
+                        {...register("couponName", {
+                          required: "Coupon name is required",
+                          validate: (value) =>
+                            value.trim().length > 0 ||
+                            "Coupon name is required",
+                        })}
+                        aria-invalid={!!errors.couponName}
                         className="max-w-md"
                       />
                       <Info className="w-4 h-4 text-gray-400" />
+                      <ValidationError message={errors.couponName?.message} />
                     </div>
                   </div>
 
@@ -354,15 +320,24 @@ const AddCouponCode = () => {
                         <span className="text-gray-600">$</span>
                         <Input
                           id="discountAmount"
-                          {...register("discountAmount")}
+                          {...register("discountAmount", {
+                            required: "Discount amount is required",
+                            validate: (value) =>
+                              Number(value) > 0 ||
+                              "Discount amount must be greater than 0",
+                          })}
                           type="number"
                           step="0.01"
+                          aria-invalid={!!errors.discountAmount}
                           className="max-w-[150px]"
                         />
                         <span className="text-gray-600">
                           off the order total
                         </span>
                         <Info className="w-4 h-4 text-gray-400" />
+                        <ValidationError
+                          message={errors.discountAmount?.message}
+                        />
                       </div>
                     </div>
                   )}
@@ -501,7 +476,7 @@ const AddCouponCode = () => {
                         onValueChange={(value) =>
                           setValue(
                             "appliesToCategories",
-                            value === "categories"
+                            value === "categories",
                           )
                         }
                       >
@@ -521,7 +496,18 @@ const AddCouponCode = () => {
                           </div>
                           {appliesToCategories && (
                             <div className="ml-6 mt-3">
-                              <CategoryTreeSm name="categoryIds" />
+                              <CategoryTreeSm
+                                name="categoryIds"
+                                rules={{
+                                  validate: (value) =>
+                                    value?.length > 0 ||
+                                    "Select at least one category",
+                                }}
+                              />
+                              <ValidationError
+                                message={errors.categoryIds?.message}
+                                className="mt-1"
+                              />
                             </div>
                           )}
                         </div>
