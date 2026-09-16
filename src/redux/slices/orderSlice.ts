@@ -850,6 +850,28 @@ export const applyCoupon = createAsyncThunk(
   }
 );
 
+/// fetch shipment by id
+// FETCH SHIPMENT BY ID
+export const fetchShipmentById = createAsyncThunk(
+  "orders/fetchShipmentById",
+  async (
+    { shipmentId }: { shipmentId: number | string },
+    thunkAPI
+  ) => {
+    try {
+      const response = await axiosInstance.get(
+        `dashboard/shipments/get-shipment/${shipmentId}`
+      );
+
+      return response.data;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to fetch shipment"
+      );
+    }
+  }
+);
+
 // 2. Initial State
 const initialState = {
   orders: [],
@@ -867,6 +889,7 @@ const initialState = {
   appliedCoupon: null,
   dashboardOrders: [],
   dashboardOrdersLoading: false,
+  singleShipment:null,
 };
 
 // 3. Slice
@@ -1041,6 +1064,24 @@ const orderSlice = createSlice({
           action.error.message ||
           "Failed to fetch dashboard orders";
       })
+
+      .addCase(fetchShipmentById.pending, (state) => {
+  state.loading = true;
+  state.error = null;
+})
+
+.addCase(fetchShipmentById.fulfilled, (state, action) => {
+  state.loading = false;
+  state.singleShipment = action.payload.data;
+})
+
+.addCase(fetchShipmentById.rejected, (state, action) => {
+  state.loading = false;
+  state.error =
+    (action.payload as string) ||
+    action.error.message ||
+    "Failed to fetch shipment";
+})
     // builder.addCase(deleteDraftOrders.fulfilled, (state, action) => {
     //   state.draftOrder = state.draftOrder?.data?.filter(
     //     (order: any) => order?.order?.id !== action.meta.arg.id
