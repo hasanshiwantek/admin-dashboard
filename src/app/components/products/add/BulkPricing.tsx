@@ -18,7 +18,13 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
-import { wholeNumberValidation } from "@/validations/validations";
+import {
+  decimalValidation,
+  restrictDecimalInput,
+  restrictDecimalPaste,
+  restrictDecimalValue,
+  wholeNumberValidation,
+} from "@/validations/validations";
 import { ValidationError } from "@/components/ui/validation-error";
 import {
   Table,
@@ -49,7 +55,10 @@ export default function BulkPricing() {
         discountType === "percent" || discountType === "%discount"
           ? basePrice * (1 - Math.min(Math.max(discount, 0), 100) / 100)
           : basePrice - Math.max(discount, 0);
-      const unitPrice = Math.max(0, Math.round(calculatedUnitPrice));
+      const unitPrice = Math.max(
+        0,
+        Math.round(calculatedUnitPrice * 100) / 100,
+      );
 
       if (Number(tier?.unitPrice) !== unitPrice) {
         setValue(`bulkPricingTiers.${index}.unitPrice`, unitPrice, {
@@ -123,9 +132,12 @@ export default function BulkPricing() {
                 <TableCell className="border-r">
                   <Input
                     type="number"
+                    onKeyDown={restrictDecimalInput}
+                    onPaste={restrictDecimalPaste}
+                    onInput={restrictDecimalValue}
                     {...register(
                       `bulkPricingTiers.${index}.price`,
-                      wholeNumberValidation("Discount"),
+                      decimalValidation("Discount"),
                     )}
                   />
                   <ValidationError
@@ -135,10 +147,14 @@ export default function BulkPricing() {
                 <TableCell className="border-r">
                   <Input
                     type="number"
+                    step="0.01"
+                    onKeyDown={restrictDecimalInput}
+                    onPaste={restrictDecimalPaste}
+                    onInput={restrictDecimalValue}
                     readOnly
                     {...register(
                       `bulkPricingTiers.${index}.unitPrice`,
-                      wholeNumberValidation("Unit Price"),
+                      decimalValidation("Unit Price"),
                     )}
                   />
                   <ValidationError

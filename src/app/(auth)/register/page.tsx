@@ -1,21 +1,22 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { UserRolesEnum } from "@/const/appConstants";
+import { RegisterPayload, registerUser } from "@/redux/slices/authSlice";
+import { AppDispatch } from "@/redux/store";
+import styles from "@/styles/auth/Auth.module.css";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/redux/store";
-import { registerUser } from "@/redux/slices/authSlice";
-import { RegisterPayload } from "@/redux/slices/authSlice";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
-import styles from "@/styles/auth/Auth.module.css";
-import { useRouter } from "next/navigation";
+
 const initialForm: RegisterPayload = {
   name: "",
   email: "",
@@ -23,7 +24,7 @@ const initialForm: RegisterPayload = {
   password_confirmation: "",
   phoneNumber: "",
   storeName: "",
-  userRole: 1,
+  userRole: UserRolesEnum.ADMIN,
   businessSize: "",
   region: "",
 };
@@ -67,7 +68,7 @@ export default function RegisterPage() {
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setRegisterForm((prev) => ({ ...prev, [name]: value }));
@@ -81,15 +82,14 @@ export default function RegisterPage() {
 
       // ✅ Check if thunk was fulfilled
       if (registerUser.fulfilled.match(resultAction)) {
-
         // ✅ Redirect after success
-        setTimeout(()=>{
+        setTimeout(() => {
           router.push("/login");
-        },3000)
+        }, 3000);
       } else {
         console.error(
           "Registration failed",
-          resultAction.payload || resultAction.error
+          resultAction.payload || resultAction.error,
         );
       }
     } catch (error) {

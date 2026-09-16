@@ -11,7 +11,12 @@ import {
 } from "@/components/ui/tooltip";
 import { HiQuestionMarkCircle } from "react-icons/hi2";
 import { useFormContext, Controller } from "react-hook-form";
-import { wholeNumberValidation } from "@/validations/validations";
+import {
+  decimalValidation,
+  restrictDecimalInput,
+  restrictDecimalPaste,
+  restrictDecimalValue,
+} from "@/validations/validations";
 import { ValidationError } from "@/components/ui/validation-error";
 
 export default function ShippingDetails() {
@@ -57,11 +62,15 @@ export default function ShippingDetails() {
             className="!max-w-[90%] w-full"
             id="fixedShippingPrice"
             type="number"
+            step="0.01"
             placeholder="$ 0"
             disabled={watch("freeShipping")}
+            onKeyDown={restrictDecimalInput}
+            onPaste={restrictDecimalPaste}
+            onInput={restrictDecimalValue}
             {...register(
               "fixedShippingCost",
-              wholeNumberValidation("Fixed Shipping Price"),
+              decimalValidation("Fixed Shipping Price"),
             )}
           />
           <ValidationError message={errors.fixedShippingCost?.message} />

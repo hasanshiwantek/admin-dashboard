@@ -8,7 +8,12 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { ValidationError } from "@/components/ui/validation-error";
-import { wholeNumberValidation } from "@/validations/validations";
+import {
+  decimalValidation,
+  restrictDecimalInput,
+  restrictDecimalPaste,
+  restrictDecimalValue,
+} from "@/validations/validations";
 import { useFormContext } from "react-hook-form";
 import { HiQuestionMarkCircle } from "react-icons/hi2";
 
@@ -46,18 +51,21 @@ export default function Dimensions() {
                       {/* <HiMiniQuestionMarkCircle /> */}
                     </TooltipTrigger>
                     <TooltipContent>
-                      Specify a page title, or leave blank to use the products
-                      name as the page title.
+                      Enter the weight of this product so that it can be used to
+                      calculate shipping costs when ordering.
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
               </Label>
               <Input
                 type="number"
+                onKeyDown={restrictDecimalInput}
+                onPaste={restrictDecimalPaste}
+                onInput={restrictDecimalValue}
                 className="!max-w-[90%] w-full"
                 placeholder="0"
                 {...register("dimensions.weight" as any, {
-                  ...wholeNumberValidation("Weight"),
+                  ...decimalValidation("Weight"),
                   required: "Weight is required",
                 })}
               />
@@ -74,19 +82,23 @@ export default function Dimensions() {
                       {/* <HiMiniQuestionMarkCircle /> */}
                     </TooltipTrigger>
                     <TooltipContent>
-                      Specify a page title, or leave blank to use the products
-                      name as the page title.
+                      Some shipping companies require the physical dimensions of
+                      a product to calculate shipping charges. If this is the
+                      case, enter the height of this product here.
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
               </Label>
               <Input
                 type="number"
+                onKeyDown={restrictDecimalInput}
+                onPaste={restrictDecimalPaste}
+                onInput={restrictDecimalValue}
                 className="!max-w-[90%] w-full"
                 id="height"
                 {...register(
                   "dimensions.height" as any,
-                  wholeNumberValidation("Height"),
+                  decimalValidation("Height"),
                 )}
               />
               <ValidationError message={getDimensionError("height")} />
@@ -106,20 +118,24 @@ export default function Dimensions() {
                       {/* <HiMiniQuestionMarkCircle /> */}
                     </TooltipTrigger>
                     <TooltipContent>
-                      Specify a page title, or leave blank to use the products
-                      name as the page title.
+                      Some shipping companies require the physical dimensions of
+                      a product to calculate shipping charges. If this is the
+                      case, enter the width of this product here.
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
               </Label>
               <Input
                 type="number"
+                onKeyDown={restrictDecimalInput}
+                onPaste={restrictDecimalPaste}
+                onInput={restrictDecimalValue}
                 className="!max-w-[90%] w-full"
                 id="width"
                 placeholder=""
                 {...register(
                   "dimensions.width" as any,
-                  wholeNumberValidation("Width"),
+                  decimalValidation("Width"),
                 )}
               />
               <ValidationError message={getDimensionError("width")} />
@@ -136,19 +152,23 @@ export default function Dimensions() {
                       {/* <HiMiniQuestionMarkCircle /> */}
                     </TooltipTrigger>
                     <TooltipContent>
-                      Specify a page title, or leave blank to use the products
-                      name as the page title.
+                      Some shipping companies require the physical dimensions of
+                      a product to calculate shipping charges. If this is the
+                      case, enter the depth of this product here.
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
               </Label>
               <Input
                 type="number"
+                onKeyDown={restrictDecimalInput}
+                onPaste={restrictDecimalPaste}
+                onInput={restrictDecimalValue}
                 className="!max-w-[90%] w-full"
                 id="depth"
                 {...register(
                   "dimensions.depth" as any,
-                  wholeNumberValidation("Depth"),
+                  decimalValidation("Depth"),
                 )}
               />
               <ValidationError message={getDimensionError("depth")} />
