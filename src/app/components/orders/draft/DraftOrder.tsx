@@ -155,8 +155,8 @@ const DraftOrder = () => {
                 return (
                   <TableRow key={row.customerId || index}>
                     <TableCell className="2xl:!text-2xl">
-                      {row.created_at
-                        ? new Date(row.created_at).toLocaleDateString("en-US", {
+                      {row.createdAt
+                        ? new Date(row.createdAt).toLocaleDateString("en-US", {
                           weekday: "short",
                           year: "numeric",
                           month: "short",
