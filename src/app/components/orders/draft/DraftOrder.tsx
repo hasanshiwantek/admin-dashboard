@@ -204,7 +204,7 @@ const DraftOrder = () => {
                       </div>
                     </TableCell>
                     <TableCell className="2xl:!text-2xl">
-                      <div className="font-semibold">${totalAmount}</div>
+                      <div className="font-semibold">${row?.totalAmount}</div>
                       <div className="text-sm text-gray-500">
                         {row?.products?.length || 0} item(s)
                       </div>
