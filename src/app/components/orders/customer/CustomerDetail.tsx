@@ -18,7 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { PlusIcon, DownloadIcon, SearchIcon, Trash } from "lucide-react";
+import { PlusIcon, DownloadIcon, SearchIcon, Trash, StickyNote } from "lucide-react";
 import React, { useState, useEffect, Fragment } from "react";
 import OrderActionsDropdown from "../../orders/OrderActionsDropdown";
 import Pagination from "@/components/ui/pagination";
@@ -66,7 +66,7 @@ const CustomerDetail = () => {
   const [selectedCustomerId, setSelectedCustomerId] = useState<number | null>(
     null,
   );
-
+  const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
   const getDropdownActions = (customer: any) => [
     {
       label: "Edit",
@@ -262,6 +262,7 @@ const CustomerDetail = () => {
           Number(selected?.id || selected) === Number(item?.id),
       ),
     );
+
     const exportData = selectedCustomer.map((item: any) => ({
       ID: item?.id,
       "First Name": item?.firstName,
@@ -501,84 +502,146 @@ const CustomerDetail = () => {
                           />
                         </TableCell>
                       </TableRow>
-                      {expandedRow === customer?.id && (
-                        <TableRow>
-                          <TableCell colSpan={11}>
-                            <div className="grid grid-cols-3 bg-gray-50 p-4">
-                              {/* Current Orders Title */}
-                              <div className="border-r pr-4">
-                                <h4 className="font-semibold text-lg">
-                                  Current Orders
-                                </h4>
-                              </div>
+               {expandedRow === customer?.id && (
+                    <TableRow>
+                      <TableCell colSpan={11}>
+                        <div className="grid grid-cols-[15%_40%_45%]  bg-gray-50 p-4">
+                          {/* Current Orders Title */}
+                          <div className="border-r pr-4 !text-right">
+                            <h4 className="font-semibold text-[16px]">
+                              Current Orders
+                            </h4>
+                          </div>
 
-                              {/* Current Order Details */}
-                              <div className="border-r px-4">
-                                {customerOrders?.currentOrders?.length > 0 ? (
-                                  customerOrders.currentOrders.map(
-                                    (order: any) => (
-                                      <div key={order.id} className="mb-4">
-                                        <h4 className="font-semibold text-blue-600">
-                                          Order #{order.orderNumber}
-                                        </h4>
+                          {/* Current Order Details */}
+                          <div className=" px-4 ">
+                            {customerOrders?.currentOrders?.length > 0 ? (
+                              customerOrders.currentOrders.map((order: any) => (
+                                <div key={order.id} className="mb-8">
+                                  {/* Order Number - Center */}
+                                  <Link
+                                    href={`/manage/orders?orderIdFrom=${order?.id}&orderIdTo=${order?.id}d}&expand=${order?.id}`}
+                                  >
+                                    <h4 className="text-[15px] relative left-[85px] font-medium text-gray-900 mb-3 cursor-pointer">
+                                      Order{" "}
+                                      <span className="!text-blue-600 !text-[15px] hover:underline">
+                                        #{order.orderNumber}
+                                      </span>
+                                    </h4>
+                                  </Link>
 
-                                        <div className="grid grid-cols-[120px_1fr] gap-y-2 mt-2">
-                                          <span>Status</span>
-                                          <span>{order.status}</span>
+                                  {/* Details */}
+                                  <div className="grid grid-cols-[120px_1fr] gap-y-2">
+                                    {/* Status */}
+                                    <span className="text-right pr-4 font-medium text-gray-600">
+                                      Status
+                                    </span>
 
-                                          <span>Order total</span>
-                                          <span>${order.totalAmount}</span>
+                                    <span className="border-l-4 border-cyan-400 pl-2 font-medium text-gray-600">
+                                      {order.status}
+                                    </span>
 
-                                          <span>Date ordered</span>
-                                          <span>
-                                            {new Date(
-                                              order.createdAt,
-                                            ).toLocaleDateString()}
+                                    {/* Order Total */}
+                                    <span className="text-right pr-4 font-medium text-gray-600">
+                                      Order total
+                                    </span>
+
+                                    <span className="font-medium text-gray-600">
+                                      ${order.totalAmount}
+                                    </span>
+
+                                    {/* Date */}
+                                    <span className="text-right pr-4 font-medium text-gray-600">
+                                      Date ordered
+                                    </span>
+
+                                    <span className="font-medium text-gray-600">
+                                      {new Date(
+                                        order.createdAt,
+                                      ).toLocaleDateString()}
+                                    </span>
+
+                                    {/* Notes */}
+                                    <span className="flex items-center justify-end pr-4 text-gray-600">
+                                      <StickyNote size={16} strokeWidth={1.5} />
+                                    </span>
+
+                                    <span
+                                      onClick={() => {
+                                        setSelectedOrderId(order?.id);
+                                        setShowCustomerNotes(true);
+                                      }}
+                                      className="!text-blue-600 font-medium cursor-pointer hover:underline"
+                                    >
+                                      View Notes
+                                    </span>
+                                  </div>
+                                </div>
+                              ))
+                            ) : (
+                              <p>No current orders</p>
+                            )}
+                          </div>
+
+                          {/* Past Orders */}
+                          <div className="px-4">
+                            <div className="flex items-stretch">
+                              {/* Past Orders Heading */}
+                              <h4 className="font-semibold text-[12px] whitespace-nowrap pr-3">
+                                Past Orders
+                              </h4>
+
+                              {/* Vertical Line + Orders */}
+                              <div className="border-l border-gray-200 pl-3">
+                                {customer?.pastOrders?.length > 0 ? (
+                                  customer.pastOrders.map((order: any) => (
+                                    <div
+                                      key={order.id}
+                                      className="flex items-center h-8"
+                                    >
+                                      {/* Order Number */}
+                                      <Link
+                                        href={`/manage/orders?orderIdFrom=${order?.id}&orderIdTo=${order?.id}&expand=${order?.id}`}
+                                      >
+                                        <span className="whitespace-nowrap pr-2 cursor-pointer">
+                                          Order{" "}
+                                          <span className="!text-blue-600 hover:underline">
+                                            #{order.orderNumber}
                                           </span>
+                                        </span>
+                                      </Link>
 
-                                          <span>Notes</span>
-                                          <span className="text-blue-600 cursor-pointer">
-                                            View Notes
-                                          </span>
-                                        </div>
-                                      </div>
-                                    ),
-                                  )
-                                ) : (
-                                  <p>No current orders</p>
-                                )}
-                              </div>
+                                      {/* View Notes */}
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          setSelectedOrderId(order?.id);
+                                          setShowCustomerNotes(true);
+                                        }}
+                                        className="flex items-center gap-2 !text-blue-600 cursor-pointer whitespace-nowrap"
+                                      >
+                                        <StickyNote
+                                          size={18}
+                                          strokeWidth={1.5}
+                                          className="text-gray-500"
+                                        />
 
-                              {/* Past Orders */}
-                              <div className="px-4">
-                                <h4 className="font-semibold text-lg mb-3">
-                                  Past Orders
-                                </h4>
-
-                                {customerOrders?.pastOrders?.length > 0 ? (
-                                  customerOrders.pastOrders.map(
-                                    (order: any) => (
-                                      <div key={order.id} className="mb-2">
-                                        <div className="flex items-center gap-2">
-                                          <span className="text-blue-600">
-                                            Order #{order.orderNumber}
-                                          </span>
-
-                                          <span className="text-blue-600 cursor-pointer">
-                                            View Notes
-                                          </span>
-                                        </div>
-                                      </div>
-                                    ),
-                                  )
+                                        <span className="!text-blue-600">
+                                          View Notes
+                                        </span>
+                                      </button>
+                                    </div>
+                                  ))
                                 ) : (
                                   <p>No past orders</p>
                                 )}
                               </div>
                             </div>
-                          </TableCell>
-                        </TableRow>
-                      )}
+                          </div>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )}
                     </Fragment>
                   );
                 },
@@ -591,7 +654,7 @@ const CustomerDetail = () => {
       <CustomerNotesModal
         open={showCustomerNotes}
         onClose={() => setShowCustomerNotes(false)}
-        orderId={selectedCustomerId}
+        orderId={selectedOrderId}
       />
     </div>
   );
