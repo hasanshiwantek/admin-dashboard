@@ -57,7 +57,12 @@ export default function ShippingMethod() {
     selectedMethod.service_type ||
     (selectedMethod.method_id ? String(selectedMethod.method_id) : "none");
   const method = watch("shippingMethod.method")
-  const cost = watch("shippingMethod.cost")
+  // const cost = watch("shippingMethod.cost")
+  const cost =
+    selectedMethod.method_type === "custom" &&
+      (selectedMethod.cost === 0 || selectedMethod.cost === "0")
+      ? ""
+      : String(selectedMethod.cost ?? "");
   const cart = values?.selectedProducts
   const { shippingRates, } = useAppSelector(
     (state) => state.order,
@@ -91,7 +96,7 @@ export default function ShippingMethod() {
       country: values?.shipping?.country || values?.billingCountry,
       state: values?.shipping?.state || values?.billingState,
       city: values?.shipping?.city || values?.billingCity,
-      zip: values?.shipping?.zip || values?.billingZip,
+      zip: values?.shipping?.zip || values?.billingZip
     }
 
     if (payload?.country && payload?.state && payload?.zip && cart?.length > 0) {

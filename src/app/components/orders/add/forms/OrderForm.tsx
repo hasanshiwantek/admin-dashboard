@@ -11,7 +11,7 @@ import { useForm, FormProvider } from "react-hook-form";
 export default function OrderForm({ orderId }: { orderId: string }) {
   const methods = useForm(); // ⬅️ this controls ALL steps
   const { reset } = methods;
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(2);
   const [formData, setFormData] = useState({});
   const [isEditMode, setIsEditMode] = useState(false);
   const dispatch = useAppDispatch();
