@@ -24,6 +24,7 @@ import { useState } from "react";
 import { fetchPackingSlipPdf, updateShipment } from "@/redux/slices/orderSlice";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import OrderActionsDropdown from "../OrderActionsDropdown";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 
 interface ShipmentModalProps {
@@ -58,7 +59,7 @@ export default function ShipmentsTableModal({
     Record<number, string>
   >({});
   const dispatch = useAppDispatch();
-
+const router = useRouter();
   const [savingId, setSavingId] = useState<number | null>(null);
 
   const handleClose = () => {
@@ -70,6 +71,7 @@ export default function ShipmentsTableModal({
   const toggleRow = (id: number) => {
     setExpandedRow((prev) => (prev === id ? null : id));
   };
+
 
 
   const orderActions = (shipment: any) => [
@@ -500,12 +502,19 @@ export default function ShipmentsTableModal({
         {/* Footer */}
         <DialogFooter className="bg-gray-100 px-4 py-3 rounded-none flex justify-end gap-2">
           <Button
-            variant="outline"
-            onClick={handleClose}
-            className="btn-outline-primary  2xl:!text-2xl h-12"
-          >
-            {cancelText}
-          </Button>
+  variant="outline"
+  onClick={() => {
+    const shipmentId = shipments?.[0]?.id;
+
+    if (!shipmentId) return;
+
+    handleClose();
+     router.push(`/manage/orders/shipments?shipmentId=${shipmentId}`);
+  }}
+  className="btn-outline-primary  2xl:!text-2xl h-12"
+>
+  {cancelText}
+</Button>
           <Button
             onClick={() => {
               onConfirm();

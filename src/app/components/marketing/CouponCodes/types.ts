@@ -2,11 +2,11 @@ export interface CouponCodeForm {
   couponCode: string;
   couponName: string;
   discountType:
-    | "dollarAmountOrder"
-    | "dollarAmountItem"
-    | "percentageItem"
-    | "dollarAmountShipping"
-    | "freeShipping";
+    | "per_total_discount"
+    | "per_item_discount"
+    | "percentage_discount"
+    | "shipping_discount"
+    | "free_shipping";
   discountAmount: string;
   minimumPurchase: string;
   limitTotalUses: boolean;

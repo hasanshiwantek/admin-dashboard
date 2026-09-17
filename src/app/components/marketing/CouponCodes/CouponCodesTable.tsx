@@ -23,6 +23,7 @@ import {
   deleteCouponCodes,
   getCouponCodes,
   searchCouponcode,
+  toggleCouponEnabled,
 } from "@/redux/slices/marketingSlice";
 import { Check, Loader2, MoreHorizontal, Trash2, X } from "lucide-react";
 import Link from "next/link";
@@ -110,6 +111,19 @@ const CouponCodesTable = () => {
   };
 
   // Delete single coupon
+  const handleToggleEnabled = async (coupon: any) => {
+    const nextEnabled = !coupon?.enabled;
+
+    try {
+      await dispatch(
+        toggleCouponEnabled({ id: coupon?.id, enabled: nextEnabled }),
+      ).unwrap();
+      dispatch(getCouponCodes());
+    } catch (error: any) {
+      console.error(error || "Failed to update coupon status");
+    }
+  };
+
   const handleDeleteCoupon = async (id: string) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this coupon code?",
@@ -401,44 +415,15 @@ const CouponCodesTable = () => {
                       {coupon?.uses || 0}
                     </TableCell>
                     <TableCell>
-                      {/* {coupon?.enabled === "1" && (
-                        <Check className="h-6 w-10 text-green-600" />
-                      )} */}
-                      {coupon?.enabled === "1" ? (
+                      {coupon?.enabled ? (
                         <Check
                           className="text-green-500 w-8 h-8 cursor-pointer"
-                          // onClick={() => {
-                          //   dispatch(
-                          //     updateNavigation({
-                          //       id: page.id,
-                          //       data: {
-                          //         isPageVisible: false,
-                          //       },
-                          //     }),
-                          //   )
-                          //     .unwrap()
-                          //     .then(() => {
-                          //       dispatch(getCouponCodes());
-                          //     });
-                          // }}
+                          onClick={() => handleToggleEnabled(coupon)}
                         />
                       ) : (
                         <X
                           className="text-red-500 w-8 h-8 cursor-pointer"
-                          // onClick={() => {
-                          //   dispatch(
-                          //     updateNavigation({
-                          //       id: page.id,
-                          //       data: {
-                          //         isPageVisible: true,
-                          //       },
-                          //     }),
-                          //   )
-                          //     .unwrap()
-                          //     .then(() => {
-                          //       dispatch(getCouponCodes());
-                          //     });
-                          // }}
+                          onClick={() => handleToggleEnabled(coupon)}
                         />
                       )}
                     </TableCell>
