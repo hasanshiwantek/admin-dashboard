@@ -1,25 +1,30 @@
 "use client";
 
-import { useFormContext, Controller } from "react-hook-form";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
-  SelectTrigger,
-  SelectValue,
   SelectContent,
   SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Tooltip,
-  TooltipTrigger,
   TooltipContent,
+  TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { HiQuestionMarkCircle } from "react-icons/hi2";
 import { ValidationError } from "@/components/ui/validation-error";
-import { wholeNumberValidation } from "@/validations/validations";
+import {
+  restrictDecimalInput,
+  restrictDecimalPaste,
+  restrictDecimalValue,
+  wholeNumberValidation,
+} from "@/validations/validations";
+import { Controller, useFormContext } from "react-hook-form";
+import { HiQuestionMarkCircle } from "react-icons/hi2";
 
 const StoreFront = () => {
   const {
@@ -118,6 +123,9 @@ const StoreFront = () => {
                 id="sortOrder"
                 type="number"
                 defaultValue={0}
+                onKeyDown={restrictDecimalInput}
+                onPaste={restrictDecimalPaste}
+                onInput={restrictDecimalValue}
                 {...register("sortOrder", wholeNumberValidation("Sort Order"))}
               />
               <ValidationError message={errors.sortOrder?.message} />

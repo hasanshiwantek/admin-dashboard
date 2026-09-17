@@ -17,19 +17,6 @@ export function generateUniqueCode(length = 4): string {
   return code;
 }
 
-export function toBase62(num: number): string {
-  if (num === 0) return "0";
-
-  let result = "";
-
-  while (num > 0) {
-    result = BASE62_STRING[num % 62] + result;
-    num = Math.floor(num / 62);
-  }
-
-  return result;
-}
-
 export function convertOptionsToObject(
   options: { value: string; label: string }[],
 ): Record<string, string> {
@@ -42,7 +29,10 @@ export function convertOptionsToObject(
   );
 }
 
-export function removeEmptyValues(data: any, keepEmptyArrays: boolean = false): any {
+export function removeEmptyValues(
+  data: any,
+  keepEmptyArrays: boolean = false,
+): any {
   // 1. Handle null, undefined, or NaN
   if (data === null || data === undefined || Number.isNaN(data)) {
     return undefined;

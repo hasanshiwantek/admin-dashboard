@@ -1,11 +1,11 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { Search, ChevronRight } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { StoreSettings } from "./StoreSettings";
+import { Card } from "@/components/ui/card";
+import { ChevronRight } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { StoreSettings } from "./StoreSettings";
+
 const SettingsPage = () => {
   //   const setupItems = [
   //     {
@@ -50,51 +50,51 @@ const SettingsPage = () => {
   const initialTab = searchParams.get("tab") || "website";
 
   const generalItems = [
-    {
-      id: "website",
-      title: "Website",
-      description:
-        "Physical dimension settings, search engine optimization, HTTPS, search engine robots",
-    },
-    {
-      id: "display",
-      title: "Display",
-      description:
-        "Settings related to displaying products, categories, control panel etc.",
-    },
-    {
-      id: "share",
-      title: "Share",
-      description: "Social sharing settings on product pages and blog posts",
-    },
-    {
-      id: "date-timezone",
-      title: "Date & Timezone",
-      description: "Timezone, DST correction, display date format",
-    },
-    {
-      id: "url-structure",
-      title: "URL structure",
-      description: "Product, category and web pages URL settings",
-    },
-    {
-      id: "search",
-      title: "Search",
-      description: "Default product sort, default content sort, search logic",
-      isNew: true,
-    },
-    {
-      id: "security",
-      title: "Security & Privacy",
-      description:
-        "Security & privacy settings for storefront and control panel",
-    },
-    {
-      id: "misc",
-      title: "Miscellaneous",
-      description:
-        "Email settings, advanced store settings, order settings, throttler",
-    },
+    // {
+    //   id: "website",
+    //   title: "Website",
+    //   description:
+    //     "Physical dimension settings, search engine optimization, HTTPS, search engine robots",
+    // },
+    // {
+    //   id: "display",
+    //   title: "Display",
+    //   description:
+    //     "Settings related to displaying products, categories, control panel etc.",
+    // },
+    // {
+    //   id: "share",
+    //   title: "Share",
+    //   description: "Social sharing settings on product pages and blog posts",
+    // },
+    // {
+    //   id: "date-timezone",
+    //   title: "Date & Timezone",
+    //   description: "Timezone, DST correction, display date format",
+    // },
+    // {
+    //   id: "url-structure",
+    //   title: "URL structure",
+    //   description: "Product, category and web pages URL settings",
+    // },
+    // {
+    //   id: "search",
+    //   title: "Search",
+    //   description: "Default product sort, default content sort, search logic",
+    //   isNew: true,
+    // },
+    // {
+    //   id: "security",
+    //   title: "Security & Privacy",
+    //   description:
+    //     "Security & privacy settings for storefront and control panel",
+    // },
+    // {
+    //   id: "misc",
+    //   title: "Miscellaneous",
+    //   description:
+    //     "Email settings, advanced store settings, order settings, throttler",
+    // },
     {
       id: "ship",
       title: "Shipping",
@@ -237,74 +237,78 @@ const SettingsPage = () => {
               </div>
             </div>
           </Card>
-          {user?.isOwner && <div className="mt-2 mb-2">
+          {user?.isOwner && (
+            <div className="mt-2 mb-2">
+              <div className="w-full bg-white rounded-md border border-gray-200 shadow-sm px-8 py-8">
+                <h1 className="!font-semibold  mb-4 2xl:!text-[2.4rem]">
+                  Advanced
+                </h1>
 
-            <div
-              className="w-full bg-white rounded-md border border-gray-200 shadow-sm px-8 py-8"
-
-            >
-              <h1 className="!font-semibold  mb-4 2xl:!text-[2.4rem]">
-                Advanced
-              </h1>
-
-              <div onClick={() => router.push("/manage/settings/storeLogs")} className="flex items-center justify-between border-b border-gray-200 pb-4 cursor-pointer group">
-                <div className="flex items-center gap-25">
-                  <span className="!text-black !font-bold 2xl:!text-[1.6rem]">
-                    Store logs
-                  </span>
-                </div>
-                <div>
-                  <span className="text-gray-600 !font-normal 2xl:!text-[1.6rem]">
-                    System logs and staff action logs rules
-                  </span>
-                </div>
-
-
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-8 h-8 text-gray-500 group-hover:text-black transition"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth="2"
+                <div
+                  onClick={() => router.push("/manage/settings/storeLogs")}
+                  className="flex items-center justify-between border-b border-gray-200 pb-4 cursor-pointer group"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M9 6l6 6-6 6"
-                  />
-                </svg>
-              </div>
-              <div onClick={() => router.push("/manage/settings/user-permission")} className="flex items-center justify-between border-b border-gray-200 pb-4 cursor-pointer group">
-                <div className="flex items-center gap-25">
-                  <span className="!text-black !font-bold 2xl:!text-[1.6rem]">
-                    Users
-                  </span>
-                </div>
-                <div>
-                  <span className="text-gray-600 !font-normal 2xl:!text-[1.6rem]">
-                    System Permissions
-                  </span>
-                </div>
+                  <div className="flex items-center gap-25">
+                    <span className="!text-black !font-bold 2xl:!text-[1.6rem]">
+                      Store logs
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-gray-600 !font-normal 2xl:!text-[1.6rem]">
+                      System logs and staff action logs rules
+                    </span>
+                  </div>
 
-
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-8 h-8 text-gray-500 group-hover:text-black transition"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth="2"
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-8 h-8 text-gray-500 group-hover:text-black transition"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M9 6l6 6-6 6"
+                    />
+                  </svg>
+                </div>
+                <div
+                  onClick={() =>
+                    router.push("/manage/settings/user-permission")
+                  }
+                  className="flex items-center justify-between border-b border-gray-200 pb-4 cursor-pointer group"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M9 6l6 6-6 6"
-                  />
-                </svg>
+                  <div className="flex items-center gap-25">
+                    <span className="!text-black !font-bold 2xl:!text-[1.6rem]">
+                      Users
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-gray-600 !font-normal 2xl:!text-[1.6rem]">
+                      System Permissions
+                    </span>
+                  </div>
+
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-8 h-8 text-gray-500 group-hover:text-black transition"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M9 6l6 6-6 6"
+                    />
+                  </svg>
+                </div>
               </div>
             </div>
-          </div>}
+          )}
         </div>
       ) : (
         <>

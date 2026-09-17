@@ -9,4 +9,11 @@ export const REGEX = {
   PRODUCT_URL_MULTIPLE_SLASHES: /\/+/g,
   PRODUCT_URL_TRAILING_SLASH: /\/$/g,
   PRODUCT_URL_NORMALIZE: /^\/+|\/+$/g,
+
+  // Numeric input
+  NUMERIC_DIGIT: /^\d$/,
+  WHOLE_NUMBER: /^\d+$/,
+  DECIMAL_SANITIZE: /[^\d.]/g,
+  DECIMAL_DUPLICATE_POINT: /\.(.*)\./g,
+  DECIMAL_LEADING_ZEROS: /^0+(?=\d)/,
 };

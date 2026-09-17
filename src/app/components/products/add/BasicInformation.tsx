@@ -14,7 +14,14 @@ import {
 import { ValidationError } from "@/components/ui/validation-error";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { fetchBrands } from "@/redux/slices/productSlice";
-import { wholeNumberValidation } from "@/validations/validations";
+import {
+  decimalValidation,
+  restrictDecimalInput,
+  restrictDecimalPaste,
+  restrictDecimalValue,
+  restrictWholeNumberInput,
+  restrictWholeNumberPaste,
+} from "@/validations/validations";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { useEffect } from "react";
@@ -152,10 +159,13 @@ export default function BasicInfoForm({
               <Input
                 type="number"
                 className="!max-w-[90%] w-full"
+                onKeyDown={restrictDecimalInput}
+                onPaste={restrictDecimalPaste}
+                onInput={restrictDecimalValue}
                 id="price"
                 placeholder="Price"
                 {...register("price", {
-                  ...wholeNumberValidation("Price"),
+                  ...decimalValidation("Price"),
                   required: "Price is required",
                 })}
               />
@@ -171,6 +181,9 @@ export default function BasicInfoForm({
                 className="!max-w-[90%] w-full"
                 id="weight"
                 placeholder="0"
+                onKeyDown={restrictDecimalInput}
+                onPaste={restrictDecimalPaste}
+                onInput={restrictDecimalValue}
                 value={weight ?? ""}
                 onChange={(event) =>
                   setValue("dimensions.weight", event.target.value, {
