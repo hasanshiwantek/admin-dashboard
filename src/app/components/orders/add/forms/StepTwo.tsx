@@ -44,6 +44,7 @@ export default function StepTwo({ step, setStep }: any) {
     const maxQty = Number(product?.maxPurchaseQuantity) > 0
       ? Number(product.maxPurchaseQuantity)
       : null;
+    const actualPrice = product?.price
 
     setSelectedProducts((prev) =>
       prev.find((p) => p.id === product.id)
@@ -55,6 +56,7 @@ export default function StepTwo({ step, setStep }: any) {
             quantity: minQty,
             minPurchaseQuantity: minQty,
             maxPurchaseQuantity: maxQty,
+            actualPrice
           },
         ]
     );
@@ -66,11 +68,6 @@ export default function StepTwo({ step, setStep }: any) {
     }
   };
 
-  // const handleProductSelect = (product: any) => {
-  //   if (!selectedProducts.some((p) => p.id === product.id)) {
-  //     setSelectedProducts((prev) => [...prev, { ...product, quantity: 1 }]);
-  //   }
-  // };
   const handleProductSelect = (product: any) => {
     if (selectedProducts.some((p) => p.id === product.id)) return;
 
@@ -82,6 +79,8 @@ export default function StepTwo({ step, setStep }: any) {
       Number(product?.maxPurchaseQuantity) > 0
         ? Number(product.maxPurchaseQuantity)
         : null;
+    const actualPrice = product.price
+
 
     setSelectedProducts((prev) => [
       ...prev,
@@ -90,6 +89,7 @@ export default function StepTwo({ step, setStep }: any) {
         quantity: minQty,
         minPurchaseQuantity: minQty,
         maxPurchaseQuantity: maxQty,
+        actualPrice
       },
     ]);
   };
@@ -101,13 +101,7 @@ export default function StepTwo({ step, setStep }: any) {
     setSelectedProducts((prev) => [...prev, product]);
   };
 
-  // const handleQtyChange = (id: number, quantity: number) => {
-  //   setSelectedProducts((prev) =>
-  //     prev.map((p) =>
-  //       p.id === id ? { ...p, quantity: Math.max(quantity, 1) } : p,
-  //     ),
-  //   );
-  // };
+
   const handleQtyChange = (id: number, quantity: number) => {
     setSelectedProducts((prev) =>
       prev.map((p) => {

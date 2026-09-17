@@ -148,7 +148,9 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
             values.selectedProducts?.map((product: any) => ({
               productId: product.id,
               quantity: product.quantity || 1,
-              price: Number(product.price ?? product.Price ?? 0),
+              ...(Number(product.actualPrice) !== Number(product.price)
+                ? { price: Number(product.price ?? 0) }
+                : {}),
             })) || [],
           shippingDestinations:
             values.shippingDestinations?.map((dest: any) => ({
@@ -239,7 +241,9 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
             values.selectedProducts?.map((product: any) => ({
               productId: product.id,
               quantity: product.quantity || 1,
-              price: Number(product.price ?? product.Price ?? 0),
+              ...(Number(product.actualPrice) !== Number(product.price)
+                ? { price: Number(product.price ?? 0) }
+                : {}),
             })) || [],
           shippingDestinations:
             values.shippingDestinations?.map((dest: any) => ({
