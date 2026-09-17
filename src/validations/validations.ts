@@ -1,6 +1,6 @@
-import type { RegisterOptions } from "react-hook-form";
-import type { ClipboardEvent, FormEvent, KeyboardEvent } from "react";
 import { REGEX } from "@/const/regex";
+import type { ClipboardEvent, FormEvent, KeyboardEvent } from "react";
+import type { RegisterOptions } from "react-hook-form";
 
 export const restrictDecimalInput = (
   event: KeyboardEvent<HTMLInputElement>,
@@ -37,7 +37,6 @@ export const restrictDecimalInput = (
     event.preventDefault();
     return;
   }
-
 };
 
 export const restrictDecimalValue = (event: FormEvent<HTMLInputElement>) => {
@@ -50,7 +49,8 @@ export const restrictDecimalValue = (event: FormEvent<HTMLInputElement>) => {
 const normalizeDecimalValue = (value: string) => {
   const sanitizedValue = value.replace(REGEX.DECIMAL_SANITIZE, "");
   const [rawIntegerPart, ...decimalParts] = sanitizedValue.split(".");
-  const integerPart = rawIntegerPart.replace(REGEX.DECIMAL_LEADING_ZEROS, "") ||
+  const integerPart =
+    rawIntegerPart.replace(REGEX.DECIMAL_LEADING_ZEROS, "") ||
     (decimalParts.length ? "0" : "");
 
   return decimalParts.length
@@ -174,10 +174,9 @@ export const decimalValidation = (
     ) {
       return true;
     }
-
+    const decimalPlaces = (value.toString().split(".")[1] || "").length;
     return (
-      Number.isInteger(Number(value) * 100) ||
-      `${fieldLabel} must have at most 2 decimal places`
+      decimalPlaces <= 2 || `${fieldLabel} must have at most 2 decimal places`
     );
   },
 });

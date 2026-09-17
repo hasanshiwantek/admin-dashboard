@@ -4,13 +4,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { UrlSettingEnums } from "@/const/appConstants";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { generateSlug } from "@/lib/productUtils";
@@ -634,7 +627,7 @@ const WebPage = () => {
                 </div>
               ))}
 
-              <div className="flex items-center gap-4 ml-20">
+              {/* <div className="flex items-center gap-4 ml-20">
                 <Label
                   htmlFor="templateLayoutFile"
                   className="w-[190px] text-right 2xl:!text-2xl"
@@ -661,7 +654,7 @@ const WebPage = () => {
                     </Select>
                   )}
                 />
-              </div>
+              </div> */}
 
               <div className="flex flex-col space-y-4 pt-4 ml-20">
                 <Controller

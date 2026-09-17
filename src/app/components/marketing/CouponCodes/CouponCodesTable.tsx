@@ -280,9 +280,6 @@ const CouponCodesTable = () => {
                   Expiration
                 </TableHead>
                 <TableHead className="font-semibold text-gray-700">
-                  Uses
-                </TableHead>
-                <TableHead className="font-semibold text-gray-700">
                   Enabled
                 </TableHead>
                 <TableHead className="font-semibold text-gray-700">
@@ -410,9 +407,6 @@ const CouponCodesTable = () => {
                     </TableCell>
                     <TableCell className="text-gray-700">
                       {coupon?.expiration || "No expiration"}
-                    </TableCell>
-                    <TableCell className="text-gray-700">
-                      {coupon?.uses || 0}
                     </TableCell>
                     <TableCell>
                       {coupon?.enabled ? (
