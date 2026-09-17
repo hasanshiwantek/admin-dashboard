@@ -180,7 +180,7 @@ const AllOrders = () => {
     "Refunded",
     "Shipped",
     "Incomplete",
-    "Archived",
+    // "Archived",
     // "Custom views",
   ];
   const fixedTabs = tabs.slice(0, 7);
