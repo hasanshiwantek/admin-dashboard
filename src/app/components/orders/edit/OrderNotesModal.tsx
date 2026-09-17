@@ -89,9 +89,11 @@ export default function OrderNotesModal({
           !w-[calc(100%-24px)]
           !max-w-[600px]
            !max-h-[80vh]
-          p-0
-          gap-0
-          overflow-y-auto
+         p-0
+gap-0
+overflow-hidden
+flex
+flex-col
           rounded-none
           border-0
           shadow-[0_8px_30px_rgba(0,0,0,0.25)]
@@ -147,8 +149,9 @@ export default function OrderNotesModal({
             px-[39px]
             pt-[20px]
             pb-[20px]
-           
-            max-h-[calc(100vh-145px)]
+         flex-1
+overflow-y-auto
+min-h-0
           "
         >
           {/* Info Box */}
@@ -293,9 +296,9 @@ export default function OrderNotesModal({
         {/* ================= FOOTER ================= */}
         <DialogFooter
           className="
-            h-[81px]
-            min-h-[81px]
-            px-[18px]
+            h-[76px]
+            min-h-[76px]
+            px-[15px]
             py-0
             flex
             flex-row
