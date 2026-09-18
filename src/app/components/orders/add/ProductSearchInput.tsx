@@ -102,6 +102,7 @@ export default function ProductSearchInput({ onSelect, register }: any) {
                   onClick={() => handleSelect(product)}
                   className="flex min-w-0 flex-1 items-center gap-3 text-left"
                 >
+                  
                   {product?.image?.[0]?.path || product?.image ? (
                     <img
                       src={product?.image?.[0]?.path || product?.image}
