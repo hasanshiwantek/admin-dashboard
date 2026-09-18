@@ -36,8 +36,9 @@ export default function SingleAddressForm() {
   );
   const selectedCustomer = watch("selectedCustomer");
   const selectedCountry = watch("shipping.country");
-  const billingCountry = watch("billingCountry");
-  const billingState = watch("billingState");
+  const shippingCountry = watch("shipping.country");
+  const shippingState = watch("shipping.state");
+  // const billingState = watch("billingState");
   const countryList = Country.getAllCountries().map((c) => ({
     name: c.name,
     code: c.isoCode,
@@ -124,19 +125,19 @@ export default function SingleAddressForm() {
   }, []);
 
   useEffect(() => {
-    if (!billingCountry) return;
-    setValue("shipping.country", String(billingCountry), {
+    if (!shippingCountry) return;
+    setValue("shipping.country", String(shippingCountry), {
       shouldDirty: true,
       shouldTouch: true,
     });
     // setValue("shipping.state", "");
     // setPendingState(billingState || "");
-  }, [billingCountry, setValue]);
+  }, [shippingCountry, setValue]);
   useEffect(() => {
-    if (!billingCountry || !billingState) return;
+    if (!shippingCountry || !shippingState) return;
 
-    const match = State.getStatesOfCountry(String(billingCountry)).find(
-      (s) => s.isoCode === billingState
+    const match = State.getStatesOfCountry(String(shippingCountry)).find(
+      (s) => s.isoCode === shippingState
     );
 
     if (!match) return;
@@ -145,7 +146,7 @@ export default function SingleAddressForm() {
       shouldDirty: true,
       shouldTouch: true,
     });
-  }, [billingCountry, billingState, setValue]);
+  }, [shippingCountry, shippingState, setValue]);
   // setValue("shipping.state", billingState || "");
   // ⬇️ Manually override shipping fields from selectedCustomer
   const handleUseThisAddress = () => {
