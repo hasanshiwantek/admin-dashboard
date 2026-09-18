@@ -176,12 +176,12 @@ const AddCouponCode = () => {
                 >
                   General
                 </TabsTrigger>
-                <TabsTrigger
+                {/* <TabsTrigger
                   value="advanced"
                   className="rounded-none border-b-2 border-transparent data-[state=active]:border-b-blue-600 data-[state=active]:bg-transparent data-[state=active]:shadow-none px-6 py-3"
                 >
                   Advanced
-                </TabsTrigger>
+                </TabsTrigger> */}
               </TabsList>
 
               {/* General Tab */}
@@ -267,7 +267,7 @@ const AddCouponCode = () => {
                           <Info className="w-4 h-4 text-gray-400" />
                         </Label>
                       </div>
-                      <div className="flex items-center space-x-2 mb-2">
+                      {/* <div className="flex items-center space-x-2 mb-2">
                         <RadioGroupItem
                           value="per_item_discount"
                           id="per_item_discount"
@@ -314,7 +314,7 @@ const AddCouponCode = () => {
                         >
                           Free shipping
                         </Label>
-                      </div>
+                      </div> */}
                     </RadioGroup>
                   </div>
 
