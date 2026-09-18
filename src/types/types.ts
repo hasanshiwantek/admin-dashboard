@@ -58,13 +58,13 @@ export interface OrderItem {
   createdAt: string;
   items: OrderProduct[];
   key: string;
-   billingInformation?: BillingInformation; 
+  billingInformation?: BillingInformation;
 }
 
 export interface OrderListResponse {
   data: OrderItem[];
   message: string;
-  status:boolean;
+  status: boolean;
   pagination: {
     total: number;
     count: number;
@@ -72,12 +72,11 @@ export interface OrderListResponse {
     currentPage: number;
     totalPages: number;
   };
-    key: string;
+  key: string;
 }
 
-export interface MappingField  {
+export interface MappingField {
   label: string;
   type: "dropdown" | "radio-dropdown";
   options?: string[]; // For radio
 };
-
