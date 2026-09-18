@@ -12,7 +12,8 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
   const dispatch = useAppDispatch();
   const { handleSubmit, getValues } = useFormContext();
   const [ipAddress, setIpAddress] = useState("");
-  const { appliedCoupon, loading } = useAppSelector(
+  const [loading, setLoading] = useState(false)
+  const { appliedCoupon, } = useAppSelector(
     (state: any) => state.order,
   );
   const router = useRouter();
@@ -268,8 +269,9 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
         };
       }
     })();
-
+    setLoading(true)
     try {
+
       let resultAction: any;
 
       if (isEditMode && orderId) {
@@ -325,7 +327,11 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
           await dispatch(addCustomerAddress({ data: billingInformation }));
         }
         setTimeout(() => {
-          window.location.href = "/manage/orders";
+          if (isDraft) {
+            window.location.href = "/manage/orders/draft";
+          } else {
+            window.location.href = "/manage/orders";
+          }
         }, 2000);
       } else {
         toast.error(resultAction.payload || "Order failed")
@@ -333,6 +339,8 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
       }
     } catch (error) {
       toast.error("Unexpected error. Please try again.")
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -366,9 +374,11 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
         </button>
 
         <div className="flex gap-4">
-          <button type="submit" className="btn-primary">
-            {isEditMode ? "Update Order" : "Save"}
-          </button>
+          {isEditMode ? <button type="submit" className="btn-primary">
+            Update Order
+          </button> : <button disabled={loading} type="submit" className="btn-primary">
+            {loading ? "Save..." : "Save"}
+          </button>}
         </div>
       </div>
     </form>

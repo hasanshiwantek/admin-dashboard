@@ -42,9 +42,6 @@ export default function FulfillmentOptions() {
   useEffect(() => {
     const values = getValues();
 
-    // console.log("values", values);
-
-
     // Only set if shipping is empty
     const shipping = values.shipping || {};
     const isshipping = shipping.firstName && shipping.lastName && shipping.phoneNumber && shipping.address1 && shipping.city && shipping.state && shipping.zip && shipping.country

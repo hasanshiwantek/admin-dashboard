@@ -102,16 +102,30 @@ export default function StepTwo({ step, setStep }: any) {
   };
 
 
-  const handleQtyChange = (id: number, quantity: number) => {
+  // const handleQtyChange = (id: number, quantity: number) => {
+  //   setSelectedProducts((prev) =>
+  //     prev.map((p) => {
+  //       if (p.id !== id) return p;
+
+  //       const minQty = Number(p.minPurchaseQuantity) > 0 ? Number(p.minPurchaseQuantity) : 1;
+  //       const maxQty = Number(p.maxPurchaseQuantity) > 0 ? Number(p.maxPurchaseQuantity) : Infinity;
+  //       const nextQty = Math.min(Math.max(Number(quantity) || minQty, minQty), maxQty);
+
+  //       return { ...p, quantity: nextQty };
+  //     })
+  //   );
+  // };
+
+  const handleQtyChange = (id: number, quantity: number | string) => {
     setSelectedProducts((prev) =>
       prev.map((p) => {
         if (p.id !== id) return p;
 
-        const minQty = Number(p.minPurchaseQuantity) > 0 ? Number(p.minPurchaseQuantity) : 1;
-        const maxQty = Number(p.maxPurchaseQuantity) > 0 ? Number(p.maxPurchaseQuantity) : Infinity;
-        const nextQty = Math.min(Math.max(Number(quantity) || minQty, minQty), maxQty);
+        if (quantity === "" || quantity === null || Number.isNaN(Number(quantity))) {
+          return { ...p, quantity: "" };
+        }
 
-        return { ...p, quantity: nextQty };
+        return { ...p, quantity: Number(quantity) };
       })
     );
   };

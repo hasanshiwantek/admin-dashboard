@@ -87,13 +87,19 @@ export default function OrderReview({ step, setStep }: any) {
   const couponDiscount = Number(
     appliedCoupon?.discountAmount || 0
   );
-  const totalDiscount = couponDiscount + manualDiscount;
 
-  const productsSubtotal = selectedProducts?.reduce(
-    (sum: number, p: any) =>
-      sum + Number(p?.price || 0) * Number(p?.quantity || 1),
-    0
-  );
+  // const productsSubtotal = selectedProducts?.reduce(
+  //   (sum: number, p: any) =>
+  //     sum + Number(p?.price || 0) * Number(p?.quantity || 1),
+  //   0
+  // );
+
+  const productsSubtotal = selectedProducts.reduce((sum: number, p: any) => {
+    const qty = Number(p.quantity || 1);
+    const unit = Number(p.price ?? 0);
+    return sum + unit * qty;
+  }, 0);
+  const totalDiscount = couponDiscount + manualDiscount;
   // const total = subtotal + shippingCost;
   const grandTotal = Math.max(
     subtotal - couponDiscount - manualDiscount + shippingCost,
@@ -495,17 +501,26 @@ export default function OrderReview({ step, setStep }: any) {
                     })} */}
                     {selectedProducts.map((p: any, idx: number) => {
                       const quantity = Number(p.quantity || 1);
-                      const price = Number(p.price || 0);
+                      const actualPrice = Number(p.price ?? 0);
+                      const price = Number(p.price);
+
                       const originalTotal = price * quantity;
-                      const share =
-                        productsSubtotal > 0 ? originalTotal / productsSubtotal : 0;
+                      const share = productsSubtotal > 0 ? originalTotal / productsSubtotal : 0;
                       const lineDiscount = totalDiscount * share;
+
                       const discountedTotal = Math.max(originalTotal - lineDiscount, 0);
                       const discountedPrice = quantity > 0 ? discountedTotal / quantity : 0;
-                      const hasDiscount = lineDiscount > 0.009;
-                      const imagePath = p.image?.[1]?.path || p.image?.[0]?.path;
+
+                      const hasDiscount =
+                        lineDiscount > 0.009 || Math.abs(actualPrice - discountedPrice) > 0.009;
+
+                      const imagePath =
+                        p.image?.find((img: any) => img.isPrimary === 1)?.path ||
+                        p.image?.[0]?.path ||
+                        p.image?.[0]?.url;
+
                       return (
-                        <TableRow key={idx}>
+                        <TableRow key={p.id ?? idx}>
                           <TableCell className="align-top">
                             {imagePath ? (
                               <Image
@@ -517,29 +532,33 @@ export default function OrderReview({ step, setStep }: any) {
                               />
                             ) : (
                               <div className="w-[70px] h-[70px] border rounded-md bg-gray-100 flex items-center justify-center text-[10px] text-gray-400 text-center px-1">
-                                Image
+                                Image Coming Soon
                               </div>
                             )}
                           </TableCell>
+
                           <TableCell className="align-top">
                             <div className="font-medium">{p.name}</div>
                             <div className="text-base text-gray-500">{p.sku}</div>
                           </TableCell>
+
                           <TableCell className="text-center align-top">{quantity}</TableCell>
+
                           <TableCell className="text-center align-top">
                             {hasDiscount && (
                               <div className="text-gray-400 line-through">
-                                ${price.toFixed(2)}
+                                ${actualPrice.toFixed(2)}
                               </div>
                             )}
                             <div className={hasDiscount ? "font-medium" : ""}>
                               ${discountedPrice.toFixed(2)}
                             </div>
                           </TableCell>
+
                           <TableCell className="text-center align-top">
                             {hasDiscount && (
                               <div className="text-gray-400 line-through">
-                                ${originalTotal.toFixed(2)}
+                                ${(actualPrice * quantity).toFixed(2)}
                               </div>
                             )}
                             <div className={hasDiscount ? "font-medium" : ""}>
