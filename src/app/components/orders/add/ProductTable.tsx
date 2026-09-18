@@ -58,9 +58,9 @@ export default function ProductTable({
                     <Image
                       src={product.image?.[1]?.path || product.image?.[0]?.path}
                       alt={product.name}
-                      width={60}
-                      height={60}
-                      className="rounded !border object-contain !border-gray-300 p-2 shrink-0 w-28 h-24"
+                      width={192}
+                      height={192}
+                      className="rounded !border object-contain !border-gray-300 p-2 shrink-0 w-60 h-48"
                     />
                   )}
                 </TableCell>

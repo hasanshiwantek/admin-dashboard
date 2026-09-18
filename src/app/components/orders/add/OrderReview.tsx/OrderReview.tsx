@@ -511,9 +511,9 @@ export default function OrderReview({ step, setStep }: any) {
                               <Image
                                 src={imagePath}
                                 alt={p.name}
-                                width={70}
-                                height={70}
-                                className="border rounded-md object-contain"
+                                width={100}
+                                height={100}
+                                className="border rounded-md object-contain w-[100px] h-[100px]"
                               />
                             ) : (
                               <div className="w-[70px] h-[70px] border rounded-md bg-gray-100 flex items-center justify-center text-[10px] text-gray-400 text-center px-1">
@@ -588,12 +588,12 @@ export default function OrderReview({ step, setStep }: any) {
             {/* Payment */}
             <h1 className="!text-4xl !font-bold">Payment</h1>
 
-            <div className=" border p-5 rounded-md bg-white">
+            <div className=" border p-5 rounded-md bg-white !text-[16px]">
               <Select
                 value={paymentMethod}
                 onValueChange={(val) => setValue("paymentMethod", val)}
               >
-                <SelectTrigger>
+                <SelectTrigger  className="h-11 w-full px-4 text-base">
                   <SelectValue placeholder="Select..." />
                 </SelectTrigger>
                 <SelectContent>
@@ -610,10 +610,10 @@ export default function OrderReview({ step, setStep }: any) {
 
             {/* Summary */}
             <h1 className="!text-4xl !font-bold">Summary</h1>
-            <div className=" border p-5 rounded-md bg-white space-y-6 text-lg">
+            <div className=" border p-5 rounded-md bg-white space-y-6 !text-[15px]">
               <div className="flex justify-between border-b pb-1">
-                <span>Subtotal</span>
-                <span>${subtotal.toFixed(2)}</span>
+                <span className="!text-[15px]">Subtotal</span>
+                <span className="!text-[15px]">${subtotal.toFixed(2)}</span>
               </div>
 
               {billing?.shippingMethod?.total_charge ? (
@@ -639,16 +639,16 @@ export default function OrderReview({ step, setStep }: any) {
                   <span>-${couponDiscount.toFixed(2)}</span>
                 </div>
               )}
-              {manualDiscount > 0 && (
+              {manualDiscount > 0 && ( 
                 <div className="flex justify-between">
                   <span>Discount</span>
                   <span>-${manualDiscount.toFixed(2)}</span>
                 </div>
               )}
 
-              <div className="flex justify-between font-bold">
-                <span>Grand total</span>
-                <span>${grandTotal.toFixed(2)}</span>
+              <div className="flex justify-between font-bold !text-[15px]">
+                <span className="!text-[15px]">Grand total</span>
+                <span className="!text-[15px]">${grandTotal.toFixed(2)}</span>
               </div>
 
 
