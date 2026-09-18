@@ -9,7 +9,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import { ChevronDown, ClipboardList, NotepadText } from "lucide-react";
+import { ChevronDown, ClipboardList,  Clock9,  NotepadText } from "lucide-react";
+
 import {
   Select,
   SelectTrigger,
@@ -1476,7 +1477,7 @@ const AllOrders = () => {
                               className="text-gray-500  flex gap-1 "
                               title="View Order Timeline"
                             >
-                              <ClipboardList
+                              <Clock9
                                 onClick={() =>
                                   router.push(
                                     `/manage/orders/order-timeline/${order?.id}`,

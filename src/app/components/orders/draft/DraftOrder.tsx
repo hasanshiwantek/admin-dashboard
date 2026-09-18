@@ -119,8 +119,8 @@ const DraftOrder = () => {
       {/* Table Section */}
       <div className="rounded-md border bg-white shadow-sm">
         <Table>
-          <TableHeader className="h-18">
-            <TableRow>
+          <TableHeader className="h-23">
+            <TableRow className="bg-[#FBFBFC]">
               <TableHead className="2xl:!text-[1.6rem]">Date</TableHead>
               <TableHead className="2xl:!text-[1.6rem]">Customer</TableHead>
               <TableHead className="2xl:!text-[1.6rem]">URL</TableHead>
@@ -145,7 +145,7 @@ const DraftOrder = () => {
                 const companyInfo =
                   row.companyName || row.billingInformation?.companyName;
                 const displayName = companyInfo
-                  ? `${customerName} (${companyInfo})`
+                  ? `${customerName} `
                   : customerName;
 
                 // ✅ Calculate total
@@ -153,8 +153,8 @@ const DraftOrder = () => {
                 const totalAmount = calculateTotal(row.products, shippingCost);
 
                 return (
-                  <TableRow key={row.customerId || index}>
-                    <TableCell className="2xl:!text-2xl">
+                  <TableRow key={row.customerId || index} className="h-23">
+                    <TableCell className="pl-4 2xl:!text-2xl">
                       {row.createdAt
                         ? new Date(row.createdAt).toLocaleDateString("en-US", {
                           weekday: "short",
@@ -166,7 +166,7 @@ const DraftOrder = () => {
                     </TableCell>
                     <TableCell className="2xl:!text-2xl">
                       <div className="flex flex-col">
-                        <span>{displayName}</span>
+                        <span className="!text-[15px] text-[#000000] !font-normal">{displayName}</span>
                         {row.email && (
                           <span className="text-xs text-gray-500">
                             {row.email}
@@ -178,7 +178,7 @@ const DraftOrder = () => {
                       <div className="flex items-center gap-2">
                         <Input
                           value={row.isDraftUrl}
-                          className="h-12 w-[220px]"
+                          className="h-15 w-[250px] bg-[#F4F5F5] !font-normal"
                         />
                         <Button
                           variant="outline"
@@ -198,7 +198,7 @@ const DraftOrder = () => {
                             ? row.channel.charAt(0).toUpperCase()
                             : "D"}
                         </div>
-                        <span className="text-slate-700 2xl:!text-2xl">
+                        <span className="!text-[#000000] 2xl:!text-2xl">
                           {row.channel || "Draft"}
                         </span>
                       </div>
