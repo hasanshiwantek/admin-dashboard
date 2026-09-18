@@ -2,40 +2,6 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "@/lib/axiosInstance";
 import { headers } from "next/headers";
 
-// 1. Thunk with slight improvement
-// export const fetchAllProducts = createAsyncThunk(
-//   "product/fetchAllProducts",
-//   async (
-//     { page, pageSize, search,
-//       isFeatured,
-//       isVisible,
-//       freeShipping,
-//       outOfStock,
-//       inventoryLow,
-//       sortBy, }: {
-//         page: number; pageSize: number | string, search?: string;
-//         isFeatured?: boolean;
-//         isVisible?: boolean;
-//         freeShipping?: boolean;
-//         outOfStock?: boolean;
-//         inventoryLow?: boolean;
-//         sortBy?: string;
-//       },
-//     thunkAPI
-//   ) => {
-//     try {
-//       const res = await axiosInstance.get(
-//         `dashboard/products/products-list?page=${page}&pageSize=${pageSize}`
-//       );
-//       return res.data;
-//     } catch (err: any) {
-//       console.error("❌ Error in fetchAllProducts:", err);
-//       return thunkAPI.rejectWithValue(
-//         err.response?.data?.message || "Failed to fetch products"
-//       );
-//     }
-//   }
-// );
 export const fetchAllProducts = createAsyncThunk(
   "product/fetchAllProducts",
   async (
@@ -88,7 +54,57 @@ export const fetchAllProducts = createAsyncThunk(
     }
   }
 );
+export const fetchAllPurchasableProducts = createAsyncThunk(
+  "product/fetchAllPurchasableProducts",
+  async (
+    {
+      page,
+      pageSize,
+      isName,
+      isFeatured,
+      isVisible,
+      freeShipping,
+      outOfStock,
+      inventoryLow,
+      lastImported,
+    }: {
+      page: number;
+      pageSize: number | string;
+      isName?: string;
+      isFeatured?: boolean;
+      isVisible?: boolean;
+      freeShipping?: boolean;
+      outOfStock?: boolean;
+      inventoryLow?: boolean;
+      lastImported?: boolean;
+    },
+    thunkAPI
+  ) => {
+    try {
+      const params = new URLSearchParams({
+        page: String(page),
+        pageSize: String(pageSize),
+      });
 
+      if (isName?.trim()) params.set("isName", isName.trim());
+      if (isFeatured !== undefined) params.set("isFeatured", String(isFeatured));
+      if (isVisible !== undefined) params.set("isVisible", String(isVisible));
+      if (freeShipping !== undefined) params.set("freeShipping", String(freeShipping));
+      if (outOfStock !== undefined) params.set("outOfStock", String(outOfStock));
+      if (inventoryLow !== undefined) params.set("inventoryLow", String(inventoryLow));
+      if (lastImported !== undefined) params.set("lastImported", String(lastImported));
+
+      const res = await axiosInstance.get(
+        `dashboard/products/purchasable-products?${params.toString()}`
+      );
+      return res.data;
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to fetch products"
+      );
+    }
+  }
+);
 export const fetchFilterProducts = createAsyncThunk(
   "product/fetchFilterProducts",
   async (
