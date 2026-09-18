@@ -68,12 +68,33 @@ export default function OrderReview({ step, setStep }: any) {
     (sum: number, p: any) => sum + parseFloat(p.price || 0) * (p.quantity || 1),
     0
   );
+  // const handleApplyCoupon = async () => {
+  //   if (!couponCode.trim()) {
+  //     return;
+  //   }
+  //   await dispatch(applyCoupon(couponCode.trim()));
+  //   setCouponCode("")
+  // };
+
   const handleApplyCoupon = async () => {
-    if (!couponCode.trim()) {
-      return;
-    }
-    await dispatch(applyCoupon(couponCode.trim()));
-    setCouponCode("")
+    const code = couponCode.trim();
+    if (!code) return;
+
+    const productIds = (selectedProducts || [])
+      .map((p: any) => p.id)
+      .filter(Boolean);
+    const customerEmail = billing.email || billing?.selectedCustomer?.email
+
+    console.log(billing.email, billing?.selectedCustomer?.email);
+
+    await dispatch(
+      applyCoupon({
+        couponCode: code,
+        productIds,
+        email: customerEmail,
+      })
+    );
+    setCouponCode("");
   };
   const handleRemoveCoupon = () => {
     dispatch(resetCoupon());
