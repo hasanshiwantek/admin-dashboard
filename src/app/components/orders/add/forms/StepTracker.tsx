@@ -14,7 +14,7 @@ const steps = [
 
 const StepTracker: React.FC<StepTrackerProps> = ({ currentStep }) => {
   return (
-    <div className="flex items-center justify-between px-10 py-6 bg-[#F8F9FB]">
+    <div className="flex items-center justify-between px-10 py-6 bg-[#F8F9FB] w-[900px]">
       {steps.map((item, index) => (
         <div className="flex items-center gap-2 w-full" key={item.step}>
           {/* Circle */}

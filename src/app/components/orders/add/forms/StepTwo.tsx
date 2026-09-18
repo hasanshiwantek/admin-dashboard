@@ -153,8 +153,8 @@ export default function StepTwo({ step, setStep }: any) {
       <div className="space-y-6 p-10 pb-26">
         <h1 className="!text-4xl !font-bold">Add Products</h1>
 
-        <div className="bg-white p-5 flex justify-between gap-10 items-center">
-          <div className="flex items-center gap-2 ">
+        <div className="bg-white p-5 flex  gap-10 items-center justify-center">
+          <div className="flex items-center gap-6 ">
             <Label>Search</Label>
             <ProductSearchInput onSelect={handleAddProduct} />
           </div>
