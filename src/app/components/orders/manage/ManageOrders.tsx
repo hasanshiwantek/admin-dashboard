@@ -61,7 +61,7 @@ const ManageOrders = () => {
       );
     }) || [];
 
-  console.log(filteredReturns, "filter request");
+
   const toggleRow = (id: number) => {
     setExpandedRow(expandedRow === id ? null : id);
   };
@@ -83,6 +83,7 @@ const ManageOrders = () => {
       setIsAllSelected(true);
     }
   };
+  
 
   // Update select all state when filtered returns change
   useEffect(() => {
@@ -389,6 +390,7 @@ const ManageOrders = () => {
                             <div className="flex items-center gap-2 w-3/4">
                               <label className="!!text-[12px] text-[var(--color-text-secondary)] w-1/3">
                                 Return Reason
+
                               </label>
                               <input
                                 type="text"
