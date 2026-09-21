@@ -471,6 +471,7 @@ const ManageOrders = () => {
                             </h2>
 
                             <div className="w-[80%] flex flex-col space-y-2 items-start">
+
                               <textarea
                                 className="w-full border border-gray-300 rounded px-3 py-2 !text-[12px] text-gray-700 bg-white resize-none"
                                 rows={8}
