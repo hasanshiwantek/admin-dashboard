@@ -71,8 +71,6 @@ export default function CategoryDropdown({
           const value = e.target.value;
           setSearch(value);
           setShowList(value.length > 0);
-          console.log("Search Term: ",value);
-          
         }}
         onFocus={() => {
           if (search.length > 0) {

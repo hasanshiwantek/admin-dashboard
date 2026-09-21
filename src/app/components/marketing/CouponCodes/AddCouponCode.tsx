@@ -243,6 +243,7 @@ const AddCouponCode = () => {
                     </div>
                   </div>
 
+
                   {/* Discount Type */}
                   <div className="grid grid-cols-[200px_1fr] items-start gap-4 mb-6">
                     <Label className="text-right text-gray-700 pt-2">

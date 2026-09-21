@@ -35,12 +35,10 @@ const ManageOrders = () => {
   const [staffNotes, setStaffNotes] = useState<{ [key: number]: string }>({});
 
   const { returnOrders, returnLoader } = useAppSelector(
-    (state: any) => state.order
+    (state: any) => state.order,
   );
 
-  const filterTabs = ["All returns",
-
-  ];
+  const filterTabs = ["All returns"];
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -63,6 +61,7 @@ const ManageOrders = () => {
       );
     }) || [];
 
+  console.log(filteredReturns, "filter request");
   const toggleRow = (id: number) => {
     setExpandedRow(expandedRow === id ? null : id);
   };
@@ -70,7 +69,7 @@ const ManageOrders = () => {
   // Handle individual checkbox
   const handleRowSelect = (id: number) => {
     setSelectedRows((prev) =>
-      prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id],
     );
   };
 
@@ -87,7 +86,10 @@ const ManageOrders = () => {
 
   // Update select all state when filtered returns change
   useEffect(() => {
-    if (selectedRows.length === filteredReturns.length && filteredReturns.length > 0) {
+    if (
+      selectedRows.length === filteredReturns.length &&
+      filteredReturns.length > 0
+    ) {
       setIsAllSelected(true);
     } else {
       setIsAllSelected(false);
@@ -107,7 +109,7 @@ const ManageOrders = () => {
       return;
     }
     const confirmDelete = window.confirm(
-      `Are you sure you want to delete ${selectedRows.length} return(s)?`
+      `Are you sure you want to delete ${selectedRows.length} return(s)?`,
     );
     if (confirmDelete) {
       // TODO: Dispatch action to delete selected returns
@@ -139,7 +141,10 @@ const ManageOrders = () => {
   const getProductNames = (products: any[]) => {
     if (!products || products.length === 0) return "No products";
     return products
-      .map((product, index) => `${products.length > 1 ? `${index + 1} x ` : ""}${product.name}`)
+      .map(
+        (product, index) =>
+          `${products.length > 1 ? `${index + 1} x ` : ""}${product.name}`,
+      )
       .join(", ");
   };
 
@@ -176,10 +181,11 @@ const ManageOrders = () => {
             <button
               key={tab}
               onClick={() => setSelectedTab(tab)}
-              className={`!text-2xl px-5 py-2 -mb-1 transition ${selectedTab === tab
-                ? "border-b-4 border-blue-600"
-                : "text-gray-600"
-                }`}
+              className={`!text-2xl px-5 py-2 -mb-1 transition ${
+                selectedTab === tab
+                  ? "border-b-4 border-blue-600"
+                  : "text-gray-600"
+              }`}
             >
               {tab}
             </button>
@@ -289,13 +295,56 @@ const ManageOrders = () => {
                       RET-{ret.id.toString().padStart(3, "0")}
                     </TableCell>
                     <TableCell className="text-[#6F8DFD] 2xl:!text-2xl">
-                      {getShortProductName(ret.product)}
+                      <span
+                        onClick={() => {
+                          const availableStores = JSON.parse(
+                            localStorage.getItem("availableStores") || "[]",
+                          );
+
+                          const selectedStoreId = Number(
+                            localStorage.getItem("storeId"),
+                          );
+
+                          const selectedStore = availableStores.find(
+                            (s: any) => s.id === selectedStoreId,
+                          );
+
+                          const productUrl = ret?.product?.[0]?.productUrl;
+
+                          if (selectedStore?.baseUrl && productUrl) {
+                            window.open(
+                              `${selectedStore.baseUrl}${
+                                productUrl.startsWith("/")
+                                  ? productUrl.slice(1)
+                                  : productUrl
+                              }`,
+                              "_blank",
+                            );
+                          } else {
+                            alert("Store URL or Product URL not found");
+                          }
+                        }}
+                        //  onClick={() => router.push(`/manage/products/reviews/edit/${review.id}`)}
+                        className="!text-[#6F8DFD] !font-normal hover:underline cursor-pointer !text-[15px]  block max-w-[500px] whitespace-normal break-words"
+                      >
+                        {getShortProductName(ret.product)}
+                      </span>
                     </TableCell>
                     <TableCell className="text-[#6F8DFD] 2xl:!text-2xl">
-                      {ret.orderNumber || "N/A"}
+                      <Link
+                        href={`/manage/orders?orderIdFrom=${ret?.orderId}&orderIdTo=${ret?.orderId}&expand=${ret?.orderId}`}
+                        className="!text-[15px]"
+                      >
+                        Order# {ret.orderNumber || "N/A"}
+                      </Link>
                     </TableCell>
                     <TableCell className="text-[#6F8DFD] 2xl:!text-2xl">
-                      {ret.customerName || "Guest"}
+                      <Link
+                        href={"/manage/orders/customer/" + ret?.customerId}
+                        className="!text-[15px]"
+                      >
+                        {ret.customerName || "Guest"}
+                      </Link>
                     </TableCell>
                     <TableCell className="2xl:!text-2xl">
                       {formatDate(ret.createdAt)}
@@ -329,49 +378,47 @@ const ManageOrders = () => {
                   {/* Expanded Row Below */}
                   {expandedRow === ret.id && (
                     <TableRow>
-                      <TableCell colSpan={9} className="bg-gray-50 p-6">
+                      <TableCell colSpan={9} className="bg-[#FBFBFC] p-6">
                         <div className="flex justify-between gap-10">
                           {/* Left Column - Return Details */}
                           <div className="flex-1 space-y-4">
-                            <h2 className="!text-3xl font-semibold text-black mb-4">
+                            <h2 className="!text-[24px] font-semibold text-[#34313F] mb-4">
                               Return Details
                             </h2>
 
-                            <div className="flex items-center gap-2 w-2/4">
-                              <label className="!text-xl text-black w-1/3">
+                            <div className="flex items-center gap-2 w-3/4">
+                              <label className="!!text-[12px] text-[#5D5B66]  w-1/3">
                                 Return Reason
                               </label>
                               <input
                                 type="text"
                                 value={ret.reason || "N/A"}
-                                className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm text-gray-700 bg-white"
+                                className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm text-[#84868C] bg-[#F6F7F9] !h-16"
                                 disabled
                               />
                             </div>
 
-                            <div className="flex items-center gap-2 w-2/4">
-                              <label className="!text-xl text-black w-1/3">
+                            <div className="flex items-center gap-2 w-3/4">
+                              <label className="!!text-[12px] text-[#5D5B66]  w-1/3">
                                 Return Action
                               </label>
                               <input
                                 type="text"
                                 value={ret.returnAction || "N/A"}
-                                className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm text-gray-700 bg-white"
+                                className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm text-[#84868C] bg-[#F6F7F9] !h-16"
                                 disabled
                               />
                             </div>
 
-                            <div className="flex flex-col items-start gap-2 w-2/4">
-                              <label className="!text-xl text-black w-1/4">
+                            <div className="flex items-center gap-16 w-3/4">
+                              <label className="!text-[12px] text-[#5D5B66] w-1/4">
                                 Customer Comments
                               </label>
                               <textarea
-                                className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm text-gray-700 bg-white resize-none"
+                                className="flex-1 border border-gray-300 rounded px-3 py-2 text-[12px]  text-[#84868C] bg-[#F6F7F9] resize-none !h-[16]"
                                 rows={6}
                                 disabled
-                                value={
-                                  ret.comments || "No comments provided"
-                                }
+                                value={ret.comments || "No comments provided"}
                               />
                             </div>
 
@@ -381,46 +428,51 @@ const ManageOrders = () => {
                                 Returned Products
                               </h3>
                               <div className="space-y-2">
-                                {ret.product?.map((product: any, index: number) => (
-                                  <div
-                                    key={product.id}
-                                    className="flex items-start gap-3 p-3 border border-gray-200 rounded"
-                                  >
-                                    {product?.image && product?.image[0] && (
-                                      <Image
-                                        src={product?.image[0].path || "/placeholder.png"}
-                                        alt={product?.name}
-                                        width={60}
-                                        height={60}
-                                        className="rounded object-cover"
-                                      />
-                                    )}
-                                    <div className="flex-1">
-                                      <p className="font-medium text-base ">
-                                        {product.name.slice(0, 60)}...
-                                      </p>
-                                      <p className="text-sm text-gray-600">
-                                        SKU: {product.sku}
-                                      </p>
-                                      <p className="text-sm text-gray-600">
-                                        Price: ${product.price}
-                                      </p>
+                                {ret.product?.map(
+                                  (product: any, index: number) => (
+                                    <div
+                                      key={product.id}
+                                      className="flex items-start gap-3 p-3 border border-gray-200 rounded"
+                                    >
+                                      {product?.image && product?.image[0] && (
+                                        <Image
+                                          src={
+                                            product?.image[0].path ||
+                                            "/placeholder.png"
+                                          }
+                                          alt={product?.name}
+                                          width={60}
+                                          height={60}
+                                          className="rounded object-cover"
+                                        />
+                                      )}
+                                      <div className="flex-1">
+                                        <p className="font-medium text-base ">
+                                          {product.name.slice(0, 60)}...
+                                        </p>
+                                        <p className="text-sm text-gray-600">
+                                          SKU: {product.sku}
+                                        </p>
+                                        <p className="text-sm text-gray-600">
+                                          Price: ${product.price}
+                                        </p>
+                                      </div>
                                     </div>
-                                  </div>
-                                ))}
+                                  ),
+                                )}
                               </div>
                             </div>
                           </div>
 
                           {/* Right Column - Staff Note */}
                           <div className="flex-1 space-y-4">
-                            <h2 className="!text-3xl font-semibold text-black mb-6">
+                            <h2 className="!text-[24px] font-semibold text-[#34313F] mb-6">
                               Staff Note
                             </h2>
 
                             <div className="w-[80%] flex flex-col space-y-2 items-start">
                               <textarea
-                                className="w-full border border-gray-300 rounded px-3 py-2 text-sm text-gray-700 bg-white resize-none"
+                                className="w-full border border-gray-300 rounded px-3 py-2 !text-[12px] text-gray-700 bg-white resize-none"
                                 rows={8}
                                 placeholder="Add staff notes here..."
                                 value={staffNotes[ret.id] || ""}
