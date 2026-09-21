@@ -294,7 +294,7 @@ const ManageOrders = () => {
                     <TableCell className="2xl:!text-2xl">
                       RET-{ret.id.toString().padStart(3, "0")}
                     </TableCell>
-                    <TableCell className="text-[#6F8DFD] 2xl:!text-2xl">
+                    <TableCell className="text-[var(--color-text-link)] 2xl:!text-2xl">
                       <span
                         onClick={() => {
                           const availableStores = JSON.parse(
@@ -325,12 +325,12 @@ const ManageOrders = () => {
                           }
                         }}
                         //  onClick={() => router.push(`/manage/products/reviews/edit/${review.id}`)}
-                        className="!text-[#6F8DFD] !font-normal hover:underline cursor-pointer !text-[15px]  block max-w-[500px] whitespace-normal break-words"
+                        className="!text-[var(--color-text-link)] !font-normal hover:underline cursor-pointer !text-[15px]  block max-w-[500px] whitespace-normal break-words"
                       >
                         {getShortProductName(ret.product)}
                       </span>
                     </TableCell>
-                    <TableCell className="text-[#6F8DFD] 2xl:!text-2xl">
+                    <TableCell className="text-[var(--color-text-link)] 2xl:!text-2xl">
                       <Link
                         href={`/manage/orders?orderIdFrom=${ret?.orderId}&orderIdTo=${ret?.orderId}&expand=${ret?.orderId}`}
                         className="!text-[15px]"
@@ -338,7 +338,7 @@ const ManageOrders = () => {
                         Order# {ret.orderNumber || "N/A"}
                       </Link>
                     </TableCell>
-                    <TableCell className="text-[#6F8DFD] 2xl:!text-2xl">
+                    <TableCell className="text-[var(--color-text-link)] 2xl:!text-2xl">
                       <Link
                         href={"/manage/orders/customer/" + ret?.customerId}
                         className="!text-[15px]"
@@ -466,7 +466,7 @@ const ManageOrders = () => {
 
                           {/* Right Column - Staff Note */}
                           <div className="flex-1 space-y-4">
-                            <h2 className="!text-[24px] font-semibold text-[#34313F] mb-6">
+                            <h2 className="!text-[24px] font-semibold text-[var(--color-text-heading)] mb-6">
                               Staff Note
                             </h2>
 
