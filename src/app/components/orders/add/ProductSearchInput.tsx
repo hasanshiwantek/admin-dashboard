@@ -1,7 +1,7 @@
 "use client";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect, useRef } from "react";
-import { fetchAllProducts } from "@/redux/slices/productSlice";
+import { fetchAllProducts, fetchAllPurchasableProducts } from "@/redux/slices/productSlice";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 
 export default function ProductSearchInput({ onSelect, register }: any) {
@@ -26,17 +26,21 @@ export default function ProductSearchInput({ onSelect, register }: any) {
 
       try {
         const resultAction = await dispatch(
-          fetchAllProducts({
+          fetchAllPurchasableProducts({
             page: 1,
             pageSize: 20,
-            search: search.trim(),
-          }),
+            isName: search.trim(),
+          })
         );
 
-        if (fetchAllProducts.fulfilled.match(resultAction)) {
+        if (fetchAllPurchasableProducts.fulfilled.match(resultAction)) {
           const payload = resultAction.payload as any;
           const list =
-            payload?.data ?? payload?.products ?? payload?.products?.data ?? [];
+            payload?.data?.data ??
+            payload?.data ??
+            payload?.products?.data ??
+            payload?.products ??
+            [];
           setFiltered(Array.isArray(list) ? list.slice(0, 10) : []);
         } else {
           setFiltered([]);
@@ -98,6 +102,7 @@ export default function ProductSearchInput({ onSelect, register }: any) {
                   onClick={() => handleSelect(product)}
                   className="flex min-w-0 flex-1 items-center gap-3 text-left"
                 >
+                  
                   {product?.image?.[0]?.path || product?.image ? (
                     <img
                       src={product?.image?.[0]?.path || product?.image}

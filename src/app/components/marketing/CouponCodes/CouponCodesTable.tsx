@@ -403,7 +403,7 @@ const CouponCodesTable = () => {
                     <TableCell className="text-gray-700">
                       {coupon?.discountType === "dollarAmountOrder"
                         ? `$${coupon?.discountAmount}`
-                        : `${coupon?.discountAmount}%`}
+                        : `$${coupon?.discountAmount}`} off the order total
                     </TableCell>
                     <TableCell className="text-gray-700">
                       {coupon?.expiration || "No expiration"}
