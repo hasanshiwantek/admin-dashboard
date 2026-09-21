@@ -180,11 +180,11 @@ const OrderSearch = () => {
                   { label: "Flat Rate", value: "flat_rate" },
                 ],
               },
-              {
-                id: "fulfillmentSource",
-                label: "Fulfillment source",
-                options: [{ label: "FBA", value: "fba" }],
-              },
+              // {
+              //   id: "fulfillmentSource",
+              //   label: "Fulfillment source",
+              //   options: [{ label: "FBA", value: "fba" }],
+              // },
             ].map(({ id, label, options }) => (
               <div key={id} className="flex items-center gap-4">
                 <Label htmlFor={id} className="w-[140px] text-right 2xl:!text-2xl">
@@ -242,7 +242,7 @@ const OrderSearch = () => {
             </div> */}
 
             {/* Pre-orders checkboxes */}
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
               <Label className="2xl:!text-2xl">Pre-orders</Label>
               <div className="flex items-center space-x-2">
                 <Checkbox
@@ -264,10 +264,10 @@ const OrderSearch = () => {
                   Include orders that contain pre-order products
                 </Label>
               </div>
-            </div>
+            </div> */}
 
             {/* Deleted orders */}
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
               <Label className="2xl:!text-2xl">Deleted orders</Label>
               <RadioGroup
                 defaultValue={formData.deletedOrder}
@@ -287,7 +287,7 @@ const OrderSearch = () => {
                   </div>
                 ))}
               </RadioGroup>
-            </div>
+            </div> */}
           </div>
 
           {/* SEARCH BY RANGE */}
@@ -371,7 +371,7 @@ const OrderSearch = () => {
                 </Select>
               </div>
 
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <Label className="2xl:!text-2xl">Date type</Label>
                 <RadioGroup
                   defaultValue={formData.dateType}
@@ -390,7 +390,7 @@ const OrderSearch = () => {
                     <Label className="2xl:!text-2xl" htmlFor="both">Order and delivery/event date</Label>
                   </div>
                 </RadioGroup>
-              </div>
+              </div> */}
             </div>
           </div>
 
@@ -404,16 +404,16 @@ const OrderSearch = () => {
                 </Label>
                 <Select onValueChange={(val) => handleChange("sortBy", val)}>
                   <SelectTrigger>
-                    <SelectValue placeholder="ID" />
+                    <SelectValue placeholder="" />
                   </SelectTrigger>
                   <SelectContent>
                     {[
-                      "id",
+                      // "id",
+                      "total",
                       "customer",
                       "date",
-                      "status",
-                      "messages",
-                      "total",
+                      // "status",
+                      // "messages",
                     ].map((opt) => (
                       <SelectItem key={opt} className="capitalize" value={opt}>
                         {opt}
