@@ -327,13 +327,19 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
           await dispatch(addCustomerAddress({ data: billingInformation }));
         }
 
+
         if (isDraft && appliedCoupon?.couponCode) {
-          dispatch(
-            saveCouponUsageDraft({
-              email: isNewCustomer ? values.email : values.selectedCustomer?.email,
-              is_draft: 1,
-            }),
-          );
+          const isDraftUrl = resultAction?.payload?.data[0]?.isDraftUrl || resultAction?.payload?.data?.isDraftUrl
+          const quoteToken = new URL(isDraftUrl).searchParams.get("quoteToken");
+
+          if (quoteToken) {
+            dispatch(
+              saveCouponUsageDraft({
+                email: isNewCustomer ? values.email : values.selectedCustomer?.email,
+                draft_token: quoteToken,
+              }),
+            );
+          }
         }
 
         setTimeout(() => {
