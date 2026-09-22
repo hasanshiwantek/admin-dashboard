@@ -17,8 +17,8 @@ import { fetchCustomerAddresses } from "@/redux/slices/customerSlice";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import { Country, State } from "country-state-city";
-import { toast } from "react-toastify";
 import { resetCoupon } from "@/redux/slices/orderSlice";
+import { errorMessage } from "@/utils/message";
 
 interface CustomerAddress {
   id: number;
@@ -127,16 +127,16 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
 
   const onSubmit = () => {
     if (orderType === "existing" && !selectedCustomer) {
-      toast.error("Please select a customer before proceeding.");
+      errorMessage("Please select a customer before proceeding.");
       return;
     }
 
     if (!billingCountry) {
-      toast.error("Please select a Country before proceeding.");
+      errorMessage("Please select a Country before proceeding.");
       return;
     }
     if (!billingState) {
-      toast.error("Please select a State before proceeding.");
+      errorMessage("Please select a State before proceeding.");
       return;
     }
     setStep(step + 1);
