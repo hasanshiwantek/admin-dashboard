@@ -45,6 +45,7 @@ import {
   shipmentByOrderId,
   updateOrderStatus,
 } from "@/redux/slices/orderSlice";
+import { errorMessage, successMessage } from "@/utils/message";
 import dayjs from "dayjs";
 import countries from "i18n-iso-countries";
 import enLocale from "i18n-iso-countries/langs/en.json";
@@ -72,7 +73,6 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Fragment, useEffect, useState } from "react";
 import { FaCircleMinus, FaCirclePlus } from "react-icons/fa6";
-import { toast } from "react-toastify";
 import * as XLSX from "xlsx";
 import Spinner from "../loader/Spinner";
 import ConfirmationModal from "./edit/CaptuedPaymentModal";
@@ -380,7 +380,7 @@ const AllOrders = () => {
           } else if (printPackingSlipPdf.rejected.match(resultAction)) {
             console.error("Failed to print invoice:", resultAction.error);
             // You can add toast notification here
-            toast.error(
+            errorMessage(
               (resultAction.payload as string) ||
                 resultAction.error?.message ||
                 "Failed to print packing slip",
@@ -525,7 +525,7 @@ const AllOrders = () => {
       .join("\n");
 
     navigator.clipboard.writeText(text);
-    toast.success("Address copied!");
+    successMessage("Address copied!");
   };
 
   // SEARCH ORDER LOGIC

@@ -22,6 +22,7 @@ import {
   loginAsCustomer,
   updateCustomer,
 } from "@/redux/slices/customerSlice";
+import { errorMessage } from "@/utils/message";
 import {
   DownloadIcon,
   PlusIcon,
@@ -33,7 +34,6 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Fragment, useEffect, useState } from "react";
 import { FaCircleMinus, FaCirclePlus } from "react-icons/fa6";
-import { toast } from "react-toastify";
 import * as XLSX from "xlsx";
 import Spinner from "../../loader/Spinner";
 import OrderActionsDropdown from "../../orders/OrderActionsDropdown";
@@ -88,7 +88,7 @@ const AllCustomers = () => {
         );
 
         if (!selectedStore?.baseUrl) {
-          toast.error("Store not found");
+          errorMessage("Store not found");
           return;
         }
         try {
@@ -101,7 +101,7 @@ const AllCustomers = () => {
             window.open(`${baseUrl}/?token=${token}`, "_blank");
           }
         } catch (err) {
-          toast.error("Failed to login as customer");
+          errorMessage("Failed to login as customer");
         }
       },
     },

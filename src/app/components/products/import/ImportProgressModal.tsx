@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import axiosInstance from "@/lib/axiosInstance";
-import { toast } from "react-toastify";
+import { errorMessage, successMessage } from "@/utils/message";
 
 interface ImportProgressModalProps {
   isOpen: boolean;
@@ -120,14 +120,14 @@ export const ImportProgressModal: React.FC<ImportProgressModalProps> = ({
           { progress_key: progressKey }
         );
 
-        toast.success(response.data.message || "Import canceled successfully");
+        successMessage(response.data.message || "Import canceled successfully");
 
         setProgress((prev) => ({ ...prev, status: "canceled" }));
         setIsCanceling(false);
         onClose();
       } catch (error) {
         console.error("Failed to cancel import:", error);
-        toast.error("Failed to cancel import. Try again.");
+        errorMessage("Failed to cancel import. Try again.");
         setIsCanceling(false);
       }
     }
@@ -183,9 +183,8 @@ export const ImportProgressModal: React.FC<ImportProgressModalProps> = ({
           </div>
           <div className="w-full bg-gray-200 rounded-full h-6 overflow-hidden shadow-inner">
             <div
-              className={`h-full transition-all duration-500 ease-out flex items-center justify-center ${
-                progress.status === "canceled" ? "bg-red-500" : "bg-green-500"
-              }`}
+              className={`h-full transition-all duration-500 ease-out flex items-center justify-center ${progress.status === "canceled" ? "bg-red-500" : "bg-green-500"
+                }`}
               style={{ width: `${percentage}%` }}
             >
               {percentage > 10 && (
@@ -254,11 +253,10 @@ export const ImportProgressModal: React.FC<ImportProgressModalProps> = ({
               <button
                 onClick={handleCancelImport}
                 disabled={isCanceling}
-                className={`px-4 py-2 rounded-lg font-medium text-white transition-colors text-lg  ${
-                  isCanceling
-                    ? "bg-red-400 cursor-not-allowed"
-                    : "bg-red-600 hover:bg-red-700"
-                }`}
+                className={`px-4 py-2 rounded-lg font-medium text-white transition-colors text-lg  ${isCanceling
+                  ? "bg-red-400 cursor-not-allowed"
+                  : "bg-red-600 hover:bg-red-700"
+                  }`}
               >
                 {isCanceling ? "Canceling..." : "Cancel Import"}
               </button>
