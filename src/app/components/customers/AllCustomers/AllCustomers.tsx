@@ -47,7 +47,7 @@ import Link from "next/link";
 import Spinner from "../../loader/Spinner";
 import { useRouter } from "next/navigation";
 import CustomerNotesModal from "../edit/CustomerNotesModal";
-import { toast } from "react-toastify";
+import { errorMessage } from "@/utils/message";
 
 const AllCustomers = () => {
   const dispatch = useAppDispatch();
@@ -98,7 +98,7 @@ const AllCustomers = () => {
         );
 
         if (!selectedStore?.baseUrl) {
-          toast.error("Store not found");
+          errorMessage("Store not found");
           return;
         }
         try {
@@ -111,7 +111,7 @@ const AllCustomers = () => {
             window.open(`${baseUrl}/?token=${token}`, "_blank");
           }
         } catch (err) {
-          toast.error("Failed to login as customer");
+          errorMessage("Failed to login as customer");
         }
       },
     },
@@ -168,7 +168,7 @@ const AllCustomers = () => {
   const toggleRow = (id: number) => {
     setExpandedRow((prev) => (prev === id ? null : id));
   };
-  const copyBilling = () => {};
+  const copyBilling = () => { };
 
   // CUSTOMER UPDATION LOGIC
   const updateCustomerGroupStatus = async (

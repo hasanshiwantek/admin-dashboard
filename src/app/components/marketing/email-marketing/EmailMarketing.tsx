@@ -24,8 +24,7 @@ import {
   exportSubscribers,
 } from "@/redux/slices/marketingSlice";
 import { useAppSelector, useAppDispatch } from "@/hooks/useReduxHooks";
-import { RootState } from "@/redux/store";
-import { toast } from "react-toastify";
+import { errorMessage, successMessage } from "@/utils/message";
 
 interface FormData {
   allowNewsletterSubscriptions: boolean;
@@ -79,13 +78,13 @@ const EmailMarketing = () => {
     try {
       const res = await dispatch(deleteAllSubscribers()).unwrap();
 
-      toast.success(res.message);
+      successMessage(res.message);
 
       setOpenDeleteModal(false);
 
       dispatch(getEmailMarketing()); // subscriber count refresh
     } catch (err: any) {
-      toast.error(err);
+      errorMessage(err);
     }
   };
   const handleExportSubscribers = async () => {
@@ -423,11 +422,11 @@ const EmailMarketing = () => {
               </div>
             </div>
             <div className="p-15">
-               <h2 className="!text-4xl !font-semibold text-gray-900 mb-6">
-                  Export Newsletter Subscribers
-                </h2>
+              <h2 className="!text-4xl !font-semibold text-gray-900 mb-6">
+                Export Newsletter Subscribers
+              </h2>
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-10">
-               
+
 
                 <div className="flex items-center gap-6 py-6 mt-4">
                   <span className="text-sm text-gray-700 font-medium">
