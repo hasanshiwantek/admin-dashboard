@@ -336,15 +336,13 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
           );
         }
 
-        console.log(values.selectedCustomer?.email);
-
-        // setTimeout(() => {
-        //   if (isDraft) {
-        //     window.location.href = "/manage/orders/draft";
-        //   } else {
-        //     window.location.href = "/manage/orders";
-        //   }
-        // }, 2000);
+        setTimeout(() => {
+          if (isDraft) {
+            window.location.href = "/manage/orders/draft";
+          } else {
+            window.location.href = "/manage/orders";
+          }
+        }, 1000);
       } else {
         errorMessage(resultAction.payload || "Order failed")
 
