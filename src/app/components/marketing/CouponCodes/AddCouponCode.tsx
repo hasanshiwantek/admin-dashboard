@@ -25,11 +25,13 @@ const AddCouponCode = () => {
   const params = useParams();
   const couponId = params?.id; // Get ID from URL params
   const isEditMode = !!couponId;
+  const values = [9, 11, 13];
+  const random = values[Math.floor(Math.random() * values.length)];
 
   const methods = useForm<CouponCodeForm>({
     defaultValues: {
       ...DefaultCouponCodeFormValues,
-      couponCode: generateUniqueCode(10),
+      couponCode: generateUniqueCode(random),
     },
   });
 

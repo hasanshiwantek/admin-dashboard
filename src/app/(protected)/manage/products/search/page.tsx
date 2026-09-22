@@ -1,7 +1,5 @@
 "use client";
 import SearchProduct from "@/app/components/products/search/SearchProduct";
-import { useAppDispatch } from "@/hooks/useReduxHooks";
-import { advanceSearchProduct } from "@/redux/slices/productSlice";
 import { useRouter } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 const Page = () => {
@@ -12,9 +10,8 @@ const Page = () => {
     },
   });
 
-  const dispatch = useAppDispatch();
   const router = useRouter();
-  const onSubmit = async (data: Record<string, any>) => {
+  const onSubmit = (data: Record<string, any>) => {
     const filteredData = Object.entries(data).reduce(
       (acc, [key, value]) => {
         const isEmptyArray = Array.isArray(value) && value.length === 0;
@@ -30,29 +27,18 @@ const Page = () => {
       {} as Record<string, any>,
     );
 
-    try {
-      const result = await dispatch(
-        advanceSearchProduct({ data: filteredData }),
-      );
-
-      if (advanceSearchProduct.fulfilled.match(result)) {
-        // ✅ Push ALL filters to URL — not just page & limit
-        const queryParams = new URLSearchParams();
-        Object.entries(filteredData).forEach(([key, value]) => {
-          if (Array.isArray(value)) {
-            value.forEach((v) => queryParams.append(key, v));
-          } else {
-            queryParams.set(key, String(value));
-          }
-        });
-
-        router.push(`/manage/products?${queryParams.toString()}`);
+    // Push every filter to the products page URL; its table container reads the
+    // URL and fetches through fetchAllProducts (no separate advanced-search).
+    const queryParams = new URLSearchParams();
+    Object.entries(filteredData).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        value.forEach((v) => queryParams.append(key, String(v)));
       } else {
-        console.error("❌ Search Failed:", result.error);
+        queryParams.set(key, String(value));
       }
-    } catch (error) {
-      console.error("🔥 Unexpected Error:", error);
-    }
+    });
+
+    router.push(`/manage/products?${queryParams.toString()}`);
   };
 
   return (
@@ -62,7 +48,13 @@ const Page = () => {
           <SearchProduct />
 
           <div className="flex justify-end  gap-10 items-center fixed w-full bottom-0 right-0  bg-white/90 z-10 shadow-xs border-t  p-4">
-            <button className="btn-outline-primary">Cancel</button>
+            <button
+              className="btn-outline-primary"
+              type="button"
+              onClick={() => router.push("/manage/products")}
+            >
+              Cancel
+            </button>
             <button className="btn-primary" type="submit">
               Search
             </button>

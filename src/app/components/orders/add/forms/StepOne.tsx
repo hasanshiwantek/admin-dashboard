@@ -17,8 +17,9 @@ import { fetchCustomerAddresses } from "@/redux/slices/customerSlice";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import { Country, State } from "country-state-city";
-import { resetCoupon } from "@/redux/slices/orderSlice";
+import { removeCouponUsage, resetCoupon } from "@/redux/slices/orderSlice";
 import { errorMessage } from "@/utils/message";
+import { useAppSelector } from "@/hooks/useReduxHooks";
 
 interface CustomerAddress {
   id: number;
@@ -48,7 +49,9 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
 
   const router = useRouter();
   const dispatch = useDispatch<any>();
-
+  const { appliedCoupon } = useAppSelector(
+    (state: any) => state.order,
+  );
   const [customerAddresses, setCustomerAddresses] = useState<CustomerAddress[]>(
     [],
   );
@@ -175,7 +178,11 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
               value={orderType}
               className="flex gap-6"
               onValueChange={(value) => {
-                dispatch(resetCoupon())
+                if (appliedCoupon?.id) {
+                  dispatch(removeCouponUsage({ id: appliedCoupon?.id })).unwrap().then(() => {
+                    dispatch(resetCoupon());
+                  })
+                }
                 setValue("orderType", value)
               }}
             >

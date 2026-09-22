@@ -43,6 +43,8 @@
   --radius-xl: calc(var(--radius) + 4px);
   --color-warning-cell-bg: var(--warning-cell-bg);
   --color-error-msg: var(--error-msg-color);
+  --color-chip-text: var(--chip-text-color);
+  --color-chip-bg: var(--chip-bg-color);
 }
 
 :root {
@@ -85,20 +87,14 @@
   --sidebar-ring: oklch(0.708 0 0);
   --warning-cell-bg: #fff9e6;
   --error-msg-color: #f0603c;
-
-  --color-text-muted: #84868C;
-  --color-background-subtle: #F6F7F9;
-  --color-text-secondary: #5D5B66;
+  --color-text-muted: #84868c;
+  --color-background-subtle: #f6f7f9;
+  --color-text-secondary: #5d5b66;
   --background-light: #fbfbfc;
-  --text-heading: #34313F;
-  --text-link: #6F8DFD;
-}
-
-body {
-  /* overflow-x: hidden; */
-  /* overflow-y: auto; */
-  /* scroll-behavior: smooth; */
-  /* height: fit-content; */
+  --text-heading: #34313f;
+  --text-link: #6f8dfd;
+  --chip-bg-color: #d9dce9;
+  --chip-text-color: #5d5b66;
 }
 
 *::before,

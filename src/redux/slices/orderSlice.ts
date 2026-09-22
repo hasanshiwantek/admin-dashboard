@@ -912,7 +912,65 @@ export const fetchShipmentById = createAsyncThunk(
     }
   }
 );
+// COUPON USAGE DRAFT THUNK
 
+export const saveCouponUsageDraft = createAsyncThunk(
+  "coupons/saveCouponUsageDraft",
+  async (
+    data: {
+      email: string;
+      is_draft: number;
+    },
+    thunkAPI,
+  ) => {
+    try {
+      const response = await axiosInstance.post(
+        "dashboard/coupons/coupon-usage/draft",
+        data,
+      );
+
+      return response.data;
+    } catch (error: any) {
+      console.error("❌ Error Saving Coupon Usage Draft:", error);
+
+      return thunkAPI.rejectWithValue(
+        error?.response?.data?.message || "Failed to save coupon usage draft",
+      );
+    }
+  },
+);
+
+// REMOVE COUPON USAGE THUNK
+
+export const removeCouponUsage = createAsyncThunk(
+  "coupons/removeCouponUsage",
+  async (
+    data: {
+      id: number;
+    },
+    thunkAPI,
+  ) => {
+    try {
+      const response = await axiosInstance.delete(
+        "web/coupons/coupon-usage/remove",
+        {
+          data,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
+      return response.data;
+    } catch (error: any) {
+      console.error("❌ Error Removing Coupon Usage:", error);
+
+      return thunkAPI.rejectWithValue(
+        error?.response?.data?.message ||
+        "Failed to remove coupon usage",
+      );
+    }
+  },
+);
 // 2. Initial State
 const initialState = {
   orders: [],
