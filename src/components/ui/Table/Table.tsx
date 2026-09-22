@@ -16,7 +16,6 @@ import {
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import { Ellipsis, X } from "lucide-react";
-import Link from "next/link";
 import { Fragment, ReactNode } from "react";
 import { IoSearchOutline } from "react-icons/io5";
 import TableTabs from "./TableTabs";
@@ -41,7 +40,6 @@ export default function Table<T>({
   onSearchSubmit,
   onSearchClear,
   searchPlaceholder = "Search",
-  filtersHref,
   showFilterChips = false,
   appliedFilters,
   filterLabels,
@@ -104,8 +102,8 @@ export default function Table<T>({
       )}
 
       {/* Search + toolbar */}
-      {(searchable || toolbar || filtersHref) && (
-        <div className="flex justify-between gap-1 items-center mb-5">
+      {(searchable || toolbar) && (
+        <div className="flex justify-between gap-4 items-center mb-5">
           {searchable ? (
             <div
               className="flex justify-start items-center bg-white text-center !px-4 !py-4 rounded-md
@@ -144,18 +142,17 @@ export default function Table<T>({
 
           {toolbar}
 
-          {filtersHref && (
-            <Link href={filtersHref}>
-              <button className="btn-outline-primary flex justify-start gap-1 items-center 2xl:!text-[1.6rem]">
-                <IoSearchOutline
-                  size={20}
-                  color="gray"
-                  className="cursor-pointer"
-                />
-                Search
-              </button>
-            </Link>
-          )}
+          <button
+            onClick={() => onSearchSubmit?.()}
+            className="btn-outline-primary flex justify-start gap-1 items-center 2xl:!text-[1.6rem]"
+          >
+            <IoSearchOutline
+              size={20}
+              color="gray"
+              className="cursor-pointer text-inherit!"
+            />
+            Search
+          </button>
         </div>
       )}
 
@@ -261,8 +258,7 @@ export default function Table<T>({
             ) : (
               data.map((row, index) => {
                 const id = getRowId(row);
-                const expanded =
-                  !!renderExpandedRow && !!isRowExpanded?.(row);
+                const expanded = !!renderExpandedRow && !!isRowExpanded?.(row);
                 return (
                   <Fragment key={id}>
                     <TableRow>

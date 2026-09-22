@@ -422,11 +422,11 @@ const OrderSearch = () => {
                   </SelectTrigger>
                   <SelectContent>
                     {[
-                      // "id",
+                      "id",
                       "total",
-                      "customer",
                       "date",
-                      // "status",
+                      "status",
+                      // "customer",
                       // "messages",
                     ].map((opt) => (
                       <SelectItem key={opt} className="capitalize" value={opt}>

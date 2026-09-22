@@ -15,21 +15,21 @@ const styles = {
     container: "flex flex-wrap items-center gap-5 mb-4",
     tab: (active: boolean) =>
       cn(
-        "!text-2xl 2xl:!text-[1.6rem] px-5 py-2 rounded cursor-pointer transition hover:bg-blue-100",
+        "text-2xl! 2xl:text-[1.6rem]! px-5 py-2 rounded cursor-pointer transition hover:bg-blue-100",
         active ? "bg-blue-100 border-blue-600 text-blue-600" : "text-blue-600",
       ),
-    more: "!text-2xl 2xl:!text-[1.6rem] px-5 py-2 rounded text-blue-600 hover:bg-blue-100 flex items-center gap-2",
+    more: "text-2xl! 2xl:text-[1.6rem]! px-5 py-2 rounded text-blue-600 hover:bg-blue-100 flex items-center gap-2",
   },
   underline: {
     container: "flex 2xl:space-x-9 space-x-6 border-b mb-4",
     tab: (active: boolean) =>
       cn(
-        "!text-2xl pb-3 border-b-3 whitespace-nowrap",
+        "text-2xl! pb-3 border-b-3 whitespace-nowrap",
         active
           ? "border-blue-600 font-semibold text-black"
           : "border-transparent text-gray-500 hover:text-black",
       ),
-    more: "!text-2xl pb-3 whitespace-nowrap text-gray-500 flex items-center gap-2 hover:text-black",
+    more: "text-2xl! pb-4 whitespace-nowrap text-gray-500 flex items-center gap-2 hover:text-black",
   },
 };
 

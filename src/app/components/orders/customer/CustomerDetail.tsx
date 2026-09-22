@@ -40,7 +40,7 @@ import Link from "next/link";
 import Spinner from "../../loader/Spinner";
 import { useRouter } from "next/navigation";
 import CustomerNotesModal from "../../customers/edit/CustomerNotesModal";
-import { toast } from "react-toastify";
+import { errorMessage } from "@/utils/message";
 // import CustomerNotesModal from "../../edit/CustomerNotesModal";
 
 const CustomerDetail = () => {
@@ -97,7 +97,7 @@ const CustomerDetail = () => {
         );
 
         if (!selectedStore?.baseUrl) {
-          toast.error("Store not found");
+          errorMessage("Store not found");
           return;
         }
         try {
@@ -105,13 +105,11 @@ const CustomerDetail = () => {
 
           const token = res?.token || res?.data?.token;
 
-          console.log(token, selectedStore, customerId);
-
           if (token && selectedStore.baseUrl) {
             window.open(`${selectedStore.baseUrl}/?token=${token}`, "_blank");
           }
         } catch (err) {
-          toast.error("Failed to login as customer");
+          errorMessage("Failed to login as customer");
         }
       },
     },
@@ -173,7 +171,7 @@ const CustomerDetail = () => {
       pastOrders: singleCustomer?.pastOrders,
     });
   };
-  const copyBilling = () => {};
+  const copyBilling = () => { };
 
   // CUSTOMER UPDATION LOGIC
   const updateCustomerGroupStatus = async (
@@ -502,146 +500,146 @@ const CustomerDetail = () => {
                           />
                         </TableCell>
                       </TableRow>
-               {expandedRow === customer?.id && (
-                    <TableRow>
-                      <TableCell colSpan={11}>
-                        <div className="grid grid-cols-[15%_40%_45%]  bg-gray-50 p-4">
-                          {/* Current Orders Title */}
-                          <div className="border-r pr-4 !text-right">
-                            <h4 className="font-semibold text-[16px]">
-                              Current Orders
-                            </h4>
-                          </div>
+                      {expandedRow === customer?.id && (
+                        <TableRow>
+                          <TableCell colSpan={11}>
+                            <div className="grid grid-cols-[15%_40%_45%]  bg-gray-50 p-4">
+                              {/* Current Orders Title */}
+                              <div className="border-r pr-4 !text-right">
+                                <h4 className="font-semibold text-[16px]">
+                                  Current Orders
+                                </h4>
+                              </div>
 
-                          {/* Current Order Details */}
-                          <div className=" px-4 ">
-                            {customerOrders?.currentOrders?.length > 0 ? (
-                              customerOrders.currentOrders.map((order: any) => (
-                                <div key={order.id} className="mb-8">
-                                  {/* Order Number - Center */}
-                                  <Link
-                                    href={`/manage/orders?orderIdFrom=${order?.id}&orderIdTo=${order?.id}d}&expand=${order?.id}`}
-                                  >
-                                    <h4 className="text-[15px] relative left-[85px] font-medium text-gray-900 mb-3 cursor-pointer">
-                                      Order{" "}
-                                      <span className="!text-blue-600 !text-[15px] hover:underline">
-                                        #{order.orderNumber}
-                                      </span>
-                                    </h4>
-                                  </Link>
-
-                                  {/* Details */}
-                                  <div className="grid grid-cols-[120px_1fr] gap-y-2">
-                                    {/* Status */}
-                                    <span className="text-right pr-4 font-medium text-gray-600">
-                                      Status
-                                    </span>
-
-                                    <span className="border-l-4 border-cyan-400 pl-2 font-medium text-gray-600">
-                                      {order.status}
-                                    </span>
-
-                                    {/* Order Total */}
-                                    <span className="text-right pr-4 font-medium text-gray-600">
-                                      Order total
-                                    </span>
-
-                                    <span className="font-medium text-gray-600">
-                                      ${order.totalAmount}
-                                    </span>
-
-                                    {/* Date */}
-                                    <span className="text-right pr-4 font-medium text-gray-600">
-                                      Date ordered
-                                    </span>
-
-                                    <span className="font-medium text-gray-600">
-                                      {new Date(
-                                        order.createdAt,
-                                      ).toLocaleDateString()}
-                                    </span>
-
-                                    {/* Notes */}
-                                    <span className="flex items-center justify-end pr-4 text-gray-600">
-                                      <StickyNote size={16} strokeWidth={1.5} />
-                                    </span>
-
-                                    <span
-                                      onClick={() => {
-                                        setSelectedOrderId(order?.id);
-                                        setShowCustomerNotes(true);
-                                      }}
-                                      className="!text-blue-600 font-medium cursor-pointer hover:underline"
-                                    >
-                                      View Notes
-                                    </span>
-                                  </div>
-                                </div>
-                              ))
-                            ) : (
-                              <p>No current orders</p>
-                            )}
-                          </div>
-
-                          {/* Past Orders */}
-                          <div className="px-4">
-                            <div className="flex items-stretch">
-                              {/* Past Orders Heading */}
-                              <h4 className="font-semibold text-[12px] whitespace-nowrap pr-3">
-                                Past Orders
-                              </h4>
-
-                              {/* Vertical Line + Orders */}
-                              <div className="border-l border-gray-200 pl-3">
-                                {customer?.pastOrders?.length > 0 ? (
-                                  customer.pastOrders.map((order: any) => (
-                                    <div
-                                      key={order.id}
-                                      className="flex items-center h-8"
-                                    >
-                                      {/* Order Number */}
+                              {/* Current Order Details */}
+                              <div className=" px-4 ">
+                                {customerOrders?.currentOrders?.length > 0 ? (
+                                  customerOrders.currentOrders.map((order: any) => (
+                                    <div key={order.id} className="mb-8">
+                                      {/* Order Number - Center */}
                                       <Link
-                                        href={`/manage/orders?orderIdFrom=${order?.id}&orderIdTo=${order?.id}&expand=${order?.id}`}
+                                        href={`/manage/orders?orderIdFrom=${order?.id}&orderIdTo=${order?.id}d}&expand=${order?.id}`}
                                       >
-                                        <span className="whitespace-nowrap pr-2 cursor-pointer">
+                                        <h4 className="text-[15px] relative left-[85px] font-medium text-gray-900 mb-3 cursor-pointer">
                                           Order{" "}
-                                          <span className="!text-blue-600 hover:underline">
+                                          <span className="!text-blue-600 !text-[15px] hover:underline">
                                             #{order.orderNumber}
                                           </span>
-                                        </span>
+                                        </h4>
                                       </Link>
 
-                                      {/* View Notes */}
-                                      <button
-                                        type="button"
-                                        onClick={() => {
-                                          setSelectedOrderId(order?.id);
-                                          setShowCustomerNotes(true);
-                                        }}
-                                        className="flex items-center gap-2 !text-blue-600 cursor-pointer whitespace-nowrap"
-                                      >
-                                        <StickyNote
-                                          size={18}
-                                          strokeWidth={1.5}
-                                          className="text-gray-500"
-                                        />
+                                      {/* Details */}
+                                      <div className="grid grid-cols-[120px_1fr] gap-y-2">
+                                        {/* Status */}
+                                        <span className="text-right pr-4 font-medium text-gray-600">
+                                          Status
+                                        </span>
 
-                                        <span className="!text-blue-600">
+                                        <span className="border-l-4 border-cyan-400 pl-2 font-medium text-gray-600">
+                                          {order.status}
+                                        </span>
+
+                                        {/* Order Total */}
+                                        <span className="text-right pr-4 font-medium text-gray-600">
+                                          Order total
+                                        </span>
+
+                                        <span className="font-medium text-gray-600">
+                                          ${order.totalAmount}
+                                        </span>
+
+                                        {/* Date */}
+                                        <span className="text-right pr-4 font-medium text-gray-600">
+                                          Date ordered
+                                        </span>
+
+                                        <span className="font-medium text-gray-600">
+                                          {new Date(
+                                            order.createdAt,
+                                          ).toLocaleDateString()}
+                                        </span>
+
+                                        {/* Notes */}
+                                        <span className="flex items-center justify-end pr-4 text-gray-600">
+                                          <StickyNote size={16} strokeWidth={1.5} />
+                                        </span>
+
+                                        <span
+                                          onClick={() => {
+                                            setSelectedOrderId(order?.id);
+                                            setShowCustomerNotes(true);
+                                          }}
+                                          className="!text-blue-600 font-medium cursor-pointer hover:underline"
+                                        >
                                           View Notes
                                         </span>
-                                      </button>
+                                      </div>
                                     </div>
                                   ))
                                 ) : (
-                                  <p>No past orders</p>
+                                  <p>No current orders</p>
                                 )}
                               </div>
+
+                              {/* Past Orders */}
+                              <div className="px-4">
+                                <div className="flex items-stretch">
+                                  {/* Past Orders Heading */}
+                                  <h4 className="font-semibold text-[12px] whitespace-nowrap pr-3">
+                                    Past Orders
+                                  </h4>
+
+                                  {/* Vertical Line + Orders */}
+                                  <div className="border-l border-gray-200 pl-3">
+                                    {customer?.pastOrders?.length > 0 ? (
+                                      customer.pastOrders.map((order: any) => (
+                                        <div
+                                          key={order.id}
+                                          className="flex items-center h-8"
+                                        >
+                                          {/* Order Number */}
+                                          <Link
+                                            href={`/manage/orders?orderIdFrom=${order?.id}&orderIdTo=${order?.id}&expand=${order?.id}`}
+                                          >
+                                            <span className="whitespace-nowrap pr-2 cursor-pointer">
+                                              Order{" "}
+                                              <span className="!text-blue-600 hover:underline">
+                                                #{order.orderNumber}
+                                              </span>
+                                            </span>
+                                          </Link>
+
+                                          {/* View Notes */}
+                                          <button
+                                            type="button"
+                                            onClick={() => {
+                                              setSelectedOrderId(order?.id);
+                                              setShowCustomerNotes(true);
+                                            }}
+                                            className="flex items-center gap-2 !text-blue-600 cursor-pointer whitespace-nowrap"
+                                          >
+                                            <StickyNote
+                                              size={18}
+                                              strokeWidth={1.5}
+                                              className="text-gray-500"
+                                            />
+
+                                            <span className="!text-blue-600">
+                                              View Notes
+                                            </span>
+                                          </button>
+                                        </div>
+                                      ))
+                                    ) : (
+                                      <p>No past orders</p>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
                             </div>
-                          </div>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  )}
+                          </TableCell>
+                        </TableRow>
+                      )}
                     </Fragment>
                   );
                 },

@@ -2,12 +2,12 @@
 import { useEffect, useState } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
 import ProductSearchInput from "../ProductSearchInput";
 import ProductTable from "../ProductTable";
 import { Label } from "@/components/ui/label";
 import AddCustomProductModal from "../AddCustomProductModal";
 import ProductSelectModal from "../ProductSelectModal";
+import { errorMessage } from "@/utils/message";
 
 export default function StepTwo({ step, setStep }: any) {
   const { register, setValue, handleSubmit, control } = useFormContext();
@@ -142,7 +142,7 @@ export default function StepTwo({ step, setStep }: any) {
 
   const onSubmit = () => {
     if (!selectedProducts?.length) {
-      toast.error("Please add atleast one product");
+      errorMessage("Please add atleast one product");
       return;
     }
     setStep(step + 1);
