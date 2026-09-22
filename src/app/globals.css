@@ -45,6 +45,7 @@
   --color-error-msg: var(--error-msg-color);
   --color-chip-text: var(--chip-text-color);
   --color-chip-bg: var(--chip-bg-color);
+  --color-store-bg: var(--store-bg);
 }
 
 :root {

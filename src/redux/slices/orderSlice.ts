@@ -11,16 +11,24 @@ type ApplyCouponArgs = {
 // 1. Thunk with slight improvement
 export const fetchAllOrders = createAsyncThunk(
   "orders/fetchAllOrders",
-  async (
-    { page, perPage, status, productId }: { page: number; perPage: number | string; status?: string, productId?: string },
-    thunkAPI,
-  ) => {
+  async (args: Record<string, any>, thunkAPI) => {
     try {
-      const params = new URLSearchParams({
-        page: String(page),
-        perPage: String(perPage),
-        ...(status && status !== "All orders" && { status }), // ✅ only add if not "All orders"
-        ...(productId && { productId: String(productId) }), // ✅ correct
+      const params = new URLSearchParams();
+      Object.entries(args || {}).forEach(([key, value]) => {
+        if (value === undefined || value === null || value === "") return;
+        // Preserve original behaviour: "All orders" means no status filter.
+        if (key === "status" && value === "All orders") return;
+        if (Array.isArray(value)) {
+          value.forEach((v) => {
+            if (v !== undefined && v !== null && v !== "") {
+              params.append(key, String(v));
+            }
+          });
+        } else if (typeof value === "boolean") {
+          params.append(key, value ? "1" : "0");
+        } else {
+          params.append(key, String(value));
+        }
       });
 
       const res = await axiosInstance.get(
@@ -267,23 +275,6 @@ export const updateShipment = createAsyncThunk(
   },
 );
 
-// ADVANCE ORDER SEARCH THUNK
-export const advanceOrderSearch = createAsyncThunk(
-  "orders/advanceOrderSearch",
-  async ({ data }: { data: any }, thunkAPI) => {
-    try {
-      const response = await axiosInstance.get(
-        `dashboard/orders/search-advanced`,
-        { params: data },
-      );
-      return response.data;
-    } catch (error: any) {
-      return thunkAPI.rejectWithValue(
-        error.response?.data?.message || "Failed to update status",
-      );
-    }
-  },
-);
 
 //PAYMENT INVOICE THUNK
 
@@ -977,10 +968,6 @@ const orderSlice = createSlice({
       })
       .addCase(fetchOrderByKeyword.rejected, (state, action) => {
         state.loading = false;
-      })
-      .addCase(advanceOrderSearch.fulfilled, (state, action) => {
-        state.loading = false;
-        state.orders = action.payload;
       })
       .addCase(updateOrderStatus.pending, (state) => {
         state.loading = true;

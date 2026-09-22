@@ -1,14 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
-  SelectTrigger,
-  SelectValue,
   SelectContent,
   SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import {
   Tooltip,
@@ -16,14 +15,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { HiQuestionMarkCircle } from "react-icons/hi2";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Checkbox } from "@/components/ui/checkbox";
-import { advanceOrderSearch } from "@/redux/slices/orderSlice";
-import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { HiQuestionMarkCircle } from "react-icons/hi2";
 const OrderSearch = () => {
-  const dispatch = useAppDispatch();
   const router = useRouter();
   const [formData, setFormData] = useState({
     keywords: "",
@@ -54,8 +49,7 @@ const OrderSearch = () => {
     }));
   };
 
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const filteredData = Object.entries(formData).reduce(
       (acc, [key, value]) => {
@@ -69,30 +63,19 @@ const OrderSearch = () => {
         }
         return acc;
       },
-      {} as Record<string, any>
+      {} as Record<string, any>,
     );
 
-    try {
-      const result = await dispatch(advanceOrderSearch({ data: filteredData }));
-
-      if (advanceOrderSearch.fulfilled.match(result)) {
-        // ✅ Push ALL filters to URL — not just page & limit
-        const queryParams = new URLSearchParams();
-        Object.entries(filteredData).forEach(([key, value]) => {
-          if (Array.isArray(value)) {
-            value.forEach((v) => queryParams.append(key, v));
-          } else {
-            queryParams.set(key, String(value));
-          }
-        });
-
-        router.push(`/manage/orders?${queryParams.toString()}`);
+    const queryParams = new URLSearchParams();
+    Object.entries(filteredData).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        value.forEach((v) => queryParams.append(key, String(v)));
       } else {
-        console.error("❌ Search Failed:", result.error);
+        queryParams.set(key, String(value));
       }
-    } catch (error) {
-      console.error("🔥 Unexpected Error:", error);
-    }
+    });
+
+    router.push(`/manage/orders?${queryParams.toString()}`);
   };
 
   return (
@@ -110,7 +93,10 @@ const OrderSearch = () => {
           <div className="bg-white shadow-md p-10 space-y-10">
             {/* Search Keywords */}
             <div className="flex items-center gap-4">
-              <Label htmlFor="searchKeywords" className="w-[140px] text-right 2xl:!text-2xl">
+              <Label
+                htmlFor="searchKeywords"
+                className="w-[140px] text-right 2xl:!text-2xl"
+              >
                 Search Keywords:
                 <TooltipProvider>
                   <Tooltip>
@@ -141,7 +127,10 @@ const OrderSearch = () => {
                 options: [
                   { label: "Awaiting Payment", value: "Awaiting Payment" },
                   { label: "Pending", value: "Pending" },
-                  { label: "Awaiting Fulfillment", value: "Awaiting Fulfillment" },
+                  {
+                    label: "Awaiting Fulfillment",
+                    value: "Awaiting Fulfillment",
+                  },
                   { label: "Awaiting Shipment", value: "Awaiting Shipment" },
                   { label: "Awaiting Pickup", value: "Awaiting Pickup" },
                   { label: "Partially Shipped", value: "Partially Shipped" },
@@ -151,7 +140,10 @@ const OrderSearch = () => {
                   { label: "Declined", value: "Declined" },
                   { label: "Refunded", value: "Refunded" },
                   { label: "Disputed", value: "Disputed" },
-                  { label: "Manual Verification Required", value: "Manual Verification Required" },
+                  {
+                    label: "Manual Verification Required",
+                    value: "Manual Verification Required",
+                  },
                   { label: "Partially Refunded", value: "Partially Refunded" },
                 ],
               },
@@ -187,12 +179,17 @@ const OrderSearch = () => {
               // },
             ].map(({ id, label, options }) => (
               <div key={id} className="flex items-center gap-4">
-                <Label htmlFor={id} className="w-[140px] text-right 2xl:!text-2xl">
+                <Label
+                  htmlFor={id}
+                  className="w-[140px] text-right 2xl:!text-2xl"
+                >
                   {label}:
                 </Label>
                 <Select onValueChange={(val) => handleChange(id, val)}>
                   <SelectTrigger>
-                    <SelectValue placeholder={`--Choose ${label.toLowerCase()}--`} />
+                    <SelectValue
+                      placeholder={`--Choose ${label.toLowerCase()}--`}
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     {options.map((opt) => (
@@ -295,10 +292,15 @@ const OrderSearch = () => {
             <h1 className="my-5 2xl:!text-[2.4rem]">Search by Range</h1>
             <div className="bg-white shadow-md p-10 space-y-10">
               <div className="flex items-center gap-4">
-                <Label htmlFor="orderIdFrom" className="w-[100px] text-right 2xl:!text-2xl">
+                <Label
+                  htmlFor="orderIdFrom"
+                  className="w-[100px] text-right 2xl:!text-2xl"
+                >
                   Order Id:
                 </Label>
-                <span className="text-sm text-gray-600 2xl:!text-2xl">From </span>
+                <span className="text-sm text-gray-600 2xl:!text-2xl">
+                  From{" "}
+                </span>
                 <Input
                   id="orderIdFrom"
                   type="number"
@@ -317,10 +319,15 @@ const OrderSearch = () => {
               </div>
 
               <div className="flex items-center gap-4">
-                <Label htmlFor="orderTotalFrom" className="w-[90px] text-right 2xl:!text-2xl">
+                <Label
+                  htmlFor="orderTotalFrom"
+                  className="w-[90px] text-right 2xl:!text-2xl"
+                >
                   Order total:
                 </Label>
-                <span className="text-sm text-gray-600 2xl:!text-2xl">From$</span>
+                <span className="text-sm text-gray-600 2xl:!text-2xl">
+                  From$
+                </span>
                 <Input
                   id="orderTotalFrom"
                   type="number"
@@ -330,7 +337,9 @@ const OrderSearch = () => {
                     handleChange("orderTotalFrom", e.target.value)
                   }
                 />
-                <span className="text-sm text-gray-600 ml-4 2xl:!text-2xl">to$</span>
+                <span className="text-sm text-gray-600 ml-4 2xl:!text-2xl">
+                  to$
+                </span>
                 <Input
                   id="orderTotalTo"
                   type="number"
@@ -347,7 +356,9 @@ const OrderSearch = () => {
             <h1 className="my-5 2xl:!text-[2.4rem]">Search by date</h1>
             <div className="bg-white shadow-md p-10 space-y-10">
               <div className="space-y-2">
-                <Label className="2xl:!text-2xl" htmlFor="date-range">Date range</Label>
+                <Label className="2xl:!text-2xl" htmlFor="date-range">
+                  Date range
+                </Label>
                 <Select onValueChange={(val) => handleChange("dateRange", val)}>
                   <SelectTrigger id="date-range" className="w-full">
                     <SelectValue placeholder="-- Choose an order date --" />
@@ -399,7 +410,10 @@ const OrderSearch = () => {
             <h1 className="my-5 2xl:!text-[2.4rem]">Sort Order</h1>
             <div className="bg-white shadow-md p-10 space-y-10">
               <div className="flex items-center gap-4">
-                <Label htmlFor="sortBy" className="w-[140px] text-right 2xl:!text-2xl">
+                <Label
+                  htmlFor="sortBy"
+                  className="w-[140px] text-right 2xl:!text-2xl"
+                >
                   Sort Order:
                 </Label>
                 <Select onValueChange={(val) => handleChange("sortBy", val)}>
