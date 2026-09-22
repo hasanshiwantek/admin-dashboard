@@ -18,6 +18,7 @@ import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import { Country, State } from "country-state-city";
 import { toast } from "react-toastify";
+import { resetCoupon } from "@/redux/slices/orderSlice";
 
 interface CustomerAddress {
   id: number;
@@ -173,7 +174,10 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
             <RadioGroup
               value={orderType}
               className="flex gap-6"
-              onValueChange={(value) => setValue("orderType", value)}
+              onValueChange={(value) => {
+                dispatch(resetCoupon())
+                setValue("orderType", value)
+              }}
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="existing" id="existing" />

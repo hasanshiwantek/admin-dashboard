@@ -1,6 +1,13 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "@/lib/axiosInstance";
 
+
+type ApplyCouponArgs = {
+  couponCode: string;
+  productIds: Array<number | string>;
+  email?: string;
+};
+
 // 1. Thunk with slight improvement
 export const fetchAllOrders = createAsyncThunk(
   "orders/fetchAllOrders",
@@ -834,17 +841,51 @@ export const fetchShippingRates = createAsyncThunk(
     }
   }
 );
+// export const applyCoupon = createAsyncThunk(
+//   "order/fetchCouponByCode",
+//   async (couponCode: string, { rejectWithValue }) => {
+//     try {
+//       const res = await axiosInstance.get("web/coupons/get-couponcode", {
+//         params: { couponCode },
+//       });
+//       return res.data;
+//     } catch (err: any) {
+//       return rejectWithValue(
+//         err?.response?.data || { message: "Coupon request failed" }
+//       );
+//     }
+//   }
+// );
+
 export const applyCoupon = createAsyncThunk(
   "order/fetchCouponByCode",
-  async (couponCode: string, { rejectWithValue }) => {
+  async ({ couponCode, productIds, email }: ApplyCouponArgs, { rejectWithValue }) => {
     try {
-      const res = await axiosInstance.get("web/coupons/get-couponcode", {
-        params: { couponCode },
-      });
+      const res = await axiosInstance.get(
+        "dashboard/coupons/get-couponcode-dashboard",
+        {
+          params: {
+            couponCode,
+            email: email,
+            "productIds[]": productIds,
+          },
+          paramsSerializer: (params) => {
+            const search = new URLSearchParams();
+            search.set("couponCode", params.couponCode);
+            if (params.email) search.set("email", params.email);
+            (params["productIds[]"] || []).forEach((id: number | string) => {
+              search.append("productIds[]", String(id));
+            });
+            return search.toString();
+          },
+        }
+      );
       return res.data;
     } catch (err: any) {
       return rejectWithValue(
-        err?.response?.data || { message: "Coupon request failed" }
+        err?.response?.data?.message ||
+        err?.response?.data ||
+        "Coupon request failed"
       );
     }
   }
@@ -889,7 +930,7 @@ const initialState = {
   appliedCoupon: null,
   dashboardOrders: [],
   dashboardOrdersLoading: false,
-  singleShipment:null,
+  singleShipment: null,
 };
 
 // 3. Slice
@@ -1066,22 +1107,22 @@ const orderSlice = createSlice({
       })
 
       .addCase(fetchShipmentById.pending, (state) => {
-  state.loading = true;
-  state.error = null;
-})
+        state.loading = true;
+        state.error = null;
+      })
 
-.addCase(fetchShipmentById.fulfilled, (state, action) => {
-  state.loading = false;
-  state.singleShipment = action.payload.data;
-})
+      .addCase(fetchShipmentById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.singleShipment = action.payload.data;
+      })
 
-.addCase(fetchShipmentById.rejected, (state, action) => {
-  state.loading = false;
-  state.error =
-    (action.payload as string) ||
-    action.error.message ||
-    "Failed to fetch shipment";
-})
+      .addCase(fetchShipmentById.rejected, (state, action) => {
+        state.loading = false;
+        state.error =
+          (action.payload as string) ||
+          action.error.message ||
+          "Failed to fetch shipment";
+      })
     // builder.addCase(deleteDraftOrders.fulfilled, (state, action) => {
     //   state.draftOrder = state.draftOrder?.data?.filter(
     //     (order: any) => order?.order?.id !== action.meta.arg.id

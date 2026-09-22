@@ -31,7 +31,7 @@ export default function OrderForm({ orderId }: { orderId: string }) {
         }
 
         // orders might be an array (e.g. [ { ... } ]) or a single object.
-        let order = res.payload.orders;
+        let order = res.payload.data;
 
         if (Array.isArray(order)) {
           if (order.length === 0) {
@@ -39,7 +39,6 @@ export default function OrderForm({ orderId }: { orderId: string }) {
           }
           order = order[0];
         }
-
 
         // Create a customer object from billing information
         const customerFromBilling = order.customer || {

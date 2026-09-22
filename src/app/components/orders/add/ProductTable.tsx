@@ -58,9 +58,9 @@ export default function ProductTable({
                     <Image
                       src={product.image?.[1]?.path || product.image?.[0]?.path}
                       alt={product.name}
-                      width={60}
-                      height={60}
-                      className="rounded !border object-contain !border-gray-300 p-2 shrink-0 w-28 h-24"
+                      width={192}
+                      height={192}
+                      className="rounded !border object-contain !border-gray-300 p-2 shrink-0 w-60 h-48"
                     />
                   )}
                 </TableCell>
@@ -75,7 +75,7 @@ export default function ProductTable({
 
                 {/* Quantity */}
                 <TableCell>
-                  <Input
+                  {/* <Input
                     type="number"
                     min={product.minPurchaseQuantity || 1}
                     max={product.maxPurchaseQuantity || undefined}
@@ -83,6 +83,36 @@ export default function ProductTable({
                     onChange={(e) =>
                       onQtyChange(product.id, parseInt(e.target.value) || 1)
                     }
+                  /> */}
+                  <Input
+                    type="number"
+                    min={product.minPurchaseQuantity || 1}
+                    max={product.maxPurchaseQuantity || undefined}
+                    value={product.quantity === "" || product.quantity == null ? "" : product.quantity}
+                    onChange={(e) => {
+                      const raw = e.target.value;
+                      if (raw === "") {
+                        onQtyChange(product.id, "" as any);
+                        return;
+                      }
+                      onQtyChange(product.id, Number(raw));
+                    }}
+                    onBlur={() => {
+                      const minQty =
+                        Number(product.minPurchaseQuantity) > 0
+                          ? Number(product.minPurchaseQuantity)
+                          : 1;
+                      const maxQty =
+                        Number(product.maxPurchaseQuantity) > 0
+                          ? Number(product.maxPurchaseQuantity)
+                          : Infinity;
+                      const current = Number(product.quantity);
+                      const next =
+                        Number.isFinite(current) && current > 0
+                          ? Math.min(Math.max(current, minQty), maxQty)
+                          : minQty;
+                      onQtyChange(product.id, next);
+                    }}
                   />
                 </TableCell>
 

@@ -68,12 +68,33 @@ export default function OrderReview({ step, setStep }: any) {
     (sum: number, p: any) => sum + parseFloat(p.price || 0) * (p.quantity || 1),
     0
   );
+  // const handleApplyCoupon = async () => {
+  //   if (!couponCode.trim()) {
+  //     return;
+  //   }
+  //   await dispatch(applyCoupon(couponCode.trim()));
+  //   setCouponCode("")
+  // };
+
   const handleApplyCoupon = async () => {
-    if (!couponCode.trim()) {
-      return;
-    }
-    await dispatch(applyCoupon(couponCode.trim()));
-    setCouponCode("")
+    const code = couponCode.trim();
+    if (!code) return;
+
+    const productIds = (selectedProducts || [])
+      .map((p: any) => p.id)
+      .filter(Boolean);
+    const customerEmail = billing.email || billing?.selectedCustomer?.email
+
+    console.log(billing.email, billing?.selectedCustomer?.email);
+
+    await dispatch(
+      applyCoupon({
+        couponCode: code,
+        productIds,
+        email: customerEmail,
+      })
+    );
+    setCouponCode("");
   };
   const handleRemoveCoupon = () => {
     dispatch(resetCoupon());
@@ -87,13 +108,19 @@ export default function OrderReview({ step, setStep }: any) {
   const couponDiscount = Number(
     appliedCoupon?.discountAmount || 0
   );
-  const totalDiscount = couponDiscount + manualDiscount;
 
-  const productsSubtotal = selectedProducts?.reduce(
-    (sum: number, p: any) =>
-      sum + Number(p?.price || 0) * Number(p?.quantity || 1),
-    0
-  );
+  // const productsSubtotal = selectedProducts?.reduce(
+  //   (sum: number, p: any) =>
+  //     sum + Number(p?.price || 0) * Number(p?.quantity || 1),
+  //   0
+  // );
+
+  const productsSubtotal = selectedProducts.reduce((sum: number, p: any) => {
+    const qty = Number(p.quantity || 1);
+    const unit = Number(p.price ?? 0);
+    return sum + unit * qty;
+  }, 0);
+  const totalDiscount = couponDiscount + manualDiscount;
   // const total = subtotal + shippingCost;
   const grandTotal = Math.max(
     subtotal - couponDiscount - manualDiscount + shippingCost,
@@ -495,51 +522,64 @@ export default function OrderReview({ step, setStep }: any) {
                     })} */}
                     {selectedProducts.map((p: any, idx: number) => {
                       const quantity = Number(p.quantity || 1);
-                      const price = Number(p.price || 0);
+                      const actualPrice = Number(p.price ?? 0);
+                      const price = Number(p.price);
+
                       const originalTotal = price * quantity;
-                      const share =
-                        productsSubtotal > 0 ? originalTotal / productsSubtotal : 0;
+                      const share = productsSubtotal > 0 ? originalTotal / productsSubtotal : 0;
                       const lineDiscount = totalDiscount * share;
+
                       const discountedTotal = Math.max(originalTotal - lineDiscount, 0);
                       const discountedPrice = quantity > 0 ? discountedTotal / quantity : 0;
-                      const hasDiscount = lineDiscount > 0.009;
-                      const imagePath = p.image?.[1]?.path || p.image?.[0]?.path;
+
+                      const hasDiscount =
+                        lineDiscount > 0.009 || Math.abs(actualPrice - discountedPrice) > 0.009;
+
+                      const imagePath =
+                        p.image?.find((img: any) => img.isPrimary === 1)?.path ||
+                        p.image?.[0]?.path ||
+                        p.image?.[0]?.url;
+
                       return (
-                        <TableRow key={idx}>
+                        <TableRow key={p.id ?? idx}>
                           <TableCell className="align-top">
                             {imagePath ? (
                               <Image
                                 src={imagePath}
                                 alt={p.name}
-                                width={70}
-                                height={70}
-                                className="border rounded-md object-contain"
+                                width={100}
+                                height={100}
+                                className="border rounded-md object-contain w-[100px] h-[100px]"
                               />
                             ) : (
                               <div className="w-[70px] h-[70px] border rounded-md bg-gray-100 flex items-center justify-center text-[10px] text-gray-400 text-center px-1">
-                                Image
+                                Image Coming Soon
                               </div>
                             )}
                           </TableCell>
+
                           <TableCell className="align-top">
                             <div className="font-medium">{p.name}</div>
                             <div className="text-base text-gray-500">{p.sku}</div>
                           </TableCell>
+
                           <TableCell className="text-center align-top">{quantity}</TableCell>
+
                           <TableCell className="text-center align-top">
                             {hasDiscount && (
                               <div className="text-gray-400 line-through">
-                                ${price.toFixed(2)}
+                                ${actualPrice.toFixed(2)}
                               </div>
                             )}
                             <div className={hasDiscount ? "font-medium" : ""}>
                               ${discountedPrice.toFixed(2)}
                             </div>
                           </TableCell>
+
                           <TableCell className="text-center align-top">
                             {hasDiscount && (
                               <div className="text-gray-400 line-through">
-                                ${originalTotal.toFixed(2)}
+                                ${(actualPrice * quantity).toFixed(2)}
                               </div>
                             )}
                             <div className={hasDiscount ? "font-medium" : ""}>
@@ -588,12 +628,12 @@ export default function OrderReview({ step, setStep }: any) {
             {/* Payment */}
             <h1 className="!text-4xl !font-bold">Payment</h1>
 
-            <div className=" border p-5 rounded-md bg-white">
+            <div className=" border p-5 rounded-md bg-white !text-[16px]">
               <Select
                 value={paymentMethod}
                 onValueChange={(val) => setValue("paymentMethod", val)}
               >
-                <SelectTrigger>
+                <SelectTrigger  className="h-11 w-full px-4 text-base">
                   <SelectValue placeholder="Select..." />
                 </SelectTrigger>
                 <SelectContent>
@@ -610,10 +650,10 @@ export default function OrderReview({ step, setStep }: any) {
 
             {/* Summary */}
             <h1 className="!text-4xl !font-bold">Summary</h1>
-            <div className=" border p-5 rounded-md bg-white space-y-6 text-lg">
+            <div className=" border p-5 rounded-md bg-white space-y-6 !text-[15px]">
               <div className="flex justify-between border-b pb-1">
-                <span>Subtotal</span>
-                <span>${subtotal.toFixed(2)}</span>
+                <span className="!text-[15px]">Subtotal</span>
+                <span className="!text-[15px]">${subtotal.toFixed(2)}</span>
               </div>
 
               {billing?.shippingMethod?.total_charge ? (
@@ -639,16 +679,16 @@ export default function OrderReview({ step, setStep }: any) {
                   <span>-${couponDiscount.toFixed(2)}</span>
                 </div>
               )}
-              {manualDiscount > 0 && (
+              {manualDiscount > 0 && ( 
                 <div className="flex justify-between">
                   <span>Discount</span>
                   <span>-${manualDiscount.toFixed(2)}</span>
                 </div>
               )}
 
-              <div className="flex justify-between font-bold">
-                <span>Grand total</span>
-                <span>${grandTotal.toFixed(2)}</span>
+              <div className="flex justify-between font-bold !text-[15px]">
+                <span className="!text-[15px]">Grand total</span>
+                <span className="!text-[15px]">${grandTotal.toFixed(2)}</span>
               </div>
 
 

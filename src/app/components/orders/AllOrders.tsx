@@ -9,7 +9,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import { ChevronDown, ClipboardList, NotepadText } from "lucide-react";
+import { ChevronDown, ClipboardList,  Clock9,  NotepadText } from "lucide-react";
+
 import {
   Select,
   SelectTrigger,
@@ -131,13 +132,26 @@ const AllOrders = () => {
   const { loading, error, singleShipmentByOrder } = useAppSelector(
     (state) => state.order,
   );
-  const [activeTab, setActiveTab] = useState(() => {
-    if (typeof window !== "undefined") {
-      return sessionStorage.getItem("ordersActiveTab") || "All orders";
-    }
+ const [activeTab, setActiveTab] = useState(() => {
+  const urlTab = searchParams.get("tab");
 
-    return "All orders";
-  });
+  if (urlTab) {
+    return urlTab;
+  }
+
+  if (typeof window !== "undefined") {
+    return sessionStorage.getItem("ordersActiveTab") || "All orders";
+  }
+
+  return "All orders";
+});
+useEffect(() => {
+  const urlTab = searchParams.get("tab");
+
+  if (urlTab) {
+    setActiveTab(urlTab);
+  }
+}, [searchParams]);
   const [filterProductId, setFilterProductId] = useState<string>("");
 
   const [dynamicTab, setDynamicTab] = useState<string | null>(() => {
@@ -215,6 +229,7 @@ const AllOrders = () => {
     setSelectedOrderIds(updated);
   };
 
+
   const statusOptions = [
     { label: "Pending", value: "Pending", color: "bg-[#879193]" },
     {
@@ -261,6 +276,7 @@ const AllOrders = () => {
     },
   ];
 
+  
   const orderActions = (order: any) => [
     {
       label: "Edit order",
@@ -647,6 +663,7 @@ const AllOrders = () => {
 
       return;
     }
+    
     // 📧 RESEND INVOICES
     if (selectedAction === "resendOrderInvoices") {
       selectedOrderIds.forEach((id) => {
@@ -767,7 +784,7 @@ const AllOrders = () => {
 
   useEffect(() => {
     const filterKeys = Object.keys(queryObject).filter(
-      (key) => !["page", "limit", "pageSize"].includes(key),
+      (key) => !["page", "limit", "pageSize","tab"].includes(key),
     );
 
     if (filterKeys.length > 0) {
@@ -904,19 +921,31 @@ const AllOrders = () => {
               : "border-transparent text-gray-500 hover:text-black"
               }`}
             onClick={() => {
-              const query = Object.fromEntries(searchParams.entries());
-              if (Object.keys(query).length > 0) {
-                setActiveTab(tab);
-                router.push(`/manage/orders`);
-              } else {
-                dispatch(
-                  fetchAllOrders({ page: currentPage, perPage, status: tab }),
-                );
-                setFilterProductId("");
-                setActiveTab(tab);
-                sessionStorage.setItem("ordersActiveTab", tab);
-              }
-            }}
+  const query = Object.fromEntries(searchParams.entries());
+
+  if (Object.keys(query).length > 0) {
+    setActiveTab(tab);
+    sessionStorage.setItem("ordersActiveTab", tab);
+
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("tab", tab);
+
+    router.push(`/manage/orders?${params.toString()}`);
+  } else {
+    dispatch(
+      fetchAllOrders({ page: currentPage, perPage, status: tab }),
+    );
+
+    setFilterProductId("");
+    setActiveTab(tab);
+    sessionStorage.setItem("ordersActiveTab", tab);
+
+    const params = new URLSearchParams();
+    params.set("tab", tab);
+
+    router.push(`/manage/orders?${params.toString()}`);
+  }
+}}
           >
             {tab}
           </button>
@@ -934,7 +963,7 @@ const AllOrders = () => {
 
             {showMoreTabs && (
               <div className="absolute right-0 top-full z-50 mt-2 min-w-[220px] rounded-md border bg-white shadow-lg">
-                {moreTabs.map((tab) => (
+                {moreTabs.map((tab:any) => (
                   <button
                     key={tab}
                     type="button"
@@ -944,13 +973,14 @@ const AllOrders = () => {
                       setActiveTab(tab);
                       sessionStorage.setItem("ordersDynamicTab", tab);
                       sessionStorage.setItem("ordersActiveTab", tab);
-
+const params = new URLSearchParams(searchParams.toString());
+params.set("tab", tab);
                       setShowMoreTabs(false);
 
                       const query = Object.fromEntries(searchParams.entries());
 
                       if (Object.keys(query).length > 0) {
-                        router.push(`/manage/orders`);
+                    router.push(`/manage/orders?${params.toString()}`);
                       } else {
                         dispatch(
                           fetchAllOrders({
@@ -960,6 +990,7 @@ const AllOrders = () => {
                           }),
                         );
                         setFilterProductId("");
+                        router.push(`/manage/orders?${params.toString()}`);
                       }
                     }}
                   >
@@ -1476,7 +1507,7 @@ const AllOrders = () => {
                               className="text-gray-500  flex gap-1 "
                               title="View Order Timeline"
                             >
-                              <ClipboardList
+                              <Clock9
                                 onClick={() =>
                                   router.push(
                                     `/manage/orders/order-timeline/${order?.id}`,

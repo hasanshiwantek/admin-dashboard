@@ -85,6 +85,13 @@
   --sidebar-ring: oklch(0.708 0 0);
   --warning-cell-bg: #fff9e6;
   --error-msg-color: #f0603c;
+
+  --color-text-muted: #84868C;
+  --color-background-subtle: #F6F7F9;
+  --color-text-secondary: #5D5B66;
+  --background-light: #fbfbfc;
+  --text-heading: #34313F;
+  --text-link: #6F8DFD;
 }
 
 body {
