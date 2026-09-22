@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import OrderReview from "../OrderReview.tsx/OrderReview";
 import { useRouter } from "next/navigation";
-import { addOrder, addOrderForNewCustomer } from "@/redux/slices/orderSlice";
+import { addOrder, addOrderForNewCustomer, saveCouponUsageDraft } from "@/redux/slices/orderSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { updateOrder } from "@/redux/slices/orderSlice";
 import { useFormContext } from "react-hook-form";
@@ -326,13 +326,23 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
           }
           await dispatch(addCustomerAddress({ data: billingInformation }));
         }
+
+        if (isDraft && appliedCoupon?.couponCode) {
+          dispatch(
+            saveCouponUsageDraft({
+              email: isNewCustomer ? values.email : values.selectedCustomer?.email,
+              is_draft: 1,
+            }),
+          );
+        }
+
         setTimeout(() => {
           if (isDraft) {
             window.location.href = "/manage/orders/draft";
           } else {
             window.location.href = "/manage/orders";
           }
-        }, 2000);
+        }, 1000);
       } else {
         errorMessage(resultAction.payload || "Order failed")
 
