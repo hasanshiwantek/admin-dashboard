@@ -2,14 +2,8 @@
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
+import Pagination from "@/components/ui/pagination";
 import {
   Table,
   TableBody,
@@ -18,36 +12,32 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  PlusIcon,
-  DownloadIcon,
-  SearchIcon,
-  Trash,
-  CalendarDays,
-  StickyNote,
-} from "lucide-react";
-import React, { useState, useEffect, Fragment } from "react";
-import OrderActionsDropdown from "../../orders/OrderActionsDropdown";
-import Pagination from "@/components/ui/pagination";
-import { FaCirclePlus, FaCircleMinus } from "react-icons/fa6";
-import { useSearchParams } from "next/navigation";
-import { advanceOrderSearch } from "@/redux/slices/orderSlice";
-import * as XLSX from "xlsx";
-import {
-  fetchCustomers,
-  deleteCustomer,
-  updateCustomer,
-  fetchCustomerByKeyword,
-  advanceCustomerSearch,
-  loginAsCustomer,
-} from "@/redux/slices/customerSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { refetchCustomers } from "@/lib/customerUtils";
+import {
+  advanceCustomerSearch,
+  deleteCustomer,
+  fetchCustomerByKeyword,
+  fetchCustomers,
+  loginAsCustomer,
+  updateCustomer,
+} from "@/redux/slices/customerSlice";
+import {
+  DownloadIcon,
+  PlusIcon,
+  SearchIcon,
+  StickyNote,
+  Trash,
+} from "lucide-react";
 import Link from "next/link";
-import Spinner from "../../loader/Spinner";
-import { useRouter } from "next/navigation";
-import CustomerNotesModal from "../edit/CustomerNotesModal";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Fragment, useEffect, useState } from "react";
+import { FaCircleMinus, FaCirclePlus } from "react-icons/fa6";
 import { toast } from "react-toastify";
+import * as XLSX from "xlsx";
+import Spinner from "../../loader/Spinner";
+import OrderActionsDropdown from "../../orders/OrderActionsDropdown";
+import CustomerNotesModal from "../edit/CustomerNotesModal";
 
 const AllCustomers = () => {
   const dispatch = useAppDispatch();

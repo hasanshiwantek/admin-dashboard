@@ -1,5 +1,15 @@
 "use client";
-import { Fragment, useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import Pagination from "@/components/ui/pagination";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -8,86 +18,69 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
-import { ChevronDown, ClipboardList,  Clock9,  NotepadText } from "lucide-react";
+import { ChevronDown, Clock9, NotepadText } from "lucide-react";
 
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import Pagination from "@/components/ui/pagination";
-import OrderActionsDropdown from "./OrderActionsDropdown";
-import { Checkbox } from "@/components/ui/checkbox";
-import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
-import {
-  fetchAllOrders,
-  updateOrderStatus,
-  fetchOrderByKeyword,
-  advanceOrderSearch,
-  printPaymentInvoice,
-  resendInvoice,
-  orderTimeline,
-  printInvoicePdf,
-  addShipmentOrder,
-  refundOrder,
-  capturePayment,
-  shipmentByOrderId,
-  printPackingSlipPdf,
-  printMultiInvoicePdf,
-  printMultiPackingSlipPdf,
-  captureMultiplePayment,
-} from "@/redux/slices/orderSlice";
-import {
-  Ellipsis,
-  MoreHorizontal,
-  BadgeCheck,
-  BadgeX,
-  TriangleAlert,
-  Copy,
-} from "lucide-react";
-import { refetchOrders } from "@/lib/orderUtils";
-import { FaCirclePlus, FaCircleMinus } from "react-icons/fa6";
-import { useSearchParams } from "next/navigation";
-import { useRouter } from "next/navigation";
-import {
-  Globe,
-  Phone,
-  Mail,
-  Clock,
-  Calendar,
-  LocationEdit,
-  Ship,
-  DollarSign,
-  CreditCard,
-  Monitor,
-  Smartphone,
-  NotebookText,
-  MonitorCheck,
-} from "lucide-react";
-import countries from "i18n-iso-countries";
-import Spinner from "../loader/Spinner";
-import Link from "next/link";
-import OrderNotesModal from "./edit/OrderNotesModal";
-import { ShipmentModal } from "./edit/ShipmentModal";
-import * as XLSX from "xlsx";
-import enLocale from "i18n-iso-countries/langs/en.json";
-import { countriesListIconsRaw } from "@/const/location";
-import Image from "next/image";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import ConfirmationModal from "./edit/CaptuedPaymentModal";
-import ShipmentsTableModal from "./edit/ShipmentsTableModal";
-import { toast } from "react-toastify";
+import { countriesListIconsRaw } from "@/const/location";
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
+import { refetchOrders } from "@/lib/orderUtils";
+import {
+  addShipmentOrder,
+  advanceOrderSearch,
+  captureMultiplePayment,
+  capturePayment,
+  fetchAllOrders,
+  fetchOrderByKeyword,
+  printInvoicePdf,
+  printMultiInvoicePdf,
+  printMultiPackingSlipPdf,
+  printPackingSlipPdf,
+  refundOrder,
+  resendInvoice,
+  shipmentByOrderId,
+  updateOrderStatus,
+} from "@/redux/slices/orderSlice";
 import dayjs from "dayjs";
+import countries from "i18n-iso-countries";
+import enLocale from "i18n-iso-countries/langs/en.json";
+import {
+  BadgeCheck,
+  BadgeX,
+  Calendar,
+  Clock,
+  Copy,
+  CreditCard,
+  DollarSign,
+  Ellipsis,
+  Globe,
+  Mail,
+  Monitor,
+  MonitorCheck,
+  NotebookText,
+  Phone,
+  Ship,
+  Smartphone,
+  TriangleAlert,
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Fragment, useEffect, useState } from "react";
+import { FaCircleMinus, FaCirclePlus } from "react-icons/fa6";
+import { toast } from "react-toastify";
+import * as XLSX from "xlsx";
+import Spinner from "../loader/Spinner";
+import ConfirmationModal from "./edit/CaptuedPaymentModal";
+import OrderNotesModal from "./edit/OrderNotesModal";
+import { ShipmentModal } from "./edit/ShipmentModal";
 import ShipmentModalForId from "./edit/ShipmentModalForId";
+import ShipmentsTableModal from "./edit/ShipmentsTableModal";
+import OrderActionsDropdown from "./OrderActionsDropdown";
 
 countries?.registerLocale(enLocale);
 
@@ -97,8 +90,8 @@ const getISO2 = (code: string) => {
   if (upper.length === 2) return upper; // AF → AF
   return countries.alpha3ToAlpha2(upper) || upper; // AFG → AF
 };
-const completed = "completed"
-const authorized = "authorized"
+const completed = "completed";
+const authorized = "authorized";
 // map mein bhi getISO2 use karo
 export const countriesListIcons = countriesListIconsRaw?.map((country) => {
   const iso2 = getISO2(country?.value);
@@ -108,7 +101,6 @@ export const countriesListIcons = countriesListIconsRaw?.map((country) => {
     flag: `https://purecatamphetamine.github.io/country-flag-icons/3x2/${iso2}.svg`,
   };
 });
-
 
 const AllOrders = () => {
   const dispatch = useAppDispatch();
@@ -132,26 +124,26 @@ const AllOrders = () => {
   const { loading, error, singleShipmentByOrder } = useAppSelector(
     (state) => state.order,
   );
- const [activeTab, setActiveTab] = useState(() => {
-  const urlTab = searchParams.get("tab");
+  const [activeTab, setActiveTab] = useState(() => {
+    const urlTab = searchParams.get("tab");
 
-  if (urlTab) {
-    return urlTab;
-  }
+    if (urlTab) {
+      return urlTab;
+    }
 
-  if (typeof window !== "undefined") {
-    return sessionStorage.getItem("ordersActiveTab") || "All orders";
-  }
+    if (typeof window !== "undefined") {
+      return sessionStorage.getItem("ordersActiveTab") || "All orders";
+    }
 
-  return "All orders";
-});
-useEffect(() => {
-  const urlTab = searchParams.get("tab");
+    return "All orders";
+  });
+  useEffect(() => {
+    const urlTab = searchParams.get("tab");
 
-  if (urlTab) {
-    setActiveTab(urlTab);
-  }
-}, [searchParams]);
+    if (urlTab) {
+      setActiveTab(urlTab);
+    }
+  }, [searchParams]);
   const [filterProductId, setFilterProductId] = useState<string>("");
 
   const [dynamicTab, setDynamicTab] = useState<string | null>(() => {
@@ -163,7 +155,6 @@ useEffect(() => {
   });
 
   const [showMoreTabs, setShowMoreTabs] = useState(false);
-
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -180,7 +171,6 @@ useEffect(() => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-
 
   const filteredOrders = orders?.data || [];
 
@@ -200,7 +190,7 @@ useEffect(() => {
   const fixedTabs = tabs.slice(0, 7);
 
   const moreTabs = tabs.filter(
-    (tab) => !fixedTabs.includes(tab) && tab !== dynamicTab
+    (tab) => !fixedTabs.includes(tab) && tab !== dynamicTab,
   );
   const [selectedOrderIds, setSelectedOrderIds] = useState<any[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<any>();
@@ -228,7 +218,6 @@ useEffect(() => {
     const updated = checked ? filteredOrders : [];
     setSelectedOrderIds(updated);
   };
-
 
   const statusOptions = [
     { label: "Pending", value: "Pending", color: "bg-[#879193]" },
@@ -276,7 +265,6 @@ useEffect(() => {
     },
   ];
 
-  
   const orderActions = (order: any) => [
     {
       label: "Edit order",
@@ -394,8 +382,8 @@ useEffect(() => {
             // You can add toast notification here
             toast.error(
               (resultAction.payload as string) ||
-              resultAction.error?.message ||
-              "Failed to print packing slip",
+                resultAction.error?.message ||
+                "Failed to print packing slip",
             );
           }
         } catch (error) {
@@ -420,13 +408,13 @@ useEffect(() => {
     },
     ...(!order?.userType
       ? [
-        {
-          label: "Send Message",
-          onClick: () => {
-            router.push(`/manage/orders/message/${order?.id}`);
+          {
+            label: "Send Message",
+            onClick: () => {
+              router.push(`/manage/orders/message/${order?.id}`);
+            },
           },
-        },
-      ]
+        ]
       : []),
     {
       label: "View notes",
@@ -437,25 +425,26 @@ useEffect(() => {
     },
     ...(!order?.shipmentId
       ? [
-        {
-          label: "Ship items",
-          onClick: () => {
-            setSelectedOrder(order); // store in state
-            setShowShipmentModal(true);
+          {
+            label: "Ship items",
+            onClick: () => {
+              setSelectedOrder(order); // store in state
+              setShowShipmentModal(true);
+            },
           },
-        },
-      ]
+        ]
       : []),
-    ...(order?.payment?.payment_intent_id && order?.payment?.payment_status !== completed
+    ...(order?.payment?.payment_intent_id &&
+    order?.payment?.payment_status !== completed
       ? [
-        {
-          label: "Capture Funds",
-          onClick: () => {
-            setSelectedOrderId(order?.payment?.payment_intent_id);
-            setShowConfirm(true);
+          {
+            label: "Capture Funds",
+            onClick: () => {
+              setSelectedOrderId(order?.payment?.payment_intent_id);
+              setShowConfirm(true);
+            },
           },
-        },
-      ]
+        ]
       : []),
     // {
     //   label: "Shipment table",
@@ -468,14 +457,14 @@ useEffect(() => {
 
     ...(order?.shipmentId
       ? [
-        {
-          label: "View shipments",
-          onClick: () => {
-            setSelectedOrderId(order.id);
-            setShowShipmentTable(true);
+          {
+            label: "View shipments",
+            onClick: () => {
+              setSelectedOrderId(order.id);
+              setShowShipmentTable(true);
+            },
           },
-        },
-      ]
+        ]
       : []),
     // {
     //   label: "View shipments",
@@ -484,36 +473,36 @@ useEffect(() => {
     //   },
     // },
     ...(String(order?.status || "")?.toLowerCase() !== "shipped" &&
-      String(order?.status || "").toLowerCase() !== "awaiting fulfillment"
+    String(order?.status || "").toLowerCase() !== "awaiting fulfillment"
       ? [
-        {
-          label: "Void Transaction",
-          onClick: async () => {
-            setSelectedOrderId(order?.id);
-            setShowVoidConfirm(true);
+          {
+            label: "Void Transaction",
+            onClick: async () => {
+              setSelectedOrderId(order?.id);
+              setShowVoidConfirm(true);
+            },
           },
-        },
-      ]
+        ]
       : []),
     ...(String(order?.status || "")?.toLowerCase() !== "cancelled" &&
-      String(order?.status || "").toLowerCase() !== "awaiting payment"
+    String(order?.status || "").toLowerCase() !== "awaiting payment"
       ? [
-        {
-          label: "Refund",
-          onClick: async () => {
-            const orderId = order?.id;
-            try {
-              const resulAction = await dispatch(refundOrder({ orderId }));
-              if (refundOrder.fulfilled.match(resulAction)) {
-                setTimeout(() => {
-                  refetchOrders(dispatch);
-                }, 3000);
-              } else {
-              }
-            } catch (err) { }
+          {
+            label: "Refund",
+            onClick: async () => {
+              const orderId = order?.id;
+              try {
+                const resulAction = await dispatch(refundOrder({ orderId }));
+                if (refundOrder.fulfilled.match(resulAction)) {
+                  setTimeout(() => {
+                    refetchOrders(dispatch);
+                  }, 3000);
+                } else {
+                }
+              } catch (err) {}
+            },
           },
-        },
-      ]
+        ]
       : []),
     {
       label: "View order timeline",
@@ -609,7 +598,9 @@ useEffect(() => {
     // 🧾 PRINT INVOICES
     if (selectedAction === "printMultiOrderInvoices") {
       try {
-        const resultAction = await dispatch(printMultiInvoicePdf(selectedOrderIds));
+        const resultAction = await dispatch(
+          printMultiInvoicePdf(selectedOrderIds),
+        );
 
         if (printMultiInvoicePdf.fulfilled.match(resultAction)) {
           const blob = new Blob([resultAction.payload], {
@@ -658,12 +649,15 @@ useEffect(() => {
         setSelectedAction("");
         setSelectedOrderIds([]);
       } catch (error) {
-        console.error("Unexpected error during packing slip PDF generation:", error);
+        console.error(
+          "Unexpected error during packing slip PDF generation:",
+          error,
+        );
       }
 
       return;
     }
-    
+
     // 📧 RESEND INVOICES
     if (selectedAction === "resendOrderInvoices") {
       selectedOrderIds.forEach((id) => {
@@ -688,7 +682,9 @@ useEffect(() => {
               ? item?.payment?.payment_intent_id
               : item?.payment?.payment_intent_id,
           )
-          .filter((id): id is string => typeof id === "string" && id.length > 0);
+          .filter(
+            (id): id is string => typeof id === "string" && id.length > 0,
+          );
 
         if (!paymentIntentIds.length) {
           console.warn("No payment intent IDs found for capture");
@@ -707,7 +703,6 @@ useEffect(() => {
 
         if (captureMultiplePayment.fulfilled.match(resultAction)) {
           dispatch(fetchAllOrders({ page: currentPage, perPage }));
-
         } else {
           console.error("Failed to capture payment(s):", resultAction.payload);
         }
@@ -733,18 +728,18 @@ useEffect(() => {
     // }
   };
   useEffect(() => {
-  const orderToExpand = searchParams.get("expand");
+    const orderToExpand = searchParams.get("expand");
 
-  if (!orderToExpand || filteredOrders?.length === 0) return;
+    if (!orderToExpand || filteredOrders?.length === 0) return;
 
-  const orderExists = filteredOrders.some(
-    (order: any) => Number(order.id) === Number(orderToExpand)
-  );
+    const orderExists = filteredOrders.some(
+      (order: any) => Number(order.id) === Number(orderToExpand),
+    );
 
-  if (orderExists) {
-    setExpandedRow(Number(orderToExpand));
-  }
-}, [filteredOrders, searchParams]);
+    if (orderExists) {
+      setExpandedRow(Number(orderToExpand));
+    }
+  }, [filteredOrders, searchParams]);
 
   // ✅ Enhanced close handler
   const handleCloseNotes = () => {
@@ -784,7 +779,7 @@ useEffect(() => {
 
   useEffect(() => {
     const filterKeys = Object.keys(queryObject).filter(
-      (key) => !["page", "limit", "pageSize","tab"].includes(key),
+      (key) => !["page", "limit", "pageSize", "tab"].includes(key),
     );
 
     if (filterKeys.length > 0) {
@@ -916,36 +911,37 @@ useEffect(() => {
         {[...fixedTabs, ...(dynamicTab ? [dynamicTab] : [])].map((tab) => (
           <button
             key={tab}
-            className={`!text-2xl pb-3 border-b-3 whitespace-nowrap ${activeTab === tab
-              ? "border-blue-600 font-semibold"
-              : "border-transparent text-gray-500 hover:text-black"
-              }`}
+            className={`!text-2xl pb-3 border-b-3 whitespace-nowrap ${
+              activeTab === tab
+                ? "border-blue-600 font-semibold"
+                : "border-transparent text-gray-500 hover:text-black"
+            }`}
             onClick={() => {
-  const query = Object.fromEntries(searchParams.entries());
+              const query = Object.fromEntries(searchParams.entries());
 
-  if (Object.keys(query).length > 0) {
-    setActiveTab(tab);
-    sessionStorage.setItem("ordersActiveTab", tab);
+              if (Object.keys(query).length > 0) {
+                setActiveTab(tab);
+                sessionStorage.setItem("ordersActiveTab", tab);
 
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("tab", tab);
+                const params = new URLSearchParams(searchParams.toString());
+                params.set("tab", tab);
 
-    router.push(`/manage/orders?${params.toString()}`);
-  } else {
-    dispatch(
-      fetchAllOrders({ page: currentPage, perPage, status: tab }),
-    );
+                router.push(`/manage/orders?${params.toString()}`);
+              } else {
+                dispatch(
+                  fetchAllOrders({ page: currentPage, perPage, status: tab }),
+                );
 
-    setFilterProductId("");
-    setActiveTab(tab);
-    sessionStorage.setItem("ordersActiveTab", tab);
+                setFilterProductId("");
+                setActiveTab(tab);
+                sessionStorage.setItem("ordersActiveTab", tab);
 
-    const params = new URLSearchParams();
-    params.set("tab", tab);
+                const params = new URLSearchParams();
+                params.set("tab", tab);
 
-    router.push(`/manage/orders?${params.toString()}`);
-  }
-}}
+                router.push(`/manage/orders?${params.toString()}`);
+              }
+            }}
           >
             {tab}
           </button>
@@ -957,13 +953,12 @@ useEffect(() => {
               className="!text-2xl pb-3 whitespace-nowrap text-gray-500 flex items-center gap-2 hover:text-black"
               onClick={() => setShowMoreTabs((prev) => !prev)}
             >
-              More   <ChevronDown className="w-5 h-5" />
-
+              More <ChevronDown className="w-5 h-5" />
             </button>
 
             {showMoreTabs && (
               <div className="absolute right-0 top-full z-50 mt-2 min-w-[220px] rounded-md border bg-white shadow-lg">
-                {moreTabs.map((tab:any) => (
+                {moreTabs.map((tab: any) => (
                   <button
                     key={tab}
                     type="button"
@@ -973,14 +968,16 @@ useEffect(() => {
                       setActiveTab(tab);
                       sessionStorage.setItem("ordersDynamicTab", tab);
                       sessionStorage.setItem("ordersActiveTab", tab);
-const params = new URLSearchParams(searchParams.toString());
-params.set("tab", tab);
+                      const params = new URLSearchParams(
+                        searchParams.toString(),
+                      );
+                      params.set("tab", tab);
                       setShowMoreTabs(false);
 
                       const query = Object.fromEntries(searchParams.entries());
 
                       if (Object.keys(query).length > 0) {
-                    router.push(`/manage/orders?${params.toString()}`);
+                        router.push(`/manage/orders?${params.toString()}`);
                       } else {
                         dispatch(
                           fetchAllOrders({
@@ -1156,16 +1153,16 @@ params.set("tab", tab);
         <div className="overflow-x-auto  rounded-md shadow">
           <Table className="w-full table-fixed">
             <colgroup>
-              <col className="w-[50px]" />   {/* checkbox */}
-              <col className="w-[55px]" />   {/* expand */}
-              <col className="w-[65px]" />   {/* device */}
-              <col className="w-[135px]" />  {/* date */}
-              <col className="w-[90px]" />   {/* order id */}
-              <col className="w-[75px]" />   {/* risk/country */}
-              <col className="w-[190px]" />  {/* customer */}
-              <col className="w-[255px]" />  {/* status */}
-              <col className="w-[145px]" />  {/* total */}
-              <col className="w-[90px]" />   {/* action */}
+              <col className="w-[50px]" /> {/* checkbox */}
+              <col className="w-[55px]" /> {/* expand */}
+              <col className="w-[65px]" /> {/* device */}
+              <col className="w-[135px]" /> {/* date */}
+              <col className="w-[90px]" /> {/* order id */}
+              <col className="w-[75px]" /> {/* risk/country */}
+              <col className="w-[190px]" /> {/* customer */}
+              <col className="w-[255px]" /> {/* status */}
+              <col className="w-[145px]" /> {/* total */}
+              <col className="w-[90px]" /> {/* action */}
             </colgroup>
             <TableHeader>
               <TableRow className="bg-[#FBFBFC] h-[56px]">
@@ -1389,17 +1386,18 @@ params.set("tab", tab);
                             )}
 
                             {/* Payment Method Icon */}
-                            {order?.payment?.payment_intent_id && order?.payment?.payment_status !== completed && (
-                              <CreditCard
-                                onClick={() => {
-                                  setSelectedOrderId(
-                                    order?.payment?.payment_intent_id,
-                                  );
-                                  setShowConfirm(true);
-                                }}
-                                className="w-7 h-7 text-gray-500 cursor-pointer"
-                              />
-                            )}
+                            {order?.payment?.payment_intent_id &&
+                              order?.payment?.payment_status !== completed && (
+                                <CreditCard
+                                  onClick={() => {
+                                    setSelectedOrderId(
+                                      order?.payment?.payment_intent_id,
+                                    );
+                                    setShowConfirm(true);
+                                  }}
+                                  className="w-7 h-7 text-gray-500 cursor-pointer"
+                                />
+                              )}
                           </div>
                         </TableCell>
                         <TableCell>
@@ -1414,8 +1412,9 @@ params.set("tab", tab);
                               return (
                                 <>
                                   <span
-                                    className={`w-7 h-12 inline-block rounded-none ${currentStatus?.color || "bg-gray-400"
-                                      }`}
+                                    className={`w-7 h-12 inline-block rounded-none ${
+                                      currentStatus?.color || "bg-gray-400"
+                                    }`}
                                   />
                                   <Select
                                     defaultValue={normalizedStatus}
@@ -1593,12 +1592,15 @@ params.set("tab", tab);
 
                                     <CreditCard className="w-5 h-5 text-gray-500" />
 
-                                    {order?.payment?.payment_status == completed && (
+                                    {order?.payment?.payment_status ==
+                                      completed && (
                                       <CreditCard className="w-5 h-5 text-gray-500" />
                                     )}
-                                    {order?.payment?.payment_intent_id && order?.payment?.payment_status !== completed && (
-                                      <CreditCard className="w-5 h-5 text-gray-500" />
-                                    )}
+                                    {order?.payment?.payment_intent_id &&
+                                      order?.payment?.payment_status !==
+                                        completed && (
+                                        <CreditCard className="w-5 h-5 text-gray-500" />
+                                      )}
 
                                     {order?.payment?.payment_intent_id && (
                                       <CreditCard className="w-5 h-5 text-gray-500" />
@@ -1678,9 +1680,9 @@ params.set("tab", tab);
                                     <span>
                                       {order?.billingInformation?.updatedAt
                                         ? dayjs(
-                                          order?.billingInformation
-                                            ?.updatedAt,
-                                        ).format("DD MMM YYYY HH:mm:ss")
+                                            order?.billingInformation
+                                              ?.updatedAt,
+                                          ).format("DD MMM YYYY HH:mm:ss")
                                         : "N/A"}
                                     </span>
                                   </div>
@@ -1709,27 +1711,30 @@ params.set("tab", tab);
                                         ?.paymentMethod || "N/A"}
                                     </span>
                                   </div>
-                                  {order?.payment?.payment_status == completed && (
+                                  {order?.payment?.payment_status ==
+                                    completed && (
                                     <div className="flex items-center gap-2">
                                       {/* <CreditCard className="w-5 h-5 text-gray-500" /> */}
                                       <span>Captured</span>
                                     </div>
                                   )}
-                                  {order?.payment?.payment_intent_id && order?.payment?.payment_status !== completed && (
-                                    <div className="flex items-center gap-2">
-                                      <span
-                                        onClick={() => {
-                                          setSelectedOrderId(
-                                            order?.payment?.payment_intent_id,
-                                          );
-                                          setShowConfirm(true);
-                                        }}
-                                        className="!text-blue-400  cursor-pointer"
-                                      >
-                                        Capture Funds
-                                      </span>
-                                    </div>
-                                  )}
+                                  {order?.payment?.payment_intent_id &&
+                                    order?.payment?.payment_status !==
+                                      completed && (
+                                      <div className="flex items-center gap-2">
+                                        <span
+                                          onClick={() => {
+                                            setSelectedOrderId(
+                                              order?.payment?.payment_intent_id,
+                                            );
+                                            setShowConfirm(true);
+                                          }}
+                                          className="!text-blue-400  cursor-pointer"
+                                        >
+                                          Capture Funds
+                                        </span>
+                                      </div>
+                                    )}
                                   {order?.payment?.payment_intent_id && (
                                     <div className="flex items-center gap-2">
                                       <Link
@@ -1810,20 +1815,25 @@ params.set("tab", tab);
                                       {order?.billingInformation?.firstName}{" "}
                                       {order?.billingInformation?.lastName}
                                       <br />
-
-                                      {order?.billingInformation?.addressLine1 && (
+                                      {order?.billingInformation
+                                        ?.addressLine1 && (
                                         <>
-                                          {order.billingInformation.addressLine1}
+                                          {
+                                            order.billingInformation
+                                              .addressLine1
+                                          }
                                         </>
                                       )}
-
-                                      {order?.billingInformation?.addressLine2 && (
+                                      {order?.billingInformation
+                                        ?.addressLine2 && (
                                         <>
                                           ,{" "}
-                                          {order.billingInformation.addressLine2}
+                                          {
+                                            order.billingInformation
+                                              .addressLine2
+                                          }
                                         </>
                                       )}
-
                                       <br />
                                       {order?.billingInformation?.state}
                                       <br />
@@ -1833,14 +1843,19 @@ params.set("tab", tab);
 
                                   {/* Method Data */}
                                   <div
-                                    className={`flex items-center gap-2 min-w-0 ${(order?.billingInformation?.shippingData?.length ?? 0) > 40
-                                      ? "pt-[25px]"
-                                      : "pt-[35px]"
-                                      }`}
+                                    className={`flex items-center gap-2 min-w-0 ${
+                                      (order?.billingInformation?.shippingData
+                                        ?.length ?? 0) > 40
+                                        ? "pt-[25px]"
+                                        : "pt-[35px]"
+                                    }`}
                                   >
                                     <div className="shipping-data-scroll w-[420px] max-w-full overflow-x-auto overflow-y-hidden whitespace-nowrap">
-                                      <span>   {order?.billingInformation?.shippingData || "N/A"} </span>
-
+                                      <span>
+                                        {" "}
+                                        {order?.billingInformation
+                                          ?.shippingData || "N/A"}{" "}
+                                      </span>
                                     </div>
                                   </div>
 
@@ -1854,7 +1869,8 @@ params.set("tab", tab);
 
                                   <div className="flex items-center gap-2">
                                     <span>
-                                      {order?.billingInformation?.email || "N/A"}
+                                      {order?.billingInformation?.email ||
+                                        "N/A"}
                                     </span>
                                   </div>
 
@@ -1869,7 +1885,8 @@ params.set("tab", tab);
                                   {/* Contact Data */}
                                   <div className="flex items-center gap-2 pt-[33px]">
                                     <span>
-                                      {order?.billingInformation?.phone || "N/A"}
+                                      {order?.billingInformation?.phone ||
+                                        "N/A"}
                                     </span>
                                   </div>
 
@@ -1878,7 +1895,8 @@ params.set("tab", tab);
                                       className="text-[#6f8DFD] text-[13px]"
                                       href={`mailto:${order.billingInformation.email}`}
                                     >
-                                      {order?.billingInformation?.email || "N/A"}
+                                      {order?.billingInformation?.email ||
+                                        "N/A"}
                                     </Link>
                                   </div>
                                 </div>
@@ -1977,18 +1995,20 @@ params.set("tab", tab);
                                               {item?.sku}
                                               <br />
 
-                                              {item?.brand?.name && <>
-                                                <strong>Brand:</strong>{" "}
-                                                {item?.brand?.name}
-                                              </>}
+                                              {item?.brand?.name && (
+                                                <>
+                                                  <strong>Brand:</strong>{" "}
+                                                  {item?.brand?.name}
+                                                </>
+                                              )}
                                             </p>
                                           </div>
 
                                           <div className="font-medium whitespace-nowrap">
-
-                                            ${(item.price * item.quantity).toFixed(
-                                              2
-                                            )}
+                                            $
+                                            {(
+                                              item.price * item.quantity
+                                            ).toFixed(2)}
                                           </div>
                                         </div>
                                       ),
@@ -2031,24 +2051,30 @@ params.set("tab", tab);
                                           .toFixed(2)}
                                       </span>
                                     </div>
-                                    {Number(order?.manualDiscount) > 0 && <div className="flex justify-between">
-                                      <span>Discount</span>
-                                      <span>
-                                        -$
-                                        {Number(
-                                          order?.manualDiscount,
-                                        ).toFixed(2)}
-                                      </span>
-                                    </div>}
-                                    {order?.couponCode && <div className="flex justify-between">
-                                      <span>Coupon Code ({order?.couponCode})</span>
-                                      <span>
-                                        -$
-                                        {Number(
-                                          order?.discountAmount,
-                                        ).toFixed(2)}
-                                      </span>
-                                    </div>}
+                                    {Number(order?.manualDiscount) > 0 && (
+                                      <div className="flex justify-between">
+                                        <span>Discount</span>
+                                        <span>
+                                          -$
+                                          {Number(
+                                            order?.manualDiscount,
+                                          ).toFixed(2)}
+                                        </span>
+                                      </div>
+                                    )}
+                                    {order?.couponCode && (
+                                      <div className="flex justify-between">
+                                        <span>
+                                          Coupon Code ({order?.couponCode})
+                                        </span>
+                                        <span>
+                                          -$
+                                          {Number(
+                                            order?.discountAmount,
+                                          ).toFixed(2)}
+                                        </span>
+                                      </div>
+                                    )}
                                     <div className="flex justify-between">
                                       <span>Shipping</span>
                                       <span>
