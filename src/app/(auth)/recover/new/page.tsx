@@ -6,7 +6,7 @@ import { forgotPasswordUser } from "@/redux/slices/authSlice";
 import type { AppDispatch, RootState } from "@/redux/store";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { toast } from "react-toastify";
+import { successMessage } from "@/utils/message";
 
 export default function ForgotPasswordPage() {
     const router = useRouter();
@@ -23,7 +23,7 @@ export default function ForgotPasswordPage() {
             forgotPasswordUser({ email: formData.email })
         );
         if (forgotPasswordUser.fulfilled.match(result)) {
-            toast.success(result?.payload?.message || "Password reset link sent to your email.");
+            successMessage(result?.payload?.message || "Password reset link sent to your email.");
             router.push("/login");
         }
     };

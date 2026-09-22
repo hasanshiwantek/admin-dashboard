@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import { ChevronDown, ClipboardList,  Clock9,  NotepadText } from "lucide-react";
+import { ChevronDown, ClipboardList, Clock9, NotepadText } from "lucide-react";
 
 import {
   Select,
@@ -85,9 +85,9 @@ import {
 } from "@/components/ui/tooltip";
 import ConfirmationModal from "./edit/CaptuedPaymentModal";
 import ShipmentsTableModal from "./edit/ShipmentsTableModal";
-import { toast } from "react-toastify";
 import dayjs from "dayjs";
 import ShipmentModalForId from "./edit/ShipmentModalForId";
+import { errorMessage, successMessage } from "@/utils/message";
 
 countries?.registerLocale(enLocale);
 
@@ -377,7 +377,7 @@ const AllOrders = () => {
           } else if (printPackingSlipPdf.rejected.match(resultAction)) {
             console.error("Failed to print invoice:", resultAction.error);
             // You can add toast notification here
-            toast.error(
+            errorMessage(
               (resultAction.payload as string) ||
               resultAction.error?.message ||
               "Failed to print packing slip",
@@ -521,7 +521,7 @@ const AllOrders = () => {
       .join("\n");
 
     navigator.clipboard.writeText(text);
-    toast.success("Address copied!");
+    successMessage("Address copied!");
   };
 
   // SEARCH ORDER LOGIC
@@ -717,18 +717,18 @@ const AllOrders = () => {
     // }
   };
   useEffect(() => {
-  const orderToExpand = searchParams.get("expand");
+    const orderToExpand = searchParams.get("expand");
 
-  if (!orderToExpand || filteredOrders?.length === 0) return;
+    if (!orderToExpand || filteredOrders?.length === 0) return;
 
-  const orderExists = filteredOrders.some(
-    (order: any) => Number(order.id) === Number(orderToExpand)
-  );
+    const orderExists = filteredOrders.some(
+      (order: any) => Number(order.id) === Number(orderToExpand)
+    );
 
-  if (orderExists) {
-    setExpandedRow(Number(orderToExpand));
-  }
-}, [filteredOrders, searchParams]);
+    if (orderExists) {
+      setExpandedRow(Number(orderToExpand));
+    }
+  }, [filteredOrders, searchParams]);
 
   // ✅ Enhanced close handler
   const handleCloseNotes = () => {
