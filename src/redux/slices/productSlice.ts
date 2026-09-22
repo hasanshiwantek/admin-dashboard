@@ -4,42 +4,25 @@ import { headers } from "next/headers";
 
 export const fetchAllProducts = createAsyncThunk(
   "product/fetchAllProducts",
-  async (
-    {
-      page,
-      pageSize,
-      search,
-      isFeatured,
-      isVisible,
-      freeShipping,
-      outOfStock,
-      inventoryLow,
-      lastImported,
-    }: {
-      page: number;
-      pageSize: number | string;
-      search?: string;
-      isFeatured?: boolean;
-      isVisible?: boolean;
-      freeShipping?: boolean;
-      outOfStock?: boolean;
-      inventoryLow?: boolean;
-      lastImported?: boolean;
-    },
-    thunkAPI
-  ) => {
+  // Accepts any filters (basic listing, tab filters, or advanced-search fields)
+  // and forwards every defined value to the products-list endpoint. This is why
+  // it can replace the old advanced-search call.
+  async (args: Record<string, any>, thunkAPI) => {
     try {
-      // ✅ Build params object, only include defined values
-      const params = new URLSearchParams({
-        page: String(page),
-        pageSize: String(pageSize),
-        ...(search && { search }),
-        ...(isFeatured !== undefined && { isFeatured: String(isFeatured) }),
-        ...(isVisible !== undefined && { isVisible: String(isVisible) }),
-        ...(freeShipping !== undefined && { freeShipping: String(freeShipping) }),
-        ...(outOfStock !== undefined && { outOfStock: String(outOfStock) }),
-        ...(inventoryLow !== undefined && { inventoryLow: String(inventoryLow) }),
-        ...(lastImported !== undefined && { lastImported: String(lastImported) }),
+      const params = new URLSearchParams();
+      Object.entries(args || {}).forEach(([key, value]) => {
+        if (value === undefined || value === null || value === "") return;
+        if (Array.isArray(value)) {
+          value.forEach((v) => {
+            if (v !== undefined && v !== null && v !== "") {
+              params.append(key, String(v));
+            }
+          });
+        } else if (typeof value === "boolean") {
+          params.append(key, value ? "1" : "0");
+        } else {
+          params.append(key, String(value));
+        }
       });
 
       const res = await axiosInstance.get(
@@ -216,25 +199,6 @@ export const deleteProduct = createAsyncThunk(
       console.error("❌ Error deleting Product:", err);
       return thunkAPI.rejectWithValue(
         err.response?.data?.message || "Failed to delete products"
-      );
-    }
-  }
-);
-
-//ADVANCED SEARCH PRODUCT
-export const advanceSearchProduct = createAsyncThunk(
-  "product/advanceSearchProduct",
-  async ({ data }: { data: any }, thunkAPI) => {
-    try {
-      const res = await axiosInstance.post(
-        `dashboard/products/advanced-search`,
-        data
-      );
-      return res.data;
-    } catch (err: any) {
-      console.error("❌ Error Searching  Product:", err);
-      return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to search products"
       );
     }
   }
@@ -576,10 +540,6 @@ const productSlice = createSlice({
             (item: any) => !deletedIds.includes(item.id)
           ),
         };
-      })
-      .addCase(advanceSearchProduct.fulfilled, (state, action) => {
-        state.loading = false;
-        state.products = action.payload;
       });
   },
 });

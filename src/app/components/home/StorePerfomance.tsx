@@ -9,7 +9,7 @@ import {
   CartesianGrid,
   ResponsiveContainer,
 } from "recharts";
-import { fetchDashboardMetrics, fetchDashboardStoreCount,fetchDashboardStoreCountFiltered, } from "@/redux/slices/homeSlice";
+import { fetchDashboardMetrics, fetchDashboardStoreCount, fetchDashboardStoreCountFiltered, } from "@/redux/slices/homeSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { StoreMetric, StoreMetricsResponse } from "@/types/types";
 import AnalyticsToolbar from "./AnalyticsToolbar";
@@ -22,12 +22,10 @@ export default function StorePerformanceChart() {
   const metrics = useAppSelector((state) => state.home?.metrics) as StoreMetricsResponse | null;
   const metricsCount = useAppSelector((state: any) => state.home?.metricsCount)
   const dateRange = useAppSelector((state: any) => state.home.dateRange);
-const previous = useAppSelector((state: any) => state.home.previous);
+  const previous = useAppSelector((state: any) => state.home.previous);
 
 
-console.log("Metrics Count:", metricsCount);
-console.log("Date Range:", dateRange);
-console.log("Previous:", previous);
+
   const metricsData = metrics?.data ?? [];
   const chartData = metricsData ? [
     { label: "Visits", value: Number(metricsCount?.visits) },
@@ -37,11 +35,11 @@ console.log("Previous:", previous);
 
   ] : [];
   useEffect(() => {
-   
+
     dispatch(fetchDashboardMetrics());
     // dispatch(fetchDashboardStoreCount());
-      dispatch(fetchDashboardStoreCountFiltered(filter));
-  }, [dispatch,filter]);
+    dispatch(fetchDashboardStoreCountFiltered(filter));
+  }, [dispatch, filter]);
 
 
   if (!metricsData) return <div>Loading...</div>;
@@ -50,16 +48,16 @@ console.log("Previous:", previous);
     <div>
       <h1 className="my-5 !text-[2.4rem]">Store Performance</h1>
       <AnalyticsToolbar
-  filter={filter}
-  onFilterChange={setFilter}
-   dateRange={dateRange}
-/>
-      
+        filter={filter}
+        onFilterChange={setFilter}
+        dateRange={dateRange}
+      />
+
       <div className="w-full h-100% p-4 bg-white rounded shadow">
         {/* Summary Cards */}
         <div className="grid grid-cols-4 gap-4 mb-6">
           {[
-            { label: "Visits", key: "visits", color: "text-blue-600", value: metricsCount?.visits ,previous: previous?.visits,},
+            { label: "Visits", key: "visits", color: "text-blue-600", value: metricsCount?.visits, previous: previous?.visits, },
             {
               label: "Conversion",
               key: "conversion",
@@ -68,14 +66,14 @@ console.log("Previous:", previous);
               value: metricsCount?.conversion,
               previous: previous?.conversion,
             },
-            { label: "Orders", key: "orders", color: "text-green-600", value: metricsCount?.orders ,  previous: previous?.orders,},
+            { label: "Orders", key: "orders", color: "text-green-600", value: metricsCount?.orders, previous: previous?.orders, },
             {
               label: "Revenue", key: "revenue",
               color: "text-emerald-600",
               prefix: "$",
               value: metricsCount?.revenue,
-                  
-                   previous: previous?.revenue,
+
+              previous: previous?.revenue,
 
             },
 
@@ -107,7 +105,7 @@ console.log("Previous:", previous);
                 </div>
                 <div className="text-md text-gray-500">
                   {/* {last} last week's total */}
-                   Previous: {metric.previous ?? 0}
+                  Previous: {metric.previous ?? 0}
                 </div>
               </div>
             );

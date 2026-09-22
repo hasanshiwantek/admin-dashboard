@@ -1,5 +1,6 @@
 import axios from "axios";
-import { toast } from "react-toastify";
+import { errorMessage, successMessage } from "@/utils/message";
+import { getFromStorage, removeFromStorage } from "@/utils/storage";
 
 const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || "https://backend.sparemicro.com/api/",
@@ -7,8 +8,8 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use((config) => {
   if (typeof window != "undefined") {
-    const token = localStorage.getItem("token");
-    const storeId = localStorage.getItem("storeId");
+    const token = getFromStorage("token");
+    const storeId = getFromStorage("storeId");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -23,30 +24,20 @@ axiosInstance.interceptors.request.use((config) => {
 axiosInstance.interceptors.response.use(
   (response) => {
     if (response.data?.message) {
-      toast.success(response.data.message, {
-        style: {
-          fontSize: "12px",
-          fontWeight: "bold",
-        },
-      });
+      successMessage(response.data.message);
     }
     return response;
   },
   (error) => {
     if (error.response?.data?.message) {
-      toast.error(error.response.data.message, {
-        style: {
-          fontSize: "12px",
-          fontWeight: "bold",
-        },
-      });
+      errorMessage(error.response.data.message);
 
       if (error.response?.data?.message == "Unauthenticated.") {
-        localStorage.removeItem("token");
-        localStorage.removeItem("storeId");
-        localStorage.removeItem("user");
-        localStorage.removeItem("availableStores");
-        localStorage.removeItem("tokenExpiry");
+        removeFromStorage("token");
+        removeFromStorage("storeId");
+        removeFromStorage("user");
+        removeFromStorage("availableStores");
+        removeFromStorage("tokenExpiry");
 
         window.location.href = "/login";
       }
@@ -58,12 +49,7 @@ axiosInstance.interceptors.response.use(
       Object.values(errors).forEach((fieldErrors) => {
         if (Array.isArray(fieldErrors)) {
           fieldErrors.forEach((err) =>
-            toast.error(err, {
-              style: {
-                fontSize: "12px",
-                fontWeight: "bold",
-              },
-            })
+            errorMessage(err)
           );
         }
       });

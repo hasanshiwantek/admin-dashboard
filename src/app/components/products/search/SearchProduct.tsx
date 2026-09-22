@@ -214,22 +214,22 @@ const SearchProduct = () => {
                       <SelectItem value="any">No Preference</SelectItem>
                       {name === "isVisible" && (
                         <>
-                          <SelectItem value="true">
+                          <SelectItem value="1">
                             Only Visible Products
                           </SelectItem>
-                          <SelectItem value="false">
+                          <SelectItem value="0">
                             Only Invisible Products
                           </SelectItem>
                         </>
                       )}
                       {name === "isFeatured" && (
                         <>
-                          <SelectItem value="true">Featured</SelectItem>
-                          <SelectItem value="false">Not Featured</SelectItem>
+                          <SelectItem value="1">Featured</SelectItem>
+                          <SelectItem value="0">Not Featured</SelectItem>
                         </>
                       )}
                       {name === "freeShipping" && (
-                        <SelectItem value="true">Only Free Shipping</SelectItem>
+                        <SelectItem value="1">Only Free Shipping</SelectItem>
                       )}
                       {/* {name === "status" && (
                         <>
