@@ -48,7 +48,6 @@ export default function AllProducts() {
           onSearchSubmit={table.submitSearch}
           onSearchClear={table.clearSearch}
           searchPlaceholder=" Search products"
-          filtersHref="/manage/products/search"
           showFilterChips
           appliedFilters={table.appliedFilters}
           filterLabels={FILTER_LABELS}

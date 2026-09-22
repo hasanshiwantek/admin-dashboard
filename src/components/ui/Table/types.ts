@@ -51,7 +51,6 @@ export interface TableProps<T> {
   onSearchSubmit?: () => void;
   onSearchClear?: () => void;
   searchPlaceholder?: string;
-  filtersHref?: string;
 
   showFilterChips?: boolean;
   appliedFilters?: Record<string, string | string[]>;
