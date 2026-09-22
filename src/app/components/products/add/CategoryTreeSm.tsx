@@ -58,13 +58,14 @@ export default function CategoryTreeSm({
 
   const categories: Category[] = normalizeCategories(categoriesDataRaw);
   const allCategoryIds = flattenCategoryIds(categories).map(String);
-  const selectedIds = ((watch(name) ?? []) as Array<string | number>).map(String);
+  const selectedIds = ((watch(name) ?? []) as Array<string | number>).map(
+    String,
+  );
   const isAllSelected =
     allCategoryIds.length > 0 &&
     allCategoryIds.every((id) => selectedIds.includes(id));
 
   useEffect(() => {
-    console.log({ selectedIds, name });
     const selected = selectedIds?.map(String);
     const nextOpenMap: Record<string, boolean> = {};
 
