@@ -952,7 +952,7 @@ export const removeCouponUsage = createAsyncThunk(
   ) => {
     try {
       const response = await axiosInstance.delete(
-        "web/coupons/coupon-usage/remove",
+        "dashboard/coupons/coupon-usage/remove",
         {
           data,
           headers: {
