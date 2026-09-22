@@ -919,7 +919,7 @@ export const saveCouponUsageDraft = createAsyncThunk(
   async (
     data: {
       email: string;
-      is_draft: number;
+      draft_token: string;
     },
     thunkAPI,
   ) => {
