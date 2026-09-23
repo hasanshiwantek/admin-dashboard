@@ -7,7 +7,6 @@ import type { AppDispatch, RootState } from "@/redux/store";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { successMessage } from "@/utils/message";
-import { getFromStorage } from "@/utils/storage";
 
 export default function ForgotPasswordPage() {
     const router = useRouter();
@@ -35,8 +34,8 @@ export default function ForgotPasswordPage() {
     };
 
     useEffect(() => {
-        const token = getFromStorage("token");
-        const storeId = getFromStorage("storeId");
+        const token = localStorage.getItem("token");
+        const storeId = localStorage.getItem("storeId");
         if (token && storeId) {
             router.replace("/manage/dashboard");
         } else {

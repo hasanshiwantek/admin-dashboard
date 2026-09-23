@@ -26,14 +26,14 @@ export default function ProductSearchInput({ onSelect, register }: any) {
 
       try {
         const resultAction = await dispatch(
-          fetchAllPurchasableProducts({
+          fetchAllProducts({
             page: 1,
             pageSize: 20,
-            isName: search.trim(),
+            search: search.trim(),
           })
         );
 
-        if (fetchAllPurchasableProducts.fulfilled.match(resultAction)) {
+        if (fetchAllProducts.fulfilled.match(resultAction)) {
           const payload = resultAction.payload as any;
           const list =
             payload?.data?.data ??
@@ -102,7 +102,7 @@ export default function ProductSearchInput({ onSelect, register }: any) {
                   onClick={() => handleSelect(product)}
                   className="flex min-w-0 flex-1 items-center gap-3 text-left"
                 >
-                  
+
                   {product?.image?.[0]?.path || product?.image ? (
                     <img
                       src={product?.image?.[0]?.path || product?.image}

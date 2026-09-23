@@ -1,6 +1,7 @@
 "use client";
 
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
+import { useSafeBack } from "@/hooks/useSafeBack";
 import objectToFormData from "@/lib/formDataUtils";
 import { buildCopyNameSku } from "@/lib/productUtils";
 import { removeEmptyValues } from "@/lib/utils";
@@ -25,7 +26,6 @@ import React, {
   useState,
 } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { useSafeBack } from "@/hooks/useSafeBack";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import { FiExternalLink } from "react-icons/fi";
 import { HiDotsHorizontal } from "react-icons/hi";
@@ -55,9 +55,9 @@ export default function AddProductPage() {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const exitAfterSaveRef = useRef(false);
   const copyAfterSaveRef = useRef(false);
-  const submitActionRef = useRef<"duplicate" | "addAnother" | "viewProducts">(
-    "viewProducts",
-  );
+  const submitActionRef = useRef<
+    "save" | "duplicate" | "addAnother" | "viewProducts"
+  >("viewProducts");
   const hasUpdatedOriginalRef = useRef(false); // ✅ tracks if update already happened
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -143,9 +143,8 @@ export default function AddProductPage() {
     if (product) {
       const mappedProduct = {
         ...product,
-        // Map relatedProductsEnabled → relatedProducts
         relatedProducts: product.relatedProductsEnabled || 0,
-        categoryIds: (product.categoryIds || []).map(Number), // ✅ critical fix
+        categoryIds: (product.categoryIds || []).map(Number),
       };
 
       reset(mappedProduct);
@@ -180,8 +179,30 @@ export default function AddProductPage() {
     if (isDirty && !guardEntryRef.current) pushGuardEntry();
   }, [isDirty]);
 
+  // Navigation waiting for the guard entry to be popped (see navigateFromForm).
+  const pendingNavRef = useRef<(() => void) | null>(null);
+
+  // Removes the guard entry before navigating, so the form keeps a single
+  // history entry and back always returns to the page it was opened from —
+  // however many times the user saves & duplicates / adds another.
+  const navigateFromForm = (navigate: () => void) => {
+    if (guardEntryRef.current) {
+      guardEntryRef.current = false;
+      pendingNavRef.current = navigate;
+      window.history.back();
+    } else {
+      navigate();
+    }
+  };
+
   useEffect(() => {
     const handlePopState = () => {
+      if (pendingNavRef.current) {
+        const navigate = pendingNavRef.current;
+        pendingNavRef.current = null;
+        navigate();
+        return;
+      }
       if (!guardEntryRef.current) return;
       guardEntryRef.current = false;
       if (isDirtyRef.current) {
@@ -212,7 +233,7 @@ export default function AddProductPage() {
     setShowLeaveModal(false);
     pushGuardEntry();
   };
-  
+
   useEffect(() => {
     if (!id) {
       setProduct(undefined); // Clear previous product state
@@ -220,23 +241,41 @@ export default function AddProductPage() {
     }
   }, [id, reset]);
 
+  // Uses replace (not push) so chained duplicates / add-anothers don't pile up
+  // history entries and back still lands on the products list with its params.
   const navigateAfterSave = (savedProductId?: number | string) => {
     const action = submitActionRef.current;
+
+    if (action === "save") {
+      // New product → switch to its edit form so later saves update it.
+      if (savedProductId) {
+        navigateFromForm(() =>
+          router.replace(`/manage/products/edit/${savedProductId}`),
+        );
+      }
+      return;
+    }
 
     if (action === "duplicate") {
       const targetId = savedProductId ?? product?.id;
       if (targetId) {
-        router.push(`/manage/products/dublicate/${targetId}?isDuplicate=true`);
+        navigateFromForm(() =>
+          router.replace(
+            `/manage/products/dublicate/${targetId}?isDuplicate=true`,
+          ),
+        );
         return;
       }
     }
 
     if (action === "addAnother") {
-      router.push("/manage/products/add");
+      setProduct(undefined);
+      reset(); // same URL when already on /add, so the page won't remount
+      navigateFromForm(() => router.replace("/manage/products/add"));
       return;
     }
 
-    router.push("/manage/products");
+    navigateFromForm(goBack);
   };
 
   const onSubmit = methods.handleSubmit(async (data: Record<string, any>) => {
@@ -255,13 +294,23 @@ export default function AddProductPage() {
         : [];
 
       // 2. Destructure unused/form-specific properties
-      const { id, imageOption, exitAfterSave, ...rest } = data;
-
+      const {
+        id,
+        imageOption,
+        exitAfterSave,
+        freeShipping,
+        fixedShippingCost,
+        ...rest
+      } = data;
+      console.log({ freeShipping });
       // 3. Normalize Payload Fields (Shared for duplicate and normal flows)
       const normalizedFields = {
         ...rest,
         image: imageData,
-        fixedShippingCost: Number(data.fixedShippingCost || 0),
+        freeShipping: freeShipping ? 1 : 0,
+        ...(!freeShipping && {
+          fixedShippingCost: Number(fixedShippingCost || 0),
+        }),
         minPurchaseQuantity: Number(data?.minPurchaseQuantity || 0),
         maxPurchaseQuantity: Number(data?.maxPurchaseQuantity || 0),
         dimensions: {
@@ -274,7 +323,6 @@ export default function AddProductPage() {
         relatedProducts: data.relatedProducts ? 1 : 0,
         showCondition: data.showCondition ? 1 : 0,
         trackInventory: data.trackInventory ? 1 : 0,
-        freeShipping: data.freeShipping ? 1 : 0,
         isVisible: data.isVisible ? 1 : 0,
         allowPurchase: data.allowPurchase ? 1 : 0,
         stopProcessingRules: data.stopProcessingRules ? 1 : 0,
@@ -360,11 +408,11 @@ export default function AddProductPage() {
 
         if (action.fulfilled.match(result)) {
           const savedProductId = result?.payload?.data?.id ?? product?.id;
-          if (
-            submitActionRef.current === "addAnother" ||
-            submitActionRef.current === "viewProducts" ||
-            submitActionRef.current === "duplicate"
-          ) {
+          if (submitActionRef.current === "save" && shouldUpdate) {
+            // Updated in place: mark the form clean and reload saved data.
+            reset(data);
+            dispatch(fetchSingleProduct({ id: product.id }));
+          } else {
             navigateAfterSave(savedProductId);
           }
         } else {
@@ -589,7 +637,7 @@ export default function AddProductPage() {
                         onClick={async () => {
                           setDropdownOpen(false);
                           await dispatch(deleteProduct({ ids: [product?.id] }));
-                          router.push("/manage/products");
+                          navigateFromForm(goBack);
                         }}
                       >
                         Delete
@@ -641,6 +689,20 @@ export default function AddProductPage() {
                   onClick={() => handleBackNavigation()}
                 >
                   Cancel
+                </button>
+
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="btn-outline-primary flex items-center gap-2"
+                  onClick={() => {
+                    submitActionRef.current = "save";
+                  }}
+                >
+                  {isLoading && submitActionRef.current === "save" && (
+                    <span className="h-4 w-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                  )}
+                  Save
                 </button>
 
                 <button

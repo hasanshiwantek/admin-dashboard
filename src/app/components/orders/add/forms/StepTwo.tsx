@@ -10,7 +10,7 @@ import ProductSelectModal from "../ProductSelectModal";
 import { errorMessage } from "@/utils/message";
 
 export default function StepTwo({ step, setStep }: any) {
-  const { register, setValue, handleSubmit, control } = useFormContext();
+  const { setValue, handleSubmit, control } = useFormContext();
 
   const watchedProducts = useWatch({
     control,

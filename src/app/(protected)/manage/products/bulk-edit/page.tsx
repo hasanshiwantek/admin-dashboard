@@ -27,7 +27,6 @@ import { setSelectedProducts } from "@/redux/slices/productSlice";
 
 import { fetchBrands } from "@/redux/slices/productSlice";
 import Link from "next/link";
-import { getFromStorage, removeFromStorage } from "@/utils/storage";
 type Product = {
   id: number;
   name: string;
@@ -58,7 +57,7 @@ export default function BulkEdit() {
   const router = useRouter();
 
   useEffect(() => {
-    const stored = getFromStorage("bulkEditProducts");
+    const stored = localStorage.getItem("bulkEditProducts");
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
@@ -115,7 +114,7 @@ export default function BulkEdit() {
     try {
       const payload = prepareUpdatePayload(products);
       await dispatch(updateProduct({ body: payload })).unwrap();
-      removeFromStorage("bulkEditProducts"); // ✅ clean up
+      localStorage.removeItem("bulkEditProducts"); // ✅ clean up
       router.push("/manage/products");
     } catch (err) {
       console.error("❌ Failed to update:", err);

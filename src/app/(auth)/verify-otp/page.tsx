@@ -11,7 +11,6 @@ import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Mail, ShieldCheck } from "lucide-react";
-import { getFromStorage, removeFromStorage, setInStorage } from "@/utils/storage";
 
 export default function VerifyOtpPage() {
     const dispatch = useDispatch<AppDispatch>();
@@ -65,14 +64,14 @@ export default function VerifyOtpPage() {
         if (verifyOtp.fulfilled.match(result)) {
             const { token, stores, expireAt, user } = result.payload;
             router.push("/store-select");
-            removeFromStorage("pending_token"); // ✅ cleanup
-            removeFromStorage("two_factor_required"); // ✅ cleanup
-            removeFromStorage("two_factor_type"); // ✅ cleanup
-            setInStorage("token", token);
-            setInStorage("user", user);
-            setInStorage("tokenExpiry", new Date(expireAt).getTime().toString());
-            setInStorage("availableStores", stores);
-            removeFromStorage("twoFactorData"); // ✅ cleanup
+            localStorage.removeItem("pending_token"); // ✅ cleanup
+            localStorage.removeItem("two_factor_required"); // ✅ cleanup
+            localStorage.removeItem("two_factor_type"); // ✅ cleanup
+            localStorage.setItem("token", token);
+            localStorage.setItem("user", JSON.stringify(user));
+            localStorage.setItem("tokenExpiry", new Date(expireAt).getTime().toString());
+            localStorage.setItem("availableStores", JSON.stringify(stores));
+            localStorage.removeItem("twoFactorData"); // ✅ cleanup
         } else {
             setOtpError((result.payload as string) || "Invalid OTP. Please try again.");
         }
@@ -87,10 +86,10 @@ export default function VerifyOtpPage() {
         })
     }
     useEffect(() => {
-        const token = getFromStorage("token");
-        const storeId = getFromStorage("storeId");
-        const twoFactorRequired = getFromStorage("two_factor_required");
-        const pendingToken = getFromStorage("pending_token");
+        const token = localStorage.getItem("token");
+        const storeId = localStorage.getItem("storeId");
+        const twoFactorRequired = localStorage.getItem("two_factor_required");
+        const pendingToken = localStorage.getItem("pending_token");
 
         if (token && storeId) {
             router.push("/manage/dashboard");
