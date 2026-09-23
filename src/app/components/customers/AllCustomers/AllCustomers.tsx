@@ -42,12 +42,9 @@ import CustomerNotesModal from "../edit/CustomerNotesModal";
 const AllCustomers = () => {
   const dispatch = useAppDispatch();
   const { customers } = useAppSelector((state: any) => state.customer);
-  console.log(customers, "ya customers");
   const { loading, error } = useAppSelector((state: any) => state.customer);
   const router = useRouter();
   const pagination = customers.pagination;
-  // const [currentPage, setCurrentPage] = useState(1);
-  // const [perPage, setPerPage] = useState("50");
   const total = pagination?.total;
   const totalPages = Math.ceil(total / pagination?.pageSize);
   const [selectedCustomers, setSelectedCustomers] = useState<any[]>([]);

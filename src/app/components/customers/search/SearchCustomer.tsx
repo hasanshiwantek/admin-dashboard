@@ -265,6 +265,7 @@ const SearchCustomer = () => {
               </div>
 
               {/* Store Credit */}
+              {/* After this sprint */}
               {/* <div>
                 <Label className="block mb-2 2xl:!text-2xl">Store credit</Label>
                 <div className="grid grid-cols-2 gap-4 max-w-md">
@@ -320,6 +321,7 @@ const SearchCustomer = () => {
             </div>
 
             {/* Search by Group */}
+            {/* After this sprint */}
             {/* <div>
               <h1 className="!font-semibold mb-4 2xl:!text-[2.4rem]">Search by group(optional)</h1>
               <div className="bg-white p-6 border rounded-md ">
