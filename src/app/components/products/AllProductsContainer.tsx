@@ -37,6 +37,11 @@ const useAllProductsContainer = () => {
     ActionEnums.ADD | ActionEnums.DELETE
   >(ActionEnums.ADD);
 
+  const [showCategoryDeleteConfirm, setShowCategoryDeleteConfirm] =
+    React.useState(false);
+  const [pendingDeleteCategoryIds, setPendingDeleteCategoryIds] =
+    React.useState<number[]>([]);
+
   const products = allProducts?.data;
   const pagination = allProducts?.pagination;
   const totalPages = pagination?.lastPage;
@@ -59,8 +64,8 @@ const useAllProductsContainer = () => {
   } = table;
 
   const handleApplyCategories = async (pickedIdsStr: string[]) => {
-    try {
-      if (categoryAction === ActionEnums.ADD) {
+    if (categoryAction === ActionEnums.ADD) {
+      try {
         const result = await dispatch(
           updateProduct({
             body: {
@@ -73,36 +78,58 @@ const useAllProductsContainer = () => {
             },
           }),
         );
-
         if (updateProduct.fulfilled.match(result)) table.refetch();
-      } else if (categoryAction === ActionEnums.DELETE) {
-        const picked = pickedIdsStr.map(Number);
-
-        if (!picked.length) return;
-
-        const ok = window.confirm(
-          `This will permanently delete ${picked.length} categor${
-            picked.length > 1 ? "ies" : "y"
-          } for ALL products. Continue?`,
-        );
-
-        if (!ok) return;
-
-        const result = await dispatch(
-          deleteProductCategory({
-            data: {
-              productIds: categoryProductIds,
-              categoryIds: picked,
-            },
-          }),
-        );
-
-        if (deleteProductCategory.fulfilled.match(result)) table.refetch();
+      } catch (error) {
+        console.error("Failed to update product categories:", error);
+      } finally {
+        setCategoryModalOpen(false);
+        setCategoryProductIds([]);
+        setCategoryModalDefaults([]);
+        clearSelection();
       }
-    } catch (error) {
-      console.error("Failed to update product categories:", error);
-    } finally {
+      return;
+    }
+
+    const picked = pickedIdsStr.map(Number);
+    if (!picked.length) {
       setCategoryModalOpen(false);
+      setCategoryModalDefaults([]);
+      return;
+    }
+    setPendingDeleteCategoryIds(picked);
+    setCategoryModalOpen(false);
+    setShowCategoryDeleteConfirm(true);
+  };
+
+  const categoryDeleteCount = pendingDeleteCategoryIds.length;
+  const categoryDeleteMessage =
+    categoryDeleteCount === 1
+      ? "Are you sure you want to delete this category from the product?"
+      : `Are you sure you want to delete these ${categoryDeleteCount} categories from the product?`;
+
+  const closeCategoryDeleteConfirm = () => {
+    setShowCategoryDeleteConfirm(false);
+    setPendingDeleteCategoryIds([]);
+    setCategoryProductIds([]);
+    setCategoryModalDefaults([]);
+  };
+
+  const confirmCategoryDelete = async () => {
+    try {
+      const result = await dispatch(
+        deleteProductCategory({
+          data: {
+            productIds: categoryProductIds,
+            categoryIds: pendingDeleteCategoryIds,
+          },
+        }),
+      );
+      if (deleteProductCategory.fulfilled.match(result)) table.refetch();
+    } catch (error) {
+      console.error("Failed to delete product categories:", error);
+    } finally {
+      setShowCategoryDeleteConfirm(false);
+      setPendingDeleteCategoryIds([]);
       setCategoryProductIds([]);
       setCategoryModalDefaults([]);
       clearSelection();
@@ -421,6 +448,11 @@ const useAllProductsContainer = () => {
     categoryModalDefaults,
     handleApplyCategories,
     bulkActions,
+    // category-delete confirmation modal
+    showCategoryDeleteConfirm,
+    categoryDeleteMessage,
+    confirmCategoryDelete,
+    closeCategoryDeleteConfirm,
   };
 };
 
