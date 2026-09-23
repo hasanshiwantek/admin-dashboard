@@ -18,6 +18,7 @@ import {
   restrictDecimalValue,
 } from "@/validations/validations";
 import { ValidationError } from "@/components/ui/validation-error";
+import { cn } from "@/lib/utils";
 
 export default function ShippingDetails() {
   const {
@@ -26,7 +27,7 @@ export default function ShippingDetails() {
     watch,
     formState: { errors },
   } = useFormContext();
-
+  const freeShipping = watch("freeShipping");
   return (
     <div
       className="bg-white shadow p-6 space-y-4 scroll-mt-20"
@@ -59,12 +60,14 @@ export default function ShippingDetails() {
             </TooltipProvider>
           </Label>
           <Input
-            className="!max-w-[90%] w-full"
+            className={cn("!max-w-[90%] w-full", {
+              "line-through": freeShipping,
+            })}
             id="fixedShippingPrice"
             type="number"
             step="0.01"
             placeholder="$ 0"
-            disabled={watch("freeShipping")}
+            disabled={freeShipping}
             onKeyDown={restrictDecimalInput}
             onPaste={restrictDecimalPaste}
             onInput={restrictDecimalValue}
