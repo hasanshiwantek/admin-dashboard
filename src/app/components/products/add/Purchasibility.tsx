@@ -20,6 +20,7 @@ import {
   wholeNumberValidation,
 } from "@/validations/validations";
 import { ValidationError } from "@/components/ui/validation-error";
+import { useEffect } from "react";
 export default function Purchasability() {
   const {
     register,
@@ -28,11 +29,12 @@ export default function Purchasability() {
     setValue,
     formState: { errors },
   } = useFormContext();
+  
 
   const status = watch("purchasabilityStatus");
   const callForPricing = watch("callForPricing");
   const removePreorderDate = watch("removePreorderStatus");
-
+ 
   return (
     <div
       className="bg-white p-6 border rounded-md space-y-6 scroll-mt-20"
@@ -58,7 +60,7 @@ export default function Purchasability() {
               </Label>
             </div>
 
-            <div className="flex flex-col gap-2">
+            {/* <div className="flex flex-col gap-2">
               <div className="flex items-start gap-2">
                 <RadioGroupItem value="preorder" id="preorder" />
                 <Label className="2xl:!text-2xl" htmlFor="preorder">
@@ -162,7 +164,7 @@ export default function Purchasability() {
                   </div>
                 </div>
               )}
-            </div>
+            </div> */}
 
             <div className="flex flex-col gap-2">
               <div className="flex items-start gap-2">
@@ -192,22 +194,42 @@ export default function Purchasability() {
                     </Label>
                   </div>
 
-                  {callForPricing && (
-                    <div>
-                      <Label
-                        className="2xl:!text-2xl"
-                        htmlFor="callForPricingLabel"
-                      >
-                        Call for pricing label
-                      </Label>
-                      <Input
-                        id="callForPricingLabel"
-                        className="w-full max-w-[80%]"
-                        placeholder="Contact us at 555-5555"
-                        {...register("callForPricingLabel")}
-                      />
-                    </div>
-                  )}
+{callForPricing && (
+  <div className="space-y-4">
+    <div>
+      <Label
+        className="2xl:!text-2xl"
+        htmlFor="callForPricingLabel"
+      >
+        Call for pricing label
+      </Label>
+
+      <Input
+        id="callForPricingLabel"
+        className="w-full max-w-[80%]"
+        placeholder="Contact us"
+        {...register("callForPricingLabel")}
+      />
+    </div>
+
+    <div>
+      <Label
+        className="2xl:!text-2xl"
+        htmlFor="callForPricingPhone"
+      >
+        Call for pricing phone
+      </Label>
+
+      <Input
+        // id="callForPricingPhone"
+        className="w-full max-w-[80%]"
+        placeholder="032656787656"
+        {...register("callForPricingPhone")}
+      />
+    </div>
+  </div>
+)}
+                 
                 </div>
               )}
             </div>
