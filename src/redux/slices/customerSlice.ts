@@ -41,12 +41,20 @@ export const loginAsCustomer = createAsyncThunk(
 export const fetchCustomers = createAsyncThunk(
   "customer/fetchCustomers",
   async (
-    { page, pageSize }: { page: number; pageSize: number | string },
+    params: Record<string, string | number | undefined | null>,
     thunkAPI
   ) => {
     try {
+      const searchParams = new URLSearchParams();
+
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== "") {
+          searchParams.append(key, String(value));
+        }
+      });
+
       const res = await axiosInstance.get(
-        `dashboard/customers/get-customers?page=${page}&pageSize=${pageSize}`
+        `dashboard/customers/get-customers?${searchParams?.toString()}`
       );
       return res.data;
     } catch (err: any) {
@@ -56,6 +64,7 @@ export const fetchCustomers = createAsyncThunk(
     }
   }
 );
+
 
 // FETCH CUSTOMERS THUNK
 export const advanceCustomerSearch = createAsyncThunk(
