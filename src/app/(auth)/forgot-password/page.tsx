@@ -7,6 +7,7 @@ import type { AppDispatch, RootState } from "@/redux/store";
 import { Eye, EyeOff } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { getFromStorage } from "@/utils/storage";
 
 function ForgotPasswordForm() {
     const router = useRouter();
@@ -83,8 +84,8 @@ function ForgotPasswordForm() {
 
     // Redirect if already logged in
     useEffect(() => {
-        const token = localStorage.getItem("token");
-        const storeId = localStorage.getItem("storeId");
+        const token = getFromStorage("token");
+        const storeId = getFromStorage("storeId");
         if (token && storeId) {
             router.replace("/manage/dashboard");
         }

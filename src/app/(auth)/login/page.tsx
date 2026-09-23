@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import Cookies from "js-cookie";
 import Image from "next/image";
 import Link from "next/link";
+import { getFromStorage, setInStorage } from "@/utils/storage";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -34,20 +35,20 @@ export default function LoginPage() {
 
       if (pending_token && two_factor_type) {
         router.push("/verify-otp");
-        localStorage.setItem("pending_token", pending_token);
-        localStorage.setItem("two_factor_required", two_factor_required.toString());
-        localStorage.setItem("two_factor_type", two_factor_type);
+        setInStorage("pending_token", pending_token);
+        setInStorage("two_factor_required", two_factor_required.toString());
+        setInStorage("two_factor_type", two_factor_type);
       } else {
         Cookies.set("token", token, { expires: 7 });
-        localStorage.setItem("token", token);
-        localStorage.setItem("user", JSON.stringify({ ...user, isOwner }));
-        localStorage.setItem(
+        setInStorage("token", token);
+        setInStorage("user", { ...user, isOwner });
+        setInStorage(
           "tokenExpiry",
           new Date(expireAt).getTime().toString()
         );
         if (stores?.length > 0) {
           // Always show store selection if there is at least 1 store
-          localStorage.setItem("availableStores", JSON.stringify(stores));
+          setInStorage("availableStores", stores);
           router.push("/store-select");
         } else {
           // No stores available, handle accordingly
@@ -66,8 +67,8 @@ export default function LoginPage() {
     setFormData((prev) => ({ ...prev, showPassword: !prev.showPassword }));
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const storeId = localStorage.getItem("storeId");
+    const token = getFromStorage("token");
+    const storeId = getFromStorage("storeId");
     if (token && storeId) {
       router.replace("/manage/dashboard");
     } else {

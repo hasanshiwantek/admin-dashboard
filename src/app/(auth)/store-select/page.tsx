@@ -14,6 +14,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { getFromStorage, removeFromStorage, setInStorage } from "@/utils/storage";
 
 export default function StoreSelectPage() {
   const dispatch = useDispatch();
@@ -27,22 +28,22 @@ export default function StoreSelectPage() {
   const [loading, setLoading] = useState(false);
 
   const verifyOTPLocalClear = () => {
-    localStorage.removeItem("pending_token");
-    localStorage.removeItem("two_factor_required");
-    localStorage.removeItem("two_factor_type");
+    removeFromStorage("pending_token");
+    removeFromStorage("two_factor_required");
+    removeFromStorage("two_factor_type");
   }
   const handleContinue = () => {
     if (!selectedStore) return; // prevent click without selection
     setLoading(true);
     dispatch(setStoreId(selectedStore));
-    localStorage.setItem("storeId", selectedStore.toString());
+    setInStorage("storeId", selectedStore.toString());
     router.push("/manage/dashboard");
     verifyOTPLocalClear()
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const storeId = localStorage.getItem("storeId");
+    const token = getFromStorage("token");
+    const storeId = getFromStorage("storeId");
     if (token && storeId) {
       router.push("/manage/dashboard");
       verifyOTPLocalClear()

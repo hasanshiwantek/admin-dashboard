@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { getFromStorage } from "@/utils/storage";
 
 const Page = () => {
   const [newEmail, setNewEmail] = useState("");
@@ -17,8 +18,8 @@ const Page = () => {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const storedUser = localStorage.getItem("user");
-      setParsedUser(storedUser ? JSON.parse(storedUser) : null);
+      const storedUser = getFromStorage("user");
+      setParsedUser(storedUser ? storedUser : null);
     }
   }, []);
 

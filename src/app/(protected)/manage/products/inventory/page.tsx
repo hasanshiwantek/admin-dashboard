@@ -21,6 +21,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { getFromStorage, removeFromStorage } from "@/utils/storage";
 type Product = {
   id: number;
   name: string;
@@ -49,7 +50,7 @@ export default function EditInventoryPage() {
     if (selectedProducts.length > 0) {
       setProducts(selectedProducts);
     } else {
-      const stored = localStorage.getItem("selectedProducts");
+      const stored = getFromStorage("selectedProducts");
       if (stored) {
         try {
           const parsed = JSON.parse(stored);
@@ -89,7 +90,7 @@ export default function EditInventoryPage() {
       const payload = prepareUpdatePayload(products);
       await dispatch(updateProduct({ body: payload })).unwrap();
       // TODO: Navigate back or close modal
-      localStorage.removeItem("selectedProducts");
+      removeFromStorage("selectedProducts");
       router.push("/manage/products");
     } catch (err) {
     }

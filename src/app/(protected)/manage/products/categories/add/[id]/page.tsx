@@ -28,6 +28,7 @@ import { useSearchParams } from "next/navigation";
 import DescriptionEditorQuillForCat from "@/app/components/products/categories/DescriptionEditorQuillForCat";
 import { UrlSettingEnums } from "@/const/appConstants";
 import { generateSlug } from "@/lib/productUtils";
+import { getFromStorage, setInStorage } from "@/utils/storage";
 
 type FormVals = {
   name: string;
@@ -310,11 +311,11 @@ export default function AddSubCategoryPage() {
 
   useEffect(() => {
     // Get available stores
-    const storedStores = localStorage.getItem("availableStores");
-    const parsedStores = storedStores ? JSON.parse(storedStores) : [];
+    const storedStores = getFromStorage("availableStores");
+    const parsedStores = storedStores ? storedStores : [];
 
     // Get the selected store ID (convert to number for comparison)
-    const savedStoreId = localStorage.getItem("storeId");
+    const savedStoreId = getFromStorage("storeId");
     const selected = parsedStores.find(
       (store: any) => store.id === Number(savedStoreId),
     );
@@ -324,7 +325,7 @@ export default function AddSubCategoryPage() {
     } else if (parsedStores.length > 0) {
       // Fallback to first store if saved ID not found
       setSelectedStore(parsedStores[0]);
-      localStorage.setItem("storeId", parsedStores[0].id.toString());
+      setInStorage("storeId", parsedStores[0].id.toString());
     }
   }, []);
   useEffect(() => {
