@@ -366,7 +366,7 @@ const SearchCustomer = () => {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="id">ID</SelectItem>
-                        <SelectItem value="first_name">Name</SelectItem>
+                        <SelectItem value="name">Name</SelectItem>
                         <SelectItem value="email">Email</SelectItem>
                         <SelectItem value="orders">Orders</SelectItem>
                       </SelectContent>
