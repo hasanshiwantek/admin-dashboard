@@ -42,12 +42,9 @@ import CustomerNotesModal from "../edit/CustomerNotesModal";
 const AllCustomers = () => {
   const dispatch = useAppDispatch();
   const { customers } = useAppSelector((state: any) => state.customer);
-  console.log(customers, "ya customers");
   const { loading, error } = useAppSelector((state: any) => state.customer);
   const router = useRouter();
   const pagination = customers.pagination;
-  // const [currentPage, setCurrentPage] = useState(1);
-  // const [perPage, setPerPage] = useState("50");
   const total = pagination?.total;
   const totalPages = Math.ceil(total / pagination?.pageSize);
   const [selectedCustomers, setSelectedCustomers] = useState<any[]>([]);
@@ -62,19 +59,6 @@ const AllCustomers = () => {
       label: "Edit",
       onClick: () => router.push(`/manage/customers/edit/${customer.id}`),
     },
-    // {
-    //   label: "View Orders",
-    //   onClick: () => console.log("View Orders clicked", customer),
-    // },
-    ///comment because shehroze bhii said
-    // {
-    //   label: "View Notes",
-    //   onClick: () => {
-    //     const customerId = customer?.id;
-
-    //     setShowCustomerNotes(true);
-    //   },
-    // },
     {
       label: "Login",
       onClick: async () => {
@@ -158,7 +142,7 @@ const AllCustomers = () => {
   const toggleRow = (id: number) => {
     setExpandedRow((prev) => (prev === id ? null : id));
   };
-  const copyBilling = () => {};
+  const copyBilling = () => { };
 
   // CUSTOMER UPDATION LOGIC
   const updateCustomerGroupStatus = async (
@@ -262,12 +246,10 @@ const AllCustomers = () => {
 
     if (filterKeys.length > 0) {
       dispatch(
-        advanceCustomerSearch({
-          data: {
-            ...queryObject,
-            page: currentPage,
-            pageSize: perPage,
-          },
+        fetchCustomers({
+          ...queryObject,
+          page: currentPage,
+          pageSize: perPage,
         }),
       );
     } else {

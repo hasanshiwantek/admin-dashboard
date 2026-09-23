@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import {
@@ -18,12 +19,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
-import { refetchProducts, sanitizeNumberInput } from "@/lib/productUtils";
+import { sanitizeNumberInput } from "@/lib/productUtils";
+import { cn } from "@/lib/utils";
 import { updateProduct } from "@/redux/slices/productSlice";
 import { useEffect, useRef, useState } from "react";
 import ValidationTooltip from "./TableCellValidationTooltip";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 
 const INVALID_STOCK_MESSAGE = "Please enter a whole number";
 
@@ -51,6 +51,7 @@ type FormValues = {
 type EditStockSheetProps = {
   trigger: React.ReactNode;
   product: Product;
+  onSuccess?: () => void;
 };
 
 const createInitialValues = (product: Product): FormValues => ({
@@ -103,6 +104,7 @@ const IntegerInputCell = ({
 export default function EditStockSheet({
   trigger,
   product,
+  onSuccess,
 }: EditStockSheetProps) {
   const dispatch = useAppDispatch();
 
@@ -184,8 +186,6 @@ export default function EditStockSheet({
         }),
       ).unwrap();
 
-      await refetchProducts(dispatch);
-
       return true;
     } catch (error) {
       console.error("Error updating product:", error);
@@ -197,13 +197,14 @@ export default function EditStockSheet({
   };
 
   const handleSave = async () => {
-    await handleSubmit();
+    const success = await handleSubmit();
+    if (success) onSuccess?.();
   };
 
   const handleSaveAndExit = async () => {
     const success = await handleSubmit();
-
     if (success) {
+      onSuccess?.();
       setOpen(false);
     }
   };

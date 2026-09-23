@@ -383,7 +383,6 @@ Updated: ${billing.updatedAt}`;
       setSavingId(null);
     }
   }, [shipmentLoader]);
-  console.log(filteredOrders, "ya rahy orders")
   // ERROR LOGIC
   if (error) {
     return (

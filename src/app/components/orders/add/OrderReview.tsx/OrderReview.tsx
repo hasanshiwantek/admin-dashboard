@@ -5,7 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox"; // Added Checkbox component
-import { resetCoupon } from "@/redux/slices/orderSlice";
+import { removeCouponUsage, resetCoupon } from "@/redux/slices/orderSlice";
 import {
   // Added Select components
   Select,
@@ -97,12 +97,17 @@ export default function OrderReview({ step, setStep }: any) {
     setCouponCode("");
   };
   const handleRemoveCoupon = () => {
-    dispatch(resetCoupon());
-    setCouponCode("");
-    setValue("couponCode", "");
-    setValue("coupon", null);
-    setValue("discountAmount", 0);
+    if (appliedCoupon?.id) {
+      dispatch(removeCouponUsage({ id: appliedCoupon?.id })).unwrap().then(() => {
+        dispatch(resetCoupon());
+        setCouponCode("");
+        setValue("couponCode", "");
+        setValue("coupon", null);
+        setValue("discountAmount", 0);
+      })
+    }
   };
+
   const shippingCost = Number(watch("shippingMethod.total_charge") || 0);
   const manualDiscount = Number(watch("manualDiscount") || 0);
   const couponDiscount = Number(
@@ -633,7 +638,7 @@ export default function OrderReview({ step, setStep }: any) {
                 value={paymentMethod}
                 onValueChange={(val) => setValue("paymentMethod", val)}
               >
-                <SelectTrigger  className="h-11 w-full px-4 text-base">
+                <SelectTrigger className="h-11 w-full px-4 text-base">
                   <SelectValue placeholder="Select..." />
                 </SelectTrigger>
                 <SelectContent>
@@ -679,7 +684,7 @@ export default function OrderReview({ step, setStep }: any) {
                   <span>-${couponDiscount.toFixed(2)}</span>
                 </div>
               )}
-              {manualDiscount > 0 && ( 
+              {manualDiscount > 0 && (
                 <div className="flex justify-between">
                   <span>Discount</span>
                   <span>-${manualDiscount.toFixed(2)}</span>

@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Sheet,
@@ -17,12 +18,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
-import { refetchProducts, sanitizeNumberInput } from "@/lib/productUtils";
+import { sanitizeNumberInput } from "@/lib/productUtils";
+import { cn } from "@/lib/utils";
 import { updateProduct } from "@/redux/slices/productSlice";
 import { useEffect, useRef, useState } from "react";
 import ValidationTooltip from "./TableCellValidationTooltip";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 
 const WARNING_CELL_BG = "#fff9e6";
 const INVALID_PRICE_MESSAGE = "Please enter a whole number";
@@ -54,6 +54,7 @@ type FormValues = {
 type EditPriceSheetProps = {
   trigger: React.ReactNode;
   product: Product;
+  onSuccess?: () => void;
 };
 
 const PRICE_COLUMNS: {
@@ -115,6 +116,7 @@ const PriceInputCell = ({
 export default function EditPriceSheet({
   trigger,
   product,
+  onSuccess,
 }: EditPriceSheetProps) {
   const dispatch = useAppDispatch();
 
@@ -132,7 +134,7 @@ export default function EditPriceSheet({
    */
   useEffect(() => {
     setValues(createInitialValues(product));
-  }, [product]);
+  }, [product.id]);
 
   /**
    * Focus the first editable field when the sheet opens.
@@ -190,8 +192,6 @@ export default function EditPriceSheet({
         }),
       ).unwrap();
 
-      await refetchProducts(dispatch);
-
       return true;
     } catch (error) {
       console.error("Error updating product:", error);
@@ -202,13 +202,14 @@ export default function EditPriceSheet({
   };
 
   const handleSave = async () => {
-    await handleSubmit();
+    const success = await handleSubmit();
+    if (success) onSuccess?.();
   };
 
   const handleSaveAndExit = async () => {
     const success = await handleSubmit();
-
     if (success) {
+      onSuccess?.();
       setOpen(false);
     }
   };

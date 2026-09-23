@@ -1,6 +1,7 @@
 "use client";
 import PageTile from "@/components/ui/PageTile";
 import Table from "@/components/ui/Table/Table";
+import ConfirmationModal from "../orders/edit/CaptuedPaymentModal";
 import AddToCategories from "./AddToCategories";
 import useAllProductsContainer from "./AllProductsContainer";
 import { FILTER_LABELS } from "./constant";
@@ -25,11 +26,14 @@ export default function AllProducts() {
     categoryModalDefaults,
     handleApplyCategories,
     bulkActions,
+    showCategoryDeleteConfirm,
+    categoryDeleteMessage,
+    confirmCategoryDelete,
+    closeCategoryDeleteConfirm,
   } = useAllProductsContainer();
 
   return (
     <>
-      <div>
         <PageTile title="All Products" />
         <Table<any>
           data={productList}
@@ -70,13 +74,22 @@ export default function AllProducts() {
             onPerPageChange: table.setPerPage,
           }}
         />
-      </div>
 
       <AddToCategories
         open={categoryModalOpen}
         onClose={() => setCategoryModalOpen(false)}
         defaultSelectedIds={categoryModalDefaults}
         onApply={handleApplyCategories}
+      />
+
+      <ConfirmationModal
+        open={showCategoryDeleteConfirm}
+        onClose={closeCategoryDeleteConfirm}
+        onConfirm={confirmCategoryDelete}
+        title="Remove Categories"
+        message={categoryDeleteMessage}
+        confirmText="Continue"
+        cancelText="Cancel"
       />
     </>
   );

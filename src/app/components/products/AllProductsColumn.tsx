@@ -102,6 +102,7 @@ const AllProductsColumn = ({
             <Pencil className="w-5 h-5 text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
           </div>
         }
+        onSuccess={refetch}
       />
     ),
   },
@@ -119,6 +120,7 @@ const AllProductsColumn = ({
             <Pencil className="w-5 h-5 text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
           </div>
         }
+        onSuccess={refetch}
       />
     ),
   },
