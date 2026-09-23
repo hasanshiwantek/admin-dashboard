@@ -35,7 +35,6 @@ export default function StoreSelectPage() {
     if (!selectedStore) return; // prevent click without selection
     setLoading(true);
     dispatch(setStoreId(selectedStore));
-    localStorage.setItem("storeId", selectedStore.toString());
     router.push("/manage/dashboard");
     verifyOTPLocalClear()
   };

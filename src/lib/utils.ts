@@ -1,5 +1,6 @@
 import { BASE62_STRING } from "@/const/appConstants";
 import { clsx, type ClassValue } from "clsx";
+import { isEmpty } from "lodash";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -80,4 +81,28 @@ export function removeEmptyValues(
   }
 
   return hasValidKeys ? cleanedObj : undefined;
+}
+
+export function buildQueryParams(payload: Record<string, any> = {}): string {
+  const queryParams = new URLSearchParams();
+
+  Object.entries(payload).forEach(([key, value]) => {
+    // Ignore undefined, null, or empty string values
+    if (value === undefined || value === null || value === "") {
+      return;
+    }
+
+    if (Array.isArray(value)) {
+      value.forEach((v) => {
+        if (v !== undefined && v !== null && v !== "") {
+          queryParams.append(key, String(v));
+        }
+      });
+    } else {
+      queryParams.set(key, String(value));
+    }
+  });
+
+  const queryString = queryParams.toString();
+  return queryString ? `?${queryString}` : "";
 }

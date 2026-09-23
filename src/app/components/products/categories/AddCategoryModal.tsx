@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -9,20 +10,19 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
-  SelectTrigger,
-  SelectValue,
   SelectContent,
   SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
+import { refetchCategories } from "@/lib/categoryUtils";
 import { cn } from "@/lib/utils";
 import { addCategory } from "@/redux/slices/categorySlice";
-import { useAppDispatch } from "@/hooks/useReduxHooks";
+import { useState } from "react";
 import CategoryDropdown from "./CategoryDropdown";
-import { refetchCategories } from "@/lib/categoryUtils";
 export default function AddCategoryModal({
   open,
   onOpenChange,
@@ -32,8 +32,9 @@ export default function AddCategoryModal({
   onOpenChange: (value: boolean) => void;
   categoryData: any;
 }) {
+  const currentStore = useAppSelector((state) => state.config.currentStore);
   const [name, setDisplayName] = useState("");
-  const [channel, setChannel] = useState("ctspoint");
+  const [channel, setChannel] = useState(currentStore?.name);
   const [parentId, setParentCategory] = useState<number | null>(null);
   const [isVisible, setVisibility] = useState(false);
   const [showError, setShowError] = useState(false);
@@ -55,9 +56,9 @@ export default function AddCategoryModal({
 
       await dispatch(addCategory({ data: payload })).unwrap(); // unwrap for error catching
       setParentCategory(null);
-      setTimeout(()=>{
-        refetchCategories(dispatch)
-      },600)
+      setTimeout(() => {
+        refetchCategories(dispatch);
+      }, 600);
       onOpenChange(false); // close modal on success
     } catch (error) {
       console.error("Failed to create category:", error);
@@ -99,8 +100,9 @@ export default function AddCategoryModal({
               <SelectValue placeholder="Select channel" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="ctspoint">ctspoint</SelectItem>
-              {/* Add more channels if needed */}
+              {currentStore?.name && (
+                <SelectItem value={currentStore.name}>{currentStore.name}</SelectItem>
+              )}
             </SelectContent>
           </Select>
         </div>

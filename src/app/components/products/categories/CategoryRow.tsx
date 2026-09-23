@@ -1,25 +1,23 @@
 "use client";
 
-import { useState } from "react";
-import { useFormContext, useForm } from "react-hook-form";
-import { TableCell, TableRow } from "@/components/ui/table";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { Folder, ChevronRight, ChevronDown } from "lucide-react";
-import OrderActionsDropdown from "../../orders/OrderActionsDropdown";
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
+import { Checkbox } from "@/components/ui/checkbox";
+import { TableCell, TableRow } from "@/components/ui/table";
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
+import { refetchCategories } from "@/lib/categoryUtils";
+import { buildQueryParams } from "@/lib/utils";
+import { deleteCategory, updateCategory } from "@/redux/slices/categorySlice";
 import {
   SortableContext,
+  useSortable,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import VisibilityToggle from "../../dropdowns/VisibilityToggle";
-import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
-import { updateCategory, deleteCategory } from "@/redux/slices/categorySlice";
-import { refetchCategories } from "@/lib/categoryUtils";
+import { CSS } from "@dnd-kit/utilities";
+import { ChevronDown, ChevronRight, Folder } from "lucide-react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-
+import { useState } from "react";
+import VisibilityToggle from "../../dropdowns/VisibilityToggle";
+import OrderActionsDropdown from "../../orders/OrderActionsDropdown";
 
 const CategoryRow = ({
   category,
@@ -55,22 +53,20 @@ const CategoryRow = ({
     paddingLeft: `${level * 28}px`,
   };
   const allCategories = useAppSelector(
-    (state: any) => state.category.categories
+    (state: any) => state.category.categories,
   );
 
   const categories = allCategories?.data || [];
 
   const dispatch = useAppDispatch();
-  const { register, watch, setValue } = useFormContext();
   const isSelected = selectedIds.some((cat: any) => cat === category);
 
   const handleChange = (checked: any) => {
     setSelectedIds((prev) =>
-      checked ? [...prev, category] : prev.filter((cat) => cat !== category)
+      checked ? [...prev, category] : prev.filter((cat) => cat !== category),
     );
   };
 
-  // const hasChildren = category.subcategories?.length;
   const hasChildren = (category.subcategories?.length ?? 0) > 0;
   const [visibilityMap, setVisibilityMap] = useState<{
     [key: number]: "ENABLED" | "DISABLED";
@@ -80,10 +76,14 @@ const CategoryRow = ({
     {
       label: "Edit",
       onClick: () => {
-        const mainRootId = rootId
-        const findCategory = categories?.find((item: any) => item?.id == mainRootId)
+        const mainRootId = rootId;
+        const findCategory = categories?.find(
+          (item: any) => item?.id == mainRootId,
+        );
         if (rootId != category?.id) {
-          router.push(`/manage/products/categories/edit/${category?.id}?rootParent=${findCategory?.name}`);
+          router.push(
+            `/manage/products/categories/edit/${category?.id}?rootParent=${findCategory?.name}`,
+          );
         } else {
           router.push(`/manage/products/categories/edit/${category?.id}`);
         }
@@ -92,13 +92,16 @@ const CategoryRow = ({
     {
       label: "Create sub-category",
       onClick: () => {
-        const mainRootId = rootId
-        const findCategory = categories?.find((item: any) => item?.id == mainRootId)
+        const mainRootId = rootId;
+        const findCategory = categories?.find(
+          (item: any) => item?.id == mainRootId,
+        );
         if (rootId != category?.id) {
-          router.push(`/manage/products/categories/add/${category?.id}?rootParent=${findCategory?.name}`);
+          router.push(
+            `/manage/products/categories/add/${category?.id}?rootParent=${findCategory?.name}`,
+          );
         } else {
           router.push(`/manage/products/categories/add/${category?.id}`);
-
         }
       },
     },
@@ -115,7 +118,7 @@ const CategoryRow = ({
           updateCategory({
             id,
             data: payload,
-          })
+          }),
         );
         setTimeout(() => {
           refetchCategories(dispatch);
@@ -125,21 +128,16 @@ const CategoryRow = ({
     {
       label: "View products",
       onClick: () => {
-        router.push(`/manage/products`);
+        const queryParams = buildQueryParams({ categoryIds: category?.id });
+        router.push(`/manage/products${queryParams}`);
       },
     },
-    // {
-    //   label: "View in page builder",
-    // },
-    // {
-    //   label: "Manage product filters",
-    // },
     {
       label: "View on storefront",
       onClick: () => {
         window.open(
-          `https://newtownspares.advertsedge.com/category/${category?.slug}`,
-          "_blank"
+          `https://server-blink.vercel.app/category/${category?.slug}`,
+          "_blank",
         );
       },
     },
@@ -193,7 +191,14 @@ const CategoryRow = ({
         </TableCell>
         <TableCell className="w-[30px] ">
           {hasChildren ? (
-            <button style={{ marginLeft: `${level * 10}px` }} type="button" onClick={(e) => { e.stopPropagation(); toggle() }}>
+            <button
+              style={{ marginLeft: `${level * 10}px` }}
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                toggle();
+              }}
+            >
               {isExpanded ? (
                 <ChevronDown size={15} />
               ) : (
@@ -203,42 +208,43 @@ const CategoryRow = ({
           ) : null}
         </TableCell>
         <TableCell className="flex  items-center gap-2 text-blue-600 font-medium text-xl py-6 select-none">
-          <div
-            // style={{ marginLeft: `${level * 10}px` }}
-            className="flex items-center gap-2 "
-          >
+          <div className="flex items-center gap-2 ">
             <Folder className="text-indigo-300 w-8 h-8" fill="lightblue" />
             <button
-  type="button"
-  onClick={() => {
-    const mainRootId = rootId;
-    const findCategory = categories?.find(
-      (item: any) => item?.id == mainRootId
-    );
+              type="button"
+              onClick={() => {
+                const mainRootId = rootId;
+                const findCategory = categories?.find(
+                  (item: any) => item?.id == mainRootId,
+                );
 
-    if (rootId != category?.id) {
-      router.push(
-        `/manage/products/categories/edit/${category?.id}?rootParent=${findCategory?.name}`
-      );
-    } else {
-      router.push(
-        `/manage/products/categories/edit/${category?.id}`
-      );
-    }
-  }}
-  className="hover:text-blue-800 2xl:!text-[1.6rem] cursor-pointer"
->
-  {category.name}
-</button>
+                if (rootId != category?.id) {
+                  router.push(
+                    `/manage/products/categories/edit/${category?.id}?rootParent=${findCategory?.name}`,
+                  );
+                } else {
+                  router.push(
+                    `/manage/products/categories/edit/${category?.id}`,
+                  );
+                }
+              }}
+              className="hover:text-blue-800 2xl:!text-[1.6rem] cursor-pointer"
+            >
+              {category.name}
+            </button>
           </div>
         </TableCell>
-        <TableCell className="text-left text-xl 2xl:!text-[1.6rem]">{category?.total_products}</TableCell>
-        <TableCell className="text-left text-xl 2xl:!text-[1.6rem]">{category?.in_subcategories}</TableCell>
+        <TableCell className="text-left text-xl 2xl:!text-[1.6rem]">
+          {category?.total_products}
+        </TableCell>
+        <TableCell className="text-left text-xl 2xl:!text-[1.6rem]">
+          {category?.in_subcategories}
+        </TableCell>
         <TableCell className="relative hover:bg-blue-100 transition-all  ">
           <VisibilityToggle
             productId={category.id}
             value={
-              visibilityMap[category.id] ?? category.is_visible
+              (visibilityMap[category.id] ?? category.is_visible)
                 ? "ENABLED"
                 : "DISABLED"
             }
@@ -257,14 +263,13 @@ const CategoryRow = ({
                 updateCategory({
                   id,
                   data: payload,
-                })
+                }),
               );
             }}
           />
         </TableCell>
         <TableCell>
           <OrderActionsDropdown
-            // actions={editdropdownActions}
             actions={editdropdownActions(category)}
             trigger={
               <Button
@@ -284,19 +289,25 @@ const CategoryRow = ({
           items={category.subcategories.map((child: any) => child.id)}
           strategy={verticalListSortingStrategy}
         >
-          {category.subcategories?.length > 0 ? category.subcategories.map((child: any) => (
-            <CategoryRow
-              key={child.id}
-              category={child}
-              level={level + 1}
-              selectedIds={selectedIds}
-              setSelectedIds={setSelectedIds}
-              expandedIds={expandedIds}
-              setExpandedIds={setExpandedIds}
-              highlightId={highlightId}
-              rootId={rootId || category.id}
-            />
-          )) : <div className="text-center text-gray-500 py-4">No sub-categories</div>}
+          {category.subcategories?.length > 0 ? (
+            category.subcategories.map((child: any) => (
+              <CategoryRow
+                key={child.id}
+                category={child}
+                level={level + 1}
+                selectedIds={selectedIds}
+                setSelectedIds={setSelectedIds}
+                expandedIds={expandedIds}
+                setExpandedIds={setExpandedIds}
+                highlightId={highlightId}
+                rootId={rootId || category.id}
+              />
+            ))
+          ) : (
+            <div className="text-center text-gray-500 py-4">
+              No sub-categories
+            </div>
+          )}
         </SortableContext>
       )}
     </>

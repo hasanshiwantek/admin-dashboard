@@ -25,3 +25,9 @@ export const UserRoles = {
   [UserRolesEnum.ADMIN]: "Admin",
   [UserRolesEnum.USER]: "User",
 };
+
+export enum LocalStorageKeys {
+  AvailableStores = "availableStores",
+  CurrentStore = "currentStore",
+  StoreId = "storeId",
+}
