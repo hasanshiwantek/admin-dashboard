@@ -202,8 +202,8 @@ const useAllOrdersContainer = () => {
         } else {
           toast.error(
             (result.payload as string) ||
-              result.error?.message ||
-              "Failed to print packing slip",
+            result.error?.message ||
+            "Failed to print packing slip",
           );
         }
       },
@@ -216,11 +216,11 @@ const useAllOrdersContainer = () => {
     },
     ...(!order?.userType
       ? [
-          {
-            label: "Send Message",
-            onClick: () => router.push(`/manage/orders/message/${order?.id}`),
-          },
-        ]
+        {
+          label: "Send Message",
+          onClick: () => router.push(`/manage/orders/message/${order?.id}`),
+        },
+      ]
       : []),
     {
       label: "View notes",
@@ -230,50 +230,50 @@ const useAllOrdersContainer = () => {
       ? [{ label: "Ship items", onClick: () => onShipItems(order) }]
       : []),
     ...(order?.payment?.payment_intent_id &&
-    order?.payment?.payment_status !== COMPLETED
+      order?.payment?.payment_status !== COMPLETED
       ? [
-          {
-            label: "Capture Funds",
-            onClick: () => onCaptureFunds(order?.payment?.payment_intent_id),
-          },
-        ]
+        {
+          label: "Capture Funds",
+          onClick: () => onCaptureFunds(order?.payment?.payment_intent_id),
+        },
+      ]
       : []),
     ...(order?.shipmentId
       ? [
-          {
-            label: "View shipments",
-            onClick: () => {
-              setSelectedOrderId(order.id);
-              setShowShipmentTable(true);
-            },
+        {
+          label: "View shipments",
+          onClick: () => {
+            setSelectedOrderId(order.id);
+            setShowShipmentTable(true);
           },
-        ]
+        },
+      ]
       : []),
     ...(String(order?.status || "").toLowerCase() !== "shipped" &&
-    String(order?.status || "").toLowerCase() !== "awaiting fulfillment"
+      String(order?.status || "").toLowerCase() !== "awaiting fulfillment"
       ? [
-          {
-            label: "Void Transaction",
-            onClick: () => {
-              setSelectedOrderId(order?.id);
-              setShowVoidConfirm(true);
-            },
+        {
+          label: "Void Transaction",
+          onClick: () => {
+            setSelectedOrderId(order?.id);
+            setShowVoidConfirm(true);
           },
-        ]
+        },
+      ]
       : []),
     ...(String(order?.status || "").toLowerCase() !== "cancelled" &&
-    String(order?.status || "").toLowerCase() !== "awaiting payment"
+      String(order?.status || "").toLowerCase() !== "awaiting payment"
       ? [
-          {
-            label: "Refund",
-            onClick: async () => {
-              const result = await dispatch(
-                refundOrder({ orderId: order?.id }),
-              );
-              if (refundOrder.fulfilled.match(result)) refetch();
-            },
+        {
+          label: "Refund",
+          onClick: async () => {
+            const result = await dispatch(
+              refundOrder({ orderId: order?.id }),
+            );
+            if (refundOrder.fulfilled.match(result)) refetch();
           },
-        ]
+        },
+      ]
       : []),
     {
       label: "View order timeline",
