@@ -1,26 +1,24 @@
 "use client";
 
-import { useFormContext, Controller } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
-import { DatePicker } from "@/components/ui/DatePicker";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { HiQuestionMarkCircle } from "react-icons/hi2";
+import { ValidationError } from "@/components/ui/validation-error";
 import {
   normalizeWholeNumberValue,
   restrictWholeNumberInput,
   restrictWholeNumberPaste,
   wholeNumberValidation,
 } from "@/validations/validations";
-import { ValidationError } from "@/components/ui/validation-error";
-import { useEffect } from "react";
+import { Controller, useFormContext } from "react-hook-form";
+import { HiQuestionMarkCircle } from "react-icons/hi2";
 export default function Purchasability() {
   const {
     register,
@@ -29,12 +27,11 @@ export default function Purchasability() {
     setValue,
     formState: { errors },
   } = useFormContext();
-  
 
   const status = watch("purchasabilityStatus");
   const callForPricing = watch("callForPricing");
   const removePreorderDate = watch("removePreorderStatus");
- 
+
   return (
     <div
       className="bg-white p-6 border rounded-md space-y-6 scroll-mt-20"
@@ -49,8 +46,10 @@ export default function Purchasability() {
         defaultValue="available"
         render={({ field }) => (
           <RadioGroup
-            {...field}
-            onValueChange={(val) => field.onChange(val)}
+            ref={field.ref}
+            name={field.name}
+            value={field.value}
+            onValueChange={field.onChange}
             className="space-y-4"
           >
             <div className="flex items-start gap-2">
@@ -173,69 +172,69 @@ export default function Purchasability() {
                   This product cannot be purchased in my online store
                 </Label>
               </div>
-
-              {field.value === "notAvailable" && (
-                <div className="space-y-5 mt-2">
-                  <div className="flex items-center gap-4">
-                    <Controller
-                      name="callForPricing"
-                      control={control}
-                      defaultValue={false}
-                      render={({ field }) => (
-                        <Switch
-                          id="callForPricing"
-                          checked={field.value}
-                          onCheckedChange={(checked) => field.onChange(checked)}
-                        />
-                      )}
-                    />
-                    <Label className="2xl:!text-2xl" htmlFor="callForPricing">
-                      Show “Call for pricing” message instead of the price
-                    </Label>
-                  </div>
-
-{callForPricing && (
-  <div className="space-y-4">
-    <div>
-      <Label
-        className="2xl:!text-2xl"
-        htmlFor="callForPricingLabel"
-      >
-        Call for pricing label
-      </Label>
-
-      <Input
-        id="callForPricingLabel"
-        className="w-full max-w-[80%]"
-        placeholder="Contact us"
-        {...register("callForPricingLabel")}
-      />
-    </div>
-
-    <div>
-      <Label
-        className="2xl:!text-2xl"
-        htmlFor="callForPricingPhone"
-      >
-        Call for pricing phone
-      </Label>
-
-      <Input
-        // id="callForPricingPhone"
-        className="w-full max-w-[80%]"
-        placeholder="032656787656"
-        {...register("callForPricingPhone")}
-      />
-    </div>
-  </div>
-)}
-                 
-                </div>
-              )}
             </div>
           </RadioGroup>
         )}
       />
+
+      {/* Kept outside the RadioGroup so typing does not bubble into its field handlers */}
+      {status === "notAvailable" && (
+        <div className="space-y-5 mt-2">
+          <div className="flex items-center gap-4">
+            <Controller
+              name="callForPricing"
+              control={control}
+              defaultValue={false}
+              render={({ field }) => (
+                <Switch
+                  id="callForPricing"
+                  checked={field.value}
+                  onCheckedChange={(checked) => field.onChange(checked)}
+                />
+              )}
+            />
+            <Label className="2xl:!text-2xl" htmlFor="callForPricing">
+              Show “Call for pricing” message instead of the price
+            </Label>
+          </div>
+
+          {callForPricing && (
+            <div className="grid grid-cols-1 2xl:grid-cols-2 gap-4">
+              <div>
+                <Label
+                  className="2xl:!text-2xl"
+                  htmlFor="callForPricingLabel"
+                >
+                  Call for pricing label
+                </Label>
+
+                <Input
+                  id="callForPricingLabel"
+                  className="max-w-[90%]! w-full"
+                  placeholder="Contact us"
+                  {...register("callForPricingLabel")}
+                />
+              </div>
+
+              <div>
+                <Label
+                  className="2xl:!text-2xl"
+                  htmlFor="callForPricingPhone"
+                >
+                  Call for pricing phone
+                </Label>
+
+                <Input
+                  id="callForPricingPhone"
+                  className="max-w-[90%]! w-full"
+                  placeholder="032656787656"
+                  {...register("callForPricingPhone")}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Min/Max Purchase Quantity */}
       <div className="grid grid-cols-1 2xl:grid-cols-2 gap-4 pt-6">
@@ -258,17 +257,13 @@ export default function Purchasability() {
           <Input
             className="!max-w-[90%] w-full"
             id="minPurchaseQty"
-            {...register(
-              "minPurchaseQuantity",
-              {
-                ...wholeNumberValidation("Minimum Purchase Quantity"),
-                max: {
-                  value: 999999999,
-                  message:
-                    "Quantity must be less than 1,000,000,000",
-                },
+            {...register("minPurchaseQuantity", {
+              ...wholeNumberValidation("Minimum Purchase Quantity"),
+              max: {
+                value: 999999999,
+                message: "Quantity must be less than 1,000,000,000",
               },
-            )}
+            })}
             type="number"
             onKeyDown={restrictWholeNumberInput}
             onPaste={restrictWholeNumberPaste}
@@ -295,17 +290,13 @@ export default function Purchasability() {
           <Input
             className="!max-w-[90%] w-full"
             id="maxPurchaseQty"
-            {...register(
-              "maxPurchaseQuantity",
-              {
-                ...wholeNumberValidation("Maximum Purchase Quantity"),
-                max: {
-                  value: 999999999,
-                  message:
-                    "Quantity must be less than 1,000,000,000",
-                },
+            {...register("maxPurchaseQuantity", {
+              ...wholeNumberValidation("Maximum Purchase Quantity"),
+              max: {
+                value: 999999999,
+                message: "Quantity must be less than 1,000,000,000",
               },
-            )}
+            })}
             type="number"
             onKeyDown={restrictWholeNumberInput}
             onPaste={restrictWholeNumberPaste}
