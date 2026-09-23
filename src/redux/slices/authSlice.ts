@@ -331,6 +331,7 @@ const authSlice = createSlice({
       // ✅ Clear everything on logout
       localStorage.removeItem("token");
       localStorage.removeItem("storeId");
+      localStorage.removeItem("currentStore");
       localStorage.removeItem("user");
       localStorage.removeItem("availableStores");
       localStorage.removeItem("tokenExpiry");
