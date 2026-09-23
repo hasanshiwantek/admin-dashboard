@@ -410,10 +410,6 @@ export default function OrderDetailRow({
                     )}
                   </p>
                 </div>
-
-                {/* <div className="font-medium whitespace-nowrap">
-                  ${(item.price * item.quantity).toFixed(2)}
-                </div> */}
                 <div className="font-medium whitespace-nowrap shrink-0">
                   ${(item.price * item.quantity).toFixed(2)}
                 </div>
