@@ -10,6 +10,7 @@ import UserDropdown from "../dropdowns/UserDropdown";
 import Image from "next/image";
 import GlobalSearchBar from "./GlobalSearch";
 import Link from "next/link";
+import { useAppSelector } from "@/hooks/useReduxHooks";
 
 interface HeaderProps {
   onMenuClick?: () => void;
@@ -18,25 +19,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const [companyOpen, setCompanyOpen] = useState<boolean>(false);
   const companyRef = useRef<HTMLDivElement>(null);
-  const [selectedStore, setSelectedStore] = useState<any>(null);
-
-  useEffect(() => {
-    // Get available stores
-    const storedStores = localStorage.getItem('availableStores');
-    const parsedStores = storedStores ? JSON.parse(storedStores) : [];
-
-    // Get the selected store ID (convert to number for comparison)
-    const savedStoreId = localStorage.getItem('storeId');
-    const selected = parsedStores.find((store: any) => store.id === Number(savedStoreId));
-    
-    if (selected) {
-      setSelectedStore(selected);
-    } else if (parsedStores.length > 0) {
-      // Fallback to first store if saved ID not found
-      setSelectedStore(parsedStores[0]);
-      localStorage.setItem('storeId', parsedStores[0].id.toString());
-    }
-  }, []);
+  const selectedStore = useAppSelector((state) => state.config.currentStore);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {

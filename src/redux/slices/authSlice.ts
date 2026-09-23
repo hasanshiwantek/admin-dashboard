@@ -330,11 +330,12 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       state.stores = [];
       // ✅ Clear everything on logout
-      removeFromStorage("token");
-      removeFromStorage("storeId");
-      removeFromStorage("user");
-      removeFromStorage("availableStores");
-      removeFromStorage("tokenExpiry");
+      localStorage.removeItem("token");
+      localStorage.removeItem("storeId");
+      localStorage.removeItem("currentStore");
+      localStorage.removeItem("user");
+      localStorage.removeItem("availableStores");
+      localStorage.removeItem("tokenExpiry");
     },
   },
   extraReducers: (builder) => {

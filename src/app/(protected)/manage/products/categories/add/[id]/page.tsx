@@ -68,6 +68,8 @@ function slugify(s: string) {
   );
 }
 
+const EMPTY_TREE: any[] = [];
+
 export default function AddSubCategoryPage() {
   const router = useRouter();
   const methods = useForm<FormVals>({
@@ -87,9 +89,8 @@ export default function AddSubCategoryPage() {
   const urlSettingData = useAppSelector(
     (state: any) => state.home?.urlSettingData,
   );
-  const catTree = useAppSelector(
-    (s: any) => s.category?.categories?.data || [],
-  );
+  const catTree =
+    useAppSelector((s: any) => s.category?.categories?.data) ?? EMPTY_TREE;
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [parentCategory, setParentCategory] = useState<ApiCategory | null>(

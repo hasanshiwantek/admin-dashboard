@@ -1,39 +1,35 @@
 "use client";
 
-import React, { useEffect, useMemo, useState, useCallback } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { useForm, useFormContext, FormProvider, Controller } from "react-hook-form";
-import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
-import {
-  fetchCategoryById,
-  fetchCategories,
-  updateCategory, // <-- ensure this thunk exists in your slice
-  editCategory,
-} from "@/redux/slices/categorySlice";
-import Link from "next/link";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
+import Spinner from "@/app/components/loader/Spinner";
 import CategoryDropdown from "@/app/components/products/categories/CategoryDropdown";
+import DescriptionEditorQuillForCat from "@/app/components/products/categories/DescriptionEditorQuillForCat";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
-  SelectTrigger,
   SelectContent,
   SelectItem,
+  SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import Spinner from "@/app/components/loader/Spinner";
-import { fetchUrlSettings } from "@/redux/slices/homeSlice";
-import { useSearchParams } from 'next/navigation';
-import DescriptionEditorQuill from "@/app/components/products/add/DescriptionEditorQuill";
-import DescriptionEditorQuillForCat from "@/app/components/products/categories/DescriptionEditorQuillForCat";
 import { UrlSettingEnums } from "@/const/appConstants";
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { generateSlug } from "@/lib/productUtils";
+import {
+  editCategory,
+  fetchCategories,
+  fetchCategoryById,
+} from "@/redux/slices/categorySlice";
+import { fetchUrlSettings } from "@/redux/slices/homeSlice";
+import Link from "next/link";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
+import React, { useCallback, useEffect, useState } from "react";
+import { Controller, FormProvider, useForm } from "react-hook-form";
 type FormVals = {
   name: string;
   slug: string;
+  channel: string;
   description: string;
   is_visible: boolean;
   parent: { id: number | null; path: string };
@@ -50,6 +46,7 @@ type FormVals = {
 type ApiCategory = {
   id: number;
   name: string;
+  channel: string;
   slug: string | null;
   description: string | null;
   is_visible: 0 | 1 | boolean;
@@ -57,41 +54,51 @@ type ApiCategory = {
   subcategories?: any[];
 };
 
-function slugify(s: string) {
-  return (
-    "/" +
-    s
-      .toLowerCase()
-      .trim()
-      .replace(/[^\w\s-]/g, "")
-      .replace(/\s+/g, "-")
-      .replace(/-+/g, "-") +
-    "/"
-  );
-}
+const EMPTY_TREE: any[] = [];
 
 export default function EditCategoryPage() {
   const router = useRouter();
-  const methods = useForm<FormVals>({
-    defaultValues: { /* same defaults */ },
-  });
   const params = useParams<{ id: string | string[] }>();
   const idStr = Array.isArray(params.id) ? params.id[0] : params.id;
   const categoryId = Number(idStr);
   const searchParams = useSearchParams();
   const dispatch = useAppDispatch();
-  const rootParentName = searchParams.get('rootParent');
-  const catTree = useAppSelector(
-    (s: any) => s.category?.categories?.data || []
-  );
+  const rootParentName = searchParams.get("rootParent");
+  // RHF
+  const methods = useForm<FormVals>({
+    defaultValues: {
+      name: "",
+      slug: "",
+      channel: "",
+      description: "",
+      is_visible: true,
+      parent: { id: null, path: "" },
+      template_layout: "Default",
+      sort_order: 0,
+      default_product_sort: "storefront_default",
+      seo_home_title: "",
+      seo_meta_keywords: "",
+      seo_meta_description: "",
+      seo_search_keywords: "",
+      image: null,
+    },
+  });
+
+  const { register, handleSubmit, reset, setValue, watch, control } = methods;
+
+  // Select the raw value; defaulting to `[]` inside the selector returns a new
+  // reference every call and causes an infinite re-render before categories load.
+  const catTree =
+    useAppSelector((s: any) => s.category?.categories?.data) ?? EMPTY_TREE;
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [initial, setInitial] = useState<ApiCategory | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [removeImage, setRemoveImage] = useState(false);
-  const [isUrlManuallyEdited, setIsUrlManuallyEdited] = useState<boolean>(false);
+  const [isUrlManuallyEdited, setIsUrlManuallyEdited] =
+    useState<boolean>(false);
   const urlSettingData = useAppSelector(
-    (state: any) => state.home?.urlSettingData
+    (state: any) => state.home?.urlSettingData,
   );
 
   // existing image URL ko pick karne ke liye flexible helper
@@ -109,7 +116,7 @@ export default function EditCategoryPage() {
       try {
         if (!Number.isNaN(categoryId)) {
           const res: any = await dispatch(
-            fetchCategoryById({ id: categoryId })
+            fetchCategoryById({ id: categoryId }),
           ).unwrap();
           // response shape: { status: true, category: {...} }
           const cat: ApiCategory = res?.category;
@@ -131,65 +138,15 @@ export default function EditCategoryPage() {
   }, [categoryId, dispatch]);
   useEffect(() => {
     if (categoryId) {
-      setIsUrlManuallyEdited(true)
+      setIsUrlManuallyEdited(true);
     }
-  }, [categoryId])
-
-  // RHF
-  const {
-    register,
-    handleSubmit,
-    reset,
-    setValue,
-    watch,
-    control,
-    formState: { isDirty },
-  } = useForm<FormVals>({
-    defaultValues: {
-      name: "",
-      slug: "",
-      description: "",
-      is_visible: true,
-      parent: { id: null, path: "" },
-      template_layout: "Default",
-      sort_order: 0,
-      default_product_sort: "storefront_default",
-      seo_home_title: "",
-      seo_meta_keywords: "",
-      seo_meta_description: "",
-      seo_search_keywords: "",
-      image: null,
-    },
-  });
-
-  // Prefill when initial category arrives
-  useEffect(() => {
-    if (!initial) return;
-    reset({
-      name: initial.name || "",
-      slug: initial.slug ? `/${initial.slug.replace(/^\/|\/$/g, "")}/` : "",
-      description: initial.description || "",
-      is_visible: Boolean(initial.is_visible),
-      parent: { id: initial.parent_id, path: "" }, // path is hydrated below if tree is present
-      template_layout: "Default",
-      sort_order: 0,
-      default_product_sort: "storefront_default",
-      seo_home_title: (initial as any).seoHomeTitle || "",        // ← fix
-      seo_meta_keywords: (initial as any).seoMetakeywords || "",  // ← fix
-      seo_meta_description: (initial as any).seoMetaDescription || "", // ← fix
-      seo_search_keywords: (initial as any).seoSearchKeywords || "",   // ← fix
-      image: null,
-    });
-    const url = getInitialImageUrl(initial);
-    setImagePreview(url || null);
-    setRemoveImage(false);
-  }, [initial, reset]);
+  }, [categoryId]);
 
   // Find full path string for the parent id to show in the CategoryDropdown input
   const findPath = (
     nodes: any[],
     targetId: number,
-    path: string[] = []
+    path: string[] = [],
   ): string | null => {
     for (const n of nodes) {
       const nextPath = [...path, n.name];
@@ -202,28 +159,63 @@ export default function EditCategoryPage() {
     return null;
   };
 
+  // Prefill when initial category arrives
   useEffect(() => {
-    const parentId = watch("parent")?.id;
-    if (parentId && catTree?.length) {
-      const p = findPath(catTree, parentId);
-      if (p)
-        setValue("parent", { id: parentId, path: p }, { shouldDirty: false });
+    if (!initial) return;
+
+    const parentId = initial.parent_id ?? null;
+
+    reset({
+      name: initial.name || "",
+      channel: initial.channel || "",
+      slug: initial.slug ? `/${initial.slug.replace(/^\/|\/$/g, "")}/` : "",
+      description: initial.description || "",
+      is_visible: Boolean(initial.is_visible),
+      parent: { id: parentId, path: "" },
+      template_layout: "Default",
+      sort_order: 0,
+      default_product_sort: "storefront_default",
+      seo_home_title: (initial as any).seoHomeTitle || "",
+      seo_meta_keywords: (initial as any).seoMetakeywords || "",
+      seo_meta_description: (initial as any).seoMetaDescription || "",
+      seo_search_keywords: (initial as any).seoSearchKeywords || "",
+      image: null,
+    });
+
+    const url = getInitialImageUrl(initial);
+    setImagePreview(url || null);
+    setRemoveImage(false);
+  }, [initial, reset]);
+
+  // Resolve the parent's display path once the tree is available (may load after `initial`)
+  useEffect(() => {
+    const parentId = initial?.parent_id;
+    if (!parentId || !catTree.length) return;
+
+    const resolvedPath = findPath(catTree, parentId);
+    if (resolvedPath) {
+      setValue(
+        "parent",
+        { id: parentId, path: resolvedPath },
+        { shouldDirty: false },
+      );
     }
-  }, [catTree, watch, setValue]);
+  }, [initial, catTree, setValue]);
 
   const nameVal = watch("name");
   const slugVal = watch("slug");
 
   const onResetSlug = () => {
     if (!nameVal) return;
-    setIsUrlManuallyEdited(false)
+    setIsUrlManuallyEdited(false);
     if (urlSettingData?.format_type == UrlSettingEnums.SEO_OPTIMIZED_SHORT) {
       if (nameVal) {
         const slug = generateSlug(nameVal);
         setValue("slug", `/${slug}`, { shouldDirty: true });
-
       }
-    } else if (urlSettingData?.format_type == UrlSettingEnums.SEO_OPTIMIZED_LONG) {
+    } else if (
+      urlSettingData?.format_type == UrlSettingEnums.SEO_OPTIMIZED_LONG
+    ) {
       if (nameVal) {
         const slug = generateSlug(nameVal);
         setValue("slug", `/categories/${slug}`, { shouldDirty: true });
@@ -242,7 +234,7 @@ export default function EditCategoryPage() {
         const finalUrl = Object.entries(replacements)
           .reduce(
             (url, [key, value]) => url.replace(new RegExp(key, "gi"), value),
-            customFormat
+            customFormat,
           )
           .replace(/%[^%]+%/g, "")
           .replace(/\/+/g, "/")
@@ -260,7 +252,9 @@ export default function EditCategoryPage() {
           const slug = generateSlug(nameVal);
           setValue("slug", `/${slug}`);
         }
-      } else if (urlSettingData?.format_type == UrlSettingEnums.SEO_OPTIMIZED_LONG) {
+      } else if (
+        urlSettingData?.format_type == UrlSettingEnums.SEO_OPTIMIZED_LONG
+      ) {
         if (nameVal) {
           const slug = generateSlug(nameVal);
           setValue("slug", `/categories/${slug}`);
@@ -268,7 +262,6 @@ export default function EditCategoryPage() {
       }
       const formatType = urlSettingData?.format_type;
       const customFormat = urlSettingData?.custom_format;
-
 
       if (formatType === "custom" && customFormat) {
         if (nameVal || rootParentName) {
@@ -280,7 +273,7 @@ export default function EditCategoryPage() {
           const finalUrl = Object.entries(replacements)
             .reduce(
               (url, [key, value]) => url.replace(new RegExp(key, "gi"), value),
-              customFormat
+              customFormat,
             )
             .replace(/%[^%]+%/g, "")
             .replace(/\/+/g, "/")
@@ -291,7 +284,6 @@ export default function EditCategoryPage() {
         }
       }
     }
-
   }, [isUrlManuallyEdited, nameVal]);
   const onPickParent = (val: { id: number; path: string }) => {
     setValue("parent", { id: val.id, path: val.path }, { shouldDirty: true });
@@ -322,7 +314,7 @@ export default function EditCategoryPage() {
         setImagePreview(objUrl);
       }
     },
-    [setValue]
+    [setValue],
   );
 
   const onDragOver = (e: React.DragEvent<HTMLDivElement>) => {
@@ -338,7 +330,7 @@ export default function EditCategoryPage() {
   };
   useEffect(() => {
     dispatch(fetchUrlSettings("category"));
-  }, [])
+  }, []);
   // --- SUBMIT: ALWAYS FORMDATA ---
   const onSubmit = async (vals: FormVals) => {
     try {
@@ -382,8 +374,8 @@ export default function EditCategoryPage() {
 
       await dispatch(editCategory({ id: categoryId, data: fd })).unwrap();
       setTimeout(() => {
-        router.push("/manage/products/categories")
-      }, 2000)
+        router.push("/manage/products/categories");
+      }, 2000);
       dispatch(fetchCategories());
     } catch (e) {
       console.error(e);
@@ -402,7 +394,6 @@ export default function EditCategoryPage() {
 
   return (
     <FormProvider {...methods}>
-
       <div>
         <div className="p-10">
           {/* Header breadcrumb + pager mimic */}
@@ -414,7 +405,9 @@ export default function EditCategoryPage() {
               <h1 className="!font-light 2xl:!text-[3.2rem]">Edit category</h1>
               {/* <div className="text-2xl">•••</div> */}
             </div>
-            <a className="border-blue-600 border-b-4 w-fit !text-2xl">Details</a>
+            <a className="border-blue-600 border-b-4 w-fit !text-2xl">
+              Details
+            </a>
           </div>
 
           {/* DETAILS CARD */}
@@ -423,16 +416,19 @@ export default function EditCategoryPage() {
 
             {/* Display name */}
             <div className="mb-8">
-              <Label className="mb-2 block 2xl:!text-[1.6rem]">Display name</Label>
-              <Input placeholder="Category display name" {...register("name")} />
+              <Label className="mb-2 block 2xl:!text-[1.6rem]">
+                Display name
+              </Label>
+              <Input
+                placeholder="Category display name"
+                {...register("name")}
+              />
             </div>
 
             {/* URL + Reset */}
             <div className="mb-8">
               {/* Row 1: Label */}
-              <Label className="mb-2 block 2xl:!text-[1.6rem]">
-                URL
-              </Label>
+              <Label className="mb-2 block 2xl:!text-[1.6rem]">URL</Label>
 
               {/* Row 2: Input + Reset */}
               <div className="flex items-center gap-4">
@@ -442,9 +438,8 @@ export default function EditCategoryPage() {
                   value={slugVal}
                   onChange={(e) => {
                     setIsUrlManuallyEdited(true);
-                    setValue("slug", e.target.value, { shouldDirty: true })
-                  }
-                  }
+                    setValue("slug", e.target.value, { shouldDirty: true });
+                  }}
                   onKeyDown={(e) => {
                     if (/[#$*&@!=+%`'":;<>{}[]|]/.test(e.key)) {
                       e.preventDefault();
@@ -468,7 +463,6 @@ export default function EditCategoryPage() {
                 </button>
               </div>
             </div>
-
 
             {/* Description (simple textarea; swap with your rich editor if needed) */}
             <div className="mb-8">
@@ -502,12 +496,14 @@ export default function EditCategoryPage() {
             {/* Channel (disabled) */}
             <div className="mb-8">
               <Label className="mb-2 block 2xl:!text-[1.6rem]">Channel</Label>
-              <Input disabled value="New Town Spares UK Ltd" />
+              <Input disabled {...register("channel")} />
             </div>
 
             {/* Parent category (searchable) */}
             <div className="mb-5 !w-full !max-w-md">
-              <Label className="mb-2 block 2xl:!text-[1.6rem]">Parent category</Label>
+              <Label className="mb-2 block 2xl:!text-[1.6rem]">
+                Parent category
+              </Label>
               <p className="text-xs text-muted-foreground mb-2">
                 Leave empty to add to the root category
               </p>
@@ -523,7 +519,9 @@ export default function EditCategoryPage() {
 
             {/* Template layout */}
             <div className="mb-8">
-              <Label className="mb-2 block 2xl:!text-[1.6rem]">Template layout file</Label>
+              <Label className="mb-2 block 2xl:!text-[1.6rem]">
+                Template layout file
+              </Label>
               <Controller
                 control={control}
                 name="template_layout"
@@ -554,7 +552,9 @@ export default function EditCategoryPage() {
 
             {/* Default product sort */}
             <div className="mb-8">
-              <Label className="mb-2 block 2xl:!text-[1.6rem]">Default product sort</Label>
+              <Label className="mb-2 block 2xl:!text-[1.6rem]">
+                Default product sort
+              </Label>
               <Controller
                 control={control}
                 name="default_product_sort"
@@ -584,7 +584,9 @@ export default function EditCategoryPage() {
 
             {/* Category image */}
             <div className="mb-2">
-              <Label className="mb-2 block 2xl:!text-[1.6rem]">Category Image</Label>
+              <Label className="mb-2 block 2xl:!text-[1.6rem]">
+                Category Image
+              </Label>
 
               {imagePreview ? (
                 <div className="flex items-start gap-4">
@@ -622,7 +624,9 @@ export default function EditCategoryPage() {
                   onDrop={onDrop}
                   onDragOver={onDragOver}
                 >
-                  <p className="mb-2 2xl:!text-[1.6rem]">Drag & drop image here or</p>
+                  <p className="mb-2 2xl:!text-[1.6rem]">
+                    Drag & drop image here or
+                  </p>
                   <Button
                     type="button"
                     onClick={() =>
@@ -654,12 +658,16 @@ export default function EditCategoryPage() {
             </h2>
 
             <div className="mb-8">
-              <Label className="mb-2 block 2xl:!text-[1.6rem]">Home page title (Optional)</Label>
+              <Label className="mb-2 block 2xl:!text-[1.6rem]">
+                Home page title (Optional)
+              </Label>
               <Input {...register("seo_home_title")} />
             </div>
 
             <div className="mb-8">
-              <Label className="mb-2 block 2xl:!text-[1.6rem]">Meta keywords (Optional)</Label>
+              <Label className="mb-2 block 2xl:!text-[1.6rem]">
+                Meta keywords (Optional)
+              </Label>
               <Input
                 placeholder="comma,separated,keywords"
                 {...register("seo_meta_keywords")}
@@ -667,12 +675,16 @@ export default function EditCategoryPage() {
             </div>
 
             <div className="mb-8">
-              <Label className="mb-2 block 2xl:!text-[1.6rem]">Meta description (Optional)</Label>
-              <Input  {...register("seo_meta_description")} />
+              <Label className="mb-2 block 2xl:!text-[1.6rem]">
+                Meta description (Optional)
+              </Label>
+              <Input {...register("seo_meta_description")} />
             </div>
 
             <div className="mb-8">
-              <Label className="mb-2 block 2xl:!text-[1.6rem]">Search keywords (Optional)</Label>
+              <Label className="mb-2 block 2xl:!text-[1.6rem]">
+                Search keywords (Optional)
+              </Label>
               <Input
                 placeholder="comma,separated,keywords"
                 {...register("seo_search_keywords")}

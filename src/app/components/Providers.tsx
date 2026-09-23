@@ -1,17 +1,16 @@
 // components/Providers.tsx
-'use client';
+"use client";
 
-import { Provider } from 'react-redux';
-import { store } from '@/redux/store';
-import { useEffect } from 'react';
-import { setStoreId } from '@/redux/slices/configSlice';
+import { setStoreId } from "@/redux/slices/configSlice";
+import { store } from "@/redux/store";
+import { useEffect } from "react";
+import { Provider } from "react-redux";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
-
   useEffect(() => {
     const savedId = localStorage.getItem("storeId");
     if (savedId) {
-      store.dispatch(setStoreId(Number (savedId)));
+      store.dispatch(setStoreId(Number(savedId)));
     }
   }, []);
 

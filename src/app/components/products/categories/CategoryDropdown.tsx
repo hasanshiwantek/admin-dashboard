@@ -59,8 +59,10 @@ export default function CategoryDropdown({
   useEffect(() => {
     if (value?.path) {
       setSearch(value.path);
+    } else {
+      setSearch("");
     }
-  }, [value]);
+  }, [value?.path]);
 
   return (
     <div className="relative">
