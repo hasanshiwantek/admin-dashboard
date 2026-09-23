@@ -1,29 +1,31 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableHead,
-  TableCell,
-} from "@/components/ui/table";
+import CategoryModal from "@/app/components/products/categories/CategoryModal";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import {
   Select,
-  SelectTrigger,
-  SelectValue,
   SelectContent,
   SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
-import { useRouter } from "next/navigation";
-import { updateProduct } from "@/redux/slices/productSlice";
-import CategoryModal from "@/app/components/products/categories/CategoryModal";
 import { fetchCategories } from "@/redux/slices/categorySlice";
-import { setSelectedProducts } from "@/redux/slices/productSlice";
+import {
+  setSelectedProducts,
+  updateProduct,
+} from "@/redux/slices/productSlice";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 import { fetchBrands } from "@/redux/slices/productSlice";
 import Link from "next/link";
@@ -44,9 +46,6 @@ type Product = {
 };
 
 export default function BulkEdit() {
-  const selectedProducts = useAppSelector(
-    (state) => state.product.selectedProducts
-  );
   const dispatch = useAppDispatch();
   const [categoryModal, setCategoryModal] = useState<{
     open: boolean;
@@ -75,7 +74,7 @@ export default function BulkEdit() {
 
   const handleChange = (id: number, field: keyof Product, value: any) => {
     setProducts((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, [field]: value } : p))
+      prev.map((p) => (p.id === id ? { ...p, [field]: value } : p)),
     );
   };
 
@@ -171,7 +170,7 @@ export default function BulkEdit() {
                       value={String(product.brand?.id || "")}
                       onValueChange={(value) => {
                         const selectedBrand = brands?.data.find(
-                          (b: any) => String(b.brand?.id) === value
+                          (b: any) => String(b.brand?.id) === value,
                         );
                         handleChange(product.id, "brand", selectedBrand?.brand);
                       }}
@@ -197,8 +196,8 @@ export default function BulkEdit() {
                       <span className="truncate max-w-[150px]">
                         {Array.isArray(product.categories)
                           ? product.categories
-                            .map((c: any) => c.name)
-                            .join(", ")
+                              .map((c: any) => c.name)
+                              .join(", ")
                           : ""}
                       </span>
                       <button
@@ -332,7 +331,7 @@ export default function BulkEdit() {
           onApply={(selectedIds) => {
             const selectedCats = selectedIds.map((id) => {
               const match = allCategories.find(
-                (cat: any) => cat.id.toString() === id
+                (cat: any) => cat.id.toString() === id,
               );
               return {
                 id: Number(id),
