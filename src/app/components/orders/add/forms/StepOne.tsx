@@ -178,8 +178,8 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
               value={orderType}
               className="flex gap-6"
               onValueChange={(value) => {
-                if (appliedCoupon?.id) {
-                  dispatch(removeCouponUsage({ id: appliedCoupon?.id })).unwrap().then(() => {
+                if (appliedCoupon?.couponUsageId) {
+                  dispatch(removeCouponUsage({ id: appliedCoupon?.couponUsageId })).unwrap().then(() => {
                     dispatch(resetCoupon());
                   })
                 }

@@ -617,7 +617,7 @@ const EditCustomer = () => {
 
                                                 {/* Name */}
                                                 <td className="py-3">
-                                                    <span className="text-[#4361ee] hover:underline cursor-pointer">
+                                                    <span className="text-[#4361ee]  cursor-pointer">
                                                         {address.first_name} {address.last_name}
                                                     </span>
                                                 </td>
