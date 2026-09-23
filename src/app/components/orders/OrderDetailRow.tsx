@@ -22,6 +22,7 @@ import { toast } from "react-toastify";
 import { COMPLETED, riskConfig } from "./constant";
 import { OrderDetailRowProps } from "./types";
 import { findCountry } from "./utils";
+import { cn } from "@/lib/utils";
 
 const copyBilling = (info: any) => {
   if (!info) return;
@@ -51,6 +52,8 @@ export default function OrderDetailRow({
   const isMobileOrTablet =
     order?.deviceType?.includes("Mobile") ||
     order?.deviceType?.includes("Tablet");
+  const hasLongShippingData =
+    (order?.billingInformation?.shippingData?.length ?? 0) > 40;
 
   return (
     <div className="grid grid-cols-3 gap-4 bg-[#fcfcfb] p-4 ">
@@ -291,10 +294,10 @@ export default function OrderDetailRow({
 
           {/* Method Data */}
           <div
-            className={`flex items-center gap-2 min-w-0 ${(order?.billingInformation?.shippingData?.length ?? 0) > 40
-              ? "pt-[25px]"
-              : "pt-[35px]"
-              }`}
+            className={cn(
+              "flex items-center gap-2 min-w-0",
+              hasLongShippingData ? "pt-[25px]" : "pt-[35px]"
+            )}
           >
             <div className="shipping-data-scroll w-[420px] max-w-full overflow-x-auto overflow-y-hidden whitespace-nowrap">
               <span> {order?.billingInformation?.shippingData || "N/A"} </span>
