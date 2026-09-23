@@ -25,6 +25,7 @@ import React, {
   useState,
 } from "react";
 import { FormProvider, useForm } from "react-hook-form";
+import { useSafeBack } from "@/hooks/useSafeBack";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import { FiExternalLink } from "react-icons/fi";
 import { HiDotsHorizontal } from "react-icons/hi";
@@ -61,8 +62,6 @@ export default function AddProductPage() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const [showLeaveModal, setShowLeaveModal] = useState(false);
-  const [pendingNavUrl, setPendingNavUrl] = useState<string>("");
-
   const isDuplicate = searchParams.get("isDuplicate") === "true";
   const defaultValues = useMemo(
     () => ({
@@ -153,21 +152,6 @@ export default function AddProductPage() {
     }
   }, [product, reset]);
 
-  useEffect(() => {
-    window.history.pushState(null, "", window.location.href);
-    const handlePopState = () => {
-      if (isDirty) {
-        window.history.pushState(null, "", window.location.href);
-        setPendingNavUrl("/manage/products");
-        setShowLeaveModal(true);
-      } else {
-        router.push("/manage/products");
-      }
-    };
-
-    window.addEventListener("popstate", handlePopState);
-    return () => window.removeEventListener("popstate", handlePopState);
-  }, [isDirty, router]);
   // ─── Tab close / page refresh handler ───────────────────────────────────────
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
@@ -181,20 +165,54 @@ export default function AddProductPage() {
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, [isDirty]);
 
-  // ─── 2. Helper function ──────────────────────────────────────────────────────
-  const handleBackNavigation = (url: string) => {
-    if (isDirty) {
-      setPendingNavUrl(url);
-      setShowLeaveModal(true);
+  const goBack = useSafeBack("/manage/products");
+
+  const guardEntryRef = useRef(false);
+  const isDirtyRef = useRef(isDirty);
+  isDirtyRef.current = isDirty;
+
+  const pushGuardEntry = () => {
+    window.history.pushState(null, "", window.location.href);
+    guardEntryRef.current = true;
+  };
+
+  useEffect(() => {
+    if (isDirty && !guardEntryRef.current) pushGuardEntry();
+  }, [isDirty]);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      if (!guardEntryRef.current) return;
+      guardEntryRef.current = false;
+      if (isDirtyRef.current) {
+        setShowLeaveModal(true);
+      } else {
+        goBack();
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, [goBack]);
+
+  const handleBackNavigation = () => {
+    if (guardEntryRef.current) {
+      window.history.back();
     } else {
-      router.push(url);
+      goBack();
     }
   };
 
   const confirmLeave = () => {
     setShowLeaveModal(false);
-    router.push(pendingNavUrl);
+    goBack();
   };
+
+  const cancelLeave = () => {
+    setShowLeaveModal(false);
+    pushGuardEntry();
+  };
+  
   useEffect(() => {
     if (!id) {
       setProduct(undefined); // Clear previous product state
@@ -436,7 +454,7 @@ export default function AddProductPage() {
               <button
                 type="button"
                 className="px-4 py-2 text-2xl rounded border border-gray-300 text-gray-700 hover:bg-gray-50"
-                onClick={() => setShowLeaveModal(false)}
+                onClick={cancelLeave}
               >
                 Cancel
               </button>
@@ -459,7 +477,7 @@ export default function AddProductPage() {
               className={`flex items-center gap-2 text-gray-500 cursor-pointer mb-1 transition-opacity duration-200 ${
                 isScrolled ? "opacity-0 pointer-events-none" : "opacity-100"
               }`}
-              onClick={() => handleBackNavigation("/manage/products")}
+              onClick={() => handleBackNavigation()}
             >
               <FaArrowLeftLong size={14} />
               <span className="text-sm uppercase tracking-wide">
@@ -480,7 +498,7 @@ export default function AddProductPage() {
                 <FaArrowLeftLong
                   size={14}
                   className="text-gray-500 cursor-pointer"
-                  onClick={() => handleBackNavigation("/manage/products")}
+                  onClick={() => handleBackNavigation()}
                 />
               </div>
               <h1
@@ -620,7 +638,7 @@ export default function AddProductPage() {
                 <button
                   className="btn-outline-primary"
                   type="button"
-                  onClick={() => handleBackNavigation("/manage/products")}
+                  onClick={() => handleBackNavigation()}
                 >
                   Cancel
                 </button>

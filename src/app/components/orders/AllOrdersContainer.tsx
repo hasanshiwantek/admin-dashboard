@@ -306,7 +306,6 @@ const useAllOrdersContainer = () => {
       if (printMultiInvoicePdf.fulfilled.match(result)) {
         openPdfBlob(result.payload);
       }
-      refetch();
       setSelectedAction("");
       clearSelection();
       return;
@@ -317,7 +316,6 @@ const useAllOrdersContainer = () => {
       if (printMultiPackingSlipPdf.fulfilled.match(result)) {
         openPdfBlob(result.payload);
       }
-      refetch();
       setSelectedAction("");
       clearSelection();
       return;
