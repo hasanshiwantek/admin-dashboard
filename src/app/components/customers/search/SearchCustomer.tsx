@@ -58,7 +58,7 @@ const SearchCustomer = () => {
     sortBy: "",
     sortOrder: "",
   });
-    const stateList = useMemo(() => {
+  const stateList = useMemo(() => {
     if (!formData.country) return [];
 
     return State.getStatesOfCountry(formData.country).map((s) => ({
@@ -91,30 +91,15 @@ const SearchCustomer = () => {
       },
       {} as Record<string, any>
     );
-
-    try {
-      const result = await dispatch(
-        advanceCustomerSearch({ data: filteredData })
-      );
-
-      if (advanceCustomerSearch.fulfilled.match(result)) {
-        // ✅ Push ALL filters to URL — not just page & limit
-        const queryParams = new URLSearchParams();
-        Object.entries(filteredData).forEach(([key, value]) => {
-          if (Array.isArray(value)) {
-            value.forEach((v) => queryParams.append(key, v));
-          } else {
-            queryParams.set(key, String(value));
-          }
-        });
-
-        router.push(`/manage/customers?${queryParams.toString()}`);
+    const queryParams = new URLSearchParams();
+    Object.entries(filteredData).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        value.forEach((v) => queryParams.append(key, v));
       } else {
-        console.error("❌ Search Failed:", result.error);
+        queryParams.set(key, String(value));
       }
-    } catch (error) {
-      console.error("🔥 Unexpected Error:", error);
-    }
+    });
+    router.push(`/manage/customers?${queryParams.toString()}`);
   };
 
   return (
@@ -280,7 +265,8 @@ const SearchCustomer = () => {
               </div>
 
               {/* Store Credit */}
-              <div>
+              {/* After this sprint */}
+              {/* <div>
                 <Label className="block mb-2 2xl:!text-2xl">Store credit</Label>
                 <div className="grid grid-cols-2 gap-4 max-w-md">
                   <Input
@@ -296,7 +282,7 @@ const SearchCustomer = () => {
                     onChange={handleChange}
                   />
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
 
@@ -335,7 +321,8 @@ const SearchCustomer = () => {
             </div>
 
             {/* Search by Group */}
-            <div>
+            {/* After this sprint */}
+            {/* <div>
               <h1 className="!font-semibold mb-4 2xl:!text-[2.4rem]">Search by group(optional)</h1>
               <div className="bg-white p-6 border rounded-md ">
                 <div className="space-y-1">
@@ -358,7 +345,7 @@ const SearchCustomer = () => {
                   </Select>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             {/* Sort Order */}
             <div>

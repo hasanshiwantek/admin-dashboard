@@ -44,6 +44,8 @@ export interface TableProps<T> {
   tabs?: TableTab[];
   activeTab?: string;
   onTabChange?: (tabKey: string) => void;
+  maxVisibleTabs?: number;
+  tabsVariant?: "pills" | "underline";
 
   searchable?: boolean;
   searchValue?: string;
@@ -63,13 +65,19 @@ export interface TableProps<T> {
   selectedIds?: (number | string)[];
   onToggleRow?: (id: number | string, checked: boolean) => void;
   onToggleAll?: (checked: boolean, allIds: (number | string)[]) => void;
+  selectAllInHeader?: boolean;
+  showRecordCount?: boolean;
 
   rowActions?: (row: T) => RowAction<T>[];
   bulkActions?: ReactNode;
 
+  renderExpandedRow?: (row: T) => ReactNode;
+  isRowExpanded?: (row: T) => boolean;
+
   pagination?: TablePaginationProps;
   toolbar?: ReactNode;
   className?: string;
+  bare?: boolean;
 }
 
 // Table Container Props
@@ -134,4 +142,13 @@ export interface UseTableContainerReturn<TId = number> {
   toggleSelectAll: (checked: boolean, allIds: TId[]) => void;
   isAllSelected: (allIds: TId[]) => boolean;
   clearSelection: () => void;
+}
+
+export interface TableTabsProps {
+  tabs: TableTab[];
+  activeTab?: string;
+  onTabChange?: (key: string) => void;
+  maxVisibleTabs?: number;
+  /** Rounded pills (default) or an underline bar. */
+  variant?: "pills" | "underline";
 }

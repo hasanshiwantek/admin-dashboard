@@ -16,8 +16,9 @@ import {
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import { Ellipsis, X } from "lucide-react";
-import { ReactNode } from "react";
+import { Fragment, ReactNode } from "react";
 import { IoSearchOutline } from "react-icons/io5";
+import TableTabs from "./TableTabs";
 import { TableProps } from "./types";
 
 export default function Table<T>({
@@ -31,6 +32,8 @@ export default function Table<T>({
   tabs,
   activeTab,
   onTabChange,
+  maxVisibleTabs,
+  tabsVariant = "pills",
   searchable = false,
   searchValue = "",
   onSearchChange,
@@ -47,11 +50,16 @@ export default function Table<T>({
   selectedIds = [],
   onToggleRow,
   onToggleAll,
+  selectAllInHeader = false,
+  showRecordCount = true,
   rowActions,
   bulkActions,
+  renderExpandedRow,
+  isRowExpanded,
   pagination,
   toolbar,
   className,
+  bare = false,
 }: TableProps<T>) {
   const rowIds = data.map(getRowId);
   const isAllSelected =
@@ -81,25 +89,16 @@ export default function Table<T>({
       : [];
 
   return (
-    <div className={cn("bg-white p-4 shadow-md", className)}>
+    <div className={cn(!bare && "bg-white p-4 shadow-md", className)}>
       {/* Tabs */}
       {tabs && tabs.length > 0 && (
-        <div className="flex flex-wrap gap-5 mb-4">
-          {tabs.map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() => onTabChange?.(tab.key)}
-              className={cn(
-                "!text-2xl 2xl:!text-[1.6rem] px-5 py-2 rounded cursor-pointer transition hover:bg-blue-100",
-                activeTab === tab.key
-                  ? "bg-blue-100 border-blue-600 text-blue-600"
-                  : "text-blue-600",
-              )}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+        <TableTabs
+          tabs={tabs}
+          activeTab={activeTab}
+          onTabChange={onTabChange}
+          maxVisibleTabs={maxVisibleTabs}
+          variant={tabsVariant}
+        />
       )}
 
       {/* Search + toolbar */}
@@ -161,10 +160,10 @@ export default function Table<T>({
       <ChipList chips={filterChips} onClearAll={onClearFilters} />
 
       {/* Selection header + pagination */}
-      {(selectable || pagination || bulkActions) && (
+      {((selectable && showRecordCount) || pagination || bulkActions) && (
         <div className="flex items-center justify-between border-t border-b border-gray-200 px-4 py-2 bg-white text-sm">
           <div className="flex items-center space-x-10">
-            {selectable && (
+            {selectable && showRecordCount && (
               <div className="flex justify-start items-center gap-2">
                 <Checkbox
                   checked={isAllSelected}
@@ -208,7 +207,18 @@ export default function Table<T>({
         <UITable>
           <TableHeader className="h-18">
             <TableRow>
-              {selectable && <TableHead className="w-12" />}
+              {selectable && (
+                <TableHead className="w-12">
+                  {selectAllInHeader && (
+                    <Checkbox
+                      checked={isAllSelected}
+                      onCheckedChange={(checked: boolean) =>
+                        onToggleAll?.(checked, rowIds)
+                      }
+                    />
+                  )}
+                </TableHead>
+              )}
               {columns.map((col) => (
                 <TableHead
                   key={col.key}
@@ -248,47 +258,57 @@ export default function Table<T>({
             ) : (
               data.map((row, index) => {
                 const id = getRowId(row);
+                const expanded = !!renderExpandedRow && !!isRowExpanded?.(row);
                 return (
-                  <TableRow key={id}>
-                    {selectable && (
-                      <TableCell>
-                        <Checkbox
-                          checked={selectedIds.includes(id)}
-                          onCheckedChange={(checked: boolean) =>
-                            onToggleRow?.(id, checked)
-                          }
-                        />
-                      </TableCell>
+                  <Fragment key={id}>
+                    <TableRow>
+                      {selectable && (
+                        <TableCell>
+                          <Checkbox
+                            checked={selectedIds.includes(id)}
+                            onCheckedChange={(checked: boolean) =>
+                              onToggleRow?.(id, checked)
+                            }
+                          />
+                        </TableCell>
+                      )}
+                      {columns.map((col) => (
+                        <TableCell key={col.key} className={col.className}>
+                          {col.render
+                            ? col.render(row, index)
+                            : ((row as Record<string, unknown>)[
+                                col.key
+                              ] as ReactNode)}
+                        </TableCell>
+                      ))}
+                      {rowActions && (
+                        <TableCell>
+                          <OrderActionsDropdown
+                            actions={rowActions(row).map((action) => ({
+                              label: action.label,
+                              onClick: () => action.onClick(row),
+                            }))}
+                            trigger={
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="text-xl cursor-pointer"
+                              >
+                                <Ellipsis className="!w-7 !h-7" />
+                              </Button>
+                            }
+                          />
+                        </TableCell>
+                      )}
+                    </TableRow>
+                    {expanded && (
+                      <TableRow>
+                        <TableCell colSpan={colSpan}>
+                          {renderExpandedRow!(row)}
+                        </TableCell>
+                      </TableRow>
                     )}
-                    {columns.map((col) => (
-                      <TableCell key={col.key} className={col.className}>
-                        {col.render
-                          ? col.render(row, index)
-                          : ((row as Record<string, unknown>)[
-                              col.key
-                            ] as ReactNode)}
-                      </TableCell>
-                    ))}
-                    {rowActions && (
-                      <TableCell>
-                        <OrderActionsDropdown
-                          actions={rowActions(row).map((action) => ({
-                            label: action.label,
-                            onClick: () => action.onClick(row),
-                          }))}
-                          trigger={
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="text-xl cursor-pointer"
-                            >
-                              <Ellipsis className="!w-7 !h-7" />
-                            </Button>
-                          }
-                        />
-                      </TableCell>
-                    )}
-                  </TableRow>
+                  </Fragment>
                 );
               })
             )}

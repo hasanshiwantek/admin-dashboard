@@ -5,6 +5,7 @@ import Header from "./Header";
 import { SideBar } from "./Sidebar";
 import NavigationLoader from "../loader/NavigationLoader";
 import { createPortal } from "react-dom";
+import { useNavigationTracker } from "@/hooks/useSafeBack";
 
 interface LayoutWrapperProps {
   children: React.ReactNode;
@@ -14,6 +15,7 @@ const LayoutWrapper: React.FC<LayoutWrapperProps> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  useNavigationTracker();
 
   return (
     <>

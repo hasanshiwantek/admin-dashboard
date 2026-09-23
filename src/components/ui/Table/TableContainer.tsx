@@ -108,7 +108,7 @@ export function useTableContainer<TId = number>(
       const keys = Object.keys(f);
       if (keys.length === 0) return false; // handle the "no filter" tab below
       return keys.every(
-        (k) => query[k] !== undefined && String(query[k]) === f[k],
+        (k) => query[k] !== undefined && String(query[k]) === String(f[k]),
       );
     });
     if (match) return match;
@@ -154,7 +154,9 @@ export function useTableContainer<TId = number>(
       pushParams((params) => {
         // Clear whatever the previous tab wrote, then apply the new tab.
         tabOwnedKeys.forEach((k) => params.delete(k));
-        Object.entries(nextFilters).forEach(([k, v]) => params.set(k, v));
+        Object.entries(nextFilters).forEach(([k, v]) =>
+          params.set(k, String(v)),
+        );
         params.delete(pageParam); // back to page 1
       });
     },
