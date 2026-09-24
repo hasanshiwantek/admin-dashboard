@@ -2,7 +2,7 @@
 
 import { downloadFile } from "@/lib/utils";
 import { useEffect } from "react";
-import { OrderExportModalProps } from "./constant";
+import { ExportModalStatus, OrderExportModalProps } from "./constant";
 
 
 export default function OrderExportModal({
@@ -62,14 +62,14 @@ export default function OrderExportModal({
                 </div>
 
                 <div className="min-h-[140px] px-8 py-8 text-[15px] text-gray-600">
-                    {status === "confirm" && (
+                    {status === ExportModalStatus.Confirm && (
                         <p>
                             When your export is done, you&apos;ll get a link to download it as
                             a csv file.
                         </p>
                     )}
 
-                    {status === "processing" && (
+                    {status === ExportModalStatus.Processing && (
                         <div>
                             <p className="mb-6">
                                 Your Orders export is currently being processed. Once the export
@@ -94,7 +94,7 @@ export default function OrderExportModal({
                         </div>
                     )}
 
-                    {status === "ready" && (
+                    {status === ExportModalStatus.Ready && (
                         <div>
                             <p className="mb-5">
                                 Your Orders export has been generated and is ready to download.
@@ -113,7 +113,7 @@ export default function OrderExportModal({
                         </div>
                     )}
 
-                    {status === "error" && (
+                    {status === ExportModalStatus.Error && (
                         <p className="text-red-600">
                             {errorMessage || "Export failed. Please try again."}
                         </p>
