@@ -7,9 +7,9 @@ import { useSearchParams } from "next/navigation";
 import { ExportModalStatus, ExportTab } from "./constant";
 import ExportOptions from "./ExportOption";
 import ExportPreview from "./ExportPreview";
-import ProductExportModal from "./ProductExportModal";
 import { exportCsv } from "@/redux/slices/productSlice";
 import { Button } from "@/components/ui/button";
+import ExportModal from "@/Modals/ExportModal";
 
 export default function OrderExport() {
   const searchParams = useSearchParams();
@@ -159,13 +159,20 @@ export default function OrderExport() {
             {activeTab === ExportTab.Preview && <ExportPreview />}
           </div>
         </form>
-        <ProductExportModal
+        <ExportModal
           open={modalOpen}
           status={modalStatus}
           progress={progress}
           fileBlob={fileBlob}
-          fileName={fileName}
-          errorMessage={errorMessage}
+          fileName="products.csv"
+          processingMessage={
+            <>
+              Your Products export is currently being processed. Once the export is
+              complete you will be able to download it.
+            </>
+          }
+          entityName="Products"
+          processingLabel="Generating Products..."
           onClose={closeModal}
           onStartExport={startExport}
         />

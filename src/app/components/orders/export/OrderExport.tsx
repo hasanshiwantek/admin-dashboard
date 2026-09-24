@@ -4,12 +4,12 @@ import { useEffect, useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import OrderExportOptions from "./OrderExportOption";
 import OrderExportPreview from "./OrderExportPreview";
-import OrderExportModal from "./OrderExportModal";
 import { exportOrderCsv } from "@/redux/slices/orderSlice";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { useSearchParams } from "next/navigation";
 import { ExportModalStatus, ExportTab } from "./constant";
 import { Button } from "@/components/ui/button";
+import ExportModal from "@/Modals/ExportModal";
 
 export default function OrderExport() {
   const searchParams = useSearchParams();
@@ -159,17 +159,24 @@ export default function OrderExport() {
             {activeTab === ExportTab.Preview && <OrderExportPreview />}
           </div>
         </form>
-        <OrderExportModal
+        <ExportModal
           open={modalOpen}
           status={modalStatus}
           progress={progress}
           fileBlob={fileBlob}
-          fileName={fileName}
-          errorMessage={errorMessage}
+          fileName="orders.csv"
+          processingMessage={
+            <>
+              Your Orders export is currently being processed. Once the export is
+              complete you will be able to download it.
+            </>
+          }
+          entityName="Orders"
+          processingLabel="Generating Orders..."
           onClose={closeModal}
           onStartExport={startExport}
         />
-      </div >
+      </div>
     </FormProvider >
   );
 }
