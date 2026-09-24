@@ -46,12 +46,12 @@ export default function ConfirmationModal({
       confirmClass: "bg-red-600 hover:bg-red-700 text-white",
     },
     warning: {
-      icon: <AlertTriangle className="w-5 h-5 text-yellow-600" />,
+      icon: <AlertTriangle className="w-5 h-5 text-blue-600" />,
       iconBg: "bg-yellow-50",
       title: title || "Are you sure?",
       description: description || "This action cannot be undone. Please confirm to proceed.",
       confirmLabel: "Confirm",
-      confirmClass: "bg-yellow-600 hover:bg-yellow-700 text-white",
+      confirmClass: "bg-blue-600 hover:bg-blue-700 text-white",
     },
   };
 

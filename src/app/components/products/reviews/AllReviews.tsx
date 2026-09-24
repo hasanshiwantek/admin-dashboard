@@ -22,6 +22,7 @@ import {
 import Spinner from "../../loader/Spinner";
 import Pagination from "@/components/ui/pagination";
 import { useRouter } from "next/navigation";
+import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
 
 // ⭐ Star Rating component
 function StarRating({ rating }: { rating: number }) {
@@ -53,6 +54,7 @@ export default function AllReviews() {
   const [keyword, setKeyword] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState("20");
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   useEffect(() => {
     dispatch(fetchAllReviews({ page: currentPage, pageSize: Number(perPage) }));
@@ -86,14 +88,11 @@ export default function AllReviews() {
   };
 
   // ── Bulk actions ─────────────────────────────────────────────────────────
-  const handleDeleteSelected = async () => {
-    if (!selectedIds.length) return;
-    const ok = window.confirm(`Delete ${selectedIds.length} review(s)?`);
-    if (!ok) return;
-    await dispatch(deleteReview({ ids: selectedIds }));
-    dispatch(fetchAllReviews({ page: currentPage, pageSize: Number(perPage) }));
-    setSelectedIds([]);
-  };
+const handleDeleteSelected = () => {
+  if (!selectedIds.length) return;
+
+  setShowDeleteModal(true);
+};
 
   const handleApproveSelected = async () => {
     if (!selectedIds.length) return;
@@ -374,6 +373,24 @@ export default function AllReviews() {
           />
         </div>
       </div>
+      <ConfirmationModal
+  open={showDeleteModal}
+  onOpenChange={setShowDeleteModal}
+  variant="warning"
+  title="Delete reviews?"
+  description="Are you sure you want to delete the selected reviews?"
+  onConfirm={async () => {
+    await dispatch(deleteReview({ ids: selectedIds }));
+    dispatch(
+      fetchAllReviews({
+        page: currentPage,
+        pageSize: Number(perPage),
+      })
+    );
+    setSelectedIds([]);
+    setShowDeleteModal(false);
+  }}
+/>
     </div>
   );
 }

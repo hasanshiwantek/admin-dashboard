@@ -8,20 +8,25 @@ import { updateOrder } from "@/redux/slices/orderSlice";
 import { useFormContext } from "react-hook-form";
 import { addCustomerAddress } from "@/redux/slices/customerSlice";
 import { errorMessage } from "@/utils/message";
+import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
 export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
   const dispatch = useAppDispatch();
   const { handleSubmit, getValues } = useFormContext();
   const [ipAddress, setIpAddress] = useState("");
   const [loading, setLoading] = useState(false)
+  const [showCancelModal, setShowCancelModal] = useState(false);
   const { appliedCoupon, } = useAppSelector(
     (state: any) => state.order,
   );
   const router = useRouter();
+  // const handleCancel = () => {
+  //   if (window.confirm("Are you sure you want to cancel this order?")) {
+  //     router.push("/manage/orders/");
+  //   }
+  // };
   const handleCancel = () => {
-    if (window.confirm("Are you sure you want to cancel this order?")) {
-      router.push("/manage/orders/");
-    }
-  };
+  setShowCancelModal(true);
+};
   const getDeviceType = () => {
     const availableStores = JSON.parse(
       localStorage.getItem("availableStores") || "[]",
@@ -397,6 +402,17 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
           </button>}
         </div>
       </div>
+      <ConfirmationModal
+  open={showCancelModal}
+  onOpenChange={setShowCancelModal}
+  variant="warning"
+  title="Cancel order?"
+  description="Are you sure you want to cancel this order?"
+  onConfirm={() => {
+    setShowCancelModal(false);
+    router.push("/manage/orders/");
+  }}
+/>
     </form>
     // </FormProvider>
   );

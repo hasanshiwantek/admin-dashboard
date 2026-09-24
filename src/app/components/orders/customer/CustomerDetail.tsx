@@ -134,31 +134,31 @@ const CustomerDetail = () => {
     setSelectedCustomers(updated);
   };
 
-  const deleteCustomerHandler = async () => {
-    if (!selectedCustomers || selectedCustomers.length === 0) {
-      alert("No customers selected for deletion.");
-      return;
-    }
-    const id = selectedCustomers?.map((c) => c?.id);
-    const payload = { ids: id };
-    const confirm = window.confirm("Delete Selected Customer");
-    if (!confirm) {
-      return;
-    } else {
-      try {
-        const result = await dispatch(deleteCustomer({ data: payload }));
+  // const deleteCustomerHandler = async () => {
+  //   if (!selectedCustomers || selectedCustomers.length === 0) {
+  //     alert("No customers selected for deletion.");
+  //     return;
+  //   }
+  //   const id = selectedCustomers?.map((c) => c?.id);
+  //   const payload = { ids: id };
+  //   const confirm = window.confirm("Delete Selected Customer");
+  //   if (!confirm) {
+  //     return;
+  //   } else {
+  //     try {
+  //       const result = await dispatch(deleteCustomer({ data: payload }));
 
-        if (deleteCustomer.fulfilled.match(result)) {
-          setSelectedCustomers([]);
-          // optionally: refresh list or reset selection
-        } else {
-          console.error("Failed to delete customers:", result.payload);
-        }
-      } catch (err) {
-        console.error("Error deleting customers:", err);
-      }
-    }
-  };
+  //       if (deleteCustomer.fulfilled.match(result)) {
+  //         setSelectedCustomers([]);
+  //         // optionally: refresh list or reset selection
+  //       } else {
+  //         console.error("Failed to delete customers:", result.payload);
+  //       }
+  //     } catch (err) {
+  //       console.error("Error deleting customers:", err);
+  //     }
+  //   }
+  // };
 
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
 

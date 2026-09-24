@@ -26,6 +26,7 @@ import { FaCircleMinus, FaCirclePlus } from "react-icons/fa6";
 import { useAppSelector, useAppDispatch } from "@/hooks/useReduxHooks";
 import { getReturnOrders } from "@/redux/slices/orderSlice";
 import Spinner from "../../loader/Spinner";
+import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
 const ManageOrders = () => {
   const [selectedTab, setSelectedTab] = useState("All returns");
   const [searchTerm, setSearchTerm] = useState("");
@@ -33,6 +34,7 @@ const ManageOrders = () => {
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [staffNotes, setStaffNotes] = useState<{ [key: number]: string }>({});
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const { returnOrders, returnLoader } = useAppSelector(
     (state: any) => state.order,
@@ -103,20 +105,28 @@ const ManageOrders = () => {
   };
 
   // Handle delete selected
+  // const handleDeleteSelected = () => {
+  //   if (selectedRows.length === 0) {
+  //     alert("Please select at least one return to delete");
+  //     return;
+  //   }
+  //   const confirmDelete = window.confirm(
+  //     `Are you sure you want to delete ${selectedRows.length} return(s)?`,
+  //   );
+  //   if (confirmDelete) {
+  //     // TODO: Dispatch action to delete selected returns
+  //     // dispatch(deleteReturnOrders(selectedRows));
+  //     setSelectedRows([]);
+  //   }
+  // };
   const handleDeleteSelected = () => {
-    if (selectedRows.length === 0) {
-      alert("Please select at least one return to delete");
-      return;
-    }
-    const confirmDelete = window.confirm(
-      `Are you sure you want to delete ${selectedRows.length} return(s)?`,
-    );
-    if (confirmDelete) {
-      // TODO: Dispatch action to delete selected returns
-      // dispatch(deleteReturnOrders(selectedRows));
-      setSelectedRows([]);
-    }
-  };
+  if (selectedRows.length === 0) {
+    alert("Please select at least one return to delete");
+    return;
+  }
+
+  setShowDeleteModal(true);
+};
 
   // Handle staff notes update
   const handleUpdateStaffNote = (returnId: number) => {
@@ -503,6 +513,20 @@ const ManageOrders = () => {
           </Table>
         )}
       </div>
+      <ConfirmationModal
+  open={showDeleteModal}
+  onOpenChange={setShowDeleteModal}
+  variant="warning"
+  title="Delete returns?"
+  description={`Are you sure you want to delete ${selectedRows.length} return(s)?`}
+  onConfirm={() => {
+    // TODO: Dispatch action to delete selected returns
+    // dispatch(deleteReturnOrders(selectedRows));
+
+    setSelectedRows([]);
+    setShowDeleteModal(false);
+  }}
+/>
     </div>
   );
 };
