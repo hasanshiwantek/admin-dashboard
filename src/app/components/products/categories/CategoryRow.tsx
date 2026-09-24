@@ -15,14 +15,12 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { ChevronDown, ChevronRight, Folder } from "lucide-react";
 import { useRouter } from "next/navigation";
-<<<<<<< HEAD
+
 import Link from "next/link";
 import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
-=======
 import { useState } from "react";
 import VisibilityToggle from "../../dropdowns/VisibilityToggle";
 import OrderActionsDropdown from "../../orders/OrderActionsDropdown";
->>>>>>> a2e3006b5639f0581f6d78509b9c8a1d791c598a
 
 const CategoryRow = ({
   category,
@@ -76,8 +74,10 @@ const CategoryRow = ({
   const [visibilityMap, setVisibilityMap] = useState<{
     [key: number]: "ENABLED" | "DISABLED";
   }>({});
-const [showDeleteModal, setShowDeleteModal] = useState(false);
-const [pendingDeleteCategoryId, setPendingDeleteCategoryId] = useState<number | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [pendingDeleteCategoryId, setPendingDeleteCategoryId] = useState<
+    number | null
+  >(null);
   const editdropdownActions = (category: any) => [
     {
       label: "Edit",
@@ -169,12 +169,12 @@ const [pendingDeleteCategoryId, setPendingDeleteCategoryId] = useState<number | 
     //   },
     // },
     {
-  label: "Delete",
-  onClick: () => {
-    setPendingDeleteCategoryId(category?.id);
-    setShowDeleteModal(true);
-  },
-},
+      label: "Delete",
+      onClick: () => {
+        setPendingDeleteCategoryId(category?.id);
+        setShowDeleteModal(true);
+      },
+    },
   ];
 
   const isExpanded = expandedIds.has(category.id);
@@ -324,34 +324,34 @@ const [pendingDeleteCategoryId, setPendingDeleteCategoryId] = useState<number | 
         </SortableContext>
       )}
       <ConfirmationModal
-  open={showDeleteModal}
-  onOpenChange={setShowDeleteModal}
-  variant="warning"
-  title="Delete category?"
-  description="Are you sure you want to delete this category?"
-  onConfirm={() => {
-    if (pendingDeleteCategoryId === null) return;
+        open={showDeleteModal}
+        onOpenChange={setShowDeleteModal}
+        variant="warning"
+        title="Delete category?"
+        description="Are you sure you want to delete this category?"
+        onConfirm={() => {
+          if (pendingDeleteCategoryId === null) return;
 
-    try {
-      dispatch(
-        deleteCategory({
-          data: {
-            ids: [pendingDeleteCategoryId],
-          },
-        })
-      );
+          try {
+            dispatch(
+              deleteCategory({
+                data: {
+                  ids: [pendingDeleteCategoryId],
+                },
+              }),
+            );
 
-      setTimeout(() => {
-        refetchCategories(dispatch);
-      }, 2000);
-    } catch (err) {
-      console.log(err, "Error while deleting");
-    } finally {
-      setShowDeleteModal(false);
-      setPendingDeleteCategoryId(null);
-    }
-  }}
-/>
+            setTimeout(() => {
+              refetchCategories(dispatch);
+            }, 2000);
+          } catch (err) {
+            console.log(err, "Error while deleting");
+          } finally {
+            setShowDeleteModal(false);
+            setPendingDeleteCategoryId(null);
+          }
+        }}
+      />
     </>
   );
 };

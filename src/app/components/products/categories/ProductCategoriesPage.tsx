@@ -40,11 +40,9 @@ import { FormProvider, useForm } from "react-hook-form";
 import Spinner from "../../loader/Spinner";
 import AddCategoryModal from "./AddCategoryModal";
 import CategoryDropdownForClear from "./CategoryDropdownForClear";
-<<<<<<< HEAD
 import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
-=======
 import CategoryRow from "./CategoryRow";
->>>>>>> a2e3006b5639f0581f6d78509b9c8a1d791c598a
+
 
 export default function ProductCategoriesPage() {
   const methods = useForm();
@@ -167,17 +165,17 @@ export default function ProductCategoriesPage() {
   //     console.error(err);
   //   }
   // };
-const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
-  e.preventDefault();
-  // const catIds = selectedIds?.map((cat: any) => cat?.id);
+  const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    // const catIds = selectedIds?.map((cat: any) => cat?.id);
 
-  if (selectedIds.length === 0) {
-    alert("Please select at least one category before deleting.");
-    return;
-  }
+    if (selectedIds.length === 0) {
+      alert("Please select at least one category before deleting.");
+      return;
+    }
 
-  setShowDeleteModal(true);
-};
+    setShowDeleteModal(true);
+  };
   const handleBulkVisibility = async (visible: boolean) => {
     if (!selectedIds.length) return;
 
@@ -365,25 +363,25 @@ const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
         categoryData={categories}
       />
       <ConfirmationModal
-  open={showDeleteModal}
-  onOpenChange={setShowDeleteModal}
-  variant="warning"
-  title="Delete categories?"
-  description="Are you sure you want to delete the selected categories?"
-  onConfirm={async () => {
-    const catIds = selectedIds?.map((cat: any) => cat?.id);
+        open={showDeleteModal}
+        onOpenChange={setShowDeleteModal}
+        variant="warning"
+        title="Delete categories?"
+        description="Are you sure you want to delete the selected categories?"
+        onConfirm={async () => {
+          const catIds = selectedIds?.map((cat: any) => cat?.id);
 
-    try {
-      await dispatch(deleteCategory({ data: { ids: catIds } }));
-      setSelectedIds([]);
-      setTimeout(() => dispatch(fetchCategories()), 500);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setShowDeleteModal(false);
-    }
-  }}
-/>
+          try {
+            await dispatch(deleteCategory({ data: { ids: catIds } }));
+            setSelectedIds([]);
+            setTimeout(() => dispatch(fetchCategories()), 500);
+          } catch (err) {
+            console.error(err);
+          } finally {
+            setShowDeleteModal(false);
+          }
+        }}
+      />
     </>
   );
 }

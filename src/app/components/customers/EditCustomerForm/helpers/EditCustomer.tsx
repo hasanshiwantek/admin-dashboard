@@ -1,39 +1,28 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import React, { useEffect, useState } from "react";
 
-import { Info, ArrowLeft, Plus, MoreHorizontal } from "lucide-react";
+import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import {
   addCustomer,
   customerAddressesDeleteMultiple,
   fetchCustomerAddresses,
-} from "@/redux/slices/customerSlice";
-import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
-import { countriesList, statesList } from "@/const/location";
-import { useRouter, useParams } from "next/navigation";
-import {
   fetchCustomerById,
   updateCustomer,
 } from "@/redux/slices/customerSlice";
+import { ArrowLeft, MoreHorizontal, Plus } from "lucide-react";
 import Link from "next/link";
-import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
+import { useParams, useRouter } from "next/navigation";
 
 const EditCustomer = () => {
   const { id } = useParams();
