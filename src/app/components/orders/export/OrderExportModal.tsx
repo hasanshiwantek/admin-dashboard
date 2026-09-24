@@ -2,19 +2,8 @@
 
 import { downloadFile } from "@/lib/utils";
 import { useEffect } from "react";
+import { OrderExportModalProps } from "./constant";
 
-export type ExportModalStatus = "confirm" | "processing" | "ready" | "error";
-
-interface OrderExportModalProps {
-    open: boolean;
-    status: ExportModalStatus;
-    progress: number;
-    fileBlob?: Blob | null;
-    fileName?: string;
-    errorMessage?: string | null;
-    onClose: () => void;
-    onStartExport: () => void;
-}
 
 export default function OrderExportModal({
     open,

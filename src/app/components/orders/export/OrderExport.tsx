@@ -4,20 +4,18 @@ import { useEffect, useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import OrderExportOptions from "./OrderExportOption";
 import OrderExportPreview from "./OrderExportPreview";
-import OrderExportModal, { ExportModalStatus } from "./OrderExportModal";
+import OrderExportModal from "./OrderExportModal";
 import { exportOrderCsv } from "@/redux/slices/orderSlice";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { useSearchParams } from "next/navigation";
+import { ExportModalStatus, ExportTab } from "./constant";
 
 export default function OrderExport() {
   const searchParams = useSearchParams();
   const dispatch = useAppDispatch();
-  const [activeTab, setActiveTab] = useState<"exportOptions" | "exportPreview">(
-    "exportOptions"
-  );
-
+  const [activeTab, setActiveTab] = useState<ExportTab>(ExportTab.Options);
   const [modalOpen, setModalOpen] = useState(false);
-  const [modalStatus, setModalStatus] = useState<ExportModalStatus>("confirm");
+  const [modalStatus, setModalStatus] = useState<ExportModalStatus>(ExportModalStatus.Confirm);
   const [progress, setProgress] = useState(0);
   const [fileBlob, setFileBlob] = useState<Blob | null>(null);
   const [fileName, setFileName] = useState("Orders.csv");
@@ -35,11 +33,11 @@ export default function OrderExport() {
     setModalOpen(false);
     setProgress(0);
     setErrorMessage(null);
-    setModalStatus("confirm");
+    setModalStatus(ExportModalStatus.Confirm);
   };
   const startExport = async () => {
     const data = form.getValues();
-    setModalStatus("processing");
+    setModalStatus(ExportModalStatus.Processing);
     setProgress(0);
     setErrorMessage(null);
     setFileBlob(null);
@@ -57,20 +55,20 @@ export default function OrderExport() {
         setProgress(100);
         setFileBlob(result.blob);
         setFileName(result.filename || `orders.${data.fileFormat || "csv"}`);
-        setModalStatus("ready");
+        setModalStatus(ExportModalStatus.Ready);
       } else {
-        setModalStatus("error");
+        setModalStatus(ExportModalStatus.Error);
         setErrorMessage(result?.message || result?.error || "Export failed.");
       }
     } catch (error) {
-      setModalStatus("error");
+      setModalStatus(ExportModalStatus.Error);
       setErrorMessage("Unexpected export error.");
       console.error("❌ Unexpected Export Error:", error);
     }
   };
 
   const onSubmit = () => {
-    setModalStatus("confirm");
+    setModalStatus(ExportModalStatus.Confirm);
     setProgress(0);
     setFileBlob(null);
     setErrorMessage(null);
@@ -79,7 +77,7 @@ export default function OrderExport() {
 
   useEffect(() => {
     if (!searchParams.get("t")) return;
-    setActiveTab("exportOptions");
+    setActiveTab(ExportTab.Options);
   }, [searchParams]);
 
   return (
@@ -95,7 +93,7 @@ export default function OrderExport() {
             <nav className="flex space-x-4 mt-5">
               <button
                 type="button"
-                onClick={() => setActiveTab("exportOptions")}
+                onClick={() => setActiveTab(ExportTab.Options)}
                 className={`px-4 py-2 text-xl border-b-4 transition-colors 2xl:!text-2xl ${activeTab === "exportOptions"
                   ? "border-blue-600 text-blue-600"
                   : "border-transparent text-gray-500 hover:text-gray-700"
@@ -105,7 +103,7 @@ export default function OrderExport() {
               </button>
               <button
                 type="button"
-                onClick={() => setActiveTab("exportPreview")}
+                onClick={() => setActiveTab(ExportTab.Preview)}
                 className={`px-4 py-2 text-xl border-b-4 transition-colors 2xl:!text-2xl ${activeTab === "exportPreview"
                   ? "border-blue-600 text-blue-600"
                   : "border-transparent text-gray-500 hover:text-gray-700"
@@ -126,8 +124,8 @@ export default function OrderExport() {
           </div>
 
           <div className="p-20">
-            {activeTab === "exportOptions" && <OrderExportOptions />}
-            {activeTab === "exportPreview" && <OrderExportPreview />}
+            {activeTab === ExportTab.Options && <OrderExportOptions />}
+            {activeTab === ExportTab.Preview && <OrderExportPreview />}
           </div>
         </form>
         <OrderExportModal
@@ -140,7 +138,7 @@ export default function OrderExport() {
           onClose={closeModal}
           onStartExport={startExport}
         />
-      </div>
-    </FormProvider>
+      </div >
+    </FormProvider >
   );
 }
