@@ -274,7 +274,10 @@ const SearchProduct = () => {
                   <SelectContent>
                     <SelectItem value="id">ID</SelectItem>
                     <SelectItem value="name">Name</SelectItem>
+                    <SelectItem value="sku">SKU</SelectItem>
+                    <SelectItem value="currentStock">Current Stock</SelectItem>
                     <SelectItem value="price">Price</SelectItem>
+                    <SelectItem value="visible">Visiblity</SelectItem>
                   </SelectContent>
                 </Select>
               )}

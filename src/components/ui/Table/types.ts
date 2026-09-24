@@ -9,6 +9,21 @@ export interface ColumnDef<T> {
   render?: (row: T, index: number) => ReactNode;
   className?: string;
   headClassName?: string;
+  /** Fixed column width (e.g. "135px"). Setting it on any column switches
+   *  the table to a fixed layout. */
+  width?: string;
+  /** Show a sort toggle on this column's header. */
+  sortable?: boolean;
+  /** Value sent to the API as the sort field. Takes priority over `key`. */
+  sortKey?: string;
+}
+
+export type SortDirection = "asc" | "desc";
+
+export interface TableSort {
+  /** The column's `sortKey`, or its `key` when no `sortKey` is set. */
+  key: string;
+  direction: SortDirection;
 }
 
 export interface RowAction<T> {
@@ -74,6 +89,15 @@ export interface TableProps<T> {
   renderExpandedRow?: (row: T) => ReactNode;
   isRowExpanded?: (row: T) => boolean;
 
+  /** Widths of the checkbox and row-actions columns in a fixed layout. */
+  selectColumnWidth?: string;
+  actionsColumnWidth?: string;
+
+  /** Active sort, shown on the headers. Sorting is done by the API: the
+   *  table only reports header clicks through `onSortChange`. */
+  sort?: TableSort | null;
+  onSortChange?: (sort: TableSort | null) => void;
+
   pagination?: TablePaginationProps;
   toolbar?: ReactNode;
   className?: string;
@@ -94,6 +118,7 @@ export interface TableFetchState {
   page: number;
   pageSize: number;
   filters: Record<string, string | string[]>;
+  sort: TableSort | null;
   isReset: boolean;
 }
 
@@ -103,6 +128,9 @@ export interface UseTableContainerOptions {
   searchParam?: string;
   pageParam?: string;
   perPageParam?: string;
+  /** Query params the sort field / direction are sent as. */
+  sortByParam?: string;
+  sortDirectionParam?: string;
   reservedKeys?: string[];
   tabs?: TableTab[];
   resetParam?: string;
@@ -122,6 +150,7 @@ export interface UseTableContainerReturn<TId = number> {
   tabs: TableTab[];
   search: string;
   formatFilterValue: (key: string, value: string) => ReactNode;
+  sort: TableSort | null;
 
   setSearch: (value: string) => void;
   submitSearch: () => void;
@@ -129,6 +158,7 @@ export interface UseTableContainerReturn<TId = number> {
   setTab: (tab: string) => void;
   setPage: (page: number) => void;
   setPerPage: (value: string) => void;
+  setSort: (sort: TableSort | null) => void;
   setFilter: (key: string, value?: string | string[] | null) => void;
   setFilters: (next: Record<string, string | string[]>) => void;
   removeFilter: (key: string, value?: string) => void;
