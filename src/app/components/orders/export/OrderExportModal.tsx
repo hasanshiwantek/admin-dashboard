@@ -129,7 +129,7 @@ export default function OrderExportModal({
                         Close
                     </button>
 
-                    {status === "confirm" && (
+                    {status === ExportModalStatus.Confirm && (
                         <button
                             type="button"
                             onClick={onStartExport}
