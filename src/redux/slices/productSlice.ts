@@ -384,49 +384,6 @@ export const importCsv = createAsyncThunk(
 );
 
 // EXPORT PRODUCTS THUNK
-// export const exportCsv = createAsyncThunk(
-//   "product/exportCsv",
-//   async ({ payload }: { payload: any }, thunkAPI) => {
-//     try {
-//       const response = await axiosInstance.get(
-//         "dashboard/products/export-csv",
-//         {
-//           params: payload,
-//           responseType: "blob", // 👈 critical for file download
-//         }
-//       );
-
-//       // Create a blob URL for the file
-//       const blob = new Blob([response.data], {
-//         type: String(response.headers["content-type"] ?? ""),
-//       });
-//       const downloadUrl = URL.createObjectURL(blob);
-
-//       // Get the file name from content-disposition header (if present)
-//       const disposition = response.headers["content-disposition"];
-//       let filename = "products_export.xlsx";
-//       if (disposition && disposition.includes("filename=")) {
-//         filename = disposition
-//           .split("filename=")[1]
-//           .split(";")[0]
-//           .replace(/"/g, "");
-//       }
-
-//       // Trigger the download
-//       const link = document.createElement("a");
-//       link.href = downloadUrl;
-//       link.setAttribute("download", filename);
-//       document.body.appendChild(link);
-//       link.click();
-//       link.remove();
-
-//       return "Export successful";
-//     } catch (error: any) {
-//       console.error("❌ Error Exporting CSV:", error);
-//       return thunkAPI.rejectWithValue("Failed to Export CSV");
-//     }
-//   }
-// );
 export const exportCsv = createAsyncThunk(
   "product/exportProductCsv",
   async (
