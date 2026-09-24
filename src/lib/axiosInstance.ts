@@ -35,6 +35,7 @@ axiosInstance.interceptors.response.use(
       if (error.response?.data?.message == "Unauthenticated.") {
         removeFromStorage("token");
         removeFromStorage("storeId");
+        removeFromStorage("currentStore");
         removeFromStorage("user");
         removeFromStorage("availableStores");
         removeFromStorage("tokenExpiry");

@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "@/lib/axiosInstance";
+import { removeFromStorage } from "@/utils/storage";
 
 export interface RegisterPayload {
   name: string;
@@ -331,6 +332,7 @@ const authSlice = createSlice({
       // ✅ Clear everything on logout
       localStorage.removeItem("token");
       localStorage.removeItem("storeId");
+      localStorage.removeItem("currentStore");
       localStorage.removeItem("user");
       localStorage.removeItem("availableStores");
       localStorage.removeItem("tokenExpiry");
@@ -370,7 +372,7 @@ const authSlice = createSlice({
           localStorage.setItem("token", action.payload.token);
           localStorage.setItem("user", JSON.stringify(action.payload.user));
           localStorage.setItem("availableStores", JSON.stringify(mappedStores));
-          localStorage.removeItem("storeId");
+          removeFromStorage("storeId");
         }
       })
 
@@ -407,7 +409,7 @@ const authSlice = createSlice({
         localStorage.setItem("token", action.payload.token);
         localStorage.setItem("user", JSON.stringify(action.payload.user));
         localStorage.setItem("availableStores", JSON.stringify(mappedStores));
-        localStorage.removeItem("storeId");
+        removeFromStorage("storeId");
       })
       .addCase(verifyOtp.rejected, (state, action) => {
         state.loading = false;

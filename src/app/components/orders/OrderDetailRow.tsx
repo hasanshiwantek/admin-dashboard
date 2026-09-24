@@ -22,6 +22,7 @@ import { toast } from "react-toastify";
 import { COMPLETED, riskConfig } from "./constant";
 import { OrderDetailRowProps } from "./types";
 import { findCountry } from "./utils";
+import { cn } from "@/lib/utils";
 
 const copyBilling = (info: any) => {
   if (!info) return;
@@ -51,6 +52,8 @@ export default function OrderDetailRow({
   const isMobileOrTablet =
     order?.deviceType?.includes("Mobile") ||
     order?.deviceType?.includes("Tablet");
+  const hasLongShippingData =
+    (order?.billingInformation?.shippingData?.length ?? 0) > 40;
 
   return (
     <div className="grid grid-cols-3 gap-4 bg-[#fcfcfb] p-4 ">
@@ -164,8 +167,8 @@ export default function OrderDetailRow({
             <span>
               {order?.billingInformation?.updatedAt
                 ? dayjs(order?.billingInformation?.updatedAt).format(
-                    "DD MMM YYYY HH:mm:ss",
-                  )
+                  "DD MMM YYYY HH:mm:ss",
+                )
                 : "N/A"}
             </span>
           </div>
@@ -291,11 +294,10 @@ export default function OrderDetailRow({
 
           {/* Method Data */}
           <div
-            className={`flex items-center gap-2 min-w-0 ${
-              (order?.billingInformation?.shippingData?.length ?? 0) > 40
-                ? "pt-[25px]"
-                : "pt-[35px]"
-            }`}
+            className={cn(
+              "flex items-center gap-2 min-w-0",
+              hasLongShippingData ? "pt-[25px]" : "pt-[35px]"
+            )}
           >
             <div className="shipping-data-scroll w-[420px] max-w-full overflow-x-auto overflow-y-hidden whitespace-nowrap">
               <span> {order?.billingInformation?.shippingData || "N/A"} </span>
@@ -371,7 +373,7 @@ export default function OrderDetailRow({
           <div className="p-4 border-b space-y-4">
             {order?.products?.map((item: any, index: number) => (
               <div key={index} className="flex justify-between gap-4 flex-wrap">
-                <div className="text-base leading-5 break-words  min-w-0 overflow-hidden">
+                <div className="text-base leading-5 min-w-0 flex-1 overflow-hidden">
                   <p className="font-semibold">
                     {item?.quantity} x{" "}
                     <span
@@ -411,8 +413,7 @@ export default function OrderDetailRow({
                     )}
                   </p>
                 </div>
-
-                <div className="font-medium whitespace-nowrap">
+                <div className="font-medium whitespace-nowrap shrink-0">
                   ${(item.price * item.quantity).toFixed(2)}
                 </div>
               </div>
