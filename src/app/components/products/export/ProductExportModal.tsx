@@ -2,11 +2,11 @@
 
 import { downloadFile } from "@/lib/utils";
 import { useEffect } from "react";
-import { ExportModalStatus, OrderExportModalProps } from "./constant";
+import { ExportModalStatus, ProductExportModalProps } from "./constant";
 import { Button } from "@/components/ui/button";
 
 
-export default function OrderExportModal({
+export default function ProductExportModal({
     open,
     status,
     progress,
@@ -15,7 +15,7 @@ export default function OrderExportModal({
     errorMessage,
     onClose,
     onStartExport,
-}: OrderExportModalProps) {
+}: ProductExportModalProps) {
     useEffect(() => {
         if (!open) return;
         const onKey = (e: KeyboardEvent) => {
@@ -73,7 +73,7 @@ export default function OrderExportModal({
                     {status === ExportModalStatus.Processing && (
                         <div>
                             <p className="mb-6">
-                                Your Orders export is currently being processed. Once the export
+                                Your Products export is currently being processed. Once the export
                                 is complete you will be able to download it.
                             </p>
                             <div className="mx-auto w-[70%]">
@@ -89,7 +89,7 @@ export default function OrderExportModal({
                                     {progress}%
                                 </p>
                                 <p className="text-center text-sm text-gray-500">
-                                    Generating Orders...
+                                    Generating Products...
                                 </p>
                             </div>
                         </div>
@@ -98,7 +98,7 @@ export default function OrderExportModal({
                     {status === ExportModalStatus.Ready && (
                         <div>
                             <p className="mb-5">
-                                Your Orders export has been generated and is ready to download.
+                                Your Products export has been generated and is ready to download.
                             </p>
                             <button
                                 type="button"
@@ -109,7 +109,7 @@ export default function OrderExportModal({
                                 <span className="text-lg" aria-hidden>
                                     💾
                                 </span>
-                                Download my Orders file
+                                Download my Products file
                             </button>
                         </div>
                     )}

@@ -495,7 +495,7 @@ export const orderTimeline = createAsyncThunk(
 );
 
 export const exportOrderCsv = createAsyncThunk(
-  "product/exportOrderCsv",
+  "order/exportOrderCsv",
   async (
     {
       payload,

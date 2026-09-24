@@ -9,6 +9,7 @@ import { exportOrderCsv } from "@/redux/slices/orderSlice";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { useSearchParams } from "next/navigation";
 import { ExportModalStatus, ExportTab } from "./constant";
+import { Button } from "@/components/ui/button";
 
 export default function OrderExport() {
   const searchParams = useSearchParams();
@@ -113,14 +114,44 @@ export default function OrderExport() {
               </button>
             </nav>
           </div>
-
-          <div className="flex justify-end gap-10 items-center fixed w-full bottom-0 right-0 bg-white/90 z-10 shadow-xs border-t p-4">
-            <button className="btn-outline-primary" type="button">
+          <div className="fixed bottom-0 right-0 z-10 flex w-full items-center justify-end gap-4 border-t bg-white/90 p-4 shadow-xs">
+            <Button
+              type="button"
+              className="
+              h-[42px]
+              min-w-[82px]
+              mr-[14px]
+              rounded-none
+              bg-transparent
+              px-[14px]
+              text-[16px]
+              font-normal
+              text-[#526dff]
+              shadow-none
+              hover:bg-transparent
+              hover:text-[#526dff]
+            "
+            >
               Cancel
-            </button>
-            <button className="btn-primary" type="submit">
+            </Button>
+
+            <Button
+              type="submit"
+              className="
+              h-[42px]
+              min-w-[112px]
+              rounded-none
+              bg-[#4d70ff]
+              px-[22px]
+              text-[16px]
+              font-normal
+              text-white
+              shadow-none
+              hover:bg-[#4164f5]
+            "
+            >
               Continue
-            </button>
+            </Button>
           </div>
 
           <div className="p-20">
