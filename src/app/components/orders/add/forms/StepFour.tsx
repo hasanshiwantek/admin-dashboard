@@ -12,6 +12,7 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
   const dispatch = useAppDispatch();
   const { handleSubmit, getValues } = useFormContext();
   const [ipAddress, setIpAddress] = useState("");
+  const [orderPlaceCountry, setOrderPlaceCountry] = useState("");
   const [loading, setLoading] = useState(false)
   const { appliedCoupon, } = useAppSelector(
     (state: any) => state.order,
@@ -92,7 +93,8 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
           phone: values.billingPhoneNumber || "",
           companyName: values.billingCompanyName || "",
           customerGroup: values.customerGroup || "",
-          "ipAddress": ipAddress,
+          ipAddress,
+          orderPlaceCountry,
           "couponCode": appliedCoupon?.couponCode,
           "discountAmount": appliedCoupon?.discountAmount,
           "isSaveAddressForBilling": values.saveAddress ? true : false,
@@ -186,7 +188,8 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
           customerId: values.selectedCustomer?.id,
           deviceType: getDeviceType(),
           userType: null,
-          "ipAddress": ipAddress,
+          ipAddress,
+          orderPlaceCountry,
           comments: values.customerComments || "",
           staffNotes: values.staffNotes || "",
           "couponCode": appliedCoupon?.couponCode,
@@ -365,6 +368,9 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
     fetch("/api/get-ip")
       .then((res) => res.json())
       .then((data) => setIpAddress(data.ip));
+    fetch("/api/detect-country")
+      .then((res) => res.json())
+      .then((data) => setOrderPlaceCountry(data?.country_code));
   }, []);
   return (
     // <FormProvider {...methods}>

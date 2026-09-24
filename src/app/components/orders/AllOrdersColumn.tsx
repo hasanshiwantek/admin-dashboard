@@ -102,7 +102,7 @@ export default function AllOrdersColumn({
       key: "risk",
       header: "",
       render: (order) => {
-        const countryData = findCountry(order?.billingAddress?.country);
+        const countryData = findCountry(order?.orderPlaceCountry);
         const risk = riskConfig[order?.payment?.risk_level];
         return (
           <div className="flex items-center gap-2  ">
