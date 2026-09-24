@@ -27,6 +27,7 @@ import { FaCircleMinus, FaCirclePlus } from "react-icons/fa6";
 import { COMPLETED, riskConfig, statusOptions } from "./constant";
 import { OrderColumnsProps } from "./types";
 import { findCountry } from "./utils";
+import { cn } from "@/lib/utils";
 
 export default function AllOrdersColumn({
   router,
@@ -185,8 +186,10 @@ export default function AllOrdersColumn({
         return (
           <div className="flex items-center gap-2">
             <span
-              className={`w-7 h-12 inline-block rounded-none ${currentStatus?.color || "bg-gray-400"
-                }`}
+              className={cn(
+                "w-7 h-12 inline-block rounded-none",
+                currentStatus?.color ?? "bg-gray-400"
+              )}
             />
             <Select
               defaultValue={order.status}
