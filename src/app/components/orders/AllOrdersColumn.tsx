@@ -27,6 +27,7 @@ import { FaCircleMinus, FaCirclePlus } from "react-icons/fa6";
 import { COMPLETED, riskConfig, statusOptions } from "./constant";
 import { OrderColumnsProps } from "./types";
 import { findCountry } from "./utils";
+import { cn } from "@/lib/utils";
 
 export default function AllOrdersColumn({
   router,
@@ -102,7 +103,7 @@ export default function AllOrdersColumn({
       key: "risk",
       header: "",
       render: (order) => {
-        const countryData = findCountry(order?.billingAddress?.country);
+        const orderCountryDetails = findCountry(order?.orderPlaceCountry);
         const risk = riskConfig[order?.payment?.risk_level];
         return (
           <div className="flex items-center gap-2  ">
@@ -121,20 +122,20 @@ export default function AllOrdersColumn({
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  {countryData ? (
+                  {orderCountryDetails ? (
                     <Image
-                      src={countryData?.flag as string}
+                      src={orderCountryDetails?.flag as string}
                       width={22}
                       height={22}
                       className="rounded-sm object-cover"
-                      alt={countryData?.label || ""}
+                      alt={orderCountryDetails?.label || ""}
                     />
                   ) : (
                     <span className="">🏳️</span>
                   )}
                 </TooltipTrigger>
                 <TooltipContent>
-                  {countryData?.label || "Unknown Country"}
+                  {orderCountryDetails?.label || "Unknown Country"}
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -185,9 +186,10 @@ export default function AllOrdersColumn({
         return (
           <div className="flex items-center gap-2">
             <span
-              className={`w-7 h-12 inline-block rounded-none ${
-                currentStatus?.color || "bg-gray-400"
-              }`}
+              className={cn(
+                "w-7 h-12 inline-block rounded-none",
+                currentStatus?.color ?? "bg-gray-400"
+              )}
             />
             <Select
               defaultValue={order.status}
