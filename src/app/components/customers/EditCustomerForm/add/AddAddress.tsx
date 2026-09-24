@@ -93,6 +93,9 @@ export default function AddAddress() {
         if (!form.country) {
             newErrors.country = "Country is required";
         }
+         if (!form.state) {
+            newErrors.state = "state is required";
+        }
 
         setErrors(newErrors);
 
@@ -142,9 +145,7 @@ export default function AddAddress() {
                 } else {
                     router.back(); // go back to customer edit page
                 }
-            } else {
-                alert("Failed to save address");
-            }
+            } 
         } catch (error) {
             console.error(error);
             alert("Something went wrong");
@@ -272,7 +273,7 @@ export default function AddAddress() {
                             </div>
                             <div>
                                 <Label className="text-[15px]  text-[#313440] mb-1.5 block">
-                                    State
+                                    State <span className="!text-red-500">*</span>
                                 </Label>
                                 <Select
                                     value={form.state}
@@ -290,6 +291,12 @@ export default function AddAddress() {
                                         ))}
                                     </SelectContent>
                                 </Select>
+                                 {errors.state && (
+                                    <p className="mt-2 flex items-center gap-1.5 text-[12px] !text-red-500">
+                                        <span className="flex h-[18px] w-[18px] items-center justify-center rounded-full bg-red-500 text-[11px] font-bold !text-white">!</span>
+                                        {errors.state}
+                                    </p>
+                                )}
                             </div>
                         </div>
 

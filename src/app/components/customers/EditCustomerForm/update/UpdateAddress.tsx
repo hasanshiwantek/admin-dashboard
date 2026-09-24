@@ -238,7 +238,7 @@ export default function UpdateAddress() {
                             </div>
                             <div>
                                 <Label className="text-[15px]  text-[#313440] mb-1.5 block">
-                                    State
+                                    State <span className="!text-red-500">*</span>
                                 </Label>
                                 <Select
                                     value={form.state}

@@ -46,12 +46,12 @@ export default function ConfirmationModal({
       confirmClass: "bg-red-600 hover:bg-red-700 text-white",
     },
     warning: {
-      icon: <AlertTriangle className="w-5 h-5 text-blue-600" />,
+      icon: <AlertTriangle className="w-8 h-8 text-yellow-600" />,
       iconBg: "bg-yellow-50",
       title: title || "Are you sure?",
       description: description || "This action cannot be undone. Please confirm to proceed.",
       confirmLabel: "Confirm",
-      confirmClass: "bg-blue-600 hover:bg-blue-700 text-white",
+      confirmClass: "bg-yellow-600 hover:bg-yellow-700 text-white",
     },
   };
 
@@ -62,39 +62,46 @@ export default function ConfirmationModal({
       <DialogContent className="!max-w-[440px] p-8">
 
         {/* Header */}
-        <div className="flex items-center gap-3 mb-6">
-          <div className={`w-10 h-10 rounded-full ${c.iconBg} flex items-center justify-center shrink-0`}>
-            {c.icon}
-          </div>
-          <div>
-            <DialogTitle className="text-base font-medium">
-              {c.title}
-            </DialogTitle>
-            <DialogDescription className="text-sm text-muted-foreground mt-0.5">
-              {c.description}
-            </DialogDescription>
-          </div>
-        </div>
+     {/* Header */}
+{/* Header */}
+<div className="flex flex-col items-center text-center gap-4 mb-9!">
+  <div
+    className={`w-16 h-16 rounded-full ${c.iconBg} flex items-center justify-center shrink-0`}
+  >
+     {c.icon}
+  </div>
+
+  <div className="space-y-1.5">
+    <DialogTitle className="text-[18px]! font-semibold">
+      {c.title}
+    </DialogTitle>
+
+    <DialogDescription className="text-[12px]! text-muted-foreground leading-6">
+      {c.description}
+    </DialogDescription>
+  </div>
+</div>
 
         {/* Divider + Footer */}
-        <div className="border-t pt-5 flex justify-end gap-2">
-          <Button
-            variant="outline"
-            type="button"
-            className="text-lg p-5"
-            onClick={() => onOpenChange(false)}
-          >
-            Cancel
-          </Button>
-          <Button
-            type="button"
-            className={`text-lg p-5 ${c.confirmClass}`}
-            disabled={loading}
-            onClick={onConfirm}
-          >
-            {loading ? "Please wait..." : c.confirmLabel}
-          </Button>
-        </div>
+        <div className="border-t pt-6 flex justify-end gap-3">
+  <Button
+    variant="outline"
+    type="button"
+    className="text-base px-5 py-5"
+    onClick={() => onOpenChange(false)}
+  >
+    Cancel
+  </Button>
+
+  <Button
+    type="button"
+    className={`text-base px-5 py-5 ${c.confirmClass}`}
+    disabled={loading}
+    onClick={onConfirm}
+  >
+    {loading ? "Please wait..." : c.confirmLabel}
+  </Button>
+</div>
 
       </DialogContent>
     </Dialog>
