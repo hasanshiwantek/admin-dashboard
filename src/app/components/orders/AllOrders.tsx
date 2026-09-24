@@ -73,6 +73,76 @@ const AllOrders = () => {
       </div>
     );
   }
+  const topActions = (
+    <div className="flex flex-wrap gap-3 items-center mb-1">
+      <Link href={"/manage/orders/add"}>
+        <button className="btn-outline-primary 2xl:!text-2xl">Add</button>
+      </Link>
+      {selectedOrders.length !== 0 && (
+        <button
+          className="btn-outline-primary 2xl:!text-2xl"
+          onClick={handleExport}
+        >
+          Export
+        </button>
+      )}
+
+      <Select onValueChange={setSelectedAction} value={selectedAction}>
+        <SelectTrigger className="w-fit px-6 py-6 2xl:py-[1.8rem]">
+          <SelectValue placeholder="Choose an action" />
+        </SelectTrigger>
+        <SelectContent>
+          {BULK_ORDER_ACTIONS.map((action) => (
+            <SelectItem key={action.value} value={action.value}>
+              {action.label}
+            </SelectItem>
+          ))}
+
+          <div className="px-2 pt-2 pb-1 my-3 text-2xl font-semibold text-muted-foreground">
+            Update status for selected to:
+          </div>
+
+          {BULK_STATUS_ACTIONS.map((action) => (
+            <SelectItem
+              key={action.value}
+              value={`updateMultiOrderStatus:${action.value}`}
+            >
+              {action.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+
+      <button
+        className="btn-outline-primary 2xl:!text-2xl"
+        onClick={handleConfirmClick}
+      >
+        Confirm
+      </button>
+
+      <Input
+        className="2xl:py-[1.8rem]"
+        placeholder="Filter by keyword"
+        value={table.search}
+        onChange={(e) => table.setSearch(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") table.submitSearch();
+        }}
+      />
+      <button
+        className="btn-outline-primary 2xl:!text-2xl"
+        onClick={table.submitSearch}
+      >
+        Search
+      </button>
+      <button
+        className="btn-outline-primary 2xl:!text-2xl"
+        onClick={table.clearSearch}
+      >
+        Clear
+      </button>
+    </div>
+  );
 
   return (
     <div className="bg-store-bg min-h-screen mt-20">
@@ -87,75 +157,7 @@ const AllOrders = () => {
 
       <div className="bg-white p-4 shadow-sm">
         {/* Top actions */}
-        <div className="flex flex-wrap gap-3 items-center mb-1">
-          <Link href={"/manage/orders/add"}>
-            <button className="btn-outline-primary 2xl:!text-2xl">Add</button>
-          </Link>
-          {selectedOrders.length !== 0 && (
-            <button
-              className="btn-outline-primary 2xl:!text-2xl"
-              onClick={handleExport}
-            >
-              Export
-            </button>
-          )}
-
-          <Select onValueChange={setSelectedAction} value={selectedAction}>
-            <SelectTrigger className="w-fit px-6 py-6 2xl:py-[1.8rem]">
-              <SelectValue placeholder="Choose an action" />
-            </SelectTrigger>
-            <SelectContent>
-              {BULK_ORDER_ACTIONS.map((action) => (
-                <SelectItem key={action.value} value={action.value}>
-                  {action.label}
-                </SelectItem>
-              ))}
-
-              <div className="px-2 pt-2 pb-1 my-3 text-2xl font-semibold text-muted-foreground">
-                Update status for selected to:
-              </div>
-
-              {BULK_STATUS_ACTIONS.map((action) => (
-                <SelectItem
-                  key={action.value}
-                  value={`updateMultiOrderStatus:${action.value}`}
-                >
-                  {action.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <button
-            className="btn-outline-primary 2xl:!text-2xl"
-            onClick={handleConfirmClick}
-          >
-            Confirm
-          </button>
-
-          <Input
-            className="2xl:py-[1.8rem]"
-            placeholder="Filter by keyword"
-            value={table.search}
-            onChange={(e) => table.setSearch(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") table.submitSearch();
-            }}
-          />
-          <button
-            className="btn-outline-primary 2xl:!text-2xl"
-            onClick={table.submitSearch}
-          >
-            Search
-          </button>
-          <button
-            className="btn-outline-primary 2xl:!text-2xl"
-            onClick={table.clearSearch}
-          >
-            Clear
-          </button>
-        </div>
-
+        {topActions}
         <Table<any>
           bare
           data={filteredOrders}
@@ -178,6 +180,8 @@ const AllOrders = () => {
           rowActions={rowActions}
           renderExpandedRow={renderExpandedRow}
           isRowExpanded={isRowExpanded}
+          sort={table.sort}
+          onSortChange={table.setSort}
           pagination={{
             currentPage,
             totalPages,

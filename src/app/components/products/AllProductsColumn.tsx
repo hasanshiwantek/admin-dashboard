@@ -1,6 +1,9 @@
 import { ColumnDef } from "@/components/ui/Table/types";
+import { LocalStorageKeys } from "@/const/appConstants";
+import { StoreObject } from "@/redux/slices/configSlice";
 import { updateProduct } from "@/redux/slices/productSlice";
 import { AppDispatch } from "@/redux/store";
+import { getFromStorage } from "@/utils/storage";
 import { Pencil } from "lucide-react";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import Image from "next/image";
@@ -23,7 +26,9 @@ const AllProductsColumn = ({
   {
     key: "name",
     header: "Name",
+    sortable: true,
     className: "flex items-center gap-2",
+    width: "350px",
     render: (product) => {
       const imageSrc =
         product.image?.find((img: any) => img?.isPrimary === 1)?.path ||
@@ -76,6 +81,7 @@ const AllProductsColumn = ({
     key: "sku",
     header: "SKU",
     className: "2xl:!text-[1.6rem]",
+    sortable: true,
   },
   {
     key: "categories",
@@ -91,6 +97,7 @@ const AllProductsColumn = ({
   {
     key: "currentStock",
     header: "Current stock",
+    sortable: true,
     render: (product) => (
       <EditStockSheet
         product={product}
@@ -109,6 +116,7 @@ const AllProductsColumn = ({
   {
     key: "price",
     header: "Price",
+    sortable: true,
     render: (product) => (
       <EditPriceSheet
         product={product}
@@ -128,10 +136,17 @@ const AllProductsColumn = ({
     key: "channels",
     header: "Channels",
     className: "2xl:!text-[1.6rem]",
+    render: () => {
+      const currentStore = getFromStorage<StoreObject>(
+        LocalStorageKeys.CurrentStore,
+      );
+      return currentStore?.name;
+    },
   },
   {
-    key: "visibility",
+    key: "visible",
     header: "Visibility",
+    sortable: true,
     className: "relative hover:bg-blue-100 transition-all",
     render: (product) => (
       <VisibilityToggle
