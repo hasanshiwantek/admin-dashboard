@@ -503,42 +503,33 @@ export const exportOrderCsv = createAsyncThunk(
         "dashboard/orders/export-orders",
         {
           params: payload,
-          responseType: "blob", // 👈 critical for file download
+          responseType: "blob",
         },
       );
 
-      // Create a blob URL for the file
       const blob = new Blob([response.data], {
-        type: String(response.headers["content-type"] ?? ""),
+        type: String(response.headers["content-type"] ?? "text/csv"),
       });
-      const downloadUrl = URL.createObjectURL(blob);
 
-      // Get the file name from content-disposition header (if present)
+      const format = String(payload?.fileFormat || "csv").replace(/^\./, "");
+      const today = new Date().toISOString().slice(0, 10); // 2026-09-24
+      let filename = `orders-${today}.${format}`;
       const disposition = response.headers["content-disposition"];
-      let filename = "products_export.xlsx";
       if (disposition && disposition.includes("filename=")) {
         filename = disposition
           .split("filename=")[1]
           .split(";")[0]
-          .replace(/"/g, "");
+          .replace(/"/g, "")
+          .trim();
       }
-
-      // Trigger the download
-      const link = document.createElement("a");
-      link.href = downloadUrl;
-      link.setAttribute("download", filename);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-
-      return "Export successful";
+      // Do NOT click a link here. Return the file for the modal.
+      return { blob, filename };
     } catch (error: any) {
       console.error("❌ Error Exporting CSV:", error);
       return thunkAPI.rejectWithValue("Failed to Export CSV");
     }
   },
 );
-
 export const fetchAllShipments = createAsyncThunk(
   "orders/fetchAllShipments",
   async (
