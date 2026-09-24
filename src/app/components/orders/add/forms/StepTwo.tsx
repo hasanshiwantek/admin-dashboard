@@ -11,7 +11,7 @@ import { errorMessage } from "@/utils/message";
 import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
 
 export default function StepTwo({ step, setStep }: any) {
-  const { register, setValue, handleSubmit, control } = useFormContext();
+  const { setValue, handleSubmit, control } = useFormContext();
 
   const watchedProducts = useWatch({
     control,

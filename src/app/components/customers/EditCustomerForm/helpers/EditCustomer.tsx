@@ -782,38 +782,38 @@ const EditCustomer = () => {
           </button>
         </div>
         <ConfirmationModal
-    open={showDeleteModal}
-    onOpenChange={setShowDeleteModal}
-    variant="warning"
-    title="Delete address?"
-    description={`Are you sure you want to delete ${deleteAddressIds.length} address${deleteAddressIds.length > 1 ? "es" : ""}?`}
-    onConfirm={async () => {
-        try {
-            const result = await dispatch(
+          open={showDeleteModal}
+          onOpenChange={setShowDeleteModal}
+          variant="warning"
+          title="Delete address?"
+          description={`Are you sure you want to delete ${deleteAddressIds.length} address${deleteAddressIds.length > 1 ? "es" : ""}?`}
+          onConfirm={async () => {
+            try {
+              const result = await dispatch(
                 customerAddressesDeleteMultiple({
-                    data: { ids: deleteAddressIds },
-                })
-            );
+                  data: { ids: deleteAddressIds },
+                }),
+              );
 
-            if (result.meta.requestStatus === "fulfilled") {
+              if (result.meta.requestStatus === "fulfilled") {
                 dispatch(
-                    fetchCustomerAddresses({
-                        customerId: Number(id),
-                    })
+                  fetchCustomerAddresses({
+                    customerId: Number(id),
+                  }),
                 );
 
                 setSelectedIds([]);
                 setDeleteAddressIds([]);
                 setShowDeleteModal(false);
-            } else {
+              } else {
                 alert("Failed to delete addresses");
+              }
+            } catch (error) {
+              console.error(error);
+              alert("Something went wrong");
             }
-        } catch (error) {
-            console.error(error);
-            alert("Something went wrong");
-        }
-    }}
-/>
+          }}
+        />
       </form>
     </div>
   );

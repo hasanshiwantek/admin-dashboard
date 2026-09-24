@@ -1,6 +1,6 @@
 "use client";
-import { useState, useEffect } from "react";
-import { useForm, FormProvider } from "react-hook-form";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table,
   TableBody,
@@ -9,40 +9,42 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import {
-  DndContext,
+  deleteCategory,
+  fetchCategories,
+  updateBulkCategory,
+  updateCategory,
+} from "@/redux/slices/categorySlice";
+import {
   closestCenter,
+  DndContext,
+  DragEndEvent,
   DragOverlay,
   PointerSensor,
   useSensor,
   useSensors,
-  DragEndEvent,
 } from "@dnd-kit/core";
 import {
-  arrayMove,
+  restrictToVerticalAxis,
+  restrictToWindowEdges,
+} from "@dnd-kit/modifiers";
+import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
-import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import AddCategoryModal from "./AddCategoryModal";
-import CategoryRow from "./CategoryRow";
-import {
-  fetchCategories,
-  updateCategory,
-  deleteCategory,
-  updateBulkCategory,
-} from "@/redux/slices/categorySlice";
-import { refetchCategories } from "@/lib/categoryUtils";
-import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
-import Spinner from "../../loader/Spinner";
-import { Checkbox } from "@/components/ui/checkbox";
-import CategoryDropdown from "./CategoryDropdown";
-import { restrictToWindowEdges } from "@dnd-kit/modifiers";
 import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import Spinner from "../../loader/Spinner";
+import AddCategoryModal from "./AddCategoryModal";
 import CategoryDropdownForClear from "./CategoryDropdownForClear";
+<<<<<<< HEAD
 import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
+=======
+import CategoryRow from "./CategoryRow";
+>>>>>>> a2e3006b5639f0581f6d78509b9c8a1d791c598a
 
 export default function ProductCategoriesPage() {
   const methods = useForm();
@@ -50,13 +52,13 @@ export default function ProductCategoriesPage() {
   const searchParams = useSearchParams();
 
   const allCategories = useAppSelector(
-    (state: any) => state.category.categories
+    (state: any) => state.category.categories,
   );
 
   const categories = allCategories?.data || [];
 
   const { loading }: { loading: boolean } = useAppSelector(
-    (state) => state.category
+    (state) => state.category,
   );
 
   const [selectedIds, setSelectedIds] = useState<any[]>([]);
@@ -75,7 +77,7 @@ export default function ProductCategoriesPage() {
         delay: 150,
         tolerance: 5,
       },
-    })
+    }),
   );
 
   const handleDragStart = (event: any) => {
@@ -127,11 +129,13 @@ export default function ProductCategoriesPage() {
             description: dragged.description,
             parentId: newParentId,
           },
-        })
-      ).unwrap().finally(async () => {
-        setIsUpdateLoading(false);
-        await dispatch(fetchCategories());
-      });
+        }),
+      )
+        .unwrap()
+        .finally(async () => {
+          setIsUpdateLoading(false);
+          await dispatch(fetchCategories());
+        });
     } catch (error) {
       console.error("Failed to move category.", error);
     }
@@ -195,7 +199,6 @@ const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
     dispatch(fetchCategories());
   }, [searchParams]);
 
-
   useEffect(() => {
     dispatch(fetchCategories());
   }, [dispatch]);
@@ -203,7 +206,7 @@ const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
   const findPathToId = (
     list: any[],
     id: number,
-    path: number[] = []
+    path: number[] = [],
   ): number[] | null => {
     for (const item of list) {
       const newPath = [...path, item.id];
@@ -276,7 +279,6 @@ const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
                 onClick={() => handleBulkVisibility(true)}
               >
                 Enable Visibility
-
               </button>
 
               <button

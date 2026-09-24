@@ -1,24 +1,24 @@
 "use client";
 
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { HiQuestionMarkCircle } from "react-icons/hi2";
-import { useFormContext, Controller } from "react-hook-form";
+import { ValidationError } from "@/components/ui/validation-error";
+import { cn } from "@/lib/utils";
 import {
   decimalValidation,
   restrictDecimalInput,
   restrictDecimalPaste,
   restrictDecimalValue,
 } from "@/validations/validations";
-import { ValidationError } from "@/components/ui/validation-error";
-import { cn } from "@/lib/utils";
+import { Controller, useFormContext } from "react-hook-form";
+import { HiQuestionMarkCircle } from "react-icons/hi2";
 
 export default function ShippingDetails() {
   const {
