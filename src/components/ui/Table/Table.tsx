@@ -15,11 +15,19 @@ import {
   Table as UITable,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
-import { Ellipsis, X } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronsUpDown,
+  ChevronUp,
+  Ellipsis,
+  X,
+} from "lucide-react";
 import { Fragment, ReactNode } from "react";
 import { IoSearchOutline } from "react-icons/io5";
 import TableTabs from "./TableTabs";
-import { TableProps } from "./types";
+import { ColumnDef, TableProps } from "./types";
+
+const sortKeyOf = (col: ColumnDef<any>) => col.sortKey ?? col.key;
 
 export default function Table<T>({
   data,
@@ -56,6 +64,10 @@ export default function Table<T>({
   bulkActions,
   renderExpandedRow,
   isRowExpanded,
+  selectColumnWidth = "50px",
+  actionsColumnWidth = "90px",
+  sort = null,
+  onSortChange,
   pagination,
   toolbar,
   className,
@@ -66,6 +78,18 @@ export default function Table<T>({
     rowIds.length > 0 && rowIds.every((id) => selectedIds.includes(id));
 
   const colSpan = columns.length + (selectable ? 1 : 0) + (rowActions ? 1 : 0);
+  const fixedLayout = columns.some((col) => col.width);
+
+  const toggleSort = (col: ColumnDef<T>) => {
+    const key = sortKeyOf(col);
+    onSortChange?.(
+      sort?.key !== key
+        ? { key, direction: "asc" }
+        : sort.direction === "asc"
+          ? { key, direction: "desc" }
+          : null,
+    );
+  };
   const filterChips: ChipItem[] =
     showFilterChips && appliedFilters
       ? Object.entries(appliedFilters).map(([key, val]) => {
@@ -204,7 +228,16 @@ export default function Table<T>({
 
       {/* Table */}
       <div>
-        <UITable>
+        <UITable className={cn(fixedLayout && "table-fixed")}>
+          {fixedLayout && (
+            <colgroup>
+              {selectable && <col style={{ width: selectColumnWidth }} />}
+              {columns.map((col) => (
+                <col key={col.key} style={{ width: col.width }} />
+              ))}
+              {rowActions && <col style={{ width: actionsColumnWidth }} />}
+            </colgroup>
+          )}
           <TableHeader className="h-18">
             <TableRow>
               {selectable && (
@@ -224,7 +257,24 @@ export default function Table<T>({
                   key={col.key}
                   className={cn("2xl:!text-[1.6rem]", col.headClassName)}
                 >
-                  {col.header}
+                  {col.sortable && onSortChange ? (
+                    <button
+                      type="button"
+                      onClick={() => toggleSort(col)}
+                      className="inline-flex items-center gap-2 cursor-pointer hover:text-blue-500"
+                    >
+                      {col.header}
+                      {sort?.key !== sortKeyOf(col) ? (
+                        <ChevronsUpDown className="h-6 w-6 shrink-0 text-gray-400" />
+                      ) : sort.direction === "asc" ? (
+                        <ChevronUp className="h-6 w-6 shrink-0" />
+                      ) : (
+                        <ChevronDown className="h-6 w-6 shrink-0" />
+                      )}
+                    </button>
+                  ) : (
+                    col.header
+                  )}
                 </TableHead>
               ))}
               {rowActions && <TableHead className="2xl:!text-[1.6rem]" />}
@@ -303,8 +353,15 @@ export default function Table<T>({
                     </TableRow>
                     {expanded && (
                       <TableRow>
-                        <TableCell colSpan={colSpan}>
-                          {renderExpandedRow!(row)}
+                        <TableCell
+                          colSpan={colSpan}
+                          className="whitespace-normal"
+                        >
+                          {/* w-0 + min-w-full keeps the expanded content from
+                              widening the table and reflowing the columns. */}
+                          <div className="w-0 min-w-full">
+                            {renderExpandedRow!(row)}
+                          </div>
                         </TableCell>
                       </TableRow>
                     )}
