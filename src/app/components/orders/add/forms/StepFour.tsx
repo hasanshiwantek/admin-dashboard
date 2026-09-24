@@ -373,7 +373,6 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
       .then((data) => setOrderPlaceCountry(data?.country_code));
   }, []);
   return (
-    // <FormProvider {...methods}>
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="p-10">
         <OrderReview step={step} setStep={setStep} />
@@ -404,6 +403,5 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
         </div>
       </div>
     </form>
-    // </FormProvider>
   );
 }
