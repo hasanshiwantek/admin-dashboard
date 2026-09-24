@@ -106,3 +106,15 @@ export function buildQueryParams(payload: Record<string, any> = {}): string {
   const queryString = queryParams.toString();
   return queryString ? `?${queryString}` : "";
 }
+export function downloadFile(file: Blob | File, fileName: string) {
+  if (!file || !fileName) return;
+
+  const url = URL.createObjectURL(file);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}

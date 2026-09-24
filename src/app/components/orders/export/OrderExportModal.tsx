@@ -1,5 +1,6 @@
 "use client";
 
+import { downloadFile } from "@/lib/utils";
 import { useEffect } from "react";
 
 export type ExportModalStatus = "confirm" | "processing" | "ready" | "error";
@@ -36,15 +37,8 @@ export default function OrderExportModal({
 
     const handleDownloadClick = () => {
         if (!fileBlob) return;
-
-        const url = URL.createObjectURL(fileBlob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = fileName;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(url);
+        downloadFile(fileBlob, fileName);
+        onClose()
     };
 
     if (!open) return null;

@@ -494,16 +494,37 @@ export const orderTimeline = createAsyncThunk(
   },
 );
 
-// EXPORT ORDERS THUNK
 export const exportOrderCsv = createAsyncThunk(
   "product/exportOrderCsv",
-  async ({ payload }: { payload: any }, thunkAPI) => {
+  async (
+    {
+      payload,
+      onProgress,
+    }: {
+      payload: any;
+      onProgress?: (percent: number) => void;
+    },
+    thunkAPI,
+  ) => {
     try {
       const response = await axiosInstance.get(
         "dashboard/orders/export-orders",
         {
           params: payload,
           responseType: "blob",
+          onDownloadProgress: (progressEvent) => {
+            const loaded = progressEvent.loaded ?? 0;
+            const total = progressEvent.total;
+
+            if (total && total > 0) {
+              const percent = Math.round((loaded * 100) / total);
+              onProgress?.(Math.min(100, Math.max(0, percent)));
+            } else {
+              // no Content-Length — show movement without hitting 100
+              const fake = Math.min(90, Math.round(loaded / 1024) % 90);
+              onProgress?.(fake || 10);
+            }
+          },
         },
       );
 
@@ -512,8 +533,9 @@ export const exportOrderCsv = createAsyncThunk(
       });
 
       const format = String(payload?.fileFormat || "csv").replace(/^\./, "");
-      const today = new Date().toISOString().slice(0, 10); // 2026-09-24
+      const today = new Date().toISOString().slice(0, 10);
       let filename = `orders-${today}.${format}`;
+
       const disposition = response.headers["content-disposition"];
       if (disposition && disposition.includes("filename=")) {
         filename = disposition
@@ -522,7 +544,8 @@ export const exportOrderCsv = createAsyncThunk(
           .replace(/"/g, "")
           .trim();
       }
-      // Do NOT click a link here. Return the file for the modal.
+
+      onProgress?.(100);
       return { blob, filename };
     } catch (error: any) {
       console.error("❌ Error Exporting CSV:", error);

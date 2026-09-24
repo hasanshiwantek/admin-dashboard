@@ -37,38 +37,35 @@ export default function OrderExport() {
     setErrorMessage(null);
     setModalStatus("confirm");
   };
-
   const startExport = async () => {
     const data = form.getValues();
     setModalStatus("processing");
-    setProgress(8);
+    setProgress(0);
     setErrorMessage(null);
     setFileBlob(null);
 
-    const tick = window.setInterval(() => {
-      setProgress((p) => (p >= 90 ? p : p + 7));
-    }, 400);
-
     try {
-      const resultAction = await dispatch(exportOrderCsv({ payload: data }));
+      const resultAction = await dispatch(
+        exportOrderCsv({
+          payload: data,
+          onProgress: (percent) => setProgress(percent),
+        }),
+      );
       const result = (resultAction as any).payload;
 
       if ((resultAction as any).meta.requestStatus === "fulfilled") {
         setProgress(100);
         setFileBlob(result.blob);
-        setFileName(result.filename || `Orders.${data.fileFormat || "csv"}`);
+        setFileName(result.filename || `orders.${data.fileFormat || "csv"}`);
         setModalStatus("ready");
       } else {
         setModalStatus("error");
         setErrorMessage(result?.message || result?.error || "Export failed.");
-        console.error("❌ Export Failed:", result);
       }
     } catch (error) {
       setModalStatus("error");
       setErrorMessage("Unexpected export error.");
       console.error("❌ Unexpected Export Error:", error);
-    } finally {
-      window.clearInterval(tick);
     }
   };
 
@@ -100,8 +97,8 @@ export default function OrderExport() {
                 type="button"
                 onClick={() => setActiveTab("exportOptions")}
                 className={`px-4 py-2 text-xl border-b-4 transition-colors 2xl:!text-2xl ${activeTab === "exportOptions"
-                    ? "border-blue-600 text-blue-600"
-                    : "border-transparent text-gray-500 hover:text-gray-700"
+                  ? "border-blue-600 text-blue-600"
+                  : "border-transparent text-gray-500 hover:text-gray-700"
                   }`}
               >
                 Export options
@@ -110,8 +107,8 @@ export default function OrderExport() {
                 type="button"
                 onClick={() => setActiveTab("exportPreview")}
                 className={`px-4 py-2 text-xl border-b-4 transition-colors 2xl:!text-2xl ${activeTab === "exportPreview"
-                    ? "border-blue-600 text-blue-600"
-                    : "border-transparent text-gray-500 hover:text-gray-700"
+                  ? "border-blue-600 text-blue-600"
+                  : "border-transparent text-gray-500 hover:text-gray-700"
                   }`}
               >
                 Export preview
