@@ -165,8 +165,7 @@ const useAllCustomersContainer = () => {
     setExpandedRow((prev) => (prev === id ? null : id));
   };
 
-  // Kept from the existing file so no customer functionality is silently removed.
-  const copyBilling = () => {};
+
 
   const updateCustomerGroupStatus = async (
     customerId: number | string,
@@ -306,7 +305,7 @@ const useAllCustomersContainer = () => {
     setStoreCredits,
     updateCustomerGroupStatus,
     updateCustomerStoreCredit,
-    copyBilling,
+    
   };
 };
 
