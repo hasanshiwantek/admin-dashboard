@@ -36,16 +36,34 @@ export default function AllOrdersColumn({
   clearSelection,
   isExpanded,
   onToggleExpand,
+  isAllExpanded,
+  onToggleExpandAll,
   onCaptureFunds,
   onViewNotes,
 }: OrderColumnsProps): ColumnDef<any>[] {
   return [
     {
       key: "expand",
-      header: "",
-      className: "justify-items-center w-[75px]!",
+      header: (
+        <button
+          onClick={onToggleExpandAll}
+          title={isAllExpanded ? "Collapse all" : "Expand all"}
+        >
+          {isAllExpanded ? (
+            <FaCircleMinus className="h-7 w-7 !fill-[#999]" />
+          ) : (
+            <FaCirclePlus className="h-7 w-7 !fill-[#999]" />
+          )}
+        </button>
+      ),
+      width: "55px",
+      headClassName: "text-center!",
+      className: "justify-items-center",
       render: (order) => (
-        <button className="flex items-center justify-center" onClick={() => onToggleExpand(order.id)}>
+        <button
+          className="flex items-center justify-center"
+          onClick={() => onToggleExpand(order.id)}
+        >
           {isExpanded(order) ? (
             <FaCircleMinus className="h-7 w-7 !fill-[#999]" />
           ) : (
@@ -57,7 +75,7 @@ export default function AllOrdersColumn({
     {
       key: "device",
       header: "",
-      className: "w-[75px]!",
+      width: "65px",
       render: (order) => {
         const isMobileOrTablet =
           order?.deviceType?.includes("Mobile") ||
@@ -85,6 +103,8 @@ export default function AllOrdersColumn({
     {
       key: "date",
       header: "Date",
+      width: "135px",
+      sortable: true,
       className: "2xl:!text-2xl",
       render: (order) =>
         new Date(order.createdAt).toLocaleDateString("en-GB", {
@@ -96,12 +116,14 @@ export default function AllOrdersColumn({
     {
       key: "id",
       header: "Order ID",
+      width: "90px",
+      sortable: true,
       className: "2xl:!text-2xl",
-      render: (order) => order.id,
     },
     {
       key: "risk",
       header: "",
+      width: "75px",
       render: (order) => {
         const orderCountryDetails = findCountry(order?.orderPlaceCountry);
         const risk = riskConfig[order?.payment?.risk_level];
@@ -146,6 +168,8 @@ export default function AllOrdersColumn({
     {
       key: "customer",
       header: "Customer",
+      width: "250px",
+      sortable: true,
       render: (order) => {
         const userType = order?.userType == "guest";
         return (
@@ -179,6 +203,8 @@ export default function AllOrdersColumn({
     {
       key: "status",
       header: "Status",
+      width: "255px",
+      sortable: true,
       render: (order) => {
         const currentStatus = statusOptions.find(
           (option) => option.value === order.status,
@@ -221,6 +247,8 @@ export default function AllOrdersColumn({
     {
       key: "total",
       header: "Total",
+      width: "145px",
+      sortable: true,
       render: (order) => {
         const userType = order?.userType == "guest";
         return (

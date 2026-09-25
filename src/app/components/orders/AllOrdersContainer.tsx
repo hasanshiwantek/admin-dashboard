@@ -73,7 +73,7 @@ const useAllOrdersContainer = () => {
   );
 
   // Modal / expansion state.
-  const [expandedRow, setExpandedRow] = useState<number | null>(null);
+  const [expandedRows, setExpandedRows] = useState<number[]>([]);
   const [showNotes, setShowNotes] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [showVoidConfirm, setShowVoidConfirm] = useState(false);
@@ -121,7 +121,7 @@ const useAllOrdersContainer = () => {
     const exists = filteredOrders.some(
       (o) => Number(o.id) === Number(expandParam),
     );
-    if (exists) setExpandedRow(Number(expandParam));
+    if (exists) setExpandedRows([Number(expandParam)]);
   }, [filteredOrders, expandParam]);
 
   // Cross-page "filter by product" entry (set in localStorage by the products
@@ -173,7 +173,17 @@ const useAllOrdersContainer = () => {
     setShowShipmentModal(true);
   };
   const onToggleExpand = (id: number) =>
-    setExpandedRow((prev) => (prev === id ? null : id));
+    setExpandedRows((prev) =>
+      prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id],
+    );
+
+  // Header toggle: expand every row on the page, or collapse all if they
+  // are already expanded.
+  const isAllExpanded =
+    filteredOrders.length > 0 &&
+    filteredOrders.every((o) => expandedRows.includes(o.id));
+  const onToggleExpandAll = () =>
+    setExpandedRows(isAllExpanded ? [] : filteredOrders.map((o) => o.id));
 
   // ----- Per-row actions dropdown -----
   const rowActions = (order: any) => [
@@ -418,13 +428,15 @@ const useAllOrdersContainer = () => {
     dispatch,
     refetch,
     clearSelection,
-    isExpanded: (order) => expandedRow === order?.id,
+    isExpanded: (order) => expandedRows.includes(order?.id),
     onToggleExpand,
+    isAllExpanded,
+    onToggleExpandAll,
     onCaptureFunds,
     onViewNotes,
   });
 
-  const isRowExpanded = (order: any) => expandedRow === order?.id;
+  const isRowExpanded = (order: any) => expandedRows.includes(order?.id);
   const renderExpandedRow = (order: any) => (
     <OrderDetailRow
       order={order}

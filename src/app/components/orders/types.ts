@@ -28,6 +28,8 @@ export interface OrderColumnsProps {
   clearSelection: () => void;
   isExpanded: (order: any) => boolean;
   onToggleExpand: (orderId: number) => void;
+  isAllExpanded: boolean;
+  onToggleExpandAll: () => void;
   onCaptureFunds: (paymentIntentId: string) => void;
   onViewNotes: (orderId: number) => void;
 }

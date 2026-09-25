@@ -4,7 +4,9 @@ import { useFilterValueFormatter } from "@/hooks/useFilterValueFormatter";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
+  SortDirection,
   TableFetchState,
+  TableSort,
   TableTab,
   UseTableContainerOptions,
   UseTableContainerReturn,
@@ -26,6 +28,8 @@ export function useTableContainer<TId = number>(
     searchParam = "search",
     pageParam = "page",
     perPageParam = "pageSize",
+    sortByParam = "sortBy",
+    sortDirectionParam = "sortDirection",
     reservedKeys = [],
     tabs = [],
     resetParam = "t",
@@ -49,11 +53,21 @@ export function useTableContainer<TId = number>(
         searchParam,
         pageParam,
         perPageParam,
+        sortByParam,
+        sortDirectionParam,
         resetParam,
         ...RESERVED_DEFAULTS,
         ...reservedKeys,
       ]),
-    [searchParam, pageParam, perPageParam, resetParam, reservedKeys],
+    [
+      searchParam,
+      pageParam,
+      perPageParam,
+      sortByParam,
+      sortDirectionParam,
+      resetParam,
+      reservedKeys,
+    ],
   );
 
   // Every query-string key any tab writes (so we can tell tab params apart from
@@ -120,6 +134,13 @@ export function useTableContainer<TId = number>(
   const committedSearch = (query[searchParam] as string) || "";
   const page = Number(query[pageParam] || 1) || 1;
   const perPage = (query[perPageParam] as string) || defaultPerPage;
+  const sortBy = query[sortByParam] as string | undefined;
+  const sortDirection: SortDirection =
+    query[sortDirectionParam] === "desc" ? "desc" : "asc";
+  const sort: TableSort | null = useMemo(
+    () => (sortBy ? { key: sortBy, direction: sortDirection } : null),
+    [sortBy, sortDirection],
+  );
 
   // Local, immediate draft for the search input; stays in sync with the URL.
   const [search, setSearch] = useState(committedSearch);
@@ -178,6 +199,24 @@ export function useTableContainer<TId = number>(
       });
     },
     [pushParams, perPageParam, pageParam],
+  );
+
+  // Sorting is done by the API: store it in the URL (which refetches) and
+  // go back to page 1.
+  const setSort = useCallback(
+    (next: TableSort | null) => {
+      pushParams((params) => {
+        if (next) {
+          params.set(sortByParam, next.key);
+          params.set(sortDirectionParam, next.direction);
+        } else {
+          params.delete(sortByParam);
+          params.delete(sortDirectionParam);
+        }
+        params.set(pageParam, "1");
+      });
+    },
+    [pushParams, sortByParam, sortDirectionParam, pageParam],
   );
 
   const submitSearch = useCallback(() => {
@@ -282,6 +321,10 @@ export function useTableContainer<TId = number>(
     [pageParam]: page,
     [perPageParam]: Number(perPage),
     ...(committedSearch && { [searchParam]: committedSearch }),
+    ...(sort && {
+      [sortByParam]: sort.key,
+      [sortDirectionParam]: sort.direction,
+    }),
     ...appliedFilters,
   };
   const currentState: TableFetchState = {
@@ -290,6 +333,7 @@ export function useTableContainer<TId = number>(
     page,
     pageSize: Number(perPage),
     filters: appliedFilters,
+    sort,
     isReset: false,
   };
 
@@ -349,6 +393,8 @@ export function useTableContainer<TId = number>(
     filters,
     appliedFilters,
     formatFilterValue,
+    sort,
+    setSort,
     query,
     tabs,
     search,
