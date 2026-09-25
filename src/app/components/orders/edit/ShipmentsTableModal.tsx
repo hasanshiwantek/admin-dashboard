@@ -15,17 +15,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Checkbox } from "@/components/ui/checkbox";
 import Spinner from "../../loader/Spinner";
 import { FaCircleMinus, FaCirclePlus } from "react-icons/fa6";
 import { Input } from "@/components/ui/input";
 import { Clock, Globe, IdCard, Mail, Phone } from "lucide-react";
 import { useState } from "react";
 import { fetchPackingSlipPdf, updateShipment } from "@/redux/slices/orderSlice";
-import { useAppDispatch } from "@/hooks/useReduxHooks";
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import OrderActionsDropdown from "../OrderActionsDropdown";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
+import { refetchOrders } from "@/lib/orderUtils";
 
 interface ShipmentModalProps {
   open: boolean;
@@ -58,8 +57,9 @@ export default function ShipmentsTableModal({
   const [trackingChanges, setTrackingChanges] = useState<
     Record<number, string>
   >({});
+  const { shipmentLoader } = useAppSelector((state) => state.order);
   const dispatch = useAppDispatch();
-const router = useRouter();
+  const router = useRouter();
   const [savingId, setSavingId] = useState<number | null>(null);
 
   const handleClose = () => {
@@ -92,10 +92,11 @@ const router = useRouter();
             window.open(url, "_blank");
           } else {
           }
-        } catch (error) {}
+        } catch (error) { }
       },
     },
   ];
+
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent
@@ -190,21 +191,22 @@ const router = useRouter();
 
                         <button
                           className="btn-outline-primary 2xl:h-[32.5px] ml-2.5"
-                          onClick={() => {
+                          onClick={async () => {
                             const updatedValue = trackingChanges[shipment?.id];
                             if (updatedValue !== undefined) {
                               setSavingId(shipment?.id);
-                              dispatch(
+                              await dispatch(
                                 updateShipment({
                                   id: shipment?.id,
                                   data: { trackingId: updatedValue },
                                 }),
                               );
+                              refetchOrders(dispatch)
                             }
                           }}
-                          disabled={savingId === shipment?.id}
+                          disabled={shipmentLoader}
                         >
-                          {savingId === shipment?.id ? "Saving..." : "Save"}
+                          {shipmentLoader ? "Saving..." : "Save"}
                         </button>
                       </TableCell>
 
@@ -234,264 +236,222 @@ const router = useRouter();
                         />
                       </TableCell>
                     </TableRow>
-                     {expandedRow === shipment.id && (
-                                            <TableRow>
-                                                <TableCell colSpan={11}>
-                                                    <div className="grid grid-cols-3 gap-6 bg-gray-50 p-6">
-                                                        {/* Billing */}
-                                                        <div className="flex gap-4">
-                                                            <div className="flex flex-col items-start gap-2 min-w-[70px]">
-                                                                <h4 className="font-bold text-lg ">Billing</h4>
-                                                            
-                                                            </div>
-                                                            <div className="flex flex-col space-y-2">
-                                                                <p className="font-semibold">
-                                                                    {orderDetails?.billingAddress?.name}
-                                                                </p>
-                                                                <p>
-                                                                    {
-                                                                        orderDetails?.billingInformation
-                                                                            ?.companyName
-                                                                    }
-                                                                </p>
-                                                                <p>
-                                                                    {
-                                                                        orderDetails?.billingAddress?.addressLine1
-                                                                    }{" "}
-                                                                    {
-                                                                        orderDetails?.billingAddress?.addressLine2
-                                                                    }
-                                                                </p>
-                                                                <p>
-                                                                    {orderDetails?.billingAddress?.city},{" "}
-                                                                    {orderDetails?.billingAddress?.state}{" "}
-                                                                    {orderDetails?.billingAddress?.zip}
-                                                                </p>
-                                                                <div className="flex items-center gap-2">
-                                                                    {/* <Globe className="w-5 h-5 text-gray-500 flex-shrink-0" /> */}
-                                                                    {/* {counrtyBilling?.flag ? (
-                                                                        <Image
-                                                                            src={counrtyBilling?.flag as string}
-                                                                            width={22}
-                                                                            height={22}
-                                                                            className="rounded-sm object-cover"
-                                                                            alt={counrtyBilling?.label || ""}
-                                                                        />
-                                                                    ) : (
-                                                                        <span className="">🏳️</span>
-                                                                    )} */}
-                                                                    <span>
-                                                                        {orderDetails?.billingAddress
-                                                                            ?.country || "N/A"}
-                                                                    </span>
-                                                                </div>
-                                                                <div className="flex items-center gap-2">
-                                                                    <Phone className="w-5 h-5 text-gray-500 flex-shrink-0" />
-                                                                    <span>
-                                                                        {orderDetails?.billingAddress?.phone ||
-                                                                            "N/A"}
-                                                                    </span>
-                                                                </div>
-                                                                <div className="flex items-center gap-2">
-                                                                    <Mail className="w-5 h-5 text-gray-500 flex-shrink-0" />
-                                                                    <span>
-                                                                        {orderDetails?.billingAddress?.email ||
-                                                                            "N/A"}
-                                                                    </span>
-                                                                </div>
-                                                                <div className="flex items-center gap-2">
-                                                                    <IdCard className="w-5 h-5 text-gray-500 flex-shrink-0" />
-                                                                    <span>
-                                                                        #
-                                                                        {orderDetails?.billingInformation
-                                                                            ?.customerId || "N/A"}
-                                                                    </span>
-                                                                </div>
-                                                                <div className="flex items-center gap-2">
-                                                                    <Clock className="w-5 h-5 text-gray-500 flex-shrink-0" />
-                                                                    <span>
-                                                                        {orderDetails?.billingInformation?.createdAt
-                                                                            ? new Date(
-                                                                                orderDetails.billingInformation
-                                                                                    .createdAt,
-                                                                            ).toLocaleString("en-GB", {
-                                                                                day: "2-digit",
-                                                                                month: "short",
-                                                                                year: "numeric",
-                                                                                hour: "2-digit",
-                                                                                minute: "2-digit",
-                                                                                second: "2-digit",
-                                                                            })
-                                                                            : "N/A"}
-                                                                    </span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                    {expandedRow === shipment.id && (
+                      <TableRow>
+                        <TableCell colSpan={11}>
+                          <div className="grid grid-cols-3 gap-6 bg-gray-50 p-6">
+                            {/* Billing */}
+                            <div className="flex gap-4">
+                              <div className="flex flex-col items-start gap-2 min-w-[70px]">
+                                <h4 className="font-bold text-lg ">Billing</h4>
 
-                                                        {/* Shipping */}
-                                                        <div className="flex gap-4">
-                                                            <div className="flex flex-col items-start gap-2 min-w-[80px]">
-                                                                <h4 className="font-bold text-lg ">Shipping</h4>
-                                                            </div>
-                                                            <div className="flex flex-col space-y-2">
-                                                                <p className="font-semibold">
-                                                                    {orderDetails?.billingInformation?.firstName}{" "}
-                                                                    {orderDetails?.billingInformation?.lastName}
-                                                                </p>
-                                                                <p>
-                                                                    {
-                                                                        orderDetails?.billingInformation
-                                                                            ?.companyName
-                                                                    }
-                                                                </p>
-                                                                <p>
-                                                                    {
-                                                                        orderDetails?.billingInformation
-                                                                            ?.addressLine1
-                                                                    }{" "}
-                                                                    {
-                                                                        orderDetails?.billingInformation
-                                                                            ?.addressLine2
-                                                                    }
-                                                                </p>
-                                                                <p>
-                                                                    {orderDetails?.billingInformation?.city},{" "}
-                                                                    {orderDetails?.billingInformation?.state}{" "}
-                                                                    {orderDetails?.billingInformation?.zip}
-                                                                </p>
-                                                                <div className="flex items-center gap-2">
-                                                                    {/* <Globe className="w-5 h-5 text-gray-500 flex-shrink-0" /> */}
-                                                                    {/* {counrtyShipping?.flag ? (
-                                                                        <Image
-                                                                            src={counrtyShipping?.flag as string}
-                                                                            width={22}
-                                                                            height={22}
-                                                                            className="rounded-sm object-cover"
-                                                                            alt={counrtyShipping?.label || ""}
-                                                                        />
-                                                                    ) : (
-                                                                        <span className="">🏳️</span>
-                                                                    )} */}
-                                                                    <span>
-                                                                        {orderDetails?.billingInformation
-                                                                            ?.country || "N/A"}
-                                                                    </span>
-                                                                </div>
-                                                                <div className="flex items-center gap-2">
-                                                                    <Phone className="w-5 h-5 text-gray-500 flex-shrink-0" />
-                                                                    <span>
-                                                                        {orderDetails?.billingInformation?.phone ||
-                                                                            "N/A"}
-                                                                    </span>
-                                                                </div>
-                                                                <div className="flex items-center gap-2">
-                                                                    <Mail className="w-5 h-5 text-gray-500 flex-shrink-0" />
-                                                                    <span>
-                                                                        {orderDetails?.customer?.email || "N/A"}
-                                                                    </span>
-                                                                </div>
-                                                                <div className="flex items-center gap-2">
-                                                                    <IdCard className="w-5 h-5 text-gray-500 flex-shrink-0" />
-                                                                    <span>
-                                                                        {shipment?.shippingMethod || "N/A"}
-                                                                    </span>
-                                                                </div>
-                                                                <div className="flex items-center gap-2">
-                                                                    <Clock className="w-5 h-5 text-gray-500 flex-shrink-0" />
-                                                                    <span>{shipment?.dateShipped || "N/A"}</span>
-                                                                </div>
-                                                                <div className="flex items-center gap-2">
-                                                                    <IdCard className="w-5 h-5 text-gray-500 flex-shrink-0" />
-                                                                    <span>
-                                                                        {shipment?.trackingNumber || "N/A"}
-                                                                    </span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                              </div>
+                              <div className="flex flex-col space-y-2">
+                                <p className="font-semibold">
+                                  {orderDetails?.billingAddress?.name}
+                                </p>
+                                <p>
+                                  {
+                                    orderDetails?.billingInformation
+                                      ?.companyName
+                                  }
+                                </p>
+                                <p>
+                                  {
+                                    orderDetails?.billingAddress?.addressLine1
+                                  }{" "}
+                                  {
+                                    orderDetails?.billingAddress?.addressLine2
+                                  }
+                                </p>
+                                <p>
+                                  {orderDetails?.billingAddress?.city},{" "}
+                                  {orderDetails?.billingAddress?.state}{" "}
+                                  {orderDetails?.billingAddress?.zip}
+                                </p>
+                                <div className="flex items-center gap-2">
+                                  <span>
+                                    {orderDetails?.billingAddress
+                                      ?.country || "N/A"}
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <Phone className="w-5 h-5 text-gray-500 flex-shrink-0" />
+                                  <span>
+                                    {orderDetails?.billingAddress?.phone ||
+                                      "N/A"}
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <Mail className="w-5 h-5 text-gray-500 flex-shrink-0" />
+                                  <span>
+                                    {orderDetails?.billingAddress?.email ||
+                                      "N/A"}
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <IdCard className="w-5 h-5 text-gray-500 flex-shrink-0" />
+                                  <span>
+                                    #
+                                    {orderDetails?.billingInformation
+                                      ?.customerId || "N/A"}
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <Clock className="w-5 h-5 text-gray-500 flex-shrink-0" />
+                                  <span>
+                                    {orderDetails?.billingInformation?.createdAt
+                                      ? new Date(
+                                        orderDetails.billingInformation
+                                          .createdAt,
+                                      ).toLocaleString("en-GB", {
+                                        day: "2-digit",
+                                        month: "short",
+                                        year: "numeric",
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                        second: "2-digit",
+                                      })
+                                      : "N/A"}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
 
-                                                        {/* Shipped Items */}
-                                                        {/* <div className="flex gap-4">
-                                                            <div className="flex flex-col items-start min-w-[80px]">
-                                                                <h4 className="font-bold text-lg italic">Shipped</h4>
-                                                                <h4 className="font-bold text-lg italic">Items</h4>
-                                                                <p className="text-sm text-gray-500 mt-1">
-                                                                    {shipment?.orderProducts?.length || 0} items
-                                                                </p>
-                                                            </div>
-                                                            <div className="flex flex-col space-y-3 flex-1">
-                                                                {shipment?.orderProducts?.map((item: any, idx: number) => (
-                                                                    <div key={idx}>
-                                                                        <p className="font-semibold">{item?.quantity} x</p>
-                                                                        <p className="text-blue-600 text-sm leading-snug">{item?.productName}</p>
-                                                                        <p className="text-sm text-gray-500 mt-0.5">{item?.sku || ""}</p>
-                                                                    </div>
-                                                                ))}
-                                                            </div>
-                                                        </div> */}
-                                                        {/* Shipped Items */}
-                                                        <div className="flex gap-4 min-w-0">
-                                                            <div className="flex flex-col items-start min-w-[70px] flex-shrink-0">
-                                                                <h4 className="font-bold text-lg ">Shipped</h4>
-                                                                <h4 className="font-bold text-lg ">Items</h4>
-                                                                <p className="text-sm text-gray-500 mt-1">
-                                                                    {shipment?.orderProducts?.length || 0} items
-                                                                </p>
-                                                            </div>
-                                                            <div className="flex flex-col space-y-3 flex-1 min-w-0 overflow-hidden">
-                                                                {shipment?.orderProducts?.map(
-                                                                    (item: any, idx: number) => (
-                                                                        <div key={idx} className="min-w-0">
-                                                                                                      <p className="font-semibold">
-                                                                                
-                                              {item?.quantity} x{" "}
-                                              <span
-                                                onClick={() => {
-                                                  const availableStores =
-                                                    JSON.parse(
-                                                      localStorage.getItem(
-                                                        "availableStores",
-                                                      ) || "[]",
-                                                    );
-                                                  const selectedStoreId =
-                                                    Number(
-                                                      localStorage.getItem(
-                                                        "storeId",
-                                                      ),
-                                                    );
-                                                  const selectedStore =
-                                                    availableStores.find(
-                                                      (s: any) =>
-                                                        s.id ===
-                                                        selectedStoreId,
-                                                    );
-                                                  if (selectedStore?.baseUrl)
-                                                    window.open(
-                                                      `${selectedStore.baseUrl.replace(/\/$/, "")}${item?.productUrl == "/" ? item?.productUrl.slice(1) : item?.productUrl}`,
-                                                      "_blank",
-                                                    );
-                                                  else
-                                                    alert(
-                                                      "Store URL or Product SKU not found",
-                                                    );
-                                                }}
-                                                className="!text-[#6F8DFD] font-light cursor-pointer hover:underline whitespace-normal break-words leading-snug max-w-[300px]"
-                                              >
-                                                {item?.productName}
-                                              </span>
-                                            </p>
-                                                                            
-                                                                            <p className="text-sm text-gray-500 mt-0.5">
-                                                                                {item?.sku || ""}
-                                                                            </p>
-                                                                        </div>
-                                                                    ),
-                                                                )}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </TableCell>
-                                            </TableRow>
-                                        )}
+                            {/* Shipping */}
+                            <div className="flex gap-4">
+                              <div className="flex flex-col items-start gap-2 min-w-[80px]">
+                                <h4 className="font-bold text-lg ">Shipping</h4>
+                              </div>
+                              <div className="flex flex-col space-y-2">
+                                <p className="font-semibold">
+                                  {orderDetails?.billingInformation?.firstName}{" "}
+                                  {orderDetails?.billingInformation?.lastName}
+                                </p>
+                                <p>
+                                  {
+                                    orderDetails?.billingInformation
+                                      ?.companyName
+                                  }
+                                </p>
+                                <p>
+                                  {
+                                    orderDetails?.billingInformation
+                                      ?.addressLine1
+                                  }{" "}
+                                  {
+                                    orderDetails?.billingInformation
+                                      ?.addressLine2
+                                  }
+                                </p>
+                                <p>
+                                  {orderDetails?.billingInformation?.city},{" "}
+                                  {orderDetails?.billingInformation?.state}{" "}
+                                  {orderDetails?.billingInformation?.zip}
+                                </p>
+                                <div className="flex items-center gap-2">
+                                  <span>
+                                    {orderDetails?.billingInformation
+                                      ?.country || "N/A"}
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <Phone className="w-5 h-5 text-gray-500 flex-shrink-0" />
+                                  <span>
+                                    {orderDetails?.billingInformation?.phone ||
+                                      "N/A"}
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <Mail className="w-5 h-5 text-gray-500 flex-shrink-0" />
+                                  <span>
+                                    {orderDetails?.customer?.email || "N/A"}
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <IdCard className="w-5 h-5 text-gray-500 flex-shrink-0" />
+                                  <span>
+                                    {shipment?.shippingMethod || "N/A"}
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <Clock className="w-5 h-5 text-gray-500 flex-shrink-0" />
+                                  <span>{shipment?.dateShipped || "N/A"}</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <IdCard className="w-5 h-5 text-gray-500 flex-shrink-0" />
+                                  <span>
+                                    {shipment?.trackingNumber || "N/A"}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Shipped Items */}
+                            {/* Shipped Items */}
+                            <div className="flex gap-4 min-w-0">
+                              <div className="flex flex-col items-start min-w-[70px] flex-shrink-0">
+                                <h4 className="font-bold text-lg ">Shipped</h4>
+                                <h4 className="font-bold text-lg ">Items</h4>
+                                <p className="text-sm text-gray-500 mt-1">
+                                  {shipment?.orderProducts?.length || 0} items
+                                </p>
+                              </div>
+                              <div className="flex flex-col space-y-3 flex-1 min-w-0 overflow-hidden">
+                                {shipment?.orderProducts?.map(
+                                  (item: any, idx: number) => (
+                                    <div key={idx} className="min-w-0">
+                                      <p className="font-semibold">
+
+                                        {item?.quantity} x{" "}
+                                        <span
+                                          onClick={() => {
+                                            const availableStores =
+                                              JSON.parse(
+                                                localStorage.getItem(
+                                                  "availableStores",
+                                                ) || "[]",
+                                              );
+                                            const selectedStoreId =
+                                              Number(
+                                                localStorage.getItem(
+                                                  "storeId",
+                                                ),
+                                              );
+                                            const selectedStore =
+                                              availableStores.find(
+                                                (s: any) =>
+                                                  s.id ===
+                                                  selectedStoreId,
+                                              );
+                                            if (selectedStore?.baseUrl)
+                                              window.open(
+                                                `${selectedStore.baseUrl.replace(/\/$/, "")}${item?.productUrl == "/" ? item?.productUrl.slice(1) : item?.productUrl}`,
+                                                "_blank",
+                                              );
+                                            else
+                                              alert(
+                                                "Store URL or Product SKU not found",
+                                              );
+                                          }}
+                                          className="!text-[#6F8DFD] font-light cursor-pointer hover:underline whitespace-normal break-words leading-snug max-w-[300px]"
+                                        >
+                                          {item?.productName}
+                                        </span>
+                                      </p>
+
+                                      <p className="text-sm text-gray-500 mt-0.5">
+                                        {item?.sku || ""}
+                                      </p>
+                                    </div>
+                                  ),
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    )}
                   </>
                 ))
               )}
@@ -502,19 +462,19 @@ const router = useRouter();
         {/* Footer */}
         <DialogFooter className="bg-gray-100 px-4 py-3 rounded-none flex justify-end gap-2">
           <Button
-  variant="outline"
-  onClick={() => {
-    const shipmentId = shipments?.[0]?.id;
+            variant="outline"
+            onClick={() => {
+              const shipmentId = shipments?.[0]?.id;
 
-    if (!shipmentId) return;
+              if (!shipmentId) return;
 
-    handleClose();
-     router.push(`/manage/orders/shipments?shipmentId=${shipmentId}`);
-  }}
-  className="btn-outline-primary  2xl:!text-2xl h-12"
->
-  {cancelText}
-</Button>
+              router.push(`/manage/orders/shipments?shipmentId=${shipmentId}`);
+              handleClose();
+            }}
+            className="btn-outline-primary  2xl:!text-2xl h-12"
+          >
+            {cancelText}
+          </Button>
           <Button
             onClick={() => {
               onConfirm();

@@ -2,7 +2,7 @@
 
 import { downloadFile } from "@/lib/utils";
 import { useEffect } from "react";
-import { ExportModalProps, ExportModalStatus } from "./constant";
+import { ExportModalProps, ExportModalStatus } from "@/types/types";
 import { Button } from "@/components/ui/button";
 
 export default function ExportModal({
