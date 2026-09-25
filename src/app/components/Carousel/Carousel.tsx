@@ -4,6 +4,7 @@ import { Settings, HelpCircle, Save, X, Plus } from "lucide-react";
 import { useForm, Controller } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
+import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
 import {
   addCarousel,
   fetchCarousal,
@@ -37,6 +38,8 @@ const defaultNewSlide: Slide = {
 const Carousel = () => {
   const [slides, setSlides] = useState<Slide[]>(initialSlides);
   const [activeSlideId, setActiveSlideId] = useState<number>(0);
+  const [deleteSlideId, setDeleteSlideId] = useState<number | null>(null);
+const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [settings, setSettings] = useState({ swapInterval: 5 });
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dispatch = useAppDispatch();
@@ -115,45 +118,55 @@ const Carousel = () => {
     setActiveSlideId(newId);
   };
 
-  const handleDeleteSlide = async (e: React.MouseEvent, id: number) => {
-    e.stopPropagation();
+  // const handleDeleteSlide = async (e: React.MouseEvent, id: number) => {
+  //   e.stopPropagation();
 
-    if (slides.length < 1) {
-      alert("You cannot delete the last remaining slide.");
-      return;
-    }
+  //   if (slides.length < 1) {
+  //     alert("You cannot delete the last remaining slide.");
+  //     return;
+  //   }
 
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this slide?"
-    );
-    if (!confirmed) return;
+  //   const confirmed = window.confirm(
+  //     "Are you sure you want to delete this slide?"
+  //   );
+  //   if (!confirmed) return;
 
-    try {
-      const response = await dispatch(deleteCarousal(id));
-      if (deleteCarousal.fulfilled.match(response)) {
-        setTimeout(async () => {
-          await dispatch(fetchCarousal());
-        }, 2000);
+  //   try {
+  //     const response = await dispatch(deleteCarousal(id));
+  //     if (deleteCarousal.fulfilled.match(response)) {
+  //       setTimeout(async () => {
+  //         await dispatch(fetchCarousal());
+  //       }, 2000);
 
-        const updatedSlides = slides.filter((slide) => slide.id !== id);
-        setSlides(updatedSlides);
+  //       const updatedSlides = slides.filter((slide) => slide.id !== id);
+  //       setSlides(updatedSlides);
 
-        if (updatedSlides.length > 0) {
-          setActiveSlideId(updatedSlides[0].id);
-        } else {
-          setActiveSlideId(0);
-        }
+  //       if (updatedSlides.length > 0) {
+  //         setActiveSlideId(updatedSlides[0].id);
+  //       } else {
+  //         setActiveSlideId(0);
+  //       }
 
-      } else {
-        console.error("❌ Failed to delete slide");
-        alert("Failed to delete the slide from the server.");
-      }
-    } catch (err) {
-      console.error("❌ Error deleting slide:", err);
-      alert("An error occurred while deleting the slide.");
-    }
-  };
+  //     } else {
+  //       console.error("❌ Failed to delete slide");
+  //       alert("Failed to delete the slide from the server.");
+  //     }
+  //   } catch (err) {
+  //     console.error("❌ Error deleting slide:", err);
+  //     alert("An error occurred while deleting the slide.");
+  //   }
+  // };
+const handleDeleteSlide = (e: React.MouseEvent, id: number) => {
+  e.stopPropagation();
 
+  if (slides.length < 1) {
+    alert("You cannot delete the last remaining slide.");
+    return;
+  }
+
+  setDeleteSlideId(id);
+  setOpenDeleteModal(true);
+};
   const triggerImageUpload = () => {
     if (activeSlideId > 0) {
       fileInputRef.current?.click();
@@ -627,6 +640,48 @@ const Carousel = () => {
           Save
         </button>
       </div>
+      <ConfirmationModal
+  open={openDeleteModal}
+  onOpenChange={setOpenDeleteModal}
+  variant="warning"
+  title="Delete slide?"
+  description="Are you sure you want to delete this slide?"
+  onConfirm={async () => {
+    if (deleteSlideId === null) return;
+
+    try {
+      const response = await dispatch(deleteCarousal(deleteSlideId));
+
+      if (deleteCarousal.fulfilled.match(response)) {
+        setOpenDeleteModal(false);
+
+        setTimeout(async () => {
+          await dispatch(fetchCarousal());
+        }, 2000);
+
+        const updatedSlides = slides.filter(
+          (slide) => slide.id !== deleteSlideId
+        );
+
+        setSlides(updatedSlides);
+
+        if (updatedSlides.length > 0) {
+          setActiveSlideId(updatedSlides[0].id);
+        } else {
+          setActiveSlideId(0);
+        }
+
+        setDeleteSlideId(null);
+      } else {
+        console.error("❌ Failed to delete slide");
+        alert("Failed to delete the slide from the server.");
+      }
+    } catch (err) {
+      console.error("❌ Error deleting slide:", err);
+      alert("An error occurred while deleting the slide.");
+    }
+  }}
+/>
     </form>
   );
 };
