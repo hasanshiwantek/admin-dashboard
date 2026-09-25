@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import {
   Home,
   ShoppingCart,
@@ -10,8 +10,7 @@ import {
   Settings,
   Megaphone,
 } from "lucide-react";
-import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
-import { fetchMyPermissions } from "@/redux/slices/userPermission";
+import { usePermissions } from "@/hooks/usePermissions";
 
 // Group key -> sidebar meta (icon + display title + order)
 const GROUP_META: Record<string, { title: string; icon: any; order: number }> = {
@@ -24,13 +23,7 @@ const GROUP_META: Record<string, { title: string; icon: any; order: number }> = 
 };
 
 export function useSidebarData() {
-  
-  const dispatch = useAppDispatch();
-  const { myPermissions } = useAppSelector((state: any) => state?.userPermission);
-
-  useEffect(() => {
-    dispatch(fetchMyPermissions());
-  }, []);
+  const { permissions: myPermissions } = usePermissions();
 
   const sidebarData = useMemo(() => {
     const items: any[] = [

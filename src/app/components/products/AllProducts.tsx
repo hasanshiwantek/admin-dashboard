@@ -34,7 +34,12 @@ export default function AllProducts() {
 
   return (
     <>
-      <PageTile title="All Products" />
+      <PageTile
+        title="All Products"
+        buttonProps={{
+          permission: "add_product",
+        }}
+      />
       <Table<any>
         data={productList}
         columns={columns}

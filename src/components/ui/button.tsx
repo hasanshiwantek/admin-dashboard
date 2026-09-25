@@ -1,11 +1,16 @@
+"use client";
+
+import { usePermissions, type PermissionCheck } from "@/hooks/usePermissions";
+import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
-import { cn } from "@/lib/utils";
 
 export type ButtonProps = React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean;
+    permission?: PermissionCheck;
+    noPermission?: "hide" | "disable";
   };
 
 const buttonVariants = cva(
@@ -41,13 +46,46 @@ const buttonVariants = cva(
   },
 );
 
-function Button({
+function Button({ permission, noPermission, ...props }: ButtonProps) {
+  // Only buttons that declare a permission touch the permission store
+  if (permission === undefined) return <BaseButton {...props} />;
+
+  return (
+    <PermissionedButton
+      permission={permission}
+      noPermission={noPermission}
+      {...props}
+    />
+  );
+}
+
+function PermissionedButton({
+  permission,
+  noPermission = "hide",
+  disabled,
+  ...props
+}: ButtonProps) {
+  const { loaded, can } = usePermissions();
+  const allowed = loaded && can(permission);
+
+  if (!allowed && noPermission === "hide") return null;
+
+  return (
+    <BaseButton
+      {...props}
+      disabled={disabled || !allowed}
+      title={!allowed ? "You don't have permission for this action" : props.title}
+    />
+  );
+}
+
+function BaseButton({
   className,
   variant = "default",
   size = "default",
   asChild = false,
   ...props
-}: ButtonProps) {
+}: Omit<ButtonProps, "permission" | "noPermission">) {
   const Comp = asChild ? Slot : "button";
 
   return (
@@ -60,3 +98,4 @@ function Button({
 }
 
 export { Button, buttonVariants };
+

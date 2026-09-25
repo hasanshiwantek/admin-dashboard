@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "@/lib/axiosInstance";
+import { logout } from "./authSlice";
 
 export interface AdminUser {
   id: number;
@@ -14,6 +15,7 @@ export interface UpdateAdminUserPayload {
   firstName: string;
   lastName: string;
   email: string;
+  userRole: number;
   permissions: number[];
 }
 
@@ -28,7 +30,8 @@ interface AdminUsersState {
   selectedAdminPermissions: PermissionGroup[];
 
   permissionGroups: PermissionGroup[];
-  myPermissions: PermissionItem[]; // or any[] if you don't know the type yet
+  myPermissions: PermissionGroup[];
+  myPermissionsStatus: "idle" | "loading" | "succeeded" | "failed";
   userPermissions: PermissionItem[]; // or any[]
   permissionsLoading: boolean;
   assigning: boolean;
@@ -54,7 +57,8 @@ const initialState: AdminUsersState = {
 
   //
   permissionGroups: [] as PermissionGroup[],
-  myPermissions: [] as any[],
+  myPermissions: [] as PermissionGroup[],
+  myPermissionsStatus: "idle",
   userPermissions: [] as any[],
   permissionsLoading: false,
   assigning: false,
@@ -94,7 +98,14 @@ export const fetchAdminUserById = createAsyncThunk(
 export const updateAdminUser = createAsyncThunk(
   "adminUsers/updateAdminUser",
   async (
-    { id, firstName, lastName, email, permissions }: UpdateAdminUserPayload,
+    {
+      id,
+      firstName,
+      lastName,
+      email,
+      userRole,
+      permissions,
+    }: UpdateAdminUserPayload,
     thunkAPI,
   ) => {
     try {
@@ -102,6 +113,7 @@ export const updateAdminUser = createAsyncThunk(
         firstName,
         lastName,
         email,
+        userRole,
         permissions,
       });
       return res.data;
@@ -156,6 +168,11 @@ export const fetchMyPermissions = createAsyncThunk(
         err.response?.data?.message || "Failed to fetch my permissions",
       );
     }
+  },
+  {
+    // Sidebar and route guard both request this on mount; only fetch once
+    condition: (_, { getState }: any) =>
+      getState()?.userPermission?.myPermissionsStatus !== "loading",
   },
 );
 
@@ -280,14 +297,17 @@ const adminUsersSlice = createSlice({
 
       // My permissions
       .addCase(fetchMyPermissions.pending, (state) => {
+        state.myPermissionsStatus = "loading";
         state.permissionsLoading = true;
         state.error = null;
       })
       .addCase(fetchMyPermissions.fulfilled, (state, action) => {
         state.permissionsLoading = false;
         state.myPermissions = action.payload?.data || [];
+        state.myPermissionsStatus = "succeeded";
       })
       .addCase(fetchMyPermissions.rejected, (state, action) => {
+        state.myPermissionsStatus = "failed";
         state.permissionsLoading = false;
         state.error =
           (action.payload as string) || action.error.message || "Failed";
@@ -321,6 +341,11 @@ const adminUsersSlice = createSlice({
         state.assigning = false;
         state.error =
           (action.payload as string) || action.error.message || "Failed";
+      })
+
+      .addCase(logout, (state) => {
+        state.myPermissions = [];
+        state.myPermissionsStatus = "idle";
       })
 
       .addCase(fetchAdminUserById.pending, (state) => {

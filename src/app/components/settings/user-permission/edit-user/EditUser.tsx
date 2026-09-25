@@ -3,7 +3,14 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { UserRolesEnum } from "@/const/appConstants";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { UserRoles, UserRolesEnum } from "@/const/appConstants";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import {
   fetchAdminUserById,
@@ -62,8 +69,12 @@ const EditUser = () => {
         permissions: [],
       },
     });
-
+  console.log({ watch: watch() });
   const selectedPermissions = watch("permissions") || [];
+  const roleOptions = Object.entries(UserRoles).map(([value, label]) => ({
+    value: Number(value),
+    label: String(label),
+  }));
 
   useEffect(() => {
     dispatch(fetchAdminUsers());
@@ -132,6 +143,7 @@ const EditUser = () => {
         firstName: data.firstName,
         lastName: data.lastName,
         email: data.email,
+        userRole: Number(data.userRole),
         permissions: selectedPermissions.length ? selectedPermissions : [1],
       };
 
@@ -472,6 +484,37 @@ const EditUser = () => {
 
         <div className="bg-white border border-gray-200 rounded-sm">
           <div className="px-8 py-6">
+            <div className="flex items-center gap-3 mb-6">
+              <Label className="text-[12px] text-gray-600 text-right w-[150px] shrink-0">
+                User Role:
+              </Label>
+
+              <Controller
+                name="userRole"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    value={field.value?.toString()}
+                    onValueChange={(value) => field.onChange(Number(value))}
+                  >
+                    <SelectTrigger className="w-[280px] h-8 text-sm border-gray-300">
+                      <SelectValue placeholder="Select user role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {roleOptions.map((option) => (
+                        <SelectItem
+                          key={option.value}
+                          value={String(option.value)}
+                        >
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </div>
+
             <div className="space-y-6">
               {permissionGroups?.map((group: any) => (
                 <div key={group.group} className="flex items-start gap-3">

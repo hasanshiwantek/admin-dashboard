@@ -1,136 +1,148 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
-import { Loader2 } from "lucide-react";
+import { UserRoles, UserRolesEnum } from "@/const/appConstants";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
-import { useRouter } from "next/navigation";
-import { fetchPermissions, fetchMyPermissions } from "@/redux/slices/userPermission";
 import { registerUser } from "@/redux/slices/authSlice";
-import { UserRolesEnum } from "@/const/appConstants";
+import {
+  fetchMyPermissions,
+  fetchPermissions,
+} from "@/redux/slices/userPermission";
+import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 
 type FormValues = {
-    firstName: string;
-    lastName: string;
-    email: string;
-    phoneNumber: string;
-    password: string;
-    password_confirmation: string;
-    companyName: string;
-    storeName: string;
-    addressLine1: string;
-    addressLine2: string;
-    suburb: string;
-    country: string;
-    state: string;
-    zip: string;
-    base_url: string;
-    businessSize: string;
-    region: string;
-    userRole: number;
-    permissions: number[];
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  password: string;
+  password_confirmation: string;
+  companyName: string;
+  storeName: string;
+  addressLine1: string;
+  addressLine2: string;
+  suburb: string;
+  country: string;
+  state: string;
+  zip: string;
+  base_url: string;
+  businessSize: string;
+  region: string;
+  userRole: number;
+  permissions: number[];
 };
 
 const AddUser = () => {
-    const dispatch = useAppDispatch();
-    const router = useRouter();
+  const dispatch = useAppDispatch();
+  const router = useRouter();
 
-    const { permissionGroups, permissionsLoading } = useAppSelector(
-        (state: any) => state?.userPermission
-    );
+  const { permissionGroups, permissionsLoading } = useAppSelector(
+    (state: any) => state?.userPermission,
+  );
 
-    const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const {
-        register,
-        handleSubmit,
-        control,
-        setValue,
-        watch,
-        formState: { errors }, // ← add this
-    } = useForm<FormValues>({
-        defaultValues: {
-            userRole: UserRolesEnum.ADMIN,
-            permissions: [],
-        },
-    });
+  const {
+    register,
+    handleSubmit,
+    control,
+    setValue,
+    watch,
+    formState: { errors }, // ← add this
+  } = useForm<FormValues>({
+    defaultValues: {
+      userRole: UserRolesEnum.ADMIN,
+      permissions: [],
+    },
+  });
 
-    const selectedPermissions = watch("permissions") || [];
+  const selectedPermissions = watch("permissions") || [];
+  const roleOptions = Object.entries(UserRoles).map(([value, label]) => ({
+    value: Number(value),
+    label: String(label),
+  }));
 
-    useEffect(() => {
-        dispatch(fetchPermissions());
-        dispatch(fetchMyPermissions());
-    }, []);
+  useEffect(() => {
+    dispatch(fetchPermissions());
+    dispatch(fetchMyPermissions());
+  }, []);
 
-    const onSubmit = async (data: FormValues) => {
-        setIsSubmitting(true);
-        try {
-            const payload = {
-                ...data,
-                permissions: selectedPermissions.length ? selectedPermissions : [1],
-            };
-            const resultAction = await dispatch(registerUser(payload));
+  const onSubmit = async (data: FormValues) => {
+    setIsSubmitting(true);
+    try {
+      const payload = {
+        ...data,
+        userRole: Number(data.userRole),
+        permissions: selectedPermissions.length ? selectedPermissions : [1],
+      };
+      const resultAction = await dispatch(registerUser(payload));
 
-            if (registerUser.fulfilled.match(resultAction)) {
-                console.log("Submitting:", payload);
-                router.push("/manage/settings/user-permission");
-            }
-
-        } catch (err) {
-            console.error("Error creating user:", err);
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
-
-    if (permissionsLoading && !permissionGroups?.length) {
-        return (
-            <div className="w-full h-screen flex items-center justify-center">
-                <div className="flex flex-col items-center gap-4">
-                    <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-                    <p className="text-gray-600">Loading...</p>
-                </div>
-            </div>
-        );
+      if (registerUser.fulfilled.match(resultAction)) {
+        console.log("Submitting:", payload);
+        router.push("/manage/settings/user-permission");
+      }
+    } catch (err) {
+      console.error("Error creating user:", err);
+    } finally {
+      setIsSubmitting(false);
     }
+  };
 
+  if (permissionsLoading && !permissionGroups?.length) {
     return (
-        <div className="w-full min-h-screen bg-gray-100 flex flex-col">
+      <div className="w-full h-screen flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
-            {/* ── Page Header (outside white box) ── */}
-            <div className="px-6 pt-6 pb-3">
-                <h1 className="!text-[34px] font-normal text-gray-800">Create a User Account</h1>
-                <p className="!text-[14px] text-gray-500 mt-3">
-                   A user is someone who has access to the administration area of your store. Each user account also has its own customizable access permissions, which you can setup below.
-                </p>
-            </div>
+  return (
+    <div className="w-full min-h-screen bg-gray-100 flex flex-col">
+      {/* ── Page Header (outside white box) ── */}
+      <div className="px-6 pt-6 pb-3">
+        <h1 className="!text-[34px] font-normal text-gray-800">
+          Create a User Account
+        </h1>
+        <p className="!text-[14px] text-gray-500 mt-3">
+          A user is someone who has access to the administration area of your
+          store. Each user account also has its own customizable access
+          permissions, which you can setup below.
+        </p>
+      </div>
 
-            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col flex-1 px-6 pb-6">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col flex-1 px-6 pb-6"
+      >
+        {/* ── Personal Information ── */}
+        <div className="px-0 py-4">
+          <h2 className="text-base font-semibold text-gray-800">
+            Personal Information
+          </h2>
+        </div>
 
-                {/* ── Personal Information ── */}
-                <div className="px-0 py-4">
-                    <h2 className="text-base font-semibold text-gray-800">
-                        Personal Information
-                    </h2>
-                </div>
-
-              <div className="bg-white border border-[#e1e4e8] rounded-[3px]">
-  <div className="px-8 py-7">
-    {/* ================= FIRST NAME ================= */}
-    <div className="flex items-start gap-4 mb-5">
-      <Label
-        htmlFor="firstName"
-        className="
+        <div className="bg-white border border-[#e1e4e8] rounded-[3px]">
+          <div className="px-8 py-7">
+            {/* ================= FIRST NAME ================= */}
+            <div className="flex items-start gap-4 mb-5">
+              <Label
+                htmlFor="firstName"
+                className="
           w-[120px]
           shrink-0
           pt-[9px]
@@ -140,19 +152,19 @@ const AddUser = () => {
           !font-normal
           text-[#374151]
         "
-      >
-        First Name:
-        <span className="ml-1 text-red-500">*</span>
-      </Label>
+              >
+                First Name:
+                <span className="ml-1 text-red-500">*</span>
+              </Label>
 
-      <div className="flex flex-col">
-        <Input
-          id="firstName"
-          placeholder="John"
-          {...register("firstName", {
-            required: "First name is required",
-          })}
-          className="
+              <div className="flex flex-col">
+                <Input
+                  id="firstName"
+                  placeholder="John"
+                  {...register("firstName", {
+                    required: "First name is required",
+                  })}
+                  className="
             w-[320px]
             h-[38px]
             rounded-[3px]
@@ -169,21 +181,21 @@ const AddUser = () => {
             focus-visible:ring-[#4d70ff]
             focus-visible:ring-offset-0
           "
-        />
+                />
 
-        {errors.firstName && (
-          <span className="mt-1.5 text-[12px] leading-[16px] text-red-500">
-            {errors.firstName.message}
-          </span>
-        )}
-      </div>
-    </div>
+                {errors.firstName && (
+                  <span className="mt-1.5 text-[12px] leading-[16px] text-red-500">
+                    {errors.firstName.message}
+                  </span>
+                )}
+              </div>
+            </div>
 
-    {/* ================= LAST NAME ================= */}
-    <div className="flex items-start gap-4 mb-5">
-      <Label
-        htmlFor="lastName"
-        className="
+            {/* ================= LAST NAME ================= */}
+            <div className="flex items-start gap-4 mb-5">
+              <Label
+                htmlFor="lastName"
+                className="
           w-[120px]
           shrink-0
           pt-[9px]
@@ -193,19 +205,19 @@ const AddUser = () => {
           !font-normal
           text-[#374151]
         "
-      >
-        Last Name:
-        <span className="ml-1 text-red-500">*</span>
-      </Label>
+              >
+                Last Name:
+                <span className="ml-1 text-red-500">*</span>
+              </Label>
 
-      <div className="flex flex-col">
-        <Input
-          id="lastName"
-          placeholder="Doe"
-          {...register("lastName", {
-            required: "Last name is required",
-          })}
-          className="
+              <div className="flex flex-col">
+                <Input
+                  id="lastName"
+                  placeholder="Doe"
+                  {...register("lastName", {
+                    required: "Last name is required",
+                  })}
+                  className="
             w-[320px]
             h-[38px]
             rounded-[3px]
@@ -222,21 +234,21 @@ const AddUser = () => {
             focus-visible:ring-[#4d70ff]
             focus-visible:ring-offset-0
           "
-        />
+                />
 
-        {errors.lastName && (
-          <span className="mt-1.5 text-[12px] leading-[16px] text-red-500">
-            {errors.lastName.message}
-          </span>
-        )}
-      </div>
-    </div>
+                {errors.lastName && (
+                  <span className="mt-1.5 text-[12px] leading-[16px] text-red-500">
+                    {errors.lastName.message}
+                  </span>
+                )}
+              </div>
+            </div>
 
-    {/* ================= EMAIL ================= */}
-    <div className="flex items-start gap-4 mb-5">
-      <Label
-        htmlFor="email"
-        className="
+            {/* ================= EMAIL ================= */}
+            <div className="flex items-start gap-4 mb-5">
+              <Label
+                htmlFor="email"
+                className="
           w-[120px]
           shrink-0
           pt-[9px]
@@ -246,24 +258,24 @@ const AddUser = () => {
           !font-normal
           text-[#374151]
         "
-      >
-        Email:
-        <span className="ml-1 text-red-500">*</span>
-      </Label>
+              >
+                Email:
+                <span className="ml-1 text-red-500">*</span>
+              </Label>
 
-      <div className="flex flex-col">
-        <Input
-          id="email"
-          type="email"
-          placeholder="john@example.com"
-          {...register("email", {
-            required: "Email is required",
-            pattern: {
-              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-              message: "Invalid email address",
-            },
-          })}
-          className="
+              <div className="flex flex-col">
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="john@example.com"
+                  {...register("email", {
+                    required: "Email is required",
+                    pattern: {
+                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                      message: "Invalid email address",
+                    },
+                  })}
+                  className="
             w-[320px]
             h-[38px]
             rounded-[3px]
@@ -280,21 +292,21 @@ const AddUser = () => {
             focus-visible:ring-[#4d70ff]
             focus-visible:ring-offset-0
           "
-        />
+                />
 
-        {errors.email && (
-          <span className="mt-1.5 text-[12px] leading-[16px] text-red-500">
-            {errors.email.message}
-          </span>
-        )}
-      </div>
-    </div>
+                {errors.email && (
+                  <span className="mt-1.5 text-[12px] leading-[16px] text-red-500">
+                    {errors.email.message}
+                  </span>
+                )}
+              </div>
+            </div>
 
-    {/* ================= PHONE NUMBER ================= */}
-    <div className="flex items-start gap-4 mb-5">
-      <Label
-        htmlFor="phoneNumber"
-        className="
+            {/* ================= PHONE NUMBER ================= */}
+            <div className="flex items-start gap-4 mb-5">
+              <Label
+                htmlFor="phoneNumber"
+                className="
           w-[120px]
           shrink-0
           pt-[9px]
@@ -304,19 +316,19 @@ const AddUser = () => {
           !font-normal
           text-[#374151]
         "
-      >
-        Phone Number:
-        <span className="ml-1 text-red-500">*</span>
-      </Label>
+              >
+                Phone Number:
+                <span className="ml-1 text-red-500">*</span>
+              </Label>
 
-      <div className="flex flex-col">
-        <Input
-          id="phoneNumber"
-          placeholder="+92 300 1234567"
-          {...register("phoneNumber", {
-            required: "Phone number is required",
-          })}
-          className="
+              <div className="flex flex-col">
+                <Input
+                  id="phoneNumber"
+                  placeholder="+92 300 1234567"
+                  {...register("phoneNumber", {
+                    required: "Phone number is required",
+                  })}
+                  className="
             w-[320px]
             h-[38px]
             rounded-[3px]
@@ -333,18 +345,18 @@ const AddUser = () => {
             focus-visible:ring-[#4d70ff]
             focus-visible:ring-offset-0
           "
-        />
+                />
 
-        {errors.phoneNumber && (
-          <span className="mt-1.5 text-[12px] leading-[16px] text-red-500">
-            {errors.phoneNumber.message}
-          </span>
-        )}
-      </div>
-    </div>
+                {errors.phoneNumber && (
+                  <span className="mt-1.5 text-[12px] leading-[16px] text-red-500">
+                    {errors.phoneNumber.message}
+                  </span>
+                )}
+              </div>
+            </div>
 
-    {/* ================= PASSWORD ================= */}
-    {/*
+            {/* ================= PASSWORD ================= */}
+            {/*
     <div className="flex items-start gap-4 mb-5">
       <Label
         htmlFor="password"
@@ -401,7 +413,7 @@ const AddUser = () => {
     </div>
 
     {/* ================= CONFIRM PASSWORD ================= */}
-    {/*
+            {/*
     <div className="flex items-start gap-4 mb-5">
       <Label
         htmlFor="password_confirmation"
@@ -456,27 +468,56 @@ const AddUser = () => {
       </div>
     </div>
     */}
-  </div>
-</div>
-                {/* ── Permissions ── */}
-                <div className="px-0 py-4 mt-4">
-                    <h2 className="text-base font-semibold text-gray-800">
-                        Permissions
-                    </h2>
-                </div>
+          </div>
+        </div>
+        {/* ── Permissions ── */}
+        <div className="px-0 py-4 mt-4">
+          <h2 className="text-base font-semibold text-gray-800">Permissions</h2>
+        </div>
 
-                <div className="bg-white border border-[#e1e4e8] rounded-[3px] overflow-hidden">
-    {/* ================= PERMISSIONS ================= */}
-    <div className="px-8 py-7">
-        <div className="space-y-5">
-            {permissionGroups?.map((group: any) => (
-                <div
-                    key={group.group}
-                    className="flex items-start gap-5"
-                >
-                    {/* Group Label */}
-                    <Label
-                        className="
+        <div className="bg-white border border-[#e1e4e8] rounded-[3px] overflow-hidden">
+          {/* ================= USER ROLE ================= */}
+          <div className="px-8 pt-7 pb-5">
+            <div className="flex items-start gap-5">
+              <Label className="w-[150px] shrink-0 pt-[9px] text-right !text-[15px] leading-[20px] !font-normal text-[#374151]">
+                User Role:
+              </Label>
+
+              <Controller
+                name="userRole"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    value={field.value?.toString()}
+                    onValueChange={(value) => field.onChange(Number(value))}
+                  >
+                    <SelectTrigger className="w-[320px] h-[38px] rounded-[3px] border-[#c9cdd2] bg-white text-[#2d3748] focus:ring-0 focus:ring-offset-0">
+                      <SelectValue placeholder="Select user role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {roleOptions.map((option) => (
+                        <SelectItem
+                          key={option.value}
+                          value={String(option.value)}
+                        >
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </div>
+          </div>
+
+          {/* ================= PERMISSIONS ================= */}
+          <div className="px-8 py-7">
+            <div className="space-y-5">
+              {permissionGroups?.map((group: any) => (
+                <div key={group.group} className="flex items-start gap-5">
+                  {/* Group Label */}
+                  <Label
+                    className="
                             w-[150px]
                             shrink-0
                             pt-[9px]
@@ -487,13 +528,13 @@ const AddUser = () => {
                             text-[#374151]
                             capitalize
                         "
-                    >
-                        {group.group}:
-                    </Label>
+                  >
+                    {group.group}:
+                  </Label>
 
-                    {/* Permissions List */}
-                    <div
-                        className="
+                  {/* Permissions List */}
+                  <div
+                    className="
                             w-[420px]
                             max-h-[170px]
                             overflow-y-auto
@@ -508,19 +549,20 @@ const AddUser = () => {
         [&::-webkit-scrollbar-thumb]:rounded-[3px]
         [&::-webkit-scrollbar-thumb:hover]:bg-[#969da5]
                         "
-                    >
-                        {group.permissions?.map((permission: any) => (
-                            <Controller
-                                key={permission.id}
-                                name="permissions"
-                                control={control}
-                                render={({ field }) => {
-                                    const isChecked =
-                                        field.value?.includes(permission.id);
+                  >
+                    {group.permissions?.map((permission: any) => (
+                      <Controller
+                        key={permission.id}
+                        name="permissions"
+                        control={control}
+                        render={({ field }) => {
+                          const isChecked = field.value?.includes(
+                            permission.id,
+                          );
 
-                                    return (
-                                        <label
-                                            className={`
+                          return (
+                            <label
+                              className={`
                                                 flex
                                                 items-center
                                                 gap-3
@@ -532,63 +574,61 @@ const AddUser = () => {
                                                 last:border-b-0
                                                 transition-colors
                                                 ${
-                                                    isChecked
-                                                        ? "bg-[#eef2ff]"
-                                                        : "bg-white hover:bg-[#f8f9fb]"
+                                                  isChecked
+                                                    ? "bg-[#eef2ff]"
+                                                    : "bg-white hover:bg-[#f8f9fb]"
                                                 }
                                             `}
-                                        >
-                                            <Checkbox
-                                                checked={isChecked}
-                                                onCheckedChange={(checked) => {
-                                                    if (checked) {
-                                                        field.onChange([
-                                                            ...(field.value || []),
-                                                            permission.id,
-                                                        ]);
-                                                    } else {
-                                                        field.onChange(
-                                                            (field.value || []).filter(
-                                                                (id) =>
-                                                                    id !==
-                                                                    permission.id
-                                                            )
-                                                        );
-                                                    }
-                                                }}
-                                                className="
+                            >
+                              <Checkbox
+                                checked={isChecked}
+                                onCheckedChange={(checked) => {
+                                  if (checked) {
+                                    field.onChange([
+                                      ...(field.value || []),
+                                      permission.id,
+                                    ]);
+                                  } else {
+                                    field.onChange(
+                                      (field.value || []).filter(
+                                        (id) => id !== permission.id,
+                                      ),
+                                    );
+                                  }
+                                }}
+                                className="
                                                     h-[16px]
                                                     w-[16px]
                                                     rounded-[3px]
                                                     data-[state=checked]:bg-[#4361ee]
                                                     data-[state=checked]:border-[#4361ee]
                                                 "
-                                            />
+                              />
 
-                                            <span
-                                                className="
+                              <span
+                                className="
                                                     !text-[13px]
                                                     leading-[20px]
                                                     text-[#374151]
                                                     select-none
                                                 "
-                                            >
-                                                {permission.label}
-                                            </span>
-                                        </label>
-                                    );
-                                }}
-                            />
-                        ))}
-                    </div>
+                              >
+                                {permission.label}
+                              </span>
+                            </label>
+                          );
+                        }}
+                      />
+                    ))}
+                  </div>
                 </div>
-            ))}
-        </div>
-    </div>
+              ))}
+            </div>
+          </div>
 
-    {/* ================= FOOTER ================= */}
-    <div
-        className="
+          {/* ================= FOOTER ================= */}
+          <div
+            className="
             flex
             justify-end
             items-center
@@ -599,12 +639,12 @@ const AddUser = () => {
             border-t
             border-[#e1e4e8]
         "
-    >
-        <button
-            type="button"
-            onClick={() => router.back()}
-            disabled={isSubmitting}
-            className="
+          >
+            <button
+              type="button"
+              onClick={() => router.back()}
+              disabled={isSubmitting}
+              className="
                 h-[36px]
                 px-4
                 rounded-[3px]
@@ -620,14 +660,14 @@ const AddUser = () => {
                 disabled:cursor-not-allowed
                 transition-colors
             "
-        >
-            Cancel
-        </button>
+            >
+              Cancel
+            </button>
 
-        <button
-            type="submit"
-            disabled={isSubmitting}
-            className="
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="
                 h-[36px]
                 min-w-[82px]
                 px-5
@@ -645,22 +685,21 @@ const AddUser = () => {
                 disabled:cursor-not-allowed
                 transition-colors
             "
-        >
-            {isSubmitting ? (
+            >
+              {isSubmitting ? (
                 <>
-                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                    Saving...
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  Saving...
                 </>
-            ) : (
+              ) : (
                 "Save"
-            )}
-        </button>
-    </div>
-</div>
-
-            </form>
+              )}
+            </button>
+          </div>
         </div>
-    );
+      </form>
+    </div>
+  );
 };
 
 export default AddUser;
