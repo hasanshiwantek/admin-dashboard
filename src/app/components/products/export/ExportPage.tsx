@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { useSearchParams } from "next/navigation";
-import { ExportModalStatus, ExportTab } from "./constant";
+import { ExportTab, ExportModalStatus } from "@/types/types";
 import ExportOptions from "./ExportOption";
 import ExportPreview from "./ExportPreview";
 import { exportCsv } from "@/redux/slices/productSlice";

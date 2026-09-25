@@ -7,7 +7,7 @@ import OrderExportPreview from "./OrderExportPreview";
 import { exportOrderCsv } from "@/redux/slices/orderSlice";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { useSearchParams } from "next/navigation";
-import { ExportModalStatus, ExportTab } from "./constant";
+import { ExportTab, ExportModalStatus } from "@/types/types";
 import { Button } from "@/components/ui/button";
 import ExportModal from "@/Modals/ExportModal";
 
