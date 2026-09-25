@@ -27,6 +27,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { useRouter } from "next/navigation";
 import { refetchBrands } from "@/lib/brandUtils";
 import Spinner from "../../loader/Spinner";
+import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
 const BrandTable = () => {
   const router = useRouter();
 
@@ -49,6 +50,7 @@ const BrandTable = () => {
   const totalPages = pagination?.totalPages;
   const [keyword, setKeyword] = useState("");
   const [selectedIds, setSelectedIds] = useState<any[]>([]);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const isAllSelected =
     brandData.length > 0 && selectedIds.length === brandData.length;
   const isIndeterminate =
@@ -70,33 +72,40 @@ const BrandTable = () => {
 
   // BRAND DELETION LOGIC
 
-  const deleteBrandHandler = async () => {
-    if (selectedIds.length === 0) {
-      alert("Please select at least one brand before deleting.");
-      return; // stop here
-    }
-    const confirm = window.confirm("Delete Brand?");
-    if (!confirm) {
-      return;
-    } else {
-      try {
-        const resultAction = await dispatch(deleteBrand({ id: selectedIds }));
-        const result = (resultAction as any).payload;
+  // const deleteBrandHandler = async () => {
+  //   if (selectedIds.length === 0) {
+  //     alert("Please select at least one brand before deleting.");
+  //     return; // stop here
+  //   }
+  //   const confirm = window.confirm("Delete Brand?");
+  //   if (!confirm) {
+  //     return;
+  //   } else {
+  //     try {
+  //       const resultAction = await dispatch(deleteBrand({ id: selectedIds }));
+  //       const result = (resultAction as any).payload;
 
-        if ((resultAction as any).meta.requestStatus === "fulfilled") {
-          setSelectedIds([]);
-          setTimeout(() => {
-            refetchBrands(dispatch);
-          }, 700);
-        } else {
-          console.error("❌ Failed to delete brand:", result);
-        }
-      } catch (err) {
-        console.error("❌ Unexpected error:", err);
-      }
-    }
-  };
+  //       if ((resultAction as any).meta.requestStatus === "fulfilled") {
+  //         setSelectedIds([]);
+  //         setTimeout(() => {
+  //           refetchBrands(dispatch);
+  //         }, 700);
+  //       } else {
+  //         console.error("❌ Failed to delete brand:", result);
+  //       }
+  //     } catch (err) {
+  //       console.error("❌ Unexpected error:", err);
+  //     }
+  //   }
+  // };
+const deleteBrandHandler = () => {
+  if (selectedIds.length === 0) {
+    alert("Please select at least one brand before deleting.");
+    return;
+  }
 
+  setShowDeleteModal(true);
+};
   // SEARCH KEYWORD LOGIC
 
 
@@ -267,6 +276,33 @@ const BrandTable = () => {
           onPerPageChange={setPerPage}
         />
       </div>
+      <ConfirmationModal
+  open={showDeleteModal}
+  onOpenChange={setShowDeleteModal}
+  variant="warning"
+  title="Delete Brand?"
+  description="Are you sure you want to delete the selected brand(s)?"
+  onConfirm={async () => {
+    try {
+      const resultAction = await dispatch(deleteBrand({ id: selectedIds }));
+      const result = (resultAction as any).payload;
+
+      if ((resultAction as any).meta.requestStatus === "fulfilled") {
+        setSelectedIds([]);
+
+        setTimeout(() => {
+          refetchBrands(dispatch);
+        }, 700);
+      } else {
+        console.error("❌ Failed to delete brand:", result);
+      }
+    } catch (err) {
+      console.error("❌ Unexpected error:", err);
+    } finally {
+      setShowDeleteModal(false);
+    }
+  }}
+/>
     </div>
   );
 };
