@@ -45,6 +45,7 @@ import {
 import SearchShipments from "./SearchShipments";
 import ExportShipmentsDialog from "./ExportShipmentsDialog";
 import { errorMessage } from "@/utils/message";
+import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
 
 const Shipments = () => {
   const shipments = useAppSelector((state: any) => state.order.shipments);
@@ -96,6 +97,7 @@ Updated: ${billing.updatedAt}`;
   const searchParams = useSearchParams();
 
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const total = pagination?.total;
   const totalPages = Math.ceil(pagination?.total / pagination?.pageSize || 1);
 
@@ -250,32 +252,39 @@ Updated: ${billing.updatedAt}`;
     }
   };
 
-  const handleShipmentDelete = async () => {
-    if (selectedOrderIds.length <= 0) {
-      alert("Please select shipment to delete");
-      return;
-    }
-    const confirm = window.confirm("Delete Selected Shipments");
-    if (!confirm) {
-      return;
-    } else {
-      try {
-        const result = await dispatch(
-          deleteShipment({ ids: selectedOrderIds })
-        );
-        if (deleteShipment.fulfilled.match(result)) {
-          setTimeout(() => {
-            refetchShipments(dispatch);
-          }, 700);
-        } else {
-        }
-      } catch (err) {
-      }
-    }
-  };
+  // const handleShipmentDelete = async () => {
+  //   if (selectedOrderIds.length <= 0) {
+  //     alert("Please select shipment to delete");
+  //     return;
+  //   }
+  //   const confirm = window.confirm("Delete Selected Shipments");
+  //   if (!confirm) {
+  //     return;
+  //   } else {
+  //     try {
+  //       const result = await dispatch(
+  //         deleteShipment({ ids: selectedOrderIds })
+  //       );
+  //       if (deleteShipment.fulfilled.match(result)) {
+  //         setTimeout(() => {
+  //           refetchShipments(dispatch);
+  //         }, 700);
+  //       } else {
+  //       }
+  //     } catch (err) {
+  //     }
+  //   }
+  // };
   /////////logic of get shipment by id////
 
+const handleShipmentDelete = () => {
+  if (selectedOrderIds.length <= 0) {
+    alert("Please select shipment to delete");
+    return;
+  }
 
+  setShowDeleteModal(true);
+};
 
 
   const handleSearch = async () => {
@@ -745,6 +754,28 @@ Updated: ${billing.updatedAt}`;
             />
           </div>
         </div>
+        <ConfirmationModal
+  open={showDeleteModal}
+  onOpenChange={setShowDeleteModal}
+  variant="warning"
+  title="Delete shipments?"
+  description="Are you sure you want to delete the selected shipment?"
+  onConfirm={async () => {
+    try {
+      const result = await dispatch(
+        deleteShipment({ ids: selectedOrderIds })
+      );
+
+      if (deleteShipment.fulfilled.match(result)) {
+        setShowDeleteModal(false);
+
+        setTimeout(() => {
+          refetchShipments(dispatch);
+        }, 700);
+      }
+    } catch (err) {}
+  }}
+/>
       </div >
     </>
   );

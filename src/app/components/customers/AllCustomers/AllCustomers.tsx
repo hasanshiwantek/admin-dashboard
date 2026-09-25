@@ -38,6 +38,7 @@ import * as XLSX from "xlsx";
 import Spinner from "../../loader/Spinner";
 import OrderActionsDropdown from "../../orders/OrderActionsDropdown";
 import CustomerNotesModal from "../edit/CustomerNotesModal";
+import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
 
 const AllCustomers = () => {
   const dispatch = useAppDispatch();
@@ -53,6 +54,7 @@ const AllCustomers = () => {
   );
   const [showCustomerNotes, setShowCustomerNotes] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const getDropdownActions = (customer: any) => [
     {
@@ -111,32 +113,39 @@ const AllCustomers = () => {
     setSelectedCustomers(updated);
   };
 
-  const deleteCustomerHandler = async () => {
-    if (!selectedCustomers || selectedCustomers.length === 0) {
-      alert("No customers selected for deletion.");
-      return;
-    }
-    const id = selectedCustomers?.map((c) => c?.id);
-    const payload = { ids: id };
-    const confirm = window.confirm("Delete Selected Customer");
-    if (!confirm) {
-      return;
-    } else {
-      try {
-        const result = await dispatch(deleteCustomer({ data: payload }));
+  // const deleteCustomerHandler = async () => {
+  //   if (!selectedCustomers || selectedCustomers.length === 0) {
+  //     alert("No customers selected for deletion.");
+  //     return;
+  //   }
+  //   const id = selectedCustomers?.map((c) => c?.id);
+  //   const payload = { ids: id };
+  //   const confirm = window.confirm("Delete Selected Customer");
+  //   if (!confirm) {
+  //     return;
+  //   } else {
+  //     try {
+  //       const result = await dispatch(deleteCustomer({ data: payload }));
 
-        if (deleteCustomer.fulfilled.match(result)) {
-          setSelectedCustomers([]);
-          // optionally: refresh list or reset selection
-        } else {
-          console.error("Failed to delete customers:", result.payload);
-        }
-      } catch (err) {
-        console.error("Error deleting customers:", err);
-      }
-    }
-  };
+  //       if (deleteCustomer.fulfilled.match(result)) {
+  //         setSelectedCustomers([]);
+  //         // optionally: refresh list or reset selection
+  //       } else {
+  //         console.error("Failed to delete customers:", result.payload);
+  //       }
+  //     } catch (err) {
+  //       console.error("Error deleting customers:", err);
+  //     }
+  //   }
+  // };
+const deleteCustomerHandler = async () => {
+  if (!selectedCustomers || selectedCustomers.length === 0) {
+    alert("No customers selected for deletion.");
+    return;
+  }
 
+  setShowDeleteModal(true);
+};
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
 
   const toggleRow = (id: number) => {
@@ -689,6 +698,30 @@ const AllCustomers = () => {
         onClose={() => setShowCustomerNotes(false)}
         orderId={selectedOrderId}
       />
+      <ConfirmationModal
+  open={showDeleteModal}
+  onOpenChange={setShowDeleteModal}
+  variant="warning"
+  title="Delete Selected Customers?"
+  description="Are you sure you want to delete the selected customer(s)?"
+  onConfirm={async () => {
+    const id = selectedCustomers?.map((c) => c?.id);
+    const payload = { ids: id };
+
+    try {
+      const result = await dispatch(deleteCustomer({ data: payload }));
+
+      if (deleteCustomer.fulfilled.match(result)) {
+        setSelectedCustomers([]);
+        setShowDeleteModal(false);
+      } else {
+        console.error("Failed to delete customers:", result.payload);
+      }
+    } catch (err) {
+      console.error("Error deleting customers:", err);
+    }
+  }}
+/>
     </div>
   );
 };

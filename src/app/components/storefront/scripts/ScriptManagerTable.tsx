@@ -30,6 +30,7 @@ import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { fetchScripts, deleteScript } from "@/redux/slices/storefrontSlice";
 import Spinner from "../../loader/Spinner";
+import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
 const ScriptManagerTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState("50");
@@ -37,7 +38,11 @@ const ScriptManagerTable = () => {
   const totalPages = 20;
   const router = useRouter();
   const dispatch = useAppDispatch();
-
+const [showDeleteModal, setShowDeleteModal] = useState(false);
+const [pendingDeleteScript, setPendingDeleteScript] = useState<{
+  id: any;
+  name: string;
+} | null>(null);
   const scripts = useAppSelector((state: any) => state.storefront.scriptData);
 
   const { loading, error } = useAppSelector((state: any) => state.storefront);
@@ -47,24 +52,31 @@ const ScriptManagerTable = () => {
     dispatch(fetchScripts());
   }, [dispatch]);
 
-  const handleDelete = async (id: any, scriptName: string) => {
-    if (window.confirm(`Are you sure you want to delete "${scriptName}"?`)) {
-      try {
-        const resultAction = await dispatch(deleteScript({ id }));
+  // const handleDelete = async (id: any, scriptName: string) => {
+  //   if (window.confirm(`Are you sure you want to delete "${scriptName}"?`)) {
+  //     try {
+  //       const resultAction = await dispatch(deleteScript({ id }));
 
-        if (deleteScript.fulfilled.match(resultAction)) {
-          // Refresh the scripts list
-          setTimeout(() => {
-            dispatch(fetchScripts());
-          }, 2000)
-        } else {
-        }
-      } catch (error) {
-        console.error("Error deleting script:", error);
-      }
-    }
-  };
+  //       if (deleteScript.fulfilled.match(resultAction)) {
+  //         // Refresh the scripts list
+  //         setTimeout(() => {
+  //           dispatch(fetchScripts());
+  //         }, 2000)
+  //       } else {
+  //       }
+  //     } catch (error) {
+  //       console.error("Error deleting script:", error);
+  //     }
+  //   }
+  // };
+const handleDelete = (id: any, scriptName: string) => {
+  setPendingDeleteScript({
+    id,
+    name: scriptName,
+  });
 
+  setShowDeleteModal(true);
+};
   return (
     <div className=" ">
       {/* Header Section */}
@@ -230,7 +242,7 @@ const ScriptManagerTable = () => {
                         : "N/A"}
                     </TableCell>
                     <TableCell className="text-right">
-                      <DropdownMenu>
+                      <DropdownMenu modal={false}>
                         <DropdownMenuTrigger asChild>
                           <Button
                             variant="ghost"
@@ -290,6 +302,33 @@ const ScriptManagerTable = () => {
           section.
         </p>
       </div>
+      <ConfirmationModal
+  open={showDeleteModal}
+  onOpenChange={setShowDeleteModal}
+  variant="warning"
+  title="Delete Script?"
+  description={`Are you sure you want to delete "${pendingDeleteScript?.name}"?`}
+  onConfirm={async () => {
+    if (!pendingDeleteScript) return;
+
+    try {
+      const resultAction = await dispatch(
+        deleteScript({ id: pendingDeleteScript.id })
+      );
+
+      if (deleteScript.fulfilled.match(resultAction)) {
+        setTimeout(() => {
+          dispatch(fetchScripts());
+        }, 2000);
+      }
+    } catch (error) {
+      console.error("Error deleting script:", error);
+    } finally {
+      setShowDeleteModal(false);
+      setPendingDeleteScript(null);
+    }
+  }}
+/>
     </div>
   );
 };

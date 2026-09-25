@@ -31,7 +31,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { IoFilterOutline } from "react-icons/io5";
 import Spinner from "../../loader/Spinner";
-
+import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
 interface Coupon {
   id: string;
   name: string;
@@ -48,6 +48,8 @@ const CouponCodesTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState("10");
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteIds, setDeleteIds] = useState<string[]>([]);
+const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -124,53 +126,89 @@ const CouponCodesTable = () => {
     }
   };
 
-  const handleDeleteCoupon = async (id: string) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this coupon code?",
-    );
+  // const handleDeleteCoupon = async (id: string) => {
+  //   const confirmDelete = window.confirm(
+  //     "Are you sure you want to delete this coupon code?",
+  //   );
 
-    if (!confirmDelete) return;
+  //   if (!confirmDelete) return;
 
-    setDeletingId(id);
-    try {
-      const result = await dispatch(deleteCouponCodes({ id })).unwrap();
-      console.log("Coupon code deleted successfully!");
-      // Refresh the list
-      dispatch(getCouponCodes());
-      // Remove from selected if it was selected
-      setSelectedCoupons(selectedCoupons.filter((cid) => cid !== id));
-    } catch (error: any) {
-      console.error(error || "Failed to delete coupon code");
-    } finally {
-      setDeletingId(null);
-    }
-  };
-
+  //   setDeletingId(id);
+  //   try {
+  //     const result = await dispatch(deleteCouponCodes({ id })).unwrap();
+  //     console.log("Coupon code deleted successfully!");
+  //     // Refresh the list
+  //     dispatch(getCouponCodes());
+  //     // Remove from selected if it was selected
+  //     setSelectedCoupons(selectedCoupons.filter((cid) => cid !== id));
+  //   } catch (error: any) {
+  //     console.error(error || "Failed to delete coupon code");
+  //   } finally {
+  //     setDeletingId(null);
+  //   }
+  // };
+const handleDeleteCoupon = (id: string) => {
+  setDeleteIds([id]);
+  setOpenDeleteModal(true);
+};
   // Delete multiple selected coupons
-  const handleDeleteSelected = async () => {
-    if (selectedCoupons.length === 0) return;
+  // const handleDeleteSelected = async () => {
+  //   if (selectedCoupons.length === 0) return;
 
-    const confirmDelete = window.confirm(
-      `Are you sure you want to delete ${selectedCoupons.length} coupon code(s)?`,
-    );
+  //   const confirmDelete = window.confirm(
+  //     `Are you sure you want to delete ${selectedCoupons.length} coupon code(s)?`,
+  //   );
 
-    if (!confirmDelete) return;
+  //   if (!confirmDelete) return;
 
-    try {
-      // Delete all selected coupons
+  //   try {
+  //     // Delete all selected coupons
+  //     await Promise.all(
+  //       selectedCoupons.map((id) =>
+  //         dispatch(deleteCouponCodes({ id })).unwrap(),
+  //       ),
+  //     );
+  //     // Refresh the list 
+  //     dispatch(getCouponCodes());
+  //     setSelectedCoupons([]);
+  //   } catch (error: any) {
+  //     console.error(error || "Failed to delete some coupon codes");
+  //   }
+  // };
+const handleDeleteSelected = () => {
+  if (selectedCoupons.length === 0) return;
+
+  setDeleteIds(selectedCoupons);
+  setOpenDeleteModal(true);
+};
+const confirmDelete = async () => {
+  try {
+    if (deleteIds.length === 1) {
+      const id = deleteIds[0];
+
+      setDeletingId(id);
+
+      await dispatch(deleteCouponCodes({ id })).unwrap();
+
+      setSelectedCoupons(selectedCoupons.filter((cid) => cid !== id));
+    } else {
       await Promise.all(
-        selectedCoupons.map((id) =>
-          dispatch(deleteCouponCodes({ id })).unwrap(),
-        ),
+        deleteIds.map((id) =>
+          dispatch(deleteCouponCodes({ id })).unwrap()
+        )
       );
-      // Refresh the list
-      dispatch(getCouponCodes());
-      setSelectedCoupons([]);
-    } catch (error: any) {
-      console.error(error || "Failed to delete some coupon codes");
-    }
-  };
 
+      setSelectedCoupons([]);
+    }
+
+    dispatch(getCouponCodes());
+    setOpenDeleteModal(false);
+  } catch (error: any) {
+    console.error(error || "Failed to delete coupon code");
+  } finally {
+    setDeletingId(null);
+  }
+};
   const goToEditPage = (id: number) =>
     router.push(`/manage/marketing/coupon-codes/edit/${id}`);
 
@@ -422,7 +460,7 @@ const CouponCodesTable = () => {
                       )}
                     </TableCell>
                     <TableCell>
-                      <DropdownMenu>
+                      <DropdownMenu  modal={false}>
                         <DropdownMenuTrigger asChild>
                           <Button
                             variant="ghost"
@@ -479,6 +517,19 @@ const CouponCodesTable = () => {
           </div>
         </div>
       </div>
+      <ConfirmationModal
+  open={openDeleteModal}
+  onOpenChange={setOpenDeleteModal}
+  variant="warning"
+  title="Delete coupon?"
+  description={
+    deleteIds.length > 1
+      ? `Are you sure you want to delete ${deleteIds.length} coupon code(s)?`
+      : "Are you sure you want to delete this coupon code?"
+  }
+  loading={deleteLoading}
+  onConfirm={confirmDelete}
+/>
     </div>
   );
 };

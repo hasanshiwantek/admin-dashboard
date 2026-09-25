@@ -24,6 +24,7 @@ import { useEffect, useState } from "react";
 import Spinner from "../loader/Spinner";
 import OrderActionsDropdown from "../orders/OrderActionsDropdown";
 import { PageTypeOptions } from "./constants";
+import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
 
 const WebPageTable = () => {
   const router = useRouter();
@@ -40,6 +41,7 @@ const WebPageTable = () => {
   const loading = useAppSelector((state: any) => state.storefront.loading);
 
   const [selectedIds, setSelectedIds] = useState<any[]>([]);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const isAllSelected = selectedIds.length === webPages?.length;
 
@@ -59,33 +61,40 @@ const WebPageTable = () => {
 
   // Webpage DELETION LOGIC
 
-  const deleteWebpageHandler = async () => {
-    if (selectedIds.length === 0) {
-      alert("Please select at least one Webpage before deleting.");
-      return; // stop here
-    }
-    const confirm = window.confirm("Delete Webpage?");
-    if (!confirm) {
-      return;
-    } else {
-      try {
-        const resultAction = await dispatch(deleteWebPage({ id: selectedIds }));
-        const result = (resultAction as any).payload;
+  // const deleteWebpageHandler = async () => {
+  //   if (selectedIds.length === 0) {
+  //     alert("Please select at least one Webpage before deleting.");
+  //     return; // stop here
+  //   }
+  //   const confirm = window.confirm("Delete Webpage?");
+  //   if (!confirm) {
+  //     return;
+  //   } else {
+  //     try {
+  //       const resultAction = await dispatch(deleteWebPage({ id: selectedIds }));
+  //       const result = (resultAction as any).payload;
 
-        if ((resultAction as any).meta.requestStatus === "fulfilled") {
-          setSelectedIds([]);
-          setTimeout(() => {
-            refetchWebpages(dispatch);
-          }, 700);
-        } else {
-          console.error("❌ Failed to delete webpage:", result);
-        }
-      } catch (err) {
-        console.error("❌ Unexpected error:", err);
-      }
-    }
-  };
+  //       if ((resultAction as any).meta.requestStatus === "fulfilled") {
+  //         setSelectedIds([]);
+  //         setTimeout(() => {
+  //           refetchWebpages(dispatch);
+  //         }, 700);
+  //       } else {
+  //         console.error("❌ Failed to delete webpage:", result);
+  //       }
+  //     } catch (err) {
+  //       console.error("❌ Unexpected error:", err);
+  //     }
+  //   }
+  // };
+const deleteWebpageHandler = () => {
+  if (selectedIds.length === 0) {
+    alert("Please select at least one Webpage before deleting.");
+    return;
+  }
 
+  setShowDeleteModal(true);
+};
   useEffect(() => {
     dispatch(getWebPages());
   }, [dispatch]);
@@ -234,6 +243,35 @@ const WebPageTable = () => {
           </TableBody>
         </Table>
       </div>
+      <ConfirmationModal
+  open={showDeleteModal}
+  onOpenChange={setShowDeleteModal}
+  variant="warning"
+  title="Delete Webpages?"
+  description="Are you sure you want to delete the selected webpages?"
+  onConfirm={async () => {
+    try {
+      const resultAction = await dispatch(
+        deleteWebPage({ id: selectedIds })
+      );
+      const result = (resultAction as any).payload;
+
+      if ((resultAction as any).meta.requestStatus === "fulfilled") {
+        setSelectedIds([]);
+
+        setTimeout(() => {
+          refetchWebpages(dispatch);
+        }, 700);
+      } else {
+        console.error("❌ Failed to delete webpage:", result);
+      }
+    } catch (err) {
+      console.error("❌ Unexpected error:", err);
+    } finally {
+      setShowDeleteModal(false);
+    }
+  }}
+/>
     </div>
   );
 };
