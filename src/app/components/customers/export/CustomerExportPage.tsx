@@ -11,7 +11,7 @@ import ExportModal from "@/Modals/ExportModal";
 import CustomerExportOptions from "./CustomerExportOptions";
 import CustomerExportPreview from "./CustomerExportPreview";
 
-export default function OrderExport() {
+export default function CustomerExportPage() {
   const searchParams = useSearchParams();
   const dispatch = useAppDispatch();
   const [activeTab, setActiveTab] = useState<ExportTab>(ExportTab.Options);
