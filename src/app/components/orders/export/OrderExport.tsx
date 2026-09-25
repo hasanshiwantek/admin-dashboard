@@ -10,8 +10,11 @@ import { useSearchParams } from "next/navigation";
 import { ExportTab, ExportModalStatus } from "@/types/types";
 import { Button } from "@/components/ui/button";
 import ExportModal from "@/Modals/ExportModal";
+import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
+import { useRouter } from "next/navigation";
 
 export default function OrderExport() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const dispatch = useAppDispatch();
   const [activeTab, setActiveTab] = useState<ExportTab>(ExportTab.Options);
@@ -21,6 +24,7 @@ export default function OrderExport() {
   const [fileBlob, setFileBlob] = useState<Blob | null>(null);
   const [fileName, setFileName] = useState("Orders.csv");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [openConfirmationModal, setOpenConfirmationModal] = useState(false);
 
   const form = useForm({
     defaultValues: {
@@ -131,6 +135,7 @@ export default function OrderExport() {
               hover:bg-transparent
               hover:text-[#526dff]
             "
+              onClick={() => setOpenConfirmationModal(true)}
             >
               Cancel
             </Button>
@@ -176,6 +181,16 @@ export default function OrderExport() {
           onClose={closeModal}
           onStartExport={startExport}
         />
+        {openConfirmationModal && <ConfirmationModal
+          open={openConfirmationModal}
+          onOpenChange={setOpenConfirmationModal}
+          variant="warning"
+          title="Confirmation"
+          description="Are you sure you want to cancel exporting?"
+          onConfirm={() => {
+            router.push("/manage/orders");
+          }}
+        />}
       </div>
     </FormProvider >
   );

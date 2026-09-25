@@ -62,46 +62,46 @@ export default function ConfirmationModal({
       <DialogContent className="!max-w-[440px] p-8">
 
         {/* Header */}
-     {/* Header */}
-{/* Header */}
-<div className="flex flex-col items-center text-center gap-4 mb-9!">
-  <div
-    className={`w-16 h-16 rounded-full ${c.iconBg} flex items-center justify-center shrink-0`}
-  >
-     {c.icon}
-  </div>
+        {/* Header */}
+        {/* Header */}
+        <div className="flex flex-col items-center text-center gap-4 mb-9!">
+          <div
+            className={`w-16 h-16 rounded-full ${c.iconBg} flex items-center justify-center shrink-0`}
+          >
+            {c.icon}
+          </div>
 
-  <div className="space-y-1.5">
-    <DialogTitle className="text-[18px]! font-semibold">
-      {c.title}
-    </DialogTitle>
+          <div className="space-y-1.5">
+            <DialogTitle className="text-[18px]! font-semibold">
+              {c.title}
+            </DialogTitle>
 
-    <DialogDescription className="text-[12px]! text-muted-foreground leading-6">
-      {c.description}
-    </DialogDescription>
-  </div>
-</div>
+            <DialogDescription className="text-[12px]! text-muted-foreground leading-6">
+              {c.description}
+            </DialogDescription>
+          </div>
+        </div>
 
         {/* Divider + Footer */}
         <div className="border-t pt-6 flex justify-end gap-3">
-  <Button
-    variant="outline"
-    type="button"
-    className="text-base px-5 py-5"
-    onClick={() => onOpenChange(false)}
-  >
-    Cancel
-  </Button>
+          <Button
+            variant="outline"
+            type="button"
+            className="text-base px-5 py-5"
+            onClick={() => onOpenChange(false)}
+          >
+            Cancel
+          </Button>
 
-  <Button
-    type="button"
-    className={`text-base px-5 py-5 ${c.confirmClass}`}
-    disabled={loading}
-    onClick={onConfirm}
-  >
-    {loading ? "Please wait..." : c.confirmLabel}
-  </Button>
-</div>
+          <Button
+            type="button"
+            className={`text-base px-5 py-5 ${c.confirmClass}`}
+            disabled={loading}
+            onClick={onConfirm}
+          >
+            {loading ? "Please wait..." : c.confirmLabel}
+          </Button>
+        </div>
 
       </DialogContent>
     </Dialog>

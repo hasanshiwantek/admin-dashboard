@@ -654,6 +654,28 @@ export const advanceShipmentSearch = createAsyncThunk(
   }
 );
 
+
+export const exportShipmentsCsv = createAsyncThunk(
+  "shipments/exportShipmentsCsv",
+  async (_, thunkAPI) => {
+    try {
+      const res = await axiosInstance.get(
+        "dashboard/shipments/export-csv",
+        {
+          responseType: "blob",
+        },
+      );
+
+      return res.data;
+    } catch (err: any) {
+      console.error("❌ Error exporting shipments:", err);
+
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to export shipments",
+      );
+    }
+  },
+);
 // FETCH ORDER BY KEYWORD
 export const fetchShipmentByKeyword = createAsyncThunk(
   "orders/fetchShipmentByKeyword",

@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
-import { exportOrderCsv } from "@/redux/slices/orderSlice";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { useSearchParams } from "next/navigation";
 import { ExportTab, ExportModalStatus } from "@/types/types";
@@ -10,8 +9,11 @@ import { Button } from "@/components/ui/button";
 import ExportModal from "@/Modals/ExportModal";
 import CustomerExportOptions from "./CustomerExportOptions";
 import CustomerExportPreview from "./CustomerExportPreview";
-
+import { useRouter } from "next/navigation";
+import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
+import { exportCustomerCsv } from "@/redux/slices/customerSlice";
 export default function CustomerExportPage() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const dispatch = useAppDispatch();
   const [activeTab, setActiveTab] = useState<ExportTab>(ExportTab.Options);
@@ -21,6 +23,7 @@ export default function CustomerExportPage() {
   const [fileBlob, setFileBlob] = useState<Blob | null>(null);
   const [fileName, setFileName] = useState("Customers.csv");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [openConfirmationModal, setOpenConfirmationModal] = useState(false);
 
   const form = useForm({
     defaultValues: {
@@ -45,7 +48,7 @@ export default function CustomerExportPage() {
 
     try {
       const resultAction = await dispatch(
-        exportOrderCsv({
+        exportCustomerCsv({
           payload: data,
           onProgress: (percent) => setProgress(percent),
         }),
@@ -131,6 +134,7 @@ export default function CustomerExportPage() {
               hover:bg-transparent
               hover:text-[#526dff]
             "
+              onClick={() => setOpenConfirmationModal(true)}
             >
               Cancel
             </Button>
@@ -176,6 +180,16 @@ export default function CustomerExportPage() {
           onClose={closeModal}
           onStartExport={startExport}
         />
+        {openConfirmationModal && <ConfirmationModal
+          open={openConfirmationModal}
+          onOpenChange={setOpenConfirmationModal}
+          variant="warning"
+          title="Confirmation"
+          description="Are you sure you want to cancel exporting?"
+          onConfirm={() => {
+            router.push("/manage/customers");
+          }}
+        />}
       </div>
     </FormProvider >
   );

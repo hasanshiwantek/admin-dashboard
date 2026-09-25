@@ -31,7 +31,7 @@ export default function BlogTable() {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
-const [deletePost, setDeletePost] = useState<any>(null);
+  const [deletePost, setDeletePost] = useState<any>(null);
   // const filteredPosts = posts?.filter((p: any) =>
   //   activeTab === "published" ? p.status === "published" : p.status === "draft"
   // );
@@ -39,7 +39,7 @@ const [deletePost, setDeletePost] = useState<any>(null);
   const editdropdownActions = (post: any) => [
     {
       label: "View",
-           onClick: () => {
+      onClick: () => {
         // Get the base URL from selected store
         const selectedStore = JSON.parse(localStorage.getItem('availableStores') || '[]')
           .find((store: any) => store.id === Number(localStorage.getItem('storeId')));
@@ -56,13 +56,13 @@ const [deletePost, setDeletePost] = useState<any>(null);
       label: "Edit",
       onClick: () => router.push(`/manage/storefront/blog/edit/${post.id}`),
     },
-   {
-  label: "Delete",
-  onClick: () => {
-    setDeletePost(post);
-    setOpenDeleteModal(true);
-  },
-},
+    {
+      label: "Delete",
+      onClick: () => {
+        setDeletePost(post);
+        setOpenDeleteModal(true);
+      },
+    },
     {
       label: "Unpublish",
     },
@@ -92,11 +92,10 @@ const [deletePost, setDeletePost] = useState<any>(null);
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`pb-3 px-4 text-xl 2xl:!text-2xl font-medium transition-colors ${
-                activeTab === tab
+              className={`pb-3 px-4 text-xl 2xl:!text-2xl font-medium transition-colors ${activeTab === tab
                   ? "text-blue-600 border-b-4 border-blue-600"
                   : "text-gray-500 hover:text-gray-700"
-              }`}
+                }`}
             >
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
             </button>
@@ -181,9 +180,9 @@ const [deletePost, setDeletePost] = useState<any>(null);
                   <TableCell className="2xl:!text-2xl">
                     {post.createdAt
                       ? new Date(post.createdAt).toLocaleString("en-US", {
-                          dateStyle: "medium",
-                          timeStyle: "short",
-                        })
+                        dateStyle: "medium",
+                        timeStyle: "short",
+                      })
                       : "N/A"}
                   </TableCell>
 
@@ -217,28 +216,28 @@ const [deletePost, setDeletePost] = useState<any>(null);
           </a>
         </div>
       </div>
-  <ConfirmationModal
-  open={openDeleteModal}
-  onOpenChange={setOpenDeleteModal}
-  variant="warning"
-  title="Delete blog?"
-  description="Are you sure you want to delete this blog?"
-  onConfirm={async () => {
-    try {
-      const resultAction = await dispatch(
-        deleteBlog({ id: deletePost?.id })
-      );
+      <ConfirmationModal
+        open={openDeleteModal}
+        onOpenChange={setOpenDeleteModal}
+        variant="warning"
+        title="Delete blog?"
+        description="Are you sure you want to delete this blog?"
+        onConfirm={async () => {
+          try {
+            const resultAction = await dispatch(
+              deleteBlog({ id: deletePost?.id })
+            );
 
-      if ((resultAction as any).meta.requestStatus === "fulfilled") {
-        setOpenDeleteModal(false);
+            if ((resultAction as any).meta.requestStatus === "fulfilled") {
+              setOpenDeleteModal(false);
 
-        setTimeout(() => {
-          refetchBlogs(dispatch);
-        }, 700);
-      }
-    } catch (err) {}
-  }}
-/>    
+              setTimeout(() => {
+                refetchBlogs(dispatch);
+              }, 700);
+            }
+          } catch (err) { }
+        }}
+      />
     </div>
   );
 }

@@ -10,9 +10,11 @@ import ExportPreview from "./ExportPreview";
 import { exportCsv } from "@/redux/slices/productSlice";
 import { Button } from "@/components/ui/button";
 import ExportModal from "@/Modals/ExportModal";
-
+import { useRouter } from "next/navigation";
+import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
 export default function OrderExport() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const dispatch = useAppDispatch();
   const [activeTab, setActiveTab] = useState<ExportTab>(ExportTab.Options);
   const [modalOpen, setModalOpen] = useState(false);
@@ -21,7 +23,7 @@ export default function OrderExport() {
   const [fileBlob, setFileBlob] = useState<Blob | null>(null);
   const [fileName, setFileName] = useState("Products.csv");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
+  const [openConfirmationModal, setOpenConfirmationModal] = useState(false);
   const form = useForm({
     defaultValues: {
       template: "",
@@ -43,13 +45,24 @@ export default function OrderExport() {
     setErrorMessage(null);
     setFileBlob(null);
 
+    let current = 0;
+
+    const applyProgress = (percent: number) => {
+      if (typeof percent !== "number" || Number.isNaN(percent)) return;
+      if (percent > current) {
+        current = percent;
+        setProgress(percent);
+      }
+    };
+
     try {
       const resultAction = await dispatch(
         exportCsv({
           payload: data,
-          onProgress: (percent) => setProgress(percent),
+          onProgress: applyProgress,
         }),
       );
+
       const result = (resultAction as any).payload;
 
       if ((resultAction as any).meta.requestStatus === "fulfilled") {
@@ -132,6 +145,7 @@ export default function OrderExport() {
               hover:bg-transparent
               hover:text-[#526dff]
             "
+              onClick={() => setOpenConfirmationModal(true)}
             >
               Cancel
             </Button>
@@ -176,7 +190,18 @@ export default function OrderExport() {
           onClose={closeModal}
           onStartExport={startExport}
         />
-      </div >
+
+        {openConfirmationModal && <ConfirmationModal
+          open={openConfirmationModal}
+          onOpenChange={setOpenConfirmationModal}
+          variant="warning"
+          title="Confirmation"
+          description="Are you sure you want to cancel exporting?"
+          onConfirm={() => {
+            router.push("/manage/products");
+          }}
+        />}
+      </div>
     </FormProvider >
   );
 }

@@ -397,23 +397,46 @@ export const exportCsv = createAsyncThunk(
     thunkAPI,
   ) => {
     try {
+      let estimatedTotal = 0;
+      let lastPercent = 0;
+
       const response = await axiosInstance.get(
         "dashboard/products/export-csv",
         {
           params: payload,
           responseType: "blob",
-          onDownloadProgress: (progressEvent) => {
-            
-            const loaded = progressEvent.loaded ?? 0;
-            const total = progressEvent.total;
+          onDownloadProgress: (progressEvent: any) => {
+            const xhr = progressEvent.event?.target ?? progressEvent.target;
+            const loaded = Number(progressEvent.loaded ?? 0);
 
-            if (total && total > 0) {
-              const percent = Math.round((loaded * 100) / total);
-              onProgress?.(Math.min(100, Math.max(0, percent)));
-            } else {
-              // no Content-Length — show movement without hitting 100
-              const fake = Math.min(90, Math.round(loaded / 1024) % 90);
-              onProgress?.(fake || 10);
+            const contentLength =
+              Number(progressEvent.total ?? 0) ||
+              Number(xhr?.getResponseHeader?.("content-length") ?? 0);
+
+            const productTotal = Number(xhr?.getResponseHeader?.("total") ?? 0); // label only
+
+            if (contentLength > 0) {
+              const percent = Math.min(99, Math.round((loaded * 100) / contentLength));
+              if (percent > lastPercent) {
+                lastPercent = percent;
+                onProgress?.(percent);
+              }
+              return;
+            }
+
+            if (loaded <= 0) return;
+
+            if (!estimatedTotal) {
+              estimatedTotal = Math.max(12 * 1024 * 1024, loaded * 5);
+            }
+            if (loaded >= estimatedTotal) {
+              estimatedTotal = loaded + 2 * 1024 * 1024;
+            }
+
+            const percent = Math.min(95, Math.round((loaded * 100) / estimatedTotal));
+            if (percent > lastPercent) {
+              lastPercent = percent;
+              onProgress?.(percent);
             }
           },
         },
