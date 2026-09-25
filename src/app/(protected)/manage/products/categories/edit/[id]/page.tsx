@@ -26,6 +26,7 @@ import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
+import { useAlert } from "@/hooks/useAlert";
 type FormVals = {
   name: string;
   slug: string;
@@ -100,7 +101,7 @@ export default function EditCategoryPage() {
   const urlSettingData = useAppSelector(
     (state: any) => state.home?.urlSettingData,
   );
-
+  const { showAlert, Alert } = useAlert();
   // existing image URL ko pick karne ke liye flexible helper
   const getInitialImageUrl = (cat: any): string | null => {
     // backend se jo aaye us hisab se try kar rahe:
@@ -337,7 +338,10 @@ export default function EditCategoryPage() {
       setSaving(true);
 
       if (vals.parent?.id === categoryId) {
-        alert("A category cannot be its own parent.");
+        showAlert({
+  title: "Invalid Category",
+  message: "A category cannot be its own parent.",
+});
         setSaving(false);
         return;
       }
@@ -708,6 +712,7 @@ export default function EditCategoryPage() {
           </button>
         </div>
       </div>
+            <Alert />
     </FormProvider>
   );
 }
