@@ -33,6 +33,10 @@ const useAllProductsContainer = () => {
   const [categoryModalDefaults, setCategoryModalDefaults] = React.useState<
     string[]
   >([]);
+  const [showProductDeleteConfirm, setShowProductDeleteConfirm] =
+  React.useState(false);
+const [pendingDeleteProductIds, setPendingDeleteProductIds] =
+  React.useState<number[]>([]);
   const [categoryAction, setCategoryAction] = React.useState<
     ActionEnums.ADD | ActionEnums.DELETE
   >(ActionEnums.ADD);
@@ -210,15 +214,22 @@ const useAllProductsContainer = () => {
         if (updateProduct.fulfilled.match(result)) table.refetch();
       },
     },
+    // {
+    //   label: "Delete",
+    //   onClick: async () => {
+    //     const confirm = window.confirm("Delete Product?");
+    //     if (!confirm) return;
+    //     const result = await dispatch(deleteProduct({ ids: [product.id] }));
+    //     if (deleteProduct.fulfilled.match(result)) table.refetch();
+    //   },
+    // },
     {
-      label: "Delete",
-      onClick: async () => {
-        const confirm = window.confirm("Delete Product?");
-        if (!confirm) return;
-        const result = await dispatch(deleteProduct({ ids: [product.id] }));
-        if (deleteProduct.fulfilled.match(result)) table.refetch();
-      },
-    },
+  label: "Delete",
+  onClick: () => {
+    setPendingDeleteProductIds([product.id]);
+    setShowProductDeleteConfirm(true);
+  },
+},
     {
       label: "Edit",
       onClick: () => {
@@ -348,20 +359,27 @@ const useAllProductsContainer = () => {
         }
       },
     },
+    // {
+    //   label: "Delete",
+    //   onClick: async () => {
+    //     const confirm = window.confirm("Delete Selecred Products?");
+    //     if (!confirm) return;
+    //     const result = await dispatch(
+    //       deleteProduct({ ids: selectedProductIds }),
+    //     );
+    //     if (deleteProduct.fulfilled.match(result)) {
+    //       table.refetch();
+    //       clearSelection();
+    //     }
+    //   },
+    // },
     {
-      label: "Delete",
-      onClick: async () => {
-        const confirm = window.confirm("Delete Selecred Products?");
-        if (!confirm) return;
-        const result = await dispatch(
-          deleteProduct({ ids: selectedProductIds }),
-        );
-        if (deleteProduct.fulfilled.match(result)) {
-          table.refetch();
-          clearSelection();
-        }
-      },
-    },
+  label: "Delete",
+  onClick: () => {
+    setPendingDeleteProductIds(selectedProductIds);
+    setShowProductDeleteConfirm(true);
+  },
+},
   ];
 
   const handleEditInventory = () => {
@@ -400,6 +418,26 @@ const useAllProductsContainer = () => {
     XLSX.utils.book_append_sheet(workbook, worksheet, "Products");
     XLSX.writeFile(workbook, "products_export.xlsx");
   };
+  const productDeleteMessage =
+  pendingDeleteProductIds.length === 1
+    ? "Are you sure you want to delete this product?"
+    : `Are you sure you want to delete these ${pendingDeleteProductIds.length} products?`;
+
+const productDeleteConfirm = async () => {
+  try {
+    const result = await dispatch(
+      deleteProduct({ ids: pendingDeleteProductIds })
+    );
+
+    if (deleteProduct.fulfilled.match(result)) {
+      table.refetch();
+      clearSelection();
+    }
+  } finally {
+    setShowProductDeleteConfirm(false);
+    setPendingDeleteProductIds([]);
+  }
+};
 
   const bulkActions = (
     <>
@@ -453,6 +491,13 @@ const useAllProductsContainer = () => {
     categoryDeleteMessage,
     confirmCategoryDelete,
     closeCategoryDeleteConfirm,
+    showProductDeleteConfirm,
+productDeleteMessage,
+productDeleteConfirm,
+closeProductDeleteConfirm: () => {
+  setShowProductDeleteConfirm(false);
+  setPendingDeleteProductIds([]);
+},
   };
 };
 

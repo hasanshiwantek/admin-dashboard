@@ -1,19 +1,18 @@
 "use client";
 
-import { useFormContext } from "react-hook-form";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
-import Link from "next/link";
-import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { fetchShippingRates } from "@/redux/slices/orderSlice";
+import { useEffect } from "react";
+import { useFormContext } from "react-hook-form";
+
 export function calculatePackage(products: any[]) {
   const totalWeight = products.reduce((sum, p) => {
     const weight = parseFloat(p.dimensions?.weight) || 1;
@@ -29,16 +28,6 @@ export function calculatePackage(products: any[]) {
 
   const itemCount = products.reduce((sum, p) => sum + (p.quantity || 1), 0);
 
-  const maxLength = Math.max(
-    ...products.map((p) => parseFloat(p.dimensions?.depth) || 1),
-  );
-  const maxWidth = Math.max(
-    ...products.map((p) => parseFloat(p.dimensions?.width) || 1),
-  );
-  const maxHeight = Math.max(
-    ...products.map((p) => parseFloat(p.dimensions?.height) || 1),
-  );
-
   return {
     total_weight: totalWeight, // fallback if data missing
     weight_unit: "LB",
@@ -47,83 +36,171 @@ export function calculatePackage(products: any[]) {
     package_value: orderTotal,
   };
 }
+
+const hasFreeShipping = (p: any) => Boolean(p?.freeShipping);
+const hasFixedShipping = (p: any) => Number(p?.fixedShippingCost) > 0;
+
+export function getProductShippingRate(products: any[]) {
+  if (!products?.length) return null;
+  if (!products.every((p) => hasFreeShipping(p) || hasFixedShipping(p))) {
+    return null;
+  }
+
+  const fixedProducts = products.filter(hasFixedShipping);
+  if (fixedProducts.length > 0) {
+    const total = fixedProducts.reduce(
+      (sum, p) => sum + Number(p.fixedShippingCost) * (Number(p.quantity) || 1),
+      0,
+    );
+    return {
+      method_id: null,
+      method_type: "fixed_shipping",
+      service_type: "fixed_shipping",
+      display_name: "Fixed Shipping",
+      total_charge: Number(total.toFixed(2)),
+      currency: "USD",
+      transit_days: null,
+      delivery_date: null,
+      is_fedex: false,
+    };
+  }
+
+  return {
+    method_id: null,
+    method_type: "free_shipping",
+    service_type: "free_shipping",
+    display_name: "Free Shipping",
+    total_charge: 0,
+    currency: "USD",
+    transit_days: null,
+    delivery_date: null,
+    is_fedex: false,
+  };
+}
 export default function ShippingMethod() {
   const { setValue, watch, getValues } = useFormContext();
-  const dispatch = useAppDispatch()
-  const values = getValues()
+  const dispatch = useAppDispatch();
+  const values = getValues();
 
   const selectedMethod = watch("shippingMethod") || {};
   const provider =
     selectedMethod.service_type ||
     (selectedMethod.method_id ? String(selectedMethod.method_id) : "none");
-  const method = watch("shippingMethod.method")
+  const method = watch("shippingMethod.method");
   // const cost = watch("shippingMethod.cost")
   const cost =
     selectedMethod.method_type === "custom" &&
-      (selectedMethod.cost === 0 || selectedMethod.cost === "0")
+    (selectedMethod.cost === 0 || selectedMethod.cost === "0")
       ? ""
       : String(selectedMethod.cost ?? "");
-  const cart = values?.selectedProducts
-  const { shippingRates, } = useAppSelector(
-    (state) => state.order,
-  );
-  const rates = Array.isArray(shippingRates) ? shippingRates : [];
+  const cart = watch("selectedProducts") || [];
+  const { shippingRates } = useAppSelector((state) => state.order);
+  const productShippingRate = getProductShippingRate(cart);
+  const rates = productShippingRate
+    ? [productShippingRate]
+    : Array.isArray(shippingRates)
+      ? shippingRates
+      : [];
 
+  // Keep a previously selected fixed/free method in sync with the current cart
+  useEffect(() => {
+    const isProductMethod =
+      selectedMethod.service_type === "fixed_shipping" ||
+      selectedMethod.service_type === "free_shipping";
+    if (!isProductMethod) return;
+
+    if (!productShippingRate) {
+      setValue("shippingMethod", {}, { shouldDirty: true });
+      return;
+    }
+    if (
+      selectedMethod.service_type !== productShippingRate.service_type ||
+      Number(selectedMethod.total_charge) !== productShippingRate.total_charge
+    ) {
+      setValue(
+        "shippingMethod",
+        {
+          ...productShippingRate,
+          cost: String(productShippingRate.total_charge),
+        },
+        { shouldDirty: true },
+      );
+    }
+  }, [productShippingRate?.service_type, productShippingRate?.total_charge]);
 
   const handleMethodChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue("shippingMethod", {
-      ...selectedMethod,
-      method_type: "custom",
-      service_type: "custom",
-      display_name: e.target.value,
-    }, { shouldDirty: true });
+    setValue(
+      "shippingMethod",
+      {
+        ...selectedMethod,
+        method_type: "custom",
+        service_type: "custom",
+        display_name: e.target.value,
+      },
+      { shouldDirty: true },
+    );
   };
   const handleCostChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = e.target.value
       .replace(/[^\d.]/g, "")
       .replace(/^(\d*\.)(.*)$/, (_m, p1, p2) => p1 + p2.replace(/\./g, ""));
 
-    setValue("shippingMethod", {
-      ...selectedMethod,
-      method_type: "custom",
-      service_type: "custom",
-      total_charge: formatted,
-      cost: formatted,
-    }, { shouldDirty: true });
+    setValue(
+      "shippingMethod",
+      {
+        ...selectedMethod,
+        method_type: "custom",
+        service_type: "custom",
+        total_charge: formatted,
+        cost: formatted,
+      },
+      { shouldDirty: true },
+    );
   };
   useEffect(() => {
+    // Product-level fixed/free shipping replaces carrier quotes
+    if (productShippingRate) return;
+
     const payload = {
       country: values?.shipping?.country || values?.billingCountry,
       state: values?.shipping?.state || values?.billingState,
       city: values?.shipping?.city || values?.billingCity,
-      zip: values?.shipping?.zip || values?.billingZip
-    }
+      zip: values?.shipping?.zip || values?.billingZip,
+    };
 
-    if (payload?.country && payload?.state && payload?.zip && cart?.length > 0) {
+    if (
+      payload?.country &&
+      payload?.state &&
+      payload?.zip &&
+      cart?.length > 0
+    ) {
       dispatch(
-        fetchShippingRates(
-          {
-            data: {
-              destination: {
-                country_code: payload?.country,
-                state: payload?.state,
-                postal_code: payload?.zip,
-                ...(payload?.city?.trim() && { city: payload?.city?.trim() }),
-              },
-              package: calculatePackage(cart),
-              // "package": {
-              //   "total_weight": 12,
-              //   "weight_unit": "LB",
-              //   "order_total": 22,
-              //   "item_count": 1,
-              //   "package_value": 22
-              // }
+        fetchShippingRates({
+          data: {
+            destination: {
+              country_code: payload?.country,
+              state: payload?.state,
+              postal_code: payload?.zip,
+              ...(payload?.city?.trim() && { city: payload?.city?.trim() }),
             },
-          }
-        )
+            package: calculatePackage(cart),
+            // "package": {
+            //   "total_weight": 12,
+            //   "weight_unit": "LB",
+            //   "order_total": 22,
+            //   "item_count": 1,
+            //   "package_value": 22
+            // }
+          },
+        }),
       );
     }
-  }, [values?.shipping?.country, values?.shipping?.state, values?.shipping?.city, values?.shipping?.zip])
+  }, [
+    values?.shipping?.country,
+    values?.shipping?.state,
+    values?.shipping?.city,
+    values?.shipping?.zip,
+  ]);
 
   const handleProviderChange = (val: string) => {
     if (val === "none") {
@@ -141,7 +218,7 @@ export default function ShippingMethod() {
           service_type: "none",
           is_fedex: false,
         },
-        { shouldDirty: true }
+        { shouldDirty: true },
       );
       return;
     }
@@ -161,7 +238,7 @@ export default function ShippingMethod() {
           service_type: "custom",
           is_fedex: false,
         },
-        { shouldDirty: true }
+        { shouldDirty: true },
       );
       return;
     }
@@ -183,7 +260,7 @@ export default function ShippingMethod() {
         service_type: rate.service_type,
         is_fedex: !!rate.is_fedex,
       },
-      { shouldDirty: true }
+      { shouldDirty: true },
     );
   };
   return (
@@ -204,10 +281,11 @@ export default function ShippingMethod() {
             <SelectTrigger className="h-auto min-h-10 w-full py-2 text-left">
               <span className="line-clamp-2 whitespace-normal break-words text-left">
                 {selectedMethod?.display_name
-                  ? `${selectedMethod.display_name} — ${Number(selectedMethod.total_charge) === 0
-                    ? "Free"
-                    : `$${Number(selectedMethod.total_charge).toFixed(2)}`
-                  }`
+                  ? `${selectedMethod.display_name} — ${
+                      Number(selectedMethod.total_charge) === 0
+                        ? "Free"
+                        : `$${Number(selectedMethod.total_charge).toFixed(2)}`
+                    }`
                   : "Select Shipping Provider"}
               </span>
             </SelectTrigger>
@@ -227,7 +305,10 @@ export default function ShippingMethod() {
                     : `$${Number(rate.total_charge).toFixed(2)}`;
 
                 return (
-                  <SelectItem key={rate.service_type} value={String(rate.service_type)}>
+                  <SelectItem
+                    key={rate.service_type}
+                    value={String(rate.service_type)}
+                  >
                     <span className="block truncate">
                       {label} — {price}
                     </span>

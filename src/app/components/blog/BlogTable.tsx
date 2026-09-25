@@ -18,6 +18,7 @@ import { fetchBlogs, deleteBlog } from "@/redux/slices/storefrontSlice";
 import { useRouter } from "next/navigation";
 import { refetchBlogs } from "@/lib/storeFrontUtils";
 import Spinner from "../loader/Spinner";
+import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
 // Mock data
 
 export default function BlogTable() {
@@ -29,6 +30,8 @@ export default function BlogTable() {
   const [visible, setVisible] = useState(true);
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+const [deletePost, setDeletePost] = useState<any>(null);
   // const filteredPosts = posts?.filter((p: any) =>
   //   activeTab === "published" ? p.status === "published" : p.status === "draft"
   // );
@@ -53,28 +56,13 @@ export default function BlogTable() {
       label: "Edit",
       onClick: () => router.push(`/manage/storefront/blog/edit/${post.id}`),
     },
-    {
-      label: "Delete",
-      onClick: async () => {
-        const confirm = window.confirm("Delete blog?");
-        if (!confirm) {
-          return;
-        } else {
-          try {
-            const resultAction = await dispatch(deleteBlog({ id: post?.id }));
-            const result = (resultAction as any).payload;
-
-            if ((resultAction as any).meta.requestStatus === "fulfilled") {
-              setTimeout(() => {
-                refetchBlogs(dispatch);
-              }, 700);
-            } else {
-            }
-          } catch (err) {
-          }
-        }
-      },
-    },
+   {
+  label: "Delete",
+  onClick: () => {
+    setDeletePost(post);
+    setOpenDeleteModal(true);
+  },
+},
     {
       label: "Unpublish",
     },
@@ -229,6 +217,28 @@ export default function BlogTable() {
           </a>
         </div>
       </div>
+  <ConfirmationModal
+  open={openDeleteModal}
+  onOpenChange={setOpenDeleteModal}
+  variant="warning"
+  title="Delete blog?"
+  description="Are you sure you want to delete this blog?"
+  onConfirm={async () => {
+    try {
+      const resultAction = await dispatch(
+        deleteBlog({ id: deletePost?.id })
+      );
+
+      if ((resultAction as any).meta.requestStatus === "fulfilled") {
+        setOpenDeleteModal(false);
+
+        setTimeout(() => {
+          refetchBlogs(dispatch);
+        }, 700);
+      }
+    } catch (err) {}
+  }}
+/>    
     </div>
   );
 }
