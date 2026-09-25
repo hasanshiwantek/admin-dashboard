@@ -109,12 +109,26 @@ export function buildQueryParams(payload: Record<string, any> = {}): string {
 export function downloadFile(file: Blob | File, fileName: string) {
   if (!file || !fileName) return;
 
+  const date = new Date().toISOString().slice(0, 10);
+
+  const lastDotIndex = fileName.lastIndexOf(".");
+  const name =
+    lastDotIndex !== -1 ? fileName.slice(0, lastDotIndex) : fileName;
+  const extension =
+    lastDotIndex !== -1 ? fileName.slice(lastDotIndex) : "";
+
+  const datedFileName = `${name}-${date}${extension}`;
+
   const url = URL.createObjectURL(file);
   const a = document.createElement("a");
+
   a.href = url;
-  a.download = fileName;
+  a.download = datedFileName;
+
   document.body.appendChild(a);
   a.click();
   a.remove();
+
   URL.revokeObjectURL(url);
 }
+
