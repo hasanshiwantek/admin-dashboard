@@ -504,6 +504,7 @@ const useAllProductsContainer = () => {
       setShowProductDeleteConfirm(false);
       setPendingDeleteProductIds([]);
     },
+    router
   };
 };
 

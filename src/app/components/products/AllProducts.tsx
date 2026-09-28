@@ -34,6 +34,7 @@ export default function AllProducts() {
     productDeleteMessage,
     productDeleteConfirm,
     closeProductDeleteConfirm,
+    router
   } = useAllProductsContainer();
 
   return (
@@ -42,6 +43,7 @@ export default function AllProducts() {
         title="All Products"
         buttonProps={{
           permission: "add_product",
+          onClick: () => router.push("/manage/products/add"),
         }}
       />
       <Table<any>

@@ -25,7 +25,7 @@ const OrderActionsDropdown: React.FC<OrderActionsDropdownProps> = ({
       <DropdownMenuTrigger asChild>{trigger}</DropdownMenuTrigger>
 
       <DropdownMenuContent
-        className="w-52 space-y-2 z-50"
+        className="w-52 space-y-2 z-50 custom-scroll"
         align="end"
         sideOffset={5}
       >

@@ -21,7 +21,7 @@ const styles = {
     more: "text-2xl! 2xl:text-[1.6rem]! px-5 py-2 rounded text-blue-600 hover:bg-blue-100 flex items-center gap-2",
   },
   underline: {
-    container: "flex 2xl:space-x-9 space-x-6 border-b mb-4",
+    container: "flex 2xl:space-x-9 space-x-6 border-b mb-4 overflow-x-auto no-scrollbar",
     tab: (active: boolean) =>
       cn(
         "text-2xl! pb-3 border-b-3 whitespace-nowrap",

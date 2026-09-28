@@ -98,7 +98,7 @@ const GlobalSearchBar = () => {
                 id: item.id,
                 label: `Order #${item.id}`,
                 subtitle: item.customer_email || "",
-                url: `/manage/orders/`,
+                  url: `/manage/orders?orderIdFrom=${item.id}&orderIdTo=${item.id}&expand=${item.id}`,
             })),
 
             ...customers.map((item: any) => ({

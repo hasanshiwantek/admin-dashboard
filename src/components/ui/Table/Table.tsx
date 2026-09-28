@@ -185,10 +185,11 @@ export default function Table<T>({
 
       {/* Selection header + pagination */}
       {((selectable && showRecordCount) || pagination || bulkActions) && (
-        <div className="flex items-center justify-between border-t border-b border-gray-200 px-4 py-2 bg-white text-sm">
-          <div className="flex items-center space-x-10">
+        <div className="flex flex-col xl:flex-row xl:items-center justify-between border-t border-b border-gray-200 px-4 py-2 bg-white text-sm">
+          {/* Updated container classes below */}
+          <div className="flex justify-between items-center gap-4 w-full xl:w-auto py-2 xl:p-6">
             {selectable && showRecordCount && (
-              <div className="flex justify-start items-center gap-2">
+              <div className="flex justify-start items-center gap-4">
                 <Checkbox
                   checked={isAllSelected}
                   onCheckedChange={(checked: boolean) =>
@@ -211,8 +212,8 @@ export default function Table<T>({
           </div>
 
           {pagination && (
-            <div className="flex items-center space-x-10 text-gray-700">
-              <div className="p-6">
+            <div className="flex items-center text-gray-700 ml-auto xl:ml-0">
+              <div className="py-2 xl:p-6">
                 <Pagination
                   currentPage={pagination.currentPage}
                   totalPages={pagination.totalPages}
@@ -375,14 +376,16 @@ export default function Table<T>({
 
       {/* Footer pagination */}
       {pagination && (
-        <div className="flex justify-end my-6">
-          <Pagination
-            currentPage={pagination.currentPage}
-            totalPages={pagination.totalPages}
-            onPageChange={pagination.onPageChange}
-            perPage={pagination.perPage}
-            onPerPageChange={pagination.onPerPageChange}
-          />
+        <div className="flex justify-end border-t border-b border-gray-200 px-4 py-2 bg-white text-sm">
+          <div className="xl:p-6">
+            <Pagination
+              currentPage={pagination.currentPage}
+              totalPages={pagination.totalPages}
+              onPageChange={pagination.onPageChange}
+              perPage={pagination.perPage}
+              onPerPageChange={pagination.onPerPageChange}
+            />
+          </div>
         </div>
       )}
     </div>
