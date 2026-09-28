@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "@/lib/axiosInstance";
 
-
 type ApplyCouponArgs = {
   couponCode: string;
   productIds: Array<number | string>;
@@ -32,12 +31,12 @@ export const fetchAllOrders = createAsyncThunk(
       });
 
       const res = await axiosInstance.get(
-        `dashboard/orders/list-orders?${params.toString()}`
+        `dashboard/orders/list-orders?${params.toString()}`,
       );
       return res.data;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to fetch orders"
+        err.response?.data?.message || "Failed to fetch orders",
       );
     }
   },
@@ -71,14 +70,10 @@ export const fetchDashboardOrderOverview = createAsyncThunk(
 
       return response.data;
     } catch (error: any) {
-      console.error(
-        "❌ Error fetching dashboard order overview:",
-        error,
-      );
+      console.error("❌ Error fetching dashboard order overview:", error);
 
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message ||
-        "Failed to fetch dashboard orders",
+        error.response?.data?.message || "Failed to fetch dashboard orders",
       );
     }
   },
@@ -128,7 +123,12 @@ export const fetchOrderByKeyword = createAsyncThunk(
       perPage,
       keyword,
       status,
-    }: { page: number; perPage: number | string; keyword: any; status?: string },
+    }: {
+      page: number;
+      perPage: number | string;
+      keyword: any;
+      status?: string;
+    },
     thunkAPI,
   ) => {
     try {
@@ -178,10 +178,10 @@ export const capturePayment = createAsyncThunk(
       return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message || "Failed to capture payment"
+        error.response?.data?.message || "Failed to capture payment",
       );
     }
-  }
+  },
 );
 export const captureMultiplePayment = createAsyncThunk(
   "orders/capturePayment",
@@ -275,7 +275,6 @@ export const updateShipment = createAsyncThunk(
   },
 );
 
-
 //PAYMENT INVOICE THUNK
 
 export const printPaymentInvoice = createAsyncThunk(
@@ -323,11 +322,19 @@ export const printInvoicePdf = createAsyncThunk(
 );
 export const printMultiInvoicePdf = createAsyncThunk(
   "orders/printMultiInvoicePdf",
-  async (orderIds: Array<number | string | { id?: number | string }>, thunkAPI) => {
+  async (
+    orderIds: Array<number | string | { id?: number | string }>,
+    thunkAPI,
+  ) => {
     try {
       const ids = orderIds
-        .map((item) => (typeof item === "object" && item !== null ? item.id : item))
-        .filter((id): id is number | string => id !== undefined && id !== null && id !== "");
+        .map((item) =>
+          typeof item === "object" && item !== null ? item.id : item,
+        )
+        .filter(
+          (id): id is number | string =>
+            id !== undefined && id !== null && id !== "",
+        );
 
       if (!ids.length) {
         return thunkAPI.rejectWithValue("No order IDs provided");
@@ -512,6 +519,7 @@ export const exportOrderCsv = createAsyncThunk(
         {
           params: payload,
           responseType: "blob",
+          signal: thunkAPI.signal,
           onDownloadProgress: (progressEvent) => {
             const loaded = progressEvent.loaded ?? 0;
             const total = progressEvent.total;
@@ -548,12 +556,14 @@ export const exportOrderCsv = createAsyncThunk(
       onProgress?.(100);
       return { blob, filename };
     } catch (error: any) {
+      if (thunkAPI.signal.aborted) {
+        return thunkAPI.rejectWithValue("Export cancelled");
+      }
       console.error("❌ Error Exporting CSV:", error);
       return thunkAPI.rejectWithValue("Failed to Export CSV");
     }
   },
 );
-
 
 export const fetchAllShipments = createAsyncThunk(
   "orders/fetchAllShipments",
@@ -629,7 +639,8 @@ export const advanceShipmentSearch = createAsyncThunk(
       if (data.shippingDate && data.shippingDate !== "Custom period") {
         params.shippingDate = data.shippingDate;
       }
-      if (data.shippingDateFrom) params.shippingDateFrom = data.shippingDateFrom;
+      if (data.shippingDateFrom)
+        params.shippingDateFrom = data.shippingDateFrom;
       if (data.shippingDateTo) params.shippingDateTo = data.shippingDateTo;
 
       if (data.orderDate && data.orderDate !== "Custom period") {
@@ -641,32 +652,30 @@ export const advanceShipmentSearch = createAsyncThunk(
       params.sortField = data.sortField ?? data.sortBy ?? "id";
       params.sortDirection = data.sortDirection ?? "asc";
       params.page = Number(data.page || 1);
-      params.pageSize = Number(data.pageSize ?? data.perPage ?? data.limit ?? 20);
+      params.pageSize = Number(
+        data.pageSize ?? data.perPage ?? data.limit ?? 20,
+      );
 
       const response = await axiosInstance.post(
         "dashboard/shipments/advanced-search",
-        params
+        params,
       );
       return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message || "Failed in advancing search"
+        error.response?.data?.message || "Failed in advancing search",
       );
     }
-  }
+  },
 );
-
 
 export const exportShipmentsCsv = createAsyncThunk(
   "shipments/exportShipmentsCsv",
   async (_, thunkAPI) => {
     try {
-      const res = await axiosInstance.get(
-        "dashboard/shipments/export-csv",
-        {
-          responseType: "blob",
-        },
-      );
+      const res = await axiosInstance.get("dashboard/shipments/export-csv", {
+        responseType: "blob",
+      });
 
       return res.data;
     } catch (err: any) {
@@ -727,10 +736,7 @@ export const deleteShipment = createAsyncThunk(
 //PRINT PACKAGE SLIP LOGIC
 export const fetchPackingSlipPdf = createAsyncThunk(
   "orders/fetchPackingSlipPdf",
-  async (
-    { shipmentId }: { shipmentId: number | string },
-    thunkAPI
-  ) => {
+  async ({ shipmentId }: { shipmentId: number | string }, thunkAPI) => {
     try {
       const response = await axiosInstance.get(
         `/dashboard/shipments/packing-slip/${shipmentId}`,
@@ -739,7 +745,7 @@ export const fetchPackingSlipPdf = createAsyncThunk(
           headers: {
             Accept: "application/pdf",
           },
-        }
+        },
       );
 
       return response.data;
@@ -756,15 +762,12 @@ export const fetchPackingSlipPdf = createAsyncThunk(
           // Blob JSON parse failed
         }
       } else {
-        message =
-          err.response?.data?.message ||
-          err.message ||
-          message;
+        message = err.response?.data?.message || err.message || message;
       }
 
       return thunkAPI.rejectWithValue(message);
     }
-  }
+  },
 );
 
 // IMPORT CSV THUNK
@@ -847,7 +850,9 @@ export const getReturnOrders = createAsyncThunk(
   "orders/getReturnOrders",
   async (_, thunkAPI) => {
     try {
-      const res = await axiosInstance.get(`dashboard/orders/admin-return-requests`);
+      const res = await axiosInstance.get(
+        `dashboard/orders/admin-return-requests`,
+      );
       return res.data;
     } catch (err: any) {
       console.error("❌ Error fetching returns:", err);
@@ -861,14 +866,17 @@ export const fetchShippingRates = createAsyncThunk(
   "shippingZone/fetchShippingRates",
   async ({ data }: { data: any }, thunkAPI) => {
     try {
-      const res = await axiosInstance.post(`web/checkout/get-shipping-rates`, data);
+      const res = await axiosInstance.post(
+        `web/checkout/get-shipping-rates`,
+        data,
+      );
       return res.data;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to fetch shipping rates"
+        err.response?.data?.message || "Failed to fetch shipping rates",
       );
     }
-  }
+  },
 );
 // export const applyCoupon = createAsyncThunk(
 //   "order/fetchCouponByCode",
@@ -888,7 +896,10 @@ export const fetchShippingRates = createAsyncThunk(
 
 export const applyCoupon = createAsyncThunk(
   "order/fetchCouponByCode",
-  async ({ couponCode, productIds, email }: ApplyCouponArgs, { rejectWithValue }) => {
+  async (
+    { couponCode, productIds, email }: ApplyCouponArgs,
+    { rejectWithValue },
+  ) => {
     try {
       const res = await axiosInstance.get(
         "dashboard/coupons/get-couponcode-dashboard",
@@ -907,39 +918,36 @@ export const applyCoupon = createAsyncThunk(
             });
             return search.toString();
           },
-        }
+        },
       );
       return res.data;
     } catch (err: any) {
       return rejectWithValue(
         err?.response?.data?.message ||
-        err?.response?.data ||
-        "Coupon request failed"
+          err?.response?.data ||
+          "Coupon request failed",
       );
     }
-  }
+  },
 );
 
 /// fetch shipment by id
 // FETCH SHIPMENT BY ID
 export const fetchShipmentById = createAsyncThunk(
   "orders/fetchShipmentById",
-  async (
-    { shipmentId }: { shipmentId: number | string },
-    thunkAPI
-  ) => {
+  async ({ shipmentId }: { shipmentId: number | string }, thunkAPI) => {
     try {
       const response = await axiosInstance.get(
-        `dashboard/shipments/get-shipment/${shipmentId}`
+        `dashboard/shipments/get-shipment/${shipmentId}`,
       );
 
       return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message || "Failed to fetch shipment"
+        error.response?.data?.message || "Failed to fetch shipment",
       );
     }
-  }
+  },
 );
 // COUPON USAGE DRAFT THUNK
 
@@ -994,8 +1002,7 @@ export const removeCouponUsage = createAsyncThunk(
       console.error("❌ Error Removing Coupon Usage:", error);
 
       return thunkAPI.rejectWithValue(
-        error?.response?.data?.message ||
-        "Failed to remove coupon usage",
+        error?.response?.data?.message || "Failed to remove coupon usage",
       );
     }
   },
@@ -1127,7 +1134,6 @@ const orderSlice = createSlice({
         state.returnOrders = action.payload;
       })
 
-
       // update shipment
       .addCase(updateShipment.rejected, (state, action) => {
         state.shipmentLoader = false;
@@ -1142,7 +1148,6 @@ const orderSlice = createSlice({
         state.returnOrders = action.payload;
       })
 
-
       .addCase(fetchShippingRates.pending, (state) => {
         state.ratesLoader = true;
       })
@@ -1155,23 +1160,19 @@ const orderSlice = createSlice({
         state.error = "Shipping is not available in your region.";
       })
 
-
-
       .addCase(applyCoupon.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(applyCoupon.fulfilled, (state, action) => {
         state.loading = false;
-        state.appliedCoupon = action.payload.data
+        state.appliedCoupon = action.payload.data;
         state.error = null;
       })
       .addCase(applyCoupon.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })
-
-
 
       .addCase(fetchDashboardOrderOverview.pending, (state) => {
         state.dashboardOrdersLoading = true;
@@ -1205,7 +1206,7 @@ const orderSlice = createSlice({
           (action.payload as string) ||
           action.error.message ||
           "Failed to fetch shipment";
-      })
+      });
     // builder.addCase(deleteDraftOrders.fulfilled, (state, action) => {
     //   state.draftOrder = state.draftOrder?.data?.filter(
     //     (order: any) => order?.order?.id !== action.meta.arg.id
