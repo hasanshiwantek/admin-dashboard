@@ -31,3 +31,13 @@ export enum LocalStorageKeys {
   CurrentStore = "currentStore",
   StoreId = "storeId",
 }
+
+export enum DateTimeFormat {
+  /** Example: 1st Jan 2024 @ 2:30 PM */
+  ORDINAL_DATE_TIME = "Do MMM YYYY [@] h:mm A",
+  ORDINAL_DATE = "Do MMM YYYY",
+  SHORT_DATE = "MMM DD, YYYY",
+  ISO_DATE = "YYYY-MM-DD",
+  TIME_12H = "h:mm A",
+  TIME_24H = "HH:mm",
+}

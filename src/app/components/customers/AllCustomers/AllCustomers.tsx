@@ -1,58 +1,59 @@
 "use client";
 
+import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Table from "@/components/ui/Table/Table";
 import TableTabs from "@/components/ui/Table/TableTabs";
 import { DownloadIcon, PlusIcon, SearchIcon, Trash } from "lucide-react";
-import Link from "next/link";
 import { useMemo } from "react";
 import CustomerNotesModal from "../edit/CustomerNotesModal";
 import { getCustomerColumns } from "./AllCustomersColumn";
 import useAllCustomersContainer from "./AllCustomersContainer";
 import { renderExpandedRow } from "./CustomerDetailRow";
-import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
+
+// Shared height so toolbar buttons and input line up
+const TOOLBAR_CONTROL = "!h-13 !py-0 !my-0";
 
 const AllCustomers = () => {
-  
-const {
-  table,
-  customerList,
-  total,
-  totalPages,
-  currentPage,
-  perPage,
-  activeTab,
-  loading,
-  error,
-  selectedCustomers,
-  keyword,
-  setKeyword,
-  expandedRow,
-  showCustomerNotes,
-  setShowCustomerNotes,
-  selectedOrderId,
-  setSelectedOrderId,
+  const {
+    table,
+    customerList,
+    total,
+    totalPages,
+    currentPage,
+    perPage,
+    activeTab,
+    loading,
+    error,
+    selectedCustomers,
+    keyword,
+    setKeyword,
+    expandedRow,
+    showCustomerNotes,
+    setShowCustomerNotes,
+    selectedOrderId,
+    setSelectedOrderId,
 
-  // Delete confirmation
-  showDeleteModal,
-  setShowDeleteModal,
-  confirmDeleteCustomers,
+    // Delete confirmation
+    showDeleteModal,
+    setShowDeleteModal,
+    confirmDeleteCustomers,
 
-  getDropdownActions,
-  handleSelectAll,
-  handleSelectOne,
-  deleteCustomerHandler,
-  toggleRow,
-  filterHandler,
-  handleExport,
-} = useAllCustomersContainer();
+    getDropdownActions,
+    handleSelectAll,
+    handleSelectOne,
+    deleteCustomerHandler,
+    toggleRow,
+    filterHandler,
+    handleExport,
+    router,
+  } = useAllCustomersContainer();
 
- const customerColumns = useMemo(
-  () => getCustomerColumns(expandedRow, toggleRow),
-  [expandedRow, toggleRow],
-);
-  
+  const customerColumns = useMemo(
+    () => getCustomerColumns(expandedRow, toggleRow),
+    [expandedRow, toggleRow],
+  );
 
   if (error) {
     return (
@@ -75,18 +76,18 @@ const {
         variant="underline"
       />
       <div className="flex flex-wrap gap-4 mb-6 items-center">
-        <Link href="/manage/customers/add">
-          <Button
-            variant="outline"
-            className="flex items-center gap-2 !p-6 btn-outline-primary 2xl:!text-2xl"
-          >
-            <PlusIcon className="!w-5 !h-5" /> Add
-          </Button>
-        </Link>
+        <Button
+          variant="outline"
+          className={`flex items-center gap-2 !px-6 btn-outline-primary 2xl:!text-2xl ${TOOLBAR_CONTROL}`}
+          onClick={() => router.push("/manage/customers/add")}
+          permission="add_customer"
+        >
+          <PlusIcon className="!w-5 !h-5" /> Add
+        </Button>
 
         <Button
           variant="outline"
-          className="flex items-center gap-2 !p-6 btn-outline-primary"
+          className={`flex items-center gap-2 !px-6 btn-outline-primary ${TOOLBAR_CONTROL}`}
           onClick={deleteCustomerHandler}
         >
           <Trash className="!w-5 !h-5" />
@@ -95,12 +96,13 @@ const {
         <Button
           onClick={handleExport}
           variant="outline"
-          className="flex items-center gap-2 !p-6 btn-outline-primary 2xl:!text-2xl"
+          className={`flex items-center gap-2 !px-6 btn-outline-primary 2xl:!text-2xl ${TOOLBAR_CONTROL}`}
         >
           <DownloadIcon className="!w-5 !h-5" /> Export selected customers
         </Button>
 
         <Input
+          className={TOOLBAR_CONTROL}
           placeholder="Filter by keyword"
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
@@ -108,7 +110,7 @@ const {
 
         <Button
           variant="default"
-          className="flex items-center gap-2 !p-6 btn-outline-primary 2xl:!text-2xl"
+          className={`flex items-center gap-2 !px-6 btn-outline-primary 2xl:!text-2xl ${TOOLBAR_CONTROL}`}
           onClick={filterHandler}
         >
           <SearchIcon className="!w-5 !h-5" /> Search
@@ -162,14 +164,14 @@ const {
         onClose={() => setShowCustomerNotes(false)}
         orderId={selectedOrderId}
       />
-   <ConfirmationModal
-  open={showDeleteModal}
-  onOpenChange={setShowDeleteModal}
-  variant="warning"
-  title="Delete Selected Customers?"
-  description="Are you sure you want to delete the selected customer(s)?"
-  onConfirm={confirmDeleteCustomers}
-/>
+      <ConfirmationModal
+        open={showDeleteModal}
+        onOpenChange={setShowDeleteModal}
+        variant="warning"
+        title="Delete Selected Customers?"
+        description="Are you sure you want to delete the selected customer(s)?"
+        onConfirm={confirmDeleteCustomers}
+      />
     </div>
   );
 };

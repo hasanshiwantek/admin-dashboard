@@ -1,7 +1,11 @@
-import { BASE62_STRING } from "@/const/appConstants";
+import { BASE62_STRING, DateTimeFormat } from "@/const/appConstants";
 import { clsx, type ClassValue } from "clsx";
-import { isEmpty } from "lodash";
+import dayjs from "dayjs";
+import advancedFormat from "dayjs/plugin/advancedFormat";
 import { twMerge } from "tailwind-merge";
+
+// Extend dayjs with the advancedFormat plugin to support 'Do'
+dayjs.extend(advancedFormat);
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -112,10 +116,8 @@ export function downloadFile(file: Blob | File, fileName: string) {
   const date = new Date().toISOString().slice(0, 10);
 
   const lastDotIndex = fileName.lastIndexOf(".");
-  const name =
-    lastDotIndex !== -1 ? fileName.slice(0, lastDotIndex) : fileName;
-  const extension =
-    lastDotIndex !== -1 ? fileName.slice(lastDotIndex) : "";
+  const name = lastDotIndex !== -1 ? fileName.slice(0, lastDotIndex) : fileName;
+  const extension = lastDotIndex !== -1 ? fileName.slice(lastDotIndex) : "";
 
   const datedFileName = `${name}-${date}${extension}`;
 
@@ -132,3 +134,15 @@ export function downloadFile(file: Blob | File, fileName: string) {
   URL.revokeObjectURL(url);
 }
 
+export const formatDateTime = (
+  value?: string | number | Date | null,
+  format: DateTimeFormat | string = DateTimeFormat.ORDINAL_DATE_TIME,
+  fallback = "-",
+): string => {
+  if (!value) return fallback;
+
+  const date = dayjs(value);
+  if (!date.isValid()) return fallback;
+
+  return date.format(format);
+};
