@@ -1,5 +1,6 @@
 "use client";
 
+import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Table from "@/components/ui/Table/Table";
@@ -33,6 +34,12 @@ const AllCustomers = () => {
     setShowCustomerNotes,
     selectedOrderId,
     setSelectedOrderId,
+
+    // Delete confirmation
+    showDeleteModal,
+    setShowDeleteModal,
+    confirmDeleteCustomers,
+
     getDropdownActions,
     handleSelectAll,
     handleSelectOne,
@@ -156,6 +163,14 @@ const AllCustomers = () => {
         open={showCustomerNotes}
         onClose={() => setShowCustomerNotes(false)}
         orderId={selectedOrderId}
+      />
+      <ConfirmationModal
+        open={showDeleteModal}
+        onOpenChange={setShowDeleteModal}
+        variant="warning"
+        title="Delete Selected Customers?"
+        description="Are you sure you want to delete the selected customer(s)?"
+        onConfirm={confirmDeleteCustomers}
       />
     </div>
   );
