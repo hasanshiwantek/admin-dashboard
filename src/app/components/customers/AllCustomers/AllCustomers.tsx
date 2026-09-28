@@ -1,5 +1,6 @@
 "use client";
 
+import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Table from "@/components/ui/Table/Table";
@@ -7,7 +8,7 @@ import TableTabs from "@/components/ui/Table/TableTabs";
 import { DownloadIcon, PlusIcon, SearchIcon, Trash } from "lucide-react";
 import { useMemo } from "react";
 import CustomerNotesModal from "../edit/CustomerNotesModal";
-import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
+
 import { useAlert } from "@/hooks/useAlert";
 import useAllCustomersContainer from "./AllCustomersContainer";
 import { getCustomerColumns } from "./AllCustomersColumn";
@@ -35,6 +36,12 @@ const AllCustomers = () => {
     setShowCustomerNotes,
     selectedOrderId,
     setSelectedOrderId,
+
+    // Delete confirmation
+    showDeleteModal,
+    setShowDeleteModal,
+    confirmDeleteCustomers,
+
     getDropdownActions,
     handleSelectAll,
     handleSelectOne,
@@ -159,10 +166,15 @@ const AllCustomers = () => {
         onClose={() => setShowCustomerNotes(false)}
         orderId={selectedOrderId}
       />
-      
-
-    {/* <Alert /> */}
-     </div>
+      <ConfirmationModal
+        open={showDeleteModal}
+        onOpenChange={setShowDeleteModal}
+        variant="warning"
+        title="Delete Selected Customers?"
+        description="Are you sure you want to delete the selected customer(s)?"
+        onConfirm={confirmDeleteCustomers}
+      />
+    </div>
   );
 };
 

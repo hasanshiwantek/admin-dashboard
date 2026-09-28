@@ -1,6 +1,7 @@
 "use client";
 
 import useTableContainer from "@/components/ui/Table/TableContainer";
+import { TableTab } from "@/components/ui/Table/types";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { refetchCustomers } from "@/lib/customerUtils";
 import {
@@ -14,9 +15,8 @@ import { errorMessage } from "@/utils/message";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import * as XLSX from "xlsx";
-import { TableTab } from "@/components/ui/Table/types";
 
-export const CustomerTabs:TableTab[]=  [
+export const CustomerTabs: TableTab[] = [
   {
     key: "All customers",
     label: "All customers",
@@ -43,17 +43,10 @@ const useAllCustomersContainer = () => {
     pageParam: "page",
     perPageParam: "pageSize",
     tabs: CustomerTabs,
-    fetcher: (params) =>
-      dispatch(
-        fetchCustomers(params),
-      ),
+    fetcher: (params) => dispatch(fetchCustomers(params)),
   });
 
-  const {
-    tab: activeTab,
-    page: currentPage,
-    perPage,
-  } = table;
+  const { tab: activeTab, page: currentPage, perPage } = table;
 
   const total = pagination?.total || 0;
   const totalPages =
@@ -67,6 +60,7 @@ const useAllCustomersContainer = () => {
   );
   const [showCustomerNotes, setShowCustomerNotes] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
   const [keyword, setKeyword] = useState("");
 
@@ -134,24 +128,27 @@ const useAllCustomersContainer = () => {
     }
   };
 
-  const deleteCustomerHandler = async () => {
+  const deleteCustomerHandler = () => {
     if (!selectedCustomers || selectedCustomers.length === 0) {
       alert("No customers selected for deletion.");
       return;
     }
 
-    const id = selectedCustomers.map((c) => c?.id);
-    const payload = { ids: id };
+    setShowDeleteModal(true);
+  };
+  const confirmDeleteCustomers = async () => {
+    const ids = selectedCustomers.map((customer) => customer?.id);
 
-    const confirm = window.confirm("Delete Selected Customer");
-
-    if (!confirm) return;
+    const payload = {
+      ids,
+    };
 
     try {
       const result = await dispatch(deleteCustomer({ data: payload }));
 
       if (deleteCustomer.fulfilled.match(result)) {
         setSelectedCustomers([]);
+        setShowDeleteModal(false);
         table.refetch();
       } else {
         console.error("Failed to delete customers:", result.payload);
@@ -164,8 +161,6 @@ const useAllCustomersContainer = () => {
   const toggleRow = (id: number) => {
     setExpandedRow((prev) => (prev === id ? null : id));
   };
-
-
 
   const updateCustomerGroupStatus = async (
     customerId: number | string,
@@ -278,7 +273,6 @@ const useAllCustomersContainer = () => {
   return {
     table,
     customerList,
-    pagination,
     total,
     totalPages,
     currentPage,
@@ -298,15 +292,16 @@ const useAllCustomersContainer = () => {
     handleSelectAll,
     handleSelectOne,
     deleteCustomerHandler,
+    showDeleteModal,
+    setShowDeleteModal,
+    confirmDeleteCustomers,
     toggleRow,
     filterHandler,
     handleExport,
     storeCredits,
-    setStoreCredits,
     updateCustomerGroupStatus,
     updateCustomerStoreCredit,
-    router
-    
+    router,
   };
 };
 
