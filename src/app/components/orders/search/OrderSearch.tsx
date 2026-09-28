@@ -421,17 +421,17 @@ const OrderSearch = () => {
                     <SelectValue placeholder="" />
                   </SelectTrigger>
                   <SelectContent>
-                    {[
-                      "date",
-                      "id",
-                      "customer",
-                      "status",
-                      "total",
-                    ].map((opt) => (
-                      <SelectItem key={opt} className="capitalize" value={opt}>
-                        {opt}
-                      </SelectItem>
-                    ))}
+                    {["date", "id", "customer", "status", "total"].map(
+                      (opt) => (
+                        <SelectItem
+                          key={opt}
+                          className="capitalize"
+                          value={opt}
+                        >
+                          {opt}
+                        </SelectItem>
+                      ),
+                    )}
                   </SelectContent>
                 </Select>
 
@@ -454,7 +454,11 @@ const OrderSearch = () => {
 
       {/* SUBMIT BUTTON */}
       <div className="sticky bottom-0 w-full border-t p-6 bg-white flex justify-end gap-4">
-        <button className="btn-outline-primary" type="button">
+        <button
+          onClick={() => router.push("/manage/orders")}
+          className="btn-outline-primary"
+          type="button"
+        >
           Cancel
         </button>
         <button className="btn-primary" type="submit">
