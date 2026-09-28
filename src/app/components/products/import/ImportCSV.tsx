@@ -9,6 +9,7 @@ import { importCsv } from "@/redux/slices/productSlice";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { useRouter } from "next/navigation";
 import { ImportProgressModal } from "./ImportProgressModal";
+import { useAlert } from "@/hooks/useAlert";
 const ImportCsv = () => {
   const methods = useForm({
     defaultValues: {
@@ -30,7 +31,7 @@ const ImportCsv = () => {
   // Progress modal state
   const [showProgressModal, setShowProgressModal] = useState(false);
   const [progressKey, setProgressKey] = useState("");
-
+  const { showAlert, Alert } = useAlert();
   // Check for ongoing import on mount AND when component becomes visible
   useEffect(() => {
     const checkOngoingImport = () => {
@@ -138,15 +139,24 @@ const ImportCsv = () => {
           localStorage.setItem("importModalHidden", "false");
         } else {
           console.error("❌ No progress_key found in response:s", result);
-          alert("Import started but progress tracking unavailable");
+          showAlert({
+            title: "Import Started",
+            message: "Import started but progress tracking unavailable.",
+          });
         }
       } else {
         console.error("❌ Failed to import CSV:", result);
-        alert("Failed to start import. Please try again.");
+        showAlert({
+          title: "Import Failed",
+          message: "Failed to start import. Please try again.",
+        });
       }
     } catch (err) {
       console.error("❌ Unexpected error:", err);
-      alert("An unexpected error occurred. Please try again.");
+      showAlert({
+        title: "Unexpected Error",
+        message: "An unexpected error occurred. Please try again.",
+      });
     }
   };
 
@@ -179,15 +189,20 @@ const ImportCsv = () => {
 
                 // 🔒 Block new upload if import is running
                 if (existingImport) {
-                  alert(
-                    "An import is already running. Please wait until it finishes."
-                  );
+                  showAlert({
+                    title: "Import Already Running",
+                    message:
+                      "An import is already running. Please wait until it finishes.",
+                  });
                   return;
                 }
 
                 const file = data.file;
                 if (!file || file.length === 0) {
-                  alert("Please upload a file before proceeding.");
+                  showAlert({
+                    title: "File Upload Required",
+                    message: "Please upload a file before proceeding.",
+                  });
                   return;
                 }
 
@@ -221,6 +236,7 @@ const ImportCsv = () => {
           onComplete={handleImportComplete}
         />
       </div>
+      <Alert />
     </>
   );
 };

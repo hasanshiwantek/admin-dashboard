@@ -80,3 +80,31 @@ export interface MappingField {
   type: "dropdown" | "radio-dropdown";
   options?: string[]; // For radio
 };
+
+//export files
+export enum ExportModalStatus {
+  Confirm = "confirm",
+  Processing = "processing",
+  Ready = "ready",
+  Error = "error",
+}
+
+export enum ExportTab {
+  Options = "exportOptions",
+  Preview = "exportPreview",
+}
+export interface ExportModalProps {
+  open: boolean;
+  status: ExportModalStatus;
+  progress: number;
+  fileBlob?: Blob | null;
+  fileName?: string;
+  errorMessage?: string;
+  confirmMessage?: React.ReactNode;
+  processingMessage?: React.ReactNode;
+  readyMessage?: React.ReactNode;
+  processingLabel?: string;
+  entityName?: string;
+  onClose: () => void;
+  onStartExport: () => void;
+}

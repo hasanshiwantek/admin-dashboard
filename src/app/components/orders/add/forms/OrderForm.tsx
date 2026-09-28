@@ -1,13 +1,13 @@
 "use client";
-import { useState, useEffect } from "react";
-import StepOne from "./StepOne";
-import StepTwo from "./StepTwo";
-import StepThree from "./StepThree";
-import StepFour from "./StepFour";
-import StepTracker from "./StepTracker";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { fetchOrderById } from "@/redux/slices/orderSlice"; // ← create this thunk
-import { useForm, FormProvider } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import StepFour from "./StepFour";
+import StepOne from "./StepOne";
+import StepThree from "./StepThree";
+import StepTracker from "./StepTracker";
+import StepTwo from "./StepTwo";
 export default function OrderForm({ orderId }: { orderId: string }) {
   const methods = useForm(); // ⬅️ this controls ALL steps
   const { reset } = methods;
@@ -82,7 +82,7 @@ export default function OrderForm({ orderId }: { orderId: string }) {
           billingState: order.billingAddress?.state || "",
           billingZip: order.billingAddress?.zip || "",
 
-          // 
+          //
           selectedProducts: (order.products || []).map((p: any) => ({
             id: p.id,
             quantity: p.qty ?? p.quantity ?? 1,
@@ -90,6 +90,9 @@ export default function OrderForm({ orderId }: { orderId: string }) {
             sku: p.sku,
             price: p.price,
             image: p.image,
+            freeShipping: p.freeShipping,
+            fixedShippingCost: p.fixedShippingCost,
+            dimensions: p.dimensions,
           })),
           // shipping/payment are on the root order object (not billingInformation)
           shippingMethod: order.shippingMethod || {
@@ -111,8 +114,7 @@ export default function OrderForm({ orderId }: { orderId: string }) {
 
         reset(transformed); // populate form for all steps
       })
-      .catch((err) => {
-      });
+      .catch((err) => {});
   }, [orderId]);
 
   return (

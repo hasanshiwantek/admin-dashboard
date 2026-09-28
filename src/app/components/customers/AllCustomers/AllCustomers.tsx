@@ -3,25 +3,16 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Table from "@/components/ui/Table/Table";
-import { useRouter } from "next/navigation";
+import TableTabs from "@/components/ui/Table/TableTabs";
+import { DownloadIcon, PlusIcon, SearchIcon, Trash } from "lucide-react";
 import Link from "next/link";
 import { useMemo } from "react";
-import {
-  DownloadIcon,
-  PlusIcon,
-  SearchIcon,
-  Trash,
-} from "lucide-react";
 import CustomerNotesModal from "../edit/CustomerNotesModal";
-import useAllCustomersContainer, {
-  CustomerTabs,
-} from "./AllCustomersContainer";
-import TableTabs from "@/components/ui/Table/TableTabs";
 import { getCustomerColumns } from "./AllCustomersColumn";
+import useAllCustomersContainer from "./AllCustomersContainer";
 import { renderExpandedRow } from "./CustomerDetailRow";
 
 const AllCustomers = () => {
-  
   const {
     table,
     customerList,
@@ -49,11 +40,10 @@ const AllCustomers = () => {
     handleExport,
   } = useAllCustomersContainer();
 
- const customerColumns = useMemo(
-  () => getCustomerColumns(expandedRow, toggleRow),
-  [expandedRow, toggleRow],
-);
-  
+  const customerColumns = useMemo(
+    () => getCustomerColumns(expandedRow, toggleRow),
+    [expandedRow, toggleRow],
+  );
 
   if (error) {
     return (
@@ -68,13 +58,13 @@ const AllCustomers = () => {
       <div className="mb-6">
         <h1 className="!font-light 2xl:!text-5xl">View customers</h1>
       </div>
-<TableTabs
-  tabs={table.tabs}
-  activeTab={activeTab}
-  onTabChange={table.setTab}
-  maxVisibleTabs={7}
-  variant="underline"
-/>
+      <TableTabs
+        tabs={table.tabs}
+        activeTab={activeTab}
+        onTabChange={table.setTab}
+        maxVisibleTabs={7}
+        variant="underline"
+      />
       <div className="flex flex-wrap gap-4 mb-6 items-center">
         <Link href="/manage/customers/add">
           <Button
@@ -140,12 +130,12 @@ const AllCustomers = () => {
           onToggleAll={(checked) => handleSelectAll(checked)}
           rowActions={getDropdownActions}
           renderExpandedRow={(customer) =>
-  renderExpandedRow(
-    customer,
-    setSelectedOrderId,
-    setShowCustomerNotes,
-  )
-}
+            renderExpandedRow(
+              customer,
+              setSelectedOrderId,
+              setShowCustomerNotes,
+            )
+          }
           isRowExpanded={(customer) => expandedRow === customer?.id}
           pagination={{
             currentPage,
@@ -163,6 +153,30 @@ const AllCustomers = () => {
         onClose={() => setShowCustomerNotes(false)}
         orderId={selectedOrderId}
       />
+      {/* <ConfirmationModal
+        open={showDeleteModal}
+        onOpenChange={setShowDeleteModal}
+        variant="warning"
+        title="Delete Selected Customers?"
+        description="Are you sure you want to delete the selected customer(s)?"
+        onConfirm={async () => {
+          const id = selectedCustomers?.map((c) => c?.id);
+          const payload = { ids: id };
+
+          try {
+            const result = await dispatch(deleteCustomer({ data: payload }));
+
+            if (deleteCustomer.fulfilled.match(result)) {
+              setSelectedCustomers([]);
+              setShowDeleteModal(false);
+            } else {
+              console.error("Failed to delete customers:", result.payload);
+            }
+          } catch (err) {
+            console.error("Error deleting customers:", err);
+          }
+        }}
+      /> */}
     </div>
   );
 };

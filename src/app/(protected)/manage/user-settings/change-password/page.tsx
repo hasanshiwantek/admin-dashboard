@@ -11,6 +11,7 @@ import { logout, profileUpdatePassword } from "@/redux/slices/authSlice";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
+import { useAlert } from "@/hooks/useAlert";
 
 // Component for displaying a single password requirement
 const RequirementItem = ({ text, isMet }: { text: any; isMet: any }) => (
@@ -45,6 +46,7 @@ const Page = () => {
   const [showCurrent, setShowCurrent] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+    const { showAlert, Alert } = useAlert();
   const router = useRouter();
   // Password requirement logic
   const requirements = {
@@ -60,15 +62,24 @@ const Page = () => {
 
   const handleSave = () => {
     if (!currentPassword || !newPassword || !confirmPassword) {
-      alert("Please fill out all password fields.");
+     showAlert({
+  title: "Password Fields Required",
+  message: "Please fill out all password fields.",
+});
       return;
     }
     if (!isNewPasswordValid) {
-      alert("New password does not meet all requirements.");
+     showAlert({
+  title: "Password Requirements",
+  message: "New password does not meet all requirements.",
+});
       return;
     }
     if (!passwordsMatch) {
-      alert("New and confirmation passwords do not match.");
+      showAlert({
+  title: "Password Mismatch",
+  message: "New and confirmation passwords do not match.",
+});
       return;
     }
 
@@ -244,6 +255,7 @@ const Page = () => {
           </div>
         </div>
       </div>
+       <Alert />
     </div>
   );
 };

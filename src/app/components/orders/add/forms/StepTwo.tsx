@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import AddCustomProductModal from "../AddCustomProductModal";
 import ProductSelectModal from "../ProductSelectModal";
 import { errorMessage } from "@/utils/message";
+import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
 
 export default function StepTwo({ step, setStep }: any) {
   const { setValue, handleSubmit, control } = useFormContext();
@@ -20,6 +21,7 @@ export default function StepTwo({ step, setStep }: any) {
 
   const [selectedProducts, setSelectedProducts] = useState<any[]>([]);
   const [showModal, setShowModal] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -62,12 +64,14 @@ export default function StepTwo({ step, setStep }: any) {
     );
   };
 
-  const handleCancel = () => {
-    if (window.confirm("Are you sure you want to cancel this order?")) {
-      router.push("/manage/orders/");
-    }
-  };
-
+  // const handleCancel = () => {
+  //   if (window.confirm("Are you sure you want to cancel this order?")) {
+  //     router.push("/manage/orders/");
+  //   }
+  // };
+const handleCancel = () => {
+  setShowCancelModal(true);
+};
   const handleProductSelect = (product: any) => {
     if (selectedProducts.some((p) => p.id === product.id)) return;
 
@@ -205,6 +209,17 @@ export default function StepTwo({ step, setStep }: any) {
           Next
         </button>
       </div>
+      <ConfirmationModal
+  open={showCancelModal}
+  onOpenChange={setShowCancelModal}
+  variant="warning"
+  title="Cancel order?"
+  description="Are you sure you want to cancel this order?"
+  onConfirm={() => {
+    setShowCancelModal(false);
+    router.push("/manage/orders/");
+  }}
+/>
     </form>
   );
 }

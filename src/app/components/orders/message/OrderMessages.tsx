@@ -26,6 +26,7 @@ import { Flag } from 'lucide-react';
 import { useRouter, useParams } from "next/navigation";
 import OrderActionsDropdown from "../OrderActionsDropdown";
 import Spinner from "../../loader/Spinner";
+import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
 
 export default function OrderMessages() {
     const dispatch = useAppDispatch();
@@ -39,6 +40,7 @@ export default function OrderMessages() {
     );
 
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     useEffect(() => {
         if (orderId) {
@@ -61,14 +63,18 @@ export default function OrderMessages() {
     };
 
     // ── Bulk delete ──────────────────────────────────────────────────────────
-    const handleDeleteSelected = async () => {
-        if (!selectedIds.length) return;
-        const ok = window.confirm(`Delete ${selectedIds.length} message(s)?`);
-        if (!ok) return;
-        await dispatch(deleteOrderMessages({ ids: selectedIds }));
-        dispatch(fetchOrderMessages({ orderId }));
-        setSelectedIds([]);
-    };
+    // const handleDeleteSelected = async () => {
+    //     if (!selectedIds.length) return;
+    //     const ok = window.confirm(`Delete ${selectedIds.length} message(s)?`);
+    //     if (!ok) return;
+    //     await dispatch(deleteOrderMessages({ ids: selectedIds }));
+    //     dispatch(fetchOrderMessages({ orderId }));
+    //     setSelectedIds([]);
+    // };
+    const handleDeleteSelected = () => {
+    if (!selectedIds.length) return;
+    setShowDeleteModal(true);
+};
 
     // ── Row dropdown ─────────────────────────────────────────────────────────
     const getRowActions = (message: any) => [
@@ -325,6 +331,19 @@ export default function OrderMessages() {
                     </TableBody>
                 </Table>
             </div>
+            <ConfirmationModal
+    open={showDeleteModal}
+    onOpenChange={setShowDeleteModal}
+    variant="warning"
+    title="Delete messages?"
+    description={`Are you sure you want to delete ${selectedIds.length} message?`}
+    onConfirm={async () => {
+        await dispatch(deleteOrderMessages({ ids: selectedIds }));
+        dispatch(fetchOrderMessages({ orderId }));
+        setSelectedIds([]);
+        setShowDeleteModal(false);
+    }}
+/>
         </div>
     );
 }
