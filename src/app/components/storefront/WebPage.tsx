@@ -57,10 +57,11 @@ const WebPage = () => {
   const router = useRouter();
   const { id } = useParams();
   const submitActionRef = useRef<"exit" | "keepEditing" | "addAnother">("exit");
-  const [pageType, showTheseFields, watchedName] = watch([
+  const [pageType, showTheseFields, watchedName, pageContent] = watch([
     "pageType",
     "showTheseFields",
     "pageName",
+    "pageContent",
   ]);
   const isEdit = !!id;
 

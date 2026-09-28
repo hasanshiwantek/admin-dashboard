@@ -1,5 +1,7 @@
 "use client";
 
+import { useAlert } from "@/hooks/useAlert";
+import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
 import {
   Calendar,
@@ -22,8 +24,7 @@ import { toast } from "react-toastify";
 import { COMPLETED, riskConfig } from "./constant";
 import { OrderDetailRowProps } from "./types";
 import { findCountry } from "./utils";
-import { cn } from "@/lib/utils";
-import { useAlert } from "@/hooks/useAlert";
+
 const copyBilling = (info: any) => {
   if (!info) return;
   const text = [
@@ -37,13 +38,15 @@ const copyBilling = (info: any) => {
   navigator.clipboard.writeText(text);
   toast.success("Address copied!");
 };
-const { showAlert, Alert } = useAlert();
+
 export default function OrderDetailRow({
   order,
   onCaptureFunds,
   onViewShipmentId,
   onShipItems,
 }: OrderDetailRowProps) {
+  
+  const { showAlert, Alert } = useAlert();
   const countryData = findCountry(order?.billingAddress?.country);
   const countryDataForCustomer = findCountry(
     order?.billingInformation?.country,

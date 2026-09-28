@@ -1,11 +1,16 @@
+"use client";
+
+import { usePermissions, type PermissionCheck } from "@/hooks/usePermissions";
+import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
-import { cn } from "@/lib/utils";
 
 export type ButtonProps = React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean;
+    permission?: PermissionCheck;
+    noPermission?: "hide" | "disable";
   };
 
 const buttonVariants = cva(
@@ -18,7 +23,7 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
         outline:
-          "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+          "text-[#2c83ec] border border-[#2c83ec] font-medium rounded px-4 py-[8px] text-xl transition-all my-1 duration-200 cursor-pointer bg-transparent hover:bg-[#f1f8fe]",
         secondary:
           "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
         ghost:
@@ -27,10 +32,10 @@ const buttonVariants = cva(
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",
-        sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
-        lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
-        xl: "h-14 rounded-md px-7 has-[>svg]:px-5",
-        xxl: "h-18 rounded-lg px-8 has-[>svg]:px-6",
+        sm: "h-8 rounded-sm gap-1.5 px-3 has-[>svg]:px-2.5",
+        lg: "h-10 rounded-sm px-6 has-[>svg]:px-4",
+        xl: "h-14 rounded-sm px-7 has-[>svg]:px-5",
+        xxl: "h-18 rounded-sm px-8 has-[>svg]:px-6",
         icon: "size-9",
       },
     },
@@ -41,13 +46,48 @@ const buttonVariants = cva(
   },
 );
 
-function Button({
+function Button({ permission, noPermission, ...props }: ButtonProps) {
+  // Only buttons that declare a permission touch the permission store
+  if (permission === undefined) return <BaseButton {...props} />;
+
+  return (
+    <PermissionedButton
+      permission={permission}
+      noPermission={noPermission}
+      {...props}
+    />
+  );
+}
+
+function PermissionedButton({
+  permission,
+  noPermission = "hide",
+  disabled,
+  ...props
+}: ButtonProps) {
+  const { loaded, can } = usePermissions();
+  const allowed = loaded && can(permission);
+
+  if (!allowed && noPermission === "hide") return null;
+
+  return (
+    <BaseButton
+      {...props}
+      disabled={disabled || !allowed}
+      title={
+        !allowed ? "You don't have permission for this action" : props.title
+      }
+    />
+  );
+}
+
+function BaseButton({
   className,
   variant = "default",
   size = "default",
   asChild = false,
   ...props
-}: ButtonProps) {
+}: Omit<ButtonProps, "permission" | "noPermission">) {
   const Comp = asChild ? Slot : "button";
 
   return (

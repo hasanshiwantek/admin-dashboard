@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input";
 import Table from "@/components/ui/Table/Table";
 import TableTabs from "@/components/ui/Table/TableTabs";
 import { DownloadIcon, PlusIcon, SearchIcon, Trash } from "lucide-react";
-import Link from "next/link";
 import { useMemo } from "react";
 import CustomerNotesModal from "../edit/CustomerNotesModal";
 import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
@@ -13,6 +12,9 @@ import { useAlert } from "@/hooks/useAlert";
 import useAllCustomersContainer from "./AllCustomersContainer";
 import { getCustomerColumns } from "./AllCustomersColumn";
 import { renderExpandedRow } from "./CustomerDetailRow";
+
+// Shared height so toolbar buttons and input line up
+const TOOLBAR_CONTROL = "!h-13 !py-0 !my-0";
 
 const AllCustomers = () => {
   const {
@@ -40,6 +42,7 @@ const AllCustomers = () => {
     toggleRow,
     filterHandler,
     handleExport,
+    router,
   } = useAllCustomersContainer();
 
   const customerColumns = useMemo(
@@ -68,18 +71,18 @@ const AllCustomers = () => {
         variant="underline"
       />
       <div className="flex flex-wrap gap-4 mb-6 items-center">
-        <Link href="/manage/customers/add">
-          <Button
-            variant="outline"
-            className="flex items-center gap-2 !p-6 btn-outline-primary 2xl:!text-2xl"
-          >
-            <PlusIcon className="!w-5 !h-5" /> Add
-          </Button>
-        </Link>
+        <Button
+          variant="outline"
+          className={`flex items-center gap-2 !px-6 btn-outline-primary 2xl:!text-2xl ${TOOLBAR_CONTROL}`}
+          onClick={() => router.push("/manage/customers/add")}
+          permission="add_customer"
+        >
+          <PlusIcon className="!w-5 !h-5" /> Add
+        </Button>
 
         <Button
           variant="outline"
-          className="flex items-center gap-2 !p-6 btn-outline-primary"
+          className={`flex items-center gap-2 !px-6 btn-outline-primary ${TOOLBAR_CONTROL}`}
           onClick={deleteCustomerHandler}
         >
           <Trash className="!w-5 !h-5" />
@@ -88,12 +91,13 @@ const AllCustomers = () => {
         <Button
           onClick={handleExport}
           variant="outline"
-          className="flex items-center gap-2 !p-6 btn-outline-primary 2xl:!text-2xl"
+          className={`flex items-center gap-2 !px-6 btn-outline-primary 2xl:!text-2xl ${TOOLBAR_CONTROL}`}
         >
           <DownloadIcon className="!w-5 !h-5" /> Export selected customers
         </Button>
 
         <Input
+          className={TOOLBAR_CONTROL}
           placeholder="Filter by keyword"
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
@@ -101,7 +105,7 @@ const AllCustomers = () => {
 
         <Button
           variant="default"
-          className="flex items-center gap-2 !p-6 btn-outline-primary 2xl:!text-2xl"
+          className={`flex items-center gap-2 !px-6 btn-outline-primary 2xl:!text-2xl ${TOOLBAR_CONTROL}`}
           onClick={filterHandler}
         >
           <SearchIcon className="!w-5 !h-5" /> Search
@@ -158,7 +162,7 @@ const AllCustomers = () => {
       
 
     {/* <Alert /> */}
-    </div>
+     </div>
   );
 };
 

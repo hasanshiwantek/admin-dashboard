@@ -305,6 +305,7 @@ const useAllCustomersContainer = () => {
     setStoreCredits,
     updateCustomerGroupStatus,
     updateCustomerStoreCredit,
+    router
     
   };
 };
