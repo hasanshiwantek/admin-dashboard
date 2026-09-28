@@ -11,39 +11,48 @@ import CustomerNotesModal from "../edit/CustomerNotesModal";
 import { getCustomerColumns } from "./AllCustomersColumn";
 import useAllCustomersContainer from "./AllCustomersContainer";
 import { renderExpandedRow } from "./CustomerDetailRow";
+import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
 
 const AllCustomers = () => {
-  const {
-    table,
-    customerList,
-    total,
-    totalPages,
-    currentPage,
-    perPage,
-    activeTab,
-    loading,
-    error,
-    selectedCustomers,
-    keyword,
-    setKeyword,
-    expandedRow,
-    showCustomerNotes,
-    setShowCustomerNotes,
-    selectedOrderId,
-    setSelectedOrderId,
-    getDropdownActions,
-    handleSelectAll,
-    handleSelectOne,
-    deleteCustomerHandler,
-    toggleRow,
-    filterHandler,
-    handleExport,
-  } = useAllCustomersContainer();
+  
+const {
+  table,
+  customerList,
+  total,
+  totalPages,
+  currentPage,
+  perPage,
+  activeTab,
+  loading,
+  error,
+  selectedCustomers,
+  keyword,
+  setKeyword,
+  expandedRow,
+  showCustomerNotes,
+  setShowCustomerNotes,
+  selectedOrderId,
+  setSelectedOrderId,
 
-  const customerColumns = useMemo(
-    () => getCustomerColumns(expandedRow, toggleRow),
-    [expandedRow, toggleRow],
-  );
+  // Delete confirmation
+  showDeleteModal,
+  setShowDeleteModal,
+  confirmDeleteCustomers,
+
+  getDropdownActions,
+  handleSelectAll,
+  handleSelectOne,
+  deleteCustomerHandler,
+  toggleRow,
+  filterHandler,
+  handleExport,
+} = useAllCustomersContainer();
+
+ const customerColumns = useMemo(
+  () => getCustomerColumns(expandedRow, toggleRow),
+  [expandedRow, toggleRow],
+);
+  
 
   if (error) {
     return (
@@ -153,30 +162,14 @@ const AllCustomers = () => {
         onClose={() => setShowCustomerNotes(false)}
         orderId={selectedOrderId}
       />
-      {/* <ConfirmationModal
-        open={showDeleteModal}
-        onOpenChange={setShowDeleteModal}
-        variant="warning"
-        title="Delete Selected Customers?"
-        description="Are you sure you want to delete the selected customer(s)?"
-        onConfirm={async () => {
-          const id = selectedCustomers?.map((c) => c?.id);
-          const payload = { ids: id };
-
-          try {
-            const result = await dispatch(deleteCustomer({ data: payload }));
-
-            if (deleteCustomer.fulfilled.match(result)) {
-              setSelectedCustomers([]);
-              setShowDeleteModal(false);
-            } else {
-              console.error("Failed to delete customers:", result.payload);
-            }
-          } catch (err) {
-            console.error("Error deleting customers:", err);
-          }
-        }}
-      /> */}
+   <ConfirmationModal
+  open={showDeleteModal}
+  onOpenChange={setShowDeleteModal}
+  variant="warning"
+  title="Delete Selected Customers?"
+  description="Are you sure you want to delete the selected customer(s)?"
+  onConfirm={confirmDeleteCustomers}
+/>
     </div>
   );
 };

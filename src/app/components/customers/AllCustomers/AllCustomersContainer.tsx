@@ -67,6 +67,7 @@ const useAllCustomersContainer = () => {
   );
   const [showCustomerNotes, setShowCustomerNotes] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
   const [keyword, setKeyword] = useState("");
 
@@ -134,32 +135,40 @@ const useAllCustomersContainer = () => {
     }
   };
 
-  const deleteCustomerHandler = async () => {
-    if (!selectedCustomers || selectedCustomers.length === 0) {
-      alert("No customers selected for deletion.");
-      return;
-    }
+const deleteCustomerHandler = () => {
+  if (!selectedCustomers || selectedCustomers.length === 0) {
+    alert("No customers selected for deletion.");
+    return;
+  }
 
-    const id = selectedCustomers.map((c) => c?.id);
-    const payload = { ids: id };
+  setShowDeleteModal(true);
+};
+const confirmDeleteCustomers = async () => {
+  const ids = selectedCustomers.map((customer) => customer?.id);
 
-    const confirm = window.confirm("Delete Selected Customer");
-
-    if (!confirm) return;
-
-    try {
-      const result = await dispatch(deleteCustomer({ data: payload }));
-
-      if (deleteCustomer.fulfilled.match(result)) {
-        setSelectedCustomers([]);
-        table.refetch();
-      } else {
-        console.error("Failed to delete customers:", result.payload);
-      }
-    } catch (err) {
-      console.error("Error deleting customers:", err);
-    }
+  const payload = {
+    ids,
   };
+
+  try {
+    const result = await dispatch(
+      deleteCustomer({ data: payload })
+    );
+
+    if (deleteCustomer.fulfilled.match(result)) {
+      setSelectedCustomers([]);
+      setShowDeleteModal(false);
+      table.refetch();
+    } else {
+      console.error(
+        "Failed to delete customers:",
+        result.payload
+      );
+    }
+  } catch (err) {
+    console.error("Error deleting customers:", err);
+  }
+};
 
   const toggleRow = (id: number) => {
     setExpandedRow((prev) => (prev === id ? null : id));
@@ -298,6 +307,9 @@ const useAllCustomersContainer = () => {
     handleSelectAll,
     handleSelectOne,
     deleteCustomerHandler,
+    showDeleteModal,
+setShowDeleteModal,
+confirmDeleteCustomers,
     toggleRow,
     filterHandler,
     handleExport,
