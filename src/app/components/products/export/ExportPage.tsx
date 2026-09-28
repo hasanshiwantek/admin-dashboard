@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { useSearchParams } from "next/navigation";
@@ -12,7 +12,8 @@ import { Button } from "@/components/ui/button";
 import ExportModal from "@/Modals/ExportModal";
 import { useRouter } from "next/navigation";
 import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
-export default function OrderExport() {
+export default function ProductExport() {
+    const exportPromiseRef = useRef<any>(null);
   const searchParams = useSearchParams();
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -33,54 +34,56 @@ export default function OrderExport() {
   });
 
   const closeModal = () => {
+
+    exportPromiseRef.current?.abort();
+  exportPromiseRef.current = null;
     setModalOpen(false);
     setProgress(0);
     setErrorMessage(null);
     setModalStatus(ExportModalStatus.Confirm);
   };
-  const startExport = async () => {
-    const data = form.getValues();
-    setModalStatus(ExportModalStatus.Processing);
-    setProgress(0);
-    setErrorMessage(null);
-    setFileBlob(null);
 
-    let current = 0;
-
-    const applyProgress = (percent: number) => {
-      if (typeof percent !== "number" || Number.isNaN(percent)) return;
-      if (percent > current) {
-        current = percent;
-        setProgress(percent);
-      }
-    };
-
-    try {
-      const resultAction = await dispatch(
+    const startExport = async () => {
+      const data = form.getValues();
+      setModalStatus(ExportModalStatus.Processing);
+      setProgress(0);
+      setErrorMessage(null);
+  
+      const promise = dispatch(
         exportCsv({
           payload: data,
-          onProgress: applyProgress,
+          onProgress: (percent) => {
+            setProgress(percent);
+          },
         }),
       );
-
-      const result = (resultAction as any).payload;
-
-      if ((resultAction as any).meta.requestStatus === "fulfilled") {
-        setProgress(100);
-        setFileBlob(result.blob);
-        setFileName(result.filename || `products.${data.fileFormat || "csv"}`);
-        setModalStatus(ExportModalStatus.Ready);
-      } else {
-        setModalStatus(ExportModalStatus.Error);
-        setErrorMessage(result?.message || result?.error || "Export failed.");
+  
+      exportPromiseRef.current = promise;
+  
+      const resultAction = await promise;
+  
+      // Don't update UI if the user cancelled
+      if (exportPromiseRef.current !== promise) {
+        return;
       }
-    } catch (error) {
-      setModalStatus(ExportModalStatus.Error);
-      setErrorMessage("Unexpected export error.");
-      console.error("❌ Unexpected Export Error:", error);
-    }
-  };
-
+  
+      exportPromiseRef.current = null;
+  
+      if (exportCsv.fulfilled.match(resultAction)) {
+        setProgress(100);
+  
+        setFileBlob(resultAction.payload.blob);
+        setFileName(resultAction.payload.filename);
+        setModalStatus(ExportModalStatus.Ready);
+      } else if (exportCsv.rejected.match(resultAction)) {
+        if (resultAction.meta.aborted) {
+          return;
+        }
+  
+        setErrorMessage("Failed to export.");
+        setModalStatus(ExportModalStatus.Error);
+      }
+    };
   const onSubmit = () => {
     setModalStatus(ExportModalStatus.Confirm);
     setProgress(0);

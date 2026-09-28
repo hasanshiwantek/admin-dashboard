@@ -46,10 +46,10 @@ export default function ProductSelectModal({
   useEffect(() => {
     if (open) {
       setSearchTerm("");
-      setSelectedCategoryIds([]);
-      setProductList([]);
-      setSelectedProductId(null);
-      methods.reset({ categories: [] });
+      // setSelectedCategoryIds([]);
+      // setProductList([]);
+      // setSelectedProductId(null);
+      // methods.reset({ categories: [] });
     }
   }, [open]);
 

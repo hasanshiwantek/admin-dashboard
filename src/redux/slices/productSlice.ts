@@ -26,16 +26,16 @@ export const fetchAllProducts = createAsyncThunk(
       });
 
       const res = await axiosInstance.get(
-        `dashboard/products/products-list?${params.toString()}`
+        `dashboard/products/products-list?${params.toString()}`,
       );
       return res.data;
     } catch (err: any) {
       console.error("❌ Error in fetchAllProducts:", err);
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to fetch products"
+        err.response?.data?.message || "Failed to fetch products",
       );
     }
-  }
+  },
 );
 export const fetchAllPurchasableProducts = createAsyncThunk(
   "product/fetchAllPurchasableProducts",
@@ -61,7 +61,7 @@ export const fetchAllPurchasableProducts = createAsyncThunk(
       inventoryLow?: boolean;
       lastImported?: boolean;
     },
-    thunkAPI
+    thunkAPI,
   ) => {
     try {
       const params = new URLSearchParams({
@@ -70,46 +70,56 @@ export const fetchAllPurchasableProducts = createAsyncThunk(
       });
 
       if (isName?.trim()) params.set("isName", isName.trim());
-      if (isFeatured !== undefined) params.set("isFeatured", String(isFeatured));
+      if (isFeatured !== undefined)
+        params.set("isFeatured", String(isFeatured));
       if (isVisible !== undefined) params.set("isVisible", String(isVisible));
-      if (freeShipping !== undefined) params.set("freeShipping", String(freeShipping));
-      if (outOfStock !== undefined) params.set("outOfStock", String(outOfStock));
-      if (inventoryLow !== undefined) params.set("inventoryLow", String(inventoryLow));
-      if (lastImported !== undefined) params.set("lastImported", String(lastImported));
+      if (freeShipping !== undefined)
+        params.set("freeShipping", String(freeShipping));
+      if (outOfStock !== undefined)
+        params.set("outOfStock", String(outOfStock));
+      if (inventoryLow !== undefined)
+        params.set("inventoryLow", String(inventoryLow));
+      if (lastImported !== undefined)
+        params.set("lastImported", String(lastImported));
 
       const res = await axiosInstance.get(
-        `dashboard/products/purchasable-products?${params.toString()}`
+        `dashboard/products/purchasable-products?${params.toString()}`,
       );
       return res.data;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to fetch products"
+        err.response?.data?.message || "Failed to fetch products",
       );
     }
-  }
+  },
 );
 export const fetchFilterProducts = createAsyncThunk(
   "product/fetchFilterProducts",
-  async (
-    { category, isName }: { category: any; isName: string },
-    thunkAPI
-  ) => {
+  async ({ category, isName }: { category: any; isName: string }, thunkAPI) => {
     try {
-      const res = await axiosInstance.get("dashboard/products/products-filter", {
-        params: {
-          ...(category?.length ? { isCategory: Array.isArray(category) ? category.join(",") : category } : {}),
-          ...(isName ? { isName } : {}),
-
+      const res = await axiosInstance.get(
+        "dashboard/products/products-filter",
+        {
+          params: {
+            ...(category?.length
+              ? {
+                  isCategory: Array.isArray(category)
+                    ? category.join(",")
+                    : category,
+                }
+              : {}),
+            ...(isName ? { isName } : {}),
+          },
         },
-      });
+      );
       return res.data;
     } catch (err: any) {
       console.error("❌ Error in fetchFilterProducts:", err);
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to fetch products"
+        err.response?.data?.message || "Failed to fetch products",
       );
     }
-  }
+  },
 );
 
 export const fetchSingleProduct = createAsyncThunk(
@@ -121,10 +131,10 @@ export const fetchSingleProduct = createAsyncThunk(
     } catch (err: any) {
       console.error("❌ Error in fetching:", err);
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to fetch product"
+        err.response?.data?.message || "Failed to fetch product",
       );
     }
-  }
+  },
 );
 
 //QUERY SEARCH
@@ -133,16 +143,16 @@ export const searchAllProducts = createAsyncThunk(
   async ({ query }: { query: any }, thunkAPI) => {
     try {
       const res = await axiosInstance.get(
-        `dashboard/products/search-product?query=${query}`
+        `dashboard/products/search-product?query=${query}`,
       );
       return res.data;
     } catch (err: any) {
       console.error("❌ Error Searching  Product:", err);
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to search products"
+        err.response?.data?.message || "Failed to search products",
       );
     }
-  }
+  },
 );
 
 export const updateProduct = createAsyncThunk(
@@ -151,16 +161,16 @@ export const updateProduct = createAsyncThunk(
     try {
       const res = await axiosInstance.put(
         `dashboard/products/update-product`,
-        body
+        body,
       );
       return res.data;
     } catch (err: any) {
       console.error("❌ Error Updating Product:", err);
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to update products"
+        err.response?.data?.message || "Failed to update products",
       );
     }
-  }
+  },
 );
 
 export const updateProductFormData = createAsyncThunk(
@@ -172,16 +182,16 @@ export const updateProductFormData = createAsyncThunk(
         data,
         {
           headers: { "content-Type": "multipart/form-data" },
-        }
+        },
       );
       return res.data;
     } catch (err: any) {
       console.error("❌ Error Updating Product:", err);
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to update products"
+        err.response?.data?.message || "Failed to update products",
       );
     }
-  }
+  },
 );
 //PROODUCT DELETION THUNK
 export const deleteProduct = createAsyncThunk(
@@ -192,16 +202,16 @@ export const deleteProduct = createAsyncThunk(
         `dashboard/products/delete-product`,
         {
           data: { ids }, // ✅ this wraps your array inside an object
-        }
+        },
       );
       return res.data;
     } catch (err: any) {
       console.error("❌ Error deleting Product:", err);
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to delete products"
+        err.response?.data?.message || "Failed to delete products",
       );
     }
-  }
+  },
 );
 
 // ADD PRODUCT THUNK
@@ -214,16 +224,16 @@ export const addProduct = createAsyncThunk(
         data,
         {
           headers: { "Content-Type": "multipart/form-data" },
-        }
+        },
       );
       return res.data;
     } catch (err: any) {
       console.error("❌ Error Adding  Product:", err);
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to Add products"
+        err.response?.data?.message || "Failed to Add products",
       );
     }
-  }
+  },
 );
 
 //DELETE PRODUCT CATEGORY THUNK
@@ -233,7 +243,7 @@ export const deleteProductCategory = createAsyncThunk(
     try {
       const response = await axiosInstance.delete(
         `dashboard/products/delete-product/categories`,
-        { data }
+        { data },
       );
 
       return response.data;
@@ -241,7 +251,7 @@ export const deleteProductCategory = createAsyncThunk(
       console.error("❌ Error Deleting Product Category:", error);
       return thunkAPI.rejectWithValue("Failed to delete Product Category");
     }
-  }
+  },
 );
 
 // ADD BRAND THUNK
@@ -256,7 +266,7 @@ export const addBrand = createAsyncThunk(
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        }
+        },
       );
 
       return response.data;
@@ -264,7 +274,7 @@ export const addBrand = createAsyncThunk(
       console.error("❌ Error Adding Brand:", error);
       return thunkAPI.rejectWithValue("Failed to create brand");
     }
-  }
+  },
 );
 
 // GET BRAND THUNK
@@ -272,11 +282,11 @@ export const fetchBrands = createAsyncThunk(
   "product/fetchBrands",
   async (
     { page, pageSize }: { page: number; pageSize: number | string },
-    thunkAPI
+    thunkAPI,
   ) => {
     try {
       const response = await axiosInstance.get(
-        `dashboard/brands/brand-list?page=${page}&pageSize=${pageSize}`
+        `dashboard/brands/brand-list?page=${page}&pageSize=${pageSize}`,
       );
 
       return response.data;
@@ -284,7 +294,7 @@ export const fetchBrands = createAsyncThunk(
       console.error("❌ Error fetching  Brand:", error);
       return thunkAPI.rejectWithValue("Failed to fetch brands");
     }
-  }
+  },
 );
 
 // GET BRAND THUNK
@@ -296,11 +306,11 @@ export const fetchBrandByKeyword = createAsyncThunk(
       pageSize,
       keyword,
     }: { page: number; pageSize: number | string; keyword: any },
-    thunkAPI
+    thunkAPI,
   ) => {
     try {
       const response = await axiosInstance.get(
-        `dashboard/brands/brand-list?page=${page}&pageSize=${pageSize}&keyword=${keyword}`
+        `dashboard/brands/brand-list?page=${page}&pageSize=${pageSize}&keyword=${keyword}`,
       );
 
       return response.data;
@@ -308,7 +318,7 @@ export const fetchBrandByKeyword = createAsyncThunk(
       console.error("❌ Error fetching  Brand:", error);
       return thunkAPI.rejectWithValue("Failed to fetch brands");
     }
-  }
+  },
 );
 
 // GET BRAND BY ID THUNK
@@ -323,7 +333,7 @@ export const getBrandById = createAsyncThunk(
       console.error("❌ Error fetching  Brand id:", error);
       return thunkAPI.rejectWithValue("Failed to fetch brand");
     }
-  }
+  },
 );
 
 // UPDATE BRAND THUNK
@@ -333,7 +343,7 @@ export const updateBrand = createAsyncThunk(
     try {
       const response = await axiosInstance.post(
         `dashboard/brands/update-brand/${id}`,
-        formData
+        formData,
       );
 
       return response.data;
@@ -341,7 +351,7 @@ export const updateBrand = createAsyncThunk(
       console.error("❌ Error Updating Brand:", error);
       return thunkAPI.rejectWithValue("Failed to update brand");
     }
-  }
+  },
 );
 
 // DELETE BRAND THUNK
@@ -350,7 +360,7 @@ export const deleteBrand = createAsyncThunk(
   async ({ id }: { id: any }, thunkAPI) => {
     try {
       const response = await axiosInstance.delete(
-        `dashboard/brands/delete-brand/${id}`
+        `dashboard/brands/delete-brand/${id}`,
       );
 
       return response.data;
@@ -358,7 +368,7 @@ export const deleteBrand = createAsyncThunk(
       console.error("❌ Error Deleting Brand:", error);
       return thunkAPI.rejectWithValue("Failed to delete brand");
     }
-  }
+  },
 );
 
 // IMPORT CSV THUNK
@@ -373,19 +383,19 @@ export const importCsv = createAsyncThunk(
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        }
+        },
       );
       return response.data;
     } catch (error: any) {
       console.error("❌ Error Importing CSV:", error);
       return thunkAPI.rejectWithValue("Failed to import CSV");
     }
-  }
+  },
 );
 
-// EXPORT PRODUCTS THUNK
+
 export const exportCsv = createAsyncThunk(
-  "product/exportProductCsv",
+  "products/exportCsv",
   async (
     {
       payload,
@@ -397,43 +407,56 @@ export const exportCsv = createAsyncThunk(
     thunkAPI,
   ) => {
     try {
-      let estimatedTotal = 0;
+      let totalRows = 0;
       let lastPercent = 0;
+      let lastTextLength = 0;
+      let linesCount = 0;
 
       const response = await axiosInstance.get(
         "dashboard/products/export-csv",
         {
+          adapter: "xhr",
           params: payload,
-          responseType: "blob",
+          responseType: "text",
+          signal: thunkAPI.signal,
           onDownloadProgress: (progressEvent: any) => {
             const xhr = progressEvent.event?.target ?? progressEvent.target;
+            if (!xhr) return;
+
+            if (!totalRows && xhr.getResponseHeader) {
+              const raw =
+                xhr.getResponseHeader("Total-Rows") ||
+                xhr.getResponseHeader("total-rows");
+              if (raw) totalRows = Number(raw);
+            }
+
             const loaded = Number(progressEvent.loaded ?? 0);
-
-            const contentLength =
+            const totalBytes =
               Number(progressEvent.total ?? 0) ||
-              Number(xhr?.getResponseHeader?.("content-length") ?? 0);
+              Number(xhr.getResponseHeader?.("content-length") ?? 0);
 
-            const productTotal = Number(xhr?.getResponseHeader?.("total") ?? 0); // label only
+            let percent = 0;
 
-            if (contentLength > 0) {
-              const percent = Math.min(99, Math.round((loaded * 100) / contentLength));
-              if (percent > lastPercent) {
-                lastPercent = percent;
-                onProgress?.(percent);
-              }
-              return;
+            if (totalRows > 0) {
+              const currentText: string = xhr.responseText || "";
+              const incoming = currentText.slice(lastTextLength);
+              lastTextLength = currentText.length;
+              linesCount += (incoming.match(/\n/g) || []).length;
+
+              const rowsSoFar = Math.max(0, linesCount - 1);
+              percent = Math.min(
+                100,
+                Math.round((rowsSoFar * 100) / totalRows),
+              );
+            } else if (totalBytes > 0) {
+              percent = Math.min(99, Math.round((loaded * 100) / totalBytes));
+            } else if (loaded > 0) {
+              percent = Math.min(
+                95,
+                Math.round((loaded / (loaded + 2 * 1024 * 1024)) * 100),
+              );
             }
 
-            if (loaded <= 0) return;
-
-            if (!estimatedTotal) {
-              estimatedTotal = Math.max(12 * 1024 * 1024, loaded * 5);
-            }
-            if (loaded >= estimatedTotal) {
-              estimatedTotal = loaded + 2 * 1024 * 1024;
-            }
-
-            const percent = Math.min(95, Math.round((loaded * 100) / estimatedTotal));
             if (percent > lastPercent) {
               lastPercent = percent;
               onProgress?.(percent);
@@ -462,7 +485,9 @@ export const exportCsv = createAsyncThunk(
       onProgress?.(100);
       return { blob, filename };
     } catch (error: any) {
-      console.error("❌ Error Exporting CSV:", error);
+      if (thunkAPI.signal.aborted) {
+        return thunkAPI.rejectWithValue("Export cancelled");
+      }
       return thunkAPI.rejectWithValue("Failed to Export CSV");
     }
   },
@@ -510,7 +535,6 @@ const productSlice = createSlice({
         state.error =
           (action.payload as string) || action.error.message || "Failed";
       })
-
 
       .addCase(fetchFilterProducts.pending, (state) => {
         state.loading = true;
@@ -576,12 +600,15 @@ const productSlice = createSlice({
         state.products = {
           ...state.products,
           data: state.products.data.filter(
-            (item: any) => !deletedIds.includes(item.id)
+            (item: any) => !deletedIds.includes(item.id),
           ),
         };
       });
   },
 });
-export const { setSelectedProducts, clearSelectedProducts, resetSingleProduct } =
-  productSlice.actions;
+export const {
+  setSelectedProducts,
+  clearSelectedProducts,
+  resetSingleProduct,
+} = productSlice.actions;
 export default productSlice.reducer;
