@@ -50,6 +50,7 @@ const AllCustomers = () => {
     filterHandler,
     handleExport,
     router,
+    Alert
   } = useAllCustomersContainer();
 
   const customerColumns = useMemo(
@@ -174,6 +175,7 @@ const AllCustomers = () => {
         description="Are you sure you want to delete the selected customer(s)?"
         onConfirm={confirmDeleteCustomers}
       />
+      <Alert/>
     </div>
   );
 };

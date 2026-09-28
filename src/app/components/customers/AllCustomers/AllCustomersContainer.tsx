@@ -15,6 +15,7 @@ import { errorMessage } from "@/utils/message";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import * as XLSX from "xlsx";
+import { useAlert } from "@/hooks/useAlert";
 
 export const CustomerTabs: TableTab[] = [
   {
@@ -26,7 +27,7 @@ export const CustomerTabs: TableTab[] = [
 const useAllCustomersContainer = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
-
+  const { showAlert, Alert } = useAlert();
   const { customers, loading, error } = useAppSelector(
     (state: any) => state.customer,
   );
@@ -130,7 +131,10 @@ const useAllCustomersContainer = () => {
 
   const deleteCustomerHandler = () => {
     if (!selectedCustomers || selectedCustomers.length === 0) {
-      alert("No customers selected for deletion.");
+ showAlert({
+  title: "No Customers Selected",
+  message: "No customers selected for deletion.",
+});
       return;
     }
 
@@ -302,6 +306,7 @@ const useAllCustomersContainer = () => {
     updateCustomerGroupStatus,
     updateCustomerStoreCredit,
     router,
+     Alert,
   };
 };
 
