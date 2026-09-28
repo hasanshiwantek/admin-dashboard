@@ -9,15 +9,15 @@ export const addCustomer = createAsyncThunk(
     try {
       const res = await axiosInstance.post(
         `dashboard/customers/add-customer`,
-        data
+        data,
       );
       return res.data;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to add Customer"
+        err.response?.data?.message || "Failed to add Customer",
       );
     }
-  }
+  },
 );
 // LOGIN AS CUSTOMER THUNK
 export const loginAsCustomer = createAsyncThunk(
@@ -26,15 +26,15 @@ export const loginAsCustomer = createAsyncThunk(
     try {
       const res = await axiosInstance.post(
         `dashboard/login-as-customer`,
-        { customer_id: customerId }  // ← object properly pass karo
+        { customer_id: customerId }, // ← object properly pass karo
       );
       return res.data;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to login customer"
+        err.response?.data?.message || "Failed to login customer",
       );
     }
-  }
+  },
 );
 
 // FETCH CUSTOMERS THUNK
@@ -42,7 +42,7 @@ export const fetchCustomers = createAsyncThunk(
   "customer/fetchCustomers",
   async (
     params: Record<string, string | number | undefined | null>,
-    thunkAPI
+    thunkAPI,
   ) => {
     try {
       const searchParams = new URLSearchParams();
@@ -54,17 +54,16 @@ export const fetchCustomers = createAsyncThunk(
       });
 
       const res = await axiosInstance.get(
-        `dashboard/customers/get-customers?${searchParams?.toString()}`
+        `dashboard/customers/get-customers?${searchParams?.toString()}`,
       );
       return res.data;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to fetch Customer"
+        err.response?.data?.message || "Failed to fetch Customer",
       );
     }
-  }
+  },
 );
-
 
 // FETCH CUSTOMERS THUNK
 export const advanceCustomerSearch = createAsyncThunk(
@@ -73,15 +72,15 @@ export const advanceCustomerSearch = createAsyncThunk(
     try {
       const res = await axiosInstance.post(
         `dashboard/customers/customer-search`,
-        data
+        data,
       );
       return res.data;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to Search Customer"
+        err.response?.data?.message || "Failed to Search Customer",
       );
     }
-  }
+  },
 );
 
 // FETCH CUSTOMERS THUNK
@@ -93,19 +92,19 @@ export const fetchCustomerByKeyword = createAsyncThunk(
       pageSize,
       search,
     }: { page: number; pageSize: number | string; search: any },
-    thunkAPI
+    thunkAPI,
   ) => {
     try {
       const res = await axiosInstance.get(
-        `dashboard/customers/get-customers?page=${page}&pageSize=${pageSize}&search=${search}`
+        `dashboard/customers/get-customers?page=${page}&pageSize=${pageSize}&search=${search}`,
       );
       return res.data;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to fetch Customer"
+        err.response?.data?.message || "Failed to fetch Customer",
       );
     }
-  }
+  },
 );
 
 // FETCH CUSTOMERS THUNK
@@ -114,30 +113,30 @@ export const fetchCustomerById = createAsyncThunk(
   async ({ id }: { id: any }, thunkAPI) => {
     try {
       const res = await axiosInstance.get(
-        `dashboard/customers/get-customer/${id}`
+        `dashboard/customers/get-customer/${id}`,
       );
       return res.data;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to fetch Customer"
+        err.response?.data?.message || "Failed to fetch Customer",
       );
     }
-  }
+  },
 );
 export const fetchCustomerDetailById = createAsyncThunk(
   "customer/fetchCustomerById",
   async ({ id }: { id: any }, thunkAPI) => {
     try {
       const res = await axiosInstance.get(
-        `dashboard/orders/customer/${id}/orders`
+        `dashboard/orders/customer/${id}/orders`,
       );
       return res.data;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to fetch Customer"
+        err.response?.data?.message || "Failed to fetch Customer",
       );
     }
-  }
+  },
 );
 
 // DELETE CUSTOMER THUNK
@@ -147,15 +146,15 @@ export const deleteCustomer = createAsyncThunk(
     try {
       const res = await axiosInstance.delete(
         `dashboard/customers/delete-customer`,
-        { data }
+        { data },
       );
       return res.data;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to delete Customer"
+        err.response?.data?.message || "Failed to delete Customer",
       );
     }
-  }
+  },
 );
 
 export const updateCustomer = createAsyncThunk(
@@ -164,15 +163,15 @@ export const updateCustomer = createAsyncThunk(
     try {
       const res = await axiosInstance.put(
         `dashboard/customers/update-customer/${id}`,
-        data
+        data,
       );
       return res.data;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to update Customer"
+        err.response?.data?.message || "Failed to update Customer",
       );
     }
-  }
+  },
 );
 
 // IMPORT CSV THUNK
@@ -187,13 +186,13 @@ export const importCustomerCsv = createAsyncThunk(
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        }
+        },
       );
       return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue("Failed to import CSV");
     }
-  }
+  },
 );
 
 export const fetchCustomerAddresses = createAsyncThunk(
@@ -201,15 +200,15 @@ export const fetchCustomerAddresses = createAsyncThunk(
   async ({ customerId }: { customerId: number }, thunkAPI) => {
     try {
       const res = await axiosInstance.get(
-        `dashboard/customer-address/list?customer_id=${customerId}`
+        `dashboard/customer-address/list?customer_id=${customerId}`,
       );
       return res.data;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to fetch customer addresses"
+        err.response?.data?.message || "Failed to fetch customer addresses",
       );
     }
-  }
+  },
 );
 // DELETE customerAddressesDeleteMultiple THUNK
 export const customerAddressesDeleteMultiple = createAsyncThunk(
@@ -218,15 +217,15 @@ export const customerAddressesDeleteMultiple = createAsyncThunk(
     try {
       const res = await axiosInstance.delete(
         `dashboard/customer-address/delete-multiple`,
-        { data }
+        { data },
       );
       return res.data;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to delete Customer"
+        err.response?.data?.message || "Failed to delete Customer",
       );
     }
-  }
+  },
 );
 
 // EXPORT CSV THUNK
@@ -243,26 +242,57 @@ export const exportCustomerCsv = createAsyncThunk(
     thunkAPI,
   ) => {
     try {
-      const response = await axiosInstance.get(
-        "dashboard/customers/export",
-        {
-          params: payload,
-          responseType: "blob",
-          onDownloadProgress: (progressEvent) => {
-            const loaded = progressEvent.loaded ?? 0;
-            const total = progressEvent.total;
+      let totalRows = 0;
+      let lastPercent = 0;
+      let lastTextLength = 0;
+      let linesCount = 0;
 
-            if (total && total > 0) {
-              const percent = Math.round((loaded * 100) / total);
-              onProgress?.(Math.min(100, Math.max(0, percent)));
-            } else {
-              // no Content-Length — show movement without hitting 100
-              const fake = Math.min(90, Math.round(loaded / 1024) % 90);
-              onProgress?.(fake || 10);
-            }
-          },
+      const response = await axiosInstance.get("dashboard/customers/export", {
+        adapter: "xhr",
+        params: payload,
+        responseType: "text",
+        signal: thunkAPI.signal,
+        onDownloadProgress: (progressEvent: any) => {
+          const xhr = progressEvent.event?.target ?? progressEvent.target;
+          if (!xhr) return;
+
+          if (!totalRows && xhr.getResponseHeader) {
+            const raw =
+              xhr.getResponseHeader("Total-Rows") ||
+              xhr.getResponseHeader("total-rows");
+            if (raw) totalRows = Number(raw);
+          }
+
+          const loaded = Number(progressEvent.loaded ?? 0);
+          const totalBytes =
+            Number(progressEvent.total ?? 0) ||
+            Number(xhr.getResponseHeader?.("content-length") ?? 0);
+
+          let percent = 0;
+
+          if (totalRows > 0) {
+            const currentText: string = xhr.responseText || "";
+            const incoming = currentText.slice(lastTextLength);
+            lastTextLength = currentText.length;
+            linesCount += (incoming.match(/\n/g) || []).length;
+
+            const rowsSoFar = Math.max(0, linesCount - 1);
+            percent = Math.min(100, Math.round((rowsSoFar * 100) / totalRows));
+          } else if (totalBytes > 0) {
+            percent = Math.min(99, Math.round((loaded * 100) / totalBytes));
+          } else if (loaded > 0) {
+            percent = Math.min(
+              95,
+              Math.round((loaded / (loaded + 2 * 1024 * 1024)) * 100),
+            );
+          }
+
+          if (percent > lastPercent) {
+            lastPercent = percent;
+            onProgress?.(percent);
+          }
         },
-      );
+      });
 
       const blob = new Blob([response.data], {
         type: String(response.headers["content-type"] ?? "text/csv"),
@@ -284,12 +314,13 @@ export const exportCustomerCsv = createAsyncThunk(
       onProgress?.(100);
       return { blob, filename };
     } catch (error: any) {
-      console.error("❌ Error Exporting CSV:", error);
+      if (thunkAPI.signal.aborted) {
+        return thunkAPI.rejectWithValue("Export cancelled");
+      }
       return thunkAPI.rejectWithValue("Failed to Export CSV");
     }
   },
 );
-
 // ADD CUSTOMER ADDRESS
 export const addCustomerAddress = createAsyncThunk(
   "customer/addCustomerAddress",
@@ -297,15 +328,18 @@ export const addCustomerAddress = createAsyncThunk(
     try {
       const res = await axiosInstance.post(
         `dashboard/customer-address/store`,
-        data
+        data,
       );
       return res.data;
     } catch (err: any) {
+           if (thunkAPI.signal.aborted) {
+        return thunkAPI.rejectWithValue("Export cancelled");
+      }
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to add address"
+        err.response?.data?.message || "Failed to add address",
       );
     }
-  }
+  },
 );
 // GET SINGLE ADDRESS
 export const fetchCustomerAddressById = createAsyncThunk(
@@ -313,15 +347,15 @@ export const fetchCustomerAddressById = createAsyncThunk(
   async ({ addressId }: { addressId: number }, thunkAPI) => {
     try {
       const res = await axiosInstance.get(
-        `dashboard/customer-address/show/${addressId}` // or adjust if backend uses different param
+        `dashboard/customer-address/show/${addressId}`, // or adjust if backend uses different param
       );
       return res.data;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to fetch address"
+        err.response?.data?.message || "Failed to fetch address",
       );
     }
-  }
+  },
 );
 
 // UPDATE ADDRESS
@@ -329,20 +363,20 @@ export const updateCustomerAddress = createAsyncThunk(
   "customer/updateCustomerAddress",
   async (
     { addressId, data }: { addressId: number | string; data: any },
-    thunkAPI
+    thunkAPI,
   ) => {
     try {
       const res = await axiosInstance.put(
         `dashboard/customer-address/update/${addressId}`,
-        data
+        data,
       );
       return res.data;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to update address"
+        err.response?.data?.message || "Failed to update address",
       );
     }
-  }
+  },
 );
 // 2. Initial State
 const initialState = {
@@ -388,11 +422,10 @@ const categorySlice = createSlice({
         state.customers = {
           ...state.customers,
           data: state.customers.data.filter(
-            (item: any) => !deletedIds.includes(item.id)
+            (item: any) => !deletedIds.includes(item.id),
           ),
         };
       })
-
 
       .addCase(fetchCustomerDetailById.pending, (state) => {
         state.loading = true;
@@ -408,7 +441,6 @@ const categorySlice = createSlice({
           (action.payload as string) || action.error.message || "Failed";
       })
 
-
       // Customer Addresses
       .addCase(fetchCustomerAddresses.pending, (state) => {
         state.addressesLoading = true;
@@ -416,13 +448,18 @@ const categorySlice = createSlice({
       })
       .addCase(fetchCustomerAddresses.fulfilled, (state, action) => {
         state.addressesLoading = false;
-        state.customerAddresses = action.payload?.data?.customer_addresses || action.payload?.customer_addresses || [];
+        state.customerAddresses =
+          action.payload?.data?.customer_addresses ||
+          action.payload?.customer_addresses ||
+          [];
       })
       .addCase(fetchCustomerAddresses.rejected, (state, action) => {
         state.addressesLoading = false;
         state.error =
-          (action.payload as string) || action.error.message || "Failed to fetch addresses";
-      })
+          (action.payload as string) ||
+          action.error.message ||
+          "Failed to fetch addresses";
+      });
   },
 });
 export default categorySlice.reducer;

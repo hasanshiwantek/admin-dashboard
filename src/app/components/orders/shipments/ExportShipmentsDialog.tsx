@@ -37,7 +37,6 @@ export default function ExportShipmentsDialog({ trigger, onConfirm }: Props) {
               <SelectTrigger className="w-60"><SelectValue placeholder="CSV" /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="csv">CSV</SelectItem>
-                <SelectItem value="xml">XML</SelectItem>
               </SelectContent>
             </Select>
           </div>

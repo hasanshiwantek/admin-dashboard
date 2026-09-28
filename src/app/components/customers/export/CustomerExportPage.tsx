@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
-import { exportOrderCsv } from "@/redux/slices/orderSlice";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { useSearchParams } from "next/navigation";
 import { ExportTab, ExportModalStatus } from "@/types/types";
@@ -10,8 +9,13 @@ import { Button } from "@/components/ui/button";
 import ExportModal from "@/Modals/ExportModal";
 import CustomerExportOptions from "./CustomerExportOptions";
 import CustomerExportPreview from "./CustomerExportPreview";
-
+import { useRouter } from "next/navigation";
+import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
+import { exportCustomerCsv } from "@/redux/slices/customerSlice";
 export default function CustomerExportPage() {
+  const exportPromiseRef = useRef<any>(null);
+  
+  const router = useRouter();
   const searchParams = useSearchParams();
   const dispatch = useAppDispatch();
   const [activeTab, setActiveTab] = useState<ExportTab>(ExportTab.Options);
@@ -21,6 +25,7 @@ export default function CustomerExportPage() {
   const [fileBlob, setFileBlob] = useState<Blob | null>(null);
   const [fileName, setFileName] = useState("Customers.csv");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [openConfirmationModal, setOpenConfirmationModal] = useState(false);
 
   const form = useForm({
     defaultValues: {
@@ -30,41 +35,55 @@ export default function CustomerExportPage() {
     },
   });
 
-  const closeModal = () => {
-    setModalOpen(false);
-    setProgress(0);
-    setErrorMessage(null);
-    setModalStatus(ExportModalStatus.Confirm);
-  };
+const closeModal = () => {
+  exportPromiseRef.current?.abort();
+  exportPromiseRef.current = null;
+
+  setModalOpen(false);
+  setProgress(0);
+  setErrorMessage(null);
+  setModalStatus(ExportModalStatus.Confirm);
+};
+
   const startExport = async () => {
     const data = form.getValues();
     setModalStatus(ExportModalStatus.Processing);
     setProgress(0);
     setErrorMessage(null);
-    setFileBlob(null);
 
-    try {
-      const resultAction = await dispatch(
-        exportOrderCsv({
-          payload: data,
-          onProgress: (percent) => setProgress(percent),
-        }),
-      );
-      const result = (resultAction as any).payload;
+    const promise = dispatch(
+      exportCustomerCsv({
+        payload: data,
+        onProgress: (percent) => {
+          setProgress(percent);
+        },
+      }),
+    );
 
-      if ((resultAction as any).meta.requestStatus === "fulfilled") {
-        setProgress(100);
-        setFileBlob(result.blob);
-        setFileName(result.filename || `customers.${data.fileFormat || "csv"}`);
-        setModalStatus(ExportModalStatus.Ready);
-      } else {
-        setModalStatus(ExportModalStatus.Error);
-        setErrorMessage(result?.message || result?.error || "Export failed.");
+    exportPromiseRef.current = promise;
+
+    const resultAction = await promise;
+
+    // Don't update UI if the user cancelled
+    if (exportPromiseRef.current !== promise) {
+      return;
+    }
+
+    exportPromiseRef.current = null;
+
+    if (exportCustomerCsv.fulfilled.match(resultAction)) {
+      setProgress(100);
+
+      setFileBlob(resultAction.payload.blob);
+      setFileName(resultAction.payload.filename);
+      setModalStatus(ExportModalStatus.Ready);
+    } else if (exportCustomerCsv.rejected.match(resultAction)) {
+      if (resultAction.meta.aborted) {
+        return;
       }
-    } catch (error) {
+
+      setErrorMessage("Failed to export.");
       setModalStatus(ExportModalStatus.Error);
-      setErrorMessage("Unexpected export error.");
-      console.error("❌ Unexpected Export Error:", error);
     }
   };
 
@@ -131,6 +150,7 @@ export default function CustomerExportPage() {
               hover:bg-transparent
               hover:text-[#526dff]
             "
+              onClick={() => setOpenConfirmationModal(true)}
             >
               Cancel
             </Button>
@@ -176,6 +196,16 @@ export default function CustomerExportPage() {
           onClose={closeModal}
           onStartExport={startExport}
         />
+        {openConfirmationModal && <ConfirmationModal
+          open={openConfirmationModal}
+          onOpenChange={setOpenConfirmationModal}
+          variant="warning"
+          title="Confirmation"
+          description="Are you sure you want to cancel exporting?"
+          onConfirm={() => {
+            router.push("/manage/customers");
+          }}
+        />}
       </div>
     </FormProvider >
   );

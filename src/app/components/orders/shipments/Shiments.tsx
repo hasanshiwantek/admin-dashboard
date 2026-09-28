@@ -23,7 +23,8 @@ import {
   advanceShipmentSearch,
   fetchShipmentByKeyword,
   updateShipment,
-  fetchShipmentById
+  fetchShipmentById,
+  exportShipmentsCsv
 } from "@/redux/slices/orderSlice";
 import { useSearchParams } from "next/navigation";
 import { refetchOrders, refetchShipments } from "@/lib/orderUtils";
@@ -196,63 +197,6 @@ Updated: ${billing.updatedAt}`;
     setExpandedRow((prev) => (prev === id ? null : id));
   };
 
-  const handleExport = (format: "csv" | "xml") => {
-    const rows = shipments?.data || [];
-    if (!rows.length) return;
-
-    const download = (content: string, type: string, filename: string) => {
-      const blob = new Blob([content], { type });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = filename;
-      a.click();
-      URL.revokeObjectURL(url);
-    };
-
-    if (format === "csv") {
-      const esc = (v: any) => {
-        const s = String(v ?? "");
-        return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
-      };
-      const header = [
-        "Shipment ID",
-        "Shipped To",
-        "Date Shipped",
-        "Tracking Number",
-        "Order Date",
-      ];
-      const lines = rows.map((r: any) =>
-        [r.id, r.shippedTo, r.dateShipped, r.trackingNumber, r.orderDate]
-          .map(esc)
-          .join(",")
-      );
-      download(
-        [header.join(","), ...lines].join("\n"),
-        "text/csv;charset=utf-8;",
-        "shipments.csv"
-      );
-    } else {
-      const e = (v: any) =>
-        String(v ?? "")
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;");
-      const xml = `<?xml version="1.0" encoding="UTF-8"?><shipments>${rows
-        .map(
-          (r: any) => `
-        <shipment>
-          <id>${e(r.id)}</id>
-          <shippedTo>${e(r.shippedTo)}</shippedTo>
-          <dateShipped>${e(r.dateShipped)}</dateShipped>
-          <trackingNumber>${e(r.trackingNumber)}</trackingNumber>
-          <orderDate>${e(r.orderDate)}</orderDate>
-        </shipment>`
-        )
-        .join("")}</shipments>`;
-      download(xml, "application/xml", "shipments.xml");
-    }
-  };
 
   // const handleShipmentDelete = async () => {
   //   if (selectedOrderIds.length <= 0) {
@@ -288,8 +232,8 @@ showAlert({
     return;
   }
 
-  setShowDeleteModal(true);
-};
+    setShowDeleteModal(true);
+  };
 
 
   const handleSearch = async () => {
@@ -327,30 +271,31 @@ showAlert({
     }
   });
 
-  // useEffect(() => {
-  //   const page = Number(queryObject.page || 1);
-  //   const pageSize = Number(queryObject.limit || queryObject.pageSize || 50);
+  const handleExport = async (format: "csv" | "xml") => {
+    if (format === "csv") {
+      try {
+        const blob = await dispatch(exportShipmentsCsv()).unwrap();
 
-  //   const filterKeys = Object.keys(queryObject).filter(
-  //     (key) => !["page", "limit", "pageSize"].includes(key)
-  //   );
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
 
-  //   if (filterKeys.length > 0) {
-  //     // 🔍 Run filtered search if extra filters exist
-  //     dispatch(
-  //       advanceShipmentSearch({
-  //         data: {
-  //           ...queryObject,
-  //           page,
-  //           perPage: pageSize,
-  //         },
-  //       })
-  //     );
-  //   } else {
-  //     // 📦 Default: Fetch all products
-  //     dispatch(fetchAllShipments({ page: currentPage, perPage: perPage }));
-  //   }
-  // }, [searchParams]); // reruns whenever URL changes
+        a.href = url;
+        a.download = "shipments.csv";
+
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+
+        URL.revokeObjectURL(url);
+      } catch (error) {
+        console.error("Export failed:", error);
+      }
+
+      return;
+    }
+
+    // XML export...
+  };
   useEffect(() => {
     const shipmentId = searchParams.get("shipmentId");
 
@@ -760,27 +705,27 @@ showAlert({
           </div>
         </div>
         <ConfirmationModal
-  open={showDeleteModal}
-  onOpenChange={setShowDeleteModal}
-  variant="warning"
-  title="Delete shipments?"
-  description="Are you sure you want to delete the selected shipment?"
-  onConfirm={async () => {
-    try {
-      const result = await dispatch(
-        deleteShipment({ ids: selectedOrderIds })
-      );
+          open={showDeleteModal}
+          onOpenChange={setShowDeleteModal}
+          variant="warning"
+          title="Delete shipments?"
+          description="Are you sure you want to delete the selected shipment?"
+          onConfirm={async () => {
+            try {
+              const result = await dispatch(
+                deleteShipment({ ids: selectedOrderIds })
+              );
 
-      if (deleteShipment.fulfilled.match(result)) {
-        setShowDeleteModal(false);
+              if (deleteShipment.fulfilled.match(result)) {
+                setShowDeleteModal(false);
 
-        setTimeout(() => {
-          refetchShipments(dispatch);
-        }, 700);
-      }
-    } catch (err) {}
-  }}
-/>
+                setTimeout(() => {
+                  refetchShipments(dispatch);
+                }, 700);
+              }
+            } catch (err) { }
+          }}
+        />
       </div >
           <Alert />
     </>
