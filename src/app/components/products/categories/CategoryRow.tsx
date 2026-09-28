@@ -15,6 +15,9 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { ChevronDown, ChevronRight, Folder } from "lucide-react";
 import { useRouter } from "next/navigation";
+
+import Link from "next/link";
+import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
 import { useState } from "react";
 import VisibilityToggle from "../../dropdowns/VisibilityToggle";
 import OrderActionsDropdown from "../../orders/OrderActionsDropdown";
@@ -71,7 +74,10 @@ const CategoryRow = ({
   const [visibilityMap, setVisibilityMap] = useState<{
     [key: number]: "ENABLED" | "DISABLED";
   }>({});
-
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [pendingDeleteCategoryId, setPendingDeleteCategoryId] = useState<
+    number | null
+  >(null);
   const editdropdownActions = (category: any) => [
     {
       label: "Edit",
@@ -141,25 +147,32 @@ const CategoryRow = ({
         );
       },
     },
+    // {
+    //   label: "Delete",
+    //   onClick: () => {
+    //     const ids = {
+    //       ids: [category?.id],
+    //     };
+    //     const confirm = window.confirm("Delete selected category?");
+    //     if (!confirm) {
+    //       return;
+    //     } else {
+    //       try {
+    //         dispatch(deleteCategory({ data: ids }));
+    //         setTimeout(() => {
+    //           refetchCategories(dispatch);
+    //         }, 2000);
+    //       } catch (err) {
+    //         console.log(err, "Error while deleting");
+    //       }
+    //     }
+    //   },
+    // },
     {
       label: "Delete",
       onClick: () => {
-        const ids = {
-          ids: [category?.id],
-        };
-        const confirm = window.confirm("Delete selected category?");
-        if (!confirm) {
-          return;
-        } else {
-          try {
-            dispatch(deleteCategory({ data: ids }));
-            setTimeout(() => {
-              refetchCategories(dispatch);
-            }, 2000);
-          } catch (err) {
-            console.log(err, "Error while deleting");
-          }
-        }
+        setPendingDeleteCategoryId(category?.id);
+        setShowDeleteModal(true);
       },
     },
   ];
@@ -310,6 +323,35 @@ const CategoryRow = ({
           )}
         </SortableContext>
       )}
+      <ConfirmationModal
+        open={showDeleteModal}
+        onOpenChange={setShowDeleteModal}
+        variant="warning"
+        title="Delete category?"
+        description="Are you sure you want to delete this category?"
+        onConfirm={() => {
+          if (pendingDeleteCategoryId === null) return;
+
+          try {
+            dispatch(
+              deleteCategory({
+                data: {
+                  ids: [pendingDeleteCategoryId],
+                },
+              }),
+            );
+
+            setTimeout(() => {
+              refetchCategories(dispatch);
+            }, 2000);
+          } catch (err) {
+            console.log(err, "Error while deleting");
+          } finally {
+            setShowDeleteModal(false);
+            setPendingDeleteCategoryId(null);
+          }
+        }}
+      />
     </>
   );
 };

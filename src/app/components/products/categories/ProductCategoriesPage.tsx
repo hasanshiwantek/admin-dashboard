@@ -40,13 +40,16 @@ import { FormProvider, useForm } from "react-hook-form";
 import Spinner from "../../loader/Spinner";
 import AddCategoryModal from "./AddCategoryModal";
 import CategoryDropdownForClear from "./CategoryDropdownForClear";
+import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
 import CategoryRow from "./CategoryRow";
+import { useAlert } from "@/hooks/useAlert";
+
 
 export default function ProductCategoriesPage() {
   const methods = useForm();
   const dispatch = useAppDispatch();
   const searchParams = useSearchParams();
-
+  const { showAlert, Alert } = useAlert();
   const allCategories = useAppSelector(
     (state: any) => state.category.categories,
   );
@@ -64,6 +67,7 @@ export default function ProductCategoriesPage() {
   const [highlightId, setHighlightId] = useState<number | null>(null);
   const [isUpdateLoading, setIsUpdateLoading] = useState(false);
   const [open, setOpen] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -142,27 +146,40 @@ export default function ProductCategoriesPage() {
     ? findCategoryById(categories, Number(activeId))
     : null;
 
-  const handleDelete = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  // const handleDelete = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  //   e.preventDefault();
+  //   const catIds = selectedIds?.map((cat: any) => cat?.id);
+
+  //   if (selectedIds.length === 0) {
+  //     alert("Please select at least one category before deleting.");
+  //     return;
+  //   }
+
+  //   const confirm = window.confirm("Confirm Deletion?");
+  //   if (!confirm) return;
+
+  //   try {
+  //     await dispatch(deleteCategory({ data: { ids: catIds } }));
+  //     setSelectedIds([]);
+  //     setTimeout(() => dispatch(fetchCategories()), 500);
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
+  const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    const catIds = selectedIds?.map((cat: any) => cat?.id);
+    // const catIds = selectedIds?.map((cat: any) => cat?.id);
 
     if (selectedIds.length === 0) {
-      alert("Please select at least one category before deleting.");
+     showAlert({
+  title: "No Category Selected",
+  message: "Please select at least one category before deleting.",
+});
       return;
     }
 
-    const confirm = window.confirm("Confirm Deletion?");
-    if (!confirm) return;
-
-    try {
-      await dispatch(deleteCategory({ data: { ids: catIds } }));
-      setSelectedIds([]);
-      setTimeout(() => dispatch(fetchCategories()), 500);
-    } catch (err) {
-      console.error(err);
-    }
+    setShowDeleteModal(true);
   };
-
   const handleBulkVisibility = async (visible: boolean) => {
     if (!selectedIds.length) return;
 
@@ -349,6 +366,27 @@ export default function ProductCategoriesPage() {
         onOpenChange={setOpen}
         categoryData={categories}
       />
+      <ConfirmationModal
+        open={showDeleteModal}
+        onOpenChange={setShowDeleteModal}
+        variant="warning"
+        title="Delete categories?"
+        description="Are you sure you want to delete the selected categories?"
+        onConfirm={async () => {
+          const catIds = selectedIds?.map((cat: any) => cat?.id);
+
+          try {
+            await dispatch(deleteCategory({ data: { ids: catIds } }));
+            setSelectedIds([]);
+            setTimeout(() => dispatch(fetchCategories()), 500);
+          } catch (err) {
+            console.error(err);
+          } finally {
+            setShowDeleteModal(false);
+          }
+        }}
+      />
+          <Alert />
     </>
   );
 }

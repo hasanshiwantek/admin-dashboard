@@ -385,49 +385,65 @@ export const importCsv = createAsyncThunk(
 
 // EXPORT PRODUCTS THUNK
 export const exportCsv = createAsyncThunk(
-  "product/exportCsv",
-  async ({ payload }: { payload: any }, thunkAPI) => {
+  "product/exportProductCsv",
+  async (
+    {
+      payload,
+      onProgress,
+    }: {
+      payload: any;
+      onProgress?: (percent: number) => void;
+    },
+    thunkAPI,
+  ) => {
     try {
       const response = await axiosInstance.get(
         "dashboard/products/export-csv",
         {
           params: payload,
-          responseType: "blob", // 👈 critical for file download
-        }
+          responseType: "blob",
+          onDownloadProgress: (progressEvent) => {
+            
+            const loaded = progressEvent.loaded ?? 0;
+            const total = progressEvent.total;
+
+            if (total && total > 0) {
+              const percent = Math.round((loaded * 100) / total);
+              onProgress?.(Math.min(100, Math.max(0, percent)));
+            } else {
+              // no Content-Length — show movement without hitting 100
+              const fake = Math.min(90, Math.round(loaded / 1024) % 90);
+              onProgress?.(fake || 10);
+            }
+          },
+        },
       );
 
-      // Create a blob URL for the file
       const blob = new Blob([response.data], {
-        type: String(response.headers["content-type"] ?? ""),
+        type: String(response.headers["content-type"] ?? "text/csv"),
       });
-      const downloadUrl = URL.createObjectURL(blob);
 
-      // Get the file name from content-disposition header (if present)
+      const format = String(payload?.fileFormat || "csv").replace(/^\./, "");
+      const today = new Date().toISOString().slice(0, 10);
+      let filename = `products-${today}.${format}`;
+
       const disposition = response.headers["content-disposition"];
-      let filename = "products_export.xlsx";
       if (disposition && disposition.includes("filename=")) {
         filename = disposition
           .split("filename=")[1]
           .split(";")[0]
-          .replace(/"/g, "");
+          .replace(/"/g, "")
+          .trim();
       }
 
-      // Trigger the download
-      const link = document.createElement("a");
-      link.href = downloadUrl;
-      link.setAttribute("download", filename);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-
-      return "Export successful";
+      onProgress?.(100);
+      return { blob, filename };
     } catch (error: any) {
       console.error("❌ Error Exporting CSV:", error);
       return thunkAPI.rejectWithValue("Failed to Export CSV");
     }
-  }
+  },
 );
-
 // 2. Initial State
 const initialState = {
   products: [],

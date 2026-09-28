@@ -22,7 +22,8 @@ import {
 import Spinner from "../../loader/Spinner";
 import Pagination from "@/components/ui/pagination";
 import { useRouter } from "next/navigation";
-
+import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
+import { useAlert } from "@/hooks/useAlert";
 // ⭐ Star Rating component
 function StarRating({ rating }: { rating: number }) {
   return (
@@ -53,6 +54,8 @@ export default function AllReviews() {
   const [keyword, setKeyword] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState("20");
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const { showAlert, Alert } = useAlert();
 
   useEffect(() => {
     dispatch(fetchAllReviews({ page: currentPage, pageSize: Number(perPage) }));
@@ -86,13 +89,10 @@ export default function AllReviews() {
   };
 
   // ── Bulk actions ─────────────────────────────────────────────────────────
-  const handleDeleteSelected = async () => {
+  const handleDeleteSelected = () => {
     if (!selectedIds.length) return;
-    const ok = window.confirm(`Delete ${selectedIds.length} review(s)?`);
-    if (!ok) return;
-    await dispatch(deleteReview({ ids: selectedIds }));
-    dispatch(fetchAllReviews({ page: currentPage, pageSize: Number(perPage) }));
-    setSelectedIds([]);
+
+    setShowDeleteModal(true);
   };
 
   const handleApproveSelected = async () => {
@@ -209,43 +209,43 @@ export default function AllReviews() {
 
         {/* ── Table ── */}
         <Table>
-         <TableHeader>
-  <TableRow className="bg-gray-50">
-    <TableHead className="w-10 !py-[18px]">
-      <Checkbox
-        className="h-9 w-9 rounded-none mr-2"
-        checked={isAllSelected}
-        onCheckedChange={(checked: boolean) =>
-          handleSelectAll(checked)
-        }
-      />
-    </TableHead>
+          <TableHeader>
+            <TableRow className="bg-gray-50">
+              <TableHead className="w-10 !py-[18px]">
+                <Checkbox
+                  className="h-9 w-9 rounded-none mr-2"
+                  checked={isAllSelected}
+                  onCheckedChange={(checked: boolean) =>
+                    handleSelectAll(checked)
+                  }
+                />
+              </TableHead>
 
-    <TableHead className="!py-[18px] text-[13px] 2xl:text-[15px] font-semibold !text-[#34313F]">
-      Product
-    </TableHead>
+              <TableHead className="!py-[18px] text-[13px] 2xl:text-[15px] font-semibold !text-[#34313F]">
+                Product
+              </TableHead>
 
-    <TableHead className="!py-[18px] text-[13px] 2xl:text-[15px] font-semibold !text-[#34313F]">
-      Rating
-    </TableHead>
+              <TableHead className="!py-[18px] text-[13px] 2xl:text-[15px] font-semibold !text-[#34313F]">
+                Rating
+              </TableHead>
 
-    <TableHead className="!py-[18px] text-[13px] 2xl:text-[15px] font-semibold !text-[#34313F]">
-      Posted By
-    </TableHead>
+              <TableHead className="!py-[18px] text-[13px] 2xl:text-[15px] font-semibold !text-[#34313F]">
+                Posted By
+              </TableHead>
 
-    <TableHead className="!py-[18px] text-[13px] 2xl:text-[15px] font-semibold !text-[#34313F]">
-      Date
-    </TableHead>
+              <TableHead className="!py-[18px] text-[13px] 2xl:text-[15px] font-semibold !text-[#34313F]">
+                Date
+              </TableHead>
 
-    <TableHead className="!py-[18px] text-[13px] 2xl:text-[15px] font-semibold !text-[#34313F]">
-      Status
-    </TableHead>
+              <TableHead className="!py-[18px] text-[13px] 2xl:text-[15px] font-semibold !text-[#34313F]">
+                Status
+              </TableHead>
 
-    <TableHead className="!py-[18px] text-[13px] 2xl:text-[15px] font-semibold !text-[#34313F]">
-      Action
-    </TableHead>
-  </TableRow>
-</TableHeader>
+              <TableHead className="!py-[18px] text-[13px] 2xl:text-[15px] font-semibold !text-[#34313F]">
+                Action
+              </TableHead>
+            </TableRow>
+          </TableHeader>
 
           <TableBody>
             {loading ? (
@@ -298,7 +298,11 @@ export default function AllReviews() {
                             `${selectedStore.baseUrl}${review?.product?.product_url[0] == "/" ? review?.product?.product_url.slice(1) : review?.product?.product_url}`,
                             "_blank",
                           );
-                        else alert("Store URL or Product SKU not found");
+                        else
+                          showAlert({
+                            title: "Store or Product Not Found",
+                            message: "Store URL or Product SKU not found.",
+                          });
                       }}
                       //  onClick={() => router.push(`/manage/products/reviews/edit/${review.id}`)}
                       className="!text-[#6F8DFD] !font-normal hover:underline cursor-pointer !text-[15px]  block max-w-[500px] whitespace-normal break-words"
@@ -374,6 +378,25 @@ export default function AllReviews() {
           />
         </div>
       </div>
+      <ConfirmationModal
+        open={showDeleteModal}
+        onOpenChange={setShowDeleteModal}
+        variant="warning"
+        title="Delete reviews?"
+        description="Are you sure you want to delete the selected reviews?"
+        onConfirm={async () => {
+          await dispatch(deleteReview({ ids: selectedIds }));
+          dispatch(
+            fetchAllReviews({
+              page: currentPage,
+              pageSize: Number(perPage),
+            }),
+          );
+          setSelectedIds([]);
+          setShowDeleteModal(false);
+        }}
+      />
+      <Alert />
     </div>
   );
 }

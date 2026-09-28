@@ -28,6 +28,7 @@ import {
 } from "@/redux/slices/customerSlice";
 import Link from "next/link";
 import { useSelector } from "react-redux";
+import { useAlert } from "@/hooks/useAlert";
 const AddCustomer = () => {
   const { id } = useParams(); // dynamic route
   const dispatch = useAppDispatch();
@@ -36,6 +37,7 @@ const AddCustomer = () => {
   const isEdit = !!id;
   const [saveAndAddAnother, setSaveAndAddAnother] = useState(false);
   const [passwordMismatch, setPasswordMismatch] = useState(false);
+    const { showAlert, Alert } = useAlert();
   const [formData, setFormData] = useState<any>({
     firstName: "",
     lastName: "",
@@ -164,11 +166,17 @@ const AddCustomer = () => {
           }, 700);
         }
       } else {
-        alert("Customer save failed");
+        showAlert({
+  title: "Customer Save Failed",
+  message: "Customer save failed.",
+});
       }
     } catch (error) {
       console.error("Submit error:", error);
-      alert("Unexpected error occurred.");
+     showAlert({
+  title: "Unexpected Error",
+  message: "Unexpected error occurred.",
+});
     } finally {
       setLoading(false);
     }
@@ -600,6 +608,7 @@ const AddCustomer = () => {
           </button>
         </div>
       </form>
+          <Alert />
     </div>
   );
 };

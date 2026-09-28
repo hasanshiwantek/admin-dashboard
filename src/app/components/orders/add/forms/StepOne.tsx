@@ -20,6 +20,7 @@ import { Country, State } from "country-state-city";
 import { removeCouponUsage, resetCoupon } from "@/redux/slices/orderSlice";
 import { errorMessage } from "@/utils/message";
 import { useAppSelector } from "@/hooks/useReduxHooks";
+import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
 
 interface CustomerAddress {
   id: number;
@@ -60,7 +61,7 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(
     watch("selectedCustomer") || null,
   );
-
+const [showCancelModal, setShowCancelModal] = useState(false);
   const orderType = watch("orderType") || "existing";
   const billingCountry = watch("billingCountry") || "";
   const billingState = watch("billingState") || "";
@@ -145,11 +146,14 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
     setStep(step + 1);
   };
 
+  // const handleCancel = () => {
+  //   if (window.confirm("Are you sure you want to cancel this order?")) {
+  //     router.push("/manage/orders/");
+  //   }
+  // };
   const handleCancel = () => {
-    if (window.confirm("Are you sure you want to cancel this order?")) {
-      router.push("/manage/orders/");
-    }
-  };
+  setShowCancelModal(true);
+};
 
   const handleUseAddress = (address: CustomerAddress) => {
     setValue("billingFirstName", address.first_name ?? "");
@@ -584,6 +588,17 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
           Next
         </button>
       </div>
+      <ConfirmationModal
+  open={showCancelModal}
+  onOpenChange={setShowCancelModal}
+  variant="warning"
+  title="Cancel order?"
+  description="Are you sure you want to cancel this order?"
+  onConfirm={() => {
+    setShowCancelModal(false);
+    router.push("/manage/orders/");
+  }}
+/>
     </form>
   );
 }
