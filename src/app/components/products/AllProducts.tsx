@@ -31,9 +31,9 @@ export default function AllProducts() {
     confirmCategoryDelete,
     closeCategoryDeleteConfirm,
     showProductDeleteConfirm,
-productDeleteMessage,
-productDeleteConfirm,
-closeProductDeleteConfirm,
+    productDeleteMessage,
+    productDeleteConfirm,
+    closeProductDeleteConfirm,
   } = useAllProductsContainer();
 
   return (
@@ -103,14 +103,14 @@ closeProductDeleteConfirm,
         cancelText="Cancel"
       />
       <ConfirmationModal
-  open={showProductDeleteConfirm}
-  onClose={closeProductDeleteConfirm}
-  onConfirm={productDeleteConfirm}
-  title="Delete Product"
-  message={productDeleteMessage}
-  confirmText="Continue"
-  cancelText="Cancel"
-/>
+        open={showProductDeleteConfirm}
+        onClose={closeProductDeleteConfirm}
+        onConfirm={productDeleteConfirm}
+        title="Delete Product"
+        message={productDeleteMessage}
+        confirmText="Continue"
+        cancelText="Cancel"
+      />
     </>
   );
 }
