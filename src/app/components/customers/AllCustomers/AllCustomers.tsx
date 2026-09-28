@@ -8,8 +8,10 @@ import TableTabs from "@/components/ui/Table/TableTabs";
 import { DownloadIcon, PlusIcon, SearchIcon, Trash } from "lucide-react";
 import { useMemo } from "react";
 import CustomerNotesModal from "../edit/CustomerNotesModal";
-import { getCustomerColumns } from "./AllCustomersColumn";
+
+import { useAlert } from "@/hooks/useAlert";
 import useAllCustomersContainer from "./AllCustomersContainer";
+import { getCustomerColumns } from "./AllCustomersColumn";
 import { renderExpandedRow } from "./CustomerDetailRow";
 
 // Shared height so toolbar buttons and input line up
@@ -48,6 +50,7 @@ const AllCustomers = () => {
     filterHandler,
     handleExport,
     router,
+    Alert
   } = useAllCustomersContainer();
 
   const customerColumns = useMemo(
@@ -172,6 +175,7 @@ const AllCustomers = () => {
         description="Are you sure you want to delete the selected customer(s)?"
         onConfirm={confirmDeleteCustomers}
       />
+      <Alert/>
     </div>
   );
 };
