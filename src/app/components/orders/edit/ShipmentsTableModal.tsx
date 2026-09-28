@@ -25,7 +25,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import OrderActionsDropdown from "../OrderActionsDropdown";
 import { useRouter } from "next/navigation";
 import { refetchOrders } from "@/lib/orderUtils";
-
+import { useAlert } from "@/hooks/useAlert";
 interface ShipmentModalProps {
   open: boolean;
   onClose: () => void;
@@ -60,6 +60,7 @@ export default function ShipmentsTableModal({
   const { shipmentLoader } = useAppSelector((state) => state.order);
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const { showAlert, Alert } = useAlert();
   const [savingId, setSavingId] = useState<number | null>(null);
 
   const handleClose = () => {
@@ -71,8 +72,6 @@ export default function ShipmentsTableModal({
   const toggleRow = (id: number) => {
     setExpandedRow((prev) => (prev === id ? null : id));
   };
-
-
 
   const orderActions = (shipment: any) => [
     {
@@ -92,12 +91,13 @@ export default function ShipmentsTableModal({
             window.open(url, "_blank");
           } else {
           }
-        } catch (error) { }
+        } catch (error) {}
       },
     },
   ];
 
   return (
+    <>
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent
         className="sm:max-w-[1100px] p-0 gap-0 rounded-none [&>button]:text-white [&>button]:top-3 [&>button]:right-3"
@@ -201,7 +201,7 @@ export default function ShipmentsTableModal({
                                   data: { trackingId: updatedValue },
                                 }),
                               );
-                              refetchOrders(dispatch)
+                              refetchOrders(dispatch);
                             }
                           }}
                           disabled={shipmentLoader}
@@ -244,7 +244,6 @@ export default function ShipmentsTableModal({
                             <div className="flex gap-4">
                               <div className="flex flex-col items-start gap-2 min-w-[70px]">
                                 <h4 className="font-bold text-lg ">Billing</h4>
-
                               </div>
                               <div className="flex flex-col space-y-2">
                                 <p className="font-semibold">
@@ -257,12 +256,8 @@ export default function ShipmentsTableModal({
                                   }
                                 </p>
                                 <p>
-                                  {
-                                    orderDetails?.billingAddress?.addressLine1
-                                  }{" "}
-                                  {
-                                    orderDetails?.billingAddress?.addressLine2
-                                  }
+                                  {orderDetails?.billingAddress?.addressLine1}{" "}
+                                  {orderDetails?.billingAddress?.addressLine2}
                                 </p>
                                 <p>
                                   {orderDetails?.billingAddress?.city},{" "}
@@ -271,8 +266,8 @@ export default function ShipmentsTableModal({
                                 </p>
                                 <div className="flex items-center gap-2">
                                   <span>
-                                    {orderDetails?.billingAddress
-                                      ?.country || "N/A"}
+                                    {orderDetails?.billingAddress?.country ||
+                                      "N/A"}
                                   </span>
                                 </div>
                                 <div className="flex items-center gap-2">
@@ -302,16 +297,16 @@ export default function ShipmentsTableModal({
                                   <span>
                                     {orderDetails?.billingInformation?.createdAt
                                       ? new Date(
-                                        orderDetails.billingInformation
-                                          .createdAt,
-                                      ).toLocaleString("en-GB", {
-                                        day: "2-digit",
-                                        month: "short",
-                                        year: "numeric",
-                                        hour: "2-digit",
-                                        minute: "2-digit",
-                                        second: "2-digit",
-                                      })
+                                          orderDetails.billingInformation
+                                            .createdAt,
+                                        ).toLocaleString("en-GB", {
+                                          day: "2-digit",
+                                          month: "short",
+                                          year: "numeric",
+                                          hour: "2-digit",
+                                          minute: "2-digit",
+                                          second: "2-digit",
+                                        })
                                       : "N/A"}
                                   </span>
                                 </div>
@@ -402,27 +397,21 @@ export default function ShipmentsTableModal({
                                   (item: any, idx: number) => (
                                     <div key={idx} className="min-w-0">
                                       <p className="font-semibold">
-
                                         {item?.quantity} x{" "}
                                         <span
                                           onClick={() => {
-                                            const availableStores =
-                                              JSON.parse(
-                                                localStorage.getItem(
-                                                  "availableStores",
-                                                ) || "[]",
-                                              );
-                                            const selectedStoreId =
-                                              Number(
-                                                localStorage.getItem(
-                                                  "storeId",
-                                                ),
-                                              );
+                                            const availableStores = JSON.parse(
+                                              localStorage.getItem(
+                                                "availableStores",
+                                              ) || "[]",
+                                            );
+                                            const selectedStoreId = Number(
+                                              localStorage.getItem("storeId"),
+                                            );
                                             const selectedStore =
                                               availableStores.find(
                                                 (s: any) =>
-                                                  s.id ===
-                                                  selectedStoreId,
+                                                  s.id === selectedStoreId,
                                               );
                                             if (selectedStore?.baseUrl)
                                               window.open(
@@ -430,9 +419,12 @@ export default function ShipmentsTableModal({
                                                 "_blank",
                                               );
                                             else
-                                              alert(
-                                                "Store URL or Product SKU not found",
-                                              );
+                                              showAlert({
+                                                title:
+                                                  "Store or Product Not Found",
+                                                message:
+                                                  "Store URL or Product SKU not found.",
+                                              });
                                           }}
                                           className="!text-[#6F8DFD] font-light cursor-pointer hover:underline whitespace-normal break-words leading-snug max-w-[300px]"
                                         >
@@ -488,5 +480,7 @@ export default function ShipmentsTableModal({
         </DialogFooter>
       </DialogContent>
     </Dialog>
+          <Alert />
+    </>
   );
 }

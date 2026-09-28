@@ -119,14 +119,6 @@ const LogoPage = () => {
   // --- onSubmit Handler ---
   const onSubmit = async (data: LogoFormValues) => {
     try {
-      // if (
-      //   data.logoType === "upload" &&
-      //   (!data.logoFile || data.logoFile.length === 0)
-      // ) {
-      //   alert("Please upload a logo image before saving.");
-      //   return;
-      // }
-
       const formData = new FormData();
       formData.append("logoType", data.logoType);
       formData.append("logoSize", data.logoSize);
@@ -199,7 +191,7 @@ const LogoPage = () => {
         if (!logo || !logo[0]?.id) return;
 
         const confirmed = confirm(
-          "Are you sure you want to delete this logo? This action cannot be undone."
+          "Are you sure you want to delete this logo? This action cannot be undone.",
         );
 
         if (!confirmed) return;
@@ -261,7 +253,9 @@ const LogoPage = () => {
                     </div>
                     <div className="flex items-center space-x-5">
                       <RadioGroupItem value="upload" id="upload-logo" />
-                      <Label className="2xl:!text-2xl" htmlFor="upload-logo">Upload a custom image</Label>
+                      <Label className="2xl:!text-2xl" htmlFor="upload-logo">
+                        Upload a custom image
+                      </Label>
                     </div>
                   </RadioGroup>
                 )}
@@ -349,7 +343,9 @@ const LogoPage = () => {
 
               {logoSize === "dimensions" ? (
                 <div className="mt-5 space-x-2 flex items-center text-base text-gray-600">
-                  <Label className="2xl:!text-2xl" htmlFor="max-width-input">Max Width:</Label>
+                  <Label className="2xl:!text-2xl" htmlFor="max-width-input">
+                    Max Width:
+                  </Label>
                   <Input
                     id="max-width-input"
                     type="number"
@@ -357,7 +353,9 @@ const LogoPage = () => {
                     className="w-24 text-center"
                   />
                   <span className="2xl:!text-2xl">x</span>
-                  <Label className="2xl:!text-2xl" htmlFor="max-height-input">Max Height:</Label>
+                  <Label className="2xl:!text-2xl" htmlFor="max-height-input">
+                    Max Height:
+                  </Label>
                   <Input
                     id="max-height-input"
                     type="number"
@@ -391,7 +389,9 @@ const LogoPage = () => {
 
           {/* --- FAVICON SECTION --- */}
           <div className="bg-white rounded-md shadow-md border p-10 space-y-6 my-30">
-            <h1 className="!font-semibold tracking-tight 2xl:!text-[2.4rem]">Favicon</h1>
+            <h1 className="!font-semibold tracking-tight 2xl:!text-[2.4rem]">
+              Favicon
+            </h1>
             <p className="text-sm text-gray-600 2xl:!text-2xl">
               A favicon is a small image that represents your brand in browser
               tabs.
@@ -454,7 +454,7 @@ const LogoPage = () => {
           className="btn-outline-primary"
           onClick={() => {
             const confirmed = confirm(
-              "Are you sure you want to cancel? All unsaved changes will be lost."
+              "Are you sure you want to cancel? All unsaved changes will be lost.",
             );
             if (confirmed) {
               reset();

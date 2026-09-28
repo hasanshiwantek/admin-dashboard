@@ -25,7 +25,7 @@ import Spinner from "../loader/Spinner";
 import OrderActionsDropdown from "../orders/OrderActionsDropdown";
 import { PageTypeOptions } from "./constants";
 import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
-
+import { useAlert } from "@/hooks/useAlert";
 const WebPageTable = () => {
   const router = useRouter();
 
@@ -44,6 +44,7 @@ const WebPageTable = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const isAllSelected = selectedIds.length === webPages?.length;
+  const { showAlert, Alert } = useAlert();
 
   const toggleSelectAll = () => {
     const newSelected = isAllSelected
@@ -87,14 +88,17 @@ const WebPageTable = () => {
   //     }
   //   }
   // };
-const deleteWebpageHandler = () => {
-  if (selectedIds.length === 0) {
-    alert("Please select at least one Webpage before deleting.");
-    return;
-  }
+  const deleteWebpageHandler = () => {
+    if (selectedIds.length === 0) {
+      showAlert({
+        title: "No Webpage Selected",
+        message: "Please select at least one Webpage before deleting.",
+      });
+      return;
+    }
 
-  setShowDeleteModal(true);
-};
+    setShowDeleteModal(true);
+  };
   useEffect(() => {
     dispatch(getWebPages());
   }, [dispatch]);
@@ -244,34 +248,35 @@ const deleteWebpageHandler = () => {
         </Table>
       </div>
       <ConfirmationModal
-  open={showDeleteModal}
-  onOpenChange={setShowDeleteModal}
-  variant="warning"
-  title="Delete Webpages?"
-  description="Are you sure you want to delete the selected webpages?"
-  onConfirm={async () => {
-    try {
-      const resultAction = await dispatch(
-        deleteWebPage({ id: selectedIds })
-      );
-      const result = (resultAction as any).payload;
+        open={showDeleteModal}
+        onOpenChange={setShowDeleteModal}
+        variant="warning"
+        title="Delete Webpages?"
+        description="Are you sure you want to delete the selected webpages?"
+        onConfirm={async () => {
+          try {
+            const resultAction = await dispatch(
+              deleteWebPage({ id: selectedIds }),
+            );
+            const result = (resultAction as any).payload;
 
-      if ((resultAction as any).meta.requestStatus === "fulfilled") {
-        setSelectedIds([]);
+            if ((resultAction as any).meta.requestStatus === "fulfilled") {
+              setSelectedIds([]);
 
-        setTimeout(() => {
-          refetchWebpages(dispatch);
-        }, 700);
-      } else {
-        console.error("❌ Failed to delete webpage:", result);
-      }
-    } catch (err) {
-      console.error("❌ Unexpected error:", err);
-    } finally {
-      setShowDeleteModal(false);
-    }
-  }}
-/>
+              setTimeout(() => {
+                refetchWebpages(dispatch);
+              }, 700);
+            } else {
+              console.error("❌ Failed to delete webpage:", result);
+            }
+          } catch (err) {
+            console.error("❌ Unexpected error:", err);
+          } finally {
+            setShowDeleteModal(false);
+          }
+        }}
+      />
+      <Alert />
     </div>
   );
 };

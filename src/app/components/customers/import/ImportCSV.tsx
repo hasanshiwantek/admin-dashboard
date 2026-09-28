@@ -10,6 +10,7 @@ import { mappingFields } from "@/const/ImportExportData";
 import { importCustomerCsv } from "@/redux/slices/customerSlice";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { useRouter } from "next/navigation";
+import { useAlert } from "@/hooks/useAlert";
 const ImportCsv = () => {
   const methods = useForm({
     defaultValues: {
@@ -28,7 +29,7 @@ const ImportCsv = () => {
   const dispatch = useAppDispatch();
   const [step, setStep] = useState(1);
   const router = useRouter();
-
+  const { showAlert, Alert } = useAlert();
   // const handleFinalSubmit = async (data: Record<string, any>) => {
   //   const {
   //     file,
@@ -158,7 +159,10 @@ const ImportCsv = () => {
               if (step === 1) {
                 const file = data.file;
                 if (!file || file.length === 0) {
-                  alert("Please upload a file before proceeding.");
+                  showAlert({
+                    title: "File Upload Required",
+                    message: "Please upload a file before proceeding.",
+                  });
                   return;
                 }
                 setStep(2);
@@ -182,6 +186,7 @@ const ImportCsv = () => {
             </div>
           </form>
         </FormProvider>
+        <Alert />
       </div>
     </>
   );

@@ -16,11 +16,13 @@ import Link from "next/link";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { useParams, useRouter } from "next/navigation";
 import { updateBrand, getBrandById } from "@/redux/slices/productSlice";
+import { useAlert } from "@/hooks/useAlert";
 
 const EditBrand = () => {
   const { id } = useParams();
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const { showAlert, Alert } = useAlert();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -56,7 +58,7 @@ const EditBrand = () => {
             setPreviewImage(
               data.logo.startsWith("http")
                 ? data.logo
-                : `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL || ""}${data.logo}`
+                : `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL || ""}${data.logo}`,
             );
           }
         }
@@ -69,7 +71,7 @@ const EditBrand = () => {
   }, [id, dispatch]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -122,7 +124,6 @@ const EditBrand = () => {
     console.log("🟡 SUBMITTING BRAND DATA:");
     for (const [key, value] of formDataToSend.entries()) {
       if (value instanceof File) {
-
       } else {
         console.log(`🔤 ${key}:`, value);
       }
@@ -130,7 +131,7 @@ const EditBrand = () => {
 
     try {
       const resultAction = await dispatch(
-        updateBrand({ id, formData: formDataToSend })
+        updateBrand({ id, formData: formDataToSend }),
       );
 
       // 🔍 Debug response
@@ -143,7 +144,10 @@ const EditBrand = () => {
         router.push("/manage/products/brands");
       } else {
         console.error("❌ Failed to update brand:", result);
-        alert(result?.message || "Brand update failed.");
+        showAlert({
+          title: "Brand Update Failed",
+          message: result?.message || "Brand update failed.",
+        });
       }
     } catch (err) {
       console.error("❌ Unexpected error during update:", err);
@@ -154,7 +158,7 @@ const EditBrand = () => {
     label: string,
     name: string,
     optional = true,
-    textarea = false
+    textarea = false,
   ) => (
     <div className="space-y-1">
       <Label className="flex items-center gap-1 2xl:!text-2xl">
@@ -186,7 +190,9 @@ const EditBrand = () => {
       <div className="p-10">
         <div className="flex flex-col gap-6">
           <h1 className="!font-light 2xl:!text-5xl">Edit Brand</h1>
-          <p className="2xl:!text-2xl">Modify the details of the brand below and click "Save".</p>
+          <p className="2xl:!text-2xl">
+            Modify the details of the brand below and click "Save".
+          </p>
         </div>
         <div className="bg-white p-5 shadow-md my-6">
           <form onSubmit={handleSubmit} className="max-w-3xl p-6 space-y-6">
@@ -211,7 +217,9 @@ const EditBrand = () => {
 
               {previewImage && (
                 <div className="mb-3">
-                  <p className="text-sm mb-1 text-gray-600 2xl:!text-2xl">Preview:</p>
+                  <p className="text-sm mb-1 text-gray-600 2xl:!text-2xl">
+                    Preview:
+                  </p>
                   <img
                     src={previewImage}
                     alt="Brand preview"
@@ -262,6 +270,7 @@ const EditBrand = () => {
           Save
         </button>
       </div>
+      <Alert />
     </div>
   );
 };
