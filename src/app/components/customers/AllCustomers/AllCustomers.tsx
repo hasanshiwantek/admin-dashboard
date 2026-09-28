@@ -39,6 +39,7 @@ import Spinner from "../../loader/Spinner";
 import OrderActionsDropdown from "../../orders/OrderActionsDropdown";
 import CustomerNotesModal from "../edit/CustomerNotesModal";
 import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
+import { useAlert } from "@/hooks/useAlert";
 
 const AllCustomers = () => {
   const dispatch = useAppDispatch();
@@ -55,6 +56,7 @@ const AllCustomers = () => {
   const [showCustomerNotes, setShowCustomerNotes] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const { showAlert, Alert } = useAlert();
 
   const getDropdownActions = (customer: any) => [
     {
@@ -140,7 +142,10 @@ const AllCustomers = () => {
   // };
 const deleteCustomerHandler = async () => {
   if (!selectedCustomers || selectedCustomers.length === 0) {
-    alert("No customers selected for deletion.");
+   showAlert({
+  title: "No Customers Selected",
+  message: "No customers selected for deletion.",
+});
     return;
   }
 
@@ -722,6 +727,7 @@ const deleteCustomerHandler = async () => {
     }
   }}
 />
+    <Alert />
     </div>
   );
 };
