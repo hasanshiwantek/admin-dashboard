@@ -1,11 +1,15 @@
 "use client";
 
+import { getRequiredSlug } from "@/const/permissions";
+import { usePermissions } from "@/hooks/usePermissions";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { usePermissions } from "@/hooks/usePermissions";
-import { getRequiredSlug } from "@/const/permissions";
 
-export default function PermissionGuard({ children }: { children: React.ReactNode }) {
+export default function PermissionGuard({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const pathname = usePathname() || "";
   const { loaded, canRoute } = usePermissions();
 

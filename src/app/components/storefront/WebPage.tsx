@@ -63,7 +63,6 @@ const WebPage = () => {
     "pageName",
     "pageContent",
   ]);
-  console.log({ pageContent});
   const isEdit = !!id;
 
   // Fetch page data if editing
