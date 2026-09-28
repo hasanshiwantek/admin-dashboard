@@ -1,3 +1,5 @@
+import { DateTimeFormat } from "@/const/appConstants";
+import { formatDateTime } from "@/lib/utils";
 import Link from "next/link";
 import { FaCircleMinus, FaCirclePlus } from "react-icons/fa6";
 
@@ -8,7 +10,7 @@ export const getCustomerColumns = (
   {
     key: "expand",
     header: "",
-    className: "w-12",
+    width: "50px",
     render: (customer: any) => (
       <button
         type="button"
@@ -26,7 +28,10 @@ export const getCustomerColumns = (
   {
     key: "name",
     header: "Name",
+    sortable: true,
+    width: "28%",
     headClassName: "2xl:!text-[1.6rem]",
+    className: "whitespace-normal break-words",
     render: (customer: any) => (
       <div className="text-blue-600 cursor-pointer hover:underline">
         <Link
@@ -42,7 +47,7 @@ export const getCustomerColumns = (
     key: "email",
     header: "Email",
     headClassName: "2xl:!text-[1.6rem]",
-    className: "text-blue-500 2xl:!text-2xl",
+    className: "text-blue-500 2xl:!text-2xl truncate",
     render: (customer: any) => (
       <Link
         href={`mailto:${customer?.email}`}
@@ -55,6 +60,7 @@ export const getCustomerColumns = (
   {
     key: "phone",
     header: "Phone",
+    width: "160px",
     headClassName: "2xl:!text-[1.6rem]",
     className: "2xl:!text-2xl",
     render: (customer: any) => customer.phone,
@@ -62,6 +68,9 @@ export const getCustomerColumns = (
   {
     key: "totalOrders",
     header: "Orders",
+    width: "120px",
+    sortable: true,
+    sortKey: "orders",
     headClassName: "2xl:!text-[1.6rem]",
     className: "2xl:!text-2xl",
     render: (customer: any) => customer?.totalOrders,
@@ -69,12 +78,11 @@ export const getCustomerColumns = (
   {
     key: "joinDate",
     header: "Join date",
+    width: "230px",
+    sortable: true,
     headClassName: "2xl:!text-[1.6rem]",
     className: "2xl:!text-2xl",
     render: (customer: any) =>
-      new Date(customer?.joinDate).toLocaleString("en-US", {
-        dateStyle: "medium",
-        timeStyle: "short",
-      }),
+      formatDateTime(customer?.joinDate, DateTimeFormat.SHORT_DATE_TIME),
   },
 ];

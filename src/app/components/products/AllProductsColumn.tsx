@@ -27,8 +27,6 @@ const AllProductsColumn = ({
     key: "name",
     header: "Name",
     sortable: true,
-    className: "flex items-center gap-2",
-    width: "350px",
     render: (product) => {
       const imageSrc =
         product.image?.find((img: any) => img?.isPrimary === 1)?.path ||
@@ -36,7 +34,7 @@ const AllProductsColumn = ({
         product.image?.[1]?.path ||
         "/default-product-image.svg";
       return (
-        <>
+        <div className="flex items-center gap-2 min-w-[280px] max-w-[420px]">
           {imageSrc && (
             <Image
               src={imageSrc}
@@ -52,7 +50,7 @@ const AllProductsColumn = ({
           >
             {product.name}
           </span>
-        </>
+        </div>
       );
     },
   },
