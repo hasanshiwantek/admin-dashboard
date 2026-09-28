@@ -1,15 +1,19 @@
 "use client";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect, useRef } from "react";
-import { fetchAllProducts, fetchAllPurchasableProducts } from "@/redux/slices/productSlice";
+import {
+  fetchAllProducts,
+  fetchAllPurchasableProducts,
+} from "@/redux/slices/productSlice";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
-
+import { useAlert } from "@/hooks/useAlert";
 export default function ProductSearchInput({ onSelect, register }: any) {
   const dispatch = useAppDispatch();
   const [search, setSearch] = useState("");
   const [filtered, setFiltered] = useState<any[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { showAlert, Alert } = useAlert();
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -30,7 +34,7 @@ export default function ProductSearchInput({ onSelect, register }: any) {
             page: 1,
             pageSize: 20,
             search: search.trim(),
-          })
+          }),
         );
 
         if (fetchAllProducts.fulfilled.match(resultAction)) {
@@ -102,7 +106,6 @@ export default function ProductSearchInput({ onSelect, register }: any) {
                   onClick={() => handleSelect(product)}
                   className="flex min-w-0 flex-1 items-center gap-3 text-left"
                 >
-
                   {product?.image?.[0]?.path || product?.image ? (
                     <img
                       src={product?.image?.[0]?.path || product?.image}
@@ -153,7 +156,10 @@ export default function ProductSearchInput({ onSelect, register }: any) {
                     if (selectedStore?.baseUrl && path) {
                       window.open(`${selectedStore.baseUrl}${path}`, "_blank");
                     } else {
-                      alert("Store URL or Product URL not found");
+                      showAlert({
+                        title: "Store or Product Not Found",
+                        message: "Store URL or Product URL not found.",
+                      });
                     }
                   }}
                 >
@@ -168,6 +174,7 @@ export default function ProductSearchInput({ onSelect, register }: any) {
           )}
         </ul>
       )}
+      <Alert />
     </div>
   );
 }

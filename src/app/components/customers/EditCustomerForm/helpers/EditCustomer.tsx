@@ -23,12 +23,14 @@ import {
 import { ArrowLeft, MoreHorizontal, Plus } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
+import { useAlert } from "@/hooks/useAlert";
 
 const EditCustomer = () => {
   const { id } = useParams();
   const dispatch = useAppDispatch();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const { showAlert, Alert } = useAlert();
   const { customerAddresses, addressesLoading } = useAppSelector(
     (state: any) => state.customer,
   );
@@ -210,11 +212,17 @@ const EditCustomer = () => {
           }, 700);
         }
       } else {
-        alert("Customer save failed");
+        showAlert({
+          title: "Customer Save Failed",
+          message: "Customer save failed.",
+        });
       }
     } catch (error) {
       console.error("Submit error:", error);
-      alert("Unexpected error occurred.");
+      showAlert({
+        title: "Unexpected Error",
+        message: "Unexpected error occurred.",
+      });
     } finally {
       setLoading(false);
     }
@@ -795,15 +803,22 @@ const EditCustomer = () => {
                 setDeleteAddressIds([]);
                 setShowDeleteModal(false);
               } else {
-                alert("Failed to delete addresses");
+                showAlert({
+                  title: "Address Deletion Failed",
+                  message: "Failed to delete addresses.",
+                });
               }
             } catch (error) {
               console.error(error);
-              alert("Something went wrong");
+              showAlert({
+                title: "Something Went Wrong",
+                message: "Something went wrong.",
+              });
             }
           }}
         />
       </form>
+      <Alert />
     </div>
   );
 };

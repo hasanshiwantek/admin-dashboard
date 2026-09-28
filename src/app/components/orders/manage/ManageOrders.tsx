@@ -27,6 +27,7 @@ import { useAppSelector, useAppDispatch } from "@/hooks/useReduxHooks";
 import { getReturnOrders } from "@/redux/slices/orderSlice";
 import Spinner from "../../loader/Spinner";
 import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
+import { useAlert } from "@/hooks/useAlert";
 const ManageOrders = () => {
   const [selectedTab, setSelectedTab] = useState("All returns");
   const [searchTerm, setSearchTerm] = useState("");
@@ -35,7 +36,7 @@ const ManageOrders = () => {
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [staffNotes, setStaffNotes] = useState<{ [key: number]: string }>({});
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-
+ const { showAlert, Alert } = useAlert();
   const { returnOrders, returnLoader } = useAppSelector(
     (state: any) => state.order,
   );
@@ -104,24 +105,13 @@ const ManageOrders = () => {
     // dispatch(updateReturnStatus({ id, status: newStatus }));
   };
 
-  // Handle delete selected
-  // const handleDeleteSelected = () => {
-  //   if (selectedRows.length === 0) {
-  //     alert("Please select at least one return to delete");
-  //     return;
-  //   }
-  //   const confirmDelete = window.confirm(
-  //     `Are you sure you want to delete ${selectedRows.length} return(s)?`,
-  //   );
-  //   if (confirmDelete) {
-  //     // TODO: Dispatch action to delete selected returns
-  //     // dispatch(deleteReturnOrders(selectedRows));
-  //     setSelectedRows([]);
-  //   }
-  // };
+
   const handleDeleteSelected = () => {
   if (selectedRows.length === 0) {
-    alert("Please select at least one return to delete");
+    showAlert({
+  title: "No Return Selected",
+  message: "Please select at least one return to delete.",
+});
     return;
   }
 
@@ -527,6 +517,7 @@ const ManageOrders = () => {
     setShowDeleteModal(false);
   }}
 />
+      <Alert />
     </div>
   );
 };

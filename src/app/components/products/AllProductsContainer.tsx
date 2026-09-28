@@ -18,6 +18,7 @@ import * as XLSX from "xlsx";
 import OrderActionsDropdown from "../orders/OrderActionsDropdown";
 import AllProductsColumn from "./AllProductsColumn";
 import { BOOLEAN_FILTERS, ProductTabs } from "./constant";
+import { useAlert } from "@/hooks/useAlert";
 
 const useAllProductsContainer = () => {
   const allProducts = useAppSelector((state: any) => state.product.products);
@@ -34,9 +35,10 @@ const useAllProductsContainer = () => {
     string[]
   >([]);
   const [showProductDeleteConfirm, setShowProductDeleteConfirm] =
-  React.useState(false);
-const [pendingDeleteProductIds, setPendingDeleteProductIds] =
-  React.useState<number[]>([]);
+    React.useState(false);
+  const [pendingDeleteProductIds, setPendingDeleteProductIds] = React.useState<
+    number[]
+  >([]);
   const [categoryAction, setCategoryAction] = React.useState<
     ActionEnums.ADD | ActionEnums.DELETE
   >(ActionEnums.ADD);
@@ -45,7 +47,7 @@ const [pendingDeleteProductIds, setPendingDeleteProductIds] =
     React.useState(false);
   const [pendingDeleteCategoryIds, setPendingDeleteCategoryIds] =
     React.useState<number[]>([]);
-
+  const { showAlert, Alert } = useAlert();
   const products = allProducts?.data;
   const pagination = allProducts?.pagination;
   const totalPages = pagination?.lastPage;
@@ -224,12 +226,12 @@ const [pendingDeleteProductIds, setPendingDeleteProductIds] =
     //   },
     // },
     {
-  label: "Delete",
-  onClick: () => {
-    setPendingDeleteProductIds([product.id]);
-    setShowProductDeleteConfirm(true);
-  },
-},
+      label: "Delete",
+      onClick: () => {
+        setPendingDeleteProductIds([product.id]);
+        setShowProductDeleteConfirm(true);
+      },
+    },
     {
       label: "Edit",
       onClick: () => {
@@ -259,7 +261,10 @@ const [pendingDeleteProductIds, setPendingDeleteProductIds] =
             "_blank",
           );
         } else {
-          alert("Store URL or Product SKU not found");
+          showAlert({
+            title: "Store or Product Not Found",
+            message: "Store URL or Product SKU not found.",
+          });
         }
       },
     },
@@ -374,12 +379,12 @@ const [pendingDeleteProductIds, setPendingDeleteProductIds] =
     //   },
     // },
     {
-  label: "Delete",
-  onClick: () => {
-    setPendingDeleteProductIds(selectedProductIds);
-    setShowProductDeleteConfirm(true);
-  },
-},
+      label: "Delete",
+      onClick: () => {
+        setPendingDeleteProductIds(selectedProductIds);
+        setShowProductDeleteConfirm(true);
+      },
+    },
   ];
 
   const handleEditInventory = () => {
@@ -419,25 +424,25 @@ const [pendingDeleteProductIds, setPendingDeleteProductIds] =
     XLSX.writeFile(workbook, "products_export.xlsx");
   };
   const productDeleteMessage =
-  pendingDeleteProductIds.length === 1
-    ? "Are you sure you want to delete this product?"
-    : `Are you sure you want to delete these ${pendingDeleteProductIds.length} products?`;
+    pendingDeleteProductIds.length === 1
+      ? "Are you sure you want to delete this product?"
+      : `Are you sure you want to delete these ${pendingDeleteProductIds.length} products?`;
 
-const productDeleteConfirm = async () => {
-  try {
-    const result = await dispatch(
-      deleteProduct({ ids: pendingDeleteProductIds })
-    );
+  const productDeleteConfirm = async () => {
+    try {
+      const result = await dispatch(
+        deleteProduct({ ids: pendingDeleteProductIds }),
+      );
 
-    if (deleteProduct.fulfilled.match(result)) {
-      table.refetch();
-      clearSelection();
+      if (deleteProduct.fulfilled.match(result)) {
+        table.refetch();
+        clearSelection();
+      }
+    } finally {
+      setShowProductDeleteConfirm(false);
+      setPendingDeleteProductIds([]);
     }
-  } finally {
-    setShowProductDeleteConfirm(false);
-    setPendingDeleteProductIds([]);
-  }
-};
+  };
 
   const bulkActions = (
     <>
@@ -458,6 +463,7 @@ const productDeleteConfirm = async () => {
           </button>
         }
       />
+      <Alert />
     </>
   );
 
@@ -492,12 +498,12 @@ const productDeleteConfirm = async () => {
     confirmCategoryDelete,
     closeCategoryDeleteConfirm,
     showProductDeleteConfirm,
-productDeleteMessage,
-productDeleteConfirm,
-closeProductDeleteConfirm: () => {
-  setShowProductDeleteConfirm(false);
-  setPendingDeleteProductIds([]);
-},
+    productDeleteMessage,
+    productDeleteConfirm,
+    closeProductDeleteConfirm: () => {
+      setShowProductDeleteConfirm(false);
+      setPendingDeleteProductIds([]);
+    },
   };
 };
 

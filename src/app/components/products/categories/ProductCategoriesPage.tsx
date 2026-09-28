@@ -42,13 +42,14 @@ import AddCategoryModal from "./AddCategoryModal";
 import CategoryDropdownForClear from "./CategoryDropdownForClear";
 import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
 import CategoryRow from "./CategoryRow";
+import { useAlert } from "@/hooks/useAlert";
 
 
 export default function ProductCategoriesPage() {
   const methods = useForm();
   const dispatch = useAppDispatch();
   const searchParams = useSearchParams();
-
+  const { showAlert, Alert } = useAlert();
   const allCategories = useAppSelector(
     (state: any) => state.category.categories,
   );
@@ -170,7 +171,10 @@ export default function ProductCategoriesPage() {
     // const catIds = selectedIds?.map((cat: any) => cat?.id);
 
     if (selectedIds.length === 0) {
-      alert("Please select at least one category before deleting.");
+     showAlert({
+  title: "No Category Selected",
+  message: "Please select at least one category before deleting.",
+});
       return;
     }
 
@@ -382,6 +386,7 @@ export default function ProductCategoriesPage() {
           }
         }}
       />
+          <Alert />
     </>
   );
 }

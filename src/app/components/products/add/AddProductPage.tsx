@@ -45,6 +45,7 @@ import Seo from "./Seo";
 import ShippingDetails from "./ShippingDetails";
 import SidebarNavigation from "./SidebarNavigation";
 import StoreFront from "./StoreFront";
+import { useAlert } from "@/hooks/useAlert";
 
 export default function AddProductPage() {
   const dispatch = useAppDispatch();
@@ -62,6 +63,7 @@ export default function AddProductPage() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const [showLeaveModal, setShowLeaveModal] = useState(false);
+  const { showAlert, Alert } = useAlert();
   const isDuplicate = searchParams.get("isDuplicate") === "true";
   const defaultValues = useMemo(
     () => ({
@@ -577,7 +579,11 @@ export default function AddProductPage() {
                         `${selectedStore.baseUrl}${product?.productUrl[0] == "/" ? product?.productUrl.slice(1) : product?.productUrl}`,
                         "_blank",
                       );
-                    else alert("Store URL or Product SKU not found");
+                    else
+                      showAlert({
+                        title: "Store or Product Not Found",
+                        message: "Store URL or Product SKU not found.",
+                      });
                   }}
                 >
                   <FiExternalLink size={14} />
@@ -750,6 +756,7 @@ export default function AddProductPage() {
             </form>
           </FormProvider>
         </div>
+        <Alert />
       </div>
     </React.Fragment>
   );
