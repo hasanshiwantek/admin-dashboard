@@ -14,13 +14,15 @@ import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional
 import { useRouter } from "next/navigation";
 
 export default function OrderExport() {
-    const exportPromiseRef = useRef<any>(null);
+  const exportPromiseRef = useRef<any>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
   const dispatch = useAppDispatch();
   const [activeTab, setActiveTab] = useState<ExportTab>(ExportTab.Options);
   const [modalOpen, setModalOpen] = useState(false);
-  const [modalStatus, setModalStatus] = useState<ExportModalStatus>(ExportModalStatus.Confirm);
+  const [modalStatus, setModalStatus] = useState<ExportModalStatus>(
+    ExportModalStatus.Confirm,
+  );
   const [progress, setProgress] = useState(0);
   const [fileBlob, setFileBlob] = useState<Blob | null>(null);
   const [fileName, setFileName] = useState("Orders.csv");
@@ -36,8 +38,8 @@ export default function OrderExport() {
   });
 
   const closeModal = () => {
-  exportPromiseRef.current?.abort();
-  exportPromiseRef.current = null;
+    exportPromiseRef.current?.abort();
+    exportPromiseRef.current = null;
 
     setModalOpen(false);
     setProgress(0);
@@ -45,48 +47,47 @@ export default function OrderExport() {
     setModalStatus(ExportModalStatus.Confirm);
   };
 
+  const startExport = async () => {
+    const data = form.getValues();
+    setModalStatus(ExportModalStatus.Processing);
+    setProgress(0);
+    setErrorMessage(null);
 
-    const startExport = async () => {
-      const data = form.getValues();
-      setModalStatus(ExportModalStatus.Processing);
-      setProgress(0);
-      setErrorMessage(null);
-  
-      const promise = dispatch(
-        exportOrderCsv({
-          payload: data,
-          onProgress: (percent) => {
-            setProgress(percent);
-          },
-        }),
-      );
-  
-      exportPromiseRef.current = promise;
-  
-      const resultAction = await promise;
-  
-      // Don't update UI if the user cancelled
-      if (exportPromiseRef.current !== promise) {
+    const promise = dispatch(
+      exportOrderCsv({
+        payload: data,
+        onProgress: (percent) => {
+          setProgress(percent);
+        },
+      }),
+    );
+
+    exportPromiseRef.current = promise;
+
+    const resultAction = await promise;
+
+    // Don't update UI if the user cancelled
+    if (exportPromiseRef.current !== promise) {
+      return;
+    }
+
+    exportPromiseRef.current = null;
+
+    if (exportOrderCsv.fulfilled.match(resultAction)) {
+      setProgress(100);
+
+      setFileBlob(resultAction.payload.blob);
+      setFileName(resultAction.payload.filename);
+      setModalStatus(ExportModalStatus.Ready);
+    } else if (exportOrderCsv.rejected.match(resultAction)) {
+      if (resultAction.meta.aborted) {
         return;
       }
-  
-      exportPromiseRef.current = null;
-  
-      if (exportOrderCsv.fulfilled.match(resultAction)) {
-        setProgress(100);
-  
-        setFileBlob(resultAction.payload.blob);
-        setFileName(resultAction.payload.filename);
-        setModalStatus(ExportModalStatus.Ready);
-      } else if (exportOrderCsv.rejected.match(resultAction)) {
-        if (resultAction.meta.aborted) {
-          return;
-        }
-  
-        setErrorMessage("Failed to export.");
-        setModalStatus(ExportModalStatus.Error);
-      }
-    };
+
+      setErrorMessage("Failed to export.");
+      setModalStatus(ExportModalStatus.Error);
+    }
+  };
   const onSubmit = () => {
     setModalStatus(ExportModalStatus.Confirm);
     setProgress(0);
@@ -114,20 +115,22 @@ export default function OrderExport() {
               <button
                 type="button"
                 onClick={() => setActiveTab(ExportTab.Options)}
-                className={`px-4 py-2 text-xl border-b-4 transition-colors 2xl:!text-2xl ${activeTab === "exportOptions"
-                  ? "border-blue-600 text-blue-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700"
-                  }`}
+                className={`px-4 py-2 text-xl border-b-4 transition-colors 2xl:!text-2xl ${
+                  activeTab === "exportOptions"
+                    ? "border-blue-600 text-blue-600"
+                    : "border-transparent text-gray-500 hover:text-gray-700"
+                }`}
               >
                 Export options
               </button>
               <button
                 type="button"
                 onClick={() => setActiveTab(ExportTab.Preview)}
-                className={`px-4 py-2 text-xl border-b-4 transition-colors 2xl:!text-2xl ${activeTab === "exportPreview"
-                  ? "border-blue-600 text-blue-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700"
-                  }`}
+                className={`px-4 py-2 text-xl border-b-4 transition-colors 2xl:!text-2xl ${
+                  activeTab === "exportPreview"
+                    ? "border-blue-600 text-blue-600"
+                    : "border-transparent text-gray-500 hover:text-gray-700"
+                }`}
               >
                 Export preview
               </button>
@@ -187,8 +190,8 @@ export default function OrderExport() {
           fileName="orders.csv"
           processingMessage={
             <>
-              Your Orders export is currently being processed. Once the export is
-              complete you will be able to download it.
+              Your Orders export is currently being processed. Once the export
+              is complete you will be able to download it.
             </>
           }
           entityName="Orders"
@@ -196,17 +199,19 @@ export default function OrderExport() {
           onClose={closeModal}
           onStartExport={startExport}
         />
-        {openConfirmationModal && <ConfirmationModal
-          open={openConfirmationModal}
-          onOpenChange={setOpenConfirmationModal}
-          variant="warning"
-          title="Confirmation"
-          description="Are you sure you want to cancel exporting?"
-          onConfirm={() => {
-            router.push("/manage/orders");
-          }}
-        />}
+        {openConfirmationModal && (
+          <ConfirmationModal
+            open={openConfirmationModal}
+            onOpenChange={setOpenConfirmationModal}
+            variant="warning"
+            title="Confirmation"
+            description="Are you sure you want to cancel exporting?"
+            onConfirm={() => {
+              router.push("/manage/orders");
+            }}
+          />
+        )}
       </div>
-    </FormProvider >
+    </FormProvider>
   );
 }

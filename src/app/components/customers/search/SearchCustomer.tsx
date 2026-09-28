@@ -417,7 +417,11 @@ const SearchCustomer = () => {
         </div>
 
         <div className="sticky bottom-0 w-full border-t p-6 bg-white flex justify-end gap-4">
-          <button type="button" className="btn-outline-primary">
+          <button
+            onClick={() => router.push("/manage/customers")}
+            type="button"
+            className="btn-outline-primary"
+          >
             Cancel
           </button>
           <button type="submit" className="btn-primary">
