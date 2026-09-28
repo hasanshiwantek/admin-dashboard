@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input";
 import Table from "@/components/ui/Table/Table";
 import TableTabs from "@/components/ui/Table/TableTabs";
 import { DownloadIcon, PlusIcon, SearchIcon, Trash } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 import CustomerNotesModal from "../edit/CustomerNotesModal";
 import { getCustomerColumns } from "./AllCustomersColumn";
@@ -16,7 +15,6 @@ import { renderExpandedRow } from "./CustomerDetailRow";
 const TOOLBAR_CONTROL = "!h-13 !py-0 !my-0";
 
 const AllCustomers = () => {
-  const router = useRouter();
   const {
     table,
     customerList,
@@ -42,6 +40,7 @@ const AllCustomers = () => {
     toggleRow,
     filterHandler,
     handleExport,
+    router,
   } = useAllCustomersContainer();
 
   const customerColumns = useMemo(
