@@ -26,6 +26,8 @@ import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
+import { useAlert } from "@/hooks/useAlert";
+
 type FormVals = {
   name: string;
   slug: string;
@@ -95,6 +97,7 @@ export default function EditCategoryPage() {
   const [initial, setInitial] = useState<ApiCategory | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [removeImage, setRemoveImage] = useState(false);
+  const { showAlert, Alert } = useAlert();
   const [isUrlManuallyEdited, setIsUrlManuallyEdited] =
     useState<boolean>(false);
   const urlSettingData = useAppSelector(
@@ -337,7 +340,10 @@ export default function EditCategoryPage() {
       setSaving(true);
 
       if (vals.parent?.id === categoryId) {
-        alert("A category cannot be its own parent.");
+      showAlert({
+  title: "Invalid Category",
+  message: "A category cannot be its own parent.",
+});
         setSaving(false);
         return;
       }
@@ -708,6 +714,7 @@ export default function EditCategoryPage() {
           </button>
         </div>
       </div>
+           <Alert />
     </FormProvider>
   );
 }

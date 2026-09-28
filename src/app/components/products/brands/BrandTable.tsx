@@ -27,6 +27,8 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { useRouter } from "next/navigation";
 import { refetchBrands } from "@/lib/brandUtils";
 import Spinner from "../../loader/Spinner";
+import { useAlert } from "@/hooks/useAlert";
+import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
 const BrandTable = () => {
   const router = useRouter();
 
@@ -49,6 +51,8 @@ const BrandTable = () => {
   const totalPages = pagination?.totalPages;
   const [keyword, setKeyword] = useState("");
   const [selectedIds, setSelectedIds] = useState<any[]>([]);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const { showAlert, Alert } = useAlert();
   const isAllSelected =
     brandData.length > 0 && selectedIds.length === brandData.length;
   const isIndeterminate =
@@ -58,47 +62,58 @@ const BrandTable = () => {
     if (isAllSelected) {
       setSelectedIds([]);
     } else {
-      setSelectedIds(brandData.map((item: any) => item.brand?.id).filter(Boolean));
+      setSelectedIds(
+        brandData.map((item: any) => item.brand?.id).filter(Boolean),
+      );
     }
   };
 
   const toggleSelectOne = (id: number) => {
     setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id],
     );
   };
 
   // BRAND DELETION LOGIC
 
-  const deleteBrandHandler = async () => {
+  // const deleteBrandHandler = async () => {
+  //   if (selectedIds.length === 0) {
+  //     alert("Please select at least one brand before deleting.");
+  //     return; // stop here
+  //   }
+  //   const confirm = window.confirm("Delete Brand?");
+  //   if (!confirm) {
+  //     return;
+  //   } else {
+  //     try {
+  //       const resultAction = await dispatch(deleteBrand({ id: selectedIds }));
+  //       const result = (resultAction as any).payload;
+
+  //       if ((resultAction as any).meta.requestStatus === "fulfilled") {
+  //         setSelectedIds([]);
+  //         setTimeout(() => {
+  //           refetchBrands(dispatch);
+  //         }, 700);
+  //       } else {
+  //         console.error("❌ Failed to delete brand:", result);
+  //       }
+  //     } catch (err) {
+  //       console.error("❌ Unexpected error:", err);
+  //     }
+  //   }
+  // };
+  const deleteBrandHandler = () => {
     if (selectedIds.length === 0) {
-      alert("Please select at least one brand before deleting.");
-      return; // stop here
-    }
-    const confirm = window.confirm("Delete Brand?");
-    if (!confirm) {
+      showAlert({
+        title: "No Brand Selected",
+        message: "Please select at least one brand before deleting.",
+      });
       return;
-    } else {
-      try {
-        const resultAction = await dispatch(deleteBrand({ id: selectedIds }));
-        const result = (resultAction as any).payload;
-
-        if ((resultAction as any).meta.requestStatus === "fulfilled") {
-          setSelectedIds([]);
-          setTimeout(() => {
-            refetchBrands(dispatch);
-          }, 700);
-        } else {
-          console.error("❌ Failed to delete brand:", result);
-        }
-      } catch (err) {
-        console.error("❌ Unexpected error:", err);
-      }
     }
+
+    setShowDeleteModal(true);
   };
-
   // SEARCH KEYWORD LOGIC
-
 
   const filterHandler = async () => {
     try {
@@ -107,7 +122,7 @@ const BrandTable = () => {
           page: currentPage,
           pageSize: perPage,
           keyword: keyword,
-        })
+        }),
       );
       if (fetchBrandByKeyword.fulfilled.match(resultAction)) {
         console.log(`✅ Fetch Brand Result`);
@@ -144,7 +159,9 @@ const BrandTable = () => {
         </div>
         <div className="flex items-center gap-5 ">
           <Link href={"/manage/products/brands/add"}>
-            <button className="btn-outline-primary 2xl:!text-2xl">Add a Brand...</button>
+            <button className="btn-outline-primary 2xl:!text-2xl">
+              Add a Brand...
+            </button>
           </Link>
           <button className="btn-outline-primary" onClick={deleteBrandHandler}>
             <Trash className="!w-6 !h-6 2xl:!h-8" />
@@ -198,9 +215,15 @@ const BrandTable = () => {
                   aria-label="Select all"
                 />
               </TableHead>
-              <TableHead className="text-left 2xl:!text-[1.6rem]">Brand Name</TableHead>
-              <TableHead className="text-left 2xl:!text-[1.6rem]">Products</TableHead>
-              <TableHead className="text-left 2xl:!text-[1.6rem]">Action</TableHead>
+              <TableHead className="text-left 2xl:!text-[1.6rem]">
+                Brand Name
+              </TableHead>
+              <TableHead className="text-left 2xl:!text-[1.6rem]">
+                Products
+              </TableHead>
+              <TableHead className="text-left 2xl:!text-[1.6rem]">
+                Action
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -237,7 +260,9 @@ const BrandTable = () => {
                       {brand.brand?.name}
                     </Link>
                   </TableCell>
-                  <TableCell className="2xl:!text-2xl">{brand?.productsCount}</TableCell>
+                  <TableCell className="2xl:!text-2xl">
+                    {brand?.productsCount}
+                  </TableCell>
                   <TableCell>
                     <OrderActionsDropdown
                       actions={getDropdownActions(brand?.brand)}
@@ -267,6 +292,36 @@ const BrandTable = () => {
           onPerPageChange={setPerPage}
         />
       </div>
+      <ConfirmationModal
+        open={showDeleteModal}
+        onOpenChange={setShowDeleteModal}
+        variant="warning"
+        title="Delete Brand?"
+        description="Are you sure you want to delete the selected brand(s)?"
+        onConfirm={async () => {
+          try {
+            const resultAction = await dispatch(
+              deleteBrand({ id: selectedIds }),
+            );
+            const result = (resultAction as any).payload;
+
+            if ((resultAction as any).meta.requestStatus === "fulfilled") {
+              setSelectedIds([]);
+
+              setTimeout(() => {
+                refetchBrands(dispatch);
+              }, 700);
+            } else {
+              console.error("❌ Failed to delete brand:", result);
+            }
+          } catch (err) {
+            console.error("❌ Unexpected error:", err);
+          } finally {
+            setShowDeleteModal(false);
+          }
+        }}
+      />
+      <Alert />
     </div>
   );
 };

@@ -19,35 +19,42 @@ import useAllCustomersContainer, {
 import TableTabs from "@/components/ui/Table/TableTabs";
 import { getCustomerColumns } from "./AllCustomersColumn";
 import { renderExpandedRow } from "./CustomerDetailRow";
+import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
 
 const AllCustomers = () => {
   
-  const {
-    table,
-    customerList,
-    total,
-    totalPages,
-    currentPage,
-    perPage,
-    activeTab,
-    loading,
-    error,
-    selectedCustomers,
-    keyword,
-    setKeyword,
-    expandedRow,
-    showCustomerNotes,
-    setShowCustomerNotes,
-    selectedOrderId,
-    setSelectedOrderId,
-    getDropdownActions,
-    handleSelectAll,
-    handleSelectOne,
-    deleteCustomerHandler,
-    toggleRow,
-    filterHandler,
-    handleExport,
-  } = useAllCustomersContainer();
+const {
+  table,
+  customerList,
+  total,
+  totalPages,
+  currentPage,
+  perPage,
+  activeTab,
+  loading,
+  error,
+  selectedCustomers,
+  keyword,
+  setKeyword,
+  expandedRow,
+  showCustomerNotes,
+  setShowCustomerNotes,
+  selectedOrderId,
+  setSelectedOrderId,
+
+  // Delete confirmation
+  showDeleteModal,
+  setShowDeleteModal,
+  confirmDeleteCustomers,
+
+  getDropdownActions,
+  handleSelectAll,
+  handleSelectOne,
+  deleteCustomerHandler,
+  toggleRow,
+  filterHandler,
+  handleExport,
+} = useAllCustomersContainer();
 
  const customerColumns = useMemo(
   () => getCustomerColumns(expandedRow, toggleRow),
@@ -163,6 +170,14 @@ const AllCustomers = () => {
         onClose={() => setShowCustomerNotes(false)}
         orderId={selectedOrderId}
       />
+   <ConfirmationModal
+  open={showDeleteModal}
+  onOpenChange={setShowDeleteModal}
+  variant="warning"
+  title="Delete Selected Customers?"
+  description="Are you sure you want to delete the selected customer(s)?"
+  onConfirm={confirmDeleteCustomers}
+/>
     </div>
   );
 };

@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import axiosInstance from "@/lib/axiosInstance";
 import { errorMessage, successMessage } from "@/utils/message";
+import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
 
 interface ImportProgressModalProps {
   isOpen: boolean;
@@ -49,6 +50,7 @@ export const ImportProgressModal: React.FC<ImportProgressModalProps> = ({
 
   const [isLoading, setIsLoading] = useState(true);
   const [isCanceling, setIsCanceling] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
   useEffect(() => {
     if (!isOpen || !progressKey) return;
 
@@ -104,35 +106,39 @@ export const ImportProgressModal: React.FC<ImportProgressModalProps> = ({
   }, [isOpen, progressKey, onComplete]);
 
   // Handle Cancel Function
-  const handleCancelImport = async () => {
-    if (!progressKey) return;
-    setIsCanceling(true);
+  // const handleCancelImport = async () => {
+  //   if (!progressKey) return;
+  //   setIsCanceling(true);
 
-    const confirm = window.confirm(
-      "Are you sure you want to cancel product uploading?"
-    );
-    if (!confirm) {
-      return;
-    } else {
-      try {
-        const response = await axiosInstance.post(
-          `dashboard/products/cancel-import`,
-          { progress_key: progressKey }
-        );
+  //   const confirm = window.confirm(
+  //     "Are you sure you want to cancel product uploading?"
+  //   );
+  //   if (!confirm) {
+  //     return;
+  //   } else {
+  //     try {
+  //       const response = await axiosInstance.post(
+  //         `dashboard/products/cancel-import`,
+  //         { progress_key: progressKey }
+  //       );
 
-        successMessage(response.data.message || "Import canceled successfully");
+  //       successMessage(response.data.message || "Import canceled successfully");
 
-        setProgress((prev) => ({ ...prev, status: "canceled" }));
-        setIsCanceling(false);
-        onClose();
-      } catch (error) {
-        console.error("Failed to cancel import:", error);
-        errorMessage("Failed to cancel import. Try again.");
-        setIsCanceling(false);
-      }
-    }
-  };
+  //       setProgress((prev) => ({ ...prev, status: "canceled" }));
+  //       setIsCanceling(false);
+  //       onClose();
+  //     } catch (error) {
+  //       console.error("Failed to cancel import:", error);
+  //       errorMessage("Failed to cancel import. Try again.");
+  //       setIsCanceling(false);
+  //     }
+  //   }
+  // };
+const handleCancelImport = () => {
+  if (!progressKey) return;
 
+  setShowCancelModal(true);
+};
   const handleHide = () => {
     if (progressKey) localStorage.setItem("importModalHidden", "true");
     onClose();
@@ -272,6 +278,38 @@ export const ImportProgressModal: React.FC<ImportProgressModalProps> = ({
           )}
         </div>
       </div>
+      <ConfirmationModal
+  open={showCancelModal}
+  onOpenChange={setShowCancelModal}
+  variant="warning"
+  title="Cancel import?"
+  description="Are you sure you want to cancel product uploading?"
+  onConfirm={async () => {
+    if (!progressKey) return;
+
+    setIsCanceling(true);
+
+    try {
+      const response = await axiosInstance.post(
+        `dashboard/products/cancel-import`,
+        { progress_key: progressKey }
+      );
+
+      successMessage(
+        response.data.message || "Import canceled successfully"
+      );
+
+      setProgress((prev) => ({ ...prev, status: "canceled" }));
+      onClose();
+    } catch (error) {
+      console.error("Failed to cancel import:", error);
+      errorMessage("Failed to cancel import. Try again.");
+    } finally {
+      setIsCanceling(false);
+      setShowCancelModal(false);
+    }
+  }}
+/>
     </div>
   );
 };

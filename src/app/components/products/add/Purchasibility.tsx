@@ -19,6 +19,8 @@ import {
 } from "@/validations/validations";
 import { Controller, useFormContext } from "react-hook-form";
 import { HiQuestionMarkCircle } from "react-icons/hi2";
+import PhoneInput from "react-phone-number-input";
+import "react-phone-number-input/style.css";
 export default function Purchasability() {
   const {
     register,
@@ -224,12 +226,60 @@ export default function Purchasability() {
                   Call for pricing phone
                 </Label>
 
-                <Input
+                {/* <Input
                   id="callForPricingPhone"
                   className="max-w-[90%]! w-full"
                   placeholder="032656787656"
                   {...register("callForPricingPhone")}
-                />
+                /> */}
+               <Controller
+  name="callForPricingPhone"
+  control={control}
+  defaultValue=""
+  rules={{
+    required: "Phone number is required",
+  }}
+  render={({ field }) => (
+    <div>
+      <div
+        className="
+          flex
+          h-10
+          w-full
+          max-w-[90%]
+          items-center
+          rounded-md
+          border            
+          border-input
+          bg-background
+          px-3
+          transition
+          focus-within:border-ring
+          focus-within:ring-2
+          focus-within:ring-ring/20
+          2xl:h-14
+        "
+      >
+        <PhoneInput
+          international
+          defaultCountry="PK"
+          value={field.value}
+          onChange={field.onChange}
+          placeholder="Enter phone number"
+          className="flex w-full items-center"
+          numberInputProps={{
+            className:
+              "w-full border-0 bg-transparent px-2 text-sm outline-none focus:ring-0 2xl:text-xl",
+          }}
+        />
+      </div>
+
+      <ValidationError
+        message={errors.callForPricingPhone?.message}
+      />
+    </div>
+  )}
+/>
               </div>
             </div>
           )}
