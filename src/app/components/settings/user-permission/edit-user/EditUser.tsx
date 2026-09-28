@@ -15,7 +15,6 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import {
   fetchAdminUserById,
   fetchAdminUsers,
-  fetchMyPermissions,
   fetchPermissions,
   updateAdminUser,
 } from "@/redux/slices/userPermission";
@@ -79,7 +78,6 @@ const EditUser = () => {
   useEffect(() => {
     dispatch(fetchAdminUsers());
     dispatch(fetchPermissions());
-    dispatch(fetchMyPermissions());
   }, []);
 
   useEffect(() => {

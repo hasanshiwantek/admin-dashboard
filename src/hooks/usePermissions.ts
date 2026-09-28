@@ -21,7 +21,6 @@ export function usePermissions() {
     () => buildPermissionSet(myPermissions),
     [myPermissions],
   );
-  console.log({ permissionSet });
   // Accepts a permission name ("add_order") or slug ("/manage/orders/add").
   // An array passes if the user has any one of them.
   const can = useCallback(

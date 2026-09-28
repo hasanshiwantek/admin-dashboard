@@ -61,7 +61,6 @@ export function getRequiredSlug(pathname: string): string | null {
   const slug = PERMISSION_SLUGS.filter((s) => matches(path, s)).sort(
     (a, b) => b.length - a.length,
   )[0];
-
   return slug ?? "";
 }
 

@@ -13,10 +13,7 @@ import {
 import { UserRoles, UserRolesEnum } from "@/const/appConstants";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { registerUser } from "@/redux/slices/authSlice";
-import {
-  fetchMyPermissions,
-  fetchPermissions,
-} from "@/redux/slices/userPermission";
+import { fetchPermissions } from "@/redux/slices/userPermission";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -76,7 +73,6 @@ const AddUser = () => {
 
   useEffect(() => {
     dispatch(fetchPermissions());
-    dispatch(fetchMyPermissions());
   }, []);
 
   const onSubmit = async (data: FormValues) => {
