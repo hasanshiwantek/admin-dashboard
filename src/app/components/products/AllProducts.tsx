@@ -31,14 +31,19 @@ export default function AllProducts() {
     confirmCategoryDelete,
     closeCategoryDeleteConfirm,
     showProductDeleteConfirm,
-productDeleteMessage,
-productDeleteConfirm,
-closeProductDeleteConfirm,
+    productDeleteMessage,
+    productDeleteConfirm,
+    closeProductDeleteConfirm,
   } = useAllProductsContainer();
 
   return (
     <>
-      <PageTile title="All Products" />
+      <PageTile
+        title="All Products"
+        buttonProps={{
+          permission: "add_product",
+        }}
+      />
       <Table<any>
         data={productList}
         columns={columns}
@@ -98,14 +103,14 @@ closeProductDeleteConfirm,
         cancelText="Cancel"
       />
       <ConfirmationModal
-  open={showProductDeleteConfirm}
-  onClose={closeProductDeleteConfirm}
-  onConfirm={productDeleteConfirm}
-  title="Delete Product"
-  message={productDeleteMessage}
-  confirmText="Continue"
-  cancelText="Cancel"
-/>
+        open={showProductDeleteConfirm}
+        onClose={closeProductDeleteConfirm}
+        onConfirm={productDeleteConfirm}
+        title="Delete Product"
+        message={productDeleteMessage}
+        confirmText="Continue"
+        cancelText="Cancel"
+      />
     </>
   );
 }

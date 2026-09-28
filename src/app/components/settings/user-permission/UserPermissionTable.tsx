@@ -8,8 +8,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { UserRoles } from "@/const/appConstants";
+import { DateTimeFormat, UserRoles } from "@/const/appConstants";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
+import { formatDateTime } from "@/lib/utils";
 import {
   deleteAdminUser,
   fetchAdminUsers,
@@ -29,32 +30,6 @@ export default function UserPermissionTable() {
     dispatch(fetchAdminUsers());
     dispatch(fetchPermissions());
   }, []);
-
-  const formatDate = (value: string) => {
-    if (!value) return "-";
-    const d = new Date(value);
-    if (isNaN(d.getTime())) return "-";
-
-    const day = d.getDate();
-    const suffix =
-      day % 10 === 1 && day !== 11
-        ? "st"
-        : day % 10 === 2 && day !== 12
-          ? "nd"
-          : day % 10 === 3 && day !== 13
-            ? "rd"
-            : "th";
-
-    const month = d.toLocaleString("en-US", { month: "short" });
-    const year = d.getFullYear();
-    const time = d.toLocaleString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    });
-
-    return `${day}${suffix} ${month} ${year} @ ${time}`;
-  };
 
   const handleDelete = async (id: string, name: string) => {
     if (confirm(`Are you sure you want to delete "${name}"?`)) {
@@ -137,7 +112,10 @@ export default function UserPermissionTable() {
                   {/* Date */}
                   <TableCell className="py-4 px-4 align-top whitespace-nowrap">
                     <span className="!text-[15px] !text-[#34313f]">
-                      {formatDate(item.createdAt)}
+                      {formatDateTime(
+                        item.created_at,
+                        DateTimeFormat.ORDINAL_DATE_TIME,
+                      )}
                     </span>
                   </TableCell>
 

@@ -47,6 +47,7 @@ import SearchShipments from "./SearchShipments";
 import ExportShipmentsDialog from "./ExportShipmentsDialog";
 import { errorMessage } from "@/utils/message";
 import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
+import { useAlert } from "@/hooks/useAlert";
 
 const Shipments = () => {
   const shipments = useAppSelector((state: any) => state.order.shipments);
@@ -96,6 +97,7 @@ Updated: ${billing.updatedAt}`;
   const [savingId, setSavingId] = useState<number | null>(null);
   const [keyword, setKeyword] = useState("");
   const searchParams = useSearchParams();
+    const { showAlert, Alert } = useAlert();
 
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -221,11 +223,14 @@ Updated: ${billing.updatedAt}`;
   // };
   /////////logic of get shipment by id////
 
-  const handleShipmentDelete = () => {
-    if (selectedOrderIds.length <= 0) {
-      alert("Please select shipment to delete");
-      return;
-    }
+const handleShipmentDelete = () => {
+  if (selectedOrderIds.length <= 0) {
+showAlert({
+  title: "No Shipment Selected",
+  message: "Please select shipment to delete.",
+});
+    return;
+  }
 
     setShowDeleteModal(true);
   };
@@ -722,6 +727,7 @@ Updated: ${billing.updatedAt}`;
           }}
         />
       </div >
+          <Alert />
     </>
   );
 };

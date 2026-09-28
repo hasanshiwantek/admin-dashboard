@@ -18,7 +18,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { PlusIcon, DownloadIcon, SearchIcon, Trash, StickyNote } from "lucide-react";
+import {
+  PlusIcon,
+  DownloadIcon,
+  SearchIcon,
+  Trash,
+  StickyNote,
+} from "lucide-react";
 import React, { useState, useEffect, Fragment } from "react";
 import OrderActionsDropdown from "../../orders/OrderActionsDropdown";
 import Pagination from "@/components/ui/pagination";
@@ -41,6 +47,7 @@ import Spinner from "../../loader/Spinner";
 import { useRouter } from "next/navigation";
 import CustomerNotesModal from "../../customers/edit/CustomerNotesModal";
 import { errorMessage } from "@/utils/message";
+import { useAlert } from "@/hooks/useAlert";
 // import CustomerNotesModal from "../../edit/CustomerNotesModal";
 
 const CustomerDetail = () => {
@@ -67,6 +74,7 @@ const CustomerDetail = () => {
     null,
   );
   const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
+  const { showAlert, Alert } = useAlert();
   const getDropdownActions = (customer: any) => [
     {
       label: "Edit",
@@ -171,7 +179,7 @@ const CustomerDetail = () => {
       pastOrders: singleCustomer?.pastOrders,
     });
   };
-  const copyBilling = () => { };
+  const copyBilling = () => {};
 
   // CUSTOMER UPDATION LOGIC
   const updateCustomerGroupStatus = async (
@@ -204,7 +212,10 @@ const CustomerDetail = () => {
     const value = storeCredits[customerId];
 
     if (!value || isNaN(Number(value))) {
-      alert("Please enter a valid number for store credit");
+      showAlert({
+        title: "Invalid Store Credit",
+        message: "Please enter a valid number for store credit.",
+      });
       return;
     }
 
@@ -514,68 +525,73 @@ const CustomerDetail = () => {
                               {/* Current Order Details */}
                               <div className=" px-4 ">
                                 {customerOrders?.currentOrders?.length > 0 ? (
-                                  customerOrders.currentOrders.map((order: any) => (
-                                    <div key={order.id} className="mb-8">
-                                      {/* Order Number - Center */}
-                                      <Link
-                                        href={`/manage/orders?orderIdFrom=${order?.id}&orderIdTo=${order?.id}d}&expand=${order?.id}`}
-                                      >
-                                        <h4 className="text-[15px] relative left-[85px] font-medium text-gray-900 mb-3 cursor-pointer">
-                                          Order{" "}
-                                          <span className="!text-blue-600 !text-[15px] hover:underline">
-                                            #{order.orderNumber}
-                                          </span>
-                                        </h4>
-                                      </Link>
-
-                                      {/* Details */}
-                                      <div className="grid grid-cols-[120px_1fr] gap-y-2">
-                                        {/* Status */}
-                                        <span className="text-right pr-4 font-medium text-gray-600">
-                                          Status
-                                        </span>
-
-                                        <span className="border-l-4 border-cyan-400 pl-2 font-medium text-gray-600">
-                                          {order.status}
-                                        </span>
-
-                                        {/* Order Total */}
-                                        <span className="text-right pr-4 font-medium text-gray-600">
-                                          Order total
-                                        </span>
-
-                                        <span className="font-medium text-gray-600">
-                                          ${order.totalAmount}
-                                        </span>
-
-                                        {/* Date */}
-                                        <span className="text-right pr-4 font-medium text-gray-600">
-                                          Date ordered
-                                        </span>
-
-                                        <span className="font-medium text-gray-600">
-                                          {new Date(
-                                            order.createdAt,
-                                          ).toLocaleDateString()}
-                                        </span>
-
-                                        {/* Notes */}
-                                        <span className="flex items-center justify-end pr-4 text-gray-600">
-                                          <StickyNote size={16} strokeWidth={1.5} />
-                                        </span>
-
-                                        <span
-                                          onClick={() => {
-                                            setSelectedOrderId(order?.id);
-                                            setShowCustomerNotes(true);
-                                          }}
-                                          className="!text-blue-600 font-medium cursor-pointer hover:underline"
+                                  customerOrders.currentOrders.map(
+                                    (order: any) => (
+                                      <div key={order.id} className="mb-8">
+                                        {/* Order Number - Center */}
+                                        <Link
+                                          href={`/manage/orders?orderIdFrom=${order?.id}&orderIdTo=${order?.id}d}&expand=${order?.id}`}
                                         >
-                                          View Notes
-                                        </span>
+                                          <h4 className="text-[15px] relative left-[85px] font-medium text-gray-900 mb-3 cursor-pointer">
+                                            Order{" "}
+                                            <span className="!text-blue-600 !text-[15px] hover:underline">
+                                              #{order.orderNumber}
+                                            </span>
+                                          </h4>
+                                        </Link>
+
+                                        {/* Details */}
+                                        <div className="grid grid-cols-[120px_1fr] gap-y-2">
+                                          {/* Status */}
+                                          <span className="text-right pr-4 font-medium text-gray-600">
+                                            Status
+                                          </span>
+
+                                          <span className="border-l-4 border-cyan-400 pl-2 font-medium text-gray-600">
+                                            {order.status}
+                                          </span>
+
+                                          {/* Order Total */}
+                                          <span className="text-right pr-4 font-medium text-gray-600">
+                                            Order total
+                                          </span>
+
+                                          <span className="font-medium text-gray-600">
+                                            ${order.totalAmount}
+                                          </span>
+
+                                          {/* Date */}
+                                          <span className="text-right pr-4 font-medium text-gray-600">
+                                            Date ordered
+                                          </span>
+
+                                          <span className="font-medium text-gray-600">
+                                            {new Date(
+                                              order.createdAt,
+                                            ).toLocaleDateString()}
+                                          </span>
+
+                                          {/* Notes */}
+                                          <span className="flex items-center justify-end pr-4 text-gray-600">
+                                            <StickyNote
+                                              size={16}
+                                              strokeWidth={1.5}
+                                            />
+                                          </span>
+
+                                          <span
+                                            onClick={() => {
+                                              setSelectedOrderId(order?.id);
+                                              setShowCustomerNotes(true);
+                                            }}
+                                            className="!text-blue-600 font-medium cursor-pointer hover:underline"
+                                          >
+                                            View Notes
+                                          </span>
+                                        </div>
                                       </div>
-                                    </div>
-                                  ))
+                                    ),
+                                  )
                                 ) : (
                                   <p>No current orders</p>
                                 )}
@@ -654,6 +670,7 @@ const CustomerDetail = () => {
         onClose={() => setShowCustomerNotes(false)}
         orderId={selectedOrderId}
       />
+      <Alert />
     </div>
   );
 };

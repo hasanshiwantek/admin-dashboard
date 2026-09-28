@@ -6,6 +6,7 @@ import { useForm, FormProvider } from "react-hook-form";
 import { importTrackingNumbers } from "@/redux/slices/orderSlice"; // Update this
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { useRouter } from "next/navigation";
+import { useAlert } from "@/hooks/useAlert";
 
 const ImportCsv = () => {
   const methods = useForm({
@@ -23,6 +24,7 @@ const ImportCsv = () => {
   const dispatch = useAppDispatch();
   const [step, setStep] = useState(1);
   const router = useRouter();
+  const { showAlert, Alert } = useAlert();
 
   const handleFinalSubmit = async (data: Record<string, any>) => {
     const {
@@ -41,7 +43,7 @@ const ImportCsv = () => {
 
     // Create FormData
     const formData = new FormData();
-    
+
     if (file && file.length > 0) {
       formData.append("file", file[0]);
     }
@@ -51,7 +53,7 @@ const ImportCsv = () => {
     formData.append("hasHeader", hasHeader ? "1" : "0");
     formData.append("separator", separator);
     formData.append("enclosure", enclosure);
-    
+
     // Send field mappings as JSON string
     formData.append("fieldMappings", JSON.stringify(fieldMappings));
 
@@ -62,7 +64,7 @@ const ImportCsv = () => {
 
     try {
       const resultAction = await dispatch(importTrackingNumbers(formData));
-      
+
       if ((resultAction as any).meta.requestStatus === "fulfilled") {
         console.log("✅ Tracking numbers imported successfully");
         router.push("/manage/orders");
@@ -82,7 +84,10 @@ const ImportCsv = () => {
             if (step === 1) {
               const file = data.file;
               if (!file || file.length === 0) {
-                alert("Please upload a file before proceeding.");
+                showAlert({
+                  title: "File Upload Required",
+                  message: "Please upload a file before proceeding.",
+                });
                 return;
               }
               setStep(2);
@@ -92,7 +97,7 @@ const ImportCsv = () => {
           })}
         >
           {step === 1 ? <ImportTrackingCsvForm /> : <StepTwo />}
-          
+
           <div className="sticky bottom-0 w-full border-t p-6 bg-white flex justify-end gap-4 shadow-lg">
             {step === 2 && (
               <button
@@ -116,6 +121,7 @@ const ImportCsv = () => {
           </div>
         </form>
       </FormProvider>
+      <Alert />
     </div>
   );
 };

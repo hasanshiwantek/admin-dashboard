@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -10,7 +11,6 @@ import {
 } from "@/components/ui/select";
 import Table from "@/components/ui/Table/Table";
 import TableTabs from "@/components/ui/Table/TableTabs";
-import Link from "next/link";
 import useAllOrdersContainer from "./AllOrdersContainer";
 import { BULK_ORDER_ACTIONS, BULK_STATUS_ACTIONS } from "./constant";
 import ConfirmationModal from "./edit/CaptuedPaymentModal";
@@ -18,6 +18,9 @@ import OrderNotesModal from "./edit/OrderNotesModal";
 import { ShipmentModal } from "./edit/ShipmentModal";
 import ShipmentModalForId from "./edit/ShipmentModalForId";
 import ShipmentsTableModal from "./edit/ShipmentsTableModal";
+
+// Shared height so toolbar buttons, select and input line up
+const TOOLBAR_CONTROL = "h-14! py-4! my-0!";
 
 const AllOrders = () => {
   const {
@@ -64,6 +67,8 @@ const AllOrders = () => {
     selectedOrderDetails,
     counrtyBilling,
     counrtyShipping,
+
+    router,
   } = useAllOrdersContainer();
 
   if (error) {
@@ -74,21 +79,29 @@ const AllOrders = () => {
     );
   }
   const topActions = (
-    <div className="flex flex-wrap gap-3 items-center mb-1">
-      <Link href={"/manage/orders/add"}>
-        <button className="btn-outline-primary 2xl:!text-2xl">Add</button>
-      </Link>
+    <div className="flex flex-wrap gap-3 items-center mb-2">
+      <Button
+        className={`2xl:!text-2xl ${TOOLBAR_CONTROL}`}
+        onClick={() => router.push("/manage/orders/add")}
+        variant="outline"
+        size="xl"
+        permission="add_order"
+      >
+        Add
+      </Button>
       {selectedOrders.length !== 0 && (
-        <button
-          className="btn-outline-primary 2xl:!text-2xl"
+        <Button
+          className={`2xl:!text-2xl ${TOOLBAR_CONTROL}`}
           onClick={handleExport}
+          variant="outline"
+          size="xl"
         >
           Export
-        </button>
+        </Button>
       )}
 
       <Select onValueChange={setSelectedAction} value={selectedAction}>
-        <SelectTrigger className="w-fit px-6 py-6 2xl:py-[1.8rem]">
+        <SelectTrigger className={`w-fit px-6 ${TOOLBAR_CONTROL}`}>
           <SelectValue placeholder="Choose an action" />
         </SelectTrigger>
         <SelectContent>
@@ -113,15 +126,17 @@ const AllOrders = () => {
         </SelectContent>
       </Select>
 
-      <button
-        className="btn-outline-primary 2xl:!text-2xl"
+      <Button
+        className={`2xl:!text-2xl ${TOOLBAR_CONTROL}`}
         onClick={handleConfirmClick}
+        variant="outline"
+        size="xl"
       >
         Confirm
-      </button>
+      </Button>
 
       <Input
-        className="2xl:py-[1.8rem]"
+        className={TOOLBAR_CONTROL}
         placeholder="Filter by keyword"
         value={table.search}
         onChange={(e) => table.setSearch(e.target.value)}
@@ -129,18 +144,22 @@ const AllOrders = () => {
           if (e.key === "Enter") table.submitSearch();
         }}
       />
-      <button
-        className="btn-outline-primary 2xl:!text-2xl"
+      <Button
+        className={`2xl:!text-2xl ${TOOLBAR_CONTROL}`}
         onClick={table.submitSearch}
+        variant="outline"
+        size="xl"
       >
         Search
-      </button>
-      <button
-        className="btn-outline-primary 2xl:!text-2xl"
+      </Button>
+      <Button
+        className={`2xl:!text-2xl ${TOOLBAR_CONTROL}`}
         onClick={table.clearSearch}
+        variant="outline"
+        size="xl"
       >
         Clear
-      </button>
+      </Button>
     </div>
   );
 

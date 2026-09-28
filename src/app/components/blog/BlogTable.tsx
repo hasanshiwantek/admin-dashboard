@@ -19,6 +19,7 @@ import { useRouter } from "next/navigation";
 import { refetchBlogs } from "@/lib/storeFrontUtils";
 import Spinner from "../loader/Spinner";
 import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
+import { useAlert } from "@/hooks/useAlert";
 // Mock data
 
 export default function BlogTable() {
@@ -31,7 +32,8 @@ export default function BlogTable() {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const [deletePost, setDeletePost] = useState<any>(null);
+   const { showAlert, Alert } = useAlert();
+const [deletePost, setDeletePost] = useState<any>(null);
   // const filteredPosts = posts?.filter((p: any) =>
   //   activeTab === "published" ? p.status === "published" : p.status === "draft"
   // );
@@ -48,7 +50,10 @@ export default function BlogTable() {
           // Open product page on storefront
           window.open(`${selectedStore.baseUrl}/blogs/${post?.slug}`, '_blank');
         } else {
-          alert('Store URL or blog not found');
+         showAlert({
+  title: "Store or Blog Not Found",
+  message: "Store URL or blog not found.",
+});
         }
       },
     },
@@ -238,6 +243,7 @@ export default function BlogTable() {
           } catch (err) { }
         }}
       />
+         <Alert /> 
     </div>
   );
 }

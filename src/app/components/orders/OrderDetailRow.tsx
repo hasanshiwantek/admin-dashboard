@@ -1,5 +1,7 @@
 "use client";
 
+import { useAlert } from "@/hooks/useAlert";
+import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
 import {
   Calendar,
@@ -22,7 +24,6 @@ import { toast } from "react-toastify";
 import { COMPLETED, riskConfig } from "./constant";
 import { OrderDetailRowProps } from "./types";
 import { findCountry } from "./utils";
-import { cn } from "@/lib/utils";
 
 const copyBilling = (info: any) => {
   if (!info) return;
@@ -44,6 +45,8 @@ export default function OrderDetailRow({
   onViewShipmentId,
   onShipItems,
 }: OrderDetailRowProps) {
+  
+  const { showAlert, Alert } = useAlert();
   const countryData = findCountry(order?.billingAddress?.country);
   const countryDataForCustomer = findCountry(
     order?.billingInformation?.country,
@@ -167,8 +170,8 @@ export default function OrderDetailRow({
             <span>
               {order?.billingInformation?.updatedAt
                 ? dayjs(order?.billingInformation?.updatedAt).format(
-                  "DD MMM YYYY HH:mm:ss",
-                )
+                    "DD MMM YYYY HH:mm:ss",
+                  )
                 : "N/A"}
             </span>
           </div>
@@ -296,7 +299,7 @@ export default function OrderDetailRow({
           <div
             className={cn(
               "flex items-center gap-2 min-w-0",
-              hasLongShippingData ? "pt-[25px]" : "pt-[35px]"
+              hasLongShippingData ? "pt-[25px]" : "pt-[35px]",
             )}
           >
             <div className="shipping-data-scroll w-[420px] max-w-full overflow-x-auto overflow-y-hidden whitespace-nowrap">
@@ -392,7 +395,11 @@ export default function OrderDetailRow({
                             `${selectedStore.baseUrl.replace(/\/$/, "")}${item?.productUrl == "/" ? item?.productUrl.slice(1) : item?.productUrl}`,
                             "_blank",
                           );
-                        else alert("Store URL or Product SKU not found");
+                        else
+                          showAlert({
+                            title: "Store or Product Not Found",
+                            message: "Store URL or Product SKU not found.",
+                          });
                       }}
                       className="!text-[#6F8DFD] font-light cursor-pointer hover:underline whitespace-normal break-words leading-snug max-w-[300px]"
                     >
@@ -480,6 +487,7 @@ export default function OrderDetailRow({
           </div>
         </div>
       </div>
+      <Alert />
     </div>
   );
 }
