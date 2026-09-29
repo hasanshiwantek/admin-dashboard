@@ -449,23 +449,6 @@ const LogoPage = () => {
 
       {/* --- ACTION BUTTONS --- */}
       <div className="flex justify-end gap-4 items-center fixed w-full bottom-0 right-0 bg-white/90 z-10 shadow-xs border-t p-4">
-        <button
-          type="button"
-          className="btn-outline-primary"
-          onClick={() => {
-            const confirmed = confirm(
-              "Are you sure you want to cancel? All unsaved changes will be lost.",
-            );
-            if (confirmed) {
-              reset();
-              setLogoPreview("/navlogo.png");
-              setFaviconPreview(defaultFaviconUrl);
-            }
-          }}
-        >
-          Cancel
-        </button>
-
         <button type="submit" className="btn-primary" disabled={loading}>
           {loading ? "Saving..." : "Save"}
         </button>
