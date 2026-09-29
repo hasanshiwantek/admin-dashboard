@@ -40,9 +40,9 @@ const Carousel = () => {
   const [slides, setSlides] = useState<Slide[]>(initialSlides);
   const [activeSlideId, setActiveSlideId] = useState<number>(0);
   const [deleteSlideId, setDeleteSlideId] = useState<number | null>(null);
-const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [settings, setSettings] = useState({ swapInterval: 5 });
-    const { showAlert, Alert } = useAlert();
+  const { showAlert, Alert } = useAlert();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dispatch = useAppDispatch();
   const { carouselData, loading } =
@@ -85,7 +85,7 @@ const [openDeleteModal, setOpenDeleteModal] = useState(false);
       setSlides((prevSlides) => {
         const existingIds = prevSlides.map((s) => s.id);
         const newSlides = memoizedSlides.filter(
-          (s: any) => !existingIds.includes(s.id)
+          (s: any) => !existingIds.includes(s.id),
         );
         return [...prevSlides, ...newSlides];
       });
@@ -120,29 +120,29 @@ const [openDeleteModal, setOpenDeleteModal] = useState(false);
     setActiveSlideId(newId);
   };
 
+  const handleDeleteSlide = (e: React.MouseEvent, id: number) => {
+    e.stopPropagation();
 
-const handleDeleteSlide = (e: React.MouseEvent, id: number) => {
-  e.stopPropagation();
+    if (slides.length < 1) {
+      showAlert({
+        title: "Cannot Delete Slide",
+        message: "You cannot delete the last remaining slide.",
+      });
+      return;
+    }
 
-  if (slides.length < 1) {
-   showAlert({
-  title: "Cannot Delete Slide",
-  message: "You cannot delete the last remaining slide.",
-});
-    return;
-  }
-
-  setDeleteSlideId(id);
-  setOpenDeleteModal(true);
-};
+    setDeleteSlideId(id);
+    setOpenDeleteModal(true);
+  };
   const triggerImageUpload = () => {
     if (activeSlideId > 0) {
       fileInputRef.current?.click();
     } else {
-     showAlert({
-  title: "Add Slide Required",
-  message: 'Please create a new slide using the "Add Slide" button first.',
-});
+      showAlert({
+        title: "Add Slide Required",
+        message:
+          'Please create a new slide using the "Add Slide" button first.',
+      });
     }
   };
 
@@ -156,8 +156,8 @@ const handleDeleteSlide = (e: React.MouseEvent, id: number) => {
           prevSlides.map((slide) =>
             slide.id === activeSlideId
               ? { ...slide, imageUrl: base64Image }
-              : slide
-          )
+              : slide,
+          ),
         );
       };
       reader.readAsDataURL(file);
@@ -224,21 +224,19 @@ const handleDeleteSlide = (e: React.MouseEvent, id: number) => {
   //   }
   // };
 
-
-
   const onSubmit = async () => {
     if (slides.length === 0) {
       showAlert({
-  title: "No Slide Added",
-  message: "Please add at least one slide to save the carousel.",
-});
+        title: "No Slide Added",
+        message: "Please add at least one slide to save the carousel.",
+      });
       return;
     }
 
     try {
       // ✅ Existing IDs backend se
       const existingIds = new Set(
-        (carouselData?.slides || []).map((s: any) => s.id)
+        (carouselData?.slides || []).map((s: any) => s.id),
       );
 
       // ✅ Sirf naye slides — jo backend mein nahi hain
@@ -248,7 +246,10 @@ const handleDeleteSlide = (e: React.MouseEvent, id: number) => {
       const updatedSlides = slides.filter((slide) => existingIds.has(slide.id));
 
       const formData = new FormData();
-      formData.append("settings[swapInterval]", settings.swapInterval.toString());
+      formData.append(
+        "settings[swapInterval]",
+        settings.swapInterval.toString(),
+      );
 
       if (newSlides.length > 0) {
         // ✅ Sirf new slides bhejo addCarousel mein
@@ -261,15 +262,23 @@ const handleDeleteSlide = (e: React.MouseEvent, id: number) => {
 
           if (slide.imageUrl.startsWith("data:image")) {
             const byteString = atob(slide.imageUrl.split(",")[1]);
-            const mimeString = slide.imageUrl.split(",")[0].split(":")[1].split(";")[0];
+            const mimeString = slide.imageUrl
+              .split(",")[0]
+              .split(":")[1]
+              .split(";")[0];
             const extension = mimeString.split("/")[1];
             const ab = new ArrayBuffer(byteString.length);
             const ia = new Uint8Array(ab);
-            for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
+            for (let i = 0; i < byteString.length; i++)
+              ia[i] = byteString.charCodeAt(i);
             const blob = new Blob([ab], { type: mimeString });
             console.log("blob", blob);
 
-            formData.append(`slides[${index}][image]`, blob, `slide-new-${index}.${extension}`);
+            formData.append(
+              `slides[${index}][image]`,
+              blob,
+              `slide-new-${index}.${extension}`,
+            );
           }
         });
 
@@ -288,13 +297,12 @@ const handleDeleteSlide = (e: React.MouseEvent, id: number) => {
       setSlides(initialSlides);
       setActiveSlideId(0);
       setSettings({ swapInterval: 5 });
-
     } catch (err) {
       console.error("❌ Error saving carousel:", err);
-     showAlert({
-  title: "Save Failed",
-  message: "Failed to save carousel data.",
-});
+      showAlert({
+        title: "Save Failed",
+        message: "Failed to save carousel data.",
+      });
     }
   };
   const handleAltTextChange = (index: number, value: string) => {
@@ -336,7 +344,9 @@ const handleDeleteSlide = (e: React.MouseEvent, id: number) => {
       </div>
       <div className="pb-20">
         <div className="flex justify-between items-center p-6">
-          <h1 className="!font-semibold 2xl:!text-[2.4rem]">Homepage carousel</h1>
+          <h1 className="!font-semibold 2xl:!text-[2.4rem]">
+            Homepage carousel
+          </h1>
           <a
             href="#"
             className="text-sm text-blue-600 hover:text-blue-800 flex items-center 2xl:!text-2xl"
@@ -357,12 +367,14 @@ const handleDeleteSlide = (e: React.MouseEvent, id: number) => {
           {/* Active Slide Fields */}
 
           <div
-            className={`flex flex-wrap gap-4 ${errors.heading || errors.text || errors.buttonText || errors.link
+            className={`flex flex-wrap gap-4 ${
+              errors.heading || errors.text || errors.buttonText || errors.link
                 ? "items-center"
                 : "items-end"
-              }
- mb-6 bg-white p-4 rounded-lg shadow-sm border ${activeSlideId === 0 ? "opacity-60 pointer-events-none" : ""
-              }`}
+            }
+ mb-6 bg-white p-4 rounded-lg shadow-sm border ${
+   activeSlideId === 0 ? "opacity-60 pointer-events-none" : ""
+ }`}
           >
             {/* HEADING FIELD */}
             <div className="flex-1 max-w-[200px] flex flex-col 2xl:flex-row mr-5 2xl:gap-6">
@@ -374,12 +386,13 @@ const handleDeleteSlide = (e: React.MouseEvent, id: number) => {
                   const val = e.target.value;
                   setSlides((prev) =>
                     prev.map((s) =>
-                      s.id === activeSlideId ? { ...s, heading: val } : s
-                    )
+                      s.id === activeSlideId ? { ...s, heading: val } : s,
+                    ),
                   );
                 }}
-                className={`p-2 border rounded w-full min-h-[38px] ${errors.heading ? "border-red-500" : "border-gray-300"
-                  } focus:ring-blue-500 focus:border-blue-500`}
+                className={`p-2 border rounded w-full min-h-[38px] ${
+                  errors.heading ? "border-red-500" : "border-gray-300"
+                } focus:ring-blue-500 focus:border-blue-500`}
               />
               {errors.heading && (
                 <p className="text-xs text-red-500 mt-1">
@@ -398,12 +411,13 @@ const handleDeleteSlide = (e: React.MouseEvent, id: number) => {
                   const val = e.target.value;
                   setSlides((prev) =>
                     prev.map((s) =>
-                      s.id === activeSlideId ? { ...s, text: val } : s
-                    )
+                      s.id === activeSlideId ? { ...s, text: val } : s,
+                    ),
                   );
                 }}
-                className={`p-2 border rounded w-full min-h-[38px] ${errors.text ? "border-red-500" : "border-gray-300"
-                  } focus:ring-blue-500 focus:border-blue-500`}
+                className={`p-2 border rounded w-full min-h-[38px] ${
+                  errors.text ? "border-red-500" : "border-gray-300"
+                } focus:ring-blue-500 focus:border-blue-500`}
               />
               {errors.text && (
                 <p className="text-xs text-red-500 mt-1">
@@ -414,7 +428,9 @@ const handleDeleteSlide = (e: React.MouseEvent, id: number) => {
 
             {/* BUTTON TEXT FIELD */}
             <div className="flex-1 max-w-[220px] flex flex-col 2xl:flex-row 2xl:gap-8">
-              <Label className="w-24 whitespace-nowrap 2xl:!text-2xl">Button Text</Label>
+              <Label className="w-24 whitespace-nowrap 2xl:!text-2xl">
+                Button Text
+              </Label>
               <input
                 {...register("buttonText", {
                   required: "Button text is required",
@@ -424,12 +440,13 @@ const handleDeleteSlide = (e: React.MouseEvent, id: number) => {
                   const val = e.target.value;
                   setSlides((prev) =>
                     prev.map((s) =>
-                      s.id === activeSlideId ? { ...s, buttonText: val } : s
-                    )
+                      s.id === activeSlideId ? { ...s, buttonText: val } : s,
+                    ),
                   );
                 }}
-                className={`p-2 border rounded w-full min-h-[38px] ${errors.buttonText ? "border-red-500" : "border-gray-300"
-                  } focus:ring-blue-500 focus:border-blue-500`}
+                className={`p-2 border rounded w-full min-h-[38px] ${
+                  errors.buttonText ? "border-red-500" : "border-gray-300"
+                } focus:ring-blue-500 focus:border-blue-500`}
               />
               {errors.buttonText && (
                 <p className="text-xs text-red-500 mt-1">
@@ -448,13 +465,14 @@ const handleDeleteSlide = (e: React.MouseEvent, id: number) => {
                   const val = e.target.value;
                   setSlides((prev) =>
                     prev.map((s) =>
-                      s.id === activeSlideId ? { ...s, link: val } : s
-                    )
+                      s.id === activeSlideId ? { ...s, link: val } : s,
+                    ),
                   );
                 }}
                 placeholder="Enter destination link"
-                className={`p-2 border rounded w-full min-h-[38px] ${errors.link ? "border-red-500" : "border-gray-300"
-                  } focus:ring-blue-500 focus:border-blue-500`}
+                className={`p-2 border rounded w-full min-h-[38px] ${
+                  errors.link ? "border-red-500" : "border-gray-300"
+                } focus:ring-blue-500 focus:border-blue-500`}
               />
               {errors.link && (
                 <p className="text-xs text-red-500 mt-1">
@@ -531,10 +549,11 @@ const handleDeleteSlide = (e: React.MouseEvent, id: number) => {
                     <div
                       key={slide.id}
                       onClick={() => setActiveSlideId(slide.id)}
-                      className={`relative min-w-[100px] h-[70px] border-2 cursor-pointer transition duration-150 ease-in-out ${slide.id === activeSlideId
+                      className={`relative min-w-[100px] h-[70px] border-2 cursor-pointer transition duration-150 ease-in-out ${
+                        slide.id === activeSlideId
                           ? "border-blue-600 ring-4 ring-blue-100"
                           : "border-gray-300 hover:border-blue-400"
-                        } bg-gray-100 rounded-md flex items-center justify-center text-xs text-gray-700 overflow-hidden`}
+                      } bg-gray-100 rounded-md flex items-center justify-center text-xs text-gray-700 overflow-hidden`}
                       style={{
                         backgroundImage: `url(${slide.imageUrl})`,
                         backgroundSize: "cover",
@@ -610,62 +629,59 @@ const handleDeleteSlide = (e: React.MouseEvent, id: number) => {
       </div>
 
       <div className="flex justify-end gap-4 items-center fixed w-full bottom-0 right-0 bg-white/90 z-10 shadow-xs border-t p-4">
-        <button type="button" className="btn-outline-primary">
-          Cancel
-        </button>
         <button type="submit" className="btn-primary">
           Save
         </button>
       </div>
       <ConfirmationModal
-  open={openDeleteModal}
-  onOpenChange={setOpenDeleteModal}
-  variant="warning"
-  title="Delete slide?"
-  description="Are you sure you want to delete this slide?"
-  onConfirm={async () => {
-    if (deleteSlideId === null) return;
+        open={openDeleteModal}
+        onOpenChange={setOpenDeleteModal}
+        variant="warning"
+        title="Delete slide?"
+        description="Are you sure you want to delete this slide?"
+        onConfirm={async () => {
+          if (deleteSlideId === null) return;
 
-    try {
-      const response = await dispatch(deleteCarousal(deleteSlideId));
+          try {
+            const response = await dispatch(deleteCarousal(deleteSlideId));
 
-      if (deleteCarousal.fulfilled.match(response)) {
-        setOpenDeleteModal(false);
+            if (deleteCarousal.fulfilled.match(response)) {
+              setOpenDeleteModal(false);
 
-        setTimeout(async () => {
-          await dispatch(fetchCarousal());
-        }, 2000);
+              setTimeout(async () => {
+                await dispatch(fetchCarousal());
+              }, 2000);
 
-        const updatedSlides = slides.filter(
-          (slide) => slide.id !== deleteSlideId
-        );
+              const updatedSlides = slides.filter(
+                (slide) => slide.id !== deleteSlideId,
+              );
 
-        setSlides(updatedSlides);
+              setSlides(updatedSlides);
 
-        if (updatedSlides.length > 0) {
-          setActiveSlideId(updatedSlides[0].id);
-        } else {
-          setActiveSlideId(0);
-        }
+              if (updatedSlides.length > 0) {
+                setActiveSlideId(updatedSlides[0].id);
+              } else {
+                setActiveSlideId(0);
+              }
 
-        setDeleteSlideId(null);
-      } else {
-        console.error("❌ Failed to delete slide");
-    showAlert({
-  title: "Slide Deletion Failed",
-  message: "Failed to delete the slide from the server.",
-});
-      }
-    } catch (err) {
-      console.error("❌ Error deleting slide:", err);
-      showAlert({
-  title: "Slide Deletion Error",
-  message: "An error occurred while deleting the slide.",
-});
-    }
-  }}
-/>
-   <Alert />
+              setDeleteSlideId(null);
+            } else {
+              console.error("❌ Failed to delete slide");
+              showAlert({
+                title: "Slide Deletion Failed",
+                message: "Failed to delete the slide from the server.",
+              });
+            }
+          } catch (err) {
+            console.error("❌ Error deleting slide:", err);
+            showAlert({
+              title: "Slide Deletion Error",
+              message: "An error occurred while deleting the slide.",
+            });
+          }
+        }}
+      />
+      <Alert />
     </form>
   );
 };
