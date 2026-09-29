@@ -59,9 +59,10 @@ export default function Table<T>({
   onToggleRow,
   onToggleAll,
   selectAllInHeader = false,
-  showRecordCount = true,
+  hideRecordCount,
   rowActions,
   bulkActions,
+  alwaysShowBulkActions,
   renderExpandedRow,
   isRowExpanded,
   selectColumnWidth = "50px",
@@ -72,6 +73,14 @@ export default function Table<T>({
   toolbar,
   className,
   bare = false,
+  toolbarClassName,
+  searchInputClassName,
+  filterChipsClassName,
+  selectionHeaderClassName,
+  selectionInfoClassName,
+  topPaginationClassName,
+  tableWrapperClassName,
+  bottomPaginationClassName,
 }: TableProps<T>) {
   const rowIds = data.map(getRowId);
   const isAllSelected =
@@ -90,6 +99,7 @@ export default function Table<T>({
           : null,
     );
   };
+
   const filterChips: ChipItem[] =
     showFilterChips && appliedFilters
       ? Object.entries(appliedFilters).map(([key, val]) => {
@@ -127,11 +137,18 @@ export default function Table<T>({
 
       {/* Search + toolbar */}
       {(searchable || toolbar) && (
-        <div className="flex justify-between gap-4 items-center mb-5">
+        <div
+          className={cn(
+            "flex justify-between gap-4 items-center mb-5",
+            toolbarClassName,
+          )}
+        >
           {searchable ? (
             <div
-              className="flex justify-start items-center bg-white text-center !px-4 !py-4 rounded-md
-             focus-within:ring-3 focus-within:ring-blue-200 focus-within:border-blue-200 border border-gray-200 transition hover:border-blue-200 flex-1"
+              className={cn(
+                "flex justify-start items-center bg-white text-center !px-4 !py-4 rounded-md focus-within:ring-3 focus-within:ring-blue-200 focus-within:border-blue-200 border border-gray-200 transition hover:border-blue-200 flex-1",
+                searchInputClassName,
+              )}
             >
               <i onClick={() => onSearchSubmit?.()}>
                 <IoSearchOutline
@@ -181,14 +198,27 @@ export default function Table<T>({
       )}
 
       {/* Applied-filter chips */}
-      <ChipList chips={filterChips} onClearAll={onClearFilters} />
+      {filterChips.length > 0 && (
+        <div className={cn(filterChipsClassName)}>
+          <ChipList chips={filterChips} onClearAll={onClearFilters} />
+        </div>
+      )}
 
       {/* Selection header + pagination */}
-      {((selectable && showRecordCount) || pagination || bulkActions) && (
-        <div className="flex flex-col xl:flex-row xl:items-center justify-between border-t border-b border-gray-200 px-4 py-2 bg-white text-sm">
-          {/* Updated container classes below */}
-          <div className="flex justify-between items-center gap-4 w-full xl:w-auto py-2 xl:p-6">
-            {selectable && showRecordCount && (
+      {((selectable && !hideRecordCount) || pagination || bulkActions) && (
+        <div
+          className={cn(
+            "flex flex-col xl:flex-row xl:items-center justify-between border-t border-b border-gray-200 px-4 py-2 bg-white text-sm",
+            selectionHeaderClassName,
+          )}
+        >
+          <div
+            className={cn(
+              "flex justify-between items-center gap-4 w-full xl:w-auto py-2 xl:p-6",
+              selectionInfoClassName,
+            )}
+          >
+            {selectable && !hideRecordCount && (
               <div className="flex justify-start items-center gap-4">
                 <Checkbox
                   checked={isAllSelected}
@@ -206,29 +236,32 @@ export default function Table<T>({
               </div>
             )}
 
-            {selectedIds.length > 0 && bulkActions && (
+            {(selectedIds.length > 0 || alwaysShowBulkActions) && bulkActions && (
               <div className="flex items-center gap-2">{bulkActions}</div>
             )}
           </div>
 
           {pagination && (
-            <div className="flex items-center text-gray-700 ml-auto xl:ml-0">
-              <div className="py-2 xl:p-6">
-                <Pagination
-                  currentPage={pagination.currentPage}
-                  totalPages={pagination.totalPages}
-                  onPageChange={pagination.onPageChange}
-                  perPage={pagination.perPage}
-                  onPerPageChange={pagination.onPerPageChange}
-                />
-              </div>
+            <div
+              className={cn(
+                "flex items-center text-gray-700 ml-auto xl:ml-0 py-2 xl:p-6",
+                topPaginationClassName,
+              )}
+            >
+              <Pagination
+                currentPage={pagination.currentPage}
+                totalPages={pagination.totalPages}
+                onPageChange={pagination.onPageChange}
+                perPage={pagination.perPage}
+                onPerPageChange={pagination.onPerPageChange}
+              />
             </div>
           )}
         </div>
       )}
 
       {/* Table */}
-      <div>
+      <div className={cn(tableWrapperClassName)}>
         <UITable className={cn(fixedLayout && "table-fixed")}>
           {fixedLayout && (
             <colgroup>
@@ -358,8 +391,6 @@ export default function Table<T>({
                           colSpan={colSpan}
                           className="whitespace-normal"
                         >
-                          {/* w-0 + min-w-full keeps the expanded content from
-                              widening the table and reflowing the columns. */}
                           <div className="w-0 min-w-full">
                             {renderExpandedRow!(row)}
                           </div>
@@ -376,16 +407,19 @@ export default function Table<T>({
 
       {/* Footer pagination */}
       {pagination && (
-        <div className="flex justify-end border-t border-b border-gray-200 px-4 py-2 bg-white text-sm">
-          <div className="xl:p-6">
-            <Pagination
-              currentPage={pagination.currentPage}
-              totalPages={pagination.totalPages}
-              onPageChange={pagination.onPageChange}
-              perPage={pagination.perPage}
-              onPerPageChange={pagination.onPerPageChange}
-            />
-          </div>
+        <div
+          className={cn(
+            "flex justify-end border-t border-b border-gray-200 px-4 py-2 xl:p-6 bg-white text-sm",
+            bottomPaginationClassName,
+          )}
+        >
+          <Pagination
+            currentPage={pagination.currentPage}
+            totalPages={pagination.totalPages}
+            onPageChange={pagination.onPageChange}
+            perPage={pagination.perPage}
+            onPerPageChange={pagination.onPerPageChange}
+          />
         </div>
       )}
     </div>

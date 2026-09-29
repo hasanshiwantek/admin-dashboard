@@ -81,20 +81,17 @@ export interface TableProps<T> {
   onToggleRow?: (id: number | string, checked: boolean) => void;
   onToggleAll?: (checked: boolean, allIds: (number | string)[]) => void;
   selectAllInHeader?: boolean;
-  showRecordCount?: boolean;
+  hideRecordCount?: boolean;
 
   rowActions?: (row: T) => RowAction<T>[];
   bulkActions?: ReactNode;
-
+  alwaysShowBulkActions?: boolean;
   renderExpandedRow?: (row: T) => ReactNode;
   isRowExpanded?: (row: T) => boolean;
 
-  /** Widths of the checkbox and row-actions columns in a fixed layout. */
   selectColumnWidth?: string;
   actionsColumnWidth?: string;
 
-  /** Active sort, shown on the headers. Sorting is done by the API: the
-   *  table only reports header clicks through `onSortChange`. */
   sort?: TableSort | null;
   onSortChange?: (sort: TableSort | null) => void;
 
@@ -102,6 +99,15 @@ export interface TableProps<T> {
   toolbar?: ReactNode;
   className?: string;
   bare?: boolean;
+
+  toolbarClassName?: string;
+  searchInputClassName?: string;
+  filterChipsClassName?: string;
+  selectionHeaderClassName?: string;
+  selectionInfoClassName?: string;
+  topPaginationClassName?: string;
+  tableWrapperClassName?: string;
+  bottomPaginationClassName?: string;
 }
 
 // Table Container Props

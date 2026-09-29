@@ -19,7 +19,7 @@ export function DatePicker({
   placeholder = "Pick a date",
 }: {
   date?: Date
-  onChange: (date: Date | undefined) => void
+  onChange?: (date: Date | undefined) => void
   placeholder?: string
 }) {
   return (

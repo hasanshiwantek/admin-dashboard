@@ -46,6 +46,8 @@
   --color-chip-text: var(--chip-text-color);
   --color-chip-bg: var(--chip-bg-color);
   --color-store-bg: var(--store-bg);
+  --color-primaryColor: var(--primary-color);
+  --color-link: var(--text-link);
 }
 
 :root {

@@ -185,7 +185,7 @@ const AllOrders = () => {
           loading={loading}
           emptyMessage="No orders found."
           selectAllInHeader
-          showRecordCount={false}
+          hideRecordCount
           appliedFilters={table.appliedFilters}
           filterLabels={filterLabels}
           formatFilterValue={table.formatFilterValue}

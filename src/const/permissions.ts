@@ -42,7 +42,13 @@ const ROUTE_ALIASES: Record<string, string> = {
   "/manage/marketing/transactional-emails": "/manage/marketing/email-marketing",
 };
 
-const PUBLIC_ROUTES = ["/manage/dashboard", "/manage/user-settings"];
+const PUBLIC_ROUTES = [
+  "/manage/dashboard",
+  "/manage/user-settings",
+  "/manage/marketing/banners",
+  "/manage/marketing/banners/",
+  "/manage/marketing/banners/[id]/edit",
+];
 
 const matches = (path: string, prefix: string) =>
   path === prefix || path.startsWith(`${prefix}/`);

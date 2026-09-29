@@ -130,7 +130,7 @@ const AllCustomers = () => {
           error={error}
           emptyMessage="No customers found."
           selectAllInHeader
-          showRecordCount={false}
+          hideRecordCount
           sort={table.sort}
           onSortChange={table.setSort}
           selectedIds={selectedCustomers.map((customer) => customer.id)}
