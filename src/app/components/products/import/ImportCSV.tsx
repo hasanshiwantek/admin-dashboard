@@ -10,7 +10,11 @@ import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { useRouter } from "next/navigation";
 import { ImportProgressModal } from "./ImportProgressModal";
 import { useAlert } from "@/hooks/useAlert";
+import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
+import { Button } from "@/components/ui/button";
 const ImportCsv = () => {
+  const dispatch = useAppDispatch();
+  const router = useRouter();
   const methods = useForm({
     defaultValues: {
       importSource: "upload",
@@ -25,10 +29,9 @@ const ImportCsv = () => {
     },
   });
 
-  const dispatch = useAppDispatch();
-  const [step, setStep] = useState(1);
-  const router = useRouter();
   // Progress modal state
+  const [step, setStep] = useState(1);
+  const [openConfirmationModal, setOpenConfirmationModal] = useState(false);
   const [showProgressModal, setShowProgressModal] = useState(false);
   const [progressKey, setProgressKey] = useState("");
   const { showAlert, Alert } = useAlert();
@@ -215,16 +218,65 @@ const ImportCsv = () => {
           >
             {step === 1 ? <ImportCsvForm /> : <StepTwo />}
             <div className="sticky bottom-0 w-full border-t p-6 bg-white flex justify-end gap-4">
-              <button
+              <Button
                 type="button"
-                className="btn-outline-primary"
-                onClick={step === 2 ? () => setStep(1) : undefined}
+                className="
+              h-[42px]
+              min-w-[82px]
+              mr-[14px]
+              rounded-none
+              bg-transparent
+              px-[14px]
+              text-[16px]
+              font-normal
+              text-[#526dff]
+              shadow-none
+              hover:bg-transparent
+              hover:text-[#526dff]
+            "
+                onClick={() => setOpenConfirmationModal(true)}
               >
-                Previous
-              </button>
-              <button type="submit" className="btn-primary">
+                Cancel
+              </Button>
+              {step !== 1 && (
+                <Button
+                  type="button"
+                  className="
+              h-[42px]
+              min-w-[82px]
+              mr-[14px]
+              rounded-none
+              bg-transparent
+              px-[14px]
+              text-[16px]
+              font-normal
+              text-[#526dff]
+              shadow-none
+              hover:bg-transparent
+              hover:text-[#526dff]
+            "
+                  onClick={step === 2 ? () => setStep(1) : undefined}
+                >
+                  Previous
+                </Button>
+              )}
+              <Button
+                type="submit"
+                className="
+              h-[42px]
+              min-w-[112px]
+              rounded-none
+              bg-[#4d70ff]
+              px-[22px]
+              text-[16px]
+              font-normal
+              text-white
+              shadow-none
+              hover:bg-[#4164f5]
+            "
+              >
                 {step === 2 ? "Submit" : "Next"}
-              </button>
+              </Button>
             </div>
           </form>
         </FormProvider>
@@ -237,6 +289,19 @@ const ImportCsv = () => {
         />
       </div>
       <Alert />
+
+      {openConfirmationModal && (
+        <ConfirmationModal
+          open={openConfirmationModal}
+          onOpenChange={setOpenConfirmationModal}
+          variant="warning"
+          title="Confirmation"
+          description="Are you sure you want to cancel importing?"
+          onConfirm={() => {
+            router.push("/manage/products");
+          }}
+        />
+      )}
     </>
   );
 };
