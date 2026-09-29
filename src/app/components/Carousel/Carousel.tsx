@@ -11,6 +11,7 @@ import {
   deleteCarousal,
 } from "@/redux/slices/storefrontSlice";
 import Spinner from "../loader/Spinner";
+import { useAlert } from "@/hooks/useAlert";
 
 interface Slide {
   id: number;
@@ -41,6 +42,7 @@ const Carousel = () => {
   const [deleteSlideId, setDeleteSlideId] = useState<number | null>(null);
 const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [settings, setSettings] = useState({ swapInterval: 5 });
+    const { showAlert, Alert } = useAlert();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dispatch = useAppDispatch();
   const { carouselData, loading } =
@@ -118,49 +120,15 @@ const [openDeleteModal, setOpenDeleteModal] = useState(false);
     setActiveSlideId(newId);
   };
 
-  // const handleDeleteSlide = async (e: React.MouseEvent, id: number) => {
-  //   e.stopPropagation();
 
-  //   if (slides.length < 1) {
-  //     alert("You cannot delete the last remaining slide.");
-  //     return;
-  //   }
-
-  //   const confirmed = window.confirm(
-  //     "Are you sure you want to delete this slide?"
-  //   );
-  //   if (!confirmed) return;
-
-  //   try {
-  //     const response = await dispatch(deleteCarousal(id));
-  //     if (deleteCarousal.fulfilled.match(response)) {
-  //       setTimeout(async () => {
-  //         await dispatch(fetchCarousal());
-  //       }, 2000);
-
-  //       const updatedSlides = slides.filter((slide) => slide.id !== id);
-  //       setSlides(updatedSlides);
-
-  //       if (updatedSlides.length > 0) {
-  //         setActiveSlideId(updatedSlides[0].id);
-  //       } else {
-  //         setActiveSlideId(0);
-  //       }
-
-  //     } else {
-  //       console.error("❌ Failed to delete slide");
-  //       alert("Failed to delete the slide from the server.");
-  //     }
-  //   } catch (err) {
-  //     console.error("❌ Error deleting slide:", err);
-  //     alert("An error occurred while deleting the slide.");
-  //   }
-  // };
 const handleDeleteSlide = (e: React.MouseEvent, id: number) => {
   e.stopPropagation();
 
   if (slides.length < 1) {
-    alert("You cannot delete the last remaining slide.");
+   showAlert({
+  title: "Cannot Delete Slide",
+  message: "You cannot delete the last remaining slide.",
+});
     return;
   }
 
@@ -171,7 +139,10 @@ const handleDeleteSlide = (e: React.MouseEvent, id: number) => {
     if (activeSlideId > 0) {
       fileInputRef.current?.click();
     } else {
-      alert('Pehle "Add Slide" button se ek nayi slide banayein.');
+     showAlert({
+  title: "Add Slide Required",
+  message: 'Please create a new slide using the "Add Slide" button first.',
+});
     }
   };
 
@@ -257,7 +228,10 @@ const handleDeleteSlide = (e: React.MouseEvent, id: number) => {
 
   const onSubmit = async () => {
     if (slides.length === 0) {
-      alert("Please add at least one slide to save the carousel.");
+      showAlert({
+  title: "No Slide Added",
+  message: "Please add at least one slide to save the carousel.",
+});
       return;
     }
 
@@ -317,7 +291,10 @@ const handleDeleteSlide = (e: React.MouseEvent, id: number) => {
 
     } catch (err) {
       console.error("❌ Error saving carousel:", err);
-      alert("⚠️ Failed to save carousel data.");
+     showAlert({
+  title: "Save Failed",
+  message: "Failed to save carousel data.",
+});
     }
   };
   const handleAltTextChange = (index: number, value: string) => {
@@ -674,14 +651,21 @@ const handleDeleteSlide = (e: React.MouseEvent, id: number) => {
         setDeleteSlideId(null);
       } else {
         console.error("❌ Failed to delete slide");
-        alert("Failed to delete the slide from the server.");
+    showAlert({
+  title: "Slide Deletion Failed",
+  message: "Failed to delete the slide from the server.",
+});
       }
     } catch (err) {
       console.error("❌ Error deleting slide:", err);
-      alert("An error occurred while deleting the slide.");
+      showAlert({
+  title: "Slide Deletion Error",
+  message: "An error occurred while deleting the slide.",
+});
     }
   }}
 />
+   <Alert />
     </form>
   );
 };

@@ -60,34 +60,7 @@ const WebPageTable = () => {
     setSelectedIds(newSelected);
   };
 
-  // Webpage DELETION LOGIC
-
-  // const deleteWebpageHandler = async () => {
-  //   if (selectedIds.length === 0) {
-  //     alert("Please select at least one Webpage before deleting.");
-  //     return; // stop here
-  //   }
-  //   const confirm = window.confirm("Delete Webpage?");
-  //   if (!confirm) {
-  //     return;
-  //   } else {
-  //     try {
-  //       const resultAction = await dispatch(deleteWebPage({ id: selectedIds }));
-  //       const result = (resultAction as any).payload;
-
-  //       if ((resultAction as any).meta.requestStatus === "fulfilled") {
-  //         setSelectedIds([]);
-  //         setTimeout(() => {
-  //           refetchWebpages(dispatch);
-  //         }, 700);
-  //       } else {
-  //         console.error("❌ Failed to delete webpage:", result);
-  //       }
-  //     } catch (err) {
-  //       console.error("❌ Unexpected error:", err);
-  //     }
-  //   }
-  // };
+ 
   const deleteWebpageHandler = () => {
     if (selectedIds.length === 0) {
       showAlert({

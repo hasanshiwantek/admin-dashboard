@@ -147,27 +147,7 @@ const CategoryRow = ({
         );
       },
     },
-    // {
-    //   label: "Delete",
-    //   onClick: () => {
-    //     const ids = {
-    //       ids: [category?.id],
-    //     };
-    //     const confirm = window.confirm("Delete selected category?");
-    //     if (!confirm) {
-    //       return;
-    //     } else {
-    //       try {
-    //         dispatch(deleteCategory({ data: ids }));
-    //         setTimeout(() => {
-    //           refetchCategories(dispatch);
-    //         }, 2000);
-    //       } catch (err) {
-    //         console.log(err, "Error while deleting");
-    //       }
-    //     }
-    //   },
-    // },
+   
     {
       label: "Delete",
       onClick: () => {

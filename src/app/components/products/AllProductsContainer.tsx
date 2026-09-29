@@ -216,15 +216,7 @@ const useAllProductsContainer = () => {
         if (updateProduct.fulfilled.match(result)) table.refetch();
       },
     },
-    // {
-    //   label: "Delete",
-    //   onClick: async () => {
-    //     const confirm = window.confirm("Delete Product?");
-    //     if (!confirm) return;
-    //     const result = await dispatch(deleteProduct({ ids: [product.id] }));
-    //     if (deleteProduct.fulfilled.match(result)) table.refetch();
-    //   },
-    // },
+  
     {
       label: "Delete",
       onClick: () => {
@@ -364,20 +356,7 @@ const useAllProductsContainer = () => {
         }
       },
     },
-    // {
-    //   label: "Delete",
-    //   onClick: async () => {
-    //     const confirm = window.confirm("Delete Selecred Products?");
-    //     if (!confirm) return;
-    //     const result = await dispatch(
-    //       deleteProduct({ ids: selectedProductIds }),
-    //     );
-    //     if (deleteProduct.fulfilled.match(result)) {
-    //       table.refetch();
-    //       clearSelection();
-    //     }
-    //   },
-    // },
+    
     {
       label: "Delete",
       onClick: () => {
