@@ -13,6 +13,8 @@ import { useFormContext } from "react-hook-form";
 import { addCustomerAddress } from "@/redux/slices/customerSlice";
 import { errorMessage } from "@/utils/message";
 import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
+import { getFromStorage } from "@/utils/storage";
+import { StoreItem } from "@/types/types";
 export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
   const dispatch = useAppDispatch();
   const { handleSubmit, getValues } = useFormContext();
@@ -31,13 +33,10 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
     setShowCancelModal(true);
   };
   const getDeviceType = () => {
-    const availableStores = JSON.parse(
-      localStorage.getItem("availableStores") || "[]",
-    );
-    const selectedStoreId = Number(localStorage.getItem("storeId"));
-    const selectedStore = availableStores.find(
-      (s: any) => s.id === selectedStoreId,
-    );
+    const availableStores =
+      (getFromStorage("availableStores") as StoreItem[] | null) || [];
+    const selectedStoreId = Number(getFromStorage("storeId"));
+    const selectedStore = availableStores.find((s) => s.id === selectedStoreId);
     if (typeof window === "undefined")
       return `${selectedStore?.name} (Manual order)`;
 

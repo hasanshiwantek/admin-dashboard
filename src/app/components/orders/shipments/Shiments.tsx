@@ -24,7 +24,7 @@ import {
   fetchShipmentByKeyword,
   updateShipment,
   fetchShipmentById,
-  exportShipmentsCsv
+  exportShipmentsCsv,
 } from "@/redux/slices/orderSlice";
 import { useSearchParams } from "next/navigation";
 import { refetchOrders, refetchShipments } from "@/lib/orderUtils";
@@ -97,14 +97,16 @@ Updated: ${billing.updatedAt}`;
   const [savingId, setSavingId] = useState<number | null>(null);
   const [keyword, setKeyword] = useState("");
   const searchParams = useSearchParams();
-    const { showAlert, Alert } = useAlert();
+  const { showAlert, Alert } = useAlert();
 
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const total = pagination?.total;
   const totalPages = Math.ceil(pagination?.total / pagination?.pageSize || 1);
 
-  const { loading, error, shipmentLoader, singleShipment } = useAppSelector((state) => state.order);
+  const { loading, error, shipmentLoader, singleShipment } = useAppSelector(
+    (state) => state.order,
+  );
   //   const filteredOrders = shipments?.data?.filter((order: any) => {
   //     if (activeTab === "All orders") return true;
   //     return order.status === activeTab;
@@ -126,7 +128,8 @@ Updated: ${billing.updatedAt}`;
     }
   }, [shipments, singleShipment, searchParams]);
 
-  const tabs = ["All shipments",
+  const tabs = [
+    "All shipments",
     // "Custom Views"
   ];
 
@@ -155,14 +158,10 @@ Updated: ${billing.updatedAt}`;
 
       onClick: async () => {
         try {
-
-
           const shipmentId = shipment?.orderId;
 
-
-
           const resultAction = await dispatch(
-            fetchPackingSlipPdf({ shipmentId })
+            fetchPackingSlipPdf({ shipmentId }),
           );
 
           if (fetchPackingSlipPdf.fulfilled.match(resultAction)) {
@@ -180,7 +179,7 @@ Updated: ${billing.updatedAt}`;
             }, 1000);
           } else {
             errorMessage(
-              String(resultAction.payload || "Failed to download PDF")
+              String(resultAction.payload || "Failed to download PDF"),
             );
           }
         } catch (error) {
@@ -190,13 +189,11 @@ Updated: ${billing.updatedAt}`;
     },
   ];
 
-  const handleTracking = () => {
-  };
+  const handleTracking = () => {};
 
   const toggleRow = (id: number) => {
     setExpandedRow((prev) => (prev === id ? null : id));
   };
-
 
   // const handleShipmentDelete = async () => {
   //   if (selectedOrderIds.length <= 0) {
@@ -223,18 +220,17 @@ Updated: ${billing.updatedAt}`;
   // };
   /////////logic of get shipment by id////
 
-const handleShipmentDelete = () => {
-  if (selectedOrderIds.length <= 0) {
-showAlert({
-  title: "No Shipment Selected",
-  message: "Please select shipment to delete.",
-});
-    return;
-  }
+  const handleShipmentDelete = () => {
+    if (selectedOrderIds.length <= 0) {
+      showAlert({
+        title: "No Shipment Selected",
+        message: "Please select shipment to delete.",
+      });
+      return;
+    }
 
     setShowDeleteModal(true);
   };
-
 
   const handleSearch = async () => {
     if (keyword === "") {
@@ -248,19 +244,16 @@ showAlert({
           page: currentPage,
           perPage: perPage,
           keyword: keyword,
-        })
+        }),
       );
       if (fetchShipmentByKeyword.fulfilled.match(resultAction)) {
         // setKeyword("");
       } else {
       }
-    } catch (err) {
-    }
+    } catch (err) {}
   };
 
   // FETCH SHIPMENTS LOGIC
-
-
 
   const queryObject: Record<string, any> = {};
   searchParams.forEach((value, key) => {
@@ -278,9 +271,10 @@ showAlert({
 
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
-
+        const today = new Date().toISOString().slice(0, 10); // 2026-09-29
+        
         a.href = url;
-        a.download = "shipments.csv";
+        a.download = `shipments-${today}.csv`;
 
         document.body.appendChild(a);
         a.click();
@@ -307,7 +301,7 @@ showAlert({
     const pageSize = Number(queryObject.pageSize || queryObject.limit || 50);
 
     const filterKeys = Object.keys(queryObject).filter(
-      (key) => !["page", "limit", "pageSize"].includes(key)
+      (key) => !["page", "limit", "pageSize"].includes(key),
     );
 
     if (filterKeys.length > 0) {
@@ -330,7 +324,7 @@ showAlert({
             page,
             pageSize,
           },
-        })
+        }),
       );
     } else {
       dispatch(fetchAllShipments({ page: currentPage, perPage: perPage }));
@@ -369,10 +363,11 @@ showAlert({
           {tabs.map((tab) => (
             <button
               key={tab}
-              className={`!text-2xl pb-1 border-b-3 whitespace-nowrap ${activeTab === tab
-                ? "border-blue-600"
-                : "border-transparent text-gray-500 hover:text-black"
-                }`}
+              className={`!text-2xl pb-1 border-b-3 whitespace-nowrap ${
+                activeTab === tab
+                  ? "border-blue-600"
+                  : "border-transparent text-gray-500 hover:text-black"
+              }`}
               onClick={() => setActiveTab(tab)}
             >
               {tab}
@@ -392,7 +387,9 @@ showAlert({
 
             <ExportShipmentsDialog
               trigger={
-                <button className="btn-outline-primary 2xl:!text-2xl">Export all</button>
+                <button className="btn-outline-primary 2xl:!text-2xl">
+                  Export all
+                </button>
               }
               onConfirm={(fmt) => handleExport(fmt)} // use shipments.data inside
             />
@@ -405,12 +402,17 @@ showAlert({
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
               />
-              <button className="btn-outline-primary h-full" onClick={handleSearch}>
+              <button
+                className="btn-outline-primary h-full"
+                onClick={handleSearch}
+              >
                 <IoFilterOutline />
               </button>
             </div>
             <Link href={"/manage/orders/shipments/search-shipments"}>
-              <button className="btn-outline-primary 2xl:!text-2xl">Search</button>
+              <button className="btn-outline-primary 2xl:!text-2xl">
+                Search
+              </button>
             </Link>
           </div>
 
@@ -435,24 +437,24 @@ showAlert({
                       checked={
                         filteredOrders?.length > 0 &&
                         filteredOrders?.every((order: any) =>
-                          selectedOrderIds.includes(order.id)
+                          selectedOrderIds.includes(order.id),
                         )
                       }
                       onCheckedChange={(checked) =>
                         handleSelectAllChange(
                           checked as boolean,
-                          filteredOrders
+                          filteredOrders,
                         )
                       }
                     />
                   </TableHead>
                   <TableHead> </TableHead>
-                  <TableHead >Shipment ID</TableHead>
-                  <TableHead >Shipped to</TableHead>
-                  <TableHead >Date shipped</TableHead>
-                  <TableHead >Shipping tracking number</TableHead>
-                  <TableHead >Order Date</TableHead>
-                  <TableHead >Action</TableHead>
+                  <TableHead>Shipment ID</TableHead>
+                  <TableHead>Shipped to</TableHead>
+                  <TableHead>Date shipped</TableHead>
+                  <TableHead>Shipping tracking number</TableHead>
+                  <TableHead>Order Date</TableHead>
+                  <TableHead>Action</TableHead>
                 </TableRow>
               </TableHeader>
 
@@ -482,7 +484,7 @@ showAlert({
                             onCheckedChange={(checked) =>
                               handleOrderCheckboxChange(
                                 shipment,
-                                checked as boolean
+                                checked as boolean,
                               )
                             }
                           />
@@ -496,12 +498,16 @@ showAlert({
                             )}
                           </button> */}
                         </TableCell>
-                        <TableCell className="2xl:!text-2xl">{shipment.id}</TableCell>
+                        <TableCell className="2xl:!text-2xl">
+                          {shipment.id}
+                        </TableCell>
 
-                        <TableCell className="text-blue-600 2xl:!text-2xl">
+                        <TableCell className=" 2xl:!text-2xl">
                           {shipment.shippedTo}
                         </TableCell>
-                        <TableCell className="2xl:!text-2xl">{shipment.dateShipped}</TableCell>
+                        <TableCell className="2xl:!text-2xl">
+                          {shipment.dateShipped}
+                        </TableCell>
                         <TableCell className="gap-1.5">
                           <Input
                             placeholder=""
@@ -522,14 +528,15 @@ showAlert({
                           <button
                             className="btn-outline-primary 2xl:h-[32.5px] ml-2.5"
                             onClick={() => {
-                              const updatedValue = trackingChanges[shipment?.id];
+                              const updatedValue =
+                                trackingChanges[shipment?.id];
                               if (updatedValue !== undefined) {
                                 setSavingId(shipment?.id);
                                 dispatch(
                                   updateShipment({
                                     id: shipment?.id,
                                     data: { trackingId: updatedValue },
-                                  })
+                                  }),
                                 );
                               }
                             }}
@@ -546,7 +553,7 @@ showAlert({
                               day: "2-digit",
                               month: "short",
                               year: "numeric",
-                            }
+                            },
                           )}
                         </TableCell>
 
@@ -564,7 +571,7 @@ showAlert({
                             }
                           />
                         </TableCell>
-                      </TableRow >
+                      </TableRow>
                       {expandedRow === shipment.id && (
                         <TableRow>
                           <TableCell colSpan={11}>
@@ -713,7 +720,7 @@ showAlert({
           onConfirm={async () => {
             try {
               const result = await dispatch(
-                deleteShipment({ ids: selectedOrderIds })
+                deleteShipment({ ids: selectedOrderIds }),
               );
 
               if (deleteShipment.fulfilled.match(result)) {
@@ -723,11 +730,11 @@ showAlert({
                   refetchShipments(dispatch);
                 }, 700);
               }
-            } catch (err) { }
+            } catch (err) {}
           }}
         />
-      </div >
-          <Alert />
+      </div>
+      <Alert />
     </>
   );
 };

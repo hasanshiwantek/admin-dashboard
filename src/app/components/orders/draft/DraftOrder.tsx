@@ -16,11 +16,12 @@ import { fetchDraftOrders, deleteDraftOrders } from "@/redux/slices/orderSlice";
 import Spinner from "../../loader/Spinner";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { errorMessage, successMessage } from "@/utils/message";
 
 const DraftOrder = () => {
   const dispatch = useAppDispatch();
   const { draftOrder, loading, error } = useAppSelector(
-    (state: any) => state.order
+    (state: any) => state.order,
   );
   const router = useRouter();
 
@@ -40,7 +41,7 @@ const DraftOrder = () => {
       label: "Delete",
       onClick: async () => {
         const confirmed = window.confirm(
-          "Are you sure you want to delete this draft order?"
+          "Are you sure you want to delete this draft order?",
         );
 
         if (!confirmed) return;
@@ -57,12 +58,15 @@ const DraftOrder = () => {
     },
   ];
 
-  const handleCopyUrl = (url: string) => {
-    if (url) {
-      navigator.clipboard.writeText(url);
+  const handleCopyUrl = async (url?: string | null) => {
+    if (!url) return;
+    try {
+      await navigator.clipboard.writeText(url);
+      successMessage("URL copied successfully");
+    } catch {
+      errorMessage("Failed to copy URL");
     }
   };
-
   // ✅ Calculate total for draft order
   const calculateTotal = (products: any[], shippingCost: string = "0.00") => {
     if (!products || products.length === 0) {
@@ -157,16 +161,18 @@ const DraftOrder = () => {
                     <TableCell className="pl-4 2xl:!text-2xl">
                       {row.createdAt
                         ? new Date(row.createdAt).toLocaleDateString("en-US", {
-                          weekday: "short",
-                          year: "numeric",
-                          month: "short",
-                          day: "numeric",
-                        })
+                            weekday: "short",
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                          })
                         : "N/A"}
                     </TableCell>
                     <TableCell className="2xl:!text-2xl">
                       <div className="flex flex-col">
-                        <span className="!text-[15px] text-[#000000] !font-normal">{displayName}</span>
+                        <span className="!text-[15px] text-[#000000] !font-normal">
+                          {displayName}
+                        </span>
                         {row.email && (
                           <span className="text-xs text-gray-500">
                             {row.email}
