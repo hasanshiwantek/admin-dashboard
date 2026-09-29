@@ -198,7 +198,29 @@ Updated: ${billing.updatedAt}`;
   };
 
 
-
+  // const handleShipmentDelete = async () => {
+  //   if (selectedOrderIds.length <= 0) {
+  //     alert("Please select shipment to delete");
+  //     return;
+  //   }
+  //   const confirm = window.confirm("Delete Selected Shipments");
+  //   if (!confirm) {
+  //     return;
+  //   } else {
+  //     try {
+  //       const result = await dispatch(
+  //         deleteShipment({ ids: selectedOrderIds })
+  //       );
+  //       if (deleteShipment.fulfilled.match(result)) {
+  //         setTimeout(() => {
+  //           refetchShipments(dispatch);
+  //         }, 700);
+  //       } else {
+  //       }
+  //     } catch (err) {
+  //     }
+  //   }
+  // };
   /////////logic of get shipment by id////
 
 const handleShipmentDelete = () => {
