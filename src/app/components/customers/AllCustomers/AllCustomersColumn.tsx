@@ -83,6 +83,6 @@ export const getCustomerColumns = (
     headClassName: "2xl:!text-[1.6rem]",
     className: "2xl:!text-2xl",
     render: (customer: any) =>
-      formatDateTime(customer?.joinDate, DateTimeFormat.SHORT_DATE_TIME),
+      formatDateTime(customer?.joinDate, DateTimeFormat.ORDINAL_DATE),
   },
 ];

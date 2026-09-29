@@ -79,7 +79,7 @@ export interface MappingField {
   label: string;
   type: "dropdown" | "radio-dropdown";
   options?: string[]; // For radio
-};
+}
 
 //export files
 export enum ExportModalStatus {
@@ -108,3 +108,8 @@ export interface ExportModalProps {
   onClose: () => void;
   onStartExport: () => void;
 }
+
+export type StoreItem = {
+  id: number;
+  name?: string;
+};
