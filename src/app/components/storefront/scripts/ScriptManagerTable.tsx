@@ -52,23 +52,7 @@ const [pendingDeleteScript, setPendingDeleteScript] = useState<{
     dispatch(fetchScripts());
   }, [dispatch]);
 
-  // const handleDelete = async (id: any, scriptName: string) => {
-  //   if (window.confirm(`Are you sure you want to delete "${scriptName}"?`)) {
-  //     try {
-  //       const resultAction = await dispatch(deleteScript({ id }));
-
-  //       if (deleteScript.fulfilled.match(resultAction)) {
-  //         // Refresh the scripts list
-  //         setTimeout(() => {
-  //           dispatch(fetchScripts());
-  //         }, 2000)
-  //       } else {
-  //       }
-  //     } catch (error) {
-  //       console.error("Error deleting script:", error);
-  //     }
-  //   }
-  // };
+ 
 const handleDelete = (id: any, scriptName: string) => {
   setPendingDeleteScript({
     id,

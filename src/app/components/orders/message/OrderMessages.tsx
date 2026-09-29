@@ -62,15 +62,7 @@ export default function OrderMessages() {
         );
     };
 
-    // ── Bulk delete ──────────────────────────────────────────────────────────
-    // const handleDeleteSelected = async () => {
-    //     if (!selectedIds.length) return;
-    //     const ok = window.confirm(`Delete ${selectedIds.length} message(s)?`);
-    //     if (!ok) return;
-    //     await dispatch(deleteOrderMessages({ ids: selectedIds }));
-    //     dispatch(fetchOrderMessages({ orderId }));
-    //     setSelectedIds([]);
-    // };
+ 
     const handleDeleteSelected = () => {
     if (!selectedIds.length) return;
     setShowDeleteModal(true);

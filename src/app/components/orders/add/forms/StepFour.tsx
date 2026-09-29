@@ -20,11 +20,7 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
     (state: any) => state.order,
   );
   const router = useRouter();
-  // const handleCancel = () => {
-  //   if (window.confirm("Are you sure you want to cancel this order?")) {
-  //     router.push("/manage/orders/");
-  //   }
-  // };
+  
   const handleCancel = () => {
   setShowCancelModal(true);
 };

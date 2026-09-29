@@ -8,6 +8,7 @@ import { CircleUser } from "lucide-react";
 import { logout } from "@/redux/slices/authSlice";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import Link from "next/link";
+import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
 
 export default function UserDropdown() {
   const [open, setOpen] = useState(false);
@@ -18,6 +19,9 @@ export default function UserDropdown() {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const pathname = usePathname();
+const [logoutModalOpen, setLogoutModalOpen] = useState(false);
+const [logoutLoading, setLogoutLoading] = useState(false);
+
 
   const updateMenuPos = () => {
     const el = ref.current;
@@ -61,12 +65,9 @@ export default function UserDropdown() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleLogout = () => {
-    const ok = window.confirm("Are you sure want to logout?");
-    if (!ok) return;
-    dispatch(logout());
-    router.push("/login");
-  };
+const handleLogout = () => {
+  setLogoutModalOpen(true);
+};
 
   return (
     <div className="relative" ref={ref}>
@@ -137,6 +138,26 @@ export default function UserDropdown() {
           </div>,
           document.body
         )}
+  <ConfirmationModal
+  open={logoutModalOpen}
+  onOpenChange={setLogoutModalOpen}
+  onConfirm={async () => {
+    try {
+      setLogoutLoading(true);
+
+      await dispatch(logout());
+
+      setLogoutModalOpen(false);
+      router.push("/login");
+    } finally {
+      setLogoutLoading(false);
+    }
+  }}
+  loading={logoutLoading}
+  variant="warning"
+  title="Confirm Logout"
+  description="Are you sure you want to logout from your account?"
+/>
     </div>
   );
 }

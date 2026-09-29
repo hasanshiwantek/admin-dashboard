@@ -105,35 +105,7 @@ export const ImportProgressModal: React.FC<ImportProgressModalProps> = ({
     return () => clearInterval(intervalId);
   }, [isOpen, progressKey, onComplete]);
 
-  // Handle Cancel Function
-  // const handleCancelImport = async () => {
-  //   if (!progressKey) return;
-  //   setIsCanceling(true);
-
-  //   const confirm = window.confirm(
-  //     "Are you sure you want to cancel product uploading?"
-  //   );
-  //   if (!confirm) {
-  //     return;
-  //   } else {
-  //     try {
-  //       const response = await axiosInstance.post(
-  //         `dashboard/products/cancel-import`,
-  //         { progress_key: progressKey }
-  //       );
-
-  //       successMessage(response.data.message || "Import canceled successfully");
-
-  //       setProgress((prev) => ({ ...prev, status: "canceled" }));
-  //       setIsCanceling(false);
-  //       onClose();
-  //     } catch (error) {
-  //       console.error("Failed to cancel import:", error);
-  //       errorMessage("Failed to cancel import. Try again.");
-  //       setIsCanceling(false);
-  //     }
-  //   }
-  // };
+  
 const handleCancelImport = () => {
   if (!progressKey) return;
 
