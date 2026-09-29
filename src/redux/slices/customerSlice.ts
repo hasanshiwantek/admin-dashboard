@@ -210,6 +210,23 @@ export const fetchCustomerAddresses = createAsyncThunk(
     }
   },
 );
+
+export const fetchCustomerByEmail = createAsyncThunk(
+  "customer/fetchCustomerByEmail",
+  async ({ email }: { email: string }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.get(
+        "dashboard/customers/customers-by-email",
+        { params: { email } },
+      );
+      return res.data;
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to fetch customer by email",
+      );
+    }
+  },
+);
 // DELETE customerAddressesDeleteMultiple THUNK
 export const customerAddressesDeleteMultiple = createAsyncThunk(
   "customer/delete-multiple",
