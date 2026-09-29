@@ -514,23 +514,56 @@ export const exportOrderCsv = createAsyncThunk(
     thunkAPI,
   ) => {
     try {
+      let totalRows = 0;
+      let lastPercent = 0;
+      let lastTextLength = 0;
+      let linesCount = 0;
+
       const response = await axiosInstance.get(
         "dashboard/orders/export-orders",
         {
+          adapter: "xhr",
           params: payload,
-          responseType: "blob",
+          responseType: "text",
           signal: thunkAPI.signal,
-          onDownloadProgress: (progressEvent) => {
-            const loaded = progressEvent.loaded ?? 0;
-            const total = progressEvent.total;
+          onDownloadProgress: (progressEvent: any) => {
+            const xhr = progressEvent.event?.target ?? progressEvent.target;
+            if (!xhr) return;
 
-            if (total && total > 0) {
-              const percent = Math.round((loaded * 100) / total);
-              onProgress?.(Math.min(100, Math.max(0, percent)));
-            } else {
-              // no Content-Length — show movement without hitting 100
-              const fake = Math.min(90, Math.round(loaded / 1024) % 90);
-              onProgress?.(fake || 10);
+            if (!totalRows && xhr.getResponseHeader) {
+              const raw =
+                xhr.getResponseHeader("Total-Rows") ||
+                xhr.getResponseHeader("total-rows");
+              if (raw) totalRows = Number(raw);
+            }
+
+            const loaded = Number(progressEvent.loaded ?? 0);
+            const totalBytes =
+              Number(progressEvent.total ?? 0) ||
+              Number(xhr.getResponseHeader?.("content-length") ?? 0);
+
+            let percent = 0;
+
+            if (totalRows > 0) {
+              const currentText: string = xhr.responseText || "";
+              const incoming = currentText.slice(lastTextLength);
+              lastTextLength = currentText.length;
+              linesCount += (incoming.match(/\n/g) || []).length;
+
+              const rowsSoFar = Math.max(0, linesCount - 1);
+              percent = Math.min(92, Math.round((rowsSoFar * 100) / totalRows));
+            } else if (totalBytes > 0) {
+              percent = Math.min(99, Math.round((loaded * 100) / totalBytes));
+            } else if (loaded > 0) {
+              percent = Math.min(
+                95,
+                Math.round((loaded / (loaded + 2 * 1024 * 1024)) * 100),
+              );
+            }
+
+            if (percent > lastPercent) {
+              lastPercent = percent;
+              onProgress?.(percent);
             }
           },
         },
@@ -559,12 +592,10 @@ export const exportOrderCsv = createAsyncThunk(
       if (thunkAPI.signal.aborted) {
         return thunkAPI.rejectWithValue("Export cancelled");
       }
-      console.error("❌ Error Exporting CSV:", error);
       return thunkAPI.rejectWithValue("Failed to Export CSV");
     }
   },
 );
-
 export const fetchAllShipments = createAsyncThunk(
   "orders/fetchAllShipments",
   async (
