@@ -294,7 +294,7 @@ export const exportCustomerCsv = createAsyncThunk(
             linesCount += (incoming.match(/\n/g) || []).length;
 
             const rowsSoFar = Math.max(0, linesCount - 1);
-            percent = Math.min(100, Math.round((rowsSoFar * 100) / totalRows));
+            percent = Math.min(92, Math.round((rowsSoFar * 100) / totalRows));
           } else if (totalBytes > 0) {
             percent = Math.min(99, Math.round((loaded * 100) / totalBytes));
           } else if (loaded > 0) {
@@ -349,7 +349,7 @@ export const addCustomerAddress = createAsyncThunk(
       );
       return res.data;
     } catch (err: any) {
-           if (thunkAPI.signal.aborted) {
+      if (thunkAPI.signal.aborted) {
         return thunkAPI.rejectWithValue("Export cancelled");
       }
       return thunkAPI.rejectWithValue(
