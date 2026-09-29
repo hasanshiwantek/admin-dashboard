@@ -146,11 +146,7 @@ const [showCancelModal, setShowCancelModal] = useState(false);
     setStep(step + 1);
   };
 
-  // const handleCancel = () => {
-  //   if (window.confirm("Are you sure you want to cancel this order?")) {
-  //     router.push("/manage/orders/");
-  //   }
-  // };
+ 
   const handleCancel = () => {
   setShowCancelModal(true);
 };

@@ -126,55 +126,12 @@ const [openDeleteModal, setOpenDeleteModal] = useState(false);
     }
   };
 
-  // const handleDeleteCoupon = async (id: string) => {
-  //   const confirmDelete = window.confirm(
-  //     "Are you sure you want to delete this coupon code?",
-  //   );
 
-  //   if (!confirmDelete) return;
-
-  //   setDeletingId(id);
-  //   try {
-  //     const result = await dispatch(deleteCouponCodes({ id })).unwrap();
-  //     console.log("Coupon code deleted successfully!");
-  //     // Refresh the list
-  //     dispatch(getCouponCodes());
-  //     // Remove from selected if it was selected
-  //     setSelectedCoupons(selectedCoupons.filter((cid) => cid !== id));
-  //   } catch (error: any) {
-  //     console.error(error || "Failed to delete coupon code");
-  //   } finally {
-  //     setDeletingId(null);
-  //   }
-  // };
 const handleDeleteCoupon = (id: string) => {
   setDeleteIds([id]);
   setOpenDeleteModal(true);
 };
-  // Delete multiple selected coupons
-  // const handleDeleteSelected = async () => {
-  //   if (selectedCoupons.length === 0) return;
-
-  //   const confirmDelete = window.confirm(
-  //     `Are you sure you want to delete ${selectedCoupons.length} coupon code(s)?`,
-  //   );
-
-  //   if (!confirmDelete) return;
-
-  //   try {
-  //     // Delete all selected coupons
-  //     await Promise.all(
-  //       selectedCoupons.map((id) =>
-  //         dispatch(deleteCouponCodes({ id })).unwrap(),
-  //       ),
-  //     );
-  //     // Refresh the list 
-  //     dispatch(getCouponCodes());
-  //     setSelectedCoupons([]);
-  //   } catch (error: any) {
-  //     console.error(error || "Failed to delete some coupon codes");
-  //   }
-  // };
+ 
 const handleDeleteSelected = () => {
   if (selectedCoupons.length === 0) return;
 

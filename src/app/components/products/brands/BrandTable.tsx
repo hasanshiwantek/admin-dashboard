@@ -74,34 +74,7 @@ const BrandTable = () => {
     );
   };
 
-  // BRAND DELETION LOGIC
-
-  // const deleteBrandHandler = async () => {
-  //   if (selectedIds.length === 0) {
-  //     alert("Please select at least one brand before deleting.");
-  //     return; // stop here
-  //   }
-  //   const confirm = window.confirm("Delete Brand?");
-  //   if (!confirm) {
-  //     return;
-  //   } else {
-  //     try {
-  //       const resultAction = await dispatch(deleteBrand({ id: selectedIds }));
-  //       const result = (resultAction as any).payload;
-
-  //       if ((resultAction as any).meta.requestStatus === "fulfilled") {
-  //         setSelectedIds([]);
-  //         setTimeout(() => {
-  //           refetchBrands(dispatch);
-  //         }, 700);
-  //       } else {
-  //         console.error("❌ Failed to delete brand:", result);
-  //       }
-  //     } catch (err) {
-  //       console.error("❌ Unexpected error:", err);
-  //     }
-  //   }
-  // };
+ 
   const deleteBrandHandler = () => {
     if (selectedIds.length === 0) {
       showAlert({

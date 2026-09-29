@@ -46,6 +46,17 @@
   --color-chip-text: var(--chip-text-color);
   --color-chip-bg: var(--chip-bg-color);
   --color-store-bg: var(--store-bg);
+    --color-primary-blue: var(--primary-blue);
+      --color-secondary-blue: var(--secondary-blue);
+        --color-danger-red: var(--danger-red);
+          --color-dark-danger-red: var(--dark-danger-red);
+            --color-text-muted: var(--text-muted);
+              --color-border-light: var(--border-light);
+  --color-background-light: var(--background-light);
+
+
+
+    
 }
 
 :root {
@@ -96,6 +107,13 @@
   --text-link: #6f8dfd;
   --chip-bg-color: #d9dce9;
   --chip-text-color: #5d5b66;
+    --primary-blue: #4C6FFF;
+     --secondary-blue: #4163E8;
+     --danger-red: #D42020;
+       --dark-danger-red: #B91C1C;
+       --text-muted: #6B7280;
+        --border-light: #E5E7EB;
+  --background-light: #F8F9FB;
 }
 
 *::before,
