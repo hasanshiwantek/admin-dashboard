@@ -50,7 +50,7 @@ const AllCustomers = () => {
     filterHandler,
     handleExport,
     router,
-    Alert
+    Alert,
   } = useAllCustomersContainer();
 
   const customerColumns = useMemo(
@@ -131,6 +131,8 @@ const AllCustomers = () => {
           emptyMessage="No customers found."
           selectAllInHeader
           showRecordCount={false}
+          sort={table.sort}
+          onSortChange={table.setSort}
           selectedIds={selectedCustomers.map((customer) => customer.id)}
           onToggleRow={(id, checked) => {
             const customer = customerList.find(
@@ -175,7 +177,7 @@ const AllCustomers = () => {
         description="Are you sure you want to delete the selected customer(s)?"
         onConfirm={confirmDeleteCustomers}
       />
-      <Alert/>
+      <Alert />
     </div>
   );
 };

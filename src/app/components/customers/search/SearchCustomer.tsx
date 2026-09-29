@@ -1,5 +1,4 @@
 "use client";
-import { useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -9,17 +8,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Info } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { advanceCustomerSearch } from "@/redux/slices/customerSlice";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
-import { useRouter } from "next/navigation";
 import { Country, State } from "country-state-city";
+import { Info } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useMemo, useState } from "react";
 const SearchCustomer = () => {
   const dispatch = useAppDispatch();
 

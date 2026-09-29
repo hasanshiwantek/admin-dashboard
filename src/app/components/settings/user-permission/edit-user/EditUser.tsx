@@ -55,7 +55,6 @@ const EditUser = () => {
     permissionGroups,
     permissionsLoading,
     selectedAdminPermissions,
-    adminUsers,
     selectedAdminUser,
   } = useAppSelector((state: any) => state.userPermission);
 
@@ -68,7 +67,7 @@ const EditUser = () => {
         permissions: [],
       },
     });
-  console.log({ watch: watch() });
+  
   const selectedPermissions = watch("permissions") || [];
   const roleOptions = Object.entries(UserRoles).map(([value, label]) => ({
     value: Number(value),
@@ -494,6 +493,7 @@ const EditUser = () => {
                   <Select
                     value={field.value?.toString()}
                     onValueChange={(value) => field.onChange(Number(value))}
+                    disabled
                   >
                     <SelectTrigger className="w-[280px] h-8 text-sm border-gray-300">
                       <SelectValue placeholder="Select user role" />
