@@ -7,11 +7,8 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import {
-  ShieldCheck,
-  ShieldOff,
-  AlertTriangle,
-} from "lucide-react";
+import { ShieldCheck, ShieldOff, AlertTriangle } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 type ConfirmVariant = "enable" | "disable" | "warning";
 
@@ -41,8 +38,7 @@ export default function ConfirmationModal({
         description ||
         "Are you sure you want to enable this? This will take effect immediately.",
       confirmLabel: "Enable",
-      confirmClass:
-        "bg-[#4C6FFF] hover:bg-[#4163E8] text-white",
+      confirmClass: "bg-primary-blue hover:bg-secondary-blue text-white",
       headerClass: "bg-blue-500",
     },
 
@@ -54,9 +50,8 @@ export default function ConfirmationModal({
         description ||
         "Are you sure you want to disable this? This will take effect immediately.",
       confirmLabel: "Disable",
-      confirmClass:
-        "bg-[#D42020] hover:bg-[#B91C1C] text-white",
-      headerClass: "bg-[#D42020]",
+      confirmClass: "bg-danger-red hover:bg-dark-danger-red text-white",
+      headerClass: "bg-danger-red",
     },
 
     warning: {
@@ -67,9 +62,8 @@ export default function ConfirmationModal({
         description ||
         "You've made some changes. If you leave, they won't be saved.",
       confirmLabel: "Confirm",
-      confirmClass:
-        "bg-[#4C6FFF] hover:bg-[#4163E8] text-white",
-      headerClass: "bg-[#4C6FFF]",
+      confirmClass: "bg-primary-blue hover:bg-secondary-blue text-white",
+      headerClass: "bg-primary-blue",
     },
   };
 
@@ -89,13 +83,8 @@ export default function ConfirmationModal({
         "
       >
         {/* ================= HEADER ================= */}
-        <div
-          className={`
-            ${c.headerClass}
-            px-6
-            py-5
-          `}
-        >
+
+        <div className={cn(c.headerClass, "px-6 py-5")}>
           <DialogTitle
             className="
               text-[18px]!
@@ -116,7 +105,7 @@ export default function ConfirmationModal({
               text-[13px]!
               font-normal
               leading-6
-              text-[#6B7280]
+              text-text-muted
               text-left
             "
           >
@@ -132,8 +121,8 @@ export default function ConfirmationModal({
             items-center
             gap-5
             border-t
-            border-[#E5E7EB]
-            bg-[#F8F9FB]
+           border-border-light
+             bg-background-light
             px-6
             py-4
           "
@@ -147,9 +136,9 @@ export default function ConfirmationModal({
               px-2
               text-[14px]
               font-medium
-              text-[#4C6FFF]
+              text-blue-500
               hover:bg-transparent
-              hover:text-[#4163E8]
+              hover:text-blue-600
             "
             onClick={() => onOpenChange(false)}
           >
@@ -160,14 +149,10 @@ export default function ConfirmationModal({
           <Button
             type="button"
             disabled={loading}
-            className={`
-              h-12
-              rounded-[4px]
-              px-5
-              text-[14px]
-              font-medium
-              ${c.confirmClass}
-            `}
+            className={cn(
+              "h-12 rounded-[4px] px-5 text-[14px] font-medium",
+              c.confirmClass,
+            )}
             onClick={onConfirm}
           >
             {loading ? "Please wait..." : c.confirmLabel}
