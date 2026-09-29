@@ -146,26 +146,6 @@ export default function ProductCategoriesPage() {
     ? findCategoryById(categories, Number(activeId))
     : null;
 
-  // const handleDelete = async (e: React.MouseEvent<HTMLButtonElement>) => {
-  //   e.preventDefault();
-  //   const catIds = selectedIds?.map((cat: any) => cat?.id);
-
-  //   if (selectedIds.length === 0) {
-  //     alert("Please select at least one category before deleting.");
-  //     return;
-  //   }
-
-  //   const confirm = window.confirm("Confirm Deletion?");
-  //   if (!confirm) return;
-
-  //   try {
-  //     await dispatch(deleteCategory({ data: { ids: catIds } }));
-  //     setSelectedIds([]);
-  //     setTimeout(() => dispatch(fetchCategories()), 500);
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // };
   const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     // const catIds = selectedIds?.map((cat: any) => cat?.id);
