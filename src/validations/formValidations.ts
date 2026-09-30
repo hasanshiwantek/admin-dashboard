@@ -4,17 +4,12 @@ import {
   BannerLocation,
   BannerPlacement,
 } from "@/app/(protected)/manage/marketing/banners/constant";
-import {
-  hasContent,
-  needsLocationId,
-} from "@/app/(protected)/manage/marketing/banners/utils";
+import { needsLocationId } from "@/app/(protected)/manage/marketing/banners/utils";
 import { boolean, date, object, ref, string } from "yup";
 
 export const bannerSchema = object({
   [BannerField.Title]: string().trim().required("Banner name is required"),
-  [BannerField.Content]: string()
-    .default("")
-    .test("has-content", "Content is required", hasContent),
+  [BannerField.Content]: string().nullable(),
   [BannerField.LocationType]: string()
     .oneOf(
       Object.values(BannerLocation),
@@ -56,7 +51,7 @@ export const bannerSchema = object({
             "End date must be after the start date",
           ),
     }),
-  [BannerField.Visible]: boolean().default(true),
+  [BannerField.Visible]: boolean().default(true).nullable(),
   [BannerField.Placement]: string()
     .oneOf(Object.values(BannerPlacement), "Choose a placement")
     .required("Choose a placement"),

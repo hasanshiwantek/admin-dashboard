@@ -437,13 +437,13 @@ const marketingSlice = createSlice({
         state.error = (action.payload as string) || "Failed to add banner";
       })
       .addCase(updateBanner.pending, (state) => {
-        state.bannerLoading = true;
+        state.bannersLoading = true;
       })
       .addCase(updateBanner.fulfilled, (state) => {
-        state.bannerLoading = false;
+        state.bannersLoading = false;
       })
       .addCase(updateBanner.rejected, (state, action) => {
-        state.bannerLoading = false;
+        state.bannersLoading = false;
         state.error = (action.payload as string) || "Failed to update banner";
       })
       .addCase(deleteBanner.pending, (state) => {

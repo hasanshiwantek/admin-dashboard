@@ -53,7 +53,7 @@ export function Form<T extends FieldValues, TTransformed = T>({
       <form
         noValidate
         onSubmit={form.handleSubmit(onSubmit, onInvalid)}
-        className={cn("flex flex-col", className)}
+        className={cn("flex flex-col", footer !== false && "pb-28", className)}
       >
         <div
           className={cn(

@@ -1,3 +1,4 @@
+import { convertOptionsToObject } from "@/lib/utils";
 import type { BannerFormValues } from "./types";
 
 /** Form field names; use these for `name`, watch/setValue and schema keys. */
@@ -30,7 +31,7 @@ export enum BannerPlacement {
   Bottom = "bottom",
 }
 
-export const BANNER_LOCATIONS = [
+export const BannerLocationOptions = [
   { value: BannerLocation.Homepage, label: "Homepage" },
   { value: BannerLocation.Category, label: "For a specific category" },
   { value: BannerLocation.Brand, label: "For a specific brand" },
@@ -48,7 +49,7 @@ export const BANNER_DATE_TYPES = [
   },
 ];
 
-export const BANNER_PLACEMENTS = [
+export const BannerPlacementOptions = [
   { value: BannerPlacement.Top, label: "Top of page" },
   { value: BannerPlacement.Bottom, label: "Bottom of page" },
 ];
@@ -64,3 +65,10 @@ export const bannerDefaultValues: BannerFormValues = {
   [BannerField.Visible]: true,
   [BannerField.Placement]: "" as BannerPlacement,
 };
+
+export const BANNER_LOCATION_LABELS = convertOptionsToObject(
+  BannerLocationOptions,
+);
+export const BANNER_PLACEMENT_LABELS = convertOptionsToObject(
+  BannerPlacementOptions,
+);

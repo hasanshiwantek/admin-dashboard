@@ -146,11 +146,6 @@ span {
 p {
   color: #313440;
 }
-/* Ensure links are clickable */
-a {
-  text-decoration: none;
-  line-height: normal;
-}
 
 /* Buttons (Optional Custom Tailwind Styling) */
 
@@ -250,6 +245,17 @@ img {
   body {
     @apply bg-background text-foreground;
     /* font-family: "Source Sans Pro", "Helvetica Neue", Arial, sans-serif; */
+  }
+  a {
+    text-decoration: none;
+    line-height: normal;
+    color: var(--text-link);
+    font-size: 1rem !important;
+  }
+  @media (width >= 96rem /* 1536px */) {
+    a {
+      font-size: 1.6rem !important;
+    }
   }
 }
 

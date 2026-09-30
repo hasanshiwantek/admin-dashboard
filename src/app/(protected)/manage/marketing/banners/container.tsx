@@ -24,6 +24,9 @@ const useBannerListingPageContainer = () => {
   const { banners, bannersLoading, deleteLoading } = useAppSelector(
     (state: any) => state.marketingReducer,
   );
+  const storeBaseUrl: string | undefined = useAppSelector(
+    (state: any) => state.config.currentStore?.baseUrl,
+  );
   const table = useTableContainer<number>({
     fetcher: (params) => dispatch(fetchBanners(params)),
   });
@@ -48,7 +51,6 @@ const useBannerListingPageContainer = () => {
 
   const closeDeleteConfirm = () => setPendingDeleteIds([]);
 
-  // The API deletes one banner per request, so bulk delete fans out.
   const confirmDelete = async () => {
     const results = await Promise.all(
       pendingDeleteIds.map((id) => dispatch(deleteBanner({ id }))),
@@ -87,10 +89,8 @@ const useBannerListingPageContainer = () => {
 
   const bannerList: Array<any> = banners?.data ?? [];
   const columns = BannersColumn({
-    dispatch,
-    refetch,
-    router,
     toggleEnable: toggleVisible,
+    baseUrl: storeBaseUrl,
   });
   const pagination = banners?.pagination;
   const totalPages = pagination?.lastPage;

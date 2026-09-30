@@ -25,11 +25,11 @@ import { useForm, useWatch } from "react-hook-form";
 import { toast } from "react-toastify";
 import {
   BANNER_DATE_TYPES,
-  BANNER_LOCATIONS,
-  BANNER_PLACEMENTS,
   BannerDateType,
   BannerField,
   BannerLocation,
+  BannerLocationOptions,
+  BannerPlacementOptions,
   bannerDefaultValues,
 } from "./constant";
 import { BannerFormProps, BannerFormValues } from "./types";
@@ -66,13 +66,10 @@ const BannerForm = ({ bannerId }: BannerFormProps) => {
   const brandMap = useBrandNameMap(locationType === BannerLocation.Brand);
   const brandOptions = useMemo(() => toOptions(brandMap), [brandMap]);
 
-  // A picked category/brand doesn't carry over when the user switches location.
-  // (Only user changes: `reset` with the loaded banner has no event type.)
   useEffect(() => {
     const { unsubscribe } = watch((values, { name, type }) => {
       if (name === BannerField.LocationType && type === "change")
         setValue(BannerField.LocationId, null);
-      // Choosing "specific dates" starts from a range instead of empty selects.
       if (
         name === BannerField.DateType &&
         type === "change" &&
@@ -141,10 +138,9 @@ const BannerForm = ({ bannerId }: BannerFormProps) => {
         <InputField
           name={BannerField.Content}
           label="Content"
-          required
           Component={RichTextEditor}
           control={control}
-          controlClassName="max-w-5xl"
+          controlClassName="max-w-7xl"
         />
 
         <InputField
@@ -153,7 +149,7 @@ const BannerForm = ({ bannerId }: BannerFormProps) => {
           required
           Component={RadioGroupField}
           control={control}
-          options={BANNER_LOCATIONS}
+          options={BannerLocationOptions}
         />
 
         {locationType === BannerLocation.Category && (
@@ -188,7 +184,6 @@ const BannerForm = ({ bannerId }: BannerFormProps) => {
           options={BANNER_DATE_TYPES}
         />
 
-        {/* Sits under the "Date range" radios, indented past the radio circle. */}
         {dateType === BannerDateType.Range && (
           <div className="flex flex-col gap-3 -mt-4">
             <InputField
@@ -222,7 +217,7 @@ const BannerForm = ({ bannerId }: BannerFormProps) => {
           required
           Component={SelectField}
           control={control}
-          options={BANNER_PLACEMENTS}
+          options={BannerPlacementOptions}
           placeholder="-- Choose a location --"
         />
       </Form>

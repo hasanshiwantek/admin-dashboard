@@ -8,11 +8,9 @@ export type FormFooterProps = {
   submitText?: string;
   loadingText?: string;
   cancelText?: string;
-  /** Hides the cancel button when omitted. */
   onCancel?: () => void;
   loading?: boolean;
   disabled?: boolean;
-  /** Extra buttons rendered between cancel and submit (e.g. "Save and add another"). */
   extraActions?: ReactNode;
   className?: string;
 };
@@ -30,7 +28,7 @@ export function FormFooter({
   return (
     <div
       className={cn(
-        "sticky bottom-0 z-10 w-full border-t p-6 bg-white flex justify-end items-center gap-4",
+        "fixed bottom-0 right-0 z-10 w-full border-t p-6 bg-white flex justify-end items-center gap-4",
         className,
       )}
     >
