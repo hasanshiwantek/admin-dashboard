@@ -160,7 +160,7 @@ export const updateMessage = createAsyncThunk(
         }
     }
 );
-// ── Initial State ─────────────────────────────────────────────────────────────
+//  ── Initial State ─────────────────────────────────────────────────────────────
 
 const initialState = {
     loading: false,

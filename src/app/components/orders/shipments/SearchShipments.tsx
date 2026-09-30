@@ -29,8 +29,13 @@ const toSearchParams = (formData: Record<string, any>) => {
   const map: Record<string, string> = {
     keywords: "keyword",
     keyword: "keyword",
+    orderIdFrom: "orderIdFrom",
     orderIdTo: "orderIdTo",
+    shipmentIdFrom: "shipmentIdFrom",
+    shipmentIdTo: "shipmentIdTo",
     shippingDate: "shippingDate",
+    shippingDateFrom: "shippingDateFrom",
+    shippingDateTo: "shippingDateTo",
     orderDate: "orderDate",
     orderDateFrom: "orderDateFrom",
     orderDateTo: "orderDateTo",
@@ -140,8 +145,11 @@ const SearchShipments = () => {
   // };
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    console.log("formData", formData);
+
     router.push(
-      `/manage/orders/shipments?${toSearchParams({ ...formData, page: 1 }).toString()}`
+      `/manage/orders/shipments?${toSearchParams({ ...formData, page: 1 }).toString()}`,
     );
   };
   return (

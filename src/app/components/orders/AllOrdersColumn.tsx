@@ -153,7 +153,9 @@ export default function AllOrdersColumn({
                       alt={orderCountryDetails?.label || ""}
                     />
                   ) : (
-                    <span className="">🏳️</span>
+                    <div className="flex items-center">
+                      <span className="w-[22px] h-[16px] bg-white border border-gray-400 rounded"></span>
+                    </div>
                   )}
                 </TooltipTrigger>
                 <TooltipContent>
@@ -214,7 +216,7 @@ export default function AllOrdersColumn({
             <span
               className={cn(
                 "w-7 h-12 inline-block rounded-none",
-                currentStatus?.color ?? "bg-gray-400"
+                currentStatus?.color ?? "bg-gray-400",
               )}
             />
             <Select

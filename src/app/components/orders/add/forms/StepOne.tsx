@@ -13,7 +13,10 @@ import {
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import CustomerSearchDropdown, { Customer } from "./CustomerSearchDropdown";
-import { fetchCustomerAddresses } from "@/redux/slices/customerSlice";
+import {
+  fetchCustomerAddresses,
+  fetchCustomerByEmail,
+} from "@/redux/slices/customerSlice";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import { Country, State } from "country-state-city";
@@ -50,9 +53,8 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
 
   const router = useRouter();
   const dispatch = useDispatch<any>();
-  const { appliedCoupon } = useAppSelector(
-    (state: any) => state.order,
-  );
+  const { appliedCoupon } = useAppSelector((state: any) => state.order);
+  const { loading } = useAppSelector((state: any) => state.customer);
   const [customerAddresses, setCustomerAddresses] = useState<CustomerAddress[]>(
     [],
   );
@@ -61,7 +63,7 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(
     watch("selectedCustomer") || null,
   );
-const [showCancelModal, setShowCancelModal] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
   const orderType = watch("orderType") || "existing";
   const billingCountry = watch("billingCountry") || "";
   const billingState = watch("billingState") || "";
@@ -129,7 +131,7 @@ const [showCancelModal, setShowCancelModal] = useState(false);
     }
   }, [stateList, pendingState, setValue]);
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     if (orderType === "existing" && !selectedCustomer) {
       errorMessage("Please select a customer before proceeding.");
       return;
@@ -143,17 +145,26 @@ const [showCancelModal, setShowCancelModal] = useState(false);
       errorMessage("Please select a State before proceeding.");
       return;
     }
+    if (orderType === "new") {
+      const email = watch("email");
+
+      try {
+        const customer: any = await dispatch(
+          fetchCustomerByEmail({ email }),
+        ).unwrap();
+
+        if (customer?.status) {
+          errorMessage("User already been registered");
+          return; // Don't move to the next step
+        }
+      } catch (error) {}
+    }
     setStep(step + 1);
   };
 
-  // const handleCancel = () => {
-  //   if (window.confirm("Are you sure you want to cancel this order?")) {
-  //     router.push("/manage/orders/");
-  //   }
-  // };
   const handleCancel = () => {
-  setShowCancelModal(true);
-};
+    setShowCancelModal(true);
+  };
 
   const handleUseAddress = (address: CustomerAddress) => {
     setValue("billingFirstName", address.first_name ?? "");
@@ -183,11 +194,15 @@ const [showCancelModal, setShowCancelModal] = useState(false);
               className="flex gap-6"
               onValueChange={(value) => {
                 if (appliedCoupon?.couponUsageId) {
-                  dispatch(removeCouponUsage({ id: appliedCoupon?.couponUsageId })).unwrap().then(() => {
-                    dispatch(resetCoupon());
-                  })
+                  dispatch(
+                    removeCouponUsage({ id: appliedCoupon?.couponUsageId }),
+                  )
+                    .unwrap()
+                    .then(() => {
+                      dispatch(resetCoupon());
+                    });
                 }
-                setValue("orderType", value)
+                setValue("orderType", value);
               }}
             >
               <div className="flex items-center space-x-2">
@@ -285,10 +300,10 @@ const [showCancelModal, setShowCancelModal] = useState(false);
                   />
                   {typeof errors.password_confirmation?.message ===
                     "string" && (
-                      <p className="!text-red-500 text-sm">
-                        {errors.password_confirmation.message}
-                      </p>
-                    )}
+                    <p className="!text-red-500 text-sm">
+                      {errors.password_confirmation.message}
+                    </p>
+                  )}
                 </div>
 
                 {/* <div className="flex items-center space-x-2">
@@ -522,13 +537,13 @@ const [showCancelModal, setShowCancelModal] = useState(false);
                               {(address.city ||
                                 address.state ||
                                 address.zip) && (
-                                  <div className="text-[15px] leading-[21px] text-[#172033]">
-                                    {address.city}
-                                    {address.city && address.state ? ", " : ""}
-                                    {address.state}
-                                    {address.zip ? `, ${address.zip}` : ""}
-                                  </div>
-                                )}
+                                <div className="text-[15px] leading-[21px] text-[#172033]">
+                                  {address.city}
+                                  {address.city && address.state ? ", " : ""}
+                                  {address.state}
+                                  {address.zip ? `, ${address.zip}` : ""}
+                                </div>
+                              )}
 
                               {address.country && (
                                 <div className="text-[15px] leading-[21px] text-[#172033] mb-1">
@@ -584,21 +599,21 @@ const [showCancelModal, setShowCancelModal] = useState(false);
         >
           Cancel
         </button>
-        <button type="submit" className="btn-primary">
-          Next
+        <button type="submit" disabled={loading} className="btn-primary">
+          {loading ? "Loading..." : "Next"}
         </button>
       </div>
       <ConfirmationModal
-  open={showCancelModal}
-  onOpenChange={setShowCancelModal}
-  variant="warning"
-  title="Cancel order?"
-  description="Are you sure you want to cancel this order?"
-  onConfirm={() => {
-    setShowCancelModal(false);
-    router.push("/manage/orders/");
-  }}
-/>
+        open={showCancelModal}
+        onOpenChange={setShowCancelModal}
+        variant="warning"
+        title="Cancel order?"
+        description="Are you sure you want to cancel this order?"
+        onConfirm={() => {
+          setShowCancelModal(false);
+          router.push("/manage/orders/");
+        }}
+      />
     </form>
   );
 }

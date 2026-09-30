@@ -1,8 +1,8 @@
 "use client";
 
 import { useAlert } from "@/hooks/useAlert";
-import { cn } from "@/lib/utils";
-import dayjs from "dayjs";
+import { cn, formatDateTime } from "@/lib/utils";
+
 import {
   Calendar,
   Clock,
@@ -24,6 +24,7 @@ import { toast } from "react-toastify";
 import { COMPLETED, riskConfig } from "./constant";
 import { OrderDetailRowProps } from "./types";
 import { findCountry } from "./utils";
+import { replaceNullWithPlaceholder } from "@/lib/utils";
 
 const copyBilling = (info: any) => {
   if (!info) return;
@@ -45,7 +46,6 @@ export default function OrderDetailRow({
   onViewShipmentId,
   onShipItems,
 }: OrderDetailRowProps) {
-  
   const { showAlert, Alert } = useAlert();
   const countryData = findCountry(order?.billingAddress?.country);
   const countryDataForCustomer = findCountry(
@@ -125,7 +125,6 @@ export default function OrderDetailRow({
           </div>
         </div>
 
-        {/* Right Side: Customer Info with Icons */}
         <div className="flex flex-col space-y-2  ">
           <div className="w-[180px] min-w-[180px] h-[90px] overflow-y-auto pr-1">
             <p className="w-full whitespace-normal break-words text-[13px] text-[#34313f] overflow-wrap-anywhere">
@@ -151,11 +150,13 @@ export default function OrderDetailRow({
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <span>{countryData?.label || "N/A"}</span>
+            <span>{replaceNullWithPlaceholder(countryData?.label)}</span>
           </div>
 
           <div className="flex items-center gap-2">
-            <span>{order?.billingAddress?.phone || "N/A"}</span>
+            <span>
+              {replaceNullWithPlaceholder(order?.billingAddress?.phone)}
+            </span>
           </div>
 
           <div className="flex items-center gap-2">
@@ -163,16 +164,19 @@ export default function OrderDetailRow({
               className="!text-blue-400"
               href={`mailto:${order.billingAddress.email}`}
             >
-              {order?.billingAddress?.email || "N/A"}
+              {replaceNullWithPlaceholder(order?.billingAddress?.email)}
             </Link>
           </div>
           <div className="flex items-center gap-2">
             <span>
-              {order?.billingInformation?.updatedAt
-                ? dayjs(order?.billingInformation?.updatedAt).format(
-                    "DD MMM YYYY HH:mm:ss",
-                  )
-                : "N/A"}
+              {replaceNullWithPlaceholder(
+                order?.billingInformation?.updatedAt
+                  ? formatDateTime(
+                      order.billingInformation.updatedAt,
+                      "DD MMM YYYY HH:mm:ss",
+                    )
+                  : null,
+              )}
             </span>
           </div>
           {order?.ipAddress && (
@@ -182,16 +186,20 @@ export default function OrderDetailRow({
                 target="_blank"
                 className="!text-blue-400"
               >
-                {order?.ipAddress}
+                {replaceNullWithPlaceholder(order?.ipAddress)}
               </Link>
             </div>
           )}
           <div className="flex items-center gap-2">
-            <span>{order?.deviceType}</span>
+            <span>{replaceNullWithPlaceholder(order?.deviceType)}</span>
           </div>
 
           <div className="flex items-center gap-2">
-            <span>{order?.billingInformation?.paymentMethod || "N/A"}</span>
+            <span>
+              {replaceNullWithPlaceholder(
+                order?.billingInformation?.paymentMethod,
+              )}
+            </span>
           </div>
           {order?.payment?.payment_status == COMPLETED && (
             <div className="flex items-center gap-2">
@@ -219,18 +227,22 @@ export default function OrderDetailRow({
                 rel="noopener noreferrer"
                 className="text-blue-500 underline break-all"
               >
-                {order.payment.payment_intent_id}
+                {replaceNullWithPlaceholder(order.payment.payment_intent_id)}
               </Link>
             </div>
           )}
           {order?.comments && (
             <div className="flex items-center gap-2">
-              <span className="">{order?.comments || "N/A"}</span>
+              <span className="">
+                {replaceNullWithPlaceholder(order?.comments)}
+              </span>
             </div>
           )}
           {risk && (
             <div className="flex items-center gap-1.5">
-              <span className="!text-blue-400">{risk.extendLabel}</span>
+              <span className="!text-blue-400">
+                replaceNullWithPlaceholder({risk.extendLabel})
+              </span>
             </div>
           )}
         </div>
@@ -283,15 +295,24 @@ export default function OrderDetailRow({
               {order?.billingInformation?.lastName}
               <br />
               {order?.billingInformation?.addressLine1 && (
-                <>{order.billingInformation.addressLine1}</>
+                <>
+                  {replaceNullWithPlaceholder(
+                    order.billingInformation.addressLine1,
+                  )}
+                </>
               )}
               {order?.billingInformation?.addressLine2 && (
-                <>, {order.billingInformation.addressLine2}</>
+                <>
+                  ,{" "}
+                  {replaceNullWithPlaceholder(
+                    order.billingInformation.addressLine2,
+                  )}
+                </>
               )}
               <br />
               {order?.billingInformation?.state}
               <br />
-              {countryDataForCustomer?.label || "N/A"}
+              {replaceNullWithPlaceholder(countryDataForCustomer?.label)}
             </p>
           </div>
 
@@ -303,7 +324,12 @@ export default function OrderDetailRow({
             )}
           >
             <div className="shipping-data-scroll w-[420px] max-w-full overflow-x-auto overflow-y-hidden whitespace-nowrap">
-              <span> {order?.billingInformation?.shippingData || "N/A"} </span>
+              <span>
+                {" "}
+                {replaceNullWithPlaceholder(
+                  order?.billingInformation?.shippingData,
+                )}{" "}
+              </span>
             </div>
           </div>
 
@@ -314,18 +340,22 @@ export default function OrderDetailRow({
           </div>
 
           <div className="flex items-center gap-2">
-            <span>{order?.billingInformation?.email || "N/A"}</span>
+            <span>
+              {replaceNullWithPlaceholder(order?.billingInformation?.email)}
+            </span>
           </div>
 
           <div className="flex items-center gap-2">
             <span>
-              {dayjs(order?.updatedAt).format("DD MMM YYYY HH:mm:ss") || "N/A"}
+              {formatDateTime(order?.updatedAt, "DD MMM YYYY HH:mm:ss", "N/A")}
             </span>
           </div>
 
           {/* Contact Data */}
           <div className="flex items-center gap-2 pt-[33px]">
-            <span>{order?.billingInformation?.phone || "N/A"}</span>
+            <span>
+              {replaceNullWithPlaceholder(order?.billingInformation?.phone)}
+            </span>
           </div>
 
           <div className="flex items-center gap-2">
@@ -333,7 +363,7 @@ export default function OrderDetailRow({
               className="text-[#6f8DFD] text-[13px]"
               href={`mailto:${order.billingInformation.email}`}
             >
-              {order?.billingInformation?.email || "N/A"}
+              {replaceNullWithPlaceholder(order?.billingInformation?.email)}
             </Link>
           </div>
         </div>
@@ -363,12 +393,12 @@ export default function OrderDetailRow({
                 <span>
                   {" "}
                   {order?.products?.length} items @{" "}
-                  {dayjs(order?.updatedAt).format("DD MMM YYYY")}{" "}
+                 {formatDateTime(order?.updatedAt, "DD MMM YYYY")}{" "}
                 </span>
               </div>
               <div className="flex ">
                 <span>Tracking #: </span>
-                <span>{order?.trackingNumber}</span>
+                <span>{replaceNullWithPlaceholder(order?.trackingNumber)}</span>
               </div>
             </div>
           )}

@@ -29,7 +29,7 @@ export const getCustomerColumns = (
     key: "name",
     header: "Name",
     sortable: true,
-    width: "28%",
+    width: "25%",
     headClassName: "2xl:!text-[1.6rem]",
     className: "whitespace-normal break-words",
     render: (customer: any) => (
@@ -46,8 +46,9 @@ export const getCustomerColumns = (
   {
     key: "email",
     header: "Email",
+        width: "30%",
     headClassName: "2xl:!text-[1.6rem]",
-    className: "text-blue-500 2xl:!text-2xl truncate",
+    className: "text-blue-500 2xl:!text-2xl  whitespace-normal break-words",
     render: (customer: any) => (
       <Link
         href={`mailto:${customer?.email}`}
@@ -60,7 +61,7 @@ export const getCustomerColumns = (
   {
     key: "phone",
     header: "Phone",
-    width: "160px",
+    width: "20%",
     headClassName: "2xl:!text-[1.6rem]",
     className: "2xl:!text-2xl",
     render: (customer: any) => customer.phone,
@@ -68,7 +69,7 @@ export const getCustomerColumns = (
   {
     key: "totalOrders",
     header: "Orders",
-    width: "120px",
+    width: "10%",
     sortable: true,
     sortKey: "orders",
     headClassName: "2xl:!text-[1.6rem]",
@@ -83,6 +84,6 @@ export const getCustomerColumns = (
     headClassName: "2xl:!text-[1.6rem]",
     className: "2xl:!text-2xl",
     render: (customer: any) =>
-      formatDateTime(customer?.joinDate, DateTimeFormat.SHORT_DATE_TIME),
+      formatDateTime(customer?.joinDate, DateTimeFormat.ORDINAL_DATE),
   },
 ];

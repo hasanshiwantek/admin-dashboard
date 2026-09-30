@@ -64,11 +64,7 @@ export default function StepTwo({ step, setStep }: any) {
     );
   };
 
-  // const handleCancel = () => {
-  //   if (window.confirm("Are you sure you want to cancel this order?")) {
-  //     router.push("/manage/orders/");
-  //   }
-  // };
+
 const handleCancel = () => {
   setShowCancelModal(true);
 };

@@ -195,7 +195,10 @@ const useAllCustomersContainer = () => {
     const value = storeCredits[customerId];
 
     if (!value || isNaN(Number(value))) {
-      alert("Please enter a valid number for store credit");
+      showAlert({
+  title: "Invalid Store Credit",
+  message: "Please enter a valid number for store credit.",
+});
       return;
     }
 

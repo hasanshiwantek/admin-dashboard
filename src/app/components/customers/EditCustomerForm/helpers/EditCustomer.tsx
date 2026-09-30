@@ -83,32 +83,7 @@ const EditCustomer = () => {
     }
   };
 
-  // Bulk Delete
-  // const handleBulkDelete = async () => {
-  //     if (selectedIds.length === 0) return;
 
-  //     const confirmDelete = window.confirm(
-  //         `Are you sure you want to delete ${selectedIds.length} address(es)?`
-  //     );
-  //     if (!confirmDelete) return;
-
-  //     try {
-  //         const result = await dispatch(
-  //             customerAddressesDeleteMultiple({ data: { ids: selectedIds } })
-  //         );
-
-  //         if (result.meta.requestStatus === "fulfilled") {
-  //             // Refresh list
-  //             dispatch(fetchCustomerAddresses({ customerId: Number(id) }));
-  //             setSelectedIds([]);
-  //         } else {
-  //             alert("Failed to delete addresses");
-  //         }
-  //     } catch (error) {
-  //         console.error(error);
-  //         alert("Something went wrong");
-  //     }
-  // };
   const handleBulkDelete = () => {
     if (selectedIds.length === 0) return;
 

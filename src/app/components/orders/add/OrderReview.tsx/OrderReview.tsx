@@ -91,8 +91,6 @@ export default function OrderReview({ step, setStep }: any) {
       .filter(Boolean);
     const customerEmail = billing.email || billing?.selectedCustomer?.email;
 
-    console.log(billing.email, billing?.selectedCustomer?.email);
-
     await dispatch(
       applyCoupon({
         couponCode: code,

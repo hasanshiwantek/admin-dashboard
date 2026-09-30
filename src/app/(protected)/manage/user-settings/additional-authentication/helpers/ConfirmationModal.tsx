@@ -4,10 +4,11 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { DialogDescription } from "@radix-ui/react-dialog";
 import { ShieldCheck, ShieldOff, AlertTriangle } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 type ConfirmVariant = "enable" | "disable" | "warning";
 
@@ -30,28 +31,39 @@ export default function ConfirmationModal({
 }) {
   const config = {
     enable: {
-      icon: <ShieldCheck className="w-5 h-5 text-green-600" />,
+      icon: <ShieldCheck className="h-5 w-5 text-green-600" />,
       iconBg: "bg-green-50",
       title: title || "Enable this feature?",
-      description: description || "Are you sure you want to enable this? This will take effect immediately.",
+      description:
+        description ||
+        "Are you sure you want to enable this? This will take effect immediately.",
       confirmLabel: "Enable",
-      confirmClass: "bg-[#031033] hover:bg-[#031033] text-white",
+      confirmClass: "bg-primary-blue hover:bg-secondary-blue text-white",
+      headerClass: "bg-blue-500",
     },
+
     disable: {
-      icon: <ShieldOff className="w-5 h-5 text-red-500" />,
+      icon: <ShieldOff className="h-5 w-5 text-red-500" />,
       iconBg: "bg-red-50",
       title: title || "Disable this feature?",
-      description: description || "Are you sure you want to disable this? This will take effect immediately.",
+      description:
+        description ||
+        "Are you sure you want to disable this? This will take effect immediately.",
       confirmLabel: "Disable",
-      confirmClass: "bg-red-600 hover:bg-red-700 text-white",
+      confirmClass: "bg-danger-red hover:bg-dark-danger-red text-white",
+      headerClass: "bg-danger-red",
     },
+
     warning: {
-      icon: <AlertTriangle className="w-8 h-8 text-yellow-600" />,
+      icon: <AlertTriangle className="h-6 w-6 text-yellow-600" />,
       iconBg: "bg-yellow-50",
-      title: title || "Are you sure?",
-      description: description || "This action cannot be undone. Please confirm to proceed.",
+      title: title || "Are you sure you want to leave?",
+      description:
+        description ||
+        "You've made some changes. If you leave, they won't be saved.",
       confirmLabel: "Confirm",
-      confirmClass: "bg-yellow-600 hover:bg-yellow-700 text-white",
+      confirmClass: "bg-primary-blue hover:bg-secondary-blue text-white",
+      headerClass: "bg-primary-blue",
     },
   };
 
@@ -59,50 +71,93 @@ export default function ConfirmationModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="!max-w-[440px] p-8">
+      <DialogContent
+        className="
+          !max-w-[608px]
+          !p-0
+          overflow-hidden
+          rounded-none
+          border-0
+          shadow-2xl
+          [&>button]:hidden
+        "
+      >
+        {/* ================= HEADER ================= */}
 
-        {/* Header */}
-        {/* Header */}
-        {/* Header */}
-        <div className="flex flex-col items-center text-center gap-4 mb-9!">
-          <div
-            className={`w-16 h-16 rounded-full ${c.iconBg} flex items-center justify-center shrink-0`}
+        <div className={cn(c.headerClass, "px-6 py-5")}>
+          <DialogTitle
+            className="
+              text-[18px]!
+              font-semibold
+              leading-6
+              text-white!
+              text-left
+            "
           >
-            {c.icon}
-          </div>
-
-          <div className="space-y-1.5">
-            <DialogTitle className="text-[18px]! font-semibold">
-              {c.title}
-            </DialogTitle>
-
-            <DialogDescription className="text-[12px]! text-muted-foreground leading-6">
-              {c.description}
-            </DialogDescription>
-          </div>
+            {c.title}
+          </DialogTitle>
         </div>
 
-        {/* Divider + Footer */}
-        <div className="border-t pt-6 flex justify-end gap-3">
+        {/* ================= BODY ================= */}
+        <div className="px-6 py-6">
+          <DialogDescription
+            className="
+              text-[13px]!
+              font-normal
+              leading-6
+              text-text-muted
+              text-left
+            "
+          >
+            {c.description}
+          </DialogDescription>
+        </div>
+
+        {/* ================= FOOTER ================= */}
+        <div
+          className="
+            flex
+            justify-end
+            items-center
+            gap-5
+            border-t
+           border-border-light
+             bg-background-light
+            px-6
+            py-4
+          "
+        >
+          {/* Cancel */}
           <Button
-            variant="outline"
+            variant="ghost"
             type="button"
-            className="text-base px-5 py-5"
+            className="
+              h-10
+              px-2
+              text-[14px]
+              font-medium
+              text-blue-500
+              hover:bg-transparent
+              hover:text-blue-600
+            "
             onClick={() => onOpenChange(false)}
           >
             Cancel
           </Button>
 
+          {/* Confirm */}
           <Button
             type="button"
-            className={`text-base px-5 py-5 ${c.confirmClass}`}
             disabled={loading}
+            className={cn(
+              "h-12 rounded-[4px] px-5 text-[14px] font-medium",
+              c.confirmClass,
+            )}
             onClick={onConfirm}
           >
             {loading ? "Please wait..." : c.confirmLabel}
           </Button>
         </div>
-
       </DialogContent>
     </Dialog>
   );

@@ -53,7 +53,10 @@ export default function OrderForm({ orderId }: { orderId: string }) {
           zip: order.billingInformation?.zip,
           country: order.billingInformation?.country,
         };
-
+        const shippingLabel =
+          order.billingInformation?.shippingMethod ||
+          order.billingInformation?.shippingData ||
+          null;
         // Transform API response to match your form structure
         const transformed = {
           selectedCustomer: order.customer,
@@ -81,7 +84,7 @@ export default function OrderForm({ orderId }: { orderId: string }) {
           billingCountry: order.billingAddress?.country || "",
           billingState: order.billingAddress?.state || "",
           billingZip: order.billingAddress?.zip || "",
-
+          manualDiscount: order?.manualDiscount || 0,
           //
           selectedProducts: (order.products || []).map((p: any) => ({
             id: p.id,
@@ -95,11 +98,15 @@ export default function OrderForm({ orderId }: { orderId: string }) {
             dimensions: p.dimensions,
           })),
           // shipping/payment are on the root order object (not billingInformation)
-          shippingMethod: order.shippingMethod || {
-            provider: null,
-            method: null,
-            cost: "0.00",
-          },
+          shippingMethod: shippingLabel
+            ? {
+                provider: shippingLabel,
+                method: shippingLabel,
+                display_name: shippingLabel,
+                total_charge: Number(order.shippingCost) || 0,
+                cost: order.shippingCost || "0.00",
+              }
+            : null,
           paymentMethod: order.paymentMethod?.method || "",
           cardType: order.paymentMethod?.cardType || "",
           cardholderName: order.paymentMethod?.cardholderName || "",

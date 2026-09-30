@@ -48,6 +48,13 @@
   --color-store-bg: var(--store-bg);
   --color-primaryColor: var(--primary-color);
   --color-link: var(--text-link);
+  --color-primary-blue: var(--primary-blue);
+  --color-secondary-blue: var(--secondary-blue);
+  --color-danger-red: var(--danger-red);
+  --color-dark-danger-red: var(--dark-danger-red);
+  --color-text-muted: var(--text-muted);
+  --color-border-light: var(--border-light);
+  --color-background-light: var(--background-light);
 }
 
 :root {
@@ -98,6 +105,13 @@
   --text-link: #6f8dfd;
   --chip-bg-color: #d9dce9;
   --chip-text-color: #5d5b66;
+  --primary-blue: #4c6fff;
+  --secondary-blue: #4163e8;
+  --danger-red: #d42020;
+  --dark-danger-red: #b91c1c;
+  --text-muted: #6b7280;
+  --border-light: #e5e7eb;
+  --background-light: #f8f9fb;
 }
 
 *::before,
