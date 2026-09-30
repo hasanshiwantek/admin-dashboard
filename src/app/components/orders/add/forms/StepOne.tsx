@@ -54,6 +54,7 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
   const router = useRouter();
   const dispatch = useDispatch<any>();
   const { appliedCoupon } = useAppSelector((state: any) => state.order);
+  const { loading } = useAppSelector((state: any) => state.customer);
   const [customerAddresses, setCustomerAddresses] = useState<CustomerAddress[]>(
     [],
   );
@@ -130,25 +131,9 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
     }
   }, [stateList, pendingState, setValue]);
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     if (orderType === "existing" && !selectedCustomer) {
       errorMessage("Please select a customer before proceeding.");
-      return;
-    }
-    if (orderType === "new") {
-      const newCustomer = watch("email");
-      dispatch(fetchCustomerByEmail({ email: newCustomer }))
-        .unwrap()
-        .then((customer: any) => {
-          if (customer?.status) {
-            errorMessage("User already been registered");
-          }
-        })
-        .catch((err: any) => {
-          if (err === "Customer not found.") {
-            setStep(step + 1);
-          }
-        });
       return;
     }
 
@@ -159,6 +144,20 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
     if (!billingState) {
       errorMessage("Please select a State before proceeding.");
       return;
+    }
+    if (orderType === "new") {
+      const email = watch("email");
+
+      try {
+        const customer: any = await dispatch(
+          fetchCustomerByEmail({ email }),
+        ).unwrap();
+
+        if (customer?.status) {
+          errorMessage("User already been registered");
+          return; // Don't move to the next step
+        }
+      } catch (error) {}
     }
     setStep(step + 1);
   };
@@ -600,8 +599,8 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
         >
           Cancel
         </button>
-        <button type="submit" className="btn-primary">
-          Next
+        <button type="submit" disabled={loading} className="btn-primary">
+          {loading ? "Loading..." : "Next"}
         </button>
       </div>
       <ConfirmationModal

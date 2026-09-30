@@ -476,6 +476,17 @@ const categorySlice = createSlice({
           (action.payload as string) ||
           action.error.message ||
           "Failed to fetch addresses";
+      })
+
+      // fetchCustomerByEmail
+      .addCase(fetchCustomerByEmail.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchCustomerByEmail.fulfilled, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(fetchCustomerByEmail.rejected, (state, action) => {
+        state.loading = false;
       });
   },
 });
