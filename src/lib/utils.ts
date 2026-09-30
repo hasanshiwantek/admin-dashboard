@@ -149,16 +149,35 @@ export const formatDateTime = (
 
 export const replaceNullWithPlaceholder = (
   value: any,
-  fallback: string = "N/A"
+  fallback: string = "N/A",
 ) => {
-  if (
-    value === null ||
-    value === undefined ||
-    value === ""
-  ) {
+  if (isEmpty(value)) {
     return fallback;
   }
 
   return value;
 };
 
+export function isEmpty(val: unknown): boolean {
+  if (val == null) return true; // Handles null and undefined
+  if (typeof val === "boolean" || typeof val === "number") return false;
+
+  // Type narrowing for objects/collections
+  if (typeof val === "object" || typeof val === "function") {
+    // Check for Map, Set, or custom collections with .size
+    if ("size" in val && typeof (val as { size: unknown }).size === "number") {
+      return (val as { size: number }).size === 0;
+    }
+    // Check for Array, String, or array-likes with .length
+    if (
+      "length" in val &&
+      typeof (val as { length: unknown }).length === "number"
+    ) {
+      return (val as { length: number }).length === 0;
+    }
+    // Plain objects
+    return Object.keys(val).length === 0;
+  }
+
+  return false;
+}

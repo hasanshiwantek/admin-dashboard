@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 
 interface PageTileProps {
   title: string;
-  description?: string;
+  description?: string | ReactNode;
   buttonText?: string;
   buttonProps?: ButtonProps;
   onButtonClick?: () => void;
@@ -50,7 +50,7 @@ const PageTitle = ({
         </h1>
         {description && (
           <p
-            className={cn("mt-1 text-base text-gray-500", descriptionClassName)}
+            className={cn("text-base text-gray-500", descriptionClassName)}
           >
             {description}
           </p>

@@ -241,7 +241,10 @@ export const createBanner = createAsyncThunk(
   "marketing/createBanner",
   async ({ data }: { data: any }, thunkAPI) => {
     try {
-      const res = await axiosInstance.post(`dashboard/banners/add-banner`, data);
+      const res = await axiosInstance.post(
+        `dashboard/banners/add-banner`,
+        data,
+      );
       return res?.data;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(
@@ -357,7 +360,7 @@ const marketingSlice = createSlice({
       })
       .addCase(getEmailMarketing.fulfilled, (state, action) => {
         state.loading = false;
-        state.emailMarketing = action?.payload;
+        state.emailMarketing = action?.payload?.data;
       })
       .addCase(deleteCouponCodes.pending, (state) => {
         state.deleteLoading = true;
