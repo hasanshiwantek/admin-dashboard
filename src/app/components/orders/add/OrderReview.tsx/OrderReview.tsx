@@ -1,18 +1,16 @@
 "use client";
 
-import { useFormContext } from "react-hook-form";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox"; // Added Checkbox component
-import { removeCouponUsage, resetCoupon } from "@/redux/slices/orderSlice";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   // Added Select components
   Select,
-  SelectTrigger,
-  SelectValue,
   SelectContent,
   SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import {
   Table,
@@ -22,11 +20,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { usePermissions } from "@/hooks/usePermissions";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
+import {
+  applyCoupon,
+  removeCouponUsage,
+  resetCoupon,
+} from "@/redux/slices/orderSlice";
+import Image from "next/image";
 import { useEffect, useState } from "react";
-import { applyCoupon } from "@/redux/slices/orderSlice";
+import { useFormContext } from "react-hook-form";
 
 // Utility arrays for Select options
 const cardTypes = ["Visa", "Mastercard", "American Express", "Discover"];
@@ -50,6 +54,8 @@ const years = Array.from({ length: 10 }, (_, i) => currentYear + i);
 export default function OrderReview({ step, setStep }: any) {
   const { watch, register, setValue, getValues } = useFormContext();
   const dispatch = useAppDispatch();
+  const { can } = usePermissions();
+  const hasDraftOrderPermission = can("draft_orders");
   const { appliedCoupon, loading } = useAppSelector(
     (state: any) => state.order,
   );
@@ -58,7 +64,7 @@ export default function OrderReview({ step, setStep }: any) {
 
   const [couponCode, setCouponCode] = useState(watch("couponCode") || "");
   const [manualDiscountInput, setManualDiscountInput] = useState(
-    watch("manualDiscount") ? String(watch("manualDiscount")) : ""
+    watch("manualDiscount") ? String(watch("manualDiscount")) : "",
   );
   const shipping = watch("shipping");
   const billing = watch();
@@ -66,7 +72,7 @@ export default function OrderReview({ step, setStep }: any) {
   const paymentMethod = watch("paymentMethod");
   const subtotal = selectedProducts.reduce(
     (sum: number, p: any) => sum + parseFloat(p.price || 0) * (p.quantity || 1),
-    0
+    0,
   );
   // const handleApplyCoupon = async () => {
   //   if (!couponCode.trim()) {
@@ -83,34 +89,34 @@ export default function OrderReview({ step, setStep }: any) {
     const productIds = (selectedProducts || [])
       .map((p: any) => p.id)
       .filter(Boolean);
-    const customerEmail = billing.email || billing?.selectedCustomer?.email
+    const customerEmail = billing.email || billing?.selectedCustomer?.email;
 
     await dispatch(
       applyCoupon({
         couponCode: code,
         productIds,
         email: customerEmail,
-      })
+      }),
     );
     setCouponCode("");
   };
   const handleRemoveCoupon = () => {
     if (appliedCoupon?.couponUsageId) {
-      dispatch(removeCouponUsage({ id: appliedCoupon?.couponUsageId })).unwrap().then(() => {
-        dispatch(resetCoupon());
-        setCouponCode("");
-        setValue("couponCode", "");
-        setValue("coupon", null);
-        setValue("discountAmount", 0);
-      })
+      dispatch(removeCouponUsage({ id: appliedCoupon?.couponUsageId }))
+        .unwrap()
+        .then(() => {
+          dispatch(resetCoupon());
+          setCouponCode("");
+          setValue("couponCode", "");
+          setValue("coupon", null);
+          setValue("discountAmount", 0);
+        });
     }
   };
 
   const shippingCost = Number(watch("shippingMethod.total_charge") || 0);
   const manualDiscount = Number(watch("manualDiscount") || 0);
-  const couponDiscount = Number(
-    appliedCoupon?.discountAmount || 0
-  );
+  const couponDiscount = Number(appliedCoupon?.discountAmount || 0);
 
   // const productsSubtotal = selectedProducts?.reduce(
   //   (sum: number, p: any) =>
@@ -127,12 +133,13 @@ export default function OrderReview({ step, setStep }: any) {
   // const total = subtotal + shippingCost;
   const grandTotal = Math.max(
     subtotal - couponDiscount - manualDiscount + shippingCost,
-    0
+    0,
   );
 
   const shippingDestinations = watch("shippingDestinations") || [];
   const destinationType = watch("destinationType"); // "billing" | "single" | "multiple"
-  const isMultiple = destinationType === "multiple" || shippingDestinations.length > 0;
+  const isMultiple =
+    destinationType === "multiple" || shippingDestinations.length > 0;
   const handleApplyManualDiscount = () => {
     const amount = Math.max(Number(manualDiscountInput) || 0, 0);
     setValue("manualDiscount", amount, { shouldDirty: true });
@@ -154,7 +161,10 @@ export default function OrderReview({ step, setStep }: any) {
   }, [getValues, setValue]);
   // Function to render specific payment fields based on the selected method
   const renderPaymentFields = () => {
-    const customerEmail = billing.email || billing?.selectedCustomer?.email || "customer@example.com"; // Use the actual email from the form data
+    const customerEmail =
+      billing.email ||
+      billing?.selectedCustomer?.email ||
+      "customer@example.com"; // Use the actual email from the form data
 
     switch (paymentMethod) {
       case "stripe":
@@ -241,18 +251,19 @@ export default function OrderReview({ step, setStep }: any) {
             </div>
 
             <div className="flex items-center space-x-2 pt-4">
-              <Checkbox id="emailInvoice"
+              <Checkbox
+                id="emailInvoice"
                 checked={!!watch("emailInvoice")}
                 onCheckedChange={(checked) =>
-                  setValue("emailInvoice", checked === true, { shouldDirty: true })
-                } defaultChecked />
-              <Label
-                htmlFor="emailInvoice"
-              >
+                  setValue("emailInvoice", checked === true, {
+                    shouldDirty: true,
+                  })
+                }
+                defaultChecked
+              />
+              <Label htmlFor="emailInvoice">
                 Email invoice to customer
-                <span className="ml-1 ">
-                  ({customerEmail})
-                </span>
+                <span className="ml-1 ">({customerEmail})</span>
               </Label>
             </div>
           </div>
@@ -270,14 +281,9 @@ export default function OrderReview({ step, setStep }: any) {
             />
             <div className="flex items-center space-x-2 pt-4">
               <Checkbox id="emailInvoiceManual" defaultChecked />
-              <label
-                htmlFor="emailInvoiceManual"
-                className=""
-              >
+              <label htmlFor="emailInvoiceManual" className="">
                 Email invoice to customer
-                <span className="ml-1 ">
-                  ({customerEmail})
-                </span>
+                <span className="ml-1 ">({customerEmail})</span>
               </label>
             </div>
           </div>
@@ -345,7 +351,10 @@ export default function OrderReview({ step, setStep }: any) {
           {isMultiple ? (
             // ✅ Multiple addresses — show each destination
             shippingDestinations.map((dest: any, idx: number) => (
-              <div key={idx} className="border rounded-md p-5 bg-white space-y-4">
+              <div
+                key={idx}
+                className="border rounded-md p-5 bg-white space-y-4"
+              >
                 <div className="flex justify-between items-start mb-4">
                   <h2 className="font-semibold text-sm">
                     Shipping to: ({idx + 1} of {shippingDestinations.length})
@@ -361,7 +370,9 @@ export default function OrderReview({ step, setStep }: any) {
 
                 <div className="text-[14px] grid grid-cols-[150px_1fr] gap-y-2">
                   <div className="font-medium">Name</div>
-                  <div>{dest.address?.firstName} {dest.address?.lastName}</div>
+                  <div>
+                    {dest.address?.firstName} {dest.address?.lastName}
+                  </div>
 
                   <div className="font-medium">Address</div>
                   <div>{dest.address?.address1}</div>
@@ -392,12 +403,17 @@ export default function OrderReview({ step, setStep }: any) {
                       <TableRow>
                         <TableHead className="w-[150px]">Products</TableHead>
                         <TableHead>
-                          Products shipped to {dest.address?.address1}, {dest.address?.city},{" "}
-                          {dest.address?.zip}, {dest.address?.country}
+                          Products shipped to {dest.address?.address1},{" "}
+                          {dest.address?.city}, {dest.address?.zip},{" "}
+                          {dest.address?.country}
                         </TableHead>
                         <TableHead className="text-center w-12">Qty</TableHead>
-                        <TableHead className="text-center w-24">Price</TableHead>
-                        <TableHead className="text-center w-24">Total</TableHead>
+                        <TableHead className="text-center w-24">
+                          Price
+                        </TableHead>
+                        <TableHead className="text-center w-24">
+                          Total
+                        </TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -405,7 +421,8 @@ export default function OrderReview({ step, setStep }: any) {
                         const quantity = p.quantity || 1;
                         const price = parseFloat(p.price || 0);
                         const total = (price * quantity).toFixed(2);
-                        const imagePath = p.image?.[1]?.path || p.image?.[0]?.path;
+                        const imagePath =
+                          p.image?.[1]?.path || p.image?.[0]?.path;
 
                         return (
                           <TableRow key={pidx}>
@@ -424,9 +441,15 @@ export default function OrderReview({ step, setStep }: any) {
                               <div className="font-medium">{p.name}</div>
                               <div className="text-base">{p.sku}</div>
                             </TableCell>
-                            <TableCell className="text-center align-top">{quantity}</TableCell>
-                            <TableCell className="text-center align-top">${price.toFixed(2)}</TableCell>
-                            <TableCell className="text-center align-top">${total}</TableCell>
+                            <TableCell className="text-center align-top">
+                              {quantity}
+                            </TableCell>
+                            <TableCell className="text-center align-top">
+                              ${price.toFixed(2)}
+                            </TableCell>
+                            <TableCell className="text-center align-top">
+                              ${total}
+                            </TableCell>
                           </TableRow>
                         );
                       })}
@@ -468,10 +491,19 @@ export default function OrderReview({ step, setStep }: any) {
                 <div className="font-medium">ZIP/Postcode</div>
                 <div>{shipping?.zip}</div>
 
-                {billing?.shippingMethod?.display_name && <>
-                  <div className="font-medium">Shipping method</div>
-                  <div>{billing?.shippingMethod?.display_name} {billing?.shippingMethod?.total_charge > 0 ? `: $${billing?.shippingMethod?.total_charge}` : <></>}</div>
-                </>}
+                {billing?.shippingMethod?.display_name && (
+                  <>
+                    <div className="font-medium">Shipping method</div>
+                    <div>
+                      {billing?.shippingMethod?.display_name}{" "}
+                      {billing?.shippingMethod?.total_charge > 0 ? (
+                        `: $${billing?.shippingMethod?.total_charge}`
+                      ) : (
+                        <></>
+                      )}
+                    </div>
+                  </>
+                )}
               </div>
 
               {/* Product Table */}
@@ -481,8 +513,8 @@ export default function OrderReview({ step, setStep }: any) {
                     <TableRow>
                       <TableHead className="w-[150px]">Products</TableHead>
                       <TableHead>
-                        Products shipped to {shipping?.address1}, {shipping?.city}
-                        , {shipping?.zip}, {shipping?.country}
+                        Products shipped to {shipping?.address1},{" "}
+                        {shipping?.city}, {shipping?.zip}, {shipping?.country}
                       </TableHead>
                       <TableHead className="text-center w-12">Qty</TableHead>
                       <TableHead className="text-center w-24">Price</TableHead>
@@ -529,17 +561,26 @@ export default function OrderReview({ step, setStep }: any) {
                       const price = Number(p.price);
 
                       const originalTotal = price * quantity;
-                      const share = productsSubtotal > 0 ? originalTotal / productsSubtotal : 0;
+                      const share =
+                        productsSubtotal > 0
+                          ? originalTotal / productsSubtotal
+                          : 0;
                       const lineDiscount = totalDiscount * share;
 
-                      const discountedTotal = Math.max(originalTotal - lineDiscount, 0);
-                      const discountedPrice = quantity > 0 ? discountedTotal / quantity : 0;
+                      const discountedTotal = Math.max(
+                        originalTotal - lineDiscount,
+                        0,
+                      );
+                      const discountedPrice =
+                        quantity > 0 ? discountedTotal / quantity : 0;
 
                       const hasDiscount =
-                        lineDiscount > 0.009 || Math.abs(actualPrice - discountedPrice) > 0.009;
+                        lineDiscount > 0.009 ||
+                        Math.abs(actualPrice - discountedPrice) > 0.009;
 
                       const imagePath =
-                        p.image?.find((img: any) => img.isPrimary === 1)?.path ||
+                        p.image?.find((img: any) => img.isPrimary === 1)
+                          ?.path ||
                         p.image?.[0]?.path ||
                         p.image?.[0]?.url;
 
@@ -563,10 +604,14 @@ export default function OrderReview({ step, setStep }: any) {
 
                           <TableCell className="align-top">
                             <div className="font-medium">{p.name}</div>
-                            <div className="text-base text-gray-500">{p.sku}</div>
+                            <div className="text-base text-gray-500">
+                              {p.sku}
+                            </div>
                           </TableCell>
 
-                          <TableCell className="text-center align-top">{quantity}</TableCell>
+                          <TableCell className="text-center align-top">
+                            {quantity}
+                          </TableCell>
 
                           <TableCell className="text-center align-top">
                             {hasDiscount && (
@@ -595,7 +640,8 @@ export default function OrderReview({ step, setStep }: any) {
                   </TableBody>
                 </Table>
               </div>
-            </div>)}
+            </div>
+          )}
 
           {/* Comments */}
           <h1 className="!text-4xl !font-bold">Comments and notes</h1>
@@ -643,7 +689,9 @@ export default function OrderReview({ step, setStep }: any) {
                   {/* <SelectItem value="cash">Manual payment</SelectItem>{" "} */}
                   <SelectItem value="stripe">Stripe</SelectItem>
                   <SelectItem value="credit_card">Credit Card</SelectItem>{" "}
-                  <SelectItem value="draft">Create draft order</SelectItem>{" "}
+                  {hasDraftOrderPermission && (
+                    <SelectItem value="draft">Create draft order</SelectItem>
+                  )}
                 </SelectContent>
               </Select>
 
@@ -664,13 +712,13 @@ export default function OrderReview({ step, setStep }: any) {
                   <span>Shipping</span>
                   <span>${billing?.shippingMethod?.total_charge}</span>
                 </div>
-              ) : <></>}
+              ) : (
+                <></>
+              )}
               {appliedCoupon && (
                 <div className="flex justify-between items-start">
                   <div>
-                    <div>
-                      Coupon ({appliedCoupon.couponCode})
-                    </div>
+                    <div>Coupon ({appliedCoupon.couponCode})</div>
                     <button
                       type="button"
                       className="text-blue-600 text-sm underline"
@@ -694,11 +742,18 @@ export default function OrderReview({ step, setStep }: any) {
                 <span className="!text-[15px]">${grandTotal.toFixed(2)}</span>
               </div>
 
-
               {/* Discount input */}
               <div className="flex items-center gap-2">
-                <Input onChange={(e) => setManualDiscountInput(e.target.value)} placeholder="Manual discount" className="text-sm" />
-                <Button onClick={handleApplyManualDiscount} type="button" className="btn-outline-primary">
+                <Input
+                  onChange={(e) => setManualDiscountInput(e.target.value)}
+                  placeholder="Manual discount"
+                  className="text-sm"
+                />
+                <Button
+                  onClick={handleApplyManualDiscount}
+                  type="button"
+                  className="btn-outline-primary"
+                >
                   Apply
                 </Button>
               </div>
@@ -712,11 +767,14 @@ export default function OrderReview({ step, setStep }: any) {
                     setCouponCode(e.target.value);
                   }}
                 />
-                <Button onClick={handleApplyCoupon} type="button" className="btn-outline-primary">
+                <Button
+                  onClick={handleApplyCoupon}
+                  type="button"
+                  className="btn-outline-primary"
+                >
                   {loading ? "Loading.." : "Apply"}
                 </Button>
               </div>
-
             </div>
           </div>
         </div>

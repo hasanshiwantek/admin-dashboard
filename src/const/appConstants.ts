@@ -48,6 +48,9 @@ export enum DateTimeFormat {
   /** Example: 2024-01-01 */
   ISO_DATE = "YYYY-MM-DD",
 
+  /** ISO 8601 with the local offset. Example: 2024-01-01T14:30:00+05:00 */
+  ISO_DATE_TIME = "YYYY-MM-DDTHH:mm:ssZ",
+
   /** Example: 2:30 PM */
   TIME_12H = "h:mm A",
 
