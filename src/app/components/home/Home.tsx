@@ -1,7 +1,6 @@
-import React from "react";
+import OrderTable from "./OrderTable";
 import SetupProgress from "./SetupProgress";
 import Stats from "./Stats";
-import OrderTable from "./OrderTable";
 import StorePerformanceChart from "./StorePerfomance";
 
 const Home = () => {
@@ -12,7 +11,7 @@ const Home = () => {
           <SetupProgress />
           <StorePerformanceChart />
           <Stats />
-          <OrderTable/>
+          <OrderTable />
         </main>
       </div>
     </>

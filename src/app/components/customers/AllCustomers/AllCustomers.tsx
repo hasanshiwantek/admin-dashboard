@@ -100,6 +100,7 @@ const AllCustomers = () => {
           onClick={handleExport}
           variant="outline"
           className={`flex items-center gap-2 !px-6 btn-outline-primary 2xl:!text-2xl ${TOOLBAR_CONTROL}`}
+          permission="export_customers"
         >
           <DownloadIcon className="!w-5 !h-5" /> Export selected customers
         </Button>
