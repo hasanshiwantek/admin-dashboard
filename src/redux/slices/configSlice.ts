@@ -8,9 +8,12 @@ import {
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface StoreObject {
-  id?: number;
-  storeId?: number;
-  name?: string;
+  baseUrl: string;
+  createdAt: Date;
+  id: number;
+  name: string;
+  updatedAt: Date;
+  user_id: number;
   [key: string]: any;
 }
 

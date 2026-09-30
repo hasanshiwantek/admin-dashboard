@@ -12,11 +12,10 @@ import {
   SidebarMenuSubItem,
   SidebarProvider,
 } from "@/components/ui/sidebar";
+import { useSidebarData } from "@/const/sidebarDataDynamic"; // jahan file rakhi hai
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-// import { sidebarData } from "@/const/sidebarData";
-import { useSidebarData } from "@/const/sidebarDataDynamic"; // jahan file rakhi hai
 
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { usePathname } from "next/navigation";
@@ -151,7 +150,7 @@ overflow-y-hidden overflow-x-hidden
                         <SidebarMenuSubItem key={child.title}>
                           <Link
                             href={child.url}
-                            className={`text-xl 2xl:!text-2xl !leading-8 cursor-pointer px-4 py-2 rounded-md block ${
+                            className={`text-xl 2xl:!text-2xl !leading-8 cursor-pointer px-4 py-2 rounded-md block text-white ${
                               pathname === child.url ? "bg-[#24345c]" : ""
                             }`}
                             onClick={(e) => {
@@ -186,7 +185,10 @@ overflow-y-hidden overflow-x-hidden
     ${pathname === item.url ? "bg-[#24345c]" : ""}
   `}
                 >
-                  <Link href={item.url || "#"} className="flex items-center">
+                  <Link
+                    href={item.url || "#"}
+                    className="flex items-center text-white"
+                  >
                     {item.icon && (
                       <item.icon
                         className={`

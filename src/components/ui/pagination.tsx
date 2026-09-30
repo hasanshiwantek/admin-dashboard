@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import {
   Select,
   SelectContent,
@@ -8,6 +9,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useMemo } from "react";
+
+const ELLIPSIS = "...";
+const DEFAULT_PER_PAGE_OPTIONS = ["10", "20", "30", "50", "100"];
+
+type PageItem = number | typeof ELLIPSIS;
 
 type PaginationProps = {
   currentPage: number;
@@ -15,6 +22,70 @@ type PaginationProps = {
   onPageChange: (page: number) => void;
   perPage: string;
   onPerPageChange: (value: string) => void;
+  siblingCount?: number;
+  boundaryCount?: number;
+  perPageOptions?: string[];
+  showPerPage?: boolean;
+  showPrevious?: boolean;
+  showNext?: boolean;
+  previousLabel?: string;
+  nextLabel?: string;
+  className?: string;
+};
+
+const range = (start: number, end: number) =>
+  end < start
+    ? []
+    : Array.from({ length: end - start + 1 }, (_, i) => start + i);
+
+export const getPageItems = (
+  currentPage: number,
+  totalPages: number,
+  siblingCount = 1,
+  boundaryCount = 1,
+): PageItem[] => {
+  if (totalPages < 1) return [];
+  const page = Math.min(Math.max(currentPage, 1), totalPages);
+
+  const startPages = range(1, Math.min(boundaryCount, totalPages));
+  const endPages = range(
+    Math.max(totalPages - boundaryCount + 1, boundaryCount + 1),
+    totalPages,
+  );
+
+  const siblingsStart = Math.max(
+    Math.min(
+      page - siblingCount,
+      totalPages - boundaryCount - siblingCount * 2 - 1,
+    ),
+    boundaryCount + 2,
+  );
+  const siblingsEnd = Math.min(
+    Math.max(page + siblingCount, boundaryCount + siblingCount * 2 + 2),
+    endPages.length ? endPages[0] - 2 : totalPages - 1,
+  );
+
+  // Where a gap is a single page, show that page instead of an ellipsis.
+  const leftGap: PageItem[] =
+    siblingsStart > boundaryCount + 2
+      ? [ELLIPSIS]
+      : boundaryCount + 1 < totalPages - boundaryCount
+        ? [boundaryCount + 1]
+        : [];
+  const rightGap: PageItem[] =
+    siblingsEnd < totalPages - boundaryCount - 1
+      ? [ELLIPSIS]
+      : totalPages - boundaryCount > boundaryCount
+        ? [totalPages - boundaryCount]
+        : [];
+
+  return [
+    ...startPages,
+    ...leftGap,
+    ...range(siblingsStart, siblingsEnd),
+    ...rightGap,
+    ...endPages,
+  ];
 };
 
 const Pagination = ({
@@ -23,87 +94,101 @@ const Pagination = ({
   onPageChange,
   perPage,
   onPerPageChange,
+  siblingCount = 1,
+  boundaryCount = 1,
+  perPageOptions = DEFAULT_PER_PAGE_OPTIONS,
+  showPerPage = true,
+  showPrevious = false,
+  showNext = true,
+  previousLabel = "Previous",
+  nextLabel = "Next",
+  className,
 }: PaginationProps) => {
-  const getVisiblePages = (): (number | "...")[] => {
-    if (totalPages <= 7) {
-      return Array.from({ length: totalPages }, (_, i) => i + 1);
-    }
+  const pages = useMemo(
+    () => getPageItems(currentPage, totalPages, siblingCount, boundaryCount),
+    [currentPage, totalPages, siblingCount, boundaryCount],
+  );
 
-    if (currentPage <= 3) {
-      return [1, 2, 3, 4, 5, "...", totalPages];
-    }
+  // Keep a custom page size selectable even when it isn't a preset.
+  const sizeOptions = useMemo(
+    () =>
+      perPageOptions.includes(perPage)
+        ? perPageOptions
+        : [...perPageOptions, perPage].sort((a, b) => Number(a) - Number(b)),
+    [perPageOptions, perPage],
+  );
 
-    if (currentPage >= totalPages - 2) {
-      return [
-        1,
-        "...",
-        totalPages - 4,
-        totalPages - 3,
-        totalPages - 2,
-        totalPages - 1,
-        totalPages,
-      ];
-    }
-
-    return [
-      currentPage - 2,
-      currentPage - 1,
-      currentPage,
-      currentPage + 1,
-      currentPage + 2,
-      "...",
-      totalPages,
-    ];
+  const goTo = (page: number) => {
+    if (page >= 1 && page <= totalPages && page !== currentPage)
+      onPageChange(page);
   };
 
   return (
-    <div className="flex items-center justify-start gap-5 px-2 text-lg">
+    <div
+      className={cn(
+        "flex items-center justify-start gap-5 px-2 text-lg",
+        className,
+      )}
+    >
       <div className="flex items-center space-x-3">
-        {getVisiblePages().map((page, i) =>
-          page === "..." ? (
+        {showPrevious && currentPage > 1 && (
+          <button
+            type="button"
+            onClick={() => goTo(currentPage - 1)}
+            className="text-blue-600 mx-4 text-xl cursor-pointer"
+          >
+            {previousLabel}
+          </button>
+        )}
+
+        {pages.map((page, i) =>
+          page === ELLIPSIS ? (
             <span key={`ellipsis-${i}`} className="text-gray-500 px-2">
-              ...
+              {ELLIPSIS}
             </span>
           ) : (
             <Button
               type="button"
               key={`page-${page}`}
               variant={currentPage === page ? "secondary" : "ghost"}
-            
               size="lg"
-              className={`h-7 w-7  px-6 py-2 text-blue-600 font-medium text-xl cursor-pointer hover:text-gray-400 hover:border ${currentPage === page && "bg-gray-400 text-white"
-                }`}
-              onClick={() => onPageChange(Number(page))}
+              aria-current={currentPage === page ? "page" : undefined}
+              className={cn(
+                "h-7 w-7 px-6 py-2 text-blue-600 font-medium text-xl cursor-pointer hover:text-gray-400 hover:border",
+                currentPage === page && "bg-gray-400 text-white",
+              )}
+              onClick={() => goTo(page)}
             >
               {page}
             </Button>
-          )
+          ),
         )}
 
-        {currentPage < totalPages && (
+        {showNext && currentPage < totalPages && (
           <button
             type="button"
-            onClick={() => onPageChange(currentPage + 1)}
-            className="text-blue-600 mx-4 text-xl"
+            onClick={() => goTo(currentPage + 1)}
+            className="text-blue-600 mx-4 text-xl cursor-pointer"
           >
-            Next
+            {nextLabel}
           </button>
         )}
       </div>
 
-      {/* View per page */}
-      <Select value={perPage} onValueChange={onPerPageChange}>
-        <SelectTrigger className="w-[110px]">
-          <SelectValue placeholder={`View ${perPage}`} />
-        </SelectTrigger>
-        <SelectContent>
-          {["10", "20", "30", "50", "100"].map((val) => (
-            <SelectItem key={val} value={val}>
-              View {val}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      {showPerPage && (
+        <Select value={perPage} onValueChange={onPerPageChange}>
+          <SelectTrigger className="w-[110px]">
+            <SelectValue placeholder={`View ${perPage}`} />
+          </SelectTrigger>
+          <SelectContent>
+            {sizeOptions.map((val) => (
+              <SelectItem key={val} value={val}>
+                View {val}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      )}
     </div>
   );
 };
