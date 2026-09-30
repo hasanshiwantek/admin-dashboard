@@ -149,7 +149,7 @@ const Shipments = () => {
             loading={loading}
             emptyMessage="No Shipment Found."
             selectAllInHeader
-            showRecordCount={false}
+            hideRecordCount
             selectedIds={table.selectedIds}
             onToggleRow={(id, checked) =>
               table.toggleSelect(Number(id), checked)
