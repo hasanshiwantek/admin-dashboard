@@ -1,5 +1,6 @@
 import { Input } from "@/components/ui/input";
 import { ColumnDef } from "@/components/ui/Table/types";
+import { formatDateTime } from "@/lib/utils";
 import dayjs from "dayjs";
 import { FaCirclePlus, FaCircleMinus } from "react-icons/fa6";
 
@@ -148,8 +149,8 @@ const AllShipmentColumn = ({
         }
 
         return (
-          <span className="2xl:!text-2xl whitespace-nowrap font-normal!">
-  {dayjs(shipment.orderDate).format("DD MMM YYYY")}
+       <span className="2xl:!text-2xl whitespace-nowrap font-normal!">
+  {formatDateTime(shipment.orderDate, "DD MMM YYYY")}
 </span>
         );
       },

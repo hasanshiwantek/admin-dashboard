@@ -1,8 +1,8 @@
 "use client";
 
 import { useAlert } from "@/hooks/useAlert";
-import { cn } from "@/lib/utils";
-import dayjs from "dayjs";
+import { cn, formatDateTime } from "@/lib/utils";
+
 import {
   Calendar,
   Clock,
@@ -24,7 +24,7 @@ import { toast } from "react-toastify";
 import { COMPLETED, riskConfig } from "./constant";
 import { OrderDetailRowProps } from "./types";
 import { findCountry } from "./utils";
-import { replaceNullWithPlaceholder } from "@/utils/replaceNullWithPlaceholder";
+import { replaceNullWithPlaceholder } from "@/lib/utils";
 
 const copyBilling = (info: any) => {
   if (!info) return;
@@ -46,7 +46,6 @@ export default function OrderDetailRow({
   onViewShipmentId,
   onShipItems,
 }: OrderDetailRowProps) {
-  
   const { showAlert, Alert } = useAlert();
   const countryData = findCountry(order?.billingAddress?.country);
   const countryDataForCustomer = findCountry(
@@ -155,7 +154,9 @@ export default function OrderDetailRow({
           </div>
 
           <div className="flex items-center gap-2">
-            <span>{replaceNullWithPlaceholder(order?.billingAddress?.phone)}</span>
+            <span>
+              {replaceNullWithPlaceholder(order?.billingAddress?.phone)}
+            </span>
           </div>
 
           <div className="flex items-center gap-2">
@@ -168,13 +169,14 @@ export default function OrderDetailRow({
           </div>
           <div className="flex items-center gap-2">
             <span>
-             {replaceNullWithPlaceholder(
-  order?.billingInformation?.updatedAt
-    ? dayjs(order.billingInformation.updatedAt).format(
-        "DD MMM YYYY HH:mm:ss"
-      )
-    : null
-)}
+              {replaceNullWithPlaceholder(
+                order?.billingInformation?.updatedAt
+                  ? formatDateTime(
+                      order.billingInformation.updatedAt,
+                      "DD MMM YYYY HH:mm:ss",
+                    )
+                  : null,
+              )}
             </span>
           </div>
           {order?.ipAddress && (
@@ -193,7 +195,11 @@ export default function OrderDetailRow({
           </div>
 
           <div className="flex items-center gap-2">
-            <span>{replaceNullWithPlaceholder(order?.billingInformation?.paymentMethod)}</span>
+            <span>
+              {replaceNullWithPlaceholder(
+                order?.billingInformation?.paymentMethod,
+              )}
+            </span>
           </div>
           {order?.payment?.payment_status == COMPLETED && (
             <div className="flex items-center gap-2">
@@ -227,12 +233,16 @@ export default function OrderDetailRow({
           )}
           {order?.comments && (
             <div className="flex items-center gap-2">
-              <span className="">{replaceNullWithPlaceholder(order?.comments)}</span>
+              <span className="">
+                {replaceNullWithPlaceholder(order?.comments)}
+              </span>
             </div>
           )}
           {risk && (
             <div className="flex items-center gap-1.5">
-              <span className="!text-blue-400">replaceNullWithPlaceholder({risk.extendLabel})</span>
+              <span className="!text-blue-400">
+                replaceNullWithPlaceholder({risk.extendLabel})
+              </span>
             </div>
           )}
         </div>
@@ -285,10 +295,19 @@ export default function OrderDetailRow({
               {order?.billingInformation?.lastName}
               <br />
               {order?.billingInformation?.addressLine1 && (
-                <>{replaceNullWithPlaceholder(order.billingInformation.addressLine1)}</>
+                <>
+                  {replaceNullWithPlaceholder(
+                    order.billingInformation.addressLine1,
+                  )}
+                </>
               )}
               {order?.billingInformation?.addressLine2 && (
-                <>, {replaceNullWithPlaceholder(order.billingInformation.addressLine2)}</>
+                <>
+                  ,{" "}
+                  {replaceNullWithPlaceholder(
+                    order.billingInformation.addressLine2,
+                  )}
+                </>
               )}
               <br />
               {order?.billingInformation?.state}
@@ -305,7 +324,12 @@ export default function OrderDetailRow({
             )}
           >
             <div className="shipping-data-scroll w-[420px] max-w-full overflow-x-auto overflow-y-hidden whitespace-nowrap">
-              <span> {replaceNullWithPlaceholder(order?.billingInformation?.shippingData)} </span>
+              <span>
+                {" "}
+                {replaceNullWithPlaceholder(
+                  order?.billingInformation?.shippingData,
+                )}{" "}
+              </span>
             </div>
           </div>
 
@@ -316,18 +340,22 @@ export default function OrderDetailRow({
           </div>
 
           <div className="flex items-center gap-2">
-            <span>{replaceNullWithPlaceholder(order?.billingInformation?.email)}</span>
+            <span>
+              {replaceNullWithPlaceholder(order?.billingInformation?.email)}
+            </span>
           </div>
 
           <div className="flex items-center gap-2">
             <span>
-              {dayjs(order?.updatedAt).format("DD MMM YYYY HH:mm:ss") || "N/A"}
+              {formatDateTime(order?.updatedAt, "DD MMM YYYY HH:mm:ss", "N/A")}
             </span>
           </div>
 
           {/* Contact Data */}
           <div className="flex items-center gap-2 pt-[33px]">
-            <span>{replaceNullWithPlaceholder(order?.billingInformation?.phone)}</span>
+            <span>
+              {replaceNullWithPlaceholder(order?.billingInformation?.phone)}
+            </span>
           </div>
 
           <div className="flex items-center gap-2">
@@ -365,7 +393,7 @@ export default function OrderDetailRow({
                 <span>
                   {" "}
                   {order?.products?.length} items @{" "}
-                  {dayjs(order?.updatedAt).format("DD MMM YYYY")}{" "}
+                 {formatDateTime(order?.updatedAt, "DD MMM YYYY")}{" "}
                 </span>
               </div>
               <div className="flex ">

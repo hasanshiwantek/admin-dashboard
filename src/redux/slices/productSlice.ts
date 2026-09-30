@@ -445,7 +445,7 @@ export const exportCsv = createAsyncThunk(
 
               const rowsSoFar = Math.max(0, linesCount - 1);
               percent = Math.min(
-                100,
+                92,
                 Math.round((rowsSoFar * 100) / totalRows),
               );
             } else if (totalBytes > 0) {

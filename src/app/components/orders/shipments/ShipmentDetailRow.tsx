@@ -5,7 +5,7 @@ import {
   IdCard,
 } from "lucide-react";
 
-import { replaceNullWithPlaceholder } from "@/utils/replaceNullWithPlaceholder";
+import {replaceNullWithPlaceholder} from "@/lib/utils"
 
 type ShipmentDetailRowProps = {
   shipment: any;
