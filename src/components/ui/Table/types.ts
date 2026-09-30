@@ -1,3 +1,4 @@
+import type { AppTabsProps, TabItem } from "@/components/ui/AppTabs/types";
 import type { FilterValueFormatterConfig } from "@/hooks/useFilterValueFormatter";
 import { ReactNode } from "react";
 
@@ -61,6 +62,9 @@ export interface TableProps<T> {
   onTabChange?: (tabKey: string) => void;
   maxVisibleTabs?: number;
   tabsVariant?: "pills" | "underline";
+  tabsClassName?: string;
+  tabClassName?: string;
+  activeTabClassName?: string;
 
   searchable?: boolean;
   searchValue?: string;
@@ -112,8 +116,7 @@ export interface TableProps<T> {
 
 // Table Container Props
 
-export interface TableTab {
-  key: string;
+export interface TableTab extends TabItem {
   label: string;
   filters?: Record<string, any>;
 }
@@ -180,11 +183,4 @@ export interface UseTableContainerReturn<TId = number> {
   clearSelection: () => void;
 }
 
-export interface TableTabsProps {
-  tabs: TableTab[];
-  activeTab?: string;
-  onTabChange?: (key: string) => void;
-  maxVisibleTabs?: number;
-  /** Rounded pills (default) or an underline bar. */
-  variant?: "pills" | "underline";
-}
+export type TableTabsProps = AppTabsProps<TableTab>;
