@@ -5,6 +5,8 @@ import {
   IdCard,
 } from "lucide-react";
 
+import { getValue } from "@/utils/getValue";
+
 type ShipmentDetailRowProps = {
   shipment: any;
 };
@@ -12,12 +14,6 @@ type ShipmentDetailRowProps = {
 const ShipmentDetailRow = ({
   shipment,
 }: ShipmentDetailRowProps) => {
-  /*
-   * ==========================================================
-   * BILLING COPY
-   * ==========================================================
-   */
-
   const handleCopyBilling = async () => {
     const billing =
       shipment?.order?.billingAddress;
@@ -46,12 +42,6 @@ const ShipmentDetailRow = ({
 
     await navigator.clipboard.writeText(text);
   };
-
-  /*
-   * ==========================================================
-   * SHIPPING COPY
-   * ==========================================================
-   */
 
   const handleCopyShipping = async () => {
     const shipping =
@@ -90,13 +80,9 @@ const ShipmentDetailRow = ({
 
   return (
     <div className="grid grid-cols-3 gap-4 bg-gray-50 p-4">
-      {/* ======================================================
-          BILLING
-      ====================================================== */}
 
+      {/* Billing */}
       <div className="flex min-w-0">
-        {/* Billing Left */}
-
         <div className="flex flex-col border-r pr-3 mr-3 shrink-0">
           <h4 className="font-bold text-lg">
             Billing
@@ -111,106 +97,98 @@ const ShipmentDetailRow = ({
           </button>
         </div>
 
-        {/* Billing Right */}
-
         <div className="flex flex-col gap-3 min-w-0">
-          {/* Address */}
-
           <div className="flex items-start gap-2">
             <div className="text-sm">
               <p>
-                {shipment?.order?.billingAddress
-                  ?.name || "N/A"}
+                {getValue(
+                  shipment?.order?.billingAddress?.name
+                )}
               </p>
 
               {shipment?.order?.billingAddress
                 ?.addressLine1 && (
                 <p>
-                  {
+                  {getValue(
                     shipment.order.billingAddress
                       .addressLine1
-                  }
+                  )}
                 </p>
               )}
 
               {shipment?.order?.billingAddress
                 ?.addressLine2 && (
                 <p>
-                  {
+                  {getValue(
                     shipment.order.billingAddress
                       .addressLine2
-                  }
+                  )}
                 </p>
               )}
 
               <p>
-                {shipment?.order?.billingAddress
-                  ?.city || "N/A"}
+                {getValue(
+                  shipment?.order?.billingAddress?.city
+                )}
                 ,{" "}
-                {shipment?.order?.billingAddress
-                  ?.state || "N/A"}
+                {getValue(
+                  shipment?.order?.billingAddress?.state
+                )}
               </p>
 
               <p>
-                {shipment?.order?.billingAddress
-                  ?.country || "N/A"}
+                {getValue(
+                  shipment?.order?.billingAddress?.country
+                )}
               </p>
             </div>
           </div>
-
-          {/* Phone */}
 
           <div className="flex items-center gap-2">
             <Phone className="w-5 h-5 text-gray-400 shrink-0" />
 
             <span className="text-sm">
-              {shipment?.order?.billingAddress
-                ?.phone || "N/A"}
+              {getValue(
+                shipment?.order?.billingAddress?.phone
+              )}
             </span>
           </div>
-
-          {/* Email */}
 
           <div className="flex items-center gap-2">
             <Mail className="w-5 h-5 text-gray-400 shrink-0" />
 
             <span className="text-sm text-blue-400 break-all">
-              {shipment?.order?.billingAddress
-                ?.email || "N/A"}
+              {getValue(
+                shipment?.order?.billingAddress?.email
+              )}
             </span>
           </div>
-
-          {/* Customer ID */}
 
           <div className="flex items-center gap-2">
             <IdCard className="w-5 h-5 text-gray-400 shrink-0" />
 
             <span className="text-sm">
               #
-              {shipment?.order?.customer?.id ||
-                "N/A"}
+              {getValue(
+                shipment?.order?.customer?.id
+              )}
             </span>
           </div>
-
-          {/* Updated */}
 
           <div className="flex items-center gap-2">
             <Clock className="w-5 h-5 text-gray-400 shrink-0" />
 
             <span className="text-sm">
-              {shipment?.order?.updatedAt || "N/A"}
+              {getValue(
+                shipment?.order?.updatedAt
+              )}
             </span>
           </div>
         </div>
       </div>
 
-      {/* ======================================================
-          SHIPPING
-      ====================================================== */}
-
+      {/* Shipping */}
       <div className="flex min-w-0">
-        {/* Shipping Left */}
-
         <div className="flex flex-col border-r pr-3 mr-3 shrink-0">
           <h4 className="font-bold text-lg">
             Shipping
@@ -225,111 +203,107 @@ const ShipmentDetailRow = ({
           </button>
         </div>
 
-        {/* Shipping Right */}
-
         <div className="flex flex-col gap-3 min-w-0">
-          {/* Address */}
-
           <div className="flex items-start gap-2">
             <div className="text-sm">
               <p>
-                {shipment?.order?.billingInformation
-                  ?.firstName || ""}{" "}
-                {shipment?.order?.billingInformation
-                  ?.lastName || ""}
+                {getValue(
+                  `${shipment?.order?.billingInformation?.firstName || ""} ${
+                    shipment?.order?.billingInformation?.lastName || ""
+                  }`.trim()
+                )}
               </p>
 
               {shipment?.order?.billingInformation
                 ?.companyName && (
                 <p>
-                  {
-                    shipment.order
-                      .billingInformation.companyName
-                  }
+                  {getValue(
+                    shipment.order.billingInformation
+                      .companyName
+                  )}
                 </p>
               )}
 
               <p>
-                {shipment?.order?.billingInformation
-                  ?.addressLine1 || "N/A"}
+                {getValue(
+                  shipment?.order?.billingInformation
+                    ?.addressLine1
+                )}
               </p>
 
               {shipment?.order?.billingInformation
                 ?.addressLine2 && (
                 <p>
-                  {
-                    shipment.order
-                      .billingInformation.addressLine2
-                  }
+                  {getValue(
+                    shipment.order.billingInformation
+                      .addressLine2
+                  )}
                 </p>
               )}
 
               <p>
-                {shipment?.order?.billingInformation
-                  ?.city || "N/A"}
+                {getValue(
+                  shipment?.order?.billingInformation?.city
+                )}
                 ,{" "}
-                {shipment?.order?.billingInformation
-                  ?.state || "N/A"}
+                {getValue(
+                  shipment?.order?.billingInformation?.state
+                )}
               </p>
 
               <p>
-                {shipment?.order?.billingInformation
-                  ?.country || "N/A"}
+                {getValue(
+                  shipment?.order?.billingInformation
+                    ?.country
+                )}
               </p>
             </div>
           </div>
-
-          {/* Phone */}
 
           <div className="flex items-center gap-2">
             <Phone className="w-5 h-5 text-gray-400 shrink-0" />
 
             <span className="text-sm">
-              {shipment?.order?.billingInformation
-                ?.phone || "N/A"}
+              {getValue(
+                shipment?.order?.billingInformation?.phone
+              )}
             </span>
           </div>
-
-          {/* Email */}
 
           <div className="flex items-center gap-2">
             <Mail className="w-5 h-5 text-gray-400 shrink-0" />
 
             <span className="text-sm text-blue-400 break-all">
-              {shipment?.order?.billingInformation
-                ?.email || "N/A"}
+              {getValue(
+                shipment?.order?.billingInformation?.email
+              )}
             </span>
           </div>
-
-          {/* Shipping Method */}
 
           <div className="flex items-center gap-2">
             <IdCard className="w-5 h-5 text-gray-400 shrink-0" />
 
             <span className="text-sm">
-              {shipment?.shippingMethod || "N/A"}
+              {getValue(
+                shipment?.shippingMethod
+              )}
             </span>
           </div>
-
-          {/* Date */}
 
           <div className="flex items-center gap-2">
             <Clock className="w-5 h-5 text-gray-400 shrink-0" />
 
             <span className="text-sm">
-              {shipment?.dateShipped || "N/A"}
+              {getValue(
+                shipment?.dateShipped
+              )}
             </span>
           </div>
         </div>
       </div>
 
-      {/* ======================================================
-          SHIPPED ITEMS
-      ====================================================== */}
-
+      {/* Shipped Items */}
       <div className="flex min-w-0">
-        {/* Shipped Items Left */}
-
         <div className="flex flex-col border-r pr-3 mr-3 shrink-0">
           <h4 className="font-bold text-lg">
             Shipped
@@ -343,8 +317,6 @@ const ShipmentDetailRow = ({
           </div>
         </div>
 
-        {/* Shipped Items Right */}
-
         <div className="flex flex-col gap-3 min-w-0">
           {shipment?.orderProducts?.length > 0 ? (
             shipment.orderProducts.map(
@@ -357,12 +329,12 @@ const ShipmentDetailRow = ({
 
                   <div className="text-sm min-w-0">
                     <p className="font-medium">
-                      {product?.quantity || 0} x{" "}
-                      {product?.productName || "N/A"}
+                      {getValue(product?.quantity, "0")} x{" "}
+                      {getValue(product?.productName)}
                     </p>
 
                     <p className="text-sm">
-                      {product?.sku || "N/A"}
+                      {getValue(product?.sku)}
                     </p>
                   </div>
                 </div>

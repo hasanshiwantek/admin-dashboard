@@ -51,9 +51,7 @@ const Shipments = () => {
   return (
     <>
       <div className="bg-[var(--store-bg)]">
-        {/* ====================================================
-            PAGE HEADER
-        ==================================================== */}
+ 
 
         <div className="my-5">
           <h1 className="!text-5xl !font-extralight !text-gray-600 !my-10">
@@ -66,9 +64,7 @@ const Shipments = () => {
           </p>
         </div>
 
-        {/* ====================================================
-            TABS
-        ==================================================== */}
+      
 
         <TableTabs
           tabs={table.tabs}
@@ -78,13 +74,11 @@ const Shipments = () => {
           variant="underline"
         />
 
-        {/* ====================================================
-            TOOLBAR
-        ==================================================== */}
+    
 
         <div className="bg-white p-4 shadow-sm">
           <div className="flex flex-wrap gap-3 items-center mb-1">
-            {/* DELETE */}
+           
 
             <button
               type="button"
@@ -94,7 +88,6 @@ const Shipments = () => {
               <MdDelete className="w-7 h-7 2xl:h-9 2xl:w-10" />
             </button>
 
-            {/* EXPORT */}
 
             <ExportShipmentsDialog
               trigger={
@@ -108,7 +101,7 @@ const Shipments = () => {
               onConfirm={(format) => handleExport(format)}
             />
 
-            {/* SEARCH */}
+          
 
             <div className="flex items-center border rounded 2xl:h-[37.98px]">
               <Input
@@ -132,7 +125,7 @@ const Shipments = () => {
               </button>
             </div>
 
-            {/* ADVANCED SEARCH */}
+        
 
             <Link href="/manage/orders/shipments/search-shipments">
               <button
@@ -145,9 +138,7 @@ const Shipments = () => {
           </div>
         </div>
 
-        {/* ====================================================
-            GENERIC TABLE
-        ==================================================== */}
+    
 
         <div className="mt-4">
           <Table<any>
@@ -182,9 +173,7 @@ const Shipments = () => {
           />
         </div>
 
-        {/* ====================================================
-            DELETE CONFIRMATION
-        ==================================================== */}
+  
 
         <ConfirmationModal
           open={showDeleteModal}

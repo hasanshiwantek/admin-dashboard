@@ -24,6 +24,7 @@ import { toast } from "react-toastify";
 import { COMPLETED, riskConfig } from "./constant";
 import { OrderDetailRowProps } from "./types";
 import { findCountry } from "./utils";
+import { getValue } from "@/utils/getValue";
 
 const copyBilling = (info: any) => {
   if (!info) return;
@@ -125,7 +126,6 @@ export default function OrderDetailRow({
           </div>
         </div>
 
-        {/* Right Side: Customer Info with Icons */}
         <div className="flex flex-col space-y-2  ">
           <div className="w-[180px] min-w-[180px] h-[90px] overflow-y-auto pr-1">
             <p className="w-full whitespace-normal break-words text-[13px] text-[#34313f] overflow-wrap-anywhere">
@@ -151,11 +151,11 @@ export default function OrderDetailRow({
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <span>{countryData?.label || "N/A"}</span>
+            <span>{getValue(countryData?.label)}</span>
           </div>
 
           <div className="flex items-center gap-2">
-            <span>{order?.billingAddress?.phone || "N/A"}</span>
+            <span>{getValue(order?.billingAddress?.phone)}</span>
           </div>
 
           <div className="flex items-center gap-2">
@@ -163,16 +163,18 @@ export default function OrderDetailRow({
               className="!text-blue-400"
               href={`mailto:${order.billingAddress.email}`}
             >
-              {order?.billingAddress?.email || "N/A"}
+              {getValue(order?.billingAddress?.email)}
             </Link>
           </div>
           <div className="flex items-center gap-2">
             <span>
-              {order?.billingInformation?.updatedAt
-                ? dayjs(order?.billingInformation?.updatedAt).format(
-                    "DD MMM YYYY HH:mm:ss",
-                  )
-                : "N/A"}
+             {getValue(
+  order?.billingInformation?.updatedAt
+    ? dayjs(order.billingInformation.updatedAt).format(
+        "DD MMM YYYY HH:mm:ss"
+      )
+    : null
+)}
             </span>
           </div>
           {order?.ipAddress && (
@@ -182,16 +184,16 @@ export default function OrderDetailRow({
                 target="_blank"
                 className="!text-blue-400"
               >
-                {order?.ipAddress}
+                {getValue(order?.ipAddress)}
               </Link>
             </div>
           )}
           <div className="flex items-center gap-2">
-            <span>{order?.deviceType}</span>
+            <span>{getValue(order?.deviceType)}</span>
           </div>
 
           <div className="flex items-center gap-2">
-            <span>{order?.billingInformation?.paymentMethod || "N/A"}</span>
+            <span>{getValue(order?.billingInformation?.paymentMethod)}</span>
           </div>
           {order?.payment?.payment_status == COMPLETED && (
             <div className="flex items-center gap-2">
@@ -219,18 +221,18 @@ export default function OrderDetailRow({
                 rel="noopener noreferrer"
                 className="text-blue-500 underline break-all"
               >
-                {order.payment.payment_intent_id}
+                {getValue(order.payment.payment_intent_id)}
               </Link>
             </div>
           )}
           {order?.comments && (
             <div className="flex items-center gap-2">
-              <span className="">{order?.comments || "N/A"}</span>
+              <span className="">{getValue(order?.comments)}</span>
             </div>
           )}
           {risk && (
             <div className="flex items-center gap-1.5">
-              <span className="!text-blue-400">{risk.extendLabel}</span>
+              <span className="!text-blue-400">getValue({risk.extendLabel})</span>
             </div>
           )}
         </div>
@@ -283,15 +285,15 @@ export default function OrderDetailRow({
               {order?.billingInformation?.lastName}
               <br />
               {order?.billingInformation?.addressLine1 && (
-                <>{order.billingInformation.addressLine1}</>
+                <>{getValue(order.billingInformation.addressLine1)}</>
               )}
               {order?.billingInformation?.addressLine2 && (
-                <>, {order.billingInformation.addressLine2}</>
+                <>, {getValue(order.billingInformation.addressLine2)}</>
               )}
               <br />
               {order?.billingInformation?.state}
               <br />
-              {countryDataForCustomer?.label || "N/A"}
+              {getValue(countryDataForCustomer?.label)}
             </p>
           </div>
 
@@ -303,7 +305,7 @@ export default function OrderDetailRow({
             )}
           >
             <div className="shipping-data-scroll w-[420px] max-w-full overflow-x-auto overflow-y-hidden whitespace-nowrap">
-              <span> {order?.billingInformation?.shippingData || "N/A"} </span>
+              <span> {getValue(order?.billingInformation?.shippingData)} </span>
             </div>
           </div>
 
@@ -314,7 +316,7 @@ export default function OrderDetailRow({
           </div>
 
           <div className="flex items-center gap-2">
-            <span>{order?.billingInformation?.email || "N/A"}</span>
+            <span>{getValue(order?.billingInformation?.email)}</span>
           </div>
 
           <div className="flex items-center gap-2">
@@ -325,7 +327,7 @@ export default function OrderDetailRow({
 
           {/* Contact Data */}
           <div className="flex items-center gap-2 pt-[33px]">
-            <span>{order?.billingInformation?.phone || "N/A"}</span>
+            <span>{getValue(order?.billingInformation?.phone)}</span>
           </div>
 
           <div className="flex items-center gap-2">
@@ -333,7 +335,7 @@ export default function OrderDetailRow({
               className="text-[#6f8DFD] text-[13px]"
               href={`mailto:${order.billingInformation.email}`}
             >
-              {order?.billingInformation?.email || "N/A"}
+              {getValue(order?.billingInformation?.email)}
             </Link>
           </div>
         </div>
@@ -368,7 +370,7 @@ export default function OrderDetailRow({
               </div>
               <div className="flex ">
                 <span>Tracking #: </span>
-                <span>{order?.trackingNumber}</span>
+                <span>{getValue(order?.trackingNumber)}</span>
               </div>
             </div>
           )}

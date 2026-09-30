@@ -1,6 +1,6 @@
 import { Input } from "@/components/ui/input";
 import { ColumnDef } from "@/components/ui/Table/types";
-
+import dayjs from "dayjs";
 import { FaCirclePlus, FaCircleMinus } from "react-icons/fa6";
 
 type AllShipmentColumnProps = {
@@ -31,9 +31,7 @@ const AllShipmentColumn = ({
   onSaveTracking,
 }: AllShipmentColumnProps): ColumnDef<any>[] => {
   return [
-    // ==========================================================
-    // EXPAND
-    // ==========================================================
+
     {
       key: "expand",
       header: "",
@@ -57,9 +55,7 @@ const AllShipmentColumn = ({
       },
     },
 
-    // ==========================================================
-    // SHIPMENT ID
-    // ==========================================================
+ 
     {
       key: "id",
       header: "Shipment ID",
@@ -72,9 +68,7 @@ const AllShipmentColumn = ({
       ),
     },
 
-    // ==========================================================
-    // SHIPPED TO
-    // ==========================================================
+
     {
       key: "shippedTo",
       header: "Shipped to",
@@ -87,9 +81,7 @@ const AllShipmentColumn = ({
       ),
     },
 
-    // ==========================================================
-    // DATE SHIPPED
-    // ==========================================================
+   
     {
       key: "dateShipped",
       header: "Date shipped",
@@ -102,9 +94,7 @@ const AllShipmentColumn = ({
       ),
     },
 
-    // ==========================================================
-    // SHIPPING TRACKING NUMBER
-    // ==========================================================
+
     {
       key: "trackingNumber",
       header: "Shipping tracking number",
@@ -142,9 +132,7 @@ const AllShipmentColumn = ({
       },
     },
 
-    // ==========================================================
-    // ORDER DATE
-    // ==========================================================
+ 
     {
       key: "orderDate",
       header: "Order Date",
@@ -161,12 +149,8 @@ const AllShipmentColumn = ({
 
         return (
           <span className="2xl:!text-2xl whitespace-nowrap font-normal!">
-            {new Date(shipment.orderDate).toLocaleDateString("en-GB", {
-              day: "2-digit",
-              month: "short",
-              year: "numeric",
-            })}
-          </span>
+  {dayjs(shipment.orderDate).format("DD MMM YYYY")}
+</span>
         );
       },
     },

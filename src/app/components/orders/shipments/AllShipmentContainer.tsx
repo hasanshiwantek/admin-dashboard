@@ -39,11 +39,6 @@ const useAllShipmentContainer = () => {
   const { shipments, loading, error, shipmentLoader, singleShipment } =
     useAppSelector((state: any) => state.order);
 
-  /*
-   * ============================================================
-   * TABLE DATA
-   * ============================================================
-   */
 
   const pagination = shipments?.pagination;
 
@@ -51,15 +46,7 @@ const useAllShipmentContainer = () => {
     return shipments?.data || [];
   }, [shipments?.data]);
 
-  /*
-   * ============================================================
-   * TABLE CONTAINER
-   * ============================================================
-   *
-   * AllOrders ki tarah pagination, search, tabs aur selection
-   * ka generic table logic yahan handle hoga.
-   */
-
+ 
   const table = useTableContainer<number>({
     defaultTab: "All shipments",
     defaultPerPage: "50",
@@ -78,11 +65,7 @@ const useAllShipmentContainer = () => {
 
   const { tab, page, perPage, selectedIds, clearSelection } = table;
 
-  /*
-   * ============================================================
-   * EXPANDED ROWS
-   * ============================================================
-   */
+
 
   const [expandedRows, setExpandedRows] = useState<number[]>([]);
 
@@ -110,11 +93,7 @@ const useAllShipmentContainer = () => {
     return expandedRows.includes(shipment?.id);
   };
 
-  /*
-   * ============================================================
-   * TRACKING
-   * ============================================================
-   */
+
 
   const [trackingChanges, setTrackingChanges] = useState<
     Record<number, string>
@@ -162,11 +141,7 @@ const useAllShipmentContainer = () => {
     }
   };
 
-  /*
-   * ============================================================
-   * ROW ACTIONS
-   * ============================================================
-   */
+ 
 
   const rowActions = (shipment: any) => [
     {
@@ -206,21 +181,13 @@ const useAllShipmentContainer = () => {
     },
   ];
 
-  /*
-   * ============================================================
-   * EXPANDED ROW
-   * ============================================================
-   */
+
 
   const renderExpandedRow = (shipment: any) => {
     return <ShipmentDetailRow shipment={shipment} />;
   };
 
-  /*
-   * ============================================================
-   * COLUMNS
-   * ============================================================
-   */
+ 
 
   const columns: ColumnDef<any>[] = AllShipmentColumn({
     isExpanded: isRowExpanded,
@@ -234,11 +201,7 @@ const useAllShipmentContainer = () => {
     onSaveTracking: handleSaveTracking,
   });
 
-  /*
-   * ============================================================
-   * SEARCH
-   * ============================================================
-   */
+ 
 
   const handleSearch = async () => {
     const keyword = table.search?.trim();
@@ -265,11 +228,6 @@ const useAllShipmentContainer = () => {
     }
   };
 
-  /*
-   * ============================================================
-   * EXPORT
-   * ============================================================
-   */
 
   const handleExport = async (format: "csv" | "xml") => {
     if (format === "csv") {
@@ -300,11 +258,6 @@ const useAllShipmentContainer = () => {
     // XML export can be added here later.
   };
 
-  /*
-   * ============================================================
-   * DELETE
-   * ============================================================
-   */
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
@@ -343,11 +296,7 @@ const useAllShipmentContainer = () => {
     }
   };
 
-  /*
-   * ============================================================
-   * SHIPMENT BY URL ID / ADVANCED SEARCH
-   * ============================================================
-   */
+
 
   const queryObject: Record<string, any> = {};
 
