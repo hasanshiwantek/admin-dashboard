@@ -1,5 +1,5 @@
 "use client";
-import PageTile from "@/components/ui/PageTile";
+import PageTitle from "@/components/ui/PageTitle";
 import Table from "@/components/ui/Table/Table";
 import ConfirmationModal from "../orders/edit/CaptuedPaymentModal";
 import AddToCategories from "./AddToCategories";
@@ -39,7 +39,7 @@ export default function AllProducts() {
 
   return (
     <>
-      <PageTile
+      <PageTitle
         title="All Products"
         buttonProps={{
           permission: "add_product",

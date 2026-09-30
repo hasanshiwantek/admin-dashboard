@@ -1,5 +1,10 @@
+import { LocalStorageKeys } from "@/const/appConstants";
+
 // setInStorage
-export const setInStorage = <T>(key: string, value: T): void => {
+export const setInStorage = <T>(
+  key: string | LocalStorageKeys,
+  value: T,
+): void => {
   if (typeof window === "undefined") return;
   try {
     localStorage.setItem(
@@ -13,7 +18,7 @@ export const setInStorage = <T>(key: string, value: T): void => {
 
 //getFromStorage
 export const getFromStorage = <T>(
-  key: string,
+  key: string | LocalStorageKeys,
   defaultValue: T | null = null,
 ): T | null => {
   if (typeof window === "undefined") return defaultValue;
@@ -32,7 +37,7 @@ export const getFromStorage = <T>(
 };
 
 // removeFromStorage
-export const removeFromStorage = (key: string): void => {
+export const removeFromStorage = (key: string | LocalStorageKeys): void => {
   if (typeof window === "undefined") return;
   try {
     localStorage.removeItem(key);
@@ -41,7 +46,10 @@ export const removeFromStorage = (key: string): void => {
   }
 };
 
-export function setInSessionStorage(key: string, obj: any) {
+export function setInSessionStorage(
+  key: string | LocalStorageKeys,
+  obj: Record<string, any>,
+) {
   if (!key || typeof window === "undefined") return;
 
   try {
