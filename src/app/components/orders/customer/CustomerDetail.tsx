@@ -142,7 +142,6 @@ const CustomerDetail = () => {
     setSelectedCustomers(updated);
   };
 
-
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
 
   const toggleRow = (customer: any, singleCustomer: any) => {
@@ -459,7 +458,16 @@ const CustomerDetail = () => {
                                         </TableCell> */}
 
                         <TableCell className="2xl:!text-2xl">
-                          {customer?.totalOrders}
+                          {customer?.totalOrders > 0 ? (
+                            <Link
+                              className="text-blue-400 hover:underline"
+                              href={`/manage/orders?customerId=${customer?.id}`}
+                            >
+                              {customer.totalOrders}
+                            </Link>
+                          ) : (
+                            <span>{customer?.totalOrders ?? 0}</span>
+                          )}
                         </TableCell>
                         <TableCell className="2xl:!text-2xl">
                           {new Date(customer?.joinDate).toLocaleString(
