@@ -42,6 +42,9 @@ export default function Table<T>({
   onTabChange,
   maxVisibleTabs,
   tabsVariant = "pills",
+  tabsClassName,
+  tabClassName,
+  activeTabClassName,
   searchable = false,
   searchValue = "",
   onSearchChange,
@@ -107,9 +110,10 @@ export default function Table<T>({
           const label = filterLabels?.[key] ?? key;
           const display = values
             .map((v) => (formatFilterValue ? formatFilterValue(key, v) : v))
-            .reduce<
-              ReactNode[]
-            >((acc, part, i) => (i === 0 ? [part] : [...acc, ", ", part]), []);
+            .reduce<ReactNode[]>(
+              (acc, part, i) => (i === 0 ? [part] : [...acc, ", ", part]),
+              [],
+            );
           return {
             id: key,
             label: (
@@ -132,6 +136,9 @@ export default function Table<T>({
           onTabChange={onTabChange}
           maxVisibleTabs={maxVisibleTabs}
           variant={tabsVariant}
+          className={tabsClassName}
+          tabClassName={tabClassName}
+          activeTabClassName={activeTabClassName}
         />
       )}
 
@@ -236,9 +243,10 @@ export default function Table<T>({
               </div>
             )}
 
-            {(selectedIds.length > 0 || alwaysShowBulkActions) && bulkActions && (
-              <div className="flex items-center gap-2">{bulkActions}</div>
-            )}
+            {(selectedIds.length > 0 || alwaysShowBulkActions) &&
+              bulkActions && (
+                <div className="flex items-center gap-2">{bulkActions}</div>
+              )}
           </div>
 
           {pagination && (
