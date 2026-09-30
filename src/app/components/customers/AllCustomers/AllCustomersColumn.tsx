@@ -1,5 +1,5 @@
 import { DateTimeFormat } from "@/const/appConstants";
-import { formatDateTime } from "@/lib/utils";
+import { cn, formatDateTime } from "@/lib/utils";
 import Link from "next/link";
 import { FaCircleMinus, FaCirclePlus } from "react-icons/fa6";
 
@@ -73,7 +73,21 @@ export const getCustomerColumns = (
     sortKey: "orders",
     headClassName: "2xl:!text-[1.6rem]",
     className: "2xl:!text-2xl",
-    render: (customer: any) => customer?.totalOrders,
+    render: (customer: any) => (
+      <Link
+        className={cn(
+          "2xl:!text-2xl",
+          customer?.totalOrders > 0 && "hover:underline text-blue-400",
+        )}
+        href={
+          customer?.totalOrders > 0
+            ? `/manage/orders?customerId=${customer?.id}`
+            : "#"
+        }
+      >
+        {customer?.totalOrders}
+      </Link>
+    ),
   },
   {
     key: "joinDate",
