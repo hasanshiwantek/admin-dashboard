@@ -359,39 +359,40 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
           resultAction?.payload?.data[0]?.customer?.id ||
           resultAction?.payload?.data?.customer?.id;
 
-        if (values.saveAddress == true) {
-          const billingAddress = {
-            customer_id: Number(customerId),
-            firstName: values.billingFirstName,
-            lastName: values.billingLastName,
-            phoneNumber: values.billingPhoneNumber,
-            companyName: values.billingCompanyName,
-            addressLine1: values.billingAddress1,
-            address_line_2: values.billingAddress2,
-            city: values.billingCity,
-            state: values.billingState,
-            zip: values.billingZip,
-            country: values.billingCountry,
-          };
-          await dispatch(addCustomerAddress({ data: billingAddress }));
-        }
-        if (values?.shipping?.saveToAddressBook == true) {
-          const billingInformation = {
-            //shipping address is same as billing address
-            customer_id: Number(customerId),
-            firstName: values?.shipping?.firstName,
-            lastName: values?.shipping?.lastName,
-            companyName: values?.shipping?.companyName,
-            phoneNumber: values?.shipping?.phoneNumber,
-            addressLine1: values?.shipping?.address1,
-            address_line_2: values?.shipping?.address2,
-            city: values?.shipping?.city,
-            state: values?.shipping?.state,
-            zip: values?.shipping?.zip,
-            country: values?.shipping?.country,
-          };
-          await dispatch(addCustomerAddress({ data: billingInformation }));
-        }
+        // Temporary comment
+        // if (values.saveAddress == true) {
+        //   const billingAddress = {
+        //     customer_id: Number(customerId),
+        //     firstName: values.billingFirstName,
+        //     lastName: values.billingLastName,
+        //     phoneNumber: values.billingPhoneNumber,
+        //     companyName: values.billingCompanyName,
+        //     addressLine1: values.billingAddress1,
+        //     address_line_2: values.billingAddress2,
+        //     city: values.billingCity,
+        //     state: values.billingState,
+        //     zip: values.billingZip,
+        //     country: values.billingCountry,
+        //   };
+        //   await dispatch(addCustomerAddress({ data: billingAddress }));
+        // }
+        // if (values?.shipping?.saveToAddressBook == true) {
+        //   const billingInformation = {
+        //     //shipping address is same as billing address
+        //     customer_id: Number(customerId),
+        //     firstName: values?.shipping?.firstName,
+        //     lastName: values?.shipping?.lastName,
+        //     companyName: values?.shipping?.companyName,
+        //     phoneNumber: values?.shipping?.phoneNumber,
+        //     addressLine1: values?.shipping?.address1,
+        //     address_line_2: values?.shipping?.address2,
+        //     city: values?.shipping?.city,
+        //     state: values?.shipping?.state,
+        //     zip: values?.shipping?.zip,
+        //     country: values?.shipping?.country,
+        //   };
+        //   await dispatch(addCustomerAddress({ data: billingInformation }));
+        // }
 
         setTimeout(() => {
           if (isDraft) {
