@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "@/lib/axiosInstance";
+import { errorMessage } from "@/utils/message";
 
 type ApplyCouponArgs = {
   couponCode: string;
@@ -953,6 +954,7 @@ export const applyCoupon = createAsyncThunk(
       );
       return res.data;
     } catch (err: any) {
+      errorMessage(err?.response?.data?.message);
       return rejectWithValue(
         err?.response?.data?.message ||
           err?.response?.data ||
