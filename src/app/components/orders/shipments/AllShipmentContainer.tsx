@@ -311,9 +311,6 @@ const useAllShipmentContainer = () => {
   useEffect(() => {
     const shipmentId = searchParams.get("shipmentId");
 
-    /*
-     * Specific shipment
-     */
     if (shipmentId) {
       dispatch(
         fetchShipmentById({
@@ -324,9 +321,7 @@ const useAllShipmentContainer = () => {
       return;
     }
 
-    /*
-     * Advanced shipment search
-     */
+  
     const pageFromUrl = Number(queryObject.page || 1);
 
     const pageSizeFromUrl = Number(
@@ -377,19 +372,10 @@ const useAllShipmentContainer = () => {
       return;
     }
 
-    /*
-     * Normal shipment listing
-     *
-     * useTableContainer normally handles this fetch.
-     * This fallback preserves the existing shipment behavior.
-     */
+ 
   }, [searchParams]);
 
-  /*
-   * ============================================================
-   * SINGLE SHIPMENT FILTER
-   * ============================================================
-   */
+ 
 
   const displayShipments = useMemo(() => {
     const shipmentId = searchParams.get("shipmentId");
@@ -401,11 +387,7 @@ const useAllShipmentContainer = () => {
     return filteredShipments;
   }, [searchParams, singleShipment, filteredShipments]);
 
-  /*
-   * ============================================================
-   * LOADER
-   * ============================================================
-   */
+
 
   useEffect(() => {
     if (!shipmentLoader) {
@@ -413,11 +395,7 @@ const useAllShipmentContainer = () => {
     }
   }, [shipmentLoader]);
 
-  /*
-   * ============================================================
-   * RETURN
-   * ============================================================
-   */
+ 
 
   return {
     table,
