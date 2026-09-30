@@ -5,7 +5,7 @@ import {
   IdCard,
 } from "lucide-react";
 
-import { getValue } from "@/utils/getValue";
+import { replaceNullWithPlaceholder } from "@/utils/replaceNullWithPlaceholder";
 
 type ShipmentDetailRowProps = {
   shipment: any;
@@ -101,7 +101,7 @@ const ShipmentDetailRow = ({
           <div className="flex items-start gap-2">
             <div className="text-sm">
               <p>
-                {getValue(
+                {replaceNullWithPlaceholder(
                   shipment?.order?.billingAddress?.name
                 )}
               </p>
@@ -109,7 +109,7 @@ const ShipmentDetailRow = ({
               {shipment?.order?.billingAddress
                 ?.addressLine1 && (
                 <p>
-                  {getValue(
+                  {replaceNullWithPlaceholder(
                     shipment.order.billingAddress
                       .addressLine1
                   )}
@@ -119,7 +119,7 @@ const ShipmentDetailRow = ({
               {shipment?.order?.billingAddress
                 ?.addressLine2 && (
                 <p>
-                  {getValue(
+                  {replaceNullWithPlaceholder(
                     shipment.order.billingAddress
                       .addressLine2
                   )}
@@ -127,17 +127,17 @@ const ShipmentDetailRow = ({
               )}
 
               <p>
-                {getValue(
+                {replaceNullWithPlaceholder(
                   shipment?.order?.billingAddress?.city
                 )}
                 ,{" "}
-                {getValue(
+                {replaceNullWithPlaceholder(
                   shipment?.order?.billingAddress?.state
                 )}
               </p>
 
               <p>
-                {getValue(
+                {replaceNullWithPlaceholder(
                   shipment?.order?.billingAddress?.country
                 )}
               </p>
@@ -148,7 +148,7 @@ const ShipmentDetailRow = ({
             <Phone className="w-5 h-5 text-gray-400 shrink-0" />
 
             <span className="text-sm">
-              {getValue(
+              {replaceNullWithPlaceholder(
                 shipment?.order?.billingAddress?.phone
               )}
             </span>
@@ -158,7 +158,7 @@ const ShipmentDetailRow = ({
             <Mail className="w-5 h-5 text-gray-400 shrink-0" />
 
             <span className="text-sm text-blue-400 break-all">
-              {getValue(
+              {replaceNullWithPlaceholder(
                 shipment?.order?.billingAddress?.email
               )}
             </span>
@@ -169,7 +169,7 @@ const ShipmentDetailRow = ({
 
             <span className="text-sm">
               #
-              {getValue(
+              {replaceNullWithPlaceholder(
                 shipment?.order?.customer?.id
               )}
             </span>
@@ -179,7 +179,7 @@ const ShipmentDetailRow = ({
             <Clock className="w-5 h-5 text-gray-400 shrink-0" />
 
             <span className="text-sm">
-              {getValue(
+              {replaceNullWithPlaceholder(
                 shipment?.order?.updatedAt
               )}
             </span>
@@ -207,7 +207,7 @@ const ShipmentDetailRow = ({
           <div className="flex items-start gap-2">
             <div className="text-sm">
               <p>
-                {getValue(
+                {replaceNullWithPlaceholder(
                   `${shipment?.order?.billingInformation?.firstName || ""} ${
                     shipment?.order?.billingInformation?.lastName || ""
                   }`.trim()
@@ -217,7 +217,7 @@ const ShipmentDetailRow = ({
               {shipment?.order?.billingInformation
                 ?.companyName && (
                 <p>
-                  {getValue(
+                  {replaceNullWithPlaceholder(
                     shipment.order.billingInformation
                       .companyName
                   )}
@@ -225,7 +225,7 @@ const ShipmentDetailRow = ({
               )}
 
               <p>
-                {getValue(
+                {replaceNullWithPlaceholder(
                   shipment?.order?.billingInformation
                     ?.addressLine1
                 )}
@@ -234,7 +234,7 @@ const ShipmentDetailRow = ({
               {shipment?.order?.billingInformation
                 ?.addressLine2 && (
                 <p>
-                  {getValue(
+                  {replaceNullWithPlaceholder(
                     shipment.order.billingInformation
                       .addressLine2
                   )}
@@ -242,17 +242,17 @@ const ShipmentDetailRow = ({
               )}
 
               <p>
-                {getValue(
+                {replaceNullWithPlaceholder(
                   shipment?.order?.billingInformation?.city
                 )}
                 ,{" "}
-                {getValue(
+                {replaceNullWithPlaceholder(
                   shipment?.order?.billingInformation?.state
                 )}
               </p>
 
               <p>
-                {getValue(
+                {replaceNullWithPlaceholder(
                   shipment?.order?.billingInformation
                     ?.country
                 )}
@@ -264,7 +264,7 @@ const ShipmentDetailRow = ({
             <Phone className="w-5 h-5 text-gray-400 shrink-0" />
 
             <span className="text-sm">
-              {getValue(
+              {replaceNullWithPlaceholder(
                 shipment?.order?.billingInformation?.phone
               )}
             </span>
@@ -274,7 +274,7 @@ const ShipmentDetailRow = ({
             <Mail className="w-5 h-5 text-gray-400 shrink-0" />
 
             <span className="text-sm text-blue-400 break-all">
-              {getValue(
+              {replaceNullWithPlaceholder(
                 shipment?.order?.billingInformation?.email
               )}
             </span>
@@ -284,7 +284,7 @@ const ShipmentDetailRow = ({
             <IdCard className="w-5 h-5 text-gray-400 shrink-0" />
 
             <span className="text-sm">
-              {getValue(
+              {replaceNullWithPlaceholder(
                 shipment?.shippingMethod
               )}
             </span>
@@ -294,7 +294,7 @@ const ShipmentDetailRow = ({
             <Clock className="w-5 h-5 text-gray-400 shrink-0" />
 
             <span className="text-sm">
-              {getValue(
+              {replaceNullWithPlaceholder(
                 shipment?.dateShipped
               )}
             </span>
@@ -329,12 +329,12 @@ const ShipmentDetailRow = ({
 
                   <div className="text-sm min-w-0">
                     <p className="font-medium">
-                      {getValue(product?.quantity, "0")} x{" "}
-                      {getValue(product?.productName)}
+                      {replaceNullWithPlaceholder(product?.quantity, "0")} x{" "}
+                      {replaceNullWithPlaceholder(product?.productName)}
                     </p>
 
                     <p className="text-sm">
-                      {getValue(product?.sku)}
+                      {replaceNullWithPlaceholder(product?.sku)}
                     </p>
                   </div>
                 </div>

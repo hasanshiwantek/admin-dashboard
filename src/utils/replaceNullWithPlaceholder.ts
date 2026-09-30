@@ -1,4 +1,4 @@
-export const getValue = (
+export const replaceNullWithPlaceholder = (
   value: any,
   fallback: string = "N/A"
 ) => {
