@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "predev": "node scripts/copy-tinymce.mjs",
     "dev": "next dev",
+    "prebuild": "node scripts/copy-tinymce.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -62,6 +64,7 @@
     "react-world-flags": "^1.6.0",
     "recharts": "^3.1.0",
     "tailwind-merge": "^3.3.1",
+    "tinymce": "^7.9.3",
     "world-countries": "^5.1.0",
     "xlsx": "^0.18.5",
     "yup": "^1.7.1"

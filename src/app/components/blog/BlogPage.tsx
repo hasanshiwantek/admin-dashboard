@@ -1,21 +1,17 @@
 "use client";
-import React, { useMemo } from "react";
-import { useForm, Controller } from "react-hook-form";
-import { Editor } from "@tinymce/tinymce-react";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { Upload } from "lucide-react";
-import { useRef, useState, useEffect } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useAppDispatch } from "@/hooks/useReduxHooks";
 import {
   createBlog,
   fetchBlogbyId,
   updateBlog,
 } from "@/redux/slices/storefrontSlice";
-import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
+import { Upload } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 
@@ -79,7 +75,6 @@ export default function BlogPage() {
   const params = useParams();
   const id = params?.id; // will be undefined if it's a "create" page
 
-  const editorRef = useRef<any>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -182,7 +177,6 @@ export default function BlogPage() {
               />
             </div>
 
-            {/* TinyMCE Editor integrated with react-hook-form */}
             <div className="flex items-start gap-4">
               <Label className="w-[100px] 2xl:!text-2xl">Body</Label>
               <Controller

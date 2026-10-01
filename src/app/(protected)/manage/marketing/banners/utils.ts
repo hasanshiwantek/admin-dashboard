@@ -93,7 +93,7 @@ export const transformGetBannerPayload = (banner: any): BannerFormValues => ({
   [BannerField.Content]: banner?.pageContent ?? "",
   [BannerField.LocationType]: banner?.locationType ?? "",
   [BannerField.LocationId]:
-    banner?.locationId != null ? String(banner.locationId) : null,
+    banner?.location != null ? String(banner?.location?.id) : null,
   [BannerField.DateType]:
     banner?.dateType ??
     (banner?.startDate ? BannerDateType.Range : BannerDateType.Always),

@@ -139,7 +139,7 @@ const BannerForm = ({ bannerId }: BannerFormProps) => {
         <InputField
           name={BannerField.Content}
           label="Content"
-          Component={DescriptionEditorQuill}
+          Component={RichTextEditor}
           control={control}
           controlClassName="max-w-7xl"
         />
