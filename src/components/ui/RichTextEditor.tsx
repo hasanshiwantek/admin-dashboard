@@ -51,10 +51,10 @@ export function RichTextEditor({
   return (
     <Editor
       id={id}
-      apiKey={
-        process.env.NEXT_PUBLIC_TINY_MCE_API_KEY ||
-        "bwwo2xyy56xeb4lla418k0p1mt3cm2rwqd3qq8vieee1evqa"
-      }
+      // Self-hosted from public/tinymce (see scripts/copy-tinymce.mjs) so no
+      // Tiny Cloud API key / approved-domain check is needed on Vercel.
+      tinymceScriptSrc="/tinymce/tinymce.min.js"
+      licenseKey="gpl"
       value={value || ""}
       onEditorChange={onChange}
       onBlur={onBlur}
@@ -88,7 +88,7 @@ export function RichTextEditor({
         file_picker_callback: async (
           callback: FilePickerCallback,
           _value: string,
-          meta: { filetype: "image" | "media" | "file" },
+          meta: Record<string, any>,
         ) => {
           const isImage = meta.filetype === "image";
           const file = await pickFile(isImage ? "image/*" : "video/*");

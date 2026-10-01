@@ -44,3 +44,5 @@ yarn-error.log*
 next-env.d.ts
 
 .claude/
+# self-hosted TinyMCE (copied from node_modules by scripts/copy-tinymce.mjs)
+/public/tinymce
