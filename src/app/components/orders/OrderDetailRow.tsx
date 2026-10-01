@@ -117,11 +117,7 @@ export default function OrderDetailRow({
               <NotebookText className="w-5 h-5 text-gray-500" />
             )}
 
-            {risk && (
-              <div className="w-8 h-8  flex items-center justify-center">
-                {risk.icon}
-              </div>
-            )}
+            {risk && risk.icon}
           </div>
         </div>
 
@@ -161,7 +157,7 @@ export default function OrderDetailRow({
 
           <div className="flex items-center gap-2">
             <Link
-              className="!text-blue-400"
+              className="text-[13px]"
               href={`mailto:${order.billingAddress.email}`}
             >
               {replaceNullWithPlaceholder(order?.billingAddress?.email)}
@@ -184,7 +180,7 @@ export default function OrderDetailRow({
               <Link
                 href={`https://whatismyipaddress.com/ip/${order?.ipAddress}`}
                 target="_blank"
-                className="!text-blue-400"
+                className="text-[13px]"
               >
                 {replaceNullWithPlaceholder(order?.ipAddress)}
               </Link>
@@ -225,7 +221,7 @@ export default function OrderDetailRow({
                 href={`https://dashboard.stripe.com/payments/${order.payment.payment_intent_id}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-500 underline break-all"
+                className="underline break-all text-[13px]"
               >
                 {replaceNullWithPlaceholder(order.payment.payment_intent_id)}
               </Link>
@@ -241,7 +237,7 @@ export default function OrderDetailRow({
           {risk && (
             <div className="flex items-center gap-1.5">
               <span className="!text-blue-400">
-                replaceNullWithPlaceholder({risk.extendLabel})
+                {replaceNullWithPlaceholder(risk.extendLabel)}
               </span>
             </div>
           )}
@@ -393,7 +389,7 @@ export default function OrderDetailRow({
                 <span>
                   {" "}
                   {order?.products?.length} items @{" "}
-                 {formatDateTime(order?.updatedAt, "DD MMM YYYY")}{" "}
+                  {formatDateTime(order?.updatedAt, "DD MMM YYYY")}{" "}
                 </span>
               </div>
               <div className="flex ">

@@ -148,7 +148,6 @@ h3 {
 }
 
 p,
-a,
 li {
   @apply text-xl font-medium leading-relaxed tracking-wide;
 }
@@ -264,11 +263,11 @@ img {
     text-decoration: none;
     line-height: normal;
     color: var(--text-link);
-    font-size: 1rem !important;
+    font-size: 1rem;
   }
   @media (width >= 96rem /* 1536px */) {
     a {
-      font-size: 1.6rem !important;
+      font-size: 1.6rem;
     }
   }
 }
@@ -285,7 +284,6 @@ img {
     @apply text-lg;
   }
   p,
-  a,
   li {
     @apply text-[1.1rem];
   }
