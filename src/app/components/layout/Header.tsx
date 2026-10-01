@@ -105,11 +105,11 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
             <UserDropdown />
           </div>
         </div>
-        <div className="!p-1 hover:bg-[#2d3748] cursor-pointer text-white">
+        <div className="!p-1 hover:bg-[#2d3748] cursor-pointer">
           <Link
             href={selectedStore?.baseUrl || '#'}
             target="_blank"
-            className="!text-xl font-medium hover:underline flex items-center gap-1 h-[5rem] !px-3 border-l-2 border-[#2d3748] 2xl:!text-2xl"
+            className="!text-xl font-medium hover:underline flex items-center gap-1 h-[5rem] !px-3 border-l-2 border-[#2d3748] 2xl:!text-2xl text-white"
           >
             View storefront
             <span>
