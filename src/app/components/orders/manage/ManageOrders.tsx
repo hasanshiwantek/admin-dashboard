@@ -415,7 +415,7 @@ const ManageOrders = () => {
                                 Customer Comments
                               </label>
                               <textarea
-                                className="flex-1 border border-gray-300 rounded px-3 py-2 text-[12px]  text-[var(--color-text-muted)] bg-[var(--color-background-subtle)] resize-none !h-[16]"
+                                className="flex-1 border border-gray-300 rounded px-3 py-2 text-[12px]  text-[var(--color-text-muted)] bg-[var(--color-background-subtle)] resize-none "
                                 rows={6}
                                 disabled
                                 value={ret.comments || "No comments provided"}
