@@ -1,3 +1,8 @@
+import type {
+  DiscountStatus,
+  PromotionListResponse,
+  UpdatePromotionStatusArgs,
+} from "@/app/components/marketing/Promotions/types";
 import axiosInstance from "@/lib/axiosInstance";
 import { buildQueryParams } from "@/lib/utils";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
@@ -287,6 +292,56 @@ export const deleteBanner = createAsyncThunk(
   },
 );
 
+// Promotions (automatic + coupon). `kind` selects which list is returned.
+export const fetchPromotions = createAsyncThunk(
+  "marketing/fetchPromotions",
+  async (args: Record<string, any>, thunkAPI) => {
+    try {
+      const res = await axiosInstance.get(
+        `dashboard/promotions/list-promotion?${buildQueryParams(args)}`,
+      );
+      return res?.data;
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to fetch promotions",
+      );
+    }
+  },
+);
+
+export const updatePromotionStatus = createAsyncThunk(
+  "marketing/updatePromotionStatus",
+  async ({ ids, status }: UpdatePromotionStatusArgs, thunkAPI) => {
+    try {
+      const res = await axiosInstance.post(
+        `dashboard/promotions/update-status`,
+        { ids, status },
+      );
+      return { ids, status, data: res?.data };
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to update promotion status",
+      );
+    }
+  },
+);
+
+export const deletePromotions = createAsyncThunk(
+  "marketing/deletePromotions",
+  async ({ ids }: { ids: number[] }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.delete(`dashboard/promotions/delete`, {
+        data: { ids },
+      });
+      return res?.data;
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to delete promotions",
+      );
+    }
+  },
+);
+
 type CouponListResponse = {
   couponcode?: {
     data?: any[];
@@ -306,6 +361,9 @@ interface MarketingState {
   bannersLoading: boolean;
   banner: any;
   bannerLoading: boolean;
+  promotions: PromotionListResponse | null;
+  promotionsLoading: boolean;
+  promotionsError: string | null;
 }
 
 // 2. Initial State
@@ -319,6 +377,23 @@ const initialState: MarketingState = {
   bannersLoading: false,
   banner: null,
   bannerLoading: false,
+  promotions: null,
+  promotionsLoading: false,
+  promotionsError: null,
+};
+
+/** Update the status of the listed promotion rows in place. */
+const setPromotionStatus = (
+  state: MarketingState,
+  ids: number[],
+  status: DiscountStatus,
+) => {
+  state.promotions?.data?.items?.forEach((row) => {
+    if (ids.includes(row.id)) {
+      row.status = status;
+      row.active = status === "active";
+    }
+  });
 };
 
 // 3. Slice
@@ -458,6 +533,29 @@ const marketingSlice = createSlice({
       .addCase(deleteBanner.rejected, (state, action) => {
         state.deleteLoading = false;
         state.error = (action.payload as string) || "Failed to delete banner";
+      })
+      .addCase(fetchPromotions.pending, (state) => {
+        state.promotionsLoading = true;
+        state.promotionsError = null;
+      })
+      .addCase(fetchPromotions.fulfilled, (state, action) => {
+        state.promotionsLoading = false;
+        state.promotions = action.payload;
+      })
+      .addCase(fetchPromotions.rejected, (state, action) => {
+        state.promotionsLoading = false;
+        state.promotionsError =
+          (action.payload as string) || "Failed to fetch promotions";
+      })
+      // With a `previousStatus` (the Active switch) the rows update
+      // optimistically and roll back if the request fails.
+      .addCase(updatePromotionStatus.pending, (state, action) => {
+        const { ids, status, previousStatus } = action.meta.arg;
+        if (previousStatus) setPromotionStatus(state, ids, status);
+      })
+      .addCase(updatePromotionStatus.rejected, (state, action) => {
+        const { ids, previousStatus } = action.meta.arg;
+        if (previousStatus) setPromotionStatus(state, ids, previousStatus);
       });
   },
 });

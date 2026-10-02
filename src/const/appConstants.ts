@@ -45,6 +45,9 @@ export enum DateTimeFormat {
   /** Example: Jan 01, 2024 */
   SHORT_DATE = "MMM DD, YYYY",
 
+  /** Example: Fri, Sep 25, 2026 */
+  DAY_SHORT_DATE = "ddd, MMM D, YYYY",
+
   /** Example: 2024-01-01 */
   ISO_DATE = "YYYY-MM-DD",
 

@@ -14,7 +14,7 @@ import {
   TableRow,
   Table as UITable,
 } from "@/components/ui/table";
-import { cn } from "@/lib/utils";
+import { cn, replaceNullWithPlaceholder } from "@/lib/utils";
 import {
   ChevronDown,
   ChevronsUpDown,
@@ -85,7 +85,7 @@ export default function Table<T>({
   tableWrapperClassName,
   bottomPaginationClassName,
 }: TableProps<T>) {
-  const rowIds = data.map(getRowId);
+  const rowIds = data?.map(getRowId);
   const isAllSelected =
     rowIds.length > 0 && rowIds.every((id) => selectedIds.includes(id));
 
@@ -110,10 +110,9 @@ export default function Table<T>({
           const label = filterLabels?.[key] ?? key;
           const display = values
             .map((v) => (formatFilterValue ? formatFilterValue(key, v) : v))
-            .reduce<ReactNode[]>(
-              (acc, part, i) => (i === 0 ? [part] : [...acc, ", ", part]),
-              [],
-            );
+            .reduce<
+              ReactNode[]
+            >((acc, part, i) => (i === 0 ? [part] : [...acc, ", ", part]), []);
           return {
             id: key,
             label: (
@@ -234,7 +233,7 @@ export default function Table<T>({
                   }
                 />
                 <span className="text-gray-700 !text-xl 2xl:!text-[1.6rem]">
-                  {data.length}
+                  {data?.length}
                   {pagination?.total != null
                     ? ` of ${pagination.total}`
                     : ""}{" "}
@@ -338,7 +337,7 @@ export default function Table<T>({
                   {error}
                 </TableCell>
               </TableRow>
-            ) : data.length === 0 ? (
+            ) : data?.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={colSpan}
@@ -348,7 +347,7 @@ export default function Table<T>({
                 </TableCell>
               </TableRow>
             ) : (
-              data.map((row, index) => {
+              data?.map((row, index) => {
                 const id = getRowId(row);
                 const expanded = !!renderExpandedRow && !!isRowExpanded?.(row);
                 return (
@@ -368,9 +367,11 @@ export default function Table<T>({
                         <TableCell key={col.key} className={col.className}>
                           {col.render
                             ? col.render(row, index)
-                            : ((row as Record<string, unknown>)[
-                                col.key
-                              ] as ReactNode)}
+                            : replaceNullWithPlaceholder(
+                                (row as Record<string, unknown>)[
+                                  col.key
+                                ] as ReactNode,
+                              )}
                         </TableCell>
                       ))}
                       {rowActions && (

@@ -142,7 +142,7 @@ export default function LoginPage() {
 
             {/* Right group */}
             <div className="space-x-3">
-              <Link href="/recover/new" className="hover:underline !text-2xl">
+              <Link href="/recover/new" className="text-white hover:underline !text-2xl">
                 Forgot?
               </Link>
 

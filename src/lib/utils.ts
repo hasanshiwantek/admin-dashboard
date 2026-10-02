@@ -110,6 +110,7 @@ export function buildQueryParams(payload: Record<string, any> = {}): string {
   const queryString = queryParams.toString();
   return queryString ? `?${queryString}` : "";
 }
+
 export function downloadFile(file: Blob | File, fileName: string) {
   if (!file || !fileName) return;
 

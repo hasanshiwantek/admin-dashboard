@@ -45,9 +45,7 @@ const ROUTE_ALIASES: Record<string, string> = {
 const PUBLIC_ROUTES = [
   "/manage/dashboard",
   "/manage/user-settings",
-  "/manage/marketing/banners",
-  "/manage/marketing/banners/",
-  "/manage/marketing/banners/[id]/edit",
+  "/manage/marketing/promotion-manager",
 ];
 
 const matches = (path: string, prefix: string) =>
