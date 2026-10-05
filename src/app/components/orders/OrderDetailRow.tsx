@@ -19,12 +19,12 @@ import {
   Smartphone,
 } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import { toast } from "react-toastify";
 import { COMPLETED, riskConfig } from "./constant";
 import { OrderDetailRowProps } from "./types";
 import { findCountry } from "./utils";
 import { replaceNullWithPlaceholder } from "@/lib/utils";
+import Link from "next/link";
 
 const copyBilling = (info: any) => {
   if (!info) return;
@@ -220,16 +220,14 @@ export default function OrderDetailRow({
               </div>
             )}
           {order?.payment?.payment_intent_id && (
-            <div className="flex items-center gap-2">
               <Link
                 href={`https://dashboard.stripe.com/payments/${order.payment.payment_intent_id}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-500 underline break-all"
+                className="text-blue-500 underline break-all text-[80px]!"
               >
                 {replaceNullWithPlaceholder(order.payment.payment_intent_id)}
               </Link>
-            </div>
           )}
           {order?.comments && (
             <div className="flex items-center gap-2">
@@ -241,7 +239,7 @@ export default function OrderDetailRow({
           {risk && (
             <div className="flex items-center gap-1.5">
               <span className="!text-blue-400">
-                replaceNullWithPlaceholder({risk.extendLabel})
+                {replaceNullWithPlaceholder(risk.extendLabel)}
               </span>
             </div>
           )}
