@@ -61,7 +61,7 @@ const AllShipmentColumn = ({
       key: "id",
       header: "Shipment ID",
       width: "140px",
-
+       sortable: true,
       render: (shipment) => (
         <span className="2xl:!text-2xl whitespace-nowrap font-normal!">
           {shipment?.id ?? "N/A"}

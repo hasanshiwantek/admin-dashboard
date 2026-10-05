@@ -200,12 +200,12 @@ const DraftOrder = () => {
                     <TableCell>
                       <div className="flex items-center justify-center gap-2">
                         <div className="w-5 h-5 bg-[#312e81] rounded flex items-center justify-center text-[10px] text-white font-bold">
-                          {row.channel
-                            ? row.channel.charAt(0).toUpperCase()
+                          {row.channelName
+                            ? row.channelName.charAt(0).toUpperCase()
                             : "D"}
                         </div>
                         <span className="!text-[#000000] 2xl:!text-2xl">
-                          {row.channel || "Draft"}
+                          {row.channelName || "Draft"}
                         </span>
                       </div>
                     </TableCell>

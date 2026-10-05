@@ -599,22 +599,42 @@ export const exportOrderCsv = createAsyncThunk(
 );
 export const fetchAllShipments = createAsyncThunk(
   "orders/fetchAllShipments",
-  async (
-    { page, perPage }: { page: number; perPage: number | string },
-    thunkAPI,
-  ) => {
+  async (args: Record<string, any>, thunkAPI) => {
     try {
+      const params = new URLSearchParams();
+
+      Object.entries(args || {}).forEach(([key, value]) => {
+        if (value === undefined || value === null || value === "") return;
+
+        // Shipment status filter
+        if (key === "status" && value === "All shipments") return;
+
+        if (Array.isArray(value)) {
+          value.forEach((v) => {
+            if (v !== undefined && v !== null && v !== "") {
+              params.append(key, String(v));
+            }
+          });
+        } else if (typeof value === "boolean") {
+          params.append(key, value ? "1" : "0");
+        } else {
+          params.append(key, String(value));
+        }
+      });
+
       const res = await axiosInstance.get(
-        `dashboard/shipments/list-shipment?page=${page}&pageSize=${perPage}`,
+        `dashboard/shipments/list-shipment?${params.toString()}`
       );
+
       return res.data;
     } catch (err: any) {
-      console.error("❌ Error fetching  shipments:", err);
+      console.error("❌ Error fetching shipments:", err);
+
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to fetch shipments",
+        err.response?.data?.message || "Failed to fetch shipments"
       );
     }
-  },
+  }
 );
 
 // ADD SHIPMENT ORDER
