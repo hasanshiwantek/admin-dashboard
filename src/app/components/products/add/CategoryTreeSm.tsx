@@ -1,6 +1,7 @@
 "use client";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { fetchCategories } from "@/redux/slices/categorySlice";
 import { Folder, MinusCircle, PlusCircle } from "lucide-react";
@@ -22,6 +23,8 @@ interface CategoryTreeProps {
   onChange?: (value: any) => void;
   /** Only one category can be checked at a time. */
   single?: boolean;
+  /** Classes for the scrolling tree container, e.g. its height. */
+  className?: string;
 }
 
 const toIdArray = (value: unknown): string[] => {
@@ -55,6 +58,7 @@ export default function CategoryTreeSm({
   value,
   onChange,
   single = false,
+  className,
 }: CategoryTreeProps) {
   const dispatch = useAppDispatch();
   const allCategories = useAppSelector(
@@ -213,7 +217,12 @@ export default function CategoryTreeSm({
   };
 
   const tree = (
-    <div className="p-4 border border-gray-200 rounded-md bg-white shadow-sm overflow-y-auto h-[200px]">
+    <div
+      className={cn(
+        "p-4 border border-gray-200 rounded-md bg-white shadow-sm overflow-y-auto h-[200px]",
+        className,
+      )}
+    >
       {showSelectAll && !single && categories.length > 0 && (
         <div className="pl-1 flex items-center gap-2 hover:bg-blue-100 transition-all group relative w-[250px]">
           <div className="relative w-6 h-6 flex items-center justify-center">

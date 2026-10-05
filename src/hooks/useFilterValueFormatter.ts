@@ -44,6 +44,8 @@ export function useCategoryNameMap(enabled = true): Record<string, string> {
         if (n?.id != null) map[String(n.id)] = n.name;
         if (n?.children) walk(n.children);
         if (n?.subCategories) walk(n.subCategories);
+        // The categories API nests children under `subcategories`.
+        if (n?.subcategories) walk(n.subcategories);
       });
     walk(categoryState?.data || []);
     return map;

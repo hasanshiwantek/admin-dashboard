@@ -12,7 +12,6 @@ import PageTitle from "@/components/ui/PageTitle";
 import RichTextEditor from "@/components/ui/RichTextEditor";
 import { useBrandNameMap } from "@/hooks/useFilterValueFormatter";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
-import DescriptionEditorQuill from "@/components/ui/DescriptionEditorQuill";
 import {
   createBanner,
   getBannerById,
@@ -39,13 +38,9 @@ import {
   transformGetBannerPayload,
   transformPostBannerPayload,
 } from "./utils";
+import { toOptions } from "@/lib/utils";
 
 const LIST_PATH = "/manage/marketing/banners";
-
-const toOptions = (map: Record<string, string>) =>
-  Object.entries(map)
-    .map(([value, label]) => ({ value, label }))
-    .sort((a, b) => a.label.localeCompare(b.label));
 
 const BannerForm = ({ bannerId }: BannerFormProps) => {
   const isEdit = !!bannerId;

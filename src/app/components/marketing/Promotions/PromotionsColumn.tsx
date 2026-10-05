@@ -14,7 +14,7 @@ import { DiscountToggleStatus, Promotion } from "./types";
 type ColumnsProps = {
   display: PromotionDisplay;
   usesHeader: string;
-  onEdit: (id: number) => string;
+  onEdit: (promotion: Promotion) => string;
   onToggleActive: (promotion: Promotion, status: DiscountToggleStatus) => void;
 };
 
@@ -42,7 +42,7 @@ const PromotionsColumn = ({
     sortable: true,
     className: CellClass,
     render: (promotion) => (
-      <Link href={onEdit(promotion.id)} className="underline">
+      <Link href={onEdit(promotion)} className="underline">
         {promotion.name}
       </Link>
     ),

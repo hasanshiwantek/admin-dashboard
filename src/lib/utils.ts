@@ -182,3 +182,8 @@ export function isEmpty(val: unknown): boolean {
 
   return false;
 }
+
+export const toOptions = (map: Record<string, string>) =>
+  Object.entries(map)
+    .map(([value, label]) => ({ value, label }))
+    .sort((a, b) => a.label.localeCompare(b.label));

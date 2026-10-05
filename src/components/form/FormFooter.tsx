@@ -9,6 +9,11 @@ export type FormFooterProps = {
   loadingText?: string;
   cancelText?: string;
   onCancel?: () => void;
+  /**
+   * Handles the primary button instead of submitting the enclosing form,
+   * e.g. for a sub-form rendered inside another form.
+   */
+  onSubmit?: () => void;
   loading?: boolean;
   disabled?: boolean;
   extraActions?: ReactNode;
@@ -20,6 +25,7 @@ export function FormFooter({
   loadingText = "Saving...",
   cancelText = "Cancel",
   onCancel,
+  onSubmit,
   loading,
   disabled,
   extraActions,
@@ -44,7 +50,8 @@ export function FormFooter({
       )}
       {extraActions}
       <Button
-        type="submit"
+        type={onSubmit ? "button" : "submit"}
+        onClick={onSubmit}
         size="xl"
         className="btn-primary text-xl! 2xl:text-2xl!"
         disabled={loading || disabled}

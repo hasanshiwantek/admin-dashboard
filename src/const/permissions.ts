@@ -33,6 +33,7 @@ export const PERMISSION_SLUGS = [
   // marketing
   "/manage/marketing/coupon-codes",
   "/manage/marketing/email-marketing",
+  "/manage/marketing/banners",
   // settings
   "/manage/settings",
 ];

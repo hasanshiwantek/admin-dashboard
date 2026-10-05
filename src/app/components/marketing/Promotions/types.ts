@@ -19,6 +19,8 @@ export type DiscountChannel = string;
 export interface Promotion {
   id: number;
   kind: DiscountKind;
+  /** Editor the promotion was created with: "standard" | "legacy". */
+  editor?: string;
   name: string;
   displayName: string;
   isFeatured: boolean;

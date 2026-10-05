@@ -321,6 +321,32 @@ export const fetchBrandByKeyword = createAsyncThunk(
   },
 );
 
+// Returns a page of brands for pickers (e.g. the promotion brand modal).
+// No reducer handles it, so it never replaces `state.product.brands`, which
+// the brand name lookups read.
+export const fetchBrandPage = createAsyncThunk(
+  "product/fetchBrandPage",
+  async (
+    {
+      page,
+      pageSize,
+      keyword,
+    }: { page: number; pageSize: number; keyword?: string },
+    thunkAPI,
+  ) => {
+    try {
+      const response = await axiosInstance.get(`dashboard/brands/brand-list`, {
+        params: { page, pageSize, ...(keyword ? { keyword } : {}) },
+      });
+      return response.data;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to fetch brands",
+      );
+    }
+  },
+);
+
 // GET BRAND BY ID THUNK
 export const getBrandById = createAsyncThunk(
   "product/getBrandById",

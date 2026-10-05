@@ -4,10 +4,18 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { SelectOption } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { Ref } from "react";
+import { ReactNode, Ref } from "react";
+
+export type RadioOption = SelectOption & {
+  /** Secondary text shown under the label. */
+  description?: ReactNode;
+  /** Shown after the label, e.g. a status tag. */
+  badge?: ReactNode;
+  disabled?: boolean;
+};
 
 type RadioGroupFieldProps = {
-  options: readonly SelectOption[];
+  options: readonly RadioOption[];
   value?: string | null;
   onChange?: (value: string) => void;
   onBlur?: () => void;
@@ -50,11 +58,32 @@ export function RadioGroupField({
           key={option.value}
           className={cn(
             "font-normal text-gray-600 my-0 2xl:text-2xl!",
+            option.description && "items-start",
+            option.disabled && "cursor-not-allowed",
             optionClassName,
           )}
         >
-          <RadioGroupItem value={option.value} aria-invalid={invalid} />
-          {option.label}
+          <RadioGroupItem
+            value={option.value}
+            disabled={option.disabled}
+            aria-invalid={invalid}
+          />
+          {option.description ? (
+            <span className="flex flex-col gap-1">
+              <span className="flex items-center gap-2">
+                {option.label}
+                {option.badge}
+              </span>
+              <span className="text-lg! text-gray-500">
+                {option.description}
+              </span>
+            </span>
+          ) : (
+            <>
+              {option.label}
+              {option.badge}
+            </>
+          )}
         </Label>
       ))}
     </RadioGroup>

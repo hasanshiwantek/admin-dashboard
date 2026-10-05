@@ -147,7 +147,9 @@ const Promotions = () => {
                   <DropdownMenuItem
                     key={option.path}
                     className="cursor-pointer text-lg"
-                    onClick={() => router.push(createPath(option.path))}
+                    onClick={() =>
+                      router.push(createPath(`${display}/${option.path}`))
+                    }
                   >
                     {option.label}
                   </DropdownMenuItem>
@@ -183,7 +185,7 @@ const Promotions = () => {
             options={PROMOTION_TYPE_OPTIONS}
             onChange={(v) => table.setFilter("type", v)}
           />
-          <div className="flex flex-1 items-center gap-3 px-4 h-14 bg-white border border-gray-200 rounded-md focus-within:ring-3 focus-within:ring-blue-200 hover:border-blue-200 transition">
+          <div className="flex flex-1 items-center gap-3 px-4 h-14 bg-white border border-gray-200 rounded-md">
             <IoSearchOutline
               size={20}
               className="text-gray-600 cursor-pointer shrink-0"

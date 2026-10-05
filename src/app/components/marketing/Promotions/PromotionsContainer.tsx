@@ -14,6 +14,8 @@ import PromotionsColumn from "./PromotionsColumn";
 import {
   DISPLAY_CONFIG,
   PROMOTIONS_BASE_PATH,
+  promotionCopyPath,
+  promotionEditPath,
   PromotionDisplay,
   PromotionStatus,
   PromotionStatusTabs,
@@ -66,7 +68,9 @@ const usePromotionsContainer = () => {
   const isArchivedTab = activeTab === "Archived";
   const total = pagination?.total ?? promotionList.length;
 
-  const editPath = (id: number) => `${PROMOTIONS_BASE_PATH}/${id}`;
+  // Rows carry their kind; fall back to the tab being viewed.
+  const editPath = (promotion: Promotion) =>
+    promotionEditPath(promotion.kind ?? display, promotion.id);
 
   const createPath = (path: string) => `${PROMOTIONS_BASE_PATH}/${path}`;
 
@@ -105,11 +109,19 @@ const usePromotionsContainer = () => {
   };
 
   const rowActions = (promotion: Promotion) => [
-    { label: "Edit", onClick: () => router.push(editPath(promotion.id)) },
-    {
-      label: "Copy",
-      onClick: () => router.push(createPath(`automatic/${promotion.id}/copy`)),
-    },
+    { label: "Edit", onClick: () => router.push(editPath(promotion)) },
+    // Copying opens the standard editor, so legacy promotions can't be copied.
+    ...(promotion.editor === "standard"
+      ? [
+          {
+            label: "Copy",
+            onClick: () =>
+              router.push(
+                promotionCopyPath(promotion.kind ?? display, promotion.id),
+              ),
+          },
+        ]
+      : []),
     promotion.status === "archived"
       ? {
           label: "Restore",

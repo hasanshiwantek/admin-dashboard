@@ -11,6 +11,13 @@ import {
 
 export const PROMOTIONS_BASE_PATH = "/manage/marketing/promotion-manager";
 
+/** Standard-editor pages, e.g. `/manage/marketing/promotion-manager/coupon/12`. */
+export const promotionEditPath = (kind: string, id: number | string) =>
+  `${PROMOTIONS_BASE_PATH}/${kind}/${id}`;
+
+export const promotionCopyPath = (kind: string, id: number | string) =>
+  `${promotionEditPath(kind, id)}/copy`;
+
 export enum PromotionDisplay {
   Automatic = "automatic",
   Coupon = "coupon",
@@ -110,7 +117,8 @@ export const CURRENCY_OPTIONS: SelectOption[] = [
   { value: "USD", label: "USD" },
 ];
 
+/** Paths are relative to the current display, e.g. `coupon/new`. */
 export const CREATE_OPTIONS = [
-  { label: "With standard editor", path: "/automatic/new" },
-  { label: "With legacy editor", path: "/discounts/create" },
+  { label: "With standard editor", path: "new" },
+  { label: "With legacy editor", path: "legacy/new" },
 ];

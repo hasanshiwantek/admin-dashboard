@@ -330,13 +330,84 @@ export const deletePromotions = createAsyncThunk(
   "marketing/deletePromotions",
   async ({ ids }: { ids: number[] }, thunkAPI) => {
     try {
-      const res = await axiosInstance.delete(`dashboard/promotions/delete`, {
+      const res = await axiosInstance.delete(`dashboard/promotions/delete-promotion`, {
         data: { ids },
       });
       return res?.data;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(
         err.response?.data?.message || "Failed to delete promotions",
+      );
+    }
+  },
+);
+
+export const createPromotion = createAsyncThunk(
+  "marketing/createPromotion",
+  async ({ data }: { data: Record<string, any> }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.post(
+        `dashboard/promotions/add-promotion`,
+        data,
+      );
+      return res?.data;
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to create promotion",
+      );
+    }
+  },
+);
+
+export const getPromotionById = createAsyncThunk(
+  "marketing/getPromotionById",
+  async ({ id }: { id: number | string }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.get(
+        `dashboard/promotions/get-promotion/${id}`,
+      );
+      return res?.data;
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to fetch promotion",
+      );
+    }
+  },
+);
+
+export const updatePromotion = createAsyncThunk(
+  "marketing/updatePromotion",
+  async (
+    { id, data }: { id: number | string; data: Record<string, any> },
+    thunkAPI,
+  ) => {
+    try {
+      const res = await axiosInstance.post(
+        `dashboard/promotions/update-promotion/${id}`,
+        data,
+      );
+      return res?.data;
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to update promotion",
+      );
+    }
+  },
+);
+
+// Bulk coupon codes of a promotion as a CSV blob.
+export const downloadPromotionCodes = createAsyncThunk(
+  "marketing/downloadPromotionCodes",
+  async ({ id }: { id: number | string }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.get(
+        `dashboard/promotions/download-codes/${id}`,
+        { responseType: "blob" },
+      );
+      return res.data as Blob;
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to download coupon codes",
       );
     }
   },
