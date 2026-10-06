@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "@/lib/axiosInstance";
 import { errorMessage } from "@/utils/message";
+import { buildQueryParams } from "@/lib/utils";
 
 type ApplyCouponArgs = {
   couponCode: string;
@@ -601,29 +602,17 @@ export const fetchAllShipments = createAsyncThunk(
   "orders/fetchAllShipments",
   async (args: Record<string, any>, thunkAPI) => {
     try {
-      const params = new URLSearchParams();
+      const filteredArgs = Object.fromEntries(
+        Object.entries(args || {}).filter(
+          ([key, value]) =>
+            !(key === "status" && value === "All shipments")
+        )
+      );
 
-      Object.entries(args || {}).forEach(([key, value]) => {
-        if (value === undefined || value === null || value === "") return;
-
-        // Shipment status filter
-        if (key === "status" && value === "All shipments") return;
-
-        if (Array.isArray(value)) {
-          value.forEach((v) => {
-            if (v !== undefined && v !== null && v !== "") {
-              params.append(key, String(v));
-            }
-          });
-        } else if (typeof value === "boolean") {
-          params.append(key, value ? "1" : "0");
-        } else {
-          params.append(key, String(value));
-        }
-      });
+      const queryParams = buildQueryParams(filteredArgs);
 
       const res = await axiosInstance.get(
-        `dashboard/shipments/list-shipment?${params.toString()}`
+        `dashboard/shipments/list-shipment?${queryParams}`
       );
 
       return res.data;
