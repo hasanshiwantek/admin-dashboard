@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "@/lib/axiosInstance";
 import { errorMessage } from "@/utils/message";
+import { buildQueryParams } from "@/lib/utils";
 
 type ApplyCouponArgs = {
   couponCode: string;
@@ -599,22 +600,30 @@ export const exportOrderCsv = createAsyncThunk(
 );
 export const fetchAllShipments = createAsyncThunk(
   "orders/fetchAllShipments",
-  async (
-    { page, perPage }: { page: number; perPage: number | string },
-    thunkAPI,
-  ) => {
+  async (args: Record<string, any>, thunkAPI) => {
     try {
-      const res = await axiosInstance.get(
-        `dashboard/shipments/list-shipment?page=${page}&pageSize=${perPage}`,
+      const filteredArgs = Object.fromEntries(
+        Object.entries(args || {}).filter(
+          ([key, value]) =>
+            !(key === "status" && value === "All shipments")
+        )
       );
+
+      const queryParams = buildQueryParams(filteredArgs);
+
+      const res = await axiosInstance.get(
+        `dashboard/shipments/list-shipment?${queryParams}`
+      );
+
       return res.data;
     } catch (err: any) {
-      console.error("❌ Error fetching  shipments:", err);
+      console.error("❌ Error fetching shipments:", err);
+
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to fetch shipments",
+        err.response?.data?.message || "Failed to fetch shipments"
       );
     }
-  },
+  }
 );
 
 // ADD SHIPMENT ORDER
