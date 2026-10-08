@@ -26,8 +26,10 @@ import Spinner from "@/app/components/loader/Spinner";
 import { fetchUrlSettings } from "@/redux/slices/homeSlice";
 import { useSearchParams } from "next/navigation";
 import DescriptionEditorQuillForCat from "@/app/components/products/categories/DescriptionEditorQuillForCat";
-import { UrlSettingEnums } from "@/const/appConstants";
+import { LocalStorageKeys, UrlSettingEnums } from "@/const/appConstants";
+import { getFromStorage, setInStorage } from "@/utils/storage";
 import { generateSlug } from "@/lib/productUtils";
+import { findCategoryPath } from "@/lib/categoryUtils";
 
 type FormVals = {
   name: string;
@@ -161,27 +163,10 @@ export default function AddSubCategoryPage() {
     );
   }, [parentCategory, setValue]);
 
-  // Find path for parent dropdown
-  const findPath = (
-    nodes: any[],
-    targetId: number,
-    path: string[] = [],
-  ): string | null => {
-    for (const n of nodes) {
-      const nextPath = [...path, n.name];
-      if (Number(n.id) === Number(targetId)) return nextPath.join(" / ");
-      if (n.subcategories?.length) {
-        const p = findPath(n.subcategories, targetId, nextPath);
-        if (p) return p;
-      }
-    }
-    return null;
-  };
-
   useEffect(() => {
     const parentId = watch("parent")?.id;
     if (parentId && catTree?.length) {
-      const p = findPath(catTree, parentId);
+      const p = findCategoryPath(catTree, parentId);
       if (p)
         setValue("parent", { id: parentId, path: p }, { shouldDirty: false });
     }
@@ -311,13 +296,13 @@ export default function AddSubCategoryPage() {
 
   useEffect(() => {
     // Get available stores
-    const storedStores = localStorage.getItem("availableStores");
-    const parsedStores = storedStores ? JSON.parse(storedStores) : [];
+    const parsedStores =
+      getFromStorage<any[]>(LocalStorageKeys.AvailableStores, []) ?? [];
 
     // Get the selected store ID (convert to number for comparison)
-    const savedStoreId = localStorage.getItem("storeId");
+    const savedStoreId = Number(getFromStorage(LocalStorageKeys.StoreId));
     const selected = parsedStores.find(
-      (store: any) => store.id === Number(savedStoreId),
+      (store: any) => store.id === savedStoreId,
     );
 
     if (selected) {
@@ -325,7 +310,7 @@ export default function AddSubCategoryPage() {
     } else if (parsedStores.length > 0) {
       // Fallback to first store if saved ID not found
       setSelectedStore(parsedStores[0]);
-      localStorage.setItem("storeId", parsedStores[0].id.toString());
+      setInStorage(LocalStorageKeys.StoreId, parsedStores[0].id.toString());
     }
   }, []);
   useEffect(() => {

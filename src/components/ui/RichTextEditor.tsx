@@ -9,11 +9,19 @@ type RichTextEditorProps = {
   onChange?: (content: string) => void;
   onBlur?: () => void;
   height?: number;
+  minHeight?: number;
   id?: string;
   uploadFile?: (file: File) => Promise<string>;
   maxImageSizeMB?: number;
   maxVideoSizeMB?: number;
+  menubar?: boolean | string;
+  toolbar?: string;
 };
+
+const DEFAULT_TOOLBAR = `undo redo | blocks fontfamily fontsize | bold italic underline forecolor backcolor |
+  alignleft aligncenter alignright alignjustify | fullscreen |
+  cut copy paste pastetext | removeformat | bullist numlist | outdent indent |
+  link unlink image media | code | table | hr`;
 
 type FilePickerCallback = (url: string, meta?: Record<string, string>) => void;
 
@@ -98,10 +106,13 @@ export function RichTextEditor({
   onChange,
   onBlur,
   height = 340,
+  minHeight = 300,
   id,
   uploadFile,
   maxImageSizeMB = 5,
   maxVideoSizeMB = 20,
+  menubar = false,
+  toolbar = DEFAULT_TOOLBAR,
 }: RichTextEditorProps) {
   const toUrl = (file: File) =>
     uploadFile ? uploadFile(file) : readAsDataUrl(file);
@@ -118,7 +129,8 @@ export function RichTextEditor({
       onBlur={onBlur}
       init={{
         height,
-        menubar: false,
+        min_height: minHeight,
+        menubar,
         directionality: "ltr",
         plugins: [
           "advlist",
@@ -132,11 +144,9 @@ export function RichTextEditor({
           "fullscreen",
           "wordcount",
         ],
-        toolbar: `undo redo | blocks fontfamily fontsize | bold italic underline forecolor backcolor |
-          alignleft aligncenter alignright alignjustify | fullscreen |
-          cut copy paste pastetext | removeformat | bullist numlist | outdent indent |
-          link unlink image media | code | table | hr`,
+        toolbar,
         branding: false,
+        promotion: false,
         default_link_target: "_blank",
         toolbar_mode: "wrap",
 
