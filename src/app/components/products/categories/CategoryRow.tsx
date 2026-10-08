@@ -6,6 +6,7 @@ import { TableCell, TableRow } from "@/components/ui/table";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { refetchCategories } from "@/lib/categoryUtils";
 import { buildQueryParams } from "@/lib/utils";
+import { STOREFRONT_URL } from "@/const/appConstants";
 import { deleteCategory, updateCategory } from "@/redux/slices/categorySlice";
 import {
   SortableContext,
@@ -142,7 +143,7 @@ const CategoryRow = ({
       label: "View on storefront",
       onClick: () => {
         window.open(
-          `https://server-blink.vercel.app/category/${category?.slug}`,
+          `${STOREFRONT_URL}/category/${category?.slug}`,
           "_blank",
         );
       },
