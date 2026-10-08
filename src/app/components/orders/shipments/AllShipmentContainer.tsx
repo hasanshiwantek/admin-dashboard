@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { useAlert } from "@/hooks/useAlert";
 
 import {
-  advanceShipmentSearch,
+ 
   deleteShipment,
   exportShipmentsCsv,
   fetchAllShipments,
@@ -56,10 +56,7 @@ const useAllShipmentContainer = () => {
     tabs: ShipmentTabs,
     fetcher: (params) =>
       dispatch(
-        fetchAllShipments({
-          page: Number(params.page ?? 1),
-          perPage: params.perPage ?? 50,
-        }),
+        fetchAllShipments(params),
       ),
   });
 
@@ -308,72 +305,7 @@ const useAllShipmentContainer = () => {
     }
   });
 
-  useEffect(() => {
-    const shipmentId = searchParams.get("shipmentId");
 
-    if (shipmentId) {
-      dispatch(
-        fetchShipmentById({
-          shipmentId,
-        }),
-      );
-
-      return;
-    }
-
-  
-    const pageFromUrl = Number(queryObject.page || 1);
-
-    const pageSizeFromUrl = Number(
-      queryObject.pageSize || queryObject.limit || 50,
-    );
-
-    const filterKeys = Object.keys(queryObject).filter(
-      (key) => !["page", "limit", "pageSize"].includes(key),
-    );
-
-    if (filterKeys.length > 0) {
-      dispatch(
-        advanceShipmentSearch({
-          data: {
-            keyword: queryObject.keyword ?? queryObject.keywords,
-
-            shipmentIdFrom: queryObject.shipmentIdFrom,
-
-            shipmentIdTo: queryObject.shipmentIdTo,
-
-            orderIdFrom: queryObject.orderIdFrom,
-
-            orderIdTo: queryObject.orderIdTo,
-
-            shippingDate: queryObject.shippingDate,
-
-            shippingDateFrom: queryObject.shippingDateFrom,
-
-            shippingDateTo: queryObject.shippingDateTo,
-
-            orderDate: queryObject.orderDate,
-
-            orderDateFrom: queryObject.orderDateFrom,
-
-            orderDateTo: queryObject.orderDateTo,
-
-            sortField: queryObject.sortField ?? queryObject.sortBy ?? "id",
-
-            sortDirection: queryObject.sortDirection ?? "asc",
-
-            page: pageFromUrl,
-
-            pageSize: pageSizeFromUrl,
-          },
-        }),
-      );
-
-      return;
-    }
-
- 
-  }, [searchParams]);
 
  
 

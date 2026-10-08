@@ -3,10 +3,12 @@ import {
   Mail,
   Clock,
   IdCard,
+  
 } from "lucide-react";
 
 import {replaceNullWithPlaceholder} from "@/lib/utils"
-
+import Link from "next/link";
+import { useAlert } from "@/hooks/useAlert";
 type ShipmentDetailRowProps = {
   shipment: any;
 };
@@ -14,6 +16,7 @@ type ShipmentDetailRowProps = {
 const ShipmentDetailRow = ({
   shipment,
 }: ShipmentDetailRowProps) => {
+   const { showAlert, Alert } = useAlert();
   const handleCopyBilling = async () => {
     const billing =
       shipment?.order?.billingAddress;
@@ -77,7 +80,6 @@ const ShipmentDetailRow = ({
 
     await navigator.clipboard.writeText(text);
   };
-
   return (
     <div className="grid grid-cols-3 gap-4 bg-gray-50 p-4">
 
@@ -156,18 +158,23 @@ const ShipmentDetailRow = ({
 
           <div className="flex items-center gap-2">
             <Mail className="w-5 h-5 text-gray-400 shrink-0" />
-
-            <span className="text-sm text-blue-400 break-all">
+             
+            <Link 
+              href={`mailto:${replaceNullWithPlaceholder(shipment?.order?.billingAddress?.email)}`}
+              className="text-[12px]! text-blue-400! break-all"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               {replaceNullWithPlaceholder(
                 shipment?.order?.billingAddress?.email
               )}
-            </span>
+            </Link>
           </div>
 
           <div className="flex items-center gap-2">
             <IdCard className="w-5 h-5 text-gray-400 shrink-0" />
 
-            <span className="text-sm">
+            <span className="text-sm text-blue-400!">
               #
               {replaceNullWithPlaceholder(
                 shipment?.order?.customer?.id
@@ -273,11 +280,16 @@ const ShipmentDetailRow = ({
           <div className="flex items-center gap-2">
             <Mail className="w-5 h-5 text-gray-400 shrink-0" />
 
-            <span className="text-sm text-blue-400 break-all">
+            <Link 
+              href={`mailto:${replaceNullWithPlaceholder(shipment?.order?.billingInformation?.email)}`}
+              className="text-[12px]! text-blue-400! break-all"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               {replaceNullWithPlaceholder(
                 shipment?.order?.billingInformation?.email
               )}
-            </span>
+            </Link>
           </div>
 
           <div className="flex items-center gap-2">
@@ -321,22 +333,56 @@ const ShipmentDetailRow = ({
           {shipment?.orderProducts?.length > 0 ? (
             shipment.orderProducts.map(
               (product: any, index: number) => (
-                <div
-                  key={index}
-                  className="flex items-start gap-2"
-                >
-                  <IdCard className="w-5 h-5 text-gray-400 shrink-0 mt-0.5" />
+                 <div
+        key={index}
+        className="flex items-start gap-2"
+      >
+        <IdCard className="w-5 h-5 text-gray-400 shrink-0 mt-0.5" />
 
-                  <div className="text-sm min-w-0">
-                    <p className="font-medium">
-                      {replaceNullWithPlaceholder(product?.quantity, "0")} x{" "}
-                      {replaceNullWithPlaceholder(product?.productName)}
-                    </p>
+        <div className="text-sm min-w-0">
+          <p className="font-medium">
+            {replaceNullWithPlaceholder(product?.quantity, "0")} x{" "}
 
-                    <p className="text-sm">
-                      {replaceNullWithPlaceholder(product?.sku)}
-                    </p>
-                  </div>
+            <span
+              onClick={() => {
+                const availableStores = JSON.parse(
+                  localStorage.getItem("availableStores") || "[]"
+                );
+
+                const selectedStoreId = Number(
+                  localStorage.getItem("storeId")
+                );
+
+                const selectedStore = availableStores.find(
+                  (s: any) => s.id === selectedStoreId
+                );
+
+                if (selectedStore?.baseUrl && product?.productUrl) {
+                  window.open(
+                    `${selectedStore.baseUrl.replace(/\/$/, "")}${
+                      product.productUrl === "/"
+                        ? product.productUrl.slice(1)
+                        : product.productUrl
+                    }`,
+                    "_blank"
+                  );
+                } else {
+                  showAlert({
+                    title: "Store or Product Not Found",
+                    message: "Store URL or Product URL not found.",
+                  });
+                }
+              }}
+              className="text-[#6F8DFD]! font-light cursor-pointer hover:underline whitespace-normal break-words leading-snug"
+            >
+              {replaceNullWithPlaceholder(product?.productName)}
+            </span>
+          </p>
+             
+          <p className="text-sm">
+            {replaceNullWithPlaceholder(product?.sku)}
+          </p>
+        </div>
                 </div>
               )
             )
@@ -347,6 +393,7 @@ const ShipmentDetailRow = ({
           )}
         </div>
       </div>
+      <Alert />
     </div>
   );
 };

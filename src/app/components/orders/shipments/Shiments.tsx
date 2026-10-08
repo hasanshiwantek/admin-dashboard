@@ -13,6 +13,7 @@ import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional
 
 import useAllShipmentContainer from "./AllShipmentContainer";
 import TableTabs from "@/components/ui/Table/TableTabs";
+import { X } from "lucide-react";
 
 const Shipments = () => {
   const {
@@ -104,17 +105,29 @@ const Shipments = () => {
           
 
             <div className="flex items-center border rounded 2xl:h-[37.98px]">
-              <Input
-                placeholder="Filter by keyword"
-                className="border-0 focus:ring-0 2xl:!text-2xl"
-                value={table.search}
-                onChange={(e) => table.setSearch(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    table.submitSearch();
-                  }
-                }}
-              />
+             <div className="relative w-full">
+  <Input
+    placeholder="Filter by keyword"
+    className="border-0 focus:ring-0 2xl:!text-2xl pr-10"
+    value={table.search}
+    onChange={(e) => table.setSearch(e.target.value)}
+    onKeyDown={(e) => {
+      if (e.key === "Enter") {
+        table.submitSearch();
+      }
+    }}
+  />
+
+  {table.search && (
+    <button
+      type="button"
+      onClick={() => table.clearSearch()}
+      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
+    >
+      <X size={18} />
+    </button>
+  )}
+</div>
 
               <button
                 type="button"
@@ -150,6 +163,7 @@ const Shipments = () => {
             emptyMessage="No Shipment Found."
             selectAllInHeader
             hideRecordCount
+            
             selectedIds={table.selectedIds}
             onToggleRow={(id, checked) =>
               table.toggleSelect(Number(id), checked)
@@ -162,6 +176,7 @@ const Shipments = () => {
             isRowExpanded={isRowExpanded}
             sort={table.sort}
             onSortChange={table.setSort}
+            
             pagination={{
               currentPage,
               totalPages,
