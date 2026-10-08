@@ -24,7 +24,7 @@ import { useAlert } from "@/hooks/useAlert";
 
 export default function BlogTable() {
   const { blogs, loading, error } = useAppSelector(
-    (state: any) => state.storefront
+    (state: any) => state.storefront,
   );
   const posts = blogs?.data;
   const [activeTab, setActiveTab] = useState("published");
@@ -32,8 +32,8 @@ export default function BlogTable() {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
-   const { showAlert, Alert } = useAlert();
-const [deletePost, setDeletePost] = useState<any>(null);
+  const { showAlert, Alert } = useAlert();
+  const [deletePost, setDeletePost] = useState<any>(null);
   // const filteredPosts = posts?.filter((p: any) =>
   //   activeTab === "published" ? p.status === "published" : p.status === "draft"
   // );
@@ -43,17 +43,20 @@ const [deletePost, setDeletePost] = useState<any>(null);
       label: "View",
       onClick: () => {
         // Get the base URL from selected store
-        const selectedStore = JSON.parse(localStorage.getItem('availableStores') || '[]')
-          .find((store: any) => store.id === Number(localStorage.getItem('storeId')));
+        const selectedStore = JSON.parse(
+          localStorage.getItem("availableStores") || "[]",
+        ).find(
+          (store: any) => store.id === Number(localStorage.getItem("storeId")),
+        );
 
         if (selectedStore?.baseUrl && post?.slug) {
           // Open product page on storefront
-          window.open(`${selectedStore.baseUrl}/blogs/${post?.slug}`, '_blank');
+          window.open(`${selectedStore.baseUrl}/blogs/${post?.slug}`, "_blank");
         } else {
-         showAlert({
-  title: "Store or Blog Not Found",
-  message: "Store URL or blog not found.",
-});
+          showAlert({
+            title: "Store or Blog Not Found",
+            message: "Store URL or blog not found.",
+          });
         }
       },
     },
@@ -67,9 +70,6 @@ const [deletePost, setDeletePost] = useState<any>(null);
         setDeletePost(post);
         setOpenDeleteModal(true);
       },
-    },
-    {
-      label: "Unpublish",
     },
   ];
 
@@ -93,14 +93,15 @@ const [deletePost, setDeletePost] = useState<any>(null);
       <div className=" bg-white  rounded-md shadow-sm p-10 ">
         {/* Tabs */}
         <div className="flex border-b border-gray-200 mb-6">
-          {["published", "draft"].map((tab) => (
+          {["published"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`pb-3 px-4 text-xl 2xl:!text-2xl font-medium transition-colors ${activeTab === tab
+              className={`pb-3 px-4 text-xl 2xl:!text-2xl font-medium transition-colors ${
+                activeTab === tab
                   ? "text-blue-600 border-b-4 border-blue-600"
                   : "text-gray-500 hover:text-gray-700"
-                }`}
+              }`}
             >
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
             </button>
@@ -115,18 +116,6 @@ const [deletePost, setDeletePost] = useState<any>(null);
                 <Plus className="h-7 w-7" />
               </button>
             </Link>
-            <button title="More Actions" className="btn-outline-primary">
-              <MoreHorizontal className="h-7 w-7" />
-            </button>
-            <div className="flex items-center gap-2 ml-4">
-              <span className="text-sm font-medium text-gray-700 2xl:!text-2xl">
-                Blog visibility
-              </span>
-              <Switch
-                checked={visible}
-                onCheckedChange={() => setVisible(!visible)}
-              />
-            </div>
           </div>
         </div>
 
@@ -180,14 +169,16 @@ const [deletePost, setDeletePost] = useState<any>(null);
                     </Link>
                   </TableCell>
 
-                  <TableCell className="2xl:!text-2xl">{post.author || "—"}</TableCell>
+                  <TableCell className="2xl:!text-2xl">
+                    {post.author || "—"}
+                  </TableCell>
 
                   <TableCell className="2xl:!text-2xl">
                     {post.createdAt
                       ? new Date(post.createdAt).toLocaleString("en-US", {
-                        dateStyle: "medium",
-                        timeStyle: "short",
-                      })
+                          dateStyle: "medium",
+                          timeStyle: "short",
+                        })
                       : "N/A"}
                   </TableCell>
 
@@ -212,14 +203,6 @@ const [deletePost, setDeletePost] = useState<any>(null);
         </Table>
 
         {/* Footer */}
-        <div className="flex justify-end pt-4">
-          <a
-            href="#"
-            className="flex items-center text-sm text-blue-600 hover:text-blue-800"
-          >
-            View 10 <ChevronDown className="ml-1 h-4 w-4" />
-          </a>
-        </div>
       </div>
       <ConfirmationModal
         open={openDeleteModal}
@@ -230,7 +213,7 @@ const [deletePost, setDeletePost] = useState<any>(null);
         onConfirm={async () => {
           try {
             const resultAction = await dispatch(
-              deleteBlog({ id: deletePost?.id })
+              deleteBlog({ id: deletePost?.id }),
             );
 
             if ((resultAction as any).meta.requestStatus === "fulfilled") {
@@ -240,10 +223,10 @@ const [deletePost, setDeletePost] = useState<any>(null);
                 refetchBlogs(dispatch);
               }, 700);
             }
-          } catch (err) { }
+          } catch (err) {}
         }}
       />
-         <Alert /> 
+      <Alert />
     </div>
   );
 }
