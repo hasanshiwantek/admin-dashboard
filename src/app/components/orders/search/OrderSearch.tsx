@@ -156,22 +156,22 @@ const OrderSearch = () => {
                   { label: "Credit Card", value: "credit_card" },
                 ],
               },
-              {
-                id: "shippingProvider",
-                label: "Shipping provider",
-                options: [
-                  { label: "USPS", value: "USPS" },
-                  { label: "Fed Ex", value: "FedEx" },
-                ],
-              },
-              {
-                id: "shippingMethod",
-                label: "Shipping Method",
-                options: [
-                  { label: "Standard", value: "standard" },
-                  { label: "Flat Rate", value: "flat_rate" },
-                ],
-              },
+              // {
+              //   id: "shippingProvider",
+              //   label: "Shipping provider",
+              //   options: [
+              //     { label: "USPS", value: "USPS" },
+              //     { label: "Fed Ex", value: "FedEx" },
+              //   ],
+              // },
+              // {
+              //   id: "shippingMethod",
+              //   label: "Shipping Method",
+              //   options: [
+              //     { label: "Standard", value: "standard" },
+              //     { label: "Flat Rate", value: "flat_rate" },
+              //   ],
+              // },
               // {
               //   id: "fulfillmentSource",
               //   label: "Fulfillment source",
