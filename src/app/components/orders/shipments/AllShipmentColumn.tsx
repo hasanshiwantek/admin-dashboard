@@ -60,7 +60,7 @@ const AllShipmentColumn = ({
     {
       key: "id",
       header: "Shipment ID",
-      width: "140px",
+      width: "125px",
        sortable: true,
       render: (shipment) => (
         <span className="2xl:!text-2xl whitespace-nowrap font-normal!">
@@ -99,7 +99,7 @@ const AllShipmentColumn = ({
     {
       key: "trackingNumber",
       header: "Shipping tracking number",
-      width: "350px",
+      width: "310px",
 
       render: (shipment) => {
         const shipmentId = shipment?.id;
@@ -122,7 +122,7 @@ const AllShipmentColumn = ({
 
             <button
               type="button"
-              className="btn-outline-primary whitespace-nowrap shrink-0 ml-2 2xl:h-[32.5px]"
+              className="btn-outline-primary whitespace-nowrap shrink-0 ml-2 mr-7 2xl:h-[32.5px]"
               onClick={() => onSaveTracking(shipment)}
               disabled={isSaving}
             >
@@ -137,7 +137,7 @@ const AllShipmentColumn = ({
     {
       key: "orderDate",
       header: "Order Date",
-      width: "150px",
+      width: "110px",
 
       render: (shipment) => {
         if (!shipment?.orderDate) {
