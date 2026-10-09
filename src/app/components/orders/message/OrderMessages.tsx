@@ -262,7 +262,7 @@ export default function OrderMessages() {
 
                                         {/* From */}
                                         <TableCell className="!text-xl 2xl:!text-[1.4rem] text-gray-600">
-                                            {isFromCustomer ? "[Customer]" : message.from}
+                                            {isFromCustomer ? "[Customer]" : message?.senderType}
                                         </TableCell>
 
                                         {/* Date Sent */}
