@@ -10,6 +10,7 @@ interface OrderActionsDropdownProps {
   actions: {
     label: string;
     onClick?: () => void;
+    disabled?: boolean;
   }[];
   trigger: ReactNode;
 }
@@ -32,6 +33,7 @@ const OrderActionsDropdown: React.FC<OrderActionsDropdownProps> = ({
         {actions.map((action, index) => (
           <DropdownMenuItem
             key={index}
+            disabled={action.disabled}
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();

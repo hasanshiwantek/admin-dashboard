@@ -57,3 +57,5 @@ export enum DateTimeFormat {
   /** Example: 14:30 */
   TIME_24H = "HH:mm",
 }
+
+export const STOREFRONT_URL = "https://server-blink.vercel.app";
