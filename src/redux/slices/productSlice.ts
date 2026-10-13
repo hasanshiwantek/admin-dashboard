@@ -95,7 +95,7 @@ export const fetchAllPurchasableProducts = createAsyncThunk(
 );
 export const fetchFilterProducts = createAsyncThunk(
   "product/fetchFilterProducts",
-  async ({ category, isName }: { category: any; isName: string }, thunkAPI) => {
+  async ({ category, isName }: { category?: any; isName: string }, thunkAPI) => {
     try {
       const res = await axiosInstance.get(
         "dashboard/products/products-filter",

@@ -76,6 +76,7 @@ export default function BlogPage() {
   const id = params?.id; // will be undefined if it's a "create" page
 
   const [preview, setPreview] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
   const dispatch = useAppDispatch();
   // Watch file input
@@ -107,6 +108,7 @@ export default function BlogPage() {
     }
 
     try {
+      setLoading(true);
       const resultAction = id
         ? await dispatch(updateBlog({ id, data: formData }))
         : await dispatch(createBlog({ data: formData }));
@@ -123,6 +125,8 @@ export default function BlogPage() {
       }
     } catch (err) {
       console.error("🔥 Error dispatching:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -307,12 +311,18 @@ export default function BlogPage() {
           <button
             type="button"
             className="btn-outline-primary"
+            disabled={loading}
             onClick={handleDraftSave}
           >
-            Save Draft
+            {loading ? "Save Draft..." : "Save Draft"}
           </button>
-          <button type="button" className="btn-primary" onClick={handlePublish}>
-            {id ? "Update" : "Publish"}
+          <button
+            type="button"
+            className="btn-primary"
+            disabled={loading}
+            onClick={handlePublish}
+          >
+            {loading ? "Loading..." : id ? "Update" : "Publish"}
           </button>
         </div>
       </form>

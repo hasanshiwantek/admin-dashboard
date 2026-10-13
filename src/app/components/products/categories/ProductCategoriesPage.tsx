@@ -10,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
+import { findCategoryAncestors } from "@/lib/categoryUtils";
 import {
   deleteCategory,
   fetchCategories,
@@ -185,22 +186,6 @@ export default function ProductCategoriesPage() {
     dispatch(fetchCategories());
   }, [dispatch]);
 
-  const findPathToId = (
-    list: any[],
-    id: number,
-    path: number[] = [],
-  ): number[] | null => {
-    for (const item of list) {
-      const newPath = [...path, item.id];
-      if (item.id === id) return newPath;
-      if (item.subcategories?.length) {
-        const found = findPathToId(item.subcategories, id, newPath);
-        if (found) return found;
-      }
-    }
-    return null;
-  };
-
   const expandPath = (ids: number[]) => {
     setExpandedIds((prev) => {
       const next = new Set(prev);
@@ -235,7 +220,10 @@ export default function ProductCategoriesPage() {
                 value={{ id: parentId, path: "" }}
                 onChange={(val) => {
                   setParentCategory(val.id);
-                  const path = findPathToId(categories, val.id) ?? [];
+                  const path =
+                    findCategoryAncestors(categories, val.id)?.map(
+                      (c) => c.id,
+                    ) ?? [];
                   expandPath(path);
                   setHighlightId(val.id);
                 }}

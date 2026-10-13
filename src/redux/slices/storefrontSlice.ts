@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "@/lib/axiosInstance";
+import { errorMessage } from "@/utils/message";
 
 // StoreFront.ts
 
@@ -9,31 +10,33 @@ export const createWebpage = createAsyncThunk(
     try {
       const res = await axiosInstance.post(
         `dashboard/webpages/create-page`,
-        data
+        data,
       );
       return res.data;
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to add web page"
+        err.response?.data?.message || "Failed to add web page",
       );
     }
-  }
+  },
 );
 
 export const getWebPages = createAsyncThunk(
   "storefront/getWebPages",
   async (_, thunkAPI) => {
     try {
-      const res = await axiosInstance.get(`dashboard/webpages/dashboard-web-pages`);
+      const res = await axiosInstance.get(
+        `dashboard/webpages/dashboard-web-pages`,
+      );
       return res?.data?.data;
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to fetch web page"
+        err.response?.data?.message || "Failed to fetch web page",
       );
     }
-  }
+  },
 );
 
 export const getWebPageById = createAsyncThunk(
@@ -41,16 +44,16 @@ export const getWebPageById = createAsyncThunk(
   async ({ id }: { id: any }, thunkAPI) => {
     try {
       const res = await axiosInstance.get(
-        `dashboard/webpages/single-page/${id}`
+        `dashboard/webpages/single-page/${id}`,
       );
       return res?.data;
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to fetch web page"
+        err.response?.data?.message || "Failed to fetch web page",
       );
     }
-  }
+  },
 );
 
 export const updateWebPage = createAsyncThunk(
@@ -59,16 +62,16 @@ export const updateWebPage = createAsyncThunk(
     try {
       const res = await axiosInstance.put(
         `dashboard/webpages/update/${id}`,
-        data
+        data,
       );
       return res?.data;
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to update web page"
+        err.response?.data?.message || "Failed to update web page",
       );
     }
-  }
+  },
 );
 export const updateNavigation = createAsyncThunk(
   "storefront/updateNavigation",
@@ -76,16 +79,16 @@ export const updateNavigation = createAsyncThunk(
     try {
       const res = await axiosInstance.put(
         `dashboard/webpages/update-navigation/${id}`,
-        data
+        data,
       );
       return res?.data;
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to update web page"
+        err.response?.data?.message || "Failed to update web page",
       );
     }
-  }
+  },
 );
 
 export const deleteWebPage = createAsyncThunk(
@@ -97,10 +100,10 @@ export const deleteWebPage = createAsyncThunk(
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to delete web page"
+        err.response?.data?.message || "Failed to delete web page",
       );
     }
-  }
+  },
 );
 
 // ADD BLOG
@@ -111,12 +114,13 @@ export const createBlog = createAsyncThunk(
       const res = await axiosInstance.post(`dashboard/blogs/add-blog`, data);
       return res.data;
     } catch (err: any) {
+      errorMessage(err.response?.data?.error || err.response?.data?.message);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to create blog post"
+        err.response?.data?.message || "Failed to create blog post",
       );
     }
-  }
+  },
 );
 
 // ADD BLOG
@@ -129,10 +133,10 @@ export const fetchBlogs = createAsyncThunk(
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to fetch blog post"
+        err.response?.data?.message || "Failed to fetch blog post",
       );
     }
-  }
+  },
 );
 
 // FETCH BLOG BY ID
@@ -141,16 +145,16 @@ export const fetchBlogbyId = createAsyncThunk(
   async ({ id }: { id: any }, thunkAPI) => {
     try {
       const res = await axiosInstance.get(
-        `dashboard/blogs/get-blogSingle/${id}`
+        `dashboard/blogs/get-blogSingle/${id}`,
       );
       return res.data;
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to fetch blog post by id"
+        err.response?.data?.message || "Failed to fetch blog post by id",
       );
     }
-  }
+  },
 );
 
 // UPDATE BLOG
@@ -160,16 +164,17 @@ export const updateBlog = createAsyncThunk(
     try {
       const res = await axiosInstance.post(
         `dashboard/blogs/update-blog/${id}`,
-        data
+        data,
       );
       return res?.data;
     } catch (err: any) {
+      errorMessage(err.response?.data?.error || err.response?.data?.message);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to update blog"
+        err.response?.data?.message || "Failed to update blog",
       );
     }
-  }
+  },
 );
 
 export const deleteBlog = createAsyncThunk(
@@ -177,16 +182,16 @@ export const deleteBlog = createAsyncThunk(
   async ({ id }: { id: any }, thunkAPI) => {
     try {
       const res = await axiosInstance.delete(
-        `dashboard/blogs/delete-blog/${id}`
+        `dashboard/blogs/delete-blog/${id}`,
       );
       return res?.data;
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to delete blog"
+        err.response?.data?.message || "Failed to delete blog",
       );
     }
-  }
+  },
 );
 
 export const createLogo = createAsyncThunk(
@@ -198,10 +203,10 @@ export const createLogo = createAsyncThunk(
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to add logo"
+        err.response?.data?.message || "Failed to add logo",
       );
     }
-  }
+  },
 );
 
 export const fetchLogo = createAsyncThunk(
@@ -213,10 +218,10 @@ export const fetchLogo = createAsyncThunk(
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to fetch logo"
+        err.response?.data?.message || "Failed to fetch logo",
       );
     }
-  }
+  },
 );
 
 export const deleteLogo = createAsyncThunk(
@@ -224,16 +229,16 @@ export const deleteLogo = createAsyncThunk(
   async ({ id }: { id: any }, thunkAPI) => {
     try {
       const res = await axiosInstance.delete(
-        `dashboard/logos/delete-logo/${id}`
+        `dashboard/logos/delete-logo/${id}`,
       );
       return res?.data;
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to delete logo"
+        err.response?.data?.message || "Failed to delete logo",
       );
     }
-  }
+  },
 );
 
 export const addCarousel = createAsyncThunk(
@@ -242,16 +247,16 @@ export const addCarousel = createAsyncThunk(
     try {
       const res = await axiosInstance.post(
         `dashboard/carousels/add-crousel`,
-        data
+        data,
       );
       return res.data;
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to add carousel"
+        err.response?.data?.message || "Failed to add carousel",
       );
     }
-  }
+  },
 );
 
 export const fetchCarousal = createAsyncThunk(
@@ -263,10 +268,10 @@ export const fetchCarousal = createAsyncThunk(
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to fetch Carousal"
+        err.response?.data?.message || "Failed to fetch Carousal",
       );
     }
-  }
+  },
 );
 
 export const deleteCarousal = createAsyncThunk(
@@ -274,16 +279,16 @@ export const deleteCarousal = createAsyncThunk(
   async (id: any, thunkAPI) => {
     try {
       const res = await axiosInstance.delete(
-        `dashboard/carousels/delete-carousel/${id}`
+        `dashboard/carousels/delete-carousel/${id}`,
       );
       return res.data;
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to delete Carousal"
+        err.response?.data?.message || "Failed to delete Carousal",
       );
     }
-  }
+  },
 );
 
 export const createScripts = createAsyncThunk(
@@ -292,16 +297,16 @@ export const createScripts = createAsyncThunk(
     try {
       const res = await axiosInstance.post(
         `dashboard/scripts/add-script`,
-        data
+        data,
       );
       return res.data;
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to create scripts"
+        err.response?.data?.message || "Failed to create scripts",
       );
     }
-  }
+  },
 );
 
 export const fetchScripts = createAsyncThunk(
@@ -313,13 +318,11 @@ export const fetchScripts = createAsyncThunk(
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to fetch scripts"
+        err.response?.data?.message || "Failed to fetch scripts",
       );
     }
-  }
+  },
 );
-
-
 
 // Fetch script by ID
 export const fetchScriptById = createAsyncThunk(
@@ -330,10 +333,10 @@ export const fetchScriptById = createAsyncThunk(
       return res.data;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to fetch script"
+        err.response?.data?.message || "Failed to fetch script",
       );
     }
-  }
+  },
 );
 
 // Update script
@@ -343,17 +346,16 @@ export const updateScript = createAsyncThunk(
     try {
       const res = await axiosInstance.put(
         `dashboard/scripts/update-script/${id}`,
-        data
+        data,
       );
       return res.data;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to update script"
+        err.response?.data?.message || "Failed to update script",
       );
     }
-  }
+  },
 );
-
 
 // Delete script
 export const deleteScript = createAsyncThunk(
@@ -361,17 +363,16 @@ export const deleteScript = createAsyncThunk(
   async ({ id }: { id: any }, thunkAPI) => {
     try {
       const res = await axiosInstance.delete(
-        `dashboard/scripts/delete-script/${id}`
+        `dashboard/scripts/delete-script/${id}`,
       );
       return res.data;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to delete script"
+        err.response?.data?.message || "Failed to delete script",
       );
     }
-  }
+  },
 );
-
 
 // 2. Initial State
 const initialState = {

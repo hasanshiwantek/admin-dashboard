@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import {
   fetchAllProducts,
   fetchAllPurchasableProducts,
+  fetchFilterProducts,
 } from "@/redux/slices/productSlice";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { useAlert } from "@/hooks/useAlert";
@@ -30,14 +31,12 @@ export default function ProductSearchInput({ onSelect, register }: any) {
 
       try {
         const resultAction = await dispatch(
-          fetchAllProducts({
-            page: 1,
-            pageSize: 20,
-            search: search.trim(),
+          fetchFilterProducts({
+            isName: search.trim(),
           }),
         );
 
-        if (fetchAllProducts.fulfilled.match(resultAction)) {
+        if (fetchFilterProducts.fulfilled.match(resultAction)) {
           const payload = resultAction.payload as any;
           const list =
             payload?.data?.data ??
@@ -45,7 +44,7 @@ export default function ProductSearchInput({ onSelect, register }: any) {
             payload?.products?.data ??
             payload?.products ??
             [];
-          setFiltered(Array.isArray(list) ? list.slice(0, 10) : []);
+          setFiltered(Array.isArray(list) ? list : []);
         } else {
           setFiltered([]);
         }
