@@ -8,6 +8,7 @@ import {
 import {
   deleteProduct,
   deleteProductCategory,
+  exportProductByIdExcel,
   fetchAllProducts,
   setSelectedProducts,
   updateProduct,
@@ -216,7 +217,7 @@ const useAllProductsContainer = () => {
         if (updateProduct.fulfilled.match(result)) table.refetch();
       },
     },
-  
+
     {
       label: "Delete",
       onClick: () => {
@@ -356,7 +357,7 @@ const useAllProductsContainer = () => {
         }
       },
     },
-    
+
     {
       label: "Delete",
       onClick: () => {
@@ -383,24 +384,35 @@ const useAllProductsContainer = () => {
     router.push("/manage/products/bulk-edit");
   };
 
-  const handleExport = () => {
-    const selectedProducts = products?.filter((item: any) =>
-      selectedProductIds.includes(item.id),
-    );
+  const handleExportExcel = async () => {
+    const productIds = selectedProductIds;
 
-    const exportData = selectedProducts.map((item: any) => ({
-      ID: item.id,
-      SKU: item.sku,
-      Name: item.name,
-      Price: item.price,
-      Featured: item.isFeatured ? "Yes" : "No",
-      Visible: item.isVisible ? "Yes" : "No",
-    }));
+    if (!productIds.length) {
+      return;
+    }
 
-    const worksheet = XLSX.utils.json_to_sheet(exportData);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Products");
-    XLSX.writeFile(workbook, "products_export.xlsx");
+    try {
+      const { blob, filename } = await dispatch(
+        exportProductByIdExcel({
+          payload: {
+            product_ids: productIds,
+          },
+        }),
+      ).unwrap();
+
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch (error) {
+      console.error("Excel export failed:", error);
+    }
   };
   const productDeleteMessage =
     pendingDeleteProductIds.length === 1
@@ -425,7 +437,7 @@ const useAllProductsContainer = () => {
 
   const bulkActions = (
     <>
-      <button className="btn-outline-primary" onClick={handleExport}>
+      <button className="btn-outline-primary" onClick={handleExportExcel}>
         Export
       </button>
       <button className="btn-outline-primary" onClick={handlebulkEdit}>
@@ -483,7 +495,7 @@ const useAllProductsContainer = () => {
       setShowProductDeleteConfirm(false);
       setPendingDeleteProductIds([]);
     },
-    router
+    router,
   };
 };
 
