@@ -174,12 +174,10 @@ const ShipmentDetailRow = ({
           <div className="flex items-center gap-2">
             <IdCard className="w-5 h-5 text-gray-400 shrink-0" />
 
-            <span className="text-sm text-blue-400!">
+            <Link    href={`/manage/orders?orderIdFrom=${shipment?.orderId}&orderIdTo=${shipment?.orderId}&expand=${shipment?.orderId}`} className="text-[14px]! text-blue-400!">
               #
-              {replaceNullWithPlaceholder(
-                shipment?.order?.customer?.id
-              )}
-            </span>
+             {replaceNullWithPlaceholder(shipment?.orderId)}
+            </Link>
           </div>
 
           <div className="flex items-center gap-2">
@@ -329,14 +327,10 @@ const ShipmentDetailRow = ({
           </div>
         </div>
 
-        <div className="flex flex-col gap-3 min-w-0">
-          {shipment?.orderProducts?.length > 0 ? (
-            shipment.orderProducts.map(
-              (product: any, index: number) => (
-                 <div
-        key={index}
-        className="flex items-start gap-2"
-      >
+      <div className="flex flex-col gap-3 min-w-0">
+  {shipment?.order?.products?.length > 0 ? (
+    shipment.order.products.map((product: any, index: number) => (
+      <div key={product?.id ?? index} className="flex items-start gap-2">
         <IdCard className="w-5 h-5 text-gray-400 shrink-0 mt-0.5" />
 
         <div className="text-sm min-w-0">
@@ -358,13 +352,18 @@ const ShipmentDetailRow = ({
                 );
 
                 if (selectedStore?.baseUrl && product?.productUrl) {
+                  const baseUrl = selectedStore.baseUrl.replace(/\/+$/, "");
+                  const productUrl =
+                    product.productUrl === "/"
+                      ? ""
+                      : product.productUrl.startsWith("/")
+                        ? product.productUrl
+                        : `/${product.productUrl}`;
+
                   window.open(
-                    `${selectedStore.baseUrl.replace(/\/$/, "")}${
-                      product.productUrl === "/"
-                        ? product.productUrl.slice(1)
-                        : product.productUrl
-                    }`,
-                    "_blank"
+                    `${baseUrl}${productUrl}`,
+                    "_blank",
+                    "noopener,noreferrer"
                   );
                 } else {
                   showAlert({
@@ -375,23 +374,23 @@ const ShipmentDetailRow = ({
               }}
               className="text-[#6F8DFD]! font-light cursor-pointer hover:underline whitespace-normal break-words leading-snug"
             >
-              {replaceNullWithPlaceholder(product?.productName)}
+              {replaceNullWithPlaceholder(product?.name)}
             </span>
           </p>
-             
+
           <p className="text-sm">
-            {replaceNullWithPlaceholder(product?.sku)}
+            {replaceNullWithPlaceholder(product?.brand?.name, "—")}
+          </p>
+          <p className="text-sm">
+            {replaceNullWithPlaceholder(product?.sku, "—")}
           </p>
         </div>
-                </div>
-              )
-            )
-          ) : (
-            <p className="text-sm text-gray-500">
-              No shipped items found.
-            </p>
-          )}
-        </div>
+      </div>
+    ))
+  ) : (
+    <p className="text-sm text-gray-500">No shipped items found.</p>
+  )}
+</div>
       </div>
       <Alert />
     </div>

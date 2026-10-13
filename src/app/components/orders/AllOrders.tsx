@@ -18,6 +18,8 @@ import OrderNotesModal from "./edit/OrderNotesModal";
 import { ShipmentModal } from "./edit/ShipmentModal";
 import ShipmentModalForId from "./edit/ShipmentModalForId";
 import ShipmentsTableModal from "./edit/ShipmentsTableModal";
+import { X } from "lucide-react";
+import { IoFilterOutline } from "react-icons/io5";
 
 // Shared height so toolbar buttons, select and input line up
 const TOOLBAR_CONTROL = "h-14! py-4! my-0!";
@@ -135,23 +137,45 @@ const AllOrders = () => {
         Confirm
       </Button>
 
-      <Input
-        className={TOOLBAR_CONTROL}
-        placeholder="Filter by keyword"
-        value={table.search}
-        onChange={(e) => table.setSearch(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") table.submitSearch();
-        }}
-      />
-      <Button
-        className={`2xl:!text-2xl ${TOOLBAR_CONTROL}`}
-        onClick={table.submitSearch}
-        variant="outline"
-        size="xl"
+   <div className="flex items-center gap-0">
+  <div className="relative">
+    <Input
+      className={`${TOOLBAR_CONTROL} pr-10 rounded-r-none`}
+      placeholder="Filter by keyword"
+      value={table.search}
+      onChange={(e) => table.setSearch(e.target.value)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") table.submitSearch();
+      }}
+    />
+
+    {table.search && (
+      <button
+        type="button"
+        onClick={() => table.clearSearch()}
+        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
       >
-        Search
-      </Button>
+        <X size={18} />
+      </button>
+    )}
+  </div>
+
+  <button
+    type="button"
+    className={`btn-outline-primary ${TOOLBAR_CONTROL} rounded-l-none`}
+    onClick={() => table.submitSearch()}
+  >
+    <IoFilterOutline />
+  </button>
+</div>
+    <Button
+  className={`2xl:!text-2xl ${TOOLBAR_CONTROL}`}
+  onClick={() => router.push("/manage/orders/search")}
+  variant="outline"
+  size="xl"
+>
+  Search
+</Button>
       <Button
         className={`2xl:!text-2xl ${TOOLBAR_CONTROL}`}
         onClick={table.clearSearch}
