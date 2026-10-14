@@ -30,6 +30,7 @@ import {
   STATUS_MAP,
 } from "./constant";
 import { findCountry } from "./utils";
+import { downloadExport } from "@/redux/slices/exportSlice";
 
 /** Turn a thunk PDF payload into a Blob and open it in a new tab. */
 const openPdfBlob = (payload: any) => {
@@ -366,21 +367,19 @@ const useAllOrdersContainer = () => {
   };
 
   // ----- Export selected -----
-  const handleExport = () => {
+  const handleExport = async () => {
     if (!selectedOrders.length) return;
-    const exportData = selectedOrders.map((item: any) => ({
-      ID: item?.id,
-      "Order Number": item?.orderNumber,
-      "Customer Name": `${item?.billingInformation?.firstName} ${item?.billingInformation?.lastName}`,
-      "Customer Email": item?.customer?.email,
-      Status: item?.status,
-      "Total Amount": item?.totalAmount,
-      "Created At": item?.createdAt,
-    }));
-    const worksheet = XLSX.utils.json_to_sheet(exportData);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Orders");
-    XLSX.writeFile(workbook, "orders_export.xlsx");
+    const orderId = selectedOrders?.map((order) => order?.id);
+    try {
+      await downloadExport(dispatch, {
+        endpoint: "dashboard/orders/export-orders",
+        ids: orderId,
+        idField: "order_ids",
+        filenamePrefix: "orders",
+      });
+    } catch (error) {
+      console.error("Product export failed:", error);
+    }
   };
 
   // ----- Modal confirm handlers -----

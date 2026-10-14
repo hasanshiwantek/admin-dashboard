@@ -491,44 +491,7 @@ export const exportCsv = createAsyncThunk(
     }
   },
 );
-export const exportProductByIdExcel = createAsyncThunk(
-  "products/exportProductByIdExcel",
-  async ({ payload }: { payload: any }, thunkAPI) => {
-    try {
-      const response = await axiosInstance.post(
-        "dashboard/products/export-excel",
-        payload,
-        {
-          responseType: "blob",
-          signal: thunkAPI.signal,
-        },
-      );
 
-      const blob = response.data;
-
-      const today = new Date().toISOString().slice(0, 10);
-      let filename = `products-${today}.xlsx`;
-
-      const disposition = response.headers["content-disposition"];
-
-      if (disposition?.includes("filename=")) {
-        filename = disposition
-          .split("filename=")[1]
-          .split(";")[0]
-          .replace(/"/g, "")
-          .trim();
-      }
-
-      return { blob, filename };
-    } catch (error: any) {
-      if (thunkAPI.signal.aborted) {
-        return thunkAPI.rejectWithValue("Export cancelled");
-      }
-
-      return thunkAPI.rejectWithValue("Failed to export Excel");
-    }
-  },
-);
 // 2. Initial State
 const initialState = {
   products: [],
