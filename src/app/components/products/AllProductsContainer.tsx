@@ -8,7 +8,6 @@ import {
 import {
   deleteProduct,
   deleteProductCategory,
-  exportProductByIdExcel,
   fetchAllProducts,
   setSelectedProducts,
   updateProduct,
@@ -20,6 +19,7 @@ import OrderActionsDropdown from "../orders/OrderActionsDropdown";
 import AllProductsColumn from "./AllProductsColumn";
 import { BOOLEAN_FILTERS, ProductTabs } from "./constant";
 import { useAlert } from "@/hooks/useAlert";
+import { downloadExport } from "@/redux/slices/exportSlice";
 
 const useAllProductsContainer = () => {
   const allProducts = useAppSelector((state: any) => state.product.products);
@@ -384,34 +384,18 @@ const useAllProductsContainer = () => {
     router.push("/manage/products/bulk-edit");
   };
 
-  const handleExportExcel = async () => {
-    const productIds = selectedProductIds;
-
-    if (!productIds.length) {
-      return;
-    }
+  const handleExportProducts = async () => {
+    if (!selectedProductIds.length) return;
 
     try {
-      const { blob, filename } = await dispatch(
-        exportProductByIdExcel({
-          payload: {
-            product_ids: productIds,
-          },
-        }),
-      ).unwrap();
-
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-
-      link.href = url;
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      await downloadExport(dispatch, {
+        endpoint: "dashboard/products/export-csv",
+        ids: selectedProductIds,
+        idField: "product_ids",
+        filenamePrefix: "products",
+      });
     } catch (error) {
-      console.error("Excel export failed:", error);
+      console.error("Product export failed:", error);
     }
   };
   const productDeleteMessage =
@@ -437,7 +421,7 @@ const useAllProductsContainer = () => {
 
   const bulkActions = (
     <>
-      <button className="btn-outline-primary" onClick={handleExportExcel}>
+      <button className="btn-outline-primary" onClick={handleExportProducts}>
         Export
       </button>
       <button className="btn-outline-primary" onClick={handlebulkEdit}>
