@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import * as XLSX from "xlsx";
 import { useAlert } from "@/hooks/useAlert";
+import { downloadExport } from "@/redux/slices/exportSlice";
 
 export const CustomerTabs: TableTab[] = [
   {
@@ -131,10 +132,10 @@ const useAllCustomersContainer = () => {
 
   const deleteCustomerHandler = () => {
     if (!selectedCustomers || selectedCustomers.length === 0) {
- showAlert({
-  title: "No Customers Selected",
-  message: "No customers selected for deletion.",
-});
+      showAlert({
+        title: "No Customers Selected",
+        message: "No customers selected for deletion.",
+      });
       return;
     }
 
@@ -196,9 +197,9 @@ const useAllCustomersContainer = () => {
 
     if (!value || isNaN(Number(value))) {
       showAlert({
-  title: "Invalid Store Credit",
-  message: "Please enter a valid number for store credit.",
-});
+        title: "Invalid Store Credit",
+        message: "Please enter a valid number for store credit.",
+      });
       return;
     }
 
@@ -241,40 +242,19 @@ const useAllCustomersContainer = () => {
     }
   };
 
-  const handleExport = () => {
+  const handleExport = async () => {
     if (!selectedCustomers.length) return;
-
-    const selectedCustomer = customerList.filter((item: any) =>
-      selectedCustomers.some(
-        (selected: any) =>
-          Number(selected?.id || selected) === Number(item?.id),
-      ),
-    );
-
-    const exportData = selectedCustomer.map((item: any) => ({
-      ID: item?.id,
-      "First Name": item?.firstName,
-      "Last Name": item?.lastName,
-      Email: item?.email,
-      Phone: item?.phone,
-      Address: item?.addresses,
-      "Company Name": item?.companyName,
-      "Customer Group": item?.customerGroup,
-      "Store Credit": item?.storeCredit,
-      Country: item?.country,
-      State: item?.state,
-      "Tax Exempt Code": item?.taxExemptCode,
-      "Force Password Reset": item?.forcePasswordReset ? 1 : "",
-      "Receive Review Emails": item?.receiveReviewEmails ? 1 : "",
-      "Created At": item?.createdAt,
-      "Updated At": item?.updatedAt,
-    }));
-
-    const worksheet = XLSX.utils.json_to_sheet(exportData);
-    const workbook = XLSX.utils.book_new();
-
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Products");
-    XLSX.writeFile(workbook, "customer_export.xlsx");
+    const ids = selectedCustomers?.map((customer) => customer?.id);
+    try {
+      await downloadExport(dispatch, {
+        endpoint: "dashboard/customers/export",
+        ids: ids,
+        idField: "customer_ids",
+        filenamePrefix: "customers",
+      });
+    } catch (error) {
+      console.error("Customer export failed:", error);
+    }
   };
 
   return {
@@ -309,7 +289,7 @@ const useAllCustomersContainer = () => {
     updateCustomerGroupStatus,
     updateCustomerStoreCredit,
     router,
-     Alert,
+    Alert,
   };
 };
 
