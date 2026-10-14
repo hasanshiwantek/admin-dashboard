@@ -2,7 +2,7 @@ import { ColumnDef } from "@/components/ui/Table/types";
 import { Flag, Ellipsis } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import OrderActionsDropdown from "../OrderActionsDropdown";
-import { cn } from "@/lib/utils";
+import { cn, formatDateTime } from "@/lib/utils";
 
 interface OrderMessagesColumnProps {
   getRowActions: (message: any) => any[];
@@ -79,7 +79,7 @@ className={cn(
       width: "170px",
       render: (message) => (
         <span className="text-xl! 2xl:text-[1.4rem]! text-gray-600 whitespace-nowrap">
-          {formatDate(message.createdAt)}
+        {formatDateTime(message.createdAt)}
         </span>
       ),
     },
