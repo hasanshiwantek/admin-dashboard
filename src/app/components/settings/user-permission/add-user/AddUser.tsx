@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { UserRoles, UserRolesEnum } from "@/const/appConstants";
+import { RolesOptions, UserRolesEnum } from "@/const/appConstants";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { registerUser } from "@/redux/slices/authSlice";
 import { fetchPermissions } from "@/redux/slices/userPermission";
@@ -66,10 +66,6 @@ const AddUser = () => {
   });
 
   const selectedPermissions = watch("permissions") || [];
-  const roleOptions = Object.entries(UserRoles).map(([value, label]) => ({
-    value: Number(value),
-    label: String(label),
-  }));
 
   useEffect(() => {
     dispatch(fetchPermissions());
@@ -150,7 +146,7 @@ const AddUser = () => {
         "
               >
                 First Name:
-                <span className="ml-1 text-red-500">*</span>
+                <span className="ml-1 text-red-500!">*</span>
               </Label>
 
               <div className="flex flex-col">
@@ -180,7 +176,7 @@ const AddUser = () => {
                 />
 
                 {errors.firstName && (
-                  <span className="mt-1.5 text-[12px] leading-[16px] text-red-500">
+                  <span className="mt-1.5 text-[12px] leading-[16px] text-red-500!">
                     {errors.firstName.message}
                   </span>
                 )}
@@ -203,7 +199,7 @@ const AddUser = () => {
         "
               >
                 Last Name:
-                <span className="ml-1 text-red-500">*</span>
+                <span className="ml-1 text-red-500!">*</span>
               </Label>
 
               <div className="flex flex-col">
@@ -233,7 +229,7 @@ const AddUser = () => {
                 />
 
                 {errors.lastName && (
-                  <span className="mt-1.5 text-[12px] leading-[16px] text-red-500">
+                  <span className="mt-1.5 text-[12px] leading-[16px] text-red-500!">
                     {errors.lastName.message}
                   </span>
                 )}
@@ -256,7 +252,7 @@ const AddUser = () => {
         "
               >
                 Email:
-                <span className="ml-1 text-red-500">*</span>
+                <span className="ml-1 text-red-500!">*</span>
               </Label>
 
               <div className="flex flex-col">
@@ -291,7 +287,7 @@ const AddUser = () => {
                 />
 
                 {errors.email && (
-                  <span className="mt-1.5 text-[12px] leading-[16px] text-red-500">
+                  <span className="mt-1.5 text-[12px] leading-[16px] text-red-500!">
                     {errors.email.message}
                   </span>
                 )}
@@ -314,7 +310,7 @@ const AddUser = () => {
         "
               >
                 Phone Number:
-                <span className="ml-1 text-red-500">*</span>
+                <span className="ml-1 text-red-500!">*</span>
               </Label>
 
               <div className="flex flex-col">
@@ -344,7 +340,7 @@ const AddUser = () => {
                 />
 
                 {errors.phoneNumber && (
-                  <span className="mt-1.5 text-[12px] leading-[16px] text-red-500">
+                  <span className="mt-1.5 text-[12px] leading-[16px] text-red-500!">
                     {errors.phoneNumber.message}
                   </span>
                 )}
@@ -368,7 +364,7 @@ const AddUser = () => {
         "
       >
         Password:
-        <span className="ml-1 text-red-500">*</span>
+        <span className="ml-1 text-red-500!">*</span>
       </Label>
 
       <div className="flex flex-col">
@@ -401,7 +397,7 @@ const AddUser = () => {
         />
 
         {errors.password && (
-          <span className="mt-1.5 text-[12px] leading-[16px] text-red-500">
+          <span className="mt-1.5 text-[12px] leading-[16px] text-red-500!">
             {errors.password.message}
           </span>
         )}
@@ -425,7 +421,7 @@ const AddUser = () => {
         "
       >
         Confirm Password:
-        <span className="ml-1 text-red-500">*</span>
+        <span className="ml-1 text-red-500!">*</span>
       </Label>
 
       <div className="flex flex-col">
@@ -457,7 +453,7 @@ const AddUser = () => {
         />
 
         {errors.password_confirmation && (
-          <span className="mt-1.5 text-[12px] leading-[16px] text-red-500">
+          <span className="mt-1.5 text-[12px] leading-[16px] text-red-500!">
             {errors.password_confirmation.message}
           </span>
         )}
@@ -491,7 +487,7 @@ const AddUser = () => {
                       <SelectValue placeholder="Select user role" />
                     </SelectTrigger>
                     <SelectContent>
-                      {roleOptions.map((option) => (
+                      {RolesOptions.map((option) => (
                         <SelectItem
                           key={option.value}
                           value={String(option.value)}

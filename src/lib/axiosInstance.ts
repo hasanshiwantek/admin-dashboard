@@ -25,7 +25,8 @@ axiosInstance.interceptors.request.use((config) => {
 
 axiosInstance.interceptors.response.use(
   (response) => {
-    if (response.data?.message) {
+    // Requests can pass `silent: true` in their config to skip the toast
+    if (response.data?.message && !(response.config as any)?.silent) {
       successMessage(response.data.message);
     }
     return response;
