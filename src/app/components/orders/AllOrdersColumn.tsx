@@ -75,7 +75,7 @@ export default function AllOrdersColumn({
     {
       key: "device",
       header: "",
-      width: "65px",
+      width: "60px",
       render: (order) => {
         const isMobileOrTablet =
           order?.deviceType?.includes("Mobile") ||
@@ -103,7 +103,7 @@ export default function AllOrdersColumn({
     {
       key: "date",
       header: "Date",
-      width: "135px",
+      width: "130px",
       sortable: true,
       className: "2xl:!text-2xl",
       render: (order) =>
@@ -116,14 +116,14 @@ export default function AllOrdersColumn({
     {
       key: "id",
       header: "Order ID",
-      width: "90px",
+      width: "75px",
       sortable: true,
       className: "2xl:!text-2xl",
     },
     {
       key: "risk",
       header: "",
-      width: "75px",
+      width: "70px",
       render: (order) => {
         const orderCountryDetails = findCountry(order?.orderPlaceCountry);
         const risk = riskConfig[order?.payment?.risk_level];
@@ -170,7 +170,7 @@ export default function AllOrdersColumn({
     {
       key: "customer",
       header: "Customer",
-      width: "250px",
+      width: "230px",
       sortable: true,
       render: (order) => {
         const userType = order?.userType == "guest";
@@ -205,7 +205,7 @@ export default function AllOrdersColumn({
     {
       key: "status",
       header: "Status",
-      width: "255px",
+      width: "245px",
       sortable: true,
       render: (order) => {
         const currentStatus = statusOptions.find(
@@ -249,7 +249,7 @@ export default function AllOrdersColumn({
     {
       key: "total",
       header: "Total",
-      width: "145px",
+      width: "110px",
       sortable: true,
       render: (order) => {
         const userType = order?.userType == "guest";
