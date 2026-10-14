@@ -19,12 +19,27 @@ export enum ActionEnums {
 export enum UserRolesEnum {
   ADMIN = 1,
   USER = 2,
+  SALES_STAFF = 3,
+  SALES_MANAGER = 4,
+  STORE_ADMINISTRATOR = 5,
+  CUSTOM = 6,
 }
 
 export const UserRoles = {
   [UserRolesEnum.ADMIN]: "Admin",
   [UserRolesEnum.USER]: "User",
+  [UserRolesEnum.SALES_STAFF]: "Sales Staff",
+  [UserRolesEnum.SALES_MANAGER]: "Sales Manager",
+  [UserRolesEnum.STORE_ADMINISTRATOR]: "Store Administrator",
+  [UserRolesEnum.CUSTOM]: "Custom",
 };
+
+export const RolesOptions = Object.entries(UserRoles)
+  .map(([value, label]) => ({
+    value: Number(value),
+    label: String(label),
+  }))
+  .filter((option) => option.value !== UserRolesEnum.USER);
 
 export enum LocalStorageKeys {
   AvailableStores = "availableStores",

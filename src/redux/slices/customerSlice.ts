@@ -19,6 +19,24 @@ export const addCustomer = createAsyncThunk(
     }
   },
 );
+// CHECK CUSTOMER EMAIL THUNK
+export const checkCustomerEmail = createAsyncThunk(
+  "customer/checkCustomerEmail",
+  async ({ email }: { email: string }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.post(
+        `dashboard/customers/add-customer/check-email`,
+        { email },
+        { silent: true } as any,
+      );
+      return res.data;
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to check email",
+      );
+    }
+  },
+);
 // LOGIN AS CUSTOMER THUNK
 export const loginAsCustomer = createAsyncThunk(
   "customer/login-as-customer",

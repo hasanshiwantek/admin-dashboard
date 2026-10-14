@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { UserRoles, UserRolesEnum } from "@/const/appConstants";
+import { RolesOptions, UserRolesEnum } from "@/const/appConstants";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import {
   fetchAdminUserById,
@@ -60,19 +60,22 @@ const EditUser = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { register, handleSubmit, control, setValue, watch, reset } =
-    useForm<FormValues>({
-      defaultValues: {
-        userRole: UserRolesEnum.ADMIN,
-        permissions: [],
-      },
-    });
-  
+  const {
+    register,
+    handleSubmit,
+    control,
+    setValue,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm<FormValues>({
+    defaultValues: {
+      userRole: UserRolesEnum.ADMIN,
+      permissions: [],
+    },
+  });
+
   const selectedPermissions = watch("permissions") || [];
-  const roleOptions = Object.entries(UserRoles).map(([value, label]) => ({
-    value: Number(value),
-    label: String(label),
-  }));
 
   useEffect(() => {
     dispatch(fetchAdminUsers());
@@ -191,34 +194,54 @@ const EditUser = () => {
 
         <div className="bg-white border border-gray-200 rounded-sm">
           <div className="px-8 py-6">
-            <div className="flex items-center gap-3 mb-5">
+            <div className="flex items-start gap-3 mb-5">
               <Label
                 htmlFor="firstName"
-                className="text-[12px] text-gray-600 text-right w-[110px] shrink-0"
+                className="text-[12px] text-gray-600 text-right w-[110px] shrink-0 pt-2"
               >
                 First Name:
+                <span className="ml-1 text-red-500!">*</span>
               </Label>
-              <Input
-                id="firstName"
-                placeholder="John"
-                {...register("firstName")}
-                className="w-[280px] h-8 text-sm border-gray-300"
-              />
+              <div className="flex flex-col">
+                <Input
+                  id="firstName"
+                  placeholder="John"
+                  {...register("firstName", {
+                    required: "First name is required",
+                  })}
+                  className="w-[280px] h-8 text-sm border-gray-300"
+                />
+                {errors.firstName && (
+                  <span className="mt-1.5 text-[12px] leading-[16px] text-red-500!">
+                    {errors.firstName.message}
+                  </span>
+                )}
+              </div>
             </div>
 
-            <div className="flex items-center gap-3 mb-5">
+            <div className="flex items-start gap-3 mb-5">
               <Label
                 htmlFor="lastName"
-                className="text-[12px] text-gray-600 text-right w-[110px] shrink-0"
+                className="text-[12px] text-gray-600 text-right w-[110px] shrink-0 pt-2"
               >
                 Last Name:
+                <span className="ml-1 text-red-500!">*</span>
               </Label>
-              <Input
-                id="lastName"
-                placeholder="Doe"
-                {...register("lastName")}
-                className="w-[280px] h-8 text-sm border-gray-300"
-              />
+              <div className="flex flex-col">
+                <Input
+                  id="lastName"
+                  placeholder="Doe"
+                  {...register("lastName", {
+                    required: "Last name is required",
+                  })}
+                  className="w-[280px] h-8 text-sm border-gray-300"
+                />
+                {errors.lastName && (
+                  <span className="mt-1.5 text-[12px] leading-[16px] text-red-500!">
+                    {errors.lastName.message}
+                  </span>
+                )}
+              </div>
             </div>
 
             <div className="flex items-center gap-3 mb-5">
@@ -238,19 +261,29 @@ const EditUser = () => {
               />
             </div>
 
-            <div className="flex items-center gap-3 mb-5">
+            <div className="flex items-start gap-3 mb-5">
               <Label
                 htmlFor="phoneNumber"
-                className="text-[12px] text-gray-600 text-right w-[110px] shrink-0"
+                className="text-[12px] text-gray-600 text-right w-[110px] shrink-0 pt-2"
               >
                 Phone Number:
+                <span className="ml-1 text-red-500!">*</span>
               </Label>
-              <Input
-                id="phoneNumber"
-                placeholder="+92 300 1234567"
-                {...register("phoneNumber")}
-                className="w-[280px] h-8 text-sm border-gray-300"
-              />
+              <div className="flex flex-col">
+                <Input
+                  id="phoneNumber"
+                  placeholder="+92 300 1234567"
+                  {...register("phoneNumber", {
+                    required: "Phone number is required",
+                  })}
+                  className="w-[280px] h-8 text-sm border-gray-300"
+                />
+                {errors.phoneNumber && (
+                  <span className="mt-1.5 text-[12px] leading-[16px] text-red-500!">
+                    {errors.phoneNumber.message}
+                  </span>
+                )}
+              </div>
             </div>
 
             {/* <div className="flex items-center gap-3 mb-5">
@@ -499,7 +532,7 @@ const EditUser = () => {
                       <SelectValue placeholder="Select user role" />
                     </SelectTrigger>
                     <SelectContent>
-                      {roleOptions.map((option) => (
+                      {RolesOptions.map((option) => (
                         <SelectItem
                           key={option.value}
                           value={String(option.value)}
