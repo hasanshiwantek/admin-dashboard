@@ -378,7 +378,7 @@ const useAllOrdersContainer = () => {
         filenamePrefix: "orders",
       });
     } catch (error) {
-      console.error("Product export failed:", error);
+      console.error("Orders export failed:", error);
     }
   };
 
