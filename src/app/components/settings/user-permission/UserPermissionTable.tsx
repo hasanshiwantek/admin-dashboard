@@ -1,5 +1,6 @@
 "use client";
 
+import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
 import {
   Table,
   TableBody,
@@ -18,28 +19,50 @@ import {
 } from "@/redux/slices/userPermission";
 import { Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function UserPermissionTable() {
   const dispatch = useAppDispatch();
   const { adminUsers, loading, permissionGroups } = useAppSelector(
     (state) => state?.userPermission,
   );
+const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
+const [selectedUser, setSelectedUser] = useState<{
+  id: string;
+  name: string;
+} | null>(null);
+
+const [deleteLoading, setDeleteLoading] = useState(false);
   useEffect(() => {
     dispatch(fetchAdminUsers());
     dispatch(fetchPermissions());
   }, []);
 
-  const handleDelete = async (id: string, name: string) => {
-    if (confirm(`Are you sure you want to delete "${name}"?`)) {
-      // TODO: dispatch delete action here
-      // dispatch(deleteAdminUser(id));
-      await dispatch(deleteAdminUser({ id: Number(id) }));
-      dispatch(fetchAdminUsers());
-    }
-  };
+ const handleDelete = (id: string, name: string) => {
+  setSelectedUser({ id, name });
+  setDeleteModalOpen(true);
+};
+const handleConfirmDelete = async () => {
+  if (!selectedUser) return;
 
+  try {
+    setDeleteLoading(true);
+
+    await dispatch(
+      deleteAdminUser({ id: Number(selectedUser.id) })
+    ).unwrap();
+
+    await dispatch(fetchAdminUsers());
+
+    setDeleteModalOpen(false);
+    setSelectedUser(null);
+  } catch (error) {
+    console.error("Delete failed:", error);
+  } finally {
+    setDeleteLoading(false);
+  }
+};
   return (
     <div className="w-full bg-white border border-[#dcdcdc] rounded-sm overflow-hidden">
       <div>
@@ -91,19 +114,19 @@ export default function UserPermissionTable() {
                 >
                   {/* Name */}
                   <TableCell className="py-4 px-4 align-top whitespace-nowrap">
-                    <span className="!text-[15px] !text-[#34313f] capitalize">
+                    <span className="text-[15px]! text-[#34313f]! font-normal! capitalize">
                       {item.name || "-"}
                     </span>
                   </TableCell>
 
                   {/* Email */}
                   <TableCell className="py-4 px-4 align-top">
-                    <span className="!text-[16px]  ">{item.email}</span>
+                    <span className="text-[16px]! font-normal!  ">{item.email}</span>
                   </TableCell>
 
                   {/* User Role */}
                   <TableCell className="py-4 px-4 align-top">
-                    <span className="!text-[16px]  ">
+                    <span className="text-[16px]! font-normal!  ">
                       {UserRoles[item.userRole as keyof typeof UserRoles] ||
                         "-"}
                     </span>
@@ -111,7 +134,7 @@ export default function UserPermissionTable() {
 
                   {/* Date */}
                   <TableCell className="py-4 px-4 align-top whitespace-nowrap">
-                    <span className="!text-[15px] !text-[#34313f]">
+                    <span className="text-[15px]! text-[#34313f]! font-normal!">
                       {formatDateTime(
                         item.created_at,
                         DateTimeFormat.ORDINAL_DATE_TIME,
@@ -155,6 +178,15 @@ export default function UserPermissionTable() {
           </TableBody>
         </Table>
       </div>
+      <ConfirmationModal
+  open={deleteModalOpen}
+  onOpenChange={setDeleteModalOpen}
+  onConfirm={handleConfirmDelete}
+  loading={deleteLoading}
+    variant="warning"
+  title="Delete User?"
+  description={`Are you sure you want to delete "${selectedUser?.name}"? This action cannot be undone.`}
+/>
     </div>
   );
 }
