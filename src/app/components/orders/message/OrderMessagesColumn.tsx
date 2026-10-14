@@ -2,6 +2,7 @@ import { ColumnDef } from "@/components/ui/Table/types";
 import { Flag, Ellipsis } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import OrderActionsDropdown from "../OrderActionsDropdown";
+import { cn } from "@/lib/utils";
 
 interface OrderMessagesColumnProps {
   getRowActions: (message: any) => any[];
@@ -27,11 +28,14 @@ export default function OrderMessagesColumn({
 
         return (
           <span
-            className={`text-xl 2xl:text-[1.4rem] ${
-              isUnread && isFromCustomer
-                ? "font-semibold text-gray-900"
-                : "text-gray-700"
-            }`}
+         
+className={cn(
+  "text-xl 2xl:text-[1.4rem]",
+  isUnread && isFromCustomer
+    ? "font-semibold text-gray-900"
+    : "text-gray-700"
+)}
+
           >
             {message.subject}
           </span>
