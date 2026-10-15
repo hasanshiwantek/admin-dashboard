@@ -34,10 +34,9 @@ import AppTabs from "@/components/ui/AppTabs/AppTabs";
 import PageTitle from "@/components/ui/PageTitle";
 import { Control, useForm, useWatch } from "react-hook-form";
 import Form from "@/components/form/Form";
-import {
-  defaultValues,
-} from "./constant";
+import { defaultValues } from "./constant";
 import InputField from "@/components/form/InputField";
+import { SocialSharingSettings } from "./SocialSharingSettings";
 type StoreSettingsFormValues = Record<string, never>;
 
 // FormField Component
@@ -361,39 +360,6 @@ export const StoreSettings = ({
   const { control, handleSubmit, reset, getValues } = useForm({
     defaultValues: defaultValues,
   });
-
-  // Fetch settings on component mount
-  useEffect(() => {
-    dispatch(fetchStoreSettings());
-  }, [dispatch]);
-
-  // ✅ Add this useEffect to sync activeTab with URL changes
-  useEffect(() => {
-    const tabFromUrl = searchParams.get("tab");
-    if (tabFromUrl && tabFromUrl !== activeTab) {
-      setActiveTab(tabFromUrl);
-    }
-  }, [searchParams]); // Re-run when URL changes
-
-  // ✅ Add: Tab change handler with URL update
-  const handleTabChange = (newTab: string) => {
-    setActiveTab(newTab);
-
-    const view = searchParams.get("view");
-    const setting = searchParams.get("setting");
-    router.push(
-      `/manage/settings?view=${view}&setting=${setting}&tab=${newTab}`,
-    );
-  };
-
-  // 🆕 State for Date & Timezone settings
-  const [dateTimezoneSettings, setDateTimezoneSettings] = useState({
-    timezone: "",
-    enableDstCorrection: false,
-    displayDateFormat: "",
-    extendedDisplayDateFormat: "",
-  });
-
   const tabs = [
     {
       key: "website",
@@ -408,11 +374,7 @@ export const StoreSettings = ({
     {
       key: "share",
       label: "Share",
-      content: (
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <p className="text-gray-600">Share settings content goes here...</p>
-        </div>
-      ),
+      content: <SocialSharingSettings control={control} />,
     },
     // {
     //   key: "date-timezone",
@@ -445,6 +407,26 @@ export const StoreSettings = ({
       content: <MiscellaneousSettings control={control} />,
     },
   ];
+
+  // ✅ Add: Tab change handler with URL update
+  const handleTabChange = (newTab: string) => {
+    setActiveTab(newTab);
+
+    const view = searchParams.get("view");
+    const setting = searchParams.get("setting");
+    router.push(
+      `/manage/settings?view=${view}&setting=${setting}&tab=${newTab}`,
+    );
+  };
+
+  // 🆕 State for Date & Timezone settings
+  const [dateTimezoneSettings, setDateTimezoneSettings] = useState({
+    timezone: "",
+    enableDstCorrection: false,
+    displayDateFormat: "",
+    extendedDisplayDateFormat: "",
+  });
+
   // // Update state when storeSettings data is loaded
   useEffect(() => {
     if (!storeSettings) return;
@@ -469,7 +451,6 @@ export const StoreSettings = ({
       // dateTimezone: values.dateTimezone,
     };
   };
-
   const handleSave = async () => {
     const payload = preparePayload();
     try {
@@ -558,6 +539,18 @@ export const StoreSettings = ({
       console.error("Error saving settings:", error);
     }
   };
+  // Fetch settings on component mount
+  useEffect(() => {
+    dispatch(fetchStoreSettings());
+  }, [dispatch]);
+
+  // ✅ Add this useEffect to sync activeTab with URL changes
+  useEffect(() => {
+    const tabFromUrl = searchParams.get("tab");
+    if (tabFromUrl && tabFromUrl !== activeTab) {
+      setActiveTab(tabFromUrl);
+    }
+  }, [searchParams]); // Re-run when URL changes
 
   // Show loading state while fetching
   if (settingsLoader) {
