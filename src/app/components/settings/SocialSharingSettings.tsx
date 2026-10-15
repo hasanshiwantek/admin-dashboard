@@ -142,38 +142,6 @@ export const SocialSharingSettings = ({ control }: { control?: any }) => {
           )}
         </div>
 
-        {/* Right: Preview */}
-        {/* <div className="flex-1 flex justify-center lg:justify-end">
-          <div className="relative w-full max-w-sm border border-gray-200 bg-gray-50">
-            <div className="absolute left-2 top-8 flex flex-col gap-1">
-              <div className="w-8 h-8 bg-[#1877F2] flex items-center justify-center text-white text-xs">
-                f
-              </div>
-              <div className="w-8 h-8 bg-[#1DA1F2] flex items-center justify-center text-white text-xs">
-                t
-              </div>
-              <div className="w-8 h-8 bg-[#0A66C2] flex items-center justify-center text-white text-xs">
-                in
-              </div>
-              <div className="w-8 h-8 bg-gray-400 flex items-center justify-center text-white text-xs">
-                p
-              </div>
-              <div className="w-8 h-8 bg-orange-500 flex items-center justify-center text-white text-xs">
-                +
-              </div>
-            </div>
-            <div className="pl-12 p-4">
-              <p className="text-xs text-gray-500 mb-2">Jan. 12, 2014</p>
-              <p className="text-sm font-medium mb-3">
-                7 key e-commerce metrics for measuring your performance and
-                planning for 2014 success
-              </p>
-              <div className="bg-gray-300 h-32 flex items-center justify-center text-xs text-gray-600">
-                Statistics / Sales preview
-              </div>
-            </div>
-          </div>
-        </div> */}
       </div>
     </div>
   );
