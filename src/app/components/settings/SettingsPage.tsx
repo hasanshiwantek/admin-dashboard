@@ -5,6 +5,8 @@ import { ChevronRight } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { StoreSettings } from "./StoreSettings";
+import PageLayout from "@/components/ui/PageLayout";
+import PageTitle from "@/components/ui/PageTitle";
 
 const SettingsPage = () => {
   //   const setupItems = [
@@ -50,51 +52,51 @@ const SettingsPage = () => {
   const initialTab = searchParams.get("tab") || "website";
 
   const generalItems = [
-    // {
-    //   id: "website",
-    //   title: "Website",
-    //   description:
-    //     "Physical dimension settings, search engine optimization, HTTPS, search engine robots",
-    // },
-    // {
-    //   id: "display",
-    //   title: "Display",
-    //   description:
-    //     "Settings related to displaying products, categories, control panel etc.",
-    // },
-    // {
-    //   id: "share",
-    //   title: "Share",
-    //   description: "Social sharing settings on product pages and blog posts",
-    // },
-    // {
-    //   id: "date-timezone",
-    //   title: "Date & Timezone",
-    //   description: "Timezone, DST correction, display date format",
-    // },
-    // {
-    //   id: "url-structure",
-    //   title: "URL structure",
-    //   description: "Product, category and web pages URL settings",
-    // },
-    // {
-    //   id: "search",
-    //   title: "Search",
-    //   description: "Default product sort, default content sort, search logic",
-    //   isNew: true,
-    // },
-    // {
-    //   id: "security",
-    //   title: "Security & Privacy",
-    //   description:
-    //     "Security & privacy settings for storefront and control panel",
-    // },
-    // {
-    //   id: "misc",
-    //   title: "Miscellaneous",
-    //   description:
-    //     "Email settings, advanced store settings, order settings, throttler",
-    // },
+    {
+      id: "website",
+      title: "Website",
+      description:
+        "Physical dimension settings, search engine optimization, HTTPS, search engine robots",
+    },
+    {
+      id: "display",
+      title: "Display",
+      description:
+        "Settings related to displaying products, categories, control panel etc.",
+    },
+    {
+      id: "share",
+      title: "Share",
+      description: "Social sharing settings on product pages and blog posts",
+    },
+    {
+      id: "date-timezone",
+      title: "Date & Timezone",
+      description: "Timezone, DST correction, display date format",
+    },
+    {
+      id: "url-structure",
+      title: "URL structure",
+      description: "Product, category and web pages URL settings",
+    },
+    {
+      id: "search",
+      title: "Search",
+      description: "Default product sort, default content sort, search logic",
+      isNew: true,
+    },
+    {
+      id: "security",
+      title: "Security & Privacy",
+      description:
+        "Security & privacy settings for storefront and control panel",
+    },
+    {
+      id: "misc",
+      title: "Miscellaneous",
+      description:
+        "Email settings, advanced store settings, order settings, throttler",
+    },
     {
       id: "ship",
       title: "Shipping",
@@ -190,13 +192,10 @@ const SettingsPage = () => {
   };
 
   return (
-    <div className="min-h-screen  p-8">
+    <PageLayout>
       {currentView === "main" ? (
-        <div className="">
-          <h1 className=" mb-6 !font-extralight 2xl:!text-[3.2rem]">
-            Settings
-          </h1>
-
+        <div>
+          <PageTitle title={"Settings"} hideActionButton />
           {/* <div className="relative mb-6">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-6 h-6 text-gray-400" />
             <Input
@@ -319,7 +318,7 @@ const SettingsPage = () => {
           />
         </>
       )}
-    </div>
+    </PageLayout>
   );
 };
 
