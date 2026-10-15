@@ -9,49 +9,10 @@ import Form from "@/components/form/Form";
 import InputField from "@/components/form/InputField";
 import SelectField from "@/components/form/fields/SelectField";
 import CheckboxField from "@/components/form/fields/CheckboxField";
+import { Button } from "@/components/ui/button";
+import { dateFormatOptions, DateTimezoneValues, extendedDateFormatOptions, timezoneOptions } from "./constant";
 
-type DateTimezoneValues = {
-  timezone: string;
-  daylightSaving: boolean;
-  dateFormat: string;
-  extendedDateFormat: string;
-};
 
-const timezoneOptions = [
-  {
-    value: "Europe/London",
-    label: "Western Europe Time, Casablanca (GMT)",
-  },
-  {
-    value: "America/New_York",
-    label: "Eastern Time, New York (GMT-05:00)",
-  },
-  {
-    value: "Asia/Karachi",
-    label: "Pakistan Standard Time (GMT+05:00)",
-  },
-];
-
-const dateFormatOptions = [
-  { value: "mmm-dd-yyyy", label: "Jul 24th 2020" },
-  { value: "mm-dd-yyyy", label: "07/24/2020" },
-  { value: "dd-mm-yyyy", label: "24/07/2020" },
-];
-
-const extendedDateFormatOptions = [
-  {
-    value: "long",
-    label: "Jul 24th 2020 @ 3:49 AM",
-  },
-  {
-    value: "short",
-    label: "07/24/2020 3:49 AM",
-  },
-  {
-    value: "24-hour",
-    label: "24/07/2020 03:49",
-  },
-];
 
 const DateTimezoneSection = () => {
   const [showSettings, setShowSettings] = useState(false);
@@ -86,21 +47,22 @@ const DateTimezoneSection = () => {
       </p>
 
       <div className="flex flex-wrap items-center gap-x-12 gap-y-4">
-        <button
-          type="button"
-          onClick={() => setShowSettings((current) => !current)}
-          aria-expanded={showSettings}
-          className="inline-flex items-center text-[16px]! gap-2 text-blue-600 hover:underline"
-        >
-          {showSettings ? "Hide format settings" : "Show format settings"}
+       <Button
+  type="button"
+  variant="ghost"
+  onClick={() => setShowSettings((current) => !current)}
+  aria-expanded={showSettings}
+  className="inline-flex items-center gap-2 text-[16px]! text-blue-600 hover:underline"
+>
+  {showSettings ? "Hide format settings" : "Show format settings"}
 
-          <ChevronDown
-            size={18}
-            className={`transition-transform ${
-              showSettings ? "rotate-180" : ""
-            }`}
-          />
-        </button>
+  <ChevronDown
+    size={18}
+    className={`transition-transform ${
+      showSettings ? "rotate-180" : ""
+    }`}
+  />
+</Button>
 
         <button
           type="button"

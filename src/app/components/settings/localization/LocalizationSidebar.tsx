@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 
 type Section = {
   id: string;
@@ -22,19 +23,18 @@ const LocalizationSidebar = ({
           const active = activeSection === section.id;
 
           return (
-            <button
+            <div
               key={section.id}
-              type="button"
               onClick={() => onSectionClick(section.id)}
               aria-current={active ? "location" : undefined}
-              className={`border-l-2 px-5 py-3 text-left text-[16px]! transition-colors ${
+              className={cn(`border-l-2 cursor-pointer px-5 py-3 text-left text-[16px]! transition-colors ${
                 active
                   ? "border-blue-600 text-blue-600"
                   : "border-transparent text-[#303747] hover:text-blue-600"
-              }`}
+              }`)}
             >
               {section.label}
-            </button>
+            </div>
           );
         })}
       </nav>
