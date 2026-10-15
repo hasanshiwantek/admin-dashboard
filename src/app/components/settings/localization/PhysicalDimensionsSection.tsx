@@ -8,43 +8,10 @@ import { useForm } from "react-hook-form";
 import Form from "@/components/form/Form";
 import InputField from "@/components/form/InputField";
 import SelectField from "@/components/form/fields/SelectField";
+import { decimalPlacesOptions, factoringDimensionOptions, lengthOptions, PhysicalDimensionsValues, weightOptions } from "./constant";
 
-type PhysicalDimensionsValues = {
-  weightMeasurement: string;
-  lengthMeasurement: string;
-  thousandsToken: string;
-  decimalToken: string;
-  decimalPlaces: string;
-  factoringDimension: string;
-};
 
-const weightOptions = [
-  { value: "ounces", label: "Ounces" },
-  { value: "pounds", label: "Pounds" },
-  { value: "grams", label: "Grams" },
-  { value: "kilograms", label: "Kilograms" },
-];
 
-const lengthOptions = [
-  { value: "inches", label: "Inches" },
-  { value: "feet", label: "Feet" },
-  { value: "centimeters", label: "Centimeters" },
-  { value: "meters", label: "Meters" },
-];
-
-const decimalPlacesOptions = [
-  { value: "0", label: "0" },
-  { value: "1", label: "1" },
-  { value: "2", label: "2" },
-  { value: "3", label: "3" },
-  { value: "4", label: "4" },
-];
-
-const factoringDimensionOptions = [
-  { value: "product_depth", label: "Product depth" },
-  { value: "product_width", label: "Product width" },
-  { value: "product_height", label: "Product height" },
-];
 
 const PhysicalDimensionsSection = () => {
   const [showSettings, setShowSettings] = useState(false);

@@ -4,6 +4,14 @@ export type DateTimezoneValues = {
   dateFormat: string;
   extendedDateFormat: string;
 };
+export type PhysicalDimensionsValues = {
+  weightMeasurement: string;
+  lengthMeasurement: string;
+  thousandsToken: string;
+  decimalToken: string;
+  decimalPlaces: string;
+  factoringDimension: string;
+};
 
 export const timezoneOptions = [
   {
@@ -39,4 +47,32 @@ export const dateFormatOptions = [
     value: "24-hour",
     label: "24/07/2020 03:49",
   },
+];
+
+export const weightOptions = [
+  { value: "ounces", label: "Ounces" },
+  { value: "pounds", label: "Pounds" },
+  { value: "grams", label: "Grams" },
+  { value: "kilograms", label: "Kilograms" },
+];
+
+export const lengthOptions = [
+  { value: "inches", label: "Inches" },
+  { value: "feet", label: "Feet" },
+  { value: "centimeters", label: "Centimeters" },
+  { value: "meters", label: "Meters" },
+];
+
+export const decimalPlacesOptions = [
+  { value: "0", label: "0" },
+  { value: "1", label: "1" },
+  { value: "2", label: "2" },
+  { value: "3", label: "3" },
+  { value: "4", label: "4" },
+];
+
+export const factoringDimensionOptions = [
+  { value: "product_depth", label: "Product depth" },
+  { value: "product_width", label: "Product width" },
+  { value: "product_height", label: "Product height" },
 ];
