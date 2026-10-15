@@ -55,6 +55,10 @@
   --color-text-muted: var(--text-muted);
   --color-border-light: var(--border-light);
   --color-background-light: var(--background-light);
+  --color-text-heading-light:var(--text-heading-light);
+  --color-text-primary-light:var( --text-primary-light);
+  --color-background-light: var(--background-light);
+  --color-text-secondary: var(--text-secondary);
 }
 
 :root {
@@ -112,6 +116,10 @@
   --text-muted: #6b7280;
   --border-light: #e5e7eb;
   --background-light: #f8f9fb;
+   --text-heading-light: #313440;
+   --text-primary-light: #172033;
+   --background-light: #F5F6FC;
+   --text-secondary: #5E637A;
 }
 
 *::before,

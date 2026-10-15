@@ -19,6 +19,7 @@ import OrderActionsDropdown from "../orders/OrderActionsDropdown";
 import AllProductsColumn from "./AllProductsColumn";
 import { BOOLEAN_FILTERS, ProductTabs } from "./constant";
 import { useAlert } from "@/hooks/useAlert";
+import { downloadExport } from "@/redux/slices/exportSlice";
 
 const useAllProductsContainer = () => {
   const allProducts = useAppSelector((state: any) => state.product.products);
@@ -216,7 +217,7 @@ const useAllProductsContainer = () => {
         if (updateProduct.fulfilled.match(result)) table.refetch();
       },
     },
-  
+
     {
       label: "Delete",
       onClick: () => {
@@ -356,7 +357,7 @@ const useAllProductsContainer = () => {
         }
       },
     },
-    
+
     {
       label: "Delete",
       onClick: () => {
@@ -383,24 +384,19 @@ const useAllProductsContainer = () => {
     router.push("/manage/products/bulk-edit");
   };
 
-  const handleExport = () => {
-    const selectedProducts = products?.filter((item: any) =>
-      selectedProductIds.includes(item.id),
-    );
+  const handleExportProducts = async () => {
+    if (!selectedProductIds.length) return;
 
-    const exportData = selectedProducts.map((item: any) => ({
-      ID: item.id,
-      SKU: item.sku,
-      Name: item.name,
-      Price: item.price,
-      Featured: item.isFeatured ? "Yes" : "No",
-      Visible: item.isVisible ? "Yes" : "No",
-    }));
-
-    const worksheet = XLSX.utils.json_to_sheet(exportData);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Products");
-    XLSX.writeFile(workbook, "products_export.xlsx");
+    try {
+      await downloadExport(dispatch, {
+        endpoint: "dashboard/products/export-csv",
+        ids: selectedProductIds,
+        idField: "product_ids",
+        filenamePrefix: "products",
+      });
+    } catch (error) {
+      console.error("Product export failed:", error);
+    }
   };
   const productDeleteMessage =
     pendingDeleteProductIds.length === 1
@@ -425,7 +421,7 @@ const useAllProductsContainer = () => {
 
   const bulkActions = (
     <>
-      <button className="btn-outline-primary" onClick={handleExport}>
+      <button className="btn-outline-primary" onClick={handleExportProducts}>
         Export
       </button>
       <button className="btn-outline-primary" onClick={handlebulkEdit}>
@@ -483,7 +479,7 @@ const useAllProductsContainer = () => {
       setShowProductDeleteConfirm(false);
       setPendingDeleteProductIds([]);
     },
-    router
+    router,
   };
 };
 

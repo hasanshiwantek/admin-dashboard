@@ -95,7 +95,10 @@ export const fetchAllPurchasableProducts = createAsyncThunk(
 );
 export const fetchFilterProducts = createAsyncThunk(
   "product/fetchFilterProducts",
-  async ({ category, isName }: { category?: any; isName: string }, thunkAPI) => {
+  async (
+    { category, isName }: { category?: any; isName: string },
+    thunkAPI,
+  ) => {
     try {
       const res = await axiosInstance.get(
         "dashboard/products/products-filter",
@@ -393,7 +396,6 @@ export const importCsv = createAsyncThunk(
   },
 );
 
-
 export const exportCsv = createAsyncThunk(
   "products/exportCsv",
   async (
@@ -444,10 +446,7 @@ export const exportCsv = createAsyncThunk(
               linesCount += (incoming.match(/\n/g) || []).length;
 
               const rowsSoFar = Math.max(0, linesCount - 1);
-              percent = Math.min(
-                92,
-                Math.round((rowsSoFar * 100) / totalRows),
-              );
+              percent = Math.min(92, Math.round((rowsSoFar * 100) / totalRows));
             } else if (totalBytes > 0) {
               percent = Math.min(99, Math.round((loaded * 100) / totalBytes));
             } else if (loaded > 0) {
@@ -492,6 +491,7 @@ export const exportCsv = createAsyncThunk(
     }
   },
 );
+
 // 2. Initial State
 const initialState = {
   products: [],

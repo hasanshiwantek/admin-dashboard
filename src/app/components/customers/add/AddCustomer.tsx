@@ -23,6 +23,7 @@ import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { Country, State } from "country-state-city";
 import { useRouter, useParams } from "next/navigation";
 import {
+  checkCustomerEmail,
   fetchCustomerById,
   updateCustomer,
 } from "@/redux/slices/customerSlice";
@@ -38,6 +39,9 @@ const AddCustomer = () => {
   const [saveAndAddAnother, setSaveAndAddAnother] = useState(false);
   const [passwordMismatch, setPasswordMismatch] = useState(false);
     const { showAlert, Alert } = useAlert();
+  const [emailError, setEmailError] = useState("");
+  const [emailChecking, setEmailChecking] = useState(false);
+  const [checkedEmail, setCheckedEmail] = useState("");
   const [formData, setFormData] = useState<any>({
     firstName: "",
     lastName: "",
@@ -109,8 +113,35 @@ const AddCustomer = () => {
     }
   }, [id, isEdit]);
 
+  // Returns true when the email is available (always true in edit mode)
+  const checkEmail = async (email: string) => {
+    if (isEdit || !email) return true;
+    if (email === checkedEmail) return !emailError;
+
+    setEmailChecking(true);
+    try {
+      const res: any = await dispatch(checkCustomerEmail({ email }));
+      const isAvailable =
+        res.meta.requestStatus === "fulfilled" && res.payload?.status;
+      const message = isAvailable
+        ? ""
+        : res.payload?.message || "This email cannot be used.";
+      setEmailError(message);
+      setCheckedEmail(email);
+      return !!isAvailable;
+    } finally {
+      setEmailChecking(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const isEmailAvailable = await checkEmail(formData.email);
+    if (!isEmailAvailable) {
+      setSaveAndAddAnother(false);
+      return;
+    }
 
     const payload = {
       firstName: formData.firstName,
@@ -160,6 +191,8 @@ const AddCustomer = () => {
             country: "",
           });
           setSaveAndAddAnother(false); // reset flag
+          setCheckedEmail("");
+          setEmailError("");
         } else {
           setTimeout(() => {
             router.push("/manage/customers/");
@@ -257,9 +290,25 @@ const AddCustomer = () => {
                   type="email"
                   placeholder=""
                   value={formData.email}
-                  onChange={(e) => updateField("email", e.target.value)}
+                  onChange={(e) => {
+                    updateField("email", e.target.value);
+                    setEmailError("");
+                    setCheckedEmail("");
+                  }}
+                  onBlur={(e) => {
+                    if (e.target.checkValidity()) checkEmail(e.target.value);
+                  }}
+                  aria-invalid={!!emailError}
                   required
                 />
+                {emailChecking && (
+                  <p className="text-sm text-muted-foreground">
+                    Checking email...
+                  </p>
+                )}
+                {emailError && (
+                  <p className="text-sm text-red-500!">{emailError}</p>
+                )}
               </div>
 
               <div className="space-y-1">
@@ -587,7 +636,7 @@ const AddCustomer = () => {
             </button>
           </Link>
           <button
-            disabled={loading}
+            disabled={loading || emailChecking || !!emailError}
             type="button"
             className="btn-outline-primary"
             onClick={() => {
@@ -603,7 +652,11 @@ const AddCustomer = () => {
             {loading ? "Saving..." : "Save and add another"}
           </button>
 
-          <button disabled={loading} type="submit" className="btn-primary">
+          <button
+            disabled={loading || emailChecking || !!emailError}
+            type="submit"
+            className="btn-primary"
+          >
             {loading ? "Saving..." : isEdit ? "Update Customer" : "Add Customer"}
           </button>
         </div>
