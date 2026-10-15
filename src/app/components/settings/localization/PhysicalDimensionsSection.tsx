@@ -8,7 +8,8 @@ import { useForm } from "react-hook-form";
 import Form from "@/components/form/Form";
 import InputField from "@/components/form/InputField";
 import SelectField from "@/components/form/fields/SelectField";
-import { decimalPlacesOptions, factoringDimensionOptions, lengthOptions, PhysicalDimensionsValues, weightOptions } from "./constant";
+import { decimalPlacesOptions, factoringDimensionOptions, lengthOptions,  weightOptions } from "./constant";
+import { PhysicalDimensionsValues } from "./type";
 
 
 

@@ -10,7 +10,8 @@ import InputField from "@/components/form/InputField";
 import SelectField from "@/components/form/fields/SelectField";
 import CheckboxField from "@/components/form/fields/CheckboxField";
 import { Button } from "@/components/ui/button";
-import { dateFormatOptions, DateTimezoneValues, extendedDateFormatOptions, timezoneOptions } from "./constant";
+import { dateFormatOptions, extendedDateFormatOptions, timezoneOptions } from "./constant";
+import { DateTimezoneValues } from "./type";
 
 
 

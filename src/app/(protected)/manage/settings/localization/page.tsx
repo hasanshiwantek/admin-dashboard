@@ -12,10 +12,11 @@ import StorefrontLanguagesSection from "@/app/components/settings/localization/S
 import PhysicalDimensionsSection from "@/app/components/settings/localization/PhysicalDimensionsSection";
 import DateTimezoneSection from "@/app/components/settings/localization/DateTimezoneSection";
 import { Button } from "@/components/ui/button";
+import { LocalizationFormValues } from "./type";
+import { sections } from "./constant";
+import PageTitle from "@/components/ui/PageTitle";
 
-type LocalizationFormValues = {
-  country: string;
-};
+
 
 const LocalizationPage = () => {
   const router = useRouter();
@@ -27,12 +28,7 @@ const LocalizationPage = () => {
     },
   });
 
-  const sections = [
-    { id: "country", label: "Country" },
-    { id: "languages", label: "Storefront Languages" },
-    { id: "dimensions", label: "Physical dimensions" },
-    { id: "timezone", label: "Date and timezone" },
-  ];
+
   const localizationSections = [
     { id: "country", component: <CountrySection /> },
     { id: "languages", component: <StorefrontLanguagesSection /> },
@@ -66,9 +62,13 @@ const LocalizationPage = () => {
           <span>Settings</span>
         </Button>
 
-        <h1 className="mb-8 text-[36px] font-light leading-tight text-[#172033]">
-          Localization
-        </h1>
+       <PageTitle
+  title="Localization"
+  hideActionButton
+  titleClassName="mb-8 text-[36px] font-light leading-tight text-[#172033]"
+  containerClassName="mb-0"
+  textContainerClassName="mb-0"
+/>
 
         <Form
           form={form}
