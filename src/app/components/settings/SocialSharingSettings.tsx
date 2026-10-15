@@ -12,6 +12,8 @@ import {
   Pin,
 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 type ShareId =
   | "facebook"
@@ -32,7 +34,12 @@ const SHARE_CONFIG: {
   { id: "twitter", icon: Twitter, color: "bg-[#1DA1F2]" },
   { id: "linkedin", icon: Linkedin, color: "bg-[#0A66C2]" },
   { id: "pinterest", icon: Pin, color: "bg-[#E60023]" },
-  { id: "facebook-like", icon: ThumbsUp, color: "text-[#1877F2]", iconOnly: true },
+  {
+    id: "facebook-like",
+    icon: ThumbsUp,
+    color: "text-[#1877F2]",
+    iconOnly: true,
+  },
   { id: "email", icon: Mail, color: "bg-slate-500" },
   { id: "print", icon: Printer, color: "bg-slate-500" },
 ];
@@ -73,16 +80,18 @@ export const SocialSharingSettings = ({ control }: { control?: any }) => {
               const Icon = btn.icon;
               const isActive = active[btn.id];
               return (
-                <button
+                <div
                   key={btn.id}
-                  type="button"
+                  //   type="button"
                   onClick={() => toggle(btn.id)}
-                  className={`w-20 h-20 flex items-center justify-center text-white transition-colors ${
-                    isActive ? btn.color : "bg-gray-300"
-                  }`}
+                  className={cn(
+                    `w-20 h-20 flex items-center justify-center cursor-pointer text-white transition-colors ${
+                      isActive ? btn.color : "bg-gray-300"
+                    }`,
+                  )}
                 >
                   <Icon className="w-10 h-10" />
-                </button>
+                </div>
               );
             })}
           </div>
@@ -103,8 +112,8 @@ export const SocialSharingSettings = ({ control }: { control?: any }) => {
                         ? btn.color
                         : "text-gray-400"
                       : isActive
-                      ? `${btn.color} text-white`
-                      : "bg-gray-300 text-white"
+                        ? `${btn.color} text-white`
+                        : "bg-gray-300 text-white"
                   }`}
                 >
                   <Icon className="w-10 h-10" />
@@ -141,7 +150,6 @@ export const SocialSharingSettings = ({ control }: { control?: any }) => {
             </div>
           )}
         </div>
-
       </div>
     </div>
   );
