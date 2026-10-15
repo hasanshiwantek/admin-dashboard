@@ -82,7 +82,6 @@ export const SocialSharingSettings = ({ control }: { control?: any }) => {
               return (
                 <div
                   key={btn.id}
-                  //   type="button"
                   onClick={() => toggle(btn.id)}
                   className={cn(
                     `w-20 h-20 flex items-center justify-center cursor-pointer text-white transition-colors ${
