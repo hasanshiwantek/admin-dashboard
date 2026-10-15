@@ -14,7 +14,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { ShareId } from "./constant";
+import { ShareId } from "./type";
 
 
 

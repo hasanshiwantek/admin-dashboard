@@ -20,14 +20,7 @@ export enum WebsiteField {
   WwwRedirect = "wwwRedirect",
   RobotsTxt = "robotsTxt",
 }
-export type ShareId =
-  | "facebook"
-  | "twitter"
-  | "linkedin"
-  | "pinterest"
-  | "facebook-like"
-  | "email"
-  | "print";
+
 // Field name constants (optional but keeps things consistent)
 export enum DisplayField {
   ProductBreadcrumbs = "productBreadcrumbs",
