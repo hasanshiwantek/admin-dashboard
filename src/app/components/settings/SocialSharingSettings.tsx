@@ -14,15 +14,9 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { ShareId } from "./constant";
 
-type ShareId =
-  | "facebook"
-  | "twitter"
-  | "linkedin"
-  | "pinterest"
-  | "facebook-like"
-  | "email"
-  | "print";
+
 
 const SHARE_CONFIG: {
   id: ShareId;
