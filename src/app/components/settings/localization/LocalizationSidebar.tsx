@@ -1,15 +1,8 @@
 import { cn } from "@/lib/utils";
+import { LocalizationSidebarProps } from "./type";
 
-type Section = {
-  id: string;
-  label: string;
-};
 
-type LocalizationSidebarProps = {
-  sections: Section[];
-  activeSection: string;
-  onSectionClick: (id: string) => void;
-};
+
 
 const LocalizationSidebar = ({
   sections,
@@ -25,6 +18,7 @@ const LocalizationSidebar = ({
           return (
             <div
               key={section.id}
+               
               onClick={() => onSectionClick(section.id)}
               aria-current={active ? "location" : undefined}
               className={cn(`border-l-2 cursor-pointer px-5 py-3 text-left text-[16px]! transition-colors ${

@@ -63,3 +63,37 @@ export const factoringDimensionOptions = [
   { value: "product_width", label: "Product width" },
   { value: "product_height", label: "Product height" },
 ];
+
+export const defaultValues = {
+      weightMeasurement: "ounces",
+      lengthMeasurement: "inches",
+      thousandsToken: ",",
+      decimalToken: ".",
+      decimalPlaces: "2",
+      factoringDimension: "product_depth",
+    }
+export const  countryDefaultValue = {
+      country: "United States",
+    }
+  export const TimedefaultValues = {
+      timezone: "Europe/London",
+      daylightSaving: false,
+      dateFormat: "mmm-dd-yyyy",
+      extendedDateFormat: "long",
+    }
+export const storeFrontLanguage = {
+    id: 1,
+    channel: "New Ecom Store",
+    type: "Stencil",
+    defaultLanguage: "English (en)",
+    additionalLanguages: "NA",
+  }
+  
+export enum PhysicalDimensionFields {
+  WEIGHT_MEASUREMENT = "weightMeasurement",
+  LENGTH_MEASUREMENT = "lengthMeasurement",
+  THOUSANDS_TOKEN = "thousandsToken",
+  DECIMAL_TOKEN = "decimalToken",
+  DECIMAL_PLACES = "decimalPlaces",
+  FACTORING_DIMENSION = "factoringDimension",
+}

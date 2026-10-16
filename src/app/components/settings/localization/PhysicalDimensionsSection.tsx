@@ -8,9 +8,11 @@ import { useForm } from "react-hook-form";
 import Form from "@/components/form/Form";
 import InputField from "@/components/form/InputField";
 import SelectField from "@/components/form/fields/SelectField";
-import { decimalPlacesOptions, factoringDimensionOptions, lengthOptions,  weightOptions } from "./constant";
+import { decimalPlacesOptions, defaultValues, factoringDimensionOptions, lengthOptions,  weightOptions } from "./constant";
 import { PhysicalDimensionsValues } from "./type";
-
+import { Button } from "@/components/ui/button";
+import { PhysicalDimensionFields } from "./constant"; 
+import { Label } from "@/components/ui/label";
 
 
 
@@ -18,15 +20,18 @@ const PhysicalDimensionsSection = () => {
   const [showSettings, setShowSettings] = useState(false);
 
   const form = useForm<PhysicalDimensionsValues>({
-    defaultValues: {
-      weightMeasurement: "ounces",
-      lengthMeasurement: "inches",
-      thousandsToken: ",",
-      decimalToken: ".",
-      decimalPlaces: "2",
-      factoringDimension: "product_depth",
-    },
+    defaultValues:defaultValues
   });
+ const handleSetStandardFormats = () => {
+  form.reset({
+    [PhysicalDimensionFields.WEIGHT_MEASUREMENT]: "ounces",
+    [PhysicalDimensionFields.LENGTH_MEASUREMENT]: "inches",
+    [PhysicalDimensionFields.THOUSANDS_TOKEN]: ",",
+    [PhysicalDimensionFields.DECIMAL_TOKEN]: ".",
+    [PhysicalDimensionFields.DECIMAL_PLACES]: "2",
+    [PhysicalDimensionFields.FACTORING_DIMENSION]: "product_depth",
+  });
+};
 
   const onSubmit = (values: PhysicalDimensionsValues) => {
     console.log("Physical dimensions:", values);
@@ -55,44 +60,37 @@ const PhysicalDimensionsSection = () => {
       </p>
 
       <div className="flex flex-wrap items-center gap-x-12 gap-y-4">
-        <button
-          type="button"
-          onClick={() => setShowSettings((current) => !current)}
-          aria-expanded={showSettings}
-          className="inline-flex items-center text-[16px]! gap-2 text-blue-600 hover:underline"
-        >
-          {showSettings ? "Hide format settings" : "Show format settings"}
+    <Button
+  type="button"
+  variant="ghost"
+  onClick={() => setShowSettings((current) => !current)}
+  aria-expanded={showSettings}
+  className="inline-flex items-center gap-2 text-[16px]! text-blue-600 hover:underline"
+>
+  {showSettings ? "Hide format settings" : "Show format settings"}
 
-          <ChevronDown
-            size={18}
-            className={`transition-transform ${
-              showSettings ? "rotate-180" : ""
-            }`}
-          />
-        </button>
-
-        <button
-          type="button"
-          className="text-blue-600 text-[16px]! hover:underline"
-          onClick={() => {
-            form.reset({
-              weightMeasurement: "ounces",
-              lengthMeasurement: "inches",
-              thousandsToken: ",",
-              decimalToken: ".",
-              decimalPlaces: "2",
-              factoringDimension: "product_depth",
-            });
-          }}
-        >
-          Set standard formats for United States
-        </button>
+  <ChevronDown
+    size={18}
+    className={`transition-transform ${
+      showSettings ? "rotate-180" : ""
+    }`}
+  />
+</Button>
+<Button
+  type="button"
+  variant="link"
+  onClick={handleSetStandardFormats}
+  className="h-auto p-0 text-[16px]! text-blue-600"
+>
+  Set standard formats for United States
+</Button>
+       
       </div>
 
       {showSettings && (
         <div className="mt-10 max-w-[520px] space-y-6">
           <InputField
-            name="weightMeasurement"
+           name = {PhysicalDimensionFields.WEIGHT_MEASUREMENT}
             label="Weight measurement"
             Component={SelectField}
             control={form.control}
@@ -103,7 +101,7 @@ const PhysicalDimensionsSection = () => {
           />
 
           <InputField
-            name="lengthMeasurement"
+            name = {PhysicalDimensionFields.LENGTH_MEASUREMENT}
             label="Length measurement"
             Component={SelectField}
             control={form.control}
@@ -114,7 +112,7 @@ const PhysicalDimensionsSection = () => {
           />
 
           <InputField
-            name="thousandsToken"
+            name= {PhysicalDimensionFields.THOUSANDS_TOKEN}
             label="Thousands token"
             control={form.control}
             layout="vertical"
@@ -123,7 +121,7 @@ const PhysicalDimensionsSection = () => {
           />
 
           <InputField
-            name="decimalToken"
+            name={PhysicalDimensionFields.DECIMAL_TOKEN}
             label="Decimal token"
             control={form.control}
             layout="vertical"
@@ -132,7 +130,7 @@ const PhysicalDimensionsSection = () => {
           />
 
           <InputField
-            name="decimalPlaces"
+            name={PhysicalDimensionFields.DECIMAL_PLACES}
             label="Decimal places"
             Component={SelectField}
             control={form.control}
@@ -143,9 +141,9 @@ const PhysicalDimensionsSection = () => {
           />
 
           <div className="flex items-center gap-3">
-            <label className="font-medium text-[#172033]">
+            <Label className="font-medium text-[#172033]">
               Factoring dimension
-            </label>
+            </Label>
 
             <HelpCircle
               size={18}
@@ -154,7 +152,7 @@ const PhysicalDimensionsSection = () => {
           </div>
 
           <InputField
-            name="factoringDimension"
+            name={PhysicalDimensionFields.FACTORING_DIMENSION}
             Component={SelectField}
             control={form.control}
             layout="vertical"

@@ -9,10 +9,11 @@ import { Country } from "country-state-city";
 import Form from "@/components/form/Form";
 import InputField from "@/components/form/InputField";
 import SelectField from "@/components/form/fields/SelectField";
+import { CountryFormValues } from "./type";
+import { countryDefaultValue } from "./constant";
+import { Label } from "@/components/ui/label";
 
-type CountryFormValues = {
-  country: string;
-};
+
 
 const CountrySection = () => {
   const countries = useMemo(
@@ -27,9 +28,7 @@ const CountrySection = () => {
   );
 
   const form = useForm<CountryFormValues>({
-    defaultValues: {
-      country: "United States",
-    },
+    defaultValues:countryDefaultValue
   });
 
   const onSubmit = (values: CountryFormValues) => {
@@ -50,12 +49,12 @@ const CountrySection = () => {
 
       <div className="max-w-[520px]">
         <div className="mb-2 flex items-center gap-3">
-          <label
-            htmlFor="country"
-            className="text-[16px]! font-medium text-slate-500"
-          >
-            Default country
-          </label>
+      <Label
+  htmlFor="country"
+  className="text-[16px]! font-medium text-slate-500"
+>
+  Default country
+</Label>
 
           <HelpCircle
             size={15}

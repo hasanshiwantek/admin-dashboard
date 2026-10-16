@@ -10,8 +10,9 @@ import InputField from "@/components/form/InputField";
 import SelectField from "@/components/form/fields/SelectField";
 import CheckboxField from "@/components/form/fields/CheckboxField";
 import { Button } from "@/components/ui/button";
-import { dateFormatOptions, extendedDateFormatOptions, timezoneOptions } from "./constant";
+import { dateFormatOptions, extendedDateFormatOptions, TimedefaultValues, timezoneOptions } from "./constant";
 import { DateTimezoneValues } from "./type";
+import PageTitle from "@/components/ui/PageTitle";
 
 
 
@@ -19,12 +20,7 @@ const DateTimezoneSection = () => {
   const [showSettings, setShowSettings] = useState(false);
 
   const form = useForm<DateTimezoneValues>({
-    defaultValues: {
-      timezone: "Europe/London",
-      daylightSaving: false,
-      dateFormat: "mmm-dd-yyyy",
-      extendedDateFormat: "long",
-    },
+    defaultValues: TimedefaultValues
   });
 
   const onSubmit = (values: DateTimezoneValues) => {
@@ -39,9 +35,13 @@ const DateTimezoneSection = () => {
       className="pb-0"
       bodyClassName="gap-0 rounded-md border border-[#E1E4ED] bg-white p-6 shadow-sm sm:p-8"
     >
-      <h2 className="mb-5 text-[24px]! font-medium! text-slate-500">
-        Date and timezone
-      </h2>
+     <PageTitle
+  title="Date and timezone"
+  hideActionButton
+  titleClassName="mb-5 text-[24px]! font-medium! text-slate-500"
+  containerClassName="mb-0"
+  textContainerClassName="mb-0"
+/>
 
       <p className="mb-12 text-[32px]! font-light leading-tight text-slate-500">
         Jul 24th 2020 @ 3:49 AM, (GMT -05:00)
