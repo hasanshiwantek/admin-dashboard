@@ -87,7 +87,7 @@ export function InputField<
           )}
         >
           {label}
-          {required && <span className="text-red-500">*</span>}
+          {required && <span className="text-red-500!">*</span>}
         </Label>
       ) : (
         horizontal && <span />

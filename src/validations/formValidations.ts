@@ -56,3 +56,13 @@ export const bannerSchema = object({
     .oneOf(Object.values(BannerPlacement), "Choose a placement")
     .required("Choose a placement"),
 });
+export const storeProfileSchema = object({
+  storeDisplayName: string().required("Store display name is required"),
+  address: string().required("Address is required"),
+  addressType: string().required("Address type is required"),
+  email:
+    string()
+    .email("Please enter a valid email address")
+    .required("Email is required"),
+  phone:string().default(""),
+});
