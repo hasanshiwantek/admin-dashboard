@@ -9,7 +9,7 @@ export type ShareId =
   | "facebook-like"
   | "email"
   | "print";
-  
+
 export type SectionProps = {
   title: string;
   formatField: UrlStructureField;

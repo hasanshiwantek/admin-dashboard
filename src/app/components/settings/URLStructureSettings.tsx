@@ -1,12 +1,9 @@
-import { Control } from "react-hook-form";
 import { URL_STRUCTURE_SECTIONS, UrlStructureField } from "./constant";
 import { UrlSettingSection } from "./UrlSettingSection";
+import { useFormContext } from "@/components/form/Form";
 
-export const URLStructureSettings = ({
-  control,
-}: {
-  control: Control<any>;
-}) => {
+export const URLStructureSettings = () => {
+  const { control } = useFormContext();
   return (
     <div className="space-y-5">
       {URL_STRUCTURE_SECTIONS.map((section, index) => (

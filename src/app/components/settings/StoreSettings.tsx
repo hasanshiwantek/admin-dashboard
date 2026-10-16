@@ -336,6 +336,44 @@ export const XFrameOptionsSettings = ({
     ]}
   />
 );
+
+const tabs = [
+  {
+    key: "website",
+    label: "Website",
+    content: <WebsiteSettings />,
+  },
+  {
+    key: "display",
+    label: "Display",
+    content: <DisplaySettings />,
+  },
+  {
+    key: "share",
+    label: "Share",
+    content: <SocialSharingSettings />,
+  },
+  {
+    key: "url-structure",
+    label: "URL Structure",
+    content: <URLStructureSettings />,
+  },
+  {
+    key: "search",
+    label: "Search",
+    content: <SearchSettings />,
+  },
+  {
+    key: "security",
+    label: "Security & Privacy",
+    content: <SecurityPrivacySettings />,
+  },
+  {
+    key: "misc",
+    label: "Miscellaneous",
+    content: <MiscellaneousSettings />,
+  },
+];
 // StoreSettings Component
 export const StoreSettings = ({
   currentSetting,
@@ -356,46 +394,7 @@ export const StoreSettings = ({
     defaultValues: {},
   });
   const [activeTab, setActiveTab] = useState(initialTab || "website");
-  const { control, handleSubmit, reset, getValues } = useForm({
-    defaultValues: defaultValues,
-  });
-  const tabs = [
-    {
-      key: "website",
-      label: "Website",
-      content: <WebsiteSettings control={control} />,
-    },
-    {
-      key: "display",
-      label: "Display",
-      content: <DisplaySettings control={control} />,
-    },
-    {
-      key: "share",
-      label: "Share",
-      content: <SocialSharingSettings control={control} />,
-    },
-    {
-      key: "url-structure",
-      label: "URL Structure",
-      content: <URLStructureSettings control={control} />,
-    },
-    {
-      key: "search",
-      label: "Search",
-      content: <SearchSettings control={control} />,
-    },
-    {
-      key: "security",
-      label: "Security & Privacy",
-      content: <SecurityPrivacySettings control={control} />,
-    },
-    {
-      key: "misc",
-      label: "Miscellaneous",
-      content: <MiscellaneousSettings control={control} />,
-    },
-  ];
+  const { reset, getValues } = form;
 
   // ✅ Add: Tab change handler with URL update
   const handleTabChange = (newTab: string) => {
@@ -504,7 +503,6 @@ export const StoreSettings = ({
             };
           })(),
         };
-
 
         // Save each URL section individually
         await Promise.all([

@@ -511,3 +511,4 @@ export const URL_STRUCTURE_SECTIONS = [
     longExample: "https://test.com/pages/about-us.html",
   },
 ];
+

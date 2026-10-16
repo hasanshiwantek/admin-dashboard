@@ -18,7 +18,7 @@ import { ShareId } from "./type";
 import { SHARE_CONFIG } from "./constant";
 import PageTitle from "@/components/ui/PageTitle";
 
-export const SocialSharingSettings = ({ control }: { control?: any }) => {
+export const SocialSharingSettings = () => {
   const [moreOpen, setMoreOpen] = useState(false);
   const [poweredByLink, setPoweredByLink] = useState(true);
   const [active, setActive] = useState<Record<ShareId, boolean>>({

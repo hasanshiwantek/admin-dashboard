@@ -15,12 +15,11 @@ import {
 } from "./constant";
 import PageTitle from "@/components/ui/PageTitle";
 import Link from "next/link";
+import { useFormContext } from "@/components/form/Form";
 
-export const SecurityPrivacySettings = ({
-  control,
-}: {
-  control: Control<any>;
-}) => {
+export const SecurityPrivacySettings = () => {
+  const { control } = useFormContext();
+
   const inactiveLogout = useWatch({
     control,
     name: SecurityPrivacyField.InactiveShopperLogout,

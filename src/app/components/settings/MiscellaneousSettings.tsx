@@ -13,12 +13,11 @@ import {
   SMTP_OPTIONS,
 } from "./constant";
 import PageTitle from "@/components/ui/PageTitle";
+import { useFormContext } from "@/components/form/Form";
 
-export const MiscellaneousSettings = ({
-  control,
-}: {
-  control: Control<any>;
-}) => {
+export const MiscellaneousSettings = () => {
+  const { control } = useFormContext();
+
   const enableAbandoned = useWatch({
     control,
     name: MiscellaneousField.EnableAbandonedCartEmails,

@@ -7,7 +7,7 @@ import PageTitle from "@/components/ui/PageTitle";
 import Link from "next/link";
 
 // Website Settings Component
-export const WebsiteSettings = ({ control }: { control?: any }) => {
+export const WebsiteSettings = () => {
   return (
     <div className="space-y-8">
       {/* Search Engine Optimization */}
@@ -17,26 +17,19 @@ export const WebsiteSettings = ({ control }: { control?: any }) => {
           <InputField
             name={WebsiteField.HomePageTitle}
             label="Home Page Title"
-            control={control}
           />
 
-          <InputField
-            name={WebsiteField.MetaKeywords}
-            label="Meta Keywords"
-            control={control}
-          />
+          <InputField name={WebsiteField.MetaKeywords} label="Meta Keywords" />
 
           <InputField
             name={WebsiteField.MetaDescription}
             label="Meta Description"
-            control={control}
           />
 
           <InputField
             name={WebsiteField.WwwRedirect}
             label="WWW/No WWW Redirect"
             Component={SelectField}
-            control={control}
             options={WwwRedirectOptions}
             placeholder="-- Choose a redirect option --"
           />
@@ -76,7 +69,6 @@ export const WebsiteSettings = ({ control }: { control?: any }) => {
           name={WebsiteField.RobotsTxt}
           label="HTTPS robots.txt"
           isTextArea
-          control={control}
         />
       </div>
     </div>

@@ -14,7 +14,7 @@ import {
 } from "./constant";
 import PageTitle from "@/components/ui/PageTitle";
 
-export const DisplaySettings = ({ control }: any) => {
+export const DisplaySettings = () => {
   return (
     <div className="space-y-8">
       {/* Display Settings */}
@@ -25,7 +25,6 @@ export const DisplaySettings = ({ control }: any) => {
             name={DisplayField.ProductBreadcrumbs}
             label="Product Breadcrumbs"
             Component={SelectField}
-            control={control}
             options={BREADCRUMB_OPTIONS}
             className="w-full "
             controlClassName="max-w-md"
@@ -35,7 +34,6 @@ export const DisplaySettings = ({ control }: any) => {
             name={DisplayField.ShowQuantityBox}
             label="Show Quantity Box for Products"
             Component={CheckboxField}
-            control={control}
             text="Yes, show the quantity box on the add to cart panel"
             className="w-full "
             controlClassName="max-w-xl"
@@ -45,7 +43,6 @@ export const DisplaySettings = ({ control }: any) => {
             name={DisplayField.EnableSearchSuggest}
             label="Enable Search Suggest"
             Component={CheckboxField}
-            control={control}
             text="Yes, enable search suggest"
             className="w-full "
             controlClassName="max-w-xl"
@@ -55,7 +52,6 @@ export const DisplaySettings = ({ control }: any) => {
             name={DisplayField.AutoApproveReviews}
             label="Auto Approve Reviews"
             Component={CheckboxField}
-            control={control}
             text="Yes, auto approve reviews"
             className="w-full "
             controlClassName="max-w-xl"
@@ -65,7 +61,6 @@ export const DisplaySettings = ({ control }: any) => {
             name={DisplayField.EnableWishlist}
             label="Enable Wishlist"
             Component={CheckboxField}
-            control={control}
             text="Yes, enable the wishlist for my store"
             className="w-full "
             controlClassName="max-w-xl"
@@ -75,7 +70,6 @@ export const DisplaySettings = ({ control }: any) => {
             name={DisplayField.EnableProductComparisons}
             label="Enable Product Comparisons"
             Component={CheckboxField}
-            control={control}
             text="Yes, enable product comparisons"
             className="w-full "
             controlClassName="max-w-xl"
@@ -85,7 +79,6 @@ export const DisplaySettings = ({ control }: any) => {
             name={DisplayField.EnableAccountCreation}
             label="Enable Account Creation?"
             Component={CheckboxField}
-            control={control}
             text="Yes, enable account creation in my store"
             className="w-full "
             controlClassName="max-w-xl"
@@ -102,7 +95,6 @@ export const DisplaySettings = ({ control }: any) => {
             name={DisplayField.UseWysiwygEditor}
             label="Use WYSIWYG Editor"
             Component={CheckboxField}
-            control={control}
             text="Yes, enable the WYSIWYG editor"
             className="w-full "
             controlClassName="max-w-xl"
@@ -112,7 +104,6 @@ export const DisplaySettings = ({ control }: any) => {
             name={DisplayField.ShowProductThumbnails}
             label="Show Product Thumbnails"
             Component={CheckboxField}
-            control={control}
             text="Yes, show product thumbnail images"
             className="w-full "
             controlClassName="max-w-xl"
@@ -129,7 +120,6 @@ export const DisplaySettings = ({ control }: any) => {
             name={DisplayField.CategoryProductList}
             label="Category Product List"
             Component={RadioGroupField}
-            control={control}
             options={CATEGORY_PRODUCT_LIST_OPTIONS}
             className="w-full "
             controlClassName="max-w-xl"
@@ -139,7 +129,6 @@ export const DisplaySettings = ({ control }: any) => {
             name={DisplayField.DefaultProductSort}
             label="Default Product Sort"
             Component={SelectField}
-            control={control}
             options={DEFAULT_SORT_OPTIONS}
             className="w-full "
           />
@@ -151,7 +140,6 @@ export const DisplaySettings = ({ control }: any) => {
             <div className="flex items-center gap-2">
               <InputField
                 name={DisplayField.MenuDisplayDepth}
-                control={control}
                 type="number"
                 min={1}
                 label=""
@@ -175,7 +163,6 @@ export const DisplaySettings = ({ control }: any) => {
             name={DisplayField.ShowProductPrice}
             label="Show Product's Price?"
             Component={CheckboxField}
-            control={control}
             text="Yes, show the product's price in my store"
             className="w-full  "
             controlClassName="max-w-xl"
@@ -190,7 +177,6 @@ export const DisplaySettings = ({ control }: any) => {
               <InputField
                 name={DisplayField.DetailPageDefaultPrice}
                 Component={SelectField}
-                control={control}
                 options={PRICE_DISPLAY_OPTIONS}
                 label=""
                 className="w-56"
@@ -214,7 +200,6 @@ export const DisplaySettings = ({ control }: any) => {
               <InputField
                 name={DisplayField.ListPageDefaultPrice}
                 Component={SelectField}
-                control={control}
                 options={PRICE_DISPLAY_OPTIONS}
                 label=""
                 className="w-56"
@@ -233,7 +218,6 @@ export const DisplaySettings = ({ control }: any) => {
             name={DisplayField.HidePriceFromGuests}
             label="Hide Product's Price from Guests?"
             Component={CheckboxField}
-            control={control}
             text="Yes, only show the product's price to logged in customers"
             className="w-full  "
             controlClassName="max-w-xl"
@@ -243,7 +227,6 @@ export const DisplaySettings = ({ control }: any) => {
             name={DisplayField.ShowProductSku}
             label="Show Product's SKU?"
             Component={CheckboxField}
-            control={control}
             text="Yes, show the product's SKU in my store"
             className="w-full  "
             controlClassName="max-w-xl"
@@ -253,7 +236,6 @@ export const DisplaySettings = ({ control }: any) => {
             name={DisplayField.ShowProductWeight}
             label="Show Product's Weight?"
             Component={CheckboxField}
-            control={control}
             text="Yes, show the product's weight in my store"
             className="w-full  "
             controlClassName="max-w-xl"
@@ -263,7 +245,6 @@ export const DisplaySettings = ({ control }: any) => {
             name={DisplayField.ShowProductBrand}
             label="Show Product's Brand?"
             Component={CheckboxField}
-            control={control}
             text="Yes, show the product's brand in my store"
             className="w-full  "
             controlClassName="max-w-xl"
@@ -273,7 +254,6 @@ export const DisplaySettings = ({ control }: any) => {
             name={DisplayField.ShowProductShippingCost}
             label="Show Product's Shipping Cost?"
             Component={CheckboxField}
-            control={control}
             text="Yes, show the product's shipping cost in my store"
             className="w-full  "
             controlClassName="max-w-xl"
@@ -283,7 +263,6 @@ export const DisplaySettings = ({ control }: any) => {
             name={DisplayField.ShowProductRating}
             label="Show Product's Rating?"
             Component={CheckboxField}
-            control={control}
             text="Yes, show the product's rating in my store"
             className="w-full "
             controlClassName="max-w-xl"
@@ -293,7 +272,6 @@ export const DisplaySettings = ({ control }: any) => {
             name={DisplayField.ShowAddToCartLink}
             label="Show Add to Cart Link?"
             Component={CheckboxField}
-            control={control}
             text='Yes, show the "Add to Cart" link in all the small product boxes'
             className="w-full "
             controlClassName="max-w-xl"
@@ -302,7 +280,6 @@ export const DisplaySettings = ({ control }: any) => {
           <InputField
             name={DisplayField.DefaultPreOrderMessage}
             label="Default Pre-Order Message"
-            control={control}
             className="w-full "
           />
         </div>
