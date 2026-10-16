@@ -5,4 +5,6 @@
     { id: "dimensions", label: "Physical dimensions" },
     { id: "timezone", label: "Date and timezone" },
   ];
- 
+ export const countryDefault =   {
+      country: "United States",
+    }

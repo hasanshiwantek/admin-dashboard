@@ -1,9 +1,6 @@
 import { cn } from "@/lib/utils";
 import { LocalizationSidebarProps } from "./type";
 
-
-
-
 const LocalizationSidebar = ({
   sections,
   activeSection,

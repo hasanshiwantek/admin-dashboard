@@ -13,7 +13,7 @@ import PhysicalDimensionsSection from "@/app/components/settings/localization/Ph
 import DateTimezoneSection from "@/app/components/settings/localization/DateTimezoneSection";
 import { Button } from "@/components/ui/button";
 import { LocalizationFormValues } from "./type";
-import { sections } from "./constant";
+import { countryDefault, sections } from "./constant";
 import PageTitle from "@/components/ui/PageTitle";
 
 
@@ -23,9 +23,7 @@ const LocalizationPage = () => {
   const [activeSection, setActiveSection] = useState("country");
 
   const form = useForm<LocalizationFormValues>({
-    defaultValues: {
-      country: "United States",
-    },
+    defaultValues: countryDefault
   });
 
 
