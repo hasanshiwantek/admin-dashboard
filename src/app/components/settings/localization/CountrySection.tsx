@@ -37,7 +37,7 @@ const CountrySection = () => {
   return (
  <div className="gap-0 rounded-md border border-[#E1E4ED] bg-white p-6 shadow-sm sm:p-8">
      <PageTitle
-  title={CountryFields.COUNTRY}
+  title="Country"
   hideActionButton
   titleClassName="mb-6 text-[24px]! font-medium text-slate-500"
   containerClassName="mb-0"
@@ -46,7 +46,7 @@ const CountrySection = () => {
 
       <div className="max-w-[520px]">
         <InputField
-  name="country"
+  name={CountryFields.COUNTRY}
   Component={SelectField}
   options={countries}
   layout="vertical"
