@@ -15,11 +15,8 @@ export const UrlSettingSection = ({
   shortExample,
   longExample,
 }: SectionProps) => {
-  const { control } = useFormContext();
-  const format = useWatch({
-    control,
-    name: formatField,
-  });
+  const { control, watch } = useFormContext();
+  const format = watch(formatField);
 
   return (
     <div className="mb-8 bg-white border p-8">
