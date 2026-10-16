@@ -30,17 +30,11 @@ const handleSetStandardFormats = () => {
     [DateTimezoneFields.EXTENDED_DATE_FORMAT]: "long",
   });
 };
-  const onSubmit = (values: DateTimezoneValues) => {
-    console.log("Date and timezone settings:", values);
-  };
+  
 
   return (
-    <Form
-      form={form}
-      onSubmit={onSubmit}
-      footer={false}
-      className="pb-0"
-      bodyClassName="gap-0 rounded-md border border-[#E1E4ED] bg-white p-6 shadow-sm sm:p-8"
+    <div
+      className="gap-0 rounded-md border border-[#E1E4ED] bg-white p-6 shadow-sm sm:p-8"
     >
      <PageTitle
   title="Date and timezone"
@@ -134,7 +128,7 @@ const handleSetStandardFormats = () => {
           />
         </div>
       )}
-    </Form>
+    </div>
   );
 };
 

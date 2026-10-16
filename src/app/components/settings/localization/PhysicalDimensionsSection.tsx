@@ -37,17 +37,11 @@ const PhysicalDimensionsSection = () => {
     });
   };
 
-  const onSubmit = (values: PhysicalDimensionsValues) => {
-    console.log("Physical dimensions:", values);
-  };
+  
 
   return (
-    <Form
-      form={form}
-      onSubmit={onSubmit}
-      footer={false}
-      className="pb-0"
-      bodyClassName="gap-0 rounded-md border border-[#E1E4ED] bg-white p-6 shadow-sm sm:p-8"
+    <div
+    className="gap-0 rounded-md border border-[#E1E4ED] bg-white p-6 shadow-sm sm:p-8"
     >
       <PageTitle
         title="Physical dimensions"
@@ -173,7 +167,7 @@ const PhysicalDimensionsSection = () => {
           />
         </div>
       )}
-    </Form>
+    </div>
   );
 };
 

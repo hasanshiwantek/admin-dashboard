@@ -33,12 +33,7 @@ const LocalizationPage = () => {
     { id: "dimensions", component: <PhysicalDimensionsSection /> },
     { id: "timezone", component: <DateTimezoneSection /> },
   ];
-//   const localizationSections = [
-//   { id: "country", component: <CountrySection form={form} /> },
-//   { id: "languages", component: <StorefrontLanguagesSection /> },
-//   { id: "dimensions", component: <PhysicalDimensionsSection form={form} /> },
-//   { id: "timezone", component: <DateTimezoneSection form={form} /> },
-// ];
+
   const handleSectionClick = (id: string) => {
     setActiveSection(id);
 
