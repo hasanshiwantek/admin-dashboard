@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { StoreSettings } from "./StoreSettings";
 import PageLayout from "@/components/ui/PageLayout";
 import PageTitle from "@/components/ui/PageTitle";
+import { generalItems } from "./constant";
 
 const SettingsPage = () => {
   //   const setupItems = [
@@ -51,59 +52,7 @@ const SettingsPage = () => {
   const initialView = searchParams.get("view") || "main";
   const initialTab = searchParams.get("tab") || "website";
 
-  const generalItems = [
-    {
-      id: "website",
-      title: "Website",
-      description:
-        "Physical dimension settings, search engine optimization, HTTPS, search engine robots",
-    },
-    {
-      id: "display",
-      title: "Display",
-      description:
-        "Settings related to displaying products, categories, control panel etc.",
-    },
-    {
-      id: "share",
-      title: "Share",
-      description: "Social sharing settings on product pages and blog posts",
-    },
-    // {
-    //   id: "date-timezone",
-    //   title: "Date & Timezone",
-    //   description: "Timezone, DST correction, display date format",
-    // },
-    {
-      id: "url-structure",
-      title: "URL structure",
-      description: "Product, category and web pages URL settings",
-    },
-    {
-      id: "search",
-      title: "Search",
-      description: "Default product sort, default content sort, search logic",
-      isNew: true,
-    },
-    {
-      id: "security",
-      title: "Security & Privacy",
-      description:
-        "Security & privacy settings for storefront and control panel",
-    },
-    {
-      id: "misc",
-      title: "Miscellaneous",
-      description:
-        "Email settings, advanced store settings, order settings, throttler",
-    },
-    {
-      id: "ship",
-      title: "Shipping",
-      description:
-        "Store's origin address, shipping zones, and shipping services",
-    },
-  ];
+
 
   const SettingsItem = ({ item, onClick }: { item: any; onClick: any }) => (
     <div

@@ -15,28 +15,10 @@ import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ShareId } from "./type";
+import { SHARE_CONFIG } from "./constant";
 
 
 
-const SHARE_CONFIG: {
-  id: ShareId;
-  icon: typeof Facebook;
-  color: string;
-  iconOnly?: boolean;
-}[] = [
-  { id: "facebook", icon: Facebook, color: "bg-[#1877F2]" },
-  { id: "twitter", icon: Twitter, color: "bg-[#1DA1F2]" },
-  { id: "linkedin", icon: Linkedin, color: "bg-[#0A66C2]" },
-  { id: "pinterest", icon: Pin, color: "bg-[#E60023]" },
-  {
-    id: "facebook-like",
-    icon: ThumbsUp,
-    color: "text-[#1877F2]",
-    iconOnly: true,
-  },
-  { id: "email", icon: Mail, color: "bg-slate-500" },
-  { id: "print", icon: Printer, color: "bg-slate-500" },
-];
 
 export const SocialSharingSettings = ({ control }: { control?: any }) => {
   const [moreOpen, setMoreOpen] = useState(false);

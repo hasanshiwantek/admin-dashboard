@@ -17,7 +17,7 @@ export const SearchSettings = ({ control }: { control: Control<any> }) => {
         <h2 className="!font-semibold mb-6">Search Settings</h2>
         <div className="mt-3">
           <InputField
-            name={`search.${SearchField.DefaultProductSort}`}
+            name={SearchField.DefaultProductSort}
             label="Default Product Sort"
             control={control}
             Component={SelectField}
@@ -26,7 +26,7 @@ export const SearchSettings = ({ control }: { control: Control<any> }) => {
         </div>
         <div className="mt-3">
           <InputField
-            name={`search.${SearchField.DefaultContentSort}`}
+            name={SearchField.DefaultContentSort}
             label="Default Content Sort"
             control={control}
             Component={SelectField}
@@ -35,7 +35,7 @@ export const SearchSettings = ({ control }: { control: Control<any> }) => {
         </div>
         <div className="mt-3">
           <InputField
-            name={`search.${SearchField.StorefrontSearchLogic}`}
+            name={SearchField.StorefrontSearchLogic}
             label="Storefront Search Logic"
             control={control}
             Component={SelectField}

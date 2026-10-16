@@ -1,20 +1,9 @@
 "use client";
-
-import { Control, useWatch, Controller } from "react-hook-form";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
+import { useWatch } from "react-hook-form";
+import InputField from "@/components/form/InputField";
+import RadioGroupField from "@/components/form/fields/RadioGroupField";
 import { Info } from "lucide-react";
-import { UrlStructureField } from "./constant";
-
-type SectionProps = {
-  title: string;
-  formatField: UrlStructureField;
-  customUrlField: UrlStructureField;
-  control: Control<any>;
-  shortExample: string;
-  longExample: string;
-};
+import { SectionProps } from "./type";
 
 export const UrlSettingSection = ({
   title,
@@ -26,92 +15,87 @@ export const UrlSettingSection = ({
 }: SectionProps) => {
   const format = useWatch({
     control,
-    name: `urlStructure.${formatField}`,
+    name: formatField,
   });
 
   return (
     <div className="mb-8 bg-white border p-8">
       <h2 className="!font-semibold mb-6 2xl:!text-[2.4rem]">{title}</h2>
 
-      <Controller
-        name={`urlStructure.${formatField}`}
-        control={control}
-        render={({ field }) => (
-          <RadioGroup
-            value={field.value}
-            onValueChange={field.onChange}
-            className="space-y-4"
-          >
-            {/* SEO Optimized (Short) */}
-            <div className="flex flex-col lg:flex-row lg:items-center items-start gap-4">
-              <div className="flex items-center w-full lg:w-72 lg:flex-row-reverse gap-3">
-                <RadioGroupItem
-                  value="seo-optimized-short"
-                  id={`${formatField}-short`}
-                />
-                <Label
-                  htmlFor={`${formatField}-short`}
-                  className="font-normal 2xl:!text-2xl"
-                >
-                  SEO Optimized (Short)
-                </Label>
-              </div>
-              <div className="flex-1 text-gray-500 text-lg 2xl:!text-2xl">
-                {shortExample}
-              </div>
-            </div>
+      <div className="space-y-2">
+        {/* Short */}
+        <div className="grid grid-cols-[14rem_1fr] 2xl:grid-cols-[18rem_1fr] items-center gap-x-8">
+          <span className="text-right font-normal text-gray-600 2xl:text-2xl!">
+            SEO Optimized (Short)
+          </span>
+          <div className="flex items-center gap-3">
+            <InputField
+              name={formatField}
+              Component={RadioGroupField}
+              control={control}
+              options={[{ value: "seo-optimized-short", label: "" }]}
+              label=""
+              layout="vertical"
+              containerClassName="!grid-cols-1"
+              className="w-auto"
+            />
+            <span className="text-gray-500 text-lg 2xl:!text-2xl">
+              {shortExample}
+            </span>
+          </div>
+        </div>
 
-            {/* SEO Optimized (Long) */}
-            <div className="flex flex-col lg:flex-row lg:items-center items-start gap-4">
-              <div className="flex items-center w-full lg:w-72 lg:flex-row-reverse gap-3">
-                <RadioGroupItem
-                  value="seo-optimized-long"
-                  id={`${formatField}-long`}
-                />
-                <Label
-                  htmlFor={`${formatField}-long`}
-                  className="font-normal 2xl:!text-2xl"
-                >
-                  SEO Optimized (Long)
-                </Label>
-              </div>
-              <div className="flex-1 flex items-center gap-2">
-                <span className="text-gray-500 text-lg 2xl:!text-2xl">
-                  {longExample}
-                </span>
-                <Info className="w-4 h-4 text-gray-400" />
-              </div>
-            </div>
+        {/* Long */}
+        <div className="grid grid-cols-[14rem_1fr] 2xl:grid-cols-[18rem_1fr] items-center gap-x-8">
+          <span className="text-right font-normal text-gray-600 2xl:text-2xl!">
+            SEO Optimized (Long)
+          </span>
+          <div className="flex items-center gap-3">
+            <InputField
+              name={formatField}
+              Component={RadioGroupField}
+              control={control}
+              options={[{ value: "seo-optimized-long", label: "" }]}
+              label=""
+              layout="vertical"
+              containerClassName="!grid-cols-1"
+              className="w-auto"
+            />
+            <span className="text-gray-500 text-lg 2xl:!text-2xl">
+              {longExample}
+            </span>
+            <Info className="w-4 h-4 text-gray-400" />
+          </div>
+        </div>
 
-            {/* Custom */}
-            <div className="flex flex-col lg:flex-row lg:items-center items-start gap-4">
-              <div className="flex items-center w-full lg:w-72 lg:flex-row-reverse gap-3">
-                <RadioGroupItem value="custom" id={`${formatField}-custom`} />
-                <Label
-                  htmlFor={`${formatField}-custom`}
-                  className="font-normal 2xl:!text-2xl"
-                >
-                  Custom
-                </Label>
-              </div>
-              <div className="flex-1">
-                <Controller
-                  name={`urlStructure.${customUrlField}`}
-                  control={control}
-                  render={({ field: customField }) => (
-                    <Input
-                      {...customField}
-                      disabled={format !== "custom"}
-                      placeholder="/custom/"
-                      className="w-full max-w-lg"
-                    />
-                  )}
-                />
-              </div>
-            </div>
-          </RadioGroup>
-        )}
-      />
+        {/* Custom */}
+        <div className="grid grid-cols-[14rem_1fr] 2xl:grid-cols-[18rem_1fr] items-center gap-x-8">
+          <span className="text-right font-normal text-gray-600 2xl:text-2xl!">
+            Custom
+          </span>
+          <div className="flex items-center gap-3">
+            <InputField
+              name={formatField}
+              Component={RadioGroupField}
+              control={control}
+              options={[{ value: "custom", label: "" }]}
+              label=""
+              layout="vertical"
+              containerClassName="!grid-cols-1"
+              className="w-auto"
+            />
+            <InputField
+              name={customUrlField}
+              control={control}
+              disabled={format !== "custom"}
+              placeholder="/%title%/"
+              label=""
+              layout="vertical"
+              containerClassName="!grid-cols-1 max-w-lg"
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

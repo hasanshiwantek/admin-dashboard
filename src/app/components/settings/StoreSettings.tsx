@@ -452,7 +452,8 @@ export const StoreSettings = ({
     };
   };
   const handleSave = async () => {
-    const payload = preparePayload();
+    const payload: any = preparePayload();
+
     try {
       const response = await dispatch(createStoreSettings({ data: payload }));
       if (createStoreSettings.fulfilled.match(response)) {

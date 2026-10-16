@@ -14,25 +14,25 @@ export const WebsiteSettings = ({ control }: { control: any }) => {
 
         <div className="space-y-5">
           <InputField
-            name={`website.${WebsiteField.HomePageTitle}`}
+            name={WebsiteField.HomePageTitle}
             label="Home Page Title"
             control={control}
           />
 
           <InputField
-            name={`website.${WebsiteField.MetaKeywords}`}
+            name={WebsiteField.MetaKeywords}
             label="Meta Keywords"
             control={control}
           />
 
           <InputField
-            name={`website.${WebsiteField.MetaDescription}`}
+            name={WebsiteField.MetaDescription}
             label="Meta Description"
             control={control}
           />
 
           <InputField
-            name={`website.${WebsiteField.WwwRedirect}`}
+            name={WebsiteField.WwwRedirect}
             label="WWW/No WWW Redirect"
             Component={SelectField}
             control={control}
@@ -73,7 +73,7 @@ export const WebsiteSettings = ({ control }: { control: any }) => {
         </p>
 
         <InputField
-          name={`website.${WebsiteField.RobotsTxt}`}
+          name={WebsiteField.RobotsTxt}
           label="HTTPS robots.txt"
           isTextArea
           control={control}

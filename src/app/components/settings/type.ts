@@ -1,3 +1,6 @@
+import { Control } from "react-hook-form";
+import { UrlStructureField } from "./constant";
+
 export type ShareId =
   | "facebook"
   | "twitter"
@@ -6,3 +9,12 @@ export type ShareId =
   | "facebook-like"
   | "email"
   | "print";
+  
+export type SectionProps = {
+  title: string;
+  formatField: UrlStructureField;
+  customUrlField: UrlStructureField;
+  control: Control<any>;
+  shortExample: string;
+  longExample: string;
+};

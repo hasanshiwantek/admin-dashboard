@@ -12,19 +12,17 @@ import {
   DisplayField,
   PRICE_DISPLAY_OPTIONS,
 } from "./constant";
+import PageTitle from "@/components/ui/PageTitle";
 
 export const DisplaySettings = ({ control }: any) => {
   return (
     <div className="space-y-8">
       {/* Display Settings */}
       <div className="bg-white rounded-sm border border-gray-200 p-6">
-        <h2 className="mb-6 !font-semibold 2xl:!text-[2.4rem]">
-          Display Settings
-        </h2>
-
+        <PageTitle title="Display Settings" hideActionButton />
         <div className="space-y-4">
           <InputField
-            name={`display.${DisplayField.ProductBreadcrumbs}`}
+            name={DisplayField.ProductBreadcrumbs}
             label="Product Breadcrumbs"
             Component={SelectField}
             control={control}
@@ -34,7 +32,7 @@ export const DisplaySettings = ({ control }: any) => {
           />
 
           <InputField
-            name={`display.${DisplayField.ShowQuantityBox}`}
+            name={DisplayField.ShowQuantityBox}
             label="Show Quantity Box for Products"
             Component={CheckboxField}
             control={control}
@@ -44,7 +42,7 @@ export const DisplaySettings = ({ control }: any) => {
           />
 
           <InputField
-            name={`display.${DisplayField.EnableSearchSuggest}`}
+            name={DisplayField.EnableSearchSuggest}
             label="Enable Search Suggest"
             Component={CheckboxField}
             control={control}
@@ -54,7 +52,7 @@ export const DisplaySettings = ({ control }: any) => {
           />
 
           <InputField
-            name={`display.${DisplayField.AutoApproveReviews}`}
+            name={DisplayField.AutoApproveReviews}
             label="Auto Approve Reviews"
             Component={CheckboxField}
             control={control}
@@ -64,7 +62,7 @@ export const DisplaySettings = ({ control }: any) => {
           />
 
           <InputField
-            name={`display.${DisplayField.EnableWishlist}`}
+            name={DisplayField.EnableWishlist}
             label="Enable Wishlist"
             Component={CheckboxField}
             control={control}
@@ -74,7 +72,7 @@ export const DisplaySettings = ({ control }: any) => {
           />
 
           <InputField
-            name={`display.${DisplayField.EnableProductComparisons}`}
+            name={DisplayField.EnableProductComparisons}
             label="Enable Product Comparisons"
             Component={CheckboxField}
             control={control}
@@ -84,7 +82,7 @@ export const DisplaySettings = ({ control }: any) => {
           />
 
           <InputField
-            name={`display.${DisplayField.EnableAccountCreation}`}
+            name={DisplayField.EnableAccountCreation}
             label="Enable Account Creation?"
             Component={CheckboxField}
             control={control}
@@ -97,11 +95,13 @@ export const DisplaySettings = ({ control }: any) => {
 
       {/* Control Panel */}
       <div className="bg-white rounded-sm border border-gray-200 p-6">
-        <h2 className="!font-semibold mb-6 2xl:!text-[2.4rem]">Control Panel</h2>
+        <h2 className="!font-semibold mb-6 2xl:!text-[2.4rem]">
+          Control Panel
+        </h2>
 
         <div className="space-y-4">
           <InputField
-            name={`display.${DisplayField.UseWysiwygEditor}`}
+            name={DisplayField.UseWysiwygEditor}
             label="Use WYSIWYG Editor"
             Component={CheckboxField}
             control={control}
@@ -111,7 +111,7 @@ export const DisplaySettings = ({ control }: any) => {
           />
 
           <InputField
-            name={`display.${DisplayField.ShowProductThumbnails}`}
+            name={DisplayField.ShowProductThumbnails}
             label="Show Product Thumbnails"
             Component={CheckboxField}
             control={control}
@@ -130,7 +130,7 @@ export const DisplaySettings = ({ control }: any) => {
 
         <div className="space-y-4">
           <InputField
-            name={`display.${DisplayField.CategoryProductList}`}
+            name={DisplayField.CategoryProductList}
             label="Category Product List"
             Component={RadioGroupField}
             control={control}
@@ -140,7 +140,7 @@ export const DisplaySettings = ({ control }: any) => {
           />
 
           <InputField
-            name={`display.${DisplayField.DefaultProductSort}`}
+            name={DisplayField.DefaultProductSort}
             label="Default Product Sort"
             Component={SelectField}
             control={control}
@@ -154,7 +154,7 @@ export const DisplaySettings = ({ control }: any) => {
             </label>
             <div className="flex items-center gap-2">
               <InputField
-                name={`display.${DisplayField.MenuDisplayDepth}`}
+                name={DisplayField.MenuDisplayDepth}
                 control={control}
                 type="number"
                 min={1}
@@ -178,7 +178,7 @@ export const DisplaySettings = ({ control }: any) => {
 
         <div className="space-y-4">
           <InputField
-            name={`display.${DisplayField.ShowProductPrice}`}
+            name={DisplayField.ShowProductPrice}
             label="Show Product's Price?"
             Component={CheckboxField}
             control={control}
@@ -189,18 +189,22 @@ export const DisplaySettings = ({ control }: any) => {
 
           <div className="flex flex-col lg:flex-row items-start gap-4">
             <label className="w-full lg:w-96 text-right pr-4 pt-2 font-medium 2xl:!text-2xl">
-              Price to display on the product details page when product selections don't map to a price
+              Price to display on the product details page when product
+              selections don't map to a price
             </label>
             <div className="flex items-center gap-2 flex-1">
               <InputField
-                name={`display.${DisplayField.DetailPageDefaultPrice}`}
+                name={DisplayField.DetailPageDefaultPrice}
                 Component={SelectField}
                 control={control}
                 options={PRICE_DISPLAY_OPTIONS}
                 label=""
                 className="w-56"
               />
-              <a href="#" className="text-blue-600 hover:underline text-sm whitespace-nowrap">
+              <a
+                href="#"
+                className="text-blue-600 hover:underline text-sm whitespace-nowrap"
+              >
                 Learn more
               </a>
               <Info className="w-4 h-4 text-gray-400" />
@@ -209,18 +213,22 @@ export const DisplaySettings = ({ control }: any) => {
 
           <div className="flex flex-col lg:flex-row items-start gap-4">
             <label className="w-full lg:w-96 text-right pr-4 pt-2 font-medium 2xl:!text-2xl">
-              Price to display on the product list page when unselected options don't map to a price
+              Price to display on the product list page when unselected options
+              don't map to a price
             </label>
             <div className="flex items-center gap-2 flex-1">
               <InputField
-                name={`display.${DisplayField.ListPageDefaultPrice}`}
+                name={DisplayField.ListPageDefaultPrice}
                 Component={SelectField}
                 control={control}
                 options={PRICE_DISPLAY_OPTIONS}
                 label=""
                 className="w-56"
               />
-              <a href="#" className="text-blue-600 hover:underline text-sm whitespace-nowrap">
+              <a
+                href="#"
+                className="text-blue-600 hover:underline text-sm whitespace-nowrap"
+              >
                 Learn more
               </a>
               <Info className="w-4 h-4 text-gray-400" />
@@ -228,7 +236,7 @@ export const DisplaySettings = ({ control }: any) => {
           </div>
 
           <InputField
-            name={`display.${DisplayField.HidePriceFromGuests}`}
+            name={DisplayField.HidePriceFromGuests}
             label="Hide Product's Price from Guests?"
             Component={CheckboxField}
             control={control}
@@ -238,7 +246,7 @@ export const DisplaySettings = ({ control }: any) => {
           />
 
           <InputField
-            name={`display.${DisplayField.ShowProductSku}`}
+            name={DisplayField.ShowProductSku}
             label="Show Product's SKU?"
             Component={CheckboxField}
             control={control}
@@ -248,7 +256,7 @@ export const DisplaySettings = ({ control }: any) => {
           />
 
           <InputField
-            name={`display.${DisplayField.ShowProductWeight}`}
+            name={DisplayField.ShowProductWeight}
             label="Show Product's Weight?"
             Component={CheckboxField}
             control={control}
@@ -258,7 +266,7 @@ export const DisplaySettings = ({ control }: any) => {
           />
 
           <InputField
-            name={`display.${DisplayField.ShowProductBrand}`}
+            name={DisplayField.ShowProductBrand}
             label="Show Product's Brand?"
             Component={CheckboxField}
             control={control}
@@ -268,7 +276,7 @@ export const DisplaySettings = ({ control }: any) => {
           />
 
           <InputField
-            name={`display.${DisplayField.ShowProductShippingCost}`}
+            name={DisplayField.ShowProductShippingCost}
             label="Show Product's Shipping Cost?"
             Component={CheckboxField}
             control={control}
@@ -278,7 +286,7 @@ export const DisplaySettings = ({ control }: any) => {
           />
 
           <InputField
-            name={`display.${DisplayField.ShowProductRating}`}
+            name={DisplayField.ShowProductRating}
             label="Show Product's Rating?"
             Component={CheckboxField}
             control={control}
@@ -288,7 +296,7 @@ export const DisplaySettings = ({ control }: any) => {
           />
 
           <InputField
-            name={`display.${DisplayField.ShowAddToCartLink}`}
+            name={DisplayField.ShowAddToCartLink}
             label="Show Add to Cart Link?"
             Component={CheckboxField}
             control={control}
@@ -298,7 +306,7 @@ export const DisplaySettings = ({ control }: any) => {
           />
 
           <InputField
-            name={`display.${DisplayField.DefaultPreOrderMessage}`}
+            name={DisplayField.DefaultPreOrderMessage}
             label="Default Pre-Order Message"
             control={control}
             className="w-full "

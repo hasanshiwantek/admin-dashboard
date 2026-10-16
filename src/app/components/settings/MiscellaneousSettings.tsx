@@ -20,12 +20,12 @@ export const MiscellaneousSettings = ({
 }) => {
   const enableAbandoned = useWatch({
     control,
-    name: `miscellaneous.${MiscellaneousField.EnableAbandonedCartEmails}`,
+    name: MiscellaneousField.EnableAbandonedCartEmails,
   });
 
   const enableThrottler = useWatch({
     control,
-    name: `miscellaneous.${MiscellaneousField.EnableThrottler}`,
+    name: MiscellaneousField.EnableThrottler,
   });
 
   return (
@@ -53,7 +53,7 @@ export const MiscellaneousSettings = ({
         </div>
         <div className="flex flex-col lg:flex-row items-start lg:items-center gap-2">
           <InputField
-            name={`miscellaneous.${MiscellaneousField.ReviewEmailDays}`}
+            name={MiscellaneousField.ReviewEmailDays}
             control={control}
             type="number"
             className="w-20"
@@ -63,14 +63,14 @@ export const MiscellaneousSettings = ({
           </span>
         </div>
         <InputField
-          name={`miscellaneous.${MiscellaneousField.SendReviewEmailToGuests}`}
+          name={MiscellaneousField.SendReviewEmailToGuests}
           control={control}
           Component={CheckboxField}
           text="Yes, send product review emails to guest customers"
           className="mt-2"
         />
         <InputField
-          name={`miscellaneous.${MiscellaneousField.ForwardOrderInvoices}`}
+          name={MiscellaneousField.ForwardOrderInvoices}
           label="Forward Order Invoices"
           control={control}
           Component={CheckboxField}
@@ -80,7 +80,7 @@ export const MiscellaneousSettings = ({
 
         <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4">
           <InputField
-            name={`miscellaneous.${MiscellaneousField.InvoiceEmailRecipient}`}
+            name={MiscellaneousField.InvoiceEmailRecipient}
             control={control}
             placeholder="sales@ctspoint.com, info@ctspoint.cc"
             className="w-64"
@@ -91,7 +91,7 @@ export const MiscellaneousSettings = ({
         </div>
 
         <InputField
-          name={`miscellaneous.${MiscellaneousField.SmtpServerOption}`}
+          name={MiscellaneousField.SmtpServerOption}
           label="Use SMTP Server"
           control={control}
           Component={RadioGroupField}
@@ -100,7 +100,7 @@ export const MiscellaneousSettings = ({
         />
 
         <InputField
-          name={`miscellaneous.${MiscellaneousField.AdministratorEmail}`}
+          name={MiscellaneousField.AdministratorEmail}
           label="Administrator's Email"
           control={control}
           placeholder="info@ctspoint.com"
@@ -108,7 +108,7 @@ export const MiscellaneousSettings = ({
         />
 
         <InputField
-          name={`miscellaneous.${MiscellaneousField.RequireMarketingConsent}`}
+          name={MiscellaneousField.RequireMarketingConsent}
           label="Require Consent"
           control={control}
           Component={CheckboxField}
@@ -117,7 +117,7 @@ export const MiscellaneousSettings = ({
         />
 
         <InputField
-          name={`miscellaneous.${MiscellaneousField.EnableAbandonedCartEmails}`}
+          name={MiscellaneousField.EnableAbandonedCartEmails}
           label="Abandoned Cart Emails"
           control={control}
           Component={CheckboxField}
@@ -129,7 +129,7 @@ export const MiscellaneousSettings = ({
           <div className=" space-y-2">
             <div className="flex flex-col lg:flex-row items-start lg:items-center gap-2">
               <InputField
-                name={`miscellaneous.${MiscellaneousField.AbandonedCartThreshold}`}
+                name={MiscellaneousField.AbandonedCartThreshold}
                 control={control}
                 type="number"
                 className="w-20"
@@ -139,13 +139,13 @@ export const MiscellaneousSettings = ({
               </span>
             </div>
             <InputField
-              name={`miscellaneous.${MiscellaneousField.EmailEveryAbandonedCart}`}
+              name={MiscellaneousField.EmailEveryAbandonedCart}
               control={control}
               Component={CheckboxField}
               text="Email me every time a cart is abandoned"
             />
             <InputField
-              name={`miscellaneous.${MiscellaneousField.StopEmailOnCompleteOrder}`}
+              name={MiscellaneousField.StopEmailOnCompleteOrder}
               control={control}
               Component={CheckboxField}
               text='Stop sending when the shopper clicks the "Complete Order" link in the email'
@@ -154,7 +154,7 @@ export const MiscellaneousSettings = ({
         )}
 
         <InputField
-          name={`miscellaneous.${MiscellaneousField.EnableConvertedCartEmails}`}
+          name={MiscellaneousField.EnableConvertedCartEmails}
           label="Converted Cart Emails"
           control={control}
           Component={CheckboxField}
@@ -163,7 +163,7 @@ export const MiscellaneousSettings = ({
         />
 
         <InputField
-          name={`miscellaneous.${MiscellaneousField.ConvertedCartRecipient}`}
+          name={MiscellaneousField.ConvertedCartRecipient}
           label="Send Emails To (Optional)"
           control={control}
           placeholder="info@ctspoint.com"
@@ -177,7 +177,7 @@ export const MiscellaneousSettings = ({
           Advanced Store Settings
         </h2>
         <InputField
-          name={`miscellaneous.${MiscellaneousField.AllowPurchasing}`}
+          name={MiscellaneousField.AllowPurchasing}
           label="Allow Purchasing?"
           control={control}
           Component={CheckboxField}
@@ -198,7 +198,7 @@ export const MiscellaneousSettings = ({
           </p>
         </div>
         <InputField
-          name={`miscellaneous.${MiscellaneousField.StartingOrderNumber}`}
+          name={MiscellaneousField.StartingOrderNumber}
           label="Starting Order Number (Optional)"
           control={control}
           type="number"
@@ -210,7 +210,7 @@ export const MiscellaneousSettings = ({
       <div className="bg-white rounded-sm border border-gray-200 p-6">
         <h2 className="!font-semibold mb-6 2xl:!text-[2.4rem]">Throttler</h2>
         <InputField
-          name={`miscellaneous.${MiscellaneousField.EnableThrottler}`}
+          name={MiscellaneousField.EnableThrottler}
           label="Enable Throttler"
           control={control}
           Component={CheckboxField}
@@ -225,7 +225,7 @@ export const MiscellaneousSettings = ({
             </div>
             <div className="flex-1 flex flex-col lg:flex-row items-start lg:items-center gap-2">
               <InputField
-                name={`miscellaneous.${MiscellaneousField.ThrottleReviewsPerPeriod}`}
+                name={MiscellaneousField.ThrottleReviewsPerPeriod}
                 control={control}
                 type="number"
                 className="w-20"
@@ -235,14 +235,14 @@ export const MiscellaneousSettings = ({
                 reviews to be posted every
               </span>
               <InputField
-                name={`miscellaneous.${MiscellaneousField.ThrottlePeriodValue}`}
+                name={MiscellaneousField.ThrottlePeriodValue}
                 control={control}
                 type="number"
                 className="w-20"
                 placeholder="30"
               />
               <InputField
-                name={`miscellaneous.${MiscellaneousField.ThrottlePeriodUnit}`}
+                name={MiscellaneousField.ThrottlePeriodUnit}
                 control={control}
                 Component={SelectField}
                 options={PERIOD_UNIT_OPTIONS}

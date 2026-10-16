@@ -21,12 +21,12 @@ export const SecurityPrivacySettings = ({
 }) => {
   const inactiveLogout = useWatch({
     control,
-    name: `securityPrivacy.${SecurityPrivacyField.InactiveShopperLogout}`,
+    name: SecurityPrivacyField.InactiveShopperLogout,
   });
 
   const enableRecaptcha = useWatch({
     control,
-    name: `securityPrivacy.${SecurityPrivacyField.EnableRecaptchaStorefront}`,
+    name: SecurityPrivacyField.EnableRecaptchaStorefront,
   });
 
   return (
@@ -37,7 +37,7 @@ export const SecurityPrivacySettings = ({
 
         <div className="space-y-4">
           <InputField
-            name={`securityPrivacy.${SecurityPrivacyField.EnforcePasswordComplexity}`}
+            name={SecurityPrivacyField.EnforcePasswordComplexity}
             label="Configure complexity of the shoppers password?"
             control={control}
             Component={CheckboxField}
@@ -61,7 +61,7 @@ export const SecurityPrivacySettings = ({
 
           <div className="space-y-4">
             <InputField
-              name={`securityPrivacy.${SecurityPrivacyField.InactiveShopperLogout}`}
+              name={SecurityPrivacyField.InactiveShopperLogout}
               label="Inactive shopper logout"
               control={control}
               Component={RadioGroupField}
@@ -73,13 +73,13 @@ export const SecurityPrivacySettings = ({
             {inactiveLogout === "custom" && (
               <div className="flex gap-3 lg:ml-72">
                 <InputField
-                  name={`securityPrivacy.${SecurityPrivacyField.CustomLogoutDuration}`}
+                  name={SecurityPrivacyField.CustomLogoutDuration}
                   label="Custom Inactive Duration"
                   control={control}
                   className="w-20"
                 />
                 <InputField
-                  name={`securityPrivacy.${SecurityPrivacyField.CustomLogoutDurationUnit}`}
+                  name={SecurityPrivacyField.CustomLogoutDurationUnit}
                   label="Unit"
                   control={control}
                   Component={SelectField}
@@ -90,7 +90,7 @@ export const SecurityPrivacySettings = ({
             )}
 
             <InputField
-              name={`securityPrivacy.${SecurityPrivacyField.ShopperActivityExtendsLogout}`}
+              name={SecurityPrivacyField.ShopperActivityExtendsLogout}
               label="Shopper activity extends logout duration"
               control={control}
               Component={CheckboxField}
@@ -106,7 +106,7 @@ export const SecurityPrivacySettings = ({
       <div className="bg-white rounded-sm border border-gray-200 p-6">
         <div className="space-y-4">
           <InputField
-            name={`securityPrivacy.${SecurityPrivacyField.ControlPanelTimeout}`}
+            name={SecurityPrivacyField.ControlPanelTimeout}
             label="Control Panel Inactivity Timeout"
             control={control}
             Component={SelectField}
@@ -116,7 +116,7 @@ export const SecurityPrivacySettings = ({
           />
 
           <InputField
-            name={`securityPrivacy.${SecurityPrivacyField.EnableRecaptchaStorefront}`}
+            name={SecurityPrivacyField.EnableRecaptchaStorefront}
             label="Enable reCAPTCHA on storefront?"
             control={control}
             Component={CheckboxField}
@@ -128,14 +128,14 @@ export const SecurityPrivacySettings = ({
           {enableRecaptcha && (
             <div className="space-y-3 lg:ml-72">
               <InputField
-                name={`securityPrivacy.${SecurityPrivacyField.RecaptchaSiteKey}`}
+                name={SecurityPrivacyField.RecaptchaSiteKey}
                 label="reCAPTCHA Site Key"
                 control={control}
                 placeholder="(Site Key)"
                 className="w-96"
               />
               <InputField
-                name={`securityPrivacy.${SecurityPrivacyField.RecaptchaSecretKey}`}
+                name={SecurityPrivacyField.RecaptchaSecretKey}
                 label="reCAPTCHA Secret Key"
                 control={control}
                 placeholder="(Secret Key)"
@@ -145,7 +145,7 @@ export const SecurityPrivacySettings = ({
           )}
 
           <InputField
-            name={`securityPrivacy.${SecurityPrivacyField.FailedLoginLockout}`}
+            name={SecurityPrivacyField.FailedLoginLockout}
             label="Failed Login Lockout"
             control={control}
             type="number"
@@ -154,7 +154,7 @@ export const SecurityPrivacySettings = ({
           />
 
           <InputField
-            name={`securityPrivacy.${SecurityPrivacyField.EnableRecaptchaPrelaunch}`}
+            name={SecurityPrivacyField.EnableRecaptchaPrelaunch}
             label="Enable reCAPTCHA on a storefront pre-launch login page?"
             control={control}
             Component={CheckboxField}
@@ -179,7 +179,7 @@ export const SecurityPrivacySettings = ({
 
           <div className="space-y-4">
             <InputField
-              name={`securityPrivacy.${SecurityPrivacyField.EnableCookieConsent}`}
+              name={SecurityPrivacyField.EnableCookieConsent}
               label="Cookie consent tracking"
               control={control}
               Component={CheckboxField}
@@ -189,7 +189,7 @@ export const SecurityPrivacySettings = ({
             />
 
             <InputField
-              name={`securityPrivacy.${SecurityPrivacyField.PrivacyPolicyUrl}`}
+              name={SecurityPrivacyField.PrivacyPolicyUrl}
               label="Privacy Policy URL"
               control={control}
               placeholder="https://example.com/privacy-policy"
@@ -198,7 +198,7 @@ export const SecurityPrivacySettings = ({
             />
 
             <InputField
-              name={`securityPrivacy.${SecurityPrivacyField.DataCollectionLimit}`}
+              name={SecurityPrivacyField.DataCollectionLimit}
               label="Collect data for my business"
               control={control}
               Component={RadioGroupField}
@@ -235,7 +235,7 @@ export const SecurityPrivacySettings = ({
           {/* <XFrameOptionsSettings control={control} /> */}
 
           <InputField
-            name={`securityPrivacy.${SecurityPrivacyField.EnableNonceSecurity}`}
+            name={SecurityPrivacyField.EnableNonceSecurity}
             label="Enable Nonce-Based Script Security"
             control={control}
             Component={CheckboxField}
