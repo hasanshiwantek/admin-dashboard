@@ -1,55 +1,54 @@
-import { DecimalPlaces } from "./type";
+import {
+  DecimalPlaces,
+  Timezone,
+  DateFormat,
+  ExtendedDateFormat,
+  WeightMeasurement,
+  LengthMeasurement,
+  FactoringDimension,
+} from "./type";
 
 
 export const timezoneOptions = [
   {
-    value: "Europe/London",
+    value: Timezone.LONDON,
     label: "Western Europe Time, Casablanca (GMT)",
   },
   {
-    value: "America/New_York",
+    value: Timezone.NEW_YORK,
     label: "Eastern Time, New York (GMT-05:00)",
   },
   {
-    value: "Asia/Karachi",
+    value: Timezone.KARACHI,
     label: "Pakistan Standard Time (GMT+05:00)",
   },
 ];
 
 export const dateFormatOptions = [
-  { value: "mmm-dd-yyyy", label: "Jul 24th 2020" },
-  { value: "mm-dd-yyyy", label: "07/24/2020" },
-  { value: "dd-mm-yyyy", label: "24/07/2020" },
+  { value: DateFormat.MONTH_DAY_YEAR, label: "Jul 24th 2020" },
+  { value: DateFormat.NUMERIC_MONTH_DAY_YEAR, label: "07/24/2020" },
+  { value: DateFormat.DAY_MONTH_YEAR, label: "24/07/2020" },
 ];
-
  export const extendedDateFormatOptions = [
-  {
-    value: "long",
-    label: "Jul 24th 2020 @ 3:49 AM",
-  },
-  {
-    value: "short",
-    label: "07/24/2020 3:49 AM",
-  },
-  {
-    value: "24-hour",
-    label: "24/07/2020 03:49",
-  },
+  { value: ExtendedDateFormat.LONG, label: "Jul 24th 2020 @ 3:49 AM" },
+  { value: ExtendedDateFormat.SHORT, label: "07/24/2020 3:49 AM" },
+  { value: ExtendedDateFormat.TWENTY_FOUR_HOUR, label: "24/07/2020 03:49" },
 ];
 
 export const weightOptions = [
-  { value: "ounces", label: "Ounces" },
-  { value: "pounds", label: "Pounds" },
-  { value: "grams", label: "Grams" },
-  { value: "kilograms", label: "Kilograms" },
+  { value: WeightMeasurement.OUNCES, label: "Ounces" },
+  { value: WeightMeasurement.POUNDS, label: "Pounds" },
+  { value: WeightMeasurement.GRAMS, label: "Grams" },
+  { value: WeightMeasurement.KILOGRAMS, label: "Kilograms" },
 ];
 
 export const lengthOptions = [
-  { value: "inches", label: "Inches" },
-  { value: "feet", label: "Feet" },
-  { value: "centimeters", label: "Centimeters" },
-  { value: "meters", label: "Meters" },
+  { value: LengthMeasurement.INCHES, label: "Inches" },
+  { value: LengthMeasurement.FEET, label: "Feet" },
+  { value: LengthMeasurement.CENTIMETERS, label: "Centimeters" },
+  { value: LengthMeasurement.METERS, label: "Meters" },
 ];
+
 
 export const decimalPlacesOptions = [
   { value: DecimalPlaces.ZERO, label: "0" },
@@ -60,18 +59,18 @@ export const decimalPlacesOptions = [
 ];
 
 export const factoringDimensionOptions = [
-  { value: "product_depth", label: "Product depth" },
-  { value: "product_width", label: "Product width" },
-  { value: "product_height", label: "Product height" },
+  { value: FactoringDimension.PRODUCT_DEPTH, label: "Product depth" },
+  { value: FactoringDimension.PRODUCT_WIDTH, label: "Product width" },
+  { value: FactoringDimension.PRODUCT_HEIGHT, label: "Product height" },
 ];
 
 export const defaultValues = {
-      weightMeasurement: "ounces",
-      lengthMeasurement: "inches",
+      weightMeasurement: WeightMeasurement.OUNCES,
+      lengthMeasurement: LengthMeasurement.INCHES,
       thousandsToken: ",",
       decimalToken: ".",
-      decimalPlaces: "2",
-      factoringDimension: "product_depth",
+      decimalPlaces: DecimalPlaces.TWO,
+      factoringDimension: FactoringDimension.PRODUCT_DEPTH,
     }
 export const  countryDefaultValue = {
       country: "United States",
