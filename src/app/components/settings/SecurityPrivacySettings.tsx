@@ -1,52 +1,56 @@
-import { CheckboxField } from "./StoreSettings";
-import { FormField } from "./StoreSettings";
-import { Input } from "@/components/ui/input";
+"use client";
+
+import { useWatch } from "react-hook-form";
+import { Control } from "react-hook-form";
+import InputField from "@/components/form/InputField";
+import CheckboxField from "@/components/form/fields/CheckboxField";
+import RadioGroupField from "@/components/form/fields/RadioGroupField";
+import SelectField from "@/components/form/fields/SelectField";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { RadioGroupField } from "./StoreSettings";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { CspSettings } from "./StoreSettings";
-import { XFrameOptionsSettings } from "./StoreSettings";
-import { HstsSettings } from "./StoreSettings";
-import { Info } from "lucide-react";
-// 🆕 SecurityPrivacySettings Component
-export const SecurityPrivacySettings = ({
-  settings,
-  onSettingsChange,
-}: {
-  settings: any;
-  onSettingsChange: any;
-}) => {
-  const updateSetting = (key: any, value: any) => {
-    onSettingsChange({ ...settings, [key]: value });
-  };
+  DATA_COLLECTION_OPTIONS,
+  DURATION_UNIT_OPTIONS,
+  LOGOUT_OPTIONS,
+  SecurityPrivacyField,
+  TIMEOUT_OPTIONS,
+} from "./constant";
+import PageTitle from "@/components/ui/PageTitle";
+import Link from "next/link";
+import { useFormContext } from "@/components/form/Form";
+
+export const SecurityPrivacySettings = () => {
+  const { control } = useFormContext();
+
+  const inactiveLogout = useWatch({
+    control,
+    name: SecurityPrivacyField.InactiveShopperLogout,
+  });
+
+  const enableRecaptcha = useWatch({
+    control,
+    name: SecurityPrivacyField.EnableRecaptchaStorefront,
+  });
 
   return (
     <div className="space-y-8">
-      {/* 1. Shopper Security Section (from image_b08be9.png) */}
+      {/* Shopper Security */}
       <div className="bg-white rounded-sm border border-gray-200 p-6">
-        <h2 className="!font-semibold mb-6 2xl:!text-[2.4rem]">Security</h2>
-
-        <CheckboxField 
-          className="w-full lg:w-80"
-          label="Configure complexity of the shoppers password?"
-          checked={settings.enforcePasswordComplexity}
-          onCheckedChange={(checked) =>
-            updateSetting("enforcePasswordComplexity", checked)
-          }
-          infoText="Yes, I would like to enforce complexity rules for shopper passwords"
-        />
+        <PageTitle title={"Security"} hideActionButton />
+        <div className="space-y-4">
+          <InputField
+            name={SecurityPrivacyField.EnforcePasswordComplexity}
+            label="Configure complexity of the shoppers password?"
+            control={control}
+            Component={CheckboxField}
+            text="Yes, I would like to enforce complexity rules for shopper passwords"
+            className="w-full "
+            labelClassName="lg:text-right"
+          />
+        </div>
       </div>
 
-      {/* 2nd Section */}
+      {/* Inactive logout */}
       <div className="bg-white rounded-sm border border-gray-200 p-6">
-              <div className="2xl:!text-2xl">
+        <div className="2xl:!text-2xl">
           <p className="text-sm text-gray-600 mb-4 2xl:!text-2xl">
             For advanced users only, this section allows you to configure the
             automatic logout duration for inactive shoppers.{" "}
@@ -55,260 +59,189 @@ export const SecurityPrivacySettings = ({
             </a>
           </p>
 
-          <RadioGroupField
-            className="w-full lg:w-80"
-            title="Inactive shopper logout"
-            name="inactive-logout"
-            value={settings.inactiveShopperLogout}
-            onValueChange={(value) =>
-              updateSetting("inactiveShopperLogout", value)
-            }
-            options={[
-              { value: "default", label: "Use the default 7 day duration" },
-              { value: "custom", label: "Let me customize the duration" },
-            ]}
+          <div className="space-y-4">
+            <InputField
+              name={SecurityPrivacyField.InactiveShopperLogout}
+              label="Inactive shopper logout"
+              control={control}
+              Component={RadioGroupField}
+              options={LOGOUT_OPTIONS}
+              className="w-full "
+              labelClassName=" lg:text-right"
+            />
+
+            {inactiveLogout === "custom" && (
+              <div className="flex gap-3 lg:ml-72">
+                <InputField
+                  name={SecurityPrivacyField.CustomLogoutDuration}
+                  label="Custom Inactive Duration"
+                  control={control}
+                  className="w-20"
+                />
+                <InputField
+                  name={SecurityPrivacyField.CustomLogoutDurationUnit}
+                  label="Unit"
+                  control={control}
+                  Component={SelectField}
+                  options={DURATION_UNIT_OPTIONS}
+                  className="w-28"
+                />
+              </div>
+            )}
+
+            <InputField
+              name={SecurityPrivacyField.ShopperActivityExtendsLogout}
+              label="Shopper activity extends logout duration"
+              control={control}
+              Component={CheckboxField}
+              text="Yes, extend my shoppers logout duration while they are active"
+              className="w-full "
+              labelClassName="lg:text-right"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Control panel + reCAPTCHA */}
+      <div className="bg-white rounded-sm border border-gray-200 p-6">
+        <div className="space-y-4">
+          <InputField
+            name={SecurityPrivacyField.ControlPanelTimeout}
+            label="Control Panel Inactivity Timeout"
+            control={control}
+            Component={SelectField}
+            options={TIMEOUT_OPTIONS}
+            className="w-full "
+            labelClassName="lg:text-right"
           />
 
-          {settings.inactiveShopperLogout === "custom" && (
-            <FormField className="w-full lg:w-80" label="Custom Inactive Duration" hasInfo={false}>
-              <Input
-                value={settings.customLogoutDuration}
-                onChange={(e) =>
-                  updateSetting("customLogoutDuration", e.target.value)
-                }
-                className="w-20"
+          <InputField
+            name={SecurityPrivacyField.EnableRecaptchaStorefront}
+            label="Enable reCAPTCHA on storefront?"
+            control={control}
+            Component={CheckboxField}
+            text="Yes, enable reCAPTCHA security"
+            className="w-full "
+            labelClassName="lg:text-right"
+          />
+
+          {enableRecaptcha && (
+            <div className="space-y-3 lg:ml-72">
+              <InputField
+                name={SecurityPrivacyField.RecaptchaSiteKey}
+                label="reCAPTCHA Site Key"
+                control={control}
+                placeholder="(Site Key)"
+                className="w-96"
               />
-              <Select
-                value={settings.customLogoutDurationUnit}
-                onValueChange={(value) =>
-                  updateSetting("customLogoutDurationUnit", value)
-                }
-              >
-                <SelectTrigger className="w-28">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="minutes">minutes</SelectItem>
-                  <SelectItem value="hours">hours</SelectItem>
-                  <SelectItem value="days">days</SelectItem>
-                </SelectContent>
-              </Select>
-            </FormField>
+              <InputField
+                name={SecurityPrivacyField.RecaptchaSecretKey}
+                label="reCAPTCHA Secret Key"
+                control={control}
+                placeholder="(Secret Key)"
+                className="w-96"
+              />
+            </div>
           )}
 
-          <CheckboxField
-            className="w-full lg:w-80"
-            label="Shopper activity extends logout duration"
-            checked={settings.shopperActivityExtendsLogout}
-            onCheckedChange={(checked) =>
-              updateSetting("shopperActivityExtendsLogout", checked)
-            }
-            infoText="Yes, extend my shoppers logout duration while they are active"
+          <InputField
+            name={SecurityPrivacyField.FailedLoginLockout}
+            label="Failed Login Lockout"
+            control={control}
+            type="number"
+            className="w-full "
+            labelClassName=" lg:text-right"
+          />
+
+          <InputField
+            name={SecurityPrivacyField.EnableRecaptchaPrelaunch}
+            label="Enable reCAPTCHA on a storefront pre-launch login page?"
+            control={control}
+            Component={CheckboxField}
+            text="Yes, enable reCAPTCHA security on the pre-launch login page."
+            className="w-full "
+            labelClassName=" lg:text-right"
           />
         </div>
       </div>
 
-
-      {/* 3. Privacy and Storefront Security Section (from image_b08c23.png) */}
-      <div className="bg-white rounded-sm border border-gray-200 p-6">
-        <FormField className="w-full lg:w-80" label="Control Panel Inactivity Timeout">
-          <Select
-            value={settings.controlPanelTimeout}
-            onValueChange={(value) =>
-              updateSetting("controlPanelTimeout", value)
-            }
-          >
-            <SelectTrigger className="w-32">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="1hour">1 hour</SelectItem>
-              <SelectItem value="2hours">2 hours</SelectItem>
-              <SelectItem value="4hours">4 hours</SelectItem>
-              <SelectItem value="8hours">8 hours</SelectItem>
-            </SelectContent>
-          </Select>
-        </FormField>
-
-        <CheckboxField
-           className="w-full lg:w-80"
-          label="Enable reCAPTCHA on storefront?"
-          checked={settings.enableRecaptchaStorefront}
-          onCheckedChange={(checked) =>
-            updateSetting("enableRecaptchaStorefront", checked)
-          }
-          infoText="Yes, enable reCAPTCHA security"
-        />
-
-        {settings.enableRecaptchaStorefront && (
-          <div className="space-y-3 pl-48">
-            <FormField className="w-full lg:w-80" label="reCAPTCHA Site Key" hasInfo={true}>
-              <Input
-                value={settings.recaptchaSiteKey}
-                onChange={(e) =>
-                  updateSetting("recaptchaSiteKey", e.target.value)
-                }
-                className="w-96"
-                placeholder="(Site Key)"
-              />
-            </FormField>
-            <FormField className="w-full lg:w-80" label="reCAPTCHA Secret Key" hasInfo={true}>
-              <Input
-                value={settings.recaptchaSecretKey}
-                onChange={(e) =>
-                  updateSetting("recaptchaSecretKey", e.target.value)
-                }
-                className="w-96"
-                placeholder="(Secret Key)"
-              />
-            </FormField>
-          </div>
-        )}
-
-        <FormField className="w-full lg:w-80" label="Failed Login Lockout">
-          <Input
-            type="number"
-            value={settings.failedLoginLockout}
-            onChange={(e) =>
-              updateSetting("failedLoginLockout", e.target.value)
-            }
-            className="w-20"
-          />
-        </FormField>
-
-        <CheckboxField
-          className="w-full lg:w-80"
-          label="Enable reCAPTCHA on a storefront pre-launch login page?"
-          checked={settings.enableRecaptchaPrelaunch}
-          onCheckedChange={(checked) =>
-            updateSetting("enableRecaptchaPrelaunch", checked)
-          }
-          infoText="Yes, enable reCAPTCHA security on the pre-launch login page."
-        />
-      </div>
-
-      {/* 4. Privacy and Storefront Security Section (from image_b08c23.png) */}
+      {/* Privacy */}
       <div className="border border-gray-200">
-        <div className="bg-white  p-6 rounded-sm ">
-          <h2 className="!font-semibold mb-6 2xl:!text-[2.4rem]">Your customers' privacy</h2>
+        <div className="bg-white p-6 rounded-sm">
+          <PageTitle title={"Your customers privacy"} hideActionButton />
+
           <p className="text-sm text-gray-600 mb-4">
             <a href="#" className="text-blue-600 hover:underline">
               Learn more
             </a>
           </p>
 
-          <CheckboxField
-            className="w-full lg:w-80"
-            label="Cookie consent tracking"
-            checked={settings.enableCookieConsent}
-            onCheckedChange={(checked) =>
-              updateSetting("enableCookieConsent", checked)
-            }
-            infoText="Yes, turn on the cookie consent banner on my store."
-          />
-
-          <FormField className="w-full lg:w-80" label="Privacy Policy URL" hasInfo={true}>
-            <Input
-              value={settings.privacyPolicyUrl}
-              onChange={(e) =>
-                updateSetting("privacyPolicyUrl", e.target.value)
-              }
-              className="w-96"
-              placeholder="https://example.com/privacy-policy"
+          <div className="space-y-4">
+            <InputField
+              name={SecurityPrivacyField.EnableCookieConsent}
+              label="Cookie consent tracking"
+              control={control}
+              Component={CheckboxField}
+              text="Yes, turn on the cookie consent banner on my store."
+              className="w-full "
+              labelClassName=" lg:text-right"
             />
-          </FormField>
 
-          <RadioGroupField
-            className="w-full lg:w-80"
-            title="Collect data for my business"
-            name="data-collection-limit"
-            value={settings.dataCollectionLimit}
-            onValueChange={(value) =>
-              updateSetting("dataCollectionLimit", value)
-            }
-            options={[
-              { value: "off", label: "Off" },
-              {
-                value: "moderate",
-                label: "On with moderate limits to data collected (Legacy)",
-              },
-              {
-                value: "strict",
-                label: "On with strict limits to data collected",
-              },
-            ]}
-          />
+            <InputField
+              name={SecurityPrivacyField.PrivacyPolicyUrl}
+              label="Privacy Policy URL"
+              control={control}
+              placeholder="https://example.com/privacy-policy"
+              className="w-full "
+              labelClassName=" lg:text-right"
+            />
+
+            <InputField
+              name={SecurityPrivacyField.DataCollectionLimit}
+              label="Collect data for my business"
+              control={control}
+              Component={RadioGroupField}
+              options={DATA_COLLECTION_OPTIONS}
+              className="w-full "
+              labelClassName=" lg:text-right"
+            />
+          </div>
         </div>
 
         <hr className="my-6" />
 
-        <div className="bg-white  p-6 rounded-sm ">
-          <h2 className="!font-semibold mb-4 2xl:!text-[2.4rem]">Storefront</h2>
+        <div className="bg-white p-6 rounded-sm">
+          <PageTitle title={"Storefront"} hideActionButton />
+
           <p className="text-sm text-gray-600 mb-4 2xl:!text-2xl">
             For advanced users only, this section allows you to configure
             advanced security policies for your storefront.{" "}
-            <a href="#" className="text-blue-600 hover:underline">
+            <Link href="#" className="text-blue-600 hover:underline">
               Learn more
-            </a>
+            </Link>
           </p>
           <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-4">
             <p className="text-sm text-gray-700 2xl:!text-2xl">
               Changing these settings can have serious consequences for your
               storefront if done incorrectly. Please consult the documentation
               before making any changes. It is recommended to not modify these
-              settings at all unless you know exactly what you're doing.
+              settings at all unless you know exactly what you&apos;re doing.
             </p>
           </div>
 
-          {/* HSTS Settings */}
-          <div className="flex flex-col lg:flex-row items-start gap-4 py-3">
-            <Label className="w-48 text-right pr-4 pt-2 2xl:!text-2xl">HSTS Settings</Label>
-            <div className="flex-1 flex  gap-2">
-              <p className="text-sm text-gray-700 2xl:!text-2xl">
-                HSTS is enforced for all stores with HTTPS only enabled. To
-                disable the effects of HSTS set the "Max-Age" to 0 (not
-                recommended).
-              </p>
-              {/* <Checkbox
-                id="enable-hsts"
-                checked={settings.enableHsts}
-                onCheckedChange={(checked) =>
-                  updateSetting("enableHsts", checked)
-                }
-              />
-              <Label htmlFor="enable-hsts" className="font-normal ml-2 2xl:!text-2xl">
-                Set Max-Age Header (max-age) to:
-              </Label> */}
-            </div>
-            <Info className="w-4 h-4 text-gray-400 flex-shrink-0 mt-2" />
-          </div>
-            <HstsSettings settings={settings} updateSetting={updateSetting} />
-          {/* {settings.enableHsts && ( */}
-          {/* )} */}
+          {/* HSTS / CSP / X-Frame — convert these sub-components to accept control as well */}
+          {/* <HstsSettings control={control} /> */}
+          {/* <CspSettings control={control} /> */}
+          {/* <XFrameOptionsSettings control={control} /> */}
 
-          <hr className="my-6" />
-
-          {/* CSP Settings */}
-          <CspSettings settings={settings} updateSetting={updateSetting} />
-
-          <hr className="my-6" />
-
-          <CheckboxField
-            className="w-full lg:w-56"
+          <InputField
+            name={SecurityPrivacyField.EnableNonceSecurity}
             label="Enable Nonce-Based Script Security"
-            checked={settings.enableNonceSecurity}
-            onCheckedChange={(checked) =>
-              updateSetting("enableNonceSecurity", checked)
-            }
-            infoText="Generate and enforce a nonce in the CSP for payment pages."
-          />
-
-          <hr className="my-6" />
-
-          {/* X-Frame-Options Header Settings */}
-          <XFrameOptionsSettings
-            settings={settings}
-            updateSetting={updateSetting}
+            control={control}
+            Component={CheckboxField}
+            text="Generate and enforce a nonce in the CSP for payment pages."
+            className="w-full "
+            labelClassName="lg:text-right"
           />
         </div>
       </div>

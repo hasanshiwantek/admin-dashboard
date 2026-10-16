@@ -1,0 +1,127 @@
+"use client";
+
+import { useState } from "react";
+import {
+  ChevronRight,
+  Facebook,
+  Twitter,
+  Linkedin,
+  Mail,
+  Printer,
+  ThumbsUp,
+  Pin,
+} from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { ShareId } from "./type";
+import { SHARE_CONFIG } from "./constant";
+import PageTitle from "@/components/ui/PageTitle";
+
+export const SocialSharingSettings = () => {
+  const [moreOpen, setMoreOpen] = useState(false);
+  const [poweredByLink, setPoweredByLink] = useState(true);
+  const [active, setActive] = useState<Record<ShareId, boolean>>({
+    facebook: true,
+    twitter: true,
+    linkedin: true,
+    pinterest: true,
+    "facebook-like": false,
+    email: true,
+    print: true,
+  });
+
+  const toggle = (id: ShareId) => {
+    setActive((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  return (
+    <div className="bg-white rounded-sm border border-gray-200 p-6">
+      <PageTitle title={"Social Sharing Settings"} hideActionButton />
+
+      <p className="text-sm text-gray-600 mb-6 2xl:!text-xl">
+        Share controls are displayed on product pages and blog posts.
+      </p>
+
+      <div className="flex flex-col lg:flex-row gap-8">
+        {/* Left: Share buttons */}
+        <div className="flex-1">
+          {/* Row 1 */}
+          <div className="flex gap-3 max-w-md">
+            {SHARE_CONFIG.slice(0, 4).map((btn) => {
+              const Icon = btn.icon;
+              const isActive = active[btn.id];
+              return (
+                <div
+                  key={btn.id}
+                  onClick={() => toggle(btn.id)}
+                  className={cn(
+                    `w-20 h-20 flex items-center justify-center cursor-pointer text-white transition-colors ${
+                      isActive ? btn.color : "bg-gray-300"
+                    }`,
+                  )}
+                >
+                  <Icon className="w-10 h-10" />
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Row 2 */}
+          <div className="flex gap-3 mt-3 max-w-md items-end">
+            {SHARE_CONFIG.slice(4).map((btn) => {
+              const Icon = btn.icon;
+              const isActive = active[btn.id];
+              return (
+                <button
+                  key={btn.id}
+                  type="button"
+                  onClick={() => toggle(btn.id)}
+                  className={`w-20 h-20 flex items-center justify-center transition-colors ${
+                    btn.iconOnly
+                      ? isActive
+                        ? btn.color
+                        : "text-gray-400"
+                      : isActive
+                        ? `${btn.color} text-white`
+                        : "bg-gray-300 text-white"
+                  }`}
+                >
+                  <Icon className="w-10 h-10" />
+                </button>
+              );
+            })}
+          </div>
+
+          {/* More options */}
+          <button
+            type="button"
+            onClick={() => setMoreOpen(!moreOpen)}
+            className="mt-6 flex items-center gap-1 text-blue-600 hover:underline text-sm"
+          >
+            <ChevronRight
+              className={`w-4 h-4 transition-transform ${
+                moreOpen ? "rotate-90" : ""
+              }`}
+            />
+            More options
+          </button>
+
+          {moreOpen && (
+            <div className="mt-4 pl-5">
+              <div className="flex items-center gap-3">
+                <span className="text-sm text-gray-700">
+                  &apos;Powered by Bigcommerce&apos; link in eBay store
+                </span>
+                <Switch
+                  checked={poweredByLink}
+                  onCheckedChange={setPoweredByLink}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
