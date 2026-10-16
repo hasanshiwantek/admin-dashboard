@@ -97,3 +97,10 @@ export enum PhysicalDimensionFields {
   DECIMAL_PLACES = "decimalPlaces",
   FACTORING_DIMENSION = "factoringDimension",
 }
+
+export enum DateTimezoneFields {
+  TIMEZONE = "timezone",
+  DAYLIGHT_SAVING = "daylightSaving",
+  DATE_FORMAT = "dateFormat",
+  EXTENDED_DATE_FORMAT = "extendedDateFormat",
+}

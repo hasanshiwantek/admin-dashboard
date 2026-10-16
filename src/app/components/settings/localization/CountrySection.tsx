@@ -12,6 +12,7 @@ import SelectField from "@/components/form/fields/SelectField";
 import { CountryFormValues } from "./type";
 import { countryDefaultValue } from "./constant";
 import { Label } from "@/components/ui/label";
+import PageTitle from "@/components/ui/PageTitle";
 
 
 
@@ -43,39 +44,46 @@ const CountrySection = () => {
       className="pb-0"
       bodyClassName="gap-0 rounded-md border border-[#E1E4ED] p-6 shadow-sm sm:p-8"
     >
-      <h2 className="mb-6 text-[24px]! font-medium text-slate-500">
-        Country
-      </h2>
+     <PageTitle
+  title="Country"
+  hideActionButton
+  titleClassName="mb-6 text-[24px]! font-medium text-slate-500"
+  containerClassName="mb-0"
+  textContainerClassName="mb-0"
+/>
 
       <div className="max-w-[520px]">
-        <div className="mb-2 flex items-center gap-3">
-      <Label
-  htmlFor="country"
-  className="text-[16px]! font-medium text-slate-500"
->
-  Default country
-</Label>
-
-          <HelpCircle
-            size={15}
-            className="text-slate-400"
-            aria-label="Country information"
-          />
-        </div>
-
-        <p className="mb-2 text-[14px] text-slate-500">
-          Determines available payment options.
-        </p>
-
         <InputField
-          name="country"
-          control={form.control}
-          Component={SelectField}
-          options={countries}
-          layout="vertical"
-          containerClassName="!gap-0"
-          controlClassName="w-full"
+  name="country"
+  control={form.control}
+  Component={SelectField}
+  options={countries}
+  layout="vertical"
+  containerClassName="!gap-0"
+  controlClassName="w-full"
+  label={
+    <div className="flex flex-col gap-2">
+      <div className="flex items-center gap-2">
+        <Label
+          htmlFor="country"
+          className="text-[16px]! font-medium text-slate-500"
+        >
+          Default country
+        </Label>
+
+        <HelpCircle
+          size={15}
+          className="text-slate-400"
+          aria-label="Country information"
         />
+      </div>
+
+      <p className="mb-2 text-[14px] text-slate-500">
+        Determines available payment options.
+      </p>
+    </div>
+  }
+/>
       </div>
     </Form>
   );

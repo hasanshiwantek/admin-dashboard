@@ -10,7 +10,7 @@ import InputField from "@/components/form/InputField";
 import SelectField from "@/components/form/fields/SelectField";
 import CheckboxField from "@/components/form/fields/CheckboxField";
 import { Button } from "@/components/ui/button";
-import { dateFormatOptions, extendedDateFormatOptions, TimedefaultValues, timezoneOptions } from "./constant";
+import { dateFormatOptions, extendedDateFormatOptions, TimedefaultValues, timezoneOptions ,DateTimezoneFields} from "./constant";
 import { DateTimezoneValues } from "./type";
 import PageTitle from "@/components/ui/PageTitle";
 
@@ -22,7 +22,14 @@ const DateTimezoneSection = () => {
   const form = useForm<DateTimezoneValues>({
     defaultValues: TimedefaultValues
   });
-
+const handleSetStandardFormats = () => {
+  form.reset({
+    [DateTimezoneFields.TIMEZONE]: "America/New_York",
+    [DateTimezoneFields.DAYLIGHT_SAVING]: false,
+    [DateTimezoneFields.DATE_FORMAT]: "mmm-dd-yyyy",
+    [DateTimezoneFields.EXTENDED_DATE_FORMAT]: "long",
+  });
+};
   const onSubmit = (values: DateTimezoneValues) => {
     console.log("Date and timezone settings:", values);
   };
@@ -37,15 +44,13 @@ const DateTimezoneSection = () => {
     >
      <PageTitle
   title="Date and timezone"
+  description="Jul 24th 2020 @ 3:49 AM, (GMT -05:00)"
   hideActionButton
   titleClassName="mb-5 text-[24px]! font-medium! text-slate-500"
+  descriptionClassName="mb-12 text-[32px]! font-light leading-tight text-slate-500"
   containerClassName="mb-0"
   textContainerClassName="mb-0"
 />
-
-      <p className="mb-12 text-[32px]! font-light leading-tight text-slate-500">
-        Jul 24th 2020 @ 3:49 AM, (GMT -05:00)
-      </p>
 
       <div className="flex flex-wrap items-center gap-x-12 gap-y-4">
        <Button
@@ -68,14 +73,8 @@ const DateTimezoneSection = () => {
         <button
           type="button"
           className="text-blue-600 text-[16px]! hover:underline"
-          onClick={() => {
-            form.reset({
-              timezone: "America/New_York",
-              daylightSaving: false,
-              dateFormat: "mmm-dd-yyyy",
-              extendedDateFormat: "long",
-            });
-          }}
+           onClick={handleSetStandardFormats}
+ 
         >
           Set standard formats for United States
         </button>
@@ -84,7 +83,7 @@ const DateTimezoneSection = () => {
       {showSettings && (
         <div className="mt-10 max-w-[520px] space-y-6">
           <InputField
-            name="timezone"
+            name={DateTimezoneFields.TIMEZONE}
             label="Store local timezone"
             required
             Component={SelectField}
@@ -96,7 +95,7 @@ const DateTimezoneSection = () => {
           />
 
         <InputField
-  name="daylightSaving"
+  name={DateTimezoneFields.DAYLIGHT_SAVING}
   Component={CheckboxField}
   control={form.control}
   layout="vertical"
@@ -111,7 +110,7 @@ const DateTimezoneSection = () => {
 />
 
           <InputField
-            name="dateFormat"
+            name={DateTimezoneFields.DATE_FORMAT}
             label="Date format"
             required
             Component={SelectField}
@@ -123,7 +122,7 @@ const DateTimezoneSection = () => {
           />
 
           <InputField
-            name="extendedDateFormat"
+            name={DateTimezoneFields.EXTENDED_DATE_FORMAT}
             label="Extended date and time format"
             required
             Component={SelectField}
