@@ -81,7 +81,6 @@ const handleSetStandardFormats = () => {
             label="Store local timezone"
             required
             Component={SelectField}
-            control={form.control}
             layout="vertical"
             containerClassName="flex flex-col gap-2"
             controlClassName="w-full"
@@ -91,7 +90,6 @@ const handleSetStandardFormats = () => {
         <InputField
   name={DateTimezoneFields.DAYLIGHT_SAVING}
   Component={CheckboxField}
-  control={form.control}
   layout="vertical"
   containerClassName="flex flex-col !gap-2"
   controlClassName="w-full"
@@ -108,7 +106,6 @@ const handleSetStandardFormats = () => {
             label="Date format"
             required
             Component={SelectField}
-            control={form.control}
             layout="vertical"
             containerClassName="flex flex-col gap-2"
             controlClassName="w-full"
@@ -120,7 +117,6 @@ const handleSetStandardFormats = () => {
             label="Extended date and time format"
             required
             Component={SelectField}
-            control={form.control}
             layout="vertical"
             containerClassName="flex flex-col !gap-2"
             controlClassName="w-full"

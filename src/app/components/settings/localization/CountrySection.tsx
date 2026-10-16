@@ -47,7 +47,6 @@ const CountrySection = () => {
       <div className="max-w-[520px]">
         <InputField
   name="country"
-  control={form.control}
   Component={SelectField}
   options={countries}
   layout="vertical"

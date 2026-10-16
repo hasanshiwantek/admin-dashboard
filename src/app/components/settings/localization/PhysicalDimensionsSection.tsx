@@ -96,7 +96,6 @@ const PhysicalDimensionsSection = () => {
             name={PhysicalDimensionFields.WEIGHT_MEASUREMENT}
             label="Weight measurement"
             Component={SelectField}
-            control={form.control}
             layout="vertical"
             containerClassName="flex flex-col gap-2"
             controlClassName="w-full"
@@ -107,7 +106,6 @@ const PhysicalDimensionsSection = () => {
             name={PhysicalDimensionFields.LENGTH_MEASUREMENT}
             label="Length measurement"
             Component={SelectField}
-            control={form.control}
             layout="vertical"
             containerClassName="flex flex-col gap-2"
             controlClassName="w-full"
@@ -117,7 +115,6 @@ const PhysicalDimensionsSection = () => {
           <InputField
             name={PhysicalDimensionFields.THOUSANDS_TOKEN}
             label="Thousands token"
-            control={form.control}
             layout="vertical"
             containerClassName="flex flex-col gap-2"
             controlClassName="w-full"
@@ -126,7 +123,6 @@ const PhysicalDimensionsSection = () => {
           <InputField
             name={PhysicalDimensionFields.DECIMAL_TOKEN}
             label="Decimal token"
-            control={form.control}
             layout="vertical"
             containerClassName="flex flex-col gap-2"
             controlClassName="w-full"
@@ -136,7 +132,6 @@ const PhysicalDimensionsSection = () => {
             name={PhysicalDimensionFields.DECIMAL_PLACES}
             label="Decimal places"
             Component={SelectField}
-            control={form.control}
             layout="vertical"
             containerClassName="flex flex-col gap-2"
             controlClassName="w-full"
@@ -146,7 +141,6 @@ const PhysicalDimensionsSection = () => {
           <InputField
             name={PhysicalDimensionFields.FACTORING_DIMENSION}
             Component={SelectField}
-            control={form.control}
             layout="vertical"
             containerClassName="flex flex-col gap-2"
             controlClassName="w-full"
