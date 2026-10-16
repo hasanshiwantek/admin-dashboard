@@ -3,7 +3,6 @@ import { UrlSettingSection } from "./UrlSettingSection";
 import { useFormContext } from "@/components/form/Form";
 
 export const URLStructureSettings = () => {
-  const { control } = useFormContext();
   return (
     <div className="space-y-5">
       {URL_STRUCTURE_SECTIONS.map((section, index) => (
@@ -12,7 +11,6 @@ export const URLStructureSettings = () => {
             title={section.title}
             formatField={section.formatField}
             customUrlField={section.customUrlField}
-            control={control}
             shortExample={section.shortExample}
             longExample={section.longExample}
           />

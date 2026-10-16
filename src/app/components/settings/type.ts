@@ -14,7 +14,6 @@ export type SectionProps = {
   title: string;
   formatField: UrlStructureField;
   customUrlField: UrlStructureField;
-  control: Control<any>;
   shortExample: string;
   longExample: string;
 };

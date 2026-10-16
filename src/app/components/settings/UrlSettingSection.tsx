@@ -5,15 +5,17 @@ import RadioGroupField from "@/components/form/fields/RadioGroupField";
 import { Info } from "lucide-react";
 import { SectionProps } from "./type";
 import PageTitle from "@/components/ui/PageTitle";
+import { useFormContext } from "@/components/form/Form";
+import { UrlFormat } from "./constant";
 
 export const UrlSettingSection = ({
   title,
   formatField,
   customUrlField,
-  control,
   shortExample,
   longExample,
 }: SectionProps) => {
+  const { control } = useFormContext();
   const format = useWatch({
     control,
     name: formatField,
@@ -79,7 +81,7 @@ export const UrlSettingSection = ({
               name={formatField}
               Component={RadioGroupField}
               control={control}
-              options={[{ value: "custom", label: "" }]}
+              options={[{ value: UrlFormat.Custom, label: "" }]}
               label=""
               layout="vertical"
               containerClassName="!grid-cols-1"
@@ -88,7 +90,7 @@ export const UrlSettingSection = ({
             <InputField
               name={customUrlField}
               control={control}
-              disabled={format !== "custom"}
+              disabled={format !== UrlFormat.Custom}
               placeholder="/%title%/"
               label=""
               layout="vertical"
