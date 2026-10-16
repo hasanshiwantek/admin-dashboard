@@ -436,11 +436,6 @@ export const generalItems = [
     title: "Share",
     description: "Social sharing settings on product pages and blog posts",
   },
-  // {
-  //   id: "date-timezone",
-  //   title: "Date & Timezone",
-  //   description: "Timezone, DST correction, display date format",
-  // },
   {
     id: "url-structure",
     title: "URL structure",
