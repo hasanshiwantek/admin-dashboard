@@ -29,12 +29,11 @@ import {
   fetchUrlSettings,
   urlSettings,
 } from "@/redux/slices/homeSlice";
-import { UrlSettingEnums } from "@/const/appConstants";
 import AppTabs from "@/components/ui/AppTabs/AppTabs";
 import PageTitle from "@/components/ui/PageTitle";
 import { Control, useForm, useWatch } from "react-hook-form";
 import Form from "@/components/form/Form";
-import { defaultValues } from "./constant";
+import { defaultValues, UrlFormat, UrlSettingEnums } from "./constant";
 import InputField from "@/components/form/InputField";
 import { SocialSharingSettings } from "./SocialSharingSettings";
 type StoreSettingsFormValues = Record<string, never>;
@@ -376,16 +375,6 @@ export const StoreSettings = ({
       label: "Share",
       content: <SocialSharingSettings control={control} />,
     },
-    // {
-    //   key: "date-timezone",
-    //   label: "Date & Timezone",
-    //   content: (
-    //     <DateTimezoneSettings
-    //       settings={dateTimezoneSettings}
-    //       onSettingsChange={setDateTimezoneSettings}
-    //     />
-    //   ),
-    // },
     {
       key: "url-structure",
       label: "URL Structure",
@@ -461,6 +450,7 @@ export const StoreSettings = ({
         const urlPayloads = {
           product: (() => {
             const format = payload.urlStructure.productUrlFormat;
+
             if (format === "custom") {
               return {
                 format_type: "custom",
@@ -470,7 +460,7 @@ export const StoreSettings = ({
             }
             return {
               format_type:
-                format === UrlSettingEnums.SEO_OPTIMIZED_SHORT
+                format === UrlFormat.SeoOptimizedShort
                   ? UrlSettingEnums.SEO_OPTIMIZED_SHORT
                   : UrlSettingEnums.SEO_OPTIMIZED_LONG,
             };
@@ -478,6 +468,7 @@ export const StoreSettings = ({
 
           category: (() => {
             const format = payload.urlStructure.categoryUrlFormat;
+
             if (format === "custom") {
               return {
                 format_type: "custom",
@@ -488,7 +479,7 @@ export const StoreSettings = ({
             }
             return {
               format_type:
-                format === UrlSettingEnums.SEO_OPTIMIZED_SHORT
+                format === UrlFormat.SeoOptimizedShort
                   ? UrlSettingEnums.SEO_OPTIMIZED_SHORT
                   : UrlSettingEnums.SEO_OPTIMIZED_LONG, // as per your requirement
             };
@@ -496,6 +487,7 @@ export const StoreSettings = ({
 
           webPage: (() => {
             const format = payload.urlStructure.webPageUrlFormat;
+
             if (format === "custom") {
               return {
                 format_type: "custom",
@@ -506,12 +498,14 @@ export const StoreSettings = ({
             }
             return {
               format_type:
-                format === UrlSettingEnums.SEO_OPTIMIZED_SHORT
+                format === UrlFormat.SeoOptimizedShort
                   ? UrlSettingEnums.SEO_OPTIMIZED_SHORT
                   : UrlSettingEnums.SEO_OPTIMIZED_LONG,
             };
           })(),
         };
+
+
         // Save each URL section individually
         await Promise.all([
           dispatch(

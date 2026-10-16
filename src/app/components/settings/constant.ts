@@ -135,7 +135,11 @@ export enum UrlFormat {
   SeoOptimizedLong = "seo-optimized-long",
   Custom = "custom",
 }
-
+export enum UrlSettingEnums {
+  SEO_OPTIMIZED_SHORT = "seo_optimized_short",
+  SEO_OPTIMIZED_LONG = "seo_optimized_long",
+  CUSTOM = "custom",
+}
 export const URL_FORMAT_OPTIONS = [
   { value: UrlFormat.SeoOptimizedShort, label: "SEO Optimized (Short)" },
   { value: UrlFormat.SeoOptimizedLong, label: "SEO Optimized (Long)" },

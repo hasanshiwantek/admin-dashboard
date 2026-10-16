@@ -4,9 +4,10 @@ import InputField from "@/components/form/InputField";
 import SelectField from "@/components/form/fields/SelectField";
 import { WebsiteField, WwwRedirectOptions } from "./constant";
 import PageTitle from "@/components/ui/PageTitle";
+import Link from "next/link";
 
 // Website Settings Component
-export const WebsiteSettings = ({ control }: { control: any }) => {
+export const WebsiteSettings = ({ control }: { control?: any }) => {
   return (
     <div className="space-y-8">
       {/* Search Engine Optimization */}
@@ -61,14 +62,14 @@ export const WebsiteSettings = ({ control }: { control: any }) => {
         <p className="text-sm text-gray-600 mb-4">
           For advanced users only, this section allows you to control which
           pages of your website will be crawled and indexed by search engines.{" "}
-          <a
+          <Link
             href="https://developers.google.com/search/docs/crawling-indexing/robots/intro"
             target="_blank"
             rel="noopener noreferrer"
             className="text-blue-600 hover:underline"
           >
             Learn More
-          </a>
+          </Link>
         </p>
 
         <InputField

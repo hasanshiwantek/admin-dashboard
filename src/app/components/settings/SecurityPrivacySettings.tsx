@@ -14,6 +14,7 @@ import {
   TIMEOUT_OPTIONS,
 } from "./constant";
 import PageTitle from "@/components/ui/PageTitle";
+import Link from "next/link";
 
 export const SecurityPrivacySettings = ({
   control,
@@ -216,9 +217,9 @@ export const SecurityPrivacySettings = ({
           <p className="text-sm text-gray-600 mb-4 2xl:!text-2xl">
             For advanced users only, this section allows you to configure
             advanced security policies for your storefront.{" "}
-            <a href="#" className="text-blue-600 hover:underline">
+            <Link href="#" className="text-blue-600 hover:underline">
               Learn more
-            </a>
+            </Link>
           </p>
           <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-4">
             <p className="text-sm text-gray-700 2xl:!text-2xl">
