@@ -10,7 +10,7 @@ import Form from "@/components/form/Form";
 import InputField from "@/components/form/InputField";
 import SelectField from "@/components/form/fields/SelectField";
 import { CountryFormValues } from "./type";
-import { countryDefaultValue } from "./constant";
+import { countryDefaultValue, CountryFields } from "./constant";
 import { Label } from "@/components/ui/label";
 import PageTitle from "@/components/ui/PageTitle";
 
@@ -37,7 +37,7 @@ const CountrySection = () => {
   return (
  <div className="gap-0 rounded-md border border-[#E1E4ED] bg-white p-6 shadow-sm sm:p-8">
      <PageTitle
-  title="Country"
+  title={CountryFields.COUNTRY}
   hideActionButton
   titleClassName="mb-6 text-[24px]! font-medium text-slate-500"
   containerClassName="mb-0"

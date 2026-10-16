@@ -104,3 +104,6 @@ export enum DateTimezoneFields {
   DATE_FORMAT = "dateFormat",
   EXTENDED_DATE_FORMAT = "extendedDateFormat",
 }
+export enum CountryFields {
+  COUNTRY = "country",
+}
