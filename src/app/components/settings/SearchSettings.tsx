@@ -9,12 +9,13 @@ import {
   SearchField,
   SORT_OPTIONS,
 } from "./constant";
+import PageTitle from "@/components/ui/PageTitle";
 
 export const SearchSettings = ({ control }: { control: Control<any> }) => {
   return (
     <div className="space-y-8">
       <div className="bg-white rounded-sm border border-gray-200 p-6">
-        <h2 className="!font-semibold mb-6">Search Settings</h2>
+        <PageTitle title={"Search Settings"} hideActionButton />
         <div className="mt-3">
           <InputField
             name={SearchField.DefaultProductSort}

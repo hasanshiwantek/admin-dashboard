@@ -13,6 +13,7 @@ import {
   SecurityPrivacyField,
   TIMEOUT_OPTIONS,
 } from "./constant";
+import PageTitle from "@/components/ui/PageTitle";
 
 export const SecurityPrivacySettings = ({
   control,
@@ -33,8 +34,7 @@ export const SecurityPrivacySettings = ({
     <div className="space-y-8">
       {/* Shopper Security */}
       <div className="bg-white rounded-sm border border-gray-200 p-6">
-        <h2 className="!font-semibold mb-6 2xl:!text-[2.4rem]">Security</h2>
-
+        <PageTitle title={"Security"} hideActionButton />
         <div className="space-y-4">
           <InputField
             name={SecurityPrivacyField.EnforcePasswordComplexity}
@@ -168,9 +168,8 @@ export const SecurityPrivacySettings = ({
       {/* Privacy */}
       <div className="border border-gray-200">
         <div className="bg-white p-6 rounded-sm">
-          <h2 className="!font-semibold mb-6 2xl:!text-[2.4rem]">
-            Your customers&apos; privacy
-          </h2>
+          <PageTitle title={"Your customers privacy"} hideActionButton />
+
           <p className="text-sm text-gray-600 mb-4">
             <a href="#" className="text-blue-600 hover:underline">
               Learn more
@@ -212,7 +211,8 @@ export const SecurityPrivacySettings = ({
         <hr className="my-6" />
 
         <div className="bg-white p-6 rounded-sm">
-          <h2 className="!font-semibold mb-4 2xl:!text-[2.4rem]">Storefront</h2>
+          <PageTitle title={"Storefront"} hideActionButton />
+
           <p className="text-sm text-gray-600 mb-4 2xl:!text-2xl">
             For advanced users only, this section allows you to configure
             advanced security policies for your storefront.{" "}

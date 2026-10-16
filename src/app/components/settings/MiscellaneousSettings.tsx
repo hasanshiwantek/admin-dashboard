@@ -12,6 +12,7 @@ import {
   PERIOD_UNIT_OPTIONS,
   SMTP_OPTIONS,
 } from "./constant";
+import PageTitle from "@/components/ui/PageTitle";
 
 export const MiscellaneousSettings = ({
   control,
@@ -32,9 +33,7 @@ export const MiscellaneousSettings = ({
     <div className="space-y-8">
       {/* Email Settings */}
       <div className="bg-white rounded-sm border border-gray-200 p-6">
-        <h2 className="!font-semibold mb-6 2xl:!text-[2.4rem]">
-          Email Settings
-        </h2>
+        <PageTitle title={"Email Settings"} hideActionButton />
 
         <div className="flex flex-col lg:flex-row items-start gap-4 py-3">
           <div className="w-full lg:w-72 text-right pr-4 pt-2 2xl:!text-2xl">
@@ -173,9 +172,8 @@ export const MiscellaneousSettings = ({
 
       {/* Advanced Store Settings */}
       <div className="bg-white rounded-sm border border-gray-200 p-6">
-        <h2 className="!font-semibold mb-6 2xl:!text-[2.4rem]">
-          Advanced Store Settings
-        </h2>
+        <PageTitle title={"Advanced Store Settings"} hideActionButton />
+
         <InputField
           name={MiscellaneousField.AllowPurchasing}
           label="Allow Purchasing?"
@@ -188,9 +186,8 @@ export const MiscellaneousSettings = ({
 
       {/* Order Settings */}
       <div className="bg-white rounded-sm border border-gray-200 p-6">
-        <h2 className="!font-semibold mb-4 2xl:!text-[2.4rem]">
-          Order Settings
-        </h2>
+        <PageTitle title={"Order Settings"} hideActionButton />
+
         <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-4">
           <p className="text-sm text-gray-700 2xl:!text-2xl">
             Once your store starts receiving orders this number can only ever be
@@ -208,7 +205,7 @@ export const MiscellaneousSettings = ({
 
       {/* Throttler */}
       <div className="bg-white rounded-sm border border-gray-200 p-6">
-        <h2 className="!font-semibold mb-6 2xl:!text-[2.4rem]">Throttler</h2>
+        <PageTitle title={"Throttler"} hideActionButton />
         <InputField
           name={MiscellaneousField.EnableThrottler}
           label="Enable Throttler"
