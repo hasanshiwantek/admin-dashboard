@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import InputField from "@/components/form/InputField";
 import SelectField from "@/components/form/fields/SelectField";
 import { WebsiteField, WwwRedirectOptions } from "./constant";
+import PageTitle from "@/components/ui/PageTitle";
 
 // Website Settings Component
 export const WebsiteSettings = ({ control }: { control: any }) => {
@@ -10,8 +11,7 @@ export const WebsiteSettings = ({ control }: { control: any }) => {
     <div className="space-y-8">
       {/* Search Engine Optimization */}
       <div className="bg-white rounded-sm border border-gray-200 p-6">
-        <h2 className="font-semibold mb-6">Search Engine Optimization</h2>
-
+        <PageTitle title={"Search Engine Optimization"} hideActionButton />
         <div className="space-y-5">
           <InputField
             name={WebsiteField.HomePageTitle}
@@ -44,8 +44,7 @@ export const WebsiteSettings = ({ control }: { control: any }) => {
 
       {/* HTTPS */}
       <div className="bg-white rounded-sm border border-gray-200 p-6">
-        <h2 className="font-semibold mb-4">HTTPS</h2>
-
+        <PageTitle title={"HTTPS"} hideActionButton />
         <div className="bg-blue-50 border-l-4 border-blue-500 p-4">
           <p className="text-sm text-gray-700">
             All of your storefront website traffic is served via HTTPS. Requests
@@ -57,7 +56,7 @@ export const WebsiteSettings = ({ control }: { control: any }) => {
 
       {/* Search Engine Robots */}
       <div className="bg-white rounded-sm border border-gray-200 p-6">
-        <h2 className="font-semibold mb-4">Search Engine Robots</h2>
+        <PageTitle title={"Search Engine Robots"} hideActionButton />
 
         <p className="text-sm text-gray-600 mb-4">
           For advanced users only, this section allows you to control which

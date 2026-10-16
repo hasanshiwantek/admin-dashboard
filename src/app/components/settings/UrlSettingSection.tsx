@@ -4,6 +4,7 @@ import InputField from "@/components/form/InputField";
 import RadioGroupField from "@/components/form/fields/RadioGroupField";
 import { Info } from "lucide-react";
 import { SectionProps } from "./type";
+import PageTitle from "@/components/ui/PageTitle";
 
 export const UrlSettingSection = ({
   title,
@@ -20,7 +21,7 @@ export const UrlSettingSection = ({
 
   return (
     <div className="mb-8 bg-white border p-8">
-      <h2 className="!font-semibold mb-6 2xl:!text-[2.4rem]">{title}</h2>
+      <PageTitle title={title} hideActionButton />
 
       <div className="space-y-2">
         {/* Short */}

@@ -16,9 +16,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ShareId } from "./type";
 import { SHARE_CONFIG } from "./constant";
-
-
-
+import PageTitle from "@/components/ui/PageTitle";
 
 export const SocialSharingSettings = ({ control }: { control?: any }) => {
   const [moreOpen, setMoreOpen] = useState(false);
@@ -39,9 +37,7 @@ export const SocialSharingSettings = ({ control }: { control?: any }) => {
 
   return (
     <div className="bg-white rounded-sm border border-gray-200 p-6">
-      <h2 className="!font-semibold mb-4 text-xl 2xl:!text-[2.4rem]">
-        Social Sharing Settings
-      </h2>
+      <PageTitle title={"Social Sharing Settings"} hideActionButton />
 
       <p className="text-sm text-gray-600 mb-6 2xl:!text-xl">
         Share controls are displayed on product pages and blog posts.

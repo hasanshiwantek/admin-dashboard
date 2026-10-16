@@ -95,9 +95,7 @@ export const DisplaySettings = ({ control }: any) => {
 
       {/* Control Panel */}
       <div className="bg-white rounded-sm border border-gray-200 p-6">
-        <h2 className="!font-semibold mb-6 2xl:!text-[2.4rem]">
-          Control Panel
-        </h2>
+        <PageTitle title={"Control Panel"} hideActionButton />
 
         <div className="space-y-4">
           <InputField
@@ -124,9 +122,7 @@ export const DisplaySettings = ({ control }: any) => {
 
       {/* Category Settings */}
       <div className="bg-white rounded-sm border border-gray-200 p-6">
-        <h2 className="!font-semibold mb-4 2xl:!text-[2.4rem]">
-          Category Settings
-        </h2>
+        <PageTitle title={"Category Settings"} hideActionButton />
 
         <div className="space-y-4">
           <InputField
@@ -172,9 +168,7 @@ export const DisplaySettings = ({ control }: any) => {
 
       {/* Product Settings */}
       <div className="bg-white rounded-sm border border-gray-200 p-6">
-        <h2 className="!font-semibold mb-4 2xl:!text-[2.4rem]">
-          Product Settings
-        </h2>
+        <PageTitle title={"Product Settings"} hideActionButton />
 
         <div className="space-y-4">
           <InputField
