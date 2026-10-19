@@ -1,6 +1,14 @@
 "use client";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+
+import { Upload } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+
+import Form from "@/components/form/Form";
+import InputField from "@/components/form/InputField";
+import RichTextEditor from "@/components/ui/RichTextEditor";
 import { Separator } from "@/components/ui/separator";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import {
@@ -8,235 +16,201 @@ import {
   fetchBlogbyId,
   updateBlog,
 } from "@/redux/slices/storefrontSlice";
-import { Upload } from "lucide-react";
-import { useParams, useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import ReactQuill from "react-quill-new";
-import "react-quill-new/dist/quill.snow.css";
+import { BlogSchema } from "@/validations/formValidations";
+import { blogDefaultValues, BlogFormFieldName } from "./constant";
+import { BlogFormValues, FieldLabelProps } from "./type";
+import PageTitle from "@/components/ui/PageTitle";
+import { Button } from "@/components/ui/button";
+import { createFormData } from "@/lib/utils";
+import { transformBlogFormValues } from "./utils";
+const LABEL_CLASS =
+  "font-semibold text-gray-800 text-xl 2xl:text-[1.6rem]! my-0";
+
+const FieldLabel = ({ text, optional, description }: FieldLabelProps) => (
+  <span className="flex flex-col items-start gap-2">
+    <span className="flex items-center gap-2 text-2xl!">
+      {text}
+      {optional && (
+        <span className="text-2xl! font-light! text-gray-500">(Optional)</span>
+      )}
+    </span>
+    {description && (
+      <span className="font-light! text-lg text-gray-500">{description}</span>
+    )}
+  </span>
+);
 
 export default function BlogPage() {
-  type FormValues = {
-    title: string;
-    body: string;
-    author: string;
-    tags: string;
-    postUrl: string;
-    metaDescription: string;
-    thumbnail?: FileList;
-    isDraft?: boolean;
-  };
+  const form = useForm<BlogFormValues>({
+    resolver: yupResolver(BlogSchema),
+    defaultValues: blogDefaultValues,
+  });
 
-  const { register, handleSubmit, control, watch, setValue } =
-    useForm<FormValues>({
-      defaultValues: {
-        title: "",
-        body: "",
-        author: "",
-        tags: "",
-        postUrl: "",
-        metaDescription: "",
-        isDraft: false,
-      },
-    });
-  const formats = [
-    "header",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "color",
-    "background",
-    "list",
-    "bullet",
-    "align",
-    "link",
-    "image",
-    "blockquote",
-    "code-block",
-  ];
-
-  const modules = useMemo(
-    () => ({
-      toolbar: [
-        [{ header: [1, 2, 3, false] }],
-        ["bold", "italic", "underline", "strike"],
-        [{ color: [] }, { background: [] }],
-        [{ list: "ordered" }, { list: "bullet" }],
-        [{ align: [] }],
-        ["link", "image"],
-        ["blockquote", "code-block"],
-        ["clean"],
-      ],
-    }),
-    [],
-  );
+  const { control, handleSubmit, watch, setValue, reset } = form;
 
   const params = useParams();
-  const id = params?.id; // will be undefined if it's a "create" page
+  const id = params?.id as string | undefined;
 
   const [preview, setPreview] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
+  const [isDraft, setIsDraft] = useState(false);
+
   const router = useRouter();
   const dispatch = useAppDispatch();
-  // Watch file input
-  const fileList = watch("thumbnail");
-  const [isDraft, setIsDraft] = useState(false); // 👈 state for draft toggle
+
+  const fileList = watch(BlogFormFieldName.Thumbnail);
 
   useEffect(() => {
     if (fileList && fileList.length > 0) {
       const file = fileList[0];
-      const url = URL.createObjectURL(file);
-      setPreview(url);
+      setPreview(URL.createObjectURL(file));
     } else {
       setPreview(null);
     }
   }, [fileList]);
 
-  const onSubmit = async (data: FormValues) => {
-    const formData = new FormData();
-    formData.append("title", data.title);
-    formData.append("body", data.body);
-    formData.append("author", data.author);
-    formData.append("tags", data.tags);
-    formData.append("postUrl", data.postUrl);
-    formData.append("metaDescription", data.metaDescription);
-    formData.append("isDraft", isDraft ? "true" : "false"); // 👈 add draft flag
+  useEffect(() => {
+    if (!id) return;
 
-    if (data.thumbnail && data.thumbnail.length > 0) {
-      formData.append("thumbnail", data.thumbnail[0]);
-    }
+    dispatch(fetchBlogbyId({ id }))
+      .unwrap()
+      .then((res) => {
+        const blog = res?.data || res?.data?.data;
+        const defaultBlogFormValues = transformBlogFormValues(blog);
+        reset(defaultBlogFormValues);
+        if (blog?.thumbnail) setPreview(blog?.thumbnail);
+      })
+      .catch(console.error);
+  }, [id, dispatch, setValue]);
 
+  const onSubmit = async (data: BlogFormValues) => {
+    const formData = createFormData(
+      {
+        ...data,
+        isDraft,
+      },
+      [BlogFormFieldName.Thumbnail],
+    );
     try {
       setLoading(true);
+
       const resultAction = id
         ? await dispatch(updateBlog({ id, data: formData }))
         : await dispatch(createBlog({ data: formData }));
 
-      if (
+      const success =
         (id && updateBlog.fulfilled.match(resultAction)) ||
-        (!id && createBlog.fulfilled.match(resultAction))
-      ) {
-        setTimeout(() => {
-          router.push("/manage/storefront/blog");
-        }, 2000);
-      } else {
-        console.error("❌ Blog save failed:", resultAction.payload);
+        (!id && createBlog.fulfilled.match(resultAction));
+
+      if (success) {
+        router.push("/manage/storefront/blog");
       }
     } catch (err) {
-      console.error("🔥 Error dispatching:", err);
+      console.error("Blog save failed:", err);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    if (id) {
-      dispatch(fetchBlogbyId({ id }))
-        .unwrap()
-        .then((res) => {
-          const blog = res?.data || res?.data?.data; // depends on backend response structure
-          setValue("title", blog.title);
-          setValue("body", blog.body);
-          setValue("author", blog.author);
-          setValue("tags", blog.tags);
-          setValue("postUrl", blog.postUrl);
-          setValue("metaDescription", blog.metaDescription);
-          if (blog.thumbnail) setPreview(blog.thumbnail);
-        })
-        .catch((err) => console.error("Failed to load blog:", err));
-    }
-  }, [id, dispatch, setValue]);
-
-  // 👇 Save draft triggers submit with draft = true
   const handleDraftSave = () => {
     setIsDraft(true);
     handleSubmit(onSubmit)();
   };
 
-  // 👇 Publish triggers submit with draft = false
   const handlePublish = () => {
     setIsDraft(false);
     handleSubmit(onSubmit)();
   };
 
+  const BLOG_BODY_TOOLBAR =
+    "undo redo | blocks | bold italic underline | bullist numlist | link image | alignleft aligncenter alignright | code";
+
   return (
-    <div className="">
-      <h1 className="!font-light my-5 2xl:!text-5xl">
-        {id ? "Edit Blog Post" : "New Blog Post"}
-      </h1>
+    <div className="w-full max-w-[100rem] mx-auto px-10 py-14">
+      <PageTitle
+        title={id ? "Edit Blog Post" : "New Blog Post"}
+        hideActionButton
+      />
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div className="  bg-white p-10 rounded-sm shadow-md">
-          <h1 className="!font-bold mb-5 2xl:!text-[2.4rem]">Content</h1>
-          {/* Title */}
-          <div className="ml-30 flex flex-col gap-10">
+      <Form
+        form={form}
+        onSubmit={onSubmit}
+        bodyClassName="bg-transparent border-0 rounded-none p-0 gap-8"
+        footer={{
+          submitText: id ? "Update" : "Publish",
+          onCancel: () => router.push("/manage/storefront/blog"),
+          loading: loading || form.formState.isSubmitting,
+          extraActions: (
+            <Button
+              type="button"
+              className="btn-outline-primary"
+              disabled={loading}
+              onClick={handleDraftSave}
+            >
+              {loading ? "Saving..." : "Save Draft"}
+            </Button>
+          ),
+        }}
+      >
+        {/* Content */}
+        <section className="flex flex-col gap-8 bg-white rounded-sm shadow-sm border border-gray-100 p-10">
+          <PageTitle title="Content" hideActionButton />
+          <InputField
+            name={BlogFormFieldName.Title}
+            label={<FieldLabel text="Title" />}
+            layout="vertical"
+            labelClassName={LABEL_CLASS}
+            control={control}
+            placeholder="Enter blog title"
+          />
+
+          <InputField
+            name={BlogFormFieldName.Body}
+            label={<FieldLabel text="Body" />}
+            layout="vertical"
+            labelClassName={LABEL_CLASS}
+            control={control}
+            Component={RichTextEditor}
+            menubar="file edit insert view format table"
+            toolbar={BLOG_BODY_TOOLBAR}
+          />
+
+          <InputField
+            name={BlogFormFieldName.Author}
+            label={<FieldLabel text="Author" />}
+            layout="vertical"
+            labelClassName={LABEL_CLASS}
+            control={control}
+            placeholder="Author name"
+          />
+
+          <InputField
+            name={BlogFormFieldName.Tags}
+            label={<FieldLabel text="Tags" />}
+            layout="vertical"
+            labelClassName={LABEL_CLASS}
+            control={control}
+            placeholder="Comma separated tags"
+          />
+
+          {/* Thumbnail */}
+          <div className="flex flex-col gap-3">
+            <FieldLabel text="Summary Thumbnail Image" optional />
             <div className="flex items-center gap-4">
-              <Label htmlFor="title " className="w-[100px] 2xl:!text-2xl">
-                Title
-              </Label>
-              <Input
-                placeholder="Enter blog title"
-                {...register("title", { required: true })}
-              />
-            </div>
-
-            <div className="flex items-start gap-4">
-              <Label className="w-[100px] 2xl:!text-2xl">Body</Label>
-              <Controller
-                name="body"
-                control={control}
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <ReactQuill
-                    theme="snow"
-                    value={field.value || ""}
-                    onChange={field.onChange}
-                    modules={modules}
-                    formats={formats}
-                    placeholder="Write your description here..."
-                  />
-                )}
-              />
-            </div>
-
-            {/* Author */}
-            <div className="flex items-center gap-4">
-              <Label htmlFor="author" className="w-[100px] 2xl:!text-2xl">
-                Author
-              </Label>
-              <Input placeholder="Author name" {...register("author")} />
-            </div>
-
-            {/* Tags */}
-            <div className="flex items-center gap-4">
-              <Label htmlFor="tags" className="w-[100px] 2xl:!text-2xl">
-                Tags
-              </Label>
-              <Input
-                placeholder="Hit enter to add multiple tags"
-                {...register("tags")}
-              />
-            </div>
-            {/* File Upload */}
-            <div className="flex items-center gap-4 relative">
-              <Label className="w-[160px] 2xl:!text-2xl">
-                Summary Thumbnail Image (optional)
-              </Label>
               <input
                 type="file"
                 id="thumbnail"
+                accept="image/*"
                 className="hidden"
-                {...register("thumbnail")}
+                {...form.register(BlogFormFieldName.Thumbnail)}
               />
               <label
                 htmlFor="thumbnail"
-                className="cursor-pointer inline-flex items-center gap-2 rounded-md border border-gray-300 bg-gray-50 px-4 py-2 text-xl font-medium text-gray-700 hover:bg-gray-100 transition-colors"
+                className="cursor-pointer inline-flex items-center gap-2 rounded-md border border-gray-300 bg-gray-50 px-4 py-2 text-xl font-medium text-gray-700 hover:bg-gray-100"
               >
                 <Upload className="h-8 w-8" /> Choose File
               </label>
 
-              {/* Preview */}
               {preview && (
                 <div className="relative">
                   <img
@@ -244,88 +218,50 @@ export default function BlogPage() {
                     alt="Preview"
                     className="h-40 w-40 object-cover rounded-xs"
                   />
-                  <button
-                    type="button"
+                  <span
                     onClick={() => {
                       setPreview(null);
-                      // Clear the file input manually
                       const input = document.getElementById(
-                        "thumbnail",
+                        BlogFormFieldName.Thumbnail,
                       ) as HTMLInputElement;
                       if (input) input.value = "";
+                      form.setValue(BlogFormFieldName.Thumbnail, undefined);
                     }}
-                    className="absolute top-1 right-1 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-full w-8 h-8 flex items-center justify-center text-3xl font-bold shadow"
+                    className="absolute cursor-pointer top-1 right-1 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-full w-8 h-8 flex items-center justify-center text-3xl font-bold"
                   >
                     ×
-                  </button>
+                  </span>
                 </div>
               )}
             </div>
           </div>
+        </section>
 
-          <Separator className="my-6" />
-        </div>
+        <Separator className="my-2" />
 
-        {/* SEO Section */}
-        <div className="mb-30">
-          <div className="  bg-white p-10 rounded-sm shadow-md ">
-            <h1 className="!font-bold my-5 2xl:!text-[2.4rem]">
-              SEO (optional)
-            </h1>
-            <div className="ml-30 flex flex-col gap-10">
-              <div className="flex items-center gap-4">
-                <Label
-                  htmlFor="Your post URL"
-                  className="w-[120px] 2xl:!text-2xl"
-                >
-                  Post URL
-                </Label>
-                <Input placeholder="Your post URL" {...register("postUrl")} />
-              </div>
+        {/* SEO */}
+        <section className="flex flex-col gap-8 bg-white rounded-sm shadow-sm border border-gray-100 p-10">
+          <h2 className="text-[2.4rem]! font-light! text-gray-800"></h2>
+          <PageTitle title={"SEO (optional)"} hideActionButton />
+          <InputField
+            name={BlogFormFieldName.PostUrl}
+            label={<FieldLabel text="Post URL" optional />}
+            layout="vertical"
+            labelClassName={LABEL_CLASS}
+            control={control}
+            placeholder="your-post-slug"
+          />
 
-              <div className="flex items-center gap-4">
-                <Label
-                  htmlFor=" Meta description"
-                  className="w-[120px] 2xl:!text-2xl"
-                >
-                  Meta description
-                </Label>
-                <Input
-                  placeholder="Optional"
-                  {...register("metaDescription")}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* FORM ACTION BUTTONS */}
-        <div className="flex justify-end  gap-10 items-center fixed w-full bottom-0 right-0  bg-white/90 z-10 shadow-xs border-t  p-4">
-          <button
-            type="button"
-            className="btn-outline-primary"
-            onClick={() => router.push("/manage/storefront/blog/")}
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            className="btn-outline-primary"
-            disabled={loading}
-            onClick={handleDraftSave}
-          >
-            {loading ? "Save Draft..." : "Save Draft"}
-          </button>
-          <button
-            type="button"
-            className="btn-primary"
-            disabled={loading}
-            onClick={handlePublish}
-          >
-            {loading ? "Loading..." : id ? "Update" : "Publish"}
-          </button>
-        </div>
-      </form>
+          <InputField
+            name={BlogFormFieldName.MetaDescription}
+            label={<FieldLabel text="Meta description" optional />}
+            layout="vertical"
+            labelClassName={LABEL_CLASS}
+            control={control}
+            placeholder="Optional meta description"
+          />
+        </section>
+      </Form>
     </div>
   );
 }
