@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { StoreSettings } from "./StoreSettings";
 import PageLayout from "@/components/ui/PageLayout";
 import PageTitle from "@/components/ui/PageTitle";
-import { generalItems } from "./constant";
+import { generalItems } from "@/app/(protected)/manage/settings/(general)/constant";
 
 const SettingsPage = () => {
   //   const setupItems = [

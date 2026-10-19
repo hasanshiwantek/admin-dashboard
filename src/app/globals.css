@@ -59,6 +59,10 @@
   --color-text-primary-light:var( --text-primary-light);
   --color-background-light: var(--background-light);
   --color-text-secondary: var(--text-secondary);
+  --color-slate-gray-blue: var(--slate-gray-blue);
+  --color-deep-royal-blue: var(--deep-royal-blue);
+  --color-text-heading: var(--text-heading);
+  --color-muted-plum-gray: var(--muted-plum-gray);
 }
 
 :root {
@@ -120,6 +124,12 @@
    --text-primary-light: #172033;
    --background-light: #F5F6FC;
    --text-secondary: #5E637A;
+  /* muted grey with a blue tint, e.g. back navigation text */
+  --slate-gray-blue: #8c93ad;
+  /* strong dark blue, e.g. back navigation hover */
+  --deep-royal-blue: #0024a6;
+  /* soft grey with a purple tint, e.g. shipping body text */
+  --muted-plum-gray: #5d5b66;
 }
 
 *::before,

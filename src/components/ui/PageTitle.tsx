@@ -3,7 +3,7 @@ import { Plus } from "lucide-react";
 import { Button, ButtonProps } from "./button";
 import { cn } from "@/lib/utils";
 
-interface PageTileProps {
+export interface PageTitleProps {
   title: string;
   description?: string | ReactNode;
   buttonText?: string;
@@ -29,7 +29,7 @@ const PageTitle = ({
   textContainerClassName,
   titleClassName,
   descriptionClassName,
-}: PageTileProps) => {
+}: PageTitleProps) => {
   const { className, size = "xl", ...restButtonProps } = buttonProps;
 
   return (

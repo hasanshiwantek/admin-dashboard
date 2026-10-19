@@ -1,18 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Search, ChevronRight, ArrowLeft, Info } from "lucide-react";
-import { WebsiteSettings } from "./WebsiteSettings";
-import { DisplaySettings } from "./DisplaySettings";
-import { DateTimezoneSettings } from "./DateTimeZoneSettings";
-import { URLStructureSettings } from "./URLStructureSettings";
-import { SearchSettings } from "./SearchSettings";
-import { MiscellaneousSettings } from "./MiscellaneousSettings";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Input } from "@/components/ui/input";
+import Form from "@/components/form/Form";
+import AppTabs from "@/components/ui/AppTabs/AppTabs";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import PageTitle from "@/components/ui/PageTitle";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Select,
   SelectContent,
@@ -20,22 +13,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { SecurityPrivacySettings } from "./SecurityPrivacySettings";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
-import Spinner from "../loader/Spinner";
 import {
   createStoreSettings,
   fetchStoreSettings,
-  fetchUrlSettings,
   urlSettings,
 } from "@/redux/slices/homeSlice";
-import AppTabs from "@/components/ui/AppTabs/AppTabs";
-import PageTitle from "@/components/ui/PageTitle";
-import { Control, useForm, useWatch } from "react-hook-form";
-import Form from "@/components/form/Form";
-import { defaultValues, UrlFormat, UrlSettingEnums } from "./constant";
-import InputField from "@/components/form/InputField";
+import { ArrowLeft, Info } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import Spinner from "../loader/Spinner";
+import { UrlFormat, UrlSettingEnums } from "./constant";
+import { DisplaySettings } from "./DisplaySettings";
+import { MiscellaneousSettings } from "./MiscellaneousSettings";
+import { SearchSettings } from "./SearchSettings";
+import { SecurityPrivacySettings } from "./SecurityPrivacySettings";
 import { SocialSharingSettings } from "./SocialSharingSettings";
+import { URLStructureSettings } from "./URLStructureSettings";
+import { WebsiteSettings } from "./WebsiteSettings";
 type StoreSettingsFormValues = Record<string, never>;
 
 // FormField Component
@@ -376,11 +372,9 @@ const tabs = [
 ];
 // StoreSettings Component
 export const StoreSettings = ({
-  currentSetting,
   onBack,
   initialTab,
 }: {
-  currentSetting: any;
   onBack: any;
   initialTab?: string;
 }) => {
@@ -568,7 +562,7 @@ export const StoreSettings = ({
         <span className="text-sm 2xl:!text-2xl">Settings</span>
       </button>
       <PageTitle
-        title={"Store Settings"}
+        title="Store Settings"
         description="Update the settings in the form below and click Save, or click Cancel to keep the current settings."
         descriptionClassName="text-xl! 2xl:text-2xl!"
         hideActionButton

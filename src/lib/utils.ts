@@ -181,3 +181,6 @@ export function isEmpty(val: unknown): boolean {
 
   return false;
 }
+
+export const getNestedValue = (obj: Record<string, any> | null | undefined, path: string) =>
+  path.split(".").reduce<any>((acc, key) => acc?.[key], obj);
