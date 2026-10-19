@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/utils";
 import Link from "next/link";
 
 export const getBlogColumns = () => [
@@ -30,12 +31,6 @@ export const getBlogColumns = () => [
     width: "25%",
     headClassName: "2xl:!text-[1.6rem]",
     className: "2xl:!text-2xl",
-    render: (post: any) =>
-      post.createdAt
-        ? new Date(post.createdAt).toLocaleString("en-US", {
-            dateStyle: "medium",
-            timeStyle: "short",
-          })
-        : "N/A",
+    render: (post: any) => formatDateTime(post?.createdAt),
   },
 ];

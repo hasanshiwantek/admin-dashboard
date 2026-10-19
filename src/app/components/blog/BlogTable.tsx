@@ -1,13 +1,9 @@
 "use client";
-
-import { useMemo } from "react";
 import Link from "next/link";
 import { ExternalLink, Plus } from "lucide-react";
-
 import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
 import Table from "@/components/ui/Table/Table";
 import useBlogTableContainer from "./useBlogTableContainer";
-import { getBlogColumns } from "./BlogColumns";
 import { getSelectedStore } from "@/utils/storage";
 import PageTitle from "@/components/ui/PageTitle";
 
@@ -21,8 +17,8 @@ export default function BlogTable() {
     confirmDelete,
     getDropdownActions,
     Alert,
+    columns,
   } = useBlogTableContainer();
-  const columns = useMemo(() => getBlogColumns(), []);
 
   return (
     <div className="p-10">

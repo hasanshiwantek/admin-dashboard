@@ -7,11 +7,13 @@ import { useAlert } from "@/hooks/useAlert";
 import { deleteBlog, fetchBlogs } from "@/redux/slices/storefrontSlice";
 import { refetchBlogs } from "@/lib/storeFrontUtils";
 import { getSelectedStore } from "@/utils/storage";
+import { getBlogColumns } from "./BlogColumns";
 
 const useBlogTableContainer = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { showAlert, Alert } = useAlert();
+  const columns = useMemo(() => getBlogColumns(), []);
 
   const { blogs, loading, error } = useAppSelector(
     (state: any) => state.storefront,
@@ -79,6 +81,7 @@ const useBlogTableContainer = () => {
     getDropdownActions,
     router,
     Alert,
+    columns
   };
 };
 
