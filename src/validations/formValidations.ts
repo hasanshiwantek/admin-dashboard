@@ -5,6 +5,7 @@ import {
   BannerPlacement,
 } from "@/app/(protected)/manage/marketing/banners/constant";
 import { needsLocationId } from "@/app/(protected)/manage/marketing/banners/utils";
+import { UserField } from "@/app/(protected)/manage/settings/(advanced)/users/constant";
 import {
   DisplayField,
   GeneralSection,
@@ -17,18 +18,18 @@ import {
   UrlStructureField,
   WebsiteField,
 } from "@/app/(protected)/manage/settings/(general)/constant";
-import { UserField } from "@/app/(protected)/manage/settings/(advanced)/users/constant";
+import { BlogFormFieldName } from "@/app/components/blog/constant";
 import { ShippingAddressField } from "@/Modals/ShippingModals/ConfigureShippingAddressModal/constant";
-import { FedExField } from "@/Modals/ShippingModals/FedExConfigModal/constant";
 import { ChargeShippingType } from "@/Modals/ShippingModals/constant";
+import { FedExField } from "@/Modals/ShippingModals/FedExConfigModal/constant";
 import {
   RateSymbol,
   ShipByWeightField,
 } from "@/Modals/ShippingModals/ShipByWeightModal/constant";
 import { DisplayNameField } from "@/Modals/ShippingModals/ShippingQuotesDisplayNameModal/constant";
-import { array, boolean, date, number, object, ref, string } from "yup";
+import { array, boolean, date, mixed, number, object, ref, string } from "yup";
 
-export const bannerSchema = object({
+export const BannerSchema = object({
   [BannerField.Title]: string().trim().required("Banner name is required"),
   [BannerField.Content]: string().nullable(),
   [BannerField.LocationType]: string()
@@ -77,15 +78,15 @@ export const bannerSchema = object({
     .oneOf(Object.values(BannerPlacement), "Choose a placement")
     .required("Choose a placement"),
 });
-export const storeProfileSchema = object({
+
+export const StoreProfileSchema = object({
   storeDisplayName: string().required("Store display name is required"),
   address: string().required("Address is required"),
   addressType: string().required("Address type is required"),
-  email:
-    string()
+  email: string()
     .email("Please enter a valid email address")
     .required("Email is required"),
-  phone:string().default(""),
+  phone: string().default(""),
 });
 
 // ─── Shipping modals ──────────────────────────────────────────
@@ -100,7 +101,7 @@ const optionalNumber = (label: string) =>
       (value) => !value || !isNaN(Number(value)),
     );
 
-export const shippingAddressSchema = object({
+export const ShippingAddressSchema = object({
   [ShippingAddressField.AddressLine1]: string()
     .trim()
     .required("Address line 1 is required"),
@@ -114,13 +115,13 @@ export const shippingAddressSchema = object({
   [ShippingAddressField.PhoneNumber]: string().default(""),
 });
 
-export const displayNameSchema = object({
+export const DisplayNameSchema = object({
   [DisplayNameField.DisplayName]: string()
     .trim()
     .required("Display name is required."),
 });
 
-export const shipByWeightSchema = object({
+export const ShipByWeightSchema = object({
   [ShipByWeightField.DisplayName]: string()
     .trim()
     .required("Display name is required."),
@@ -144,8 +145,10 @@ export const shipByWeightSchema = object({
     .required(),
 });
 
-export const fedexConfigSchema = object({
-  [FedExField.DisplayName]: string().trim().required("Display name is required"),
+export const FedexConfigSchema = object({
+  [FedExField.DisplayName]: string()
+    .trim()
+    .required("Display name is required"),
   [FedExField.DropOffType]: string().default(""),
   [FedExField.PackagingType]: string().default(""),
   [FedExField.PackingMethod]: string().default(""),
@@ -195,7 +198,7 @@ const customUrl = (formatField: UrlStructureField) =>
     then: (schema) => schema.trim().required("Enter a custom URL format"),
   });
 
-export const generalSettingsSchema = object({
+export const GeneralSettingsSchema = object({
   [GeneralSection.Website]: object({
     [WebsiteField.HomePageTitle]: text(),
     [WebsiteField.MetaKeywords]: text(),
@@ -330,7 +333,7 @@ export const generalSettingsSchema = object({
 
 // ─── Admin users (add / edit) ─────────────────────────────────
 
-export const adminUserSchema = object({
+export const AdminUserSchema = object({
   [UserField.FirstName]: string().trim().required("First name is required"),
   [UserField.LastName]: string().trim().required("Last name is required"),
   [UserField.Email]: string()
@@ -340,4 +343,26 @@ export const adminUserSchema = object({
   [UserField.PhoneNumber]: string().trim().required("Phone number is required"),
   [UserField.UserRole]: string().required("Choose a user role"),
   [UserField.Permissions]: array().of(number().required()).default([]),
+  phone: string().default(""),
+});
+
+export const CategorySchema = object({
+  name: string().trim().required("Enter category display name"),
+  channel: string().required("Channel is required"),
+  parentId: number().nullable(),
+  isVisible: boolean(),
+});
+
+export const BlogSchema = object({
+  [BlogFormFieldName.Title]: string().trim().required("Title is required"),
+  [BlogFormFieldName.Body]: string().trim().nullable().default(""),
+  [BlogFormFieldName.Author]: string().trim().nullable().default(""),
+  [BlogFormFieldName.Tags]: string().trim().nullable().default(""),
+  [BlogFormFieldName.PostUrl]: string().trim().nullable().default(""),
+  [BlogFormFieldName.MetaDescription]: string()
+    .trim()
+    .nullable()
+    .max(160)
+    .default(""),
+  [BlogFormFieldName.Thumbnail]: mixed<FileList>().nullable().optional(),
 });

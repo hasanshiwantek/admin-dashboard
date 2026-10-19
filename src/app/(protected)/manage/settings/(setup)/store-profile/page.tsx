@@ -5,7 +5,7 @@ import InputField from "@/components/form/InputField";
 import SelectField from "@/components/form/fields/SelectField";
 import PageLayout from "@/components/ui/PageLayout";
 import PageTitle from "@/components/ui/PageTitle";
-import { storeProfileSchema } from "@/validations/formValidations";
+import { StoreProfileSchema } from "@/validations/formValidations";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
@@ -14,7 +14,7 @@ import { StoreProfileFormValues } from "./type";
 
 const StoreProfilePage = () => {
   const form = useForm<StoreProfileFormValues>({
-    resolver: yupResolver(storeProfileSchema),
+    resolver: yupResolver(StoreProfileSchema),
     defaultValues: storeProfileDefault,
   });
 

@@ -1,10 +1,10 @@
-import type { generalSettingsSchema } from "@/validations/formValidations";
+import type { GeneralSettingsSchema } from "@/validations/formValidations";
 import type { LucideIcon } from "lucide-react";
 import * as yup from "yup";
 import type { ShareField, UrlStructureField } from "./constant";
 
 export type GeneralSettingsFormValues = yup.InferType<
-  typeof generalSettingsSchema
+  typeof GeneralSettingsSchema
 >;
 
 // The url-settings API saves each section separately

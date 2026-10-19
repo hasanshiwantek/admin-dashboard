@@ -1,6 +1,6 @@
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { fetchAddress, saveAddress } from "@/redux/slices/shippingSlice";
-import { shippingAddressSchema } from "@/validations/formValidations";
+import { ShippingAddressSchema } from "@/validations/formValidations";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -21,7 +21,7 @@ const useConfigureShippingAddressContainer = ({
   );
 
   const form = useForm<ShippingAddressFormValues>({
-    resolver: yupResolver(shippingAddressSchema),
+    resolver: yupResolver(ShippingAddressSchema),
     defaultValues: shippingAddressDefaults,
   });
   const { reset } = form;

@@ -1,4 +1,4 @@
-import { storeProfileSchema } from "@/validations/formValidations";
+import { StoreProfileSchema } from "@/validations/formValidations";
 import * as yup from "yup";
 
-export type StoreProfileFormValues = yup.InferType<typeof storeProfileSchema>;
+export type StoreProfileFormValues = yup.InferType<typeof StoreProfileSchema>;

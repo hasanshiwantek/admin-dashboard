@@ -1,10 +1,10 @@
 import type { SelectOption } from "@/components/ui/select";
-import type { fedexConfigSchema } from "@/validations/formValidations";
+import type { FedexConfigSchema } from "@/validations/formValidations";
 import * as yup from "yup";
 import { ShippingMethodModalProps } from "../type";
 import type { FedExField } from "./constant";
 
-export type FedExFormValues = yup.InferType<typeof fedexConfigSchema>;
+export type FedExFormValues = yup.InferType<typeof FedexConfigSchema>;
 
 export type FedExConfigModalProps = ShippingMethodModalProps;
 

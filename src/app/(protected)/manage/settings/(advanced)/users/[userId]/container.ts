@@ -4,7 +4,7 @@ import {
   fetchPermissions,
   updateAdminUser,
 } from "@/redux/slices/userPermission";
-import { adminUserSchema } from "@/validations/formValidations";
+import { AdminUserSchema } from "@/validations/formValidations";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -30,7 +30,7 @@ const useEditUserContainer = () => {
   } = useAppSelector((state) => state.userPermission);
 
   const form = useForm<UserFormValues>({
-    resolver: yupResolver(adminUserSchema),
+    resolver: yupResolver(AdminUserSchema),
     defaultValues: userDefaults,
   });
   const { reset } = form;

@@ -109,6 +109,7 @@ export const defaultValues = {
       decimalToken: ".",
       decimalPlaces: DecimalPlaces.TWO,
       factoringDimension: FactoringDimension.PRODUCT_DEPTH,
+      
     }
 export const  countryDefaultValue = {
       country: "United States",

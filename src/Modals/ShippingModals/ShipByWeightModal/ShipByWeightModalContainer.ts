@@ -1,4 +1,4 @@
-import { shipByWeightSchema } from "@/validations/formValidations";
+import { ShipByWeightSchema } from "@/validations/formValidations";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect } from "react";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
@@ -25,7 +25,7 @@ const useShipByWeightModalContainer = ({
   onSaved?: () => void;
 }) => {
   const form = useForm<ShipByWeightFormValues>({
-    resolver: yupResolver(shipByWeightSchema),
+    resolver: yupResolver(ShipByWeightSchema),
     defaultValues: shipByWeightDefaults,
   });
   const { control, reset } = form;

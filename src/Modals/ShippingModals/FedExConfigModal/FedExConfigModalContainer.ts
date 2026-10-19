@@ -5,7 +5,7 @@ import {
   saveFedexConfig,
   saveQuoteFedexConfig,
 } from "@/redux/slices/shippingSlice";
-import { fedexConfigSchema } from "@/validations/formValidations";
+import { FedexConfigSchema } from "@/validations/formValidations";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect, useState } from "react";
 import { FieldErrors, useForm } from "react-hook-form";
@@ -42,7 +42,7 @@ const useFedExConfigModalContainer = ({
   const [activeTab, setActiveTab] = useState<FedExTab>(FedExTab.Settings);
 
   const form = useForm<FedExFormValues>({
-    resolver: yupResolver(fedexConfigSchema),
+    resolver: yupResolver(FedexConfigSchema),
     defaultValues: fedexDefaultValues,
   });
   const { reset } = form;

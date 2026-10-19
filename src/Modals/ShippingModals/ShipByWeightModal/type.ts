@@ -1,8 +1,8 @@
-import type { shipByWeightSchema } from "@/validations/formValidations";
+import type { ShipByWeightSchema } from "@/validations/formValidations";
 import * as yup from "yup";
 import { ShippingMethodModalProps } from "../type";
 
-export type ShipByWeightFormValues = yup.InferType<typeof shipByWeightSchema>;
+export type ShipByWeightFormValues = yup.InferType<typeof ShipByWeightSchema>;
 
 // One editable range row (inputs hold strings)
 export type RangeRow = ShipByWeightFormValues["ranges"][number];

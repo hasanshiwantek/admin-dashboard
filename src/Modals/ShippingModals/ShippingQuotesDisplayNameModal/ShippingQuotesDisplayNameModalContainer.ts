@@ -1,4 +1,4 @@
-import { displayNameSchema } from "@/validations/formValidations";
+import { DisplayNameSchema } from "@/validations/formValidations";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -20,7 +20,7 @@ const useShippingQuotesDisplayNameContainer = ({
   onSaved?: () => void;
 }) => {
   const form = useForm<DisplayNameFormValues>({
-    resolver: yupResolver(displayNameSchema),
+    resolver: yupResolver(DisplayNameSchema),
     defaultValues: displayNameDefaults,
   });
   const { reset } = form;

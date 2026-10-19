@@ -4,7 +4,7 @@ import {
   fetchStoreSettings,
   urlSettings,
 } from "@/redux/slices/homeSlice";
-import { generalSettingsSchema } from "@/validations/formValidations";
+import { GeneralSettingsSchema } from "@/validations/formValidations";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -39,7 +39,7 @@ const useGeneralSettingsContainer = () => {
   );
 
   const form = useForm<GeneralSettingsFormValues>({
-    resolver: yupResolver(generalSettingsSchema),
+    resolver: yupResolver(GeneralSettingsSchema),
     defaultValues: generalSettingsDefaults,
   });
   const { reset } = form;
