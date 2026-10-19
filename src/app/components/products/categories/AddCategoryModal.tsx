@@ -1,28 +1,55 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import Form from "@/components/form/Form";
+import InputField from "@/components/form/InputField";
+import SelectField from "@/components/form/fields/SelectField";
+import CheckboxField from "@/components/form/fields/CheckboxField";
+
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
-import { refetchCategories } from "@/lib/categoryUtils";
-import { cn } from "@/lib/utils";
 import { addCategory } from "@/redux/slices/categorySlice";
-import { useState } from "react";
+import { refetchCategories } from "@/lib/categoryUtils";
 import CategoryDropdown from "./CategoryDropdown";
+import { CategorySchema } from "@/validations/formValidations";
+import { addCategoryDefault, CategoryField } from "./constant";
+import { CategoryFormValues } from "./type";
+import { getChannelPayload } from "./utils";
+
+const defaultValues: CategoryFormValues = {
+  ...addCategoryDefault,
+};
+
+// Adapter for CategoryDropdown shape
+function ParentCategoryField({
+  value,
+  onChange,
+  categoryData,
+}: {
+  value?: number | null;
+  onChange: (val: number | null) => void;
+  categoryData: any;
+}) {
+  return (
+    <CategoryDropdown
+      categoryData={categoryData}
+      value={{
+        id: value != null ? Number(value) : null,
+        path: "",
+      }}
+      onChange={(val) => onChange(val?.id ?? null)}
+    />
+  );
+}
+
 export default function AddCategoryModal({
   open,
   onOpenChange,
@@ -33,38 +60,44 @@ export default function AddCategoryModal({
   categoryData: any;
 }) {
   const currentStore = useAppSelector((state) => state.config.currentStore);
-  const [name, setDisplayName] = useState("");
-  const [channel, setChannel] = useState(currentStore?.name);
-  const [parentId, setParentCategory] = useState<number | null>(null);
-  const [isVisible, setVisibility] = useState(false);
-  const [showError, setShowError] = useState(false);
   const dispatch = useAppDispatch();
 
-  const handleSave = async () => {
-    if (!name.trim()) {
-      setShowError(true);
-      return;
+  const form = useForm<CategoryFormValues>({
+    resolver: yupResolver(CategorySchema),
+    defaultValues,
+  });
+
+  const { control, reset, setValue } = form;
+
+  useEffect(() => {
+    if (currentStore?.name) {
+      setValue(CategoryField.CHANNEL, currentStore.name);
     }
+  }, [currentStore?.name, setValue]);
 
+  useEffect(() => {
+    if (!open) reset(defaultValues);
+  }, [open, reset]);
+
+  const onSubmit = async (values: CategoryFormValues) => {
+    const payload = getChannelPayload(values);
     try {
-      const payload = {
-        name,
-        channel,
-        parentId,
-        isVisible,
-      };
+      await dispatch(
+        addCategory({
+          data: payload,
+        }),
+      ).unwrap();
 
-      await dispatch(addCategory({ data: payload })).unwrap(); // unwrap for error catching
-      setParentCategory(null);
-      setTimeout(() => {
-        refetchCategories(dispatch);
-      }, 600);
-      onOpenChange(false); // close modal on success
+      setTimeout(() => refetchCategories(dispatch), 600);
+      onOpenChange(false);
     } catch (error) {
       console.error("Failed to create category:", error);
-      // optionally: show toast or error state
     }
   };
+
+  const channelOptions = currentStore?.name
+    ? [{ value: currentStore.name, label: currentStore.name }]
+    : [];
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -73,92 +106,64 @@ export default function AddCategoryModal({
           <DialogTitle>Add new category</DialogTitle>
         </DialogHeader>
 
-        {/* Display Name */}
-        <div className="space-y-2">
-          <Label>Display name</Label>
-          <Input
+        <Form
+          form={form}
+          onSubmit={onSubmit}
+          footer={{
+            submitText: "Save and edit",
+            onCancel: () => onOpenChange(false),
+            loading: form.formState.isSubmitting,
+          }}
+        >
+          {/* Display Name */}
+          <InputField
+            name={CategoryField.NAME}
+            label="Display name"
+            required
+            control={control}
             placeholder="New category"
-            value={name}
-            onChange={(e) => {
-              setDisplayName(e.target.value);
-              setShowError(false);
-            }}
-            className={`${cn(showError && "border-red-500")} !max-w-full`}
+            layout="vertical"
+            containerClassName="space-y-2"
+            className="!max-w-full"
           />
-          {showError && (
-            <p className="text-sm text-red-500">Enter category display name</p>
-          )}
-        </div>
 
-        {/* Channel */}
-        <div className="space-y-2">
-          <Label>
-            Channel <span className="!text-red-500">*</span>
-          </Label>
-          <Select value={channel} onValueChange={setChannel}>
-            <SelectTrigger className="!max-w-full">
-              <SelectValue placeholder="Select channel" />
-            </SelectTrigger>
-            <SelectContent>
-              {currentStore?.name && (
-                <SelectItem value={currentStore.name}>{currentStore.name}</SelectItem>
-              )}
-            </SelectContent>
-          </Select>
-        </div>
+          {/* Channel */}
+          <InputField
+            name={CategoryField.CHANNEL}
+            label="Channel"
+            required
+            Component={SelectField}
+            control={control}
+            options={channelOptions}
+            placeholder="Select channel"
+            layout="vertical"
+            containerClassName="space-y-2"
+            className="!max-w-full"
+          />
 
-        {/* Parent Category */}
-        <div className="space-y-2">
-          <Label>Parent category</Label>
-          <CategoryDropdown
+          {/* Parent Category */}
+          <InputField
+            name={CategoryField.PARENT_ID}
+            label="Parent category"
+            Component={ParentCategoryField}
+            control={control}
             categoryData={categoryData}
-            value={{
-              id: parentId ? Number(parentId) : null,
-              path: "", // optional: use if you want to show prefilled path
-            }}
-            onChange={(val) => {
-              setParentCategory(val.id); // keep it as number
-            }}
+            layout="vertical"
+            containerClassName="space-y-2"
+            hint="Leave empty to add to the root category"
           />
-          <p className="text-sm text-muted-foreground">
-            Leave empty to add to the root category
-          </p>
-        </div>
 
-        {/* Enable Visibility */}
-        <div className="flex items-center space-x-2 pt-2">
-          <Checkbox
-            id="visibility"
-            checked={isVisible}
-            onCheckedChange={(val) => setVisibility(!!val)}
+          {/* Enable Visibility */}
+          <InputField
+            name={CategoryField.IS_VISIBLE}
+            text="Enable visibility"
+            Component={CheckboxField}
+            control={control}
+            hint="Makes new categories immediately available on the storefront."
+            layout="vertical"
+            containerClassName="flex-start! space-x-2 pt-2"
           />
-          <Label htmlFor="visibility">Enable visibility</Label>
-        </div>
-        <p className="text-xs text-muted-foreground -mt-2">
-          Makes new categories immediately available on the storefront.
-        </p>
-
-        {/* Footer */}
-        <div className="flex justify-end gap-2 pt-6">
-          <Button
-            variant="ghost"
-            onClick={() => onOpenChange(false)}
-            className="text-lg p-5"
-            type="button"
-          >
-            Cancel
-          </Button>
-          {/* <Button disabled variant="outline">
-            Save and add another
-          </Button> */}
-          <Button
-            disabled={!name.trim()}
-            onClick={handleSave}
-            className="text-lg p-5"
-          >
-            Save and edit
-          </Button>
-        </div>
+        </Form>
       </DialogContent>
     </Dialog>
   );
