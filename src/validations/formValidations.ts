@@ -5,7 +5,7 @@ import {
   BannerPlacement,
 } from "@/app/(protected)/manage/marketing/banners/constant";
 import { needsLocationId } from "@/app/(protected)/manage/marketing/banners/utils";
-import { boolean, date, object, ref, string } from "yup";
+import { boolean, date, object, ref, string,number } from "yup";
 
 export const bannerSchema = object({
   [BannerField.Title]: string().trim().required("Banner name is required"),
@@ -65,4 +65,11 @@ export const storeProfileSchema = object({
     .email("Please enter a valid email address")
     .required("Email is required"),
   phone:string().default(""),
+});
+
+export const categorySchema = object({
+  name: string().trim().required("Enter category display name"),
+  channel:string().required("Channel is required"),
+  parentId: number().nullable(),
+  isVisible: boolean(),
 });

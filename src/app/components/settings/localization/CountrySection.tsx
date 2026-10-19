@@ -5,8 +5,6 @@ import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { HelpCircle } from "lucide-react";
 import { Country } from "country-state-city";
-
-import Form from "@/components/form/Form";
 import InputField from "@/components/form/InputField";
 import SelectField from "@/components/form/fields/SelectField";
 import { CountryFormValues } from "./type";

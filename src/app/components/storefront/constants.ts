@@ -51,3 +51,17 @@ export const DefaultWebPageValues = {
   showTheseFields: ["email", "comments"],
   rawHtml: "",
 };
+export const WebPageField = {
+  PageType: "pageType",
+  PageName: "pageName",
+  PageUrl: "pageUrl",
+  PageContent: "pageContent",
+  Link: "link",
+  EmailQuestionsTo: "emailQuestionsTo",
+  ShowTheseFields: "showTheseFields",
+  ShowInNavigation: "showInNavigation",
+  ParentPage: "parentPage",
+  RestrictToCustomersOnly: "restrictToCustomersOnly",
+  SortOrder: "sortOrder",
+  RawHtml: "rawHtml",
+} as const
