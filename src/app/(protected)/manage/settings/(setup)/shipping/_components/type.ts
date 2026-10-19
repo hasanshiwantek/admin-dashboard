@@ -25,7 +25,6 @@ export interface ShippingMethodsSectionProps {
   methods: ShippingMethod[];
   loading?: boolean;
   onToggle: (method: ShippingMethod) => void;
-  /** Called after a method is saved in its edit modal */
   onMethodSaved?: () => void;
 }
 

@@ -2,12 +2,11 @@
 
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-
-import CountrySection from "@/app/components/settings/localization/CountrySection";
-import DateTimezoneSection from "@/app/components/settings/localization/DateTimezoneSection";
-import LocalizationSidebar from "@/app/components/settings/localization/LocalizationSidebar";
-import PhysicalDimensionsSection from "@/app/components/settings/localization/PhysicalDimensionsSection";
-import StorefrontLanguagesSection from "@/app/components/settings/localization/StorefrontLanguagesSection";
+import CountrySection from "@/app/(protected)/manage/settings/(setup)/localization/_components/CountrySection";
+import DateTimezoneSection from "@/app/(protected)/manage/settings/(setup)/localization/_components/DateTimezoneSection";
+import LocalizationSidebar from "@/app/(protected)/manage/settings/(setup)/localization/_components/LocalizationSidebar";
+import PhysicalDimensionsSection from "@/app/(protected)/manage/settings/(setup)/localization/_components/PhysicalDimensionsSection";
+import StorefrontLanguagesSection from "@/app/(protected)/manage/settings/(setup)/localization/_components/StorefrontLanguagesSection";
 import Form from "@/components/form/Form";
 import PageLayout from "@/components/ui/PageLayout";
 import { countryDefault, sections } from "./constant";

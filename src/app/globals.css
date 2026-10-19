@@ -63,6 +63,10 @@
   --color-deep-royal-blue: var(--deep-royal-blue);
   --color-text-heading: var(--text-heading);
   --color-muted-plum-gray: var(--muted-plum-gray);
+  --color-bright-azure-blue: var(--bright-azure-blue);
+  --color-sky-cyan-blue: var(--sky-cyan-blue);
+  --color-deep-cobalt-blue: var(--deep-cobalt-blue);
+  --color-crimson-red: var(--crimson-red);
 }
 
 :root {
@@ -130,6 +134,14 @@
   --deep-royal-blue: #0024a6;
   /* soft grey with a purple tint, e.g. shipping body text */
   --muted-plum-gray: #5d5b66;
+  /* vivid mid blue, e.g. Facebook share button */
+  --bright-azure-blue: #1877f2;
+  /* light blue with a cyan tint, e.g. Twitter share button */
+  --sky-cyan-blue: #1da1f2;
+  /* dark saturated blue, e.g. LinkedIn share button */
+  --deep-cobalt-blue: #0a66c2;
+  /* strong deep red, e.g. Pinterest share button */
+  --crimson-red: #e60023;
 }
 
 *::before,
