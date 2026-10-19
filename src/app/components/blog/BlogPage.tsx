@@ -22,6 +22,7 @@ import { BlogFormValues, FieldLabelProps } from "./type";
 import PageTitle from "@/components/ui/PageTitle";
 import { Button } from "@/components/ui/button";
 import { createFormData } from "@/lib/utils";
+import { transformBlogFormValues } from "./utils";
 const LABEL_CLASS =
   "font-semibold text-gray-800 text-xl 2xl:text-[1.6rem]! my-0";
 
@@ -75,15 +76,7 @@ export default function BlogPage() {
       .unwrap()
       .then((res) => {
         const blog = res?.data || res?.data?.data;
-        const defaultBlogFormValues = {
-          [BlogFormFieldName.Title]: blog?.title ?? "",
-          [BlogFormFieldName.Body]: blog?.body ?? "",
-          [BlogFormFieldName.Author]: blog?.author ?? "",
-          [BlogFormFieldName.Tags]: blog?.tags ?? "",
-          [BlogFormFieldName.PostUrl]: blog?.postUrl ?? "",
-          [BlogFormFieldName.MetaDescription]: blog?.metaDescription ?? "",
-          [BlogFormFieldName.Thumbnail]: null,
-        };
+        const defaultBlogFormValues = transformBlogFormValues(blog);
         reset(defaultBlogFormValues);
         if (blog?.thumbnail) setPreview(blog?.thumbnail);
       })
