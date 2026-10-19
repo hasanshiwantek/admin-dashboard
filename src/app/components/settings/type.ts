@@ -1,4 +1,3 @@
-import { Control } from "react-hook-form";
 import { UrlStructureField } from "./constant";
 
 export type ShareId =

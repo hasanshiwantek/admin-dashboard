@@ -5,7 +5,8 @@ import {
   BannerPlacement,
 } from "@/app/(protected)/manage/marketing/banners/constant";
 import { needsLocationId } from "@/app/(protected)/manage/marketing/banners/utils";
-import { boolean, date, object, ref, string } from "yup";
+import { BlogField } from "@/app/components/blog/constant";
+import { boolean, date, mixed, object, ref, string } from "yup";
 
 export const bannerSchema = object({
   [BannerField.Title]: string().trim().required("Banner name is required"),
@@ -55,4 +56,14 @@ export const bannerSchema = object({
   [BannerField.Placement]: string()
     .oneOf(Object.values(BannerPlacement), "Choose a placement")
     .required("Choose a placement"),
+});
+
+export const blogSchema = object({
+  [BlogField.Title]: string().trim().required("Title is required"),
+  [BlogField.Body]: string().trim().nullable().default(""),
+  [BlogField.Author]: string().trim().nullable().default(""),
+  [BlogField.Tags]: string().trim().nullable().default(""),
+  [BlogField.PostUrl]: string().trim().nullable().default(""),
+  [BlogField.MetaDescription]: string().trim().nullable().max(160).default(""),
+  [BlogField.Thumbnail]: mixed<FileList>().nullable().optional(),
 });
