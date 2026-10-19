@@ -1,4 +1,4 @@
 import * as yup from "yup";
-import { categorySchema } from "@/validations/formValidations";
+import { CategorySchema } from "@/validations/formValidations";
 
-export type CategoryFormValues = yup.InferType<typeof categorySchema>;
+export type CategoryFormValues = yup.InferType<typeof CategorySchema>;

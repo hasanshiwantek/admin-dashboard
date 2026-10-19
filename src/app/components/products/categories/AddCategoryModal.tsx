@@ -19,7 +19,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { addCategory } from "@/redux/slices/categorySlice";
 import { refetchCategories } from "@/lib/categoryUtils";
 import CategoryDropdown from "./CategoryDropdown";
-import { categorySchema } from "@/validations/formValidations";
+import { CategorySchema } from "@/validations/formValidations";
 import { addCategoryDefault, CategoryField } from "./constant";
 import { CategoryFormValues } from "./type";
 import { getChannelPayload } from "./utils";
@@ -63,7 +63,7 @@ export default function AddCategoryModal({
   const dispatch = useAppDispatch();
 
   const form = useForm<CategoryFormValues>({
-    resolver: yupResolver(categorySchema),
+    resolver: yupResolver(CategorySchema),
     defaultValues,
   });
 

@@ -5,7 +5,8 @@ import {
   BannerPlacement,
 } from "@/app/(protected)/manage/marketing/banners/constant";
 import { needsLocationId } from "@/app/(protected)/manage/marketing/banners/utils";
-import { boolean, date, object, ref, string,number } from "yup";
+import { BlogFormFieldName } from "@/app/components/blog/constant";
+import { boolean, date, object, ref, string,number, mixed } from "yup";
 
 export const bannerSchema = object({
   [BannerField.Title]: string().trim().required("Banner name is required"),
@@ -56,20 +57,32 @@ export const bannerSchema = object({
     .oneOf(Object.values(BannerPlacement), "Choose a placement")
     .required("Choose a placement"),
 });
+
 export const storeProfileSchema = object({
   storeDisplayName: string().required("Store display name is required"),
   address: string().required("Address is required"),
   addressType: string().required("Address type is required"),
-  email:
-    string()
+  email: string()
     .email("Please enter a valid email address")
     .required("Email is required"),
-  phone:string().default(""),
+  phone: string().default(""),
 });
-
-export const categorySchema = object({
+export const CategorySchema = object({
   name: string().trim().required("Enter category display name"),
   channel:string().required("Channel is required"),
   parentId: number().nullable(),
   isVisible: boolean(),
+});
+export const BlogSchema = object({
+  [BlogFormFieldName.Title]: string().trim().required("Title is required"),
+  [BlogFormFieldName.Body]: string().trim().nullable().default(""),
+  [BlogFormFieldName.Author]: string().trim().nullable().default(""),
+  [BlogFormFieldName.Tags]: string().trim().nullable().default(""),
+  [BlogFormFieldName.PostUrl]: string().trim().nullable().default(""),
+  [BlogFormFieldName.MetaDescription]: string()
+    .trim()
+    .nullable()
+    .max(160)
+    .default(""),
+  [BlogFormFieldName.Thumbnail]: mixed<FileList>().nullable().optional(),
 });
