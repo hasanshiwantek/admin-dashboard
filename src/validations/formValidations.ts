@@ -6,7 +6,7 @@ import {
 } from "@/app/(protected)/manage/marketing/banners/constant";
 import { needsLocationId } from "@/app/(protected)/manage/marketing/banners/utils";
 import { BlogFormFieldName } from "@/app/components/blog/constant";
-import { boolean, date, mixed, object, ref, string } from "yup";
+import { boolean, date, object, ref, string,number, mixed } from "yup";
 
 export const bannerSchema = object({
   [BannerField.Title]: string().trim().required("Banner name is required"),
@@ -67,7 +67,12 @@ export const storeProfileSchema = object({
     .required("Email is required"),
   phone: string().default(""),
 });
-
+export const CategorySchema = object({
+  name: string().trim().required("Enter category display name"),
+  channel:string().required("Channel is required"),
+  parentId: number().nullable(),
+  isVisible: boolean(),
+});
 export const BlogSchema = object({
   [BlogFormFieldName.Title]: string().trim().required("Title is required"),
   [BlogFormFieldName.Body]: string().trim().nullable().default(""),
