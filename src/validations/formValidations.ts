@@ -58,6 +58,16 @@ export const bannerSchema = object({
     .required("Choose a placement"),
 });
 
+export const storeProfileSchema = object({
+  storeDisplayName: string().required("Store display name is required"),
+  address: string().required("Address is required"),
+  addressType: string().required("Address type is required"),
+  email: string()
+    .email("Please enter a valid email address")
+    .required("Email is required"),
+  phone: string().default(""),
+});
+
 export const blogSchema = object({
   [BlogField.Title]: string().trim().required("Title is required"),
   [BlogField.Body]: string().trim().nullable().default(""),
