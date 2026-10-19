@@ -18,16 +18,11 @@ import {
 } from "@/redux/slices/storefrontSlice";
 import { blogSchema } from "@/validations/formValidations";
 import { blogDefaultValues, BlogField } from "./constant";
-import { BlogFormValues } from "./type";
+import { BlogFormValues, FieldLabelProps } from "./type";
 import PageTitle from "@/components/ui/PageTitle";
+import { Button } from "@/components/ui/button";
 const LABEL_CLASS =
   "font-semibold text-gray-800 text-xl 2xl:text-[1.6rem]! my-0";
-
-type FieldLabelProps = {
-  text: string;
-  optional?: boolean;
-  description?: string;
-};
 
 const FieldLabel = ({ text, optional, description }: FieldLabelProps) => (
   <span className="flex flex-col items-start gap-2">
@@ -157,14 +152,14 @@ export default function BlogPage() {
           onCancel: () => router.push("/manage/storefront/blog"),
           loading: loading || form.formState.isSubmitting,
           extraActions: (
-            <button
+            <Button
               type="button"
               className="btn-outline-primary"
               disabled={loading}
               onClick={handleDraftSave}
             >
               {loading ? "Saving..." : "Save Draft"}
-            </button>
+            </Button>
           ),
         }}
       >
@@ -234,8 +229,7 @@ export default function BlogPage() {
                     alt="Preview"
                     className="h-40 w-40 object-cover rounded-xs"
                   />
-                  <button
-                    type="button"
+                  <span
                     onClick={() => {
                       setPreview(null);
                       const input = document.getElementById(
@@ -244,10 +238,10 @@ export default function BlogPage() {
                       if (input) input.value = "";
                       form.setValue(BlogField.Thumbnail, undefined);
                     }}
-                    className="absolute top-1 right-1 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-full w-8 h-8 flex items-center justify-center text-3xl font-bold"
+                    className="absolute cursor-pointer top-1 right-1 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-full w-8 h-8 flex items-center justify-center text-3xl font-bold"
                   >
                     ×
-                  </button>
+                  </span>
                 </div>
               )}
             </div>
@@ -258,10 +252,8 @@ export default function BlogPage() {
 
         {/* SEO */}
         <section className="flex flex-col gap-8 bg-white rounded-sm shadow-sm border border-gray-100 p-10">
-          <h2 className="text-[2.4rem]! font-light! text-gray-800">
-            SEO (optional)
-          </h2>
-
+          <h2 className="text-[2.4rem]! font-light! text-gray-800"></h2>
+          <PageTitle title={"SEO (optional)"} hideActionButton />
           <InputField
             name={BlogField.PostUrl}
             label={<FieldLabel text="Post URL" optional />}
