@@ -16,11 +16,12 @@ import {
   fetchBlogbyId,
   updateBlog,
 } from "@/redux/slices/storefrontSlice";
-import { blogSchema } from "@/validations/formValidations";
-import { blogDefaultValues, BlogField } from "./constant";
+import { BlogSchema } from "@/validations/formValidations";
+import { blogDefaultValues, BlogFormFieldName } from "./constant";
 import { BlogFormValues, FieldLabelProps } from "./type";
 import PageTitle from "@/components/ui/PageTitle";
 import { Button } from "@/components/ui/button";
+import { createFormData } from "@/lib/utils";
 const LABEL_CLASS =
   "font-semibold text-gray-800 text-xl 2xl:text-[1.6rem]! my-0";
 
@@ -40,7 +41,7 @@ const FieldLabel = ({ text, optional, description }: FieldLabelProps) => (
 
 export default function BlogPage() {
   const form = useForm<BlogFormValues>({
-    resolver: yupResolver(blogSchema),
+    resolver: yupResolver(BlogSchema),
     defaultValues: blogDefaultValues,
   });
 
@@ -56,7 +57,7 @@ export default function BlogPage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
 
-  const fileList = watch("thumbnail");
+  const fileList = watch(BlogFormFieldName.Thumbnail);
 
   useEffect(() => {
     if (fileList && fileList.length > 0) {
@@ -74,34 +75,29 @@ export default function BlogPage() {
       .unwrap()
       .then((res) => {
         const blog = res?.data || res?.data?.data;
-        reset({
-          title: blog?.title ?? "",
-          body: blog?.body ?? "",
-          author: blog?.author ?? "",
-          tags: blog?.tags ?? "",
-          postUrl: blog?.postUrl ?? "",
-          metaDescription: blog?.metaDescription ?? "",
-          thumbnail: null,
-        });
+        const defaultBlogFormValues = {
+          [BlogFormFieldName.Title]: blog?.title ?? "",
+          [BlogFormFieldName.Body]: blog?.body ?? "",
+          [BlogFormFieldName.Author]: blog?.author ?? "",
+          [BlogFormFieldName.Tags]: blog?.tags ?? "",
+          [BlogFormFieldName.PostUrl]: blog?.postUrl ?? "",
+          [BlogFormFieldName.MetaDescription]: blog?.metaDescription ?? "",
+          [BlogFormFieldName.Thumbnail]: null,
+        };
+        reset(defaultBlogFormValues);
         if (blog?.thumbnail) setPreview(blog?.thumbnail);
       })
       .catch(console.error);
   }, [id, dispatch, setValue]);
 
   const onSubmit = async (data: BlogFormValues) => {
-    const formData = new FormData();
-    formData.append(BlogField.Title, data.title);
-    formData.append(BlogField.Body, data.body || "");
-    formData.append(BlogField.Author, data.author || "");
-    formData.append(BlogField.Tags, data.tags || "");
-    formData.append(BlogField.PostUrl, data.postUrl || "");
-    formData.append(BlogField.MetaDescription, data.metaDescription || "");
-    formData.append("isDraft", String(isDraft));
-    const file = data.thumbnail?.[0];
-    if (file instanceof File) {
-      formData.append("thumbnail", file);
-    }
-
+    const formData = createFormData(
+      {
+        ...data,
+        isDraft,
+      },
+      [BlogFormFieldName.Thumbnail],
+    );
     try {
       setLoading(true);
 
@@ -167,7 +163,7 @@ export default function BlogPage() {
         <section className="flex flex-col gap-8 bg-white rounded-sm shadow-sm border border-gray-100 p-10">
           <PageTitle title="Content" hideActionButton />
           <InputField
-            name={BlogField.Title}
+            name={BlogFormFieldName.Title}
             label={<FieldLabel text="Title" />}
             layout="vertical"
             labelClassName={LABEL_CLASS}
@@ -176,7 +172,7 @@ export default function BlogPage() {
           />
 
           <InputField
-            name={BlogField.Body}
+            name={BlogFormFieldName.Body}
             label={<FieldLabel text="Body" />}
             layout="vertical"
             labelClassName={LABEL_CLASS}
@@ -187,7 +183,7 @@ export default function BlogPage() {
           />
 
           <InputField
-            name={BlogField.Author}
+            name={BlogFormFieldName.Author}
             label={<FieldLabel text="Author" />}
             layout="vertical"
             labelClassName={LABEL_CLASS}
@@ -196,7 +192,7 @@ export default function BlogPage() {
           />
 
           <InputField
-            name={BlogField.Tags}
+            name={BlogFormFieldName.Tags}
             label={<FieldLabel text="Tags" />}
             layout="vertical"
             labelClassName={LABEL_CLASS}
@@ -213,7 +209,7 @@ export default function BlogPage() {
                 id="thumbnail"
                 accept="image/*"
                 className="hidden"
-                {...form.register(BlogField.Thumbnail)}
+                {...form.register(BlogFormFieldName.Thumbnail)}
               />
               <label
                 htmlFor="thumbnail"
@@ -233,10 +229,10 @@ export default function BlogPage() {
                     onClick={() => {
                       setPreview(null);
                       const input = document.getElementById(
-                        BlogField.Thumbnail,
+                        BlogFormFieldName.Thumbnail,
                       ) as HTMLInputElement;
                       if (input) input.value = "";
-                      form.setValue(BlogField.Thumbnail, undefined);
+                      form.setValue(BlogFormFieldName.Thumbnail, undefined);
                     }}
                     className="absolute cursor-pointer top-1 right-1 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-full w-8 h-8 flex items-center justify-center text-3xl font-bold"
                   >
@@ -255,7 +251,7 @@ export default function BlogPage() {
           <h2 className="text-[2.4rem]! font-light! text-gray-800"></h2>
           <PageTitle title={"SEO (optional)"} hideActionButton />
           <InputField
-            name={BlogField.PostUrl}
+            name={BlogFormFieldName.PostUrl}
             label={<FieldLabel text="Post URL" optional />}
             layout="vertical"
             labelClassName={LABEL_CLASS}
@@ -264,7 +260,7 @@ export default function BlogPage() {
           />
 
           <InputField
-            name={BlogField.MetaDescription}
+            name={BlogFormFieldName.MetaDescription}
             label={<FieldLabel text="Meta description" optional />}
             layout="vertical"
             labelClassName={LABEL_CLASS}

@@ -181,3 +181,30 @@ export function isEmpty(val: unknown): boolean {
 
   return false;
 }
+export const createFormData = <T extends Record<string, any>>(
+  data: T,
+  files: string[] = [],
+): FormData => {
+  const formData = new FormData();
+
+  Object.entries(data).forEach(([key, value]) => {
+    if (files.includes(key)) {
+      const file = value?.[0];
+
+      if (file instanceof File) {
+        formData.append(key, file);
+      }
+
+      return;
+    }
+
+    if (value === undefined || value === null) {
+      formData.append(key, "");
+      return;
+    }
+
+    formData.append(key, typeof value === "string" ? value : String(value));
+  });
+
+  return formData;
+};

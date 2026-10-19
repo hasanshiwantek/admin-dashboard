@@ -1,4 +1,4 @@
-export const BlogField = {
+export const BlogFormFieldName = {
   Title: "title",
   Body: "body",
   Author: "author",
@@ -9,11 +9,11 @@ export const BlogField = {
 } as const;
 
 export const blogDefaultValues = {
-  [BlogField.Title]: "",
-  [BlogField.Body]: "",
-  [BlogField.Author]: "",
-  [BlogField.Tags]: "",
-  [BlogField.PostUrl]: "",
-  [BlogField.MetaDescription]: "",
-  [BlogField.Thumbnail]: null,
+  [BlogFormFieldName.Title]: "",
+  [BlogFormFieldName.Body]: "",
+  [BlogFormFieldName.Author]: "",
+  [BlogFormFieldName.Tags]: "",
+  [BlogFormFieldName.PostUrl]: "",
+  [BlogFormFieldName.MetaDescription]: "",
+  [BlogFormFieldName.Thumbnail]: null,
 };
