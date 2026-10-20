@@ -23,8 +23,6 @@ import {
   updateWebPage,
 } from "@/redux/slices/storefrontSlice";
 import { fetchUrlSettings } from "@/redux/slices/homeSlice";
-import { generateSlug } from "@/lib/productUtils";
-import { UrlSettingEnums } from "@/const/appConstants";
 
 import {
   AdvancedOptions,
