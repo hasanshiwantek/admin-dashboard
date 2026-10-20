@@ -12,7 +12,7 @@ import PageTitle from "@/components/ui/PageTitle";
 import RichTextEditor from "@/components/ui/RichTextEditor";
 import { useBrandNameMap } from "@/hooks/useFilterValueFormatter";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
-import DescriptionEditorQuill from "@/components/ui/DescriptionEditorQuill";
+
 import {
   createBanner,
   getBannerById,
