@@ -1,16 +1,12 @@
 import PageTitle from "@/components/ui/PageTitle";
 import Table from "@/components/ui/Table/Table";
+import type { ColumnDef } from "@/components/ui/Table/types";
 import { Button } from "@/components/ui/button";
 import { HelpCircle, MoreHorizontal } from "lucide-react";
-import type { ColumnDef } from "@/components/ui/Table/types";
-import { StorefrontLanguage } from "./type";
 import { storeFrontLanguage } from "./constant";
+import { StorefrontLanguage } from "./type";
 
-
-
-const storefrontLanguages: StorefrontLanguage[] = [
-   storeFrontLanguage
-];
+const storefrontLanguages: StorefrontLanguage[] = [storeFrontLanguage];
 
 const columns: ColumnDef<StorefrontLanguage>[] = [
   {

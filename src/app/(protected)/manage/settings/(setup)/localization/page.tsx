@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-import { useForm } from "react-hook-form";
 import CountrySection from "@/app/(protected)/manage/settings/(setup)/localization/_components/CountrySection";
 import DateTimezoneSection from "@/app/(protected)/manage/settings/(setup)/localization/_components/DateTimezoneSection";
 import LocalizationSidebar from "@/app/(protected)/manage/settings/(setup)/localization/_components/LocalizationSidebar";
@@ -9,6 +7,8 @@ import PhysicalDimensionsSection from "@/app/(protected)/manage/settings/(setup)
 import StorefrontLanguagesSection from "@/app/(protected)/manage/settings/(setup)/localization/_components/StorefrontLanguagesSection";
 import Form from "@/components/form/Form";
 import PageLayout from "@/components/ui/PageLayout";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { countryDefault, sections } from "./constant";
 import { LocalizationFormValues } from "./type";
 

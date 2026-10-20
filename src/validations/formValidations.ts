@@ -347,7 +347,6 @@ export const AdminUserSchema = object({
   [UserField.PhoneNumber]: string().trim().required("Phone number is required"),
   [UserField.UserRole]: string().required("Choose a user role"),
   [UserField.Permissions]: array().of(number().required()).default([]),
-  phone: string().default(""),
 });
 
 export const CategorySchema = object({

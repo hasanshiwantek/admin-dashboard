@@ -1,23 +1,23 @@
 "use client";
 
-import { useState } from "react";
 import { ChevronDown, HelpCircle } from "lucide-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-import InputField from "@/components/form/InputField";
 import SelectField from "@/components/form/fields/SelectField";
+import InputField from "@/components/form/InputField";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import PageTitle from "@/components/ui/PageTitle";
 import {
   decimalPlacesOptions,
   defaultValues,
   factoringDimensionOptions,
   lengthOptions,
+  PhysicalDimensionFields,
   weightOptions,
 } from "./constant";
 import { PhysicalDimensionsValues } from "./type";
-import { Button } from "@/components/ui/button";
-import { PhysicalDimensionFields } from "./constant";
-import { Label } from "@/components/ui/label";
-import PageTitle from "@/components/ui/PageTitle";
 
 const PhysicalDimensionsSection = () => {
   const [showSettings, setShowSettings] = useState(false);
@@ -36,12 +36,8 @@ const PhysicalDimensionsSection = () => {
     });
   };
 
-  
-
   return (
-    <div
-    className="gap-0 rounded-md border border-[#E1E4ED] bg-white p-6 shadow-sm sm:p-8"
-    >
+    <div className="gap-0 rounded-md border border-[#E1E4ED] bg-white p-6 shadow-sm sm:p-8">
       <PageTitle
         title="Physical dimensions"
         description={

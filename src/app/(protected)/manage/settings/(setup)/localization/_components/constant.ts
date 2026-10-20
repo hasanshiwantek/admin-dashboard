@@ -38,14 +38,11 @@ export enum LengthMeasurement {
   METERS = "meters",
 }
 
-
-
 export enum FactoringDimension {
   PRODUCT_DEPTH = "product_depth",
   PRODUCT_WIDTH = "product_width",
   PRODUCT_HEIGHT = "product_height",
 }
-
 
 export const timezoneOptions = [
   {
@@ -67,7 +64,7 @@ export const dateFormatOptions = [
   { value: DateFormat.NUMERIC_MONTH_DAY_YEAR, label: "07/24/2020" },
   { value: DateFormat.DAY_MONTH_YEAR, label: "24/07/2020" },
 ];
- export const extendedDateFormatOptions = [
+export const extendedDateFormatOptions = [
   { value: ExtendedDateFormat.LONG, label: "Jul 24th 2020 @ 3:49 AM" },
   { value: ExtendedDateFormat.SHORT, label: "07/24/2020 3:49 AM" },
   { value: ExtendedDateFormat.TWENTY_FOUR_HOUR, label: "24/07/2020 03:49" },
@@ -87,7 +84,6 @@ export const lengthOptions = [
   { value: LengthMeasurement.METERS, label: "Meters" },
 ];
 
-
 export const decimalPlacesOptions = [
   { value: DecimalPlaces.ZERO, label: "0" },
   { value: DecimalPlaces.ONE, label: "1" },
@@ -103,31 +99,30 @@ export const factoringDimensionOptions = [
 ];
 
 export const defaultValues = {
-      weightMeasurement: WeightMeasurement.OUNCES,
-      lengthMeasurement: LengthMeasurement.INCHES,
-      thousandsToken: ",",
-      decimalToken: ".",
-      decimalPlaces: DecimalPlaces.TWO,
-      factoringDimension: FactoringDimension.PRODUCT_DEPTH,
-      
-    }
-export const  countryDefaultValue = {
-      country: "United States",
-    }
-  export const TimedefaultValues = {
-      timezone: "Europe/London",
-      daylightSaving: false,
-      dateFormat: "mmm-dd-yyyy",
-      extendedDateFormat: "long",
-    }
+  weightMeasurement: WeightMeasurement.OUNCES,
+  lengthMeasurement: LengthMeasurement.INCHES,
+  thousandsToken: ",",
+  decimalToken: ".",
+  decimalPlaces: DecimalPlaces.TWO,
+  factoringDimension: FactoringDimension.PRODUCT_DEPTH,
+};
+export const countryDefaultValue = {
+  country: "United States",
+};
+export const TimedefaultValues = {
+  timezone: "Europe/London",
+  daylightSaving: false,
+  dateFormat: "mmm-dd-yyyy",
+  extendedDateFormat: "long",
+};
 export const storeFrontLanguage = {
-    id: 1,
-    channel: "New Ecom Store",
-    type: "Stencil",
-    defaultLanguage: "English (en)",
-    additionalLanguages: "NA",
-  }
-  
+  id: 1,
+  channel: "New Ecom Store",
+  type: "Stencil",
+  defaultLanguage: "English (en)",
+  additionalLanguages: "NA",
+};
+
 export enum PhysicalDimensionFields {
   WEIGHT_MEASUREMENT = "weightMeasurement",
   LENGTH_MEASUREMENT = "lengthMeasurement",
