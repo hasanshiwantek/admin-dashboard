@@ -371,6 +371,7 @@ export default function AddSubCategoryPage() {
             </div>
             <Button
               type="button"
+              variant='ghost'
               className="text-xl text-blue-600 hover:underline 2xl:!text-[1.6rem] mb-1"
               onClick={onResetSlug}
             >
@@ -390,18 +391,18 @@ export default function AddSubCategoryPage() {
             />
           </div>
 
-          <div className="mb-8 flex gap-8 items-center">
-            <Label className="font-normal text-gray-600 2xl:text-2xl! min-w-[140px]">
+          <div className="mb-8 flex gap-6 items-center ml-40">
+            <Label className="font-normal text-gray-600 2xl:text-2xl! ">
               Channel
             </Label>
             <Input disabled value={selectedStore?.name || ""} />
           </div>
 
-          <div className="mb-5 flex gap-3 items-start">
-            <Label className="font-normal text-gray-600 2xl:text-2xl! min-w-[140px] pt-2">
+          <div className="mb-5 flex gap-3 items-center ml-40">
+            <Label className="font-normal text-gray-600 2xl:text-2xl!  pt-2">
               Parent category
             </Label>
-            <div className="flex-1">
+            <div >
               <p className="text-xs text-muted-foreground mb-2">
                 Adding sub-category under: {parentCategory?.name}
               </p>
