@@ -32,7 +32,7 @@ import {
   DefaultProductSortOptions,
   TemplateLayoutOptions,
 } from "./constant";
-import { buildCategoryPayload } from "./utils";
+import { buildCategoryPayload, generateCategorySlug } from "./utils";
 import PageTitle from "@/components/ui/PageTitle";
 import { REGEX } from "@/const/regex";
 
@@ -61,7 +61,9 @@ export default function AddSubCategoryPage() {
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [parentCategory, setParentCategory] = useState<ApiCategory | null>(null);
+  const [parentCategory, setParentCategory] = useState<ApiCategory | null>(
+    null,
+  );
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isUrlManuallyEdited, setIsUrlManuallyEdited] = useState(false);
   const [selectedStore, setSelectedStore] = useState<any>(null);
@@ -120,83 +122,30 @@ export default function AddSubCategoryPage() {
   const slugVal = watch("slug");
 
   const onResetSlug = () => {
-    if (!nameVal) return;
     setIsUrlManuallyEdited(false);
-
-    const formatType = urlSettingData?.format_type;
-    const customFormat = urlSettingData?.custom_format;
-
-    if (formatType === UrlSettingEnums.SEO_OPTIMIZED_SHORT) {
-      const slug = generateSlug(nameVal);
-      setValue("slug", `/${slug}`, { shouldDirty: true });
-    } else if (formatType === UrlSettingEnums.SEO_OPTIMIZED_LONG) {
-      const slug = generateSlug(nameVal);
-      setValue("slug", `/categories/${slug}`, { shouldDirty: true });
-    } else if (formatType === "custom" && customFormat) {
-      const replacements = {
-        "%parent%": rootParentName ? generateSlug(rootParentName) : "",
-        "%categoryname%": nameVal ? generateSlug(nameVal) : "",
-      };
-
-      const finalUrl = Object.entries(replacements)
-        .reduce(
-          (url, [key, value]) => url.replace(new RegExp(key, "gi"), value),
-          customFormat,
-        )
-        .replace(/%[^%]+%/g, "")
-        .replace(/\/+/g, "/")
-        .replace(/\/$/g, "");
-
-      if (finalUrl) {
-        setValue("slug", finalUrl, { shouldDirty: true });
-      }
+    const slug = generateCategorySlug(nameVal, urlSettingData, rootParentName);
+    if (slug) {
+      setValue(CategoryField.Slug, slug, { shouldDirty: true });
     }
   };
 
   // Auto-generate slug when name changes (if not manually edited)
   useEffect(() => {
-    if (isUrlManuallyEdited) return;
-    if (!nameVal) return;
-
-    const formatType = urlSettingData?.format_type;
-    const customFormat = urlSettingData?.custom_format;
-
-    if (formatType === UrlSettingEnums.SEO_OPTIMIZED_SHORT) {
-      const slug = generateSlug(nameVal);
-      setValue("slug", `/${slug}`);
-    } else if (formatType === UrlSettingEnums.SEO_OPTIMIZED_LONG) {
-      const slug = generateSlug(nameVal);
-      setValue("slug", `/categories/${slug}`);
-    } else if (formatType === "custom" && customFormat) {
-      const replacements = {
-        "%parent%": rootParentName ? generateSlug(rootParentName) : "",
-        "%categoryname%": nameVal ? generateSlug(nameVal) : "",
-      };
-
-      const finalUrl = Object.entries(replacements)
-        .reduce(
-          (url, [key, value]) => url.replace(new RegExp(key, "gi"), value),
-          customFormat,
-        )
-        .replace(/%[^%]+%/g, "")
-        .replace(/\/+/g, "/")
-        .replace(/\/$/g, "");
-
-      if (finalUrl) {
-        setValue("slug", finalUrl);
-      }
+    if (isUrlManuallyEdited || !nameVal) return;
+    const slug = generateCategorySlug(nameVal, urlSettingData, rootParentName);
+    if (slug) {
+      setValue(CategoryField.Slug, slug);
     }
-  }, [nameVal, isUrlManuallyEdited, urlSettingData, rootParentName, setValue]);
-
+  }, [isUrlManuallyEdited, nameVal]);
   // Mark slug as manually edited when user types in it
-  useEffect(() => {
-    const subscription = watch((value, { name }) => {
-      if (name === "slug" && !isUrlManuallyEdited) {
-        setIsUrlManuallyEdited(true);
-      }
-    });
-    return () => subscription.unsubscribe();
-  }, [watch, isUrlManuallyEdited]);
+  // useEffect(() => {
+  //   const subscription = watch((value, { name }) => {
+  //     if (name === "slug" && !isUrlManuallyEdited) {
+  //       setIsUrlManuallyEdited(true);
+  //     }
+  //   });
+  //   return () => subscription.unsubscribe();
+  // }, [watch, isUrlManuallyEdited]);
 
   const onPickParent = (val: { id: number; path: string }) => {
     setValue("parent", { id: val.id, path: val.path }, { shouldDirty: true });
@@ -350,7 +299,7 @@ export default function AddSubCategoryPage() {
           </div>
 
           <div className="mb-8 flex gap-5 ">
-            <div >
+            <div>
               <InputField
                 name={CategoryField.Slug}
                 label="URL"
@@ -371,7 +320,7 @@ export default function AddSubCategoryPage() {
             </div>
             <Button
               type="button"
-              variant='ghost'
+              variant="ghost"
               className="text-xl text-blue-600 hover:underline 2xl:!text-[1.6rem] mb-1"
               onClick={onResetSlug}
             >
@@ -402,7 +351,7 @@ export default function AddSubCategoryPage() {
             <Label className="font-normal text-gray-600 2xl:text-2xl!  pt-2">
               Parent category
             </Label>
-            <div >
+            <div>
               <p className="text-xs text-muted-foreground mb-2">
                 Adding sub-category under: {parentCategory?.name}
               </p>
