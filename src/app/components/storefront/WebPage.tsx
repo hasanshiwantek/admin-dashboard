@@ -1,727 +1,144 @@
 "use client";
 
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
+import { useEffect, useRef, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { useForm, useWatch } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+
+import Form from "@/components/form/Form";
+import InputField from "@/components/form/InputField";
+import CheckboxField from "@/components/form/fields/CheckboxField";
+import RadioGroupField from "@/components/form/fields/RadioGroupField";
+import PageTitle from "@/components/ui/PageTitle";
+import RichTextEditor from "@/components/ui/RichTextEditor";
 import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { UrlSettingEnums } from "@/const/appConstants";
-import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
-import { generateSlug } from "@/lib/productUtils";
+import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
-import { fetchUrlSettings } from "@/redux/slices/homeSlice";
+
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import {
   createWebpage,
   getWebPageById,
   getWebPages,
   updateWebPage,
 } from "@/redux/slices/storefrontSlice";
-import { useParams, useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
-import {
-  Controller,
-  FormProvider,
-  SubmitHandler,
-  useForm,
-} from "react-hook-form";
-import DescriptionEditorQuill from "../products/add/DescriptionEditorQuill";
+import { fetchUrlSettings } from "@/redux/slices/homeSlice";
+
 import {
   AdvancedOptions,
   ContactFields,
   DefaultWebPageValues,
   PageTypeEnums,
   PageTypeOptions,
+  WebPageField,
 } from "./constants";
-import { WebPageFormValues } from "./types";
+import { WebPageSchema } from "@/validations/formValidations";
+import type { WebPageFormValues } from "./types";
+import { Button } from "@/components/ui/button";
+import { REGEX } from "@/const/regex";
+import { generatePageUrl } from "./utils";
+
+const LIST_PATH = "/manage/storefront/web-pages";
 
 const WebPage = () => {
-  const methods = useForm<WebPageFormValues>({
+  const { id } = useParams();
+  const isEdit = !!id;
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+
+  const webPages = useAppSelector((s: any) => s.storefront.webPages) ?? [];
+  const urlSettingData = useAppSelector((s: any) => s.home?.urlSettingData);
+
+  const form = useForm<WebPageFormValues>({
+    resolver: yupResolver(WebPageSchema),
     defaultValues: DefaultWebPageValues,
   });
 
-  const {
-    control,
-    setValue,
-    watch,
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = methods;
-  const webPages = useAppSelector((state: any) => state?.storefront?.webPages);
-  const urlSettingData = useAppSelector(
-    (state: any) => state.home?.urlSettingData,
-  );
-  const [isUrlManuallyEdited, setIsUrlManuallyEdited] =
-    useState<boolean>(false);
-  const dispatch = useAppDispatch();
-  const router = useRouter();
-  const { id } = useParams();
+  const { control, reset, setValue, watch } = form;
+  const [isUrlManuallyEdited, setIsUrlManuallyEdited] = useState(false);
   const submitActionRef = useRef<"exit" | "keepEditing" | "addAnother">("exit");
-  const [pageType, showTheseFields, watchedName, pageContent] = watch([
-    "pageType",
-    "showTheseFields",
-    "pageName",
-    "pageContent",
-  ]);
-  const isEdit = !!id;
 
-  // Fetch page data if editing
-  useEffect(() => {
-    if (isEdit && id) {
-      const fetchPage = async () => {
-        try {
-          const result = await dispatch(getWebPageById({ id: id }));
-          if (getWebPageById.fulfilled.match(result)) {
-            reset(result?.payload?.data);
-          } else {
-          }
-        } catch (err) {}
-      };
-      fetchPage();
-    }
-  }, [isEdit, id, dispatch, reset]);
-
-  // Submission handler
-  const onSubmit: SubmitHandler<WebPageFormValues> = async (data) => {
-    try {
-      let result;
-      if (isEdit && id) {
-        result = await dispatch(updateWebPage({ id, data }));
-      } else {
-        result = await dispatch(createWebpage({ data }));
-      }
-
-      if ((isEdit ? updateWebPage : createWebpage).fulfilled.match(result)) {
-        dispatch(getWebPages());
-
-        if (submitActionRef.current === "keepEditing" && isEdit && id) {
-          const refreshedPage = await dispatch(getWebPageById({ id }));
-          if (getWebPageById.fulfilled.match(refreshedPage)) {
-            reset(refreshedPage.payload.data);
-          }
-        } else if (submitActionRef.current === "addAnother") {
-          reset(DefaultWebPageValues);
-          setIsUrlManuallyEdited(false);
-        } else {
-          reset();
-          router.push("/manage/storefront/web-pages");
-        }
-      } else {
-      }
-    } catch (err) {
-      console.error("Something went wrong!", err);
-    }
-  };
-  const toggleContactField = (fieldId: string) => {
-    const current = showTheseFields;
-    const updated = current.includes(fieldId)
-      ? current.filter((f) => f !== fieldId)
-      : [...current, fieldId];
-    setValue("showTheseFields", updated, { shouldDirty: true });
-  };
+  const pageType = useWatch({ control, name: WebPageField.PageType });
+  const watchedName = useWatch({ control, name: WebPageField.PageName });
+  const showTheseFields =
+    useWatch({ control, name: WebPageField.ShowTheseFields }) ?? [];
 
   useEffect(() => {
-    if (!isUrlManuallyEdited) {
-      if (urlSettingData?.format_type == UrlSettingEnums.SEO_OPTIMIZED_SHORT) {
-        if (watchedName) {
-          const slug = generateSlug(watchedName);
-          setValue("pageUrl", `/${slug}`);
-        }
-      } else if (
-        urlSettingData?.format_type == UrlSettingEnums.SEO_OPTIMIZED_LONG
-      ) {
-        if (watchedName) {
-          const slug = generateSlug(watchedName);
-          setValue("pageUrl", `/pages/${slug}`);
-        }
-      }
-      const formatType = urlSettingData?.format_type;
-      const customFormat = urlSettingData?.custom_format;
+    if (!isEdit || !id) return;
+    dispatch(getWebPageById({ id }))
+      .unwrap()
+      .then((res) => reset(res?.data ?? res))
+      .catch(console.error);
+  }, [id, isEdit, dispatch, reset]);
 
-      if (formatType === "custom" && customFormat) {
-        if (watchedName) {
-          const replacements = {
-            "%pagename%": watchedName ? generateSlug(watchedName) : "",
-          };
+  useEffect(() => {
+    if (isUrlManuallyEdited || !watchedName) return;
 
-          const finalUrl = Object.entries(replacements)
-            .reduce(
-              (url, [key, value]) => url.replace(new RegExp(key, "gi"), value),
-              customFormat,
-            )
-            .replace(/%[^%]+%/g, "")
-            .replace(/\/+/g, "/")
-            .replace(/\/$/g, "");
-          if (finalUrl) {
-            setValue("pageUrl", finalUrl);
-          }
-        }
-      }
+    const url = generatePageUrl(watchedName, urlSettingData);
+    if (url) {
+      setValue(WebPageField.PageUrl, url);
     }
   }, [watchedName, isUrlManuallyEdited]);
-
   useEffect(() => {
     dispatch(getWebPages());
     dispatch(fetchUrlSettings("webpage"));
   }, [dispatch]);
 
   useEffect(() => {
-    if (id) {
-      setIsUrlManuallyEdited(true);
-    }
+    if (id) setIsUrlManuallyEdited(true);
   }, [id]);
 
+  const onSubmit = async (values: WebPageFormValues) => {
+    try {
+      const result = isEdit
+        ? await dispatch(updateWebPage({ id, data: values }))
+        : await dispatch(createWebpage({ data: values }));
+
+      if ((isEdit ? updateWebPage : createWebpage).fulfilled.match(result)) {
+        dispatch(getWebPages());
+
+        if (submitActionRef.current === "keepEditing" && isEdit) {
+          const refreshed = await dispatch(getWebPageById({ id }));
+          if (getWebPageById.fulfilled.match(refreshed)) {
+            reset(refreshed.payload.data);
+          }
+        } else if (submitActionRef.current === "addAnother") {
+          reset(DefaultWebPageValues);
+          setIsUrlManuallyEdited(false);
+        } else {
+          router.push(LIST_PATH);
+        }
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const toggleContactField = (fieldId: string) => {
+    const current = showTheseFields;
+    const updated = current.includes(fieldId)
+      ? current.filter((f: any) => f !== fieldId)
+      : [...current, fieldId];
+    setValue(WebPageField.ShowTheseFields, updated, { shouldDirty: true });
+  };
+
   return (
-    <FormProvider {...methods}>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="p-5 space-y-5">
-          <div className="flex flex-col space-y-5 mt-10">
-            <h1 className="!font-extralight 2xl:!text-5xl">
-              {isEdit ? "Edit" : "Create"} a Web Page
-            </h1>
-            <p className="2xl:!text-2xl">
-              To create a web page (such as an "About Us" page or a contact
-              form), start by choosing the type of page you want and then fill
-              in the other details.
-            </p>
-          </div>
+    <div className="min-h-screen">
+      <PageTitle
+        title={isEdit ? "Edit a Web Page" : "Create a Web Page"}
+        description='To create a web page (such as an "About Us" page or a contact form), start by choosing the type of page you want and then fill in the other details.'
+        descriptionClassName="text-xl! 2xl:text-2xl!"
+        hideActionButton
+      />
 
-          {/* PAGE TYPE */}
-          <div className="space-y-4 mt-10">
-            <h1 className="!font-semibold text-lg 2xl:!text-[2.4rem]">
-              Page Type
-            </h1>
-            <div className="bg-white shadow-md p-10">
-              <Controller
-                name="pageType"
-                control={control}
-                defaultValue={"1"}
-                render={({ field }) => (
-                  <RadioGroup
-                    value={field.value}
-                    onValueChange={field.onChange}
-                    className="space-y-2"
-                  >
-                    {PageTypeOptions.map((opt) => (
-                      <div
-                        key={opt.value}
-                        className="flex items-start space-x-3 ml-60"
-                      >
-                        <RadioGroupItem id={opt.value} value={opt.value} />
-                        <Label className="2xl:!text-2xl" htmlFor={opt.value}>
-                          {opt.label}
-                        </Label>
-                      </div>
-                    ))}
-                  </RadioGroup>
-                )}
-              />
-            </div>
-          </div>
-
-          {/* WEB PAGE DETAILS */}
-          <div className="space-y-4 mt-10">
-            <h1 className="!font-semibold text-lg 2xl:!text-[2.4rem]">
-              Web Page Details
-            </h1>
-            <div className="bg-white shadow-md p-10 space-y-5">
-              {/* Page Name — always visible */}
-              <div className="flex items-center gap-4">
-                <Label
-                  htmlFor="pageName"
-                  className="w-[140px] text-right 2xl:!text-2xl"
-                >
-                  Page Name:
-                </Label>
-                <Controller
-                  name="pageName"
-                  control={control}
-                  rules={{
-                    required: "Page name is required",
-                    validate: (value) =>
-                      value.trim().length > 0 || "Page name is required",
-                  }}
-                  render={({ field }) => (
-                    <div className="flex-1">
-                      <Input
-                        id="pageName"
-                        {...field}
-                        value={field.value ?? ""}
-                        placeholder="Enter Page Name"
-                        aria-invalid={!!errors.pageName}
-                        className={cn(
-                          errors.pageName &&
-                            "border-red-500 focus-visible:ring-red-500",
-                        )}
-                      />
-                      {errors.pageName && (
-                        <p className="mt-1 text-sm text-red-500">
-                          {String(errors.pageName.message)}
-                        </p>
-                      )}
-                    </div>
-                  )}
-                />
-              </div>
-
-              {/* Page URL — always visible */}
-              {pageType != PageTypeEnums.Link && (
-                <div className="flex items-center gap-4">
-                  <Label
-                    htmlFor="pageUrl"
-                    className="w-[140px] text-right 2xl:!text-2xl"
-                  >
-                    Page URL:
-                  </Label>
-                  <Controller
-                    name="pageUrl"
-                    control={control}
-                    render={({ field }) => (
-                      <Input
-                        id="pageUrl"
-                        {...field}
-                        onKeyDown={(e) => {
-                          if (/[$*&@!=+%`'"^|]/.test(e.key)) {
-                            e.preventDefault();
-                          }
-                        }}
-                        onPaste={(e) => {
-                          const pasted = e.clipboardData.getData("text");
-                          if (/[$*&@!=+%`'"^|]/.test(pasted)) {
-                            e.preventDefault();
-                          }
-                        }}
-                        onChange={(e) => {
-                          field.onChange(e);
-                          setIsUrlManuallyEdited(true);
-                        }}
-                        placeholder="Enter Page URL"
-                      />
-                    )}
-                  />
-                  <button
-                    className="btn-outline-primary !py-2"
-                    type="button"
-                    onClick={() => {
-                      setIsUrlManuallyEdited(false);
-                      if (
-                        urlSettingData?.format_type ==
-                        UrlSettingEnums.SEO_OPTIMIZED_SHORT
-                      ) {
-                        if (watchedName) {
-                          const slug = generateSlug(watchedName);
-                          setValue("pageUrl", `/${slug}`);
-                        }
-                      } else if (
-                        urlSettingData?.format_type == "seo_optimized_long"
-                      ) {
-                        if (watchedName) {
-                          const slug = generateSlug(watchedName);
-                          setValue("pageUrl", `/pages/${slug}`);
-                        }
-                      }
-                      const formatType = urlSettingData?.format_type;
-                      const customFormat = urlSettingData?.custom_format;
-
-                      if (formatType === "custom" && customFormat) {
-                        if (watchedName) {
-                          const replacements = {
-                            "%pagename%": watchedName
-                              ? generateSlug(watchedName)
-                              : "",
-                          };
-
-                          const finalUrl = Object.entries(replacements)
-                            .reduce(
-                              (url, [key, value]) =>
-                                url.replace(new RegExp(key, "gi"), value),
-                              customFormat,
-                            )
-                            .replace(/%[^%]+%/g, "")
-                            .replace(/\/+/g, "/")
-                            .replace(/\/$/g, "");
-                          if (finalUrl) {
-                            setValue("pageUrl", finalUrl);
-                          }
-                        }
-                      }
-                    }}
-                  >
-                    Reset
-                  </button>
-                </div>
-              )}
-
-              {/* WYSIWYG */}
-              {pageType == PageTypeEnums.WYSIWYG && (
-                <div className="flex items-start justify-start gap-4">
-                  <Label className="w-[140px] text-right 2xl:!text-2xl">
-                    Page Content:
-                  </Label>
-                  <DescriptionEditorQuill
-                    fieldName="pageContent"
-                    label="Page Content"
-                    height={300}
-                  />
-                </div>
-              )}
-
-              {/* LINK */}
-              {pageType == PageTypeEnums.Link && (
-                <div className="flex items-center gap-4">
-                  <Label
-                    htmlFor="link"
-                    className="w-[140px] text-right 2xl:!text-2xl"
-                  >
-                    Link:
-                  </Label>
-                  <div className="flex flex-col gap-1 flex-1 max-w-[500px]">
-                    <Controller
-                      name="link"
-                      control={control}
-                      rules={{
-                        required: "Link is required",
-                        validate: (value: string) => {
-                          const trimmed = value?.trim?.() ?? "";
-                          if (!trimmed) return "Link is required";
-                          return (
-                            /^https:\/\//i.test(trimmed) ||
-                            "Link must start with https://"
-                          );
-                        },
-                      }}
-                      render={({ field }) => (
-                        <Input
-                          id="link"
-                          {...field}
-                          type="url"
-                          value={field.value ?? ""}
-                          placeholder="https://"
-                          aria-invalid={!!errors.link}
-                          className={cn(
-                            errors.link &&
-                              "border-red-500 focus-visible:ring-red-500",
-                            "max-w-[500px]",
-                          )}
-                        />
-                      )}
-                    />
-                    {errors.link && (
-                      <p className="text-sm text-red-500">
-                        {String(errors.link.message)}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {/* CONTACT FORM */}
-              {pageType == PageTypeEnums.ContactForm && (
-                <div className="space-y-5">
-                  {/* Page Content editor */}
-                  <div className="flex items-start justify-start gap-4">
-                    <Label className="w-[140px] text-right 2xl:!text-2xl">
-                      Page Content:
-                    </Label>
-                    <DescriptionEditorQuill
-                      fieldName="pageContent"
-                      label="Page Content"
-                      height={300}
-                    />
-                  </div>
-
-                  {/* Email Questions To */}
-                  <div className="flex items-center gap-4">
-                    <Label
-                      htmlFor="emailQuestionsTo"
-                      className="w-[180px] text-right 2xl:!text-2xl"
-                    >
-                      Email Questions to:
-                    </Label>
-                    <Controller
-                      name="emailQuestionsTo"
-                      control={control}
-                      render={({ field }) => (
-                        <Input
-                          id="emailQuestionsTo"
-                          {...field}
-                          placeholder="info@mystore.com"
-                          className="max-w-[300px]"
-                        />
-                      )}
-                    />
-                  </div>
-
-                  {/* Show These Fields */}
-                  <div className="flex items-start gap-4">
-                    <Label className="w-[180px] text-right pt-1 2xl:!text-2xl">
-                      Show These Fields:
-                    </Label>
-                    <div className="space-y-2">
-                      {ContactFields.map((f) => (
-                        <div key={f.id} className="flex items-center gap-2">
-                          <Checkbox
-                            id={f.id}
-                            checked={f.locked || showTheseFields.includes(f.id)}
-                            disabled={f.locked}
-                            onCheckedChange={() => toggleContactField(f.id)}
-                          />
-                          <Label
-                            htmlFor={f.id}
-                            className="cursor-pointer 2xl:!text-xl"
-                          >
-                            {f.label}
-                          </Label>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Spam Protection */}
-                  <div className="flex items-center gap-4">
-                    <Label className="w-[180px] text-right 2xl:!text-2xl">
-                      Spam Protection:
-                    </Label>
-                    <div className="flex items-center gap-2">
-                      <Checkbox
-                        id="spamProtection"
-                        checked={showTheseFields.includes("spamProtection")}
-                        onCheckedChange={() =>
-                          toggleContactField("spamProtection")
-                        }
-                      />
-                      <Label
-                        htmlFor="spamProtection"
-                        className="cursor-pointer 2xl:!text-xl"
-                      >
-                        Add Manual Captcha
-                      </Label>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* RAW HTML */}
-              {pageType == PageTypeEnums.RawHTML && (
-                <div className="flex items-start gap-4">
-                  <Label
-                    htmlFor="rawHtml"
-                    className="w-[140px] text-right 2xl:!text-2xl"
-                  >
-                    HTML Content:
-                  </Label>
-                  <Controller
-                    name="rawHtml"
-                    control={control}
-                    render={({ field }) => (
-                      <textarea
-                        id="rawHtml"
-                        {...field}
-                        rows={15}
-                        className="flex-1 border rounded-md p-3 font-mono text-sm resize-y focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Enter raw HTML here..."
-                      />
-                    )}
-                  />
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* NAVIGATION MENU */}
-          <div className="space-y-4 mt-10">
-            <h1 className="!font-semibold text-lg 2xl:!text-[2.4rem]">
-              Navigation Menu Options
-            </h1>
-            <div className="bg-white shadow-md p-10 space-y-5">
-              <div className="ml-20">
-                <Controller
-                  name="showInNavigation"
-                  control={control}
-                  defaultValue={false}
-                  render={({ field: { value, onChange } }) => (
-                    <div className="flex items-center gap-4">
-                      <Label
-                        htmlFor="showInNavigation"
-                        className="cursor-pointer 2xl:!text-2xl"
-                      >
-                        Navigation Menu
-                      </Label>
-                      <Checkbox
-                        id="showInNavigation"
-                        checked={value}
-                        onCheckedChange={onChange}
-                        className="mr-2"
-                      />
-                      <Label
-                        htmlFor="showInNavigation"
-                        className="cursor-pointer 2xl:!text-2xl"
-                      >
-                        Yes, show this web page on the navigation menu
-                      </Label>
-                    </div>
-                  )}
-                />
-
-                <div className="flex justify-start gap-15 items-start mt-4">
-                  <Label className="pt-1 2xl:!text-2xl">Parent Page</Label>
-                  <div className="w-[300px] border rounded-md overflow-y-auto h-[160px] bg-white text-xl">
-                    {[
-                      { pageName: "-- No Parent Page --", id: 0 },
-                      ...(webPages.filter((item: any) => item.id != id) || []),
-                    ]?.map((tpl: any) => {
-                      const isSelected =
-                        String(watch("parentPage")) === String(tpl.id);
-                      return (
-                        <div
-                          key={tpl.id}
-                          onClick={() =>
-                            setValue(
-                              "parentPage",
-                              isSelected ? "" : String(tpl.id),
-                              {
-                                shouldDirty: true,
-                              },
-                            )
-                          }
-                          className={cn(
-                            "cursor-pointer px-3 py-1",
-                            isSelected && "bg-blue-600 text-white",
-                          )}
-                        >
-                          {tpl.pageName}
-                        </div>
-                      );
-                    })}
-                    <input type="hidden" {...register("parentPage")} />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* ADVANCED OPTIONS */}
-          <div className="space-y-4 mt-10">
-            <h1 className="!font-semibold text-lg 2xl:!text-[2.4rem]">
-              Advanced Options
-            </h1>
-            <div className="bg-white shadow-md p-10 space-y-5">
-              {AdvancedOptions.map(({ label, name }) => (
-                <div className="flex items-center gap-4 ml-20" key={name}>
-                  <Label
-                    htmlFor={name}
-                    className="w-[190px] text-right 2xl:!text-2xl"
-                  >
-                    {label} (Optional):
-                  </Label>
-                  <Controller
-                    name={name as keyof WebPageFormValues}
-                    control={control}
-                    render={({ field }) => (
-                      <Input
-                        id={name}
-                        {...field}
-                        value={field.value as string}
-                      />
-                    )}
-                  />
-                </div>
-              ))}
-
-              {/* <div className="flex items-center gap-4 ml-20">
-                <Label
-                  htmlFor="templateLayoutFile"
-                  className="w-[190px] text-right 2xl:!text-2xl"
-                >
-                  Template Layout File:
-                </Label>
-                <Controller
-                  name="templateLayoutFile"
-                  control={control}
-                  render={({ field }) => (
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger className="flex-1">
-                        <SelectValue placeholder="Select layout file" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="default">default</SelectItem>
-                        <SelectItem value="page-full-width">
-                          page-full-width
-                        </SelectItem>
-                        <SelectItem value="multi-add-skus">
-                          multi-add-skus
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
-              </div> */}
-
-              <div className="flex flex-col space-y-4 pt-4 ml-20">
-                <Controller
-                  name="restrictToCustomersOnly"
-                  control={control}
-                  render={({ field: { value, onChange, ...field } }) => (
-                    <div className="flex items-center gap-8">
-                      <Label className="w-[180px] text-right 2xl:!text-2xl">
-                        Restrict to Customers Only
-                      </Label>
-                      <div className="flex items-center">
-                        <Checkbox
-                          id="restrictToCustomersOnly"
-                          checked={value}
-                          onCheckedChange={onChange}
-                          {...field}
-                          className="mr-2"
-                        />
-                        <Label
-                          htmlFor="restrictToCustomersOnly"
-                          className="cursor-pointer 2xl:!text-2xl"
-                        >
-                          Yes, only allow customers who've logged in to view
-                          this page
-                        </Label>
-                      </div>
-                    </div>
-                  )}
-                />
-              </div>
-
-              <div className="flex items-start gap-4 pt-4 ml-20">
-                <Label
-                  htmlFor="sortOrder"
-                  className="w-[190px] text-right 2xl:!text-2xl"
-                >
-                  Sort Order (Optional):
-                </Label>
-                <Controller
-                  name="sortOrder"
-                  control={control}
-                  render={({ field }) => (
-                    <Input
-                      id="sortOrder"
-                      {...field}
-                      type="number"
-                      className="w-[100px]"
-                    />
-                  )}
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* FORM ACTION BUTTONS */}
-          <div className="flex justify-end gap-4 items-center fixed w-full bottom-0 right-0 bg-white/90 z-10 shadow-xs border-t p-4">
-            <button
-              type="button"
-              className="btn-outline-primary"
-              onClick={() => router.push("/manage/storefront/web-pages")}
-            >
-              Cancel
-            </button>
-            <button type="submit" className="btn-primary">
-              Save and Exit
-            </button>
+      <Form
+        form={form}
+        onSubmit={onSubmit}
+        footer={{
+          submitText: "Save and Exit",
+          onCancel: () => router.push(LIST_PATH),
+          loading: form.formState.isSubmitting,
+          extraActions: (
             <button
               type="submit"
               className="btn-primary"
@@ -731,10 +148,220 @@ const WebPage = () => {
             >
               {isEdit ? "Save & Keep Editing" : "Save & Add Another"}
             </button>
+          ),
+        }}
+      >
+        <section className="bg-white shadow-sm border border-gray-100 rounded-sm p-10 space-y-6">
+          <PageTitle title="Page Type" hideActionButton />
+          <InputField
+            name={WebPageField.PageType}
+            required
+            Component={RadioGroupField}
+            control={control}
+            options={PageTypeOptions}
+          />
+        </section>
+        <section className="bg-white shadow-sm border border-gray-100 rounded-sm p-10 space-y-6">
+          <PageTitle title="Web Page Details" hideActionButton />
+
+          <InputField
+            name={WebPageField.PageName}
+            label="Page Name"
+            required
+            control={control}
+            placeholder="Enter Page Name"
+          />
+
+          {pageType !== PageTypeEnums.Link && (
+            <div className="flex items-end  gap-4">
+              <InputField
+                name={WebPageField.PageUrl}
+                label="Page URL"
+                control={control}
+                onKeyDown={(e) => {
+                  if (REGEX.URL_BLOCKED_CHARS.test(e.key)) {
+                    e.preventDefault();
+                  }
+                }}
+                onPaste={(e) => {
+                  const pasted = e.clipboardData.getData("text");
+                  if (REGEX.URL_BLOCKED_CHARS.test(pasted)) {
+                    e.preventDefault();
+                  }
+                }}
+              />
+              <Button
+                type="button"
+                className="btn-outline-primary !py-2 h-13"
+                onClick={() => {
+                  setIsUrlManuallyEdited(false);
+                  const url = generatePageUrl(watchedName, urlSettingData);
+                  if (url) {
+                    setValue(WebPageField.PageUrl, url);
+                  }
+                }}
+              >
+                Reset
+              </Button>
+            </div>
+          )}
+
+          {(pageType === PageTypeEnums.WYSIWYG ||
+            pageType === PageTypeEnums.ContactForm) && (
+            <InputField
+              name={WebPageField.PageContent}
+              label="Page Content"
+              Component={RichTextEditor}
+              control={control}
+              controlClassName="max-w-7xl"
+            />
+          )}
+
+          {pageType === PageTypeEnums.Link && (
+            <InputField
+              name={WebPageField.Link}
+              label="Link"
+              required
+              control={control}
+              placeholder="https://"
+            />
+          )}
+
+          {pageType === PageTypeEnums.RawHTML && (
+            <InputField
+              name={WebPageField.RawHtml}
+              label="HTML Content"
+              control={control}
+              Component="textarea"
+              rows={15}
+              className="font-mono text-sm border rounded-md p-3 bg-gray-50"
+              placeholder="Enter raw HTML here..."
+            />
+          )}
+
+          {pageType === PageTypeEnums.ContactForm && (
+            <>
+              {/* Email Questions To */}
+              <InputField
+                name={WebPageField.EmailQuestionsTo}
+                label="Email Questions to"
+                control={control}
+                placeholder="info@mystore.com"
+              />
+              {/* Show These Fields */}
+              <div className="grid grid-cols-[220px_1fr] items-start gap-4">
+                <Label className="font-normal text-gray-600 2xl:text-2xl! justify-center text-center pt-3">
+                  Show These Fields
+                </Label>
+                <div className="space-y-2">
+                  {ContactFields.map((f) => (
+                    <div key={f.id} className="flex items-center gap-2">
+                      <Checkbox
+                        id={f.id}
+                        checked={f.locked || showTheseFields.includes(f.id)}
+                        disabled={f.locked}
+                        onCheckedChange={() => toggleContactField(f.id)}
+                      />
+                      <Label htmlFor={f.id} className="cursor-pointer text-xl">
+                        {f.label}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              {/* Spam Protection */}
+              <div className="grid grid-cols-[220px_1fr] items-center gap-4">
+                <Label className="font-normal text-gray-600 2xl:text-2xl! justify-center text-center pt-3">
+                  Spam Protection
+                </Label>
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    id="spamProtection"
+                    checked={showTheseFields.includes("spamProtection")}
+                    onCheckedChange={() => toggleContactField("spamProtection")}
+                  />
+                  <Label
+                    htmlFor="spamProtection"
+                    className="cursor-pointer text-xl"
+                  >
+                    Add Manual Captcha
+                  </Label>
+                </div>
+              </div>
+            </>
+          )}
+        </section>
+        <section className="bg-white shadow-sm border border-gray-100 rounded-sm p-10 space-y-6">
+          <PageTitle title="Navigation Menu Options" hideActionButton />
+          <InputField
+            name={WebPageField.ShowInNavigation}
+            label="Navigation Menu"
+            Component={CheckboxField}
+            control={control}
+            text="Yes, show this web page on the navigation menu"
+          />
+          <div className="grid grid-cols-[220px_1fr] items-start gap-4">
+            <Label className="font-normal text-gray-600 2xl:text-2xl! justify-center text-center pt-3">
+              Parent Page
+            </Label>
+            <div className="w-[300px] border rounded-md overflow-y-auto h-[160px] bg-white text-xl">
+              {[
+                { pageName: "-- No Parent Page --", id: 0 },
+                ...(webPages.filter((item: any) => item.id != id) || []),
+              ].map((tpl: any) => {
+                const isSelected =
+                  String(watch(WebPageField.ParentPage)) === String(tpl.id);
+                return (
+                  <div
+                    key={tpl.id}
+                    onClick={() =>
+                      setValue(
+                        WebPageField.ParentPage,
+                        isSelected ? "" : String(tpl.id),
+                        { shouldDirty: true },
+                      )
+                    }
+                    className={cn(
+                      "cursor-pointer px-3 py-1.5 hover:bg-gray-100",
+                      isSelected && "bg-blue-600 text-white hover:bg-blue-600",
+                    )}
+                  >
+                    {tpl.pageName}
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        </div>
-      </form>
-    </FormProvider>
+        </section>
+        <section className="bg-white shadow-sm border border-gray-100 rounded-sm p-10 space-y-6">
+          <PageTitle title="Advanced Options" hideActionButton />
+
+          {AdvancedOptions.map(({ label, name }) => (
+            <InputField
+              key={name}
+              name={name as any}
+              label={`${label} (Optional)`}
+              control={control}
+            />
+          ))}
+
+          <InputField
+            name={WebPageField.RestrictToCustomersOnly}
+            label="Restrict to Customers Only"
+            Component={CheckboxField}
+            control={control}
+            text="Yes, only allow customers who've logged in to view this page"
+          />
+
+          <InputField
+            name={WebPageField.SortOrder}
+            label="Sort Order (Optional)"
+            control={control}
+            type="number"
+          />
+        </section>
+      </Form>
+    </div>
   );
 };
 

@@ -11,6 +11,7 @@ import {
   deleteReview,
 } from "@/redux/slices/reviewSlice";
 import { getReviewColumns } from "./ReviewColumns";
+import { getSelectedStore } from "@/utils/storage";
 
 const useAllReviewsContainer = () => {
   const dispatch = useAppDispatch();
@@ -108,14 +109,7 @@ const useAllReviewsContainer = () => {
   ];
 
   const handleProductClick = (review: any) => {
-    const availableStores = JSON.parse(
-      localStorage.getItem("availableStores") || "[]",
-    );
-    const selectedStoreId = Number(localStorage.getItem("storeId"));
-    const selectedStore = availableStores.find(
-      (s: any) => s.id === selectedStoreId,
-    );
-
+    const selectedStore = getSelectedStore();
     if (selectedStore?.baseUrl) {
       const url = review?.product?.product_url || "";
       const cleanUrl = url.startsWith("/") ? url.slice(1) : url;

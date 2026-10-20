@@ -6,7 +6,8 @@ import {
 } from "@/app/(protected)/manage/marketing/banners/constant";
 import { needsLocationId } from "@/app/(protected)/manage/marketing/banners/utils";
 import { BlogFormFieldName } from "@/app/components/blog/constant";
-import { boolean, date, object, ref, string,number, mixed } from "yup";
+import { PageTypeEnums, WebPageField } from "@/app/components/storefront/constants";
+import { boolean, date, object, ref, string, number, mixed, array } from "yup";
 
 export const bannerSchema = object({
   [BannerField.Title]: string().trim().required("Banner name is required"),
@@ -69,7 +70,7 @@ export const storeProfileSchema = object({
 });
 export const CategorySchema = object({
   name: string().trim().required("Enter category display name"),
-  channel:string().required("Channel is required"),
+  channel: string().required("Channel is required"),
   parentId: number().nullable(),
   isVisible: boolean(),
 });
@@ -85,4 +86,35 @@ export const BlogSchema = object({
     .max(160)
     .default(""),
   [BlogFormFieldName.Thumbnail]: mixed<FileList>().nullable().optional(),
+});
+
+export const WebPageSchema = object({
+  [WebPageField.PageType]: string().required("Page type is required"),
+  [WebPageField.PageName]: string().trim().required("Page name is required"),
+  [WebPageField.PageUrl]: string().trim().nullable().default(""),
+  [WebPageField.PageContent]: string().nullable().default(""),
+  [WebPageField.Link]: string()
+    .nullable()
+    .default("")
+    .when(WebPageField.PageType, {
+      is: PageTypeEnums.Link,
+      then: (schema) =>
+        schema
+          .required("Link is required")
+          .matches(/^https:\/\//i, "Link must start with https://"),
+    }),
+  [WebPageField.RawHtml]: string().nullable().default(""),
+  [WebPageField.EmailQuestionsTo]: string()
+    .email("Invalid email address")
+    .nullable()
+    .default(""),
+  [WebPageField.ShowTheseFields]: array().of(string()).default([]),
+  [WebPageField.ShowInNavigation]: boolean().default(false),
+  [WebPageField.ParentPage]: string().nullable().default(""),
+  [WebPageField.RestrictToCustomersOnly]: boolean().default(false),
+  [WebPageField.SortOrder]: number().nullable().default(0),
+  [WebPageField.PageTitle]: string().nullable().default(""),
+  [WebPageField.MetaKeywords]: string().nullable().default(""),
+  [WebPageField.MetaDescription]: string().nullable().default(""),
+  [WebPageField.SearchKeywords]: string().nullable().default(""),
 });

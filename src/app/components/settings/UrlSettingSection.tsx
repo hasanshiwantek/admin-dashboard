@@ -87,7 +87,7 @@ export const UrlSettingSection = ({
             <InputField
               name={customUrlField}
               control={control}
-              disabled={format !== UrlFormat.Custom}
+              // disabled={format !== UrlFormat.Custom}
               placeholder="/%title%/"
               label=""
               layout="vertical"
