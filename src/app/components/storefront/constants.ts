@@ -31,26 +31,6 @@ export const PageTypeOptions = [
   },
 ];
 
-export const AdvancedOptions = [
-  { label: "Page Title", name: "pageTitle" },
-  { label: "Meta Keywords", name: "metaKeywords" },
-  { label: "Meta Description", name: "metaDescription" },
-  { label: "Search Keywords", name: "searchKeywords" },
-];
-
-export const DefaultWebPageValues = {
-  pageName: "",
-  pageUrl: "",
-  pageContent: "",
-  templateLayoutFile: "default",
-  displayAsHomePage: false,
-  restrictToCustomersOnly: false,
-  sortOrder: 0,
-  link: "",
-  emailQuestionsTo: "",
-  showTheseFields: ["email", "comments"],
-  rawHtml: "",
-};
 export const WebPageField = {
   PageType: "pageType",
   PageName: "pageName",
@@ -64,4 +44,32 @@ export const WebPageField = {
   RestrictToCustomersOnly: "restrictToCustomersOnly",
   SortOrder: "sortOrder",
   RawHtml: "rawHtml",
-} as const
+  PageTitle: "pageTitle",
+  MetaKeywords: "metaKeywords",
+  MetaDescription: "metaDescription",
+  SearchKeywords: "searchKeywords",
+} as const;
+export const AdvancedOptions = [
+  { label: "Page Title", name: WebPageField.PageTitle },
+  { label: "Meta Keywords", name: WebPageField.MetaKeywords },
+  { label: "Meta Description", name: WebPageField.MetaDescription },
+  { label: "Search Keywords", name: WebPageField.SearchKeywords },
+];
+export const DefaultWebPageValues = {
+  [WebPageField.PageType]: PageTypeEnums.WYSIWYG,
+  [WebPageField.PageName]: "",
+  [WebPageField.PageUrl]: "",
+  [WebPageField.PageContent]: "",
+  [WebPageField.Link]: "",
+  [WebPageField.EmailQuestionsTo]: "",
+  [WebPageField.ShowTheseFields]: ["email", "comments"],
+  [WebPageField.ShowInNavigation]: false,
+  [WebPageField.ParentPage]: "",
+  [WebPageField.RestrictToCustomersOnly]: false,
+  [WebPageField.SortOrder]: 0,
+  [WebPageField.RawHtml]: "",
+  [WebPageField.PageTitle]: "",
+  [WebPageField.MetaKeywords]: "",
+  [WebPageField.MetaDescription]: "",
+  [WebPageField.SearchKeywords]: "",
+};

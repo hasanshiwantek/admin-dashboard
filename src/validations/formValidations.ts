@@ -19,6 +19,10 @@ import {
   WebsiteField,
 } from "@/app/(protected)/manage/settings/(general)/constant";
 import { BlogFormFieldName } from "@/app/components/blog/constant";
+import {
+  PageTypeEnums,
+  WebPageField,
+} from "@/app/components/storefront/constants";
 import { ShippingAddressField } from "@/Modals/ShippingModals/ConfigureShippingAddressModal/constant";
 import { ChargeShippingType } from "@/Modals/ShippingModals/constant";
 import { FedExField } from "@/Modals/ShippingModals/FedExConfigModal/constant";
@@ -365,4 +369,35 @@ export const BlogSchema = object({
     .max(160)
     .default(""),
   [BlogFormFieldName.Thumbnail]: mixed<FileList>().nullable().optional(),
+});
+
+export const WebPageSchema = object({
+  [WebPageField.PageType]: string().required("Page type is required"),
+  [WebPageField.PageName]: string().trim().required("Page name is required"),
+  [WebPageField.PageUrl]: string().trim().nullable().default(""),
+  [WebPageField.PageContent]: string().nullable().default(""),
+  [WebPageField.Link]: string()
+    .nullable()
+    .default("")
+    .when(WebPageField.PageType, {
+      is: PageTypeEnums.Link,
+      then: (schema) =>
+        schema
+          .required("Link is required")
+          .matches(/^https:\/\//i, "Link must start with https://"),
+    }),
+  [WebPageField.RawHtml]: string().nullable().default(""),
+  [WebPageField.EmailQuestionsTo]: string()
+    .email("Invalid email address")
+    .nullable()
+    .default(""),
+  [WebPageField.ShowTheseFields]: array().of(string()).default([]),
+  [WebPageField.ShowInNavigation]: boolean().default(false),
+  [WebPageField.ParentPage]: string().nullable().default(""),
+  [WebPageField.RestrictToCustomersOnly]: boolean().default(false),
+  [WebPageField.SortOrder]: number().nullable().default(0),
+  [WebPageField.PageTitle]: string().nullable().default(""),
+  [WebPageField.MetaKeywords]: string().nullable().default(""),
+  [WebPageField.MetaDescription]: string().nullable().default(""),
+  [WebPageField.SearchKeywords]: string().nullable().default(""),
 });
