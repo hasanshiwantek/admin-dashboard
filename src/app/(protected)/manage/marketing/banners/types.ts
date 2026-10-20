@@ -1,8 +1,8 @@
-import type { bannerSchema } from "@/validations/formValidations";
+import type { BannerSchema } from "@/validations/formValidations";
 import * as yup from "yup";
 import type { BannerLocation, BannerPlacement } from "./constant";
 
-export type BannerFormValues = yup.InferType<typeof bannerSchema>;
+export type BannerFormValues = yup.InferType<typeof BannerSchema>;
 
 export type BannerFormProps = {
   bannerId?: string;
