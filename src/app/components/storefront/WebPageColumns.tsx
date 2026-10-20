@@ -1,8 +1,7 @@
 import Link from "next/link";
-import { Check, X } from "lucide-react";
 import { convertOptionsToObject } from "@/lib/utils";
 import { PageTypeOptions } from "./constants";
-
+import EnableDisable from "@/components/common/EnableDisable";
 export const getWebPageColumns = (onToggleVisibility: (page: any) => void) => [
   {
     key: "pageName",
@@ -35,17 +34,11 @@ export const getWebPageColumns = (onToggleVisibility: (page: any) => void) => [
     className: "text-center",
     render: (page: any) => (
       <div className="flex justify-center">
-        {page.isPageVisible ? (
-          <Check
-            className="text-green-500 w-7 h-7 cursor-pointer"
-            onClick={() => onToggleVisibility(page)}
-          />
-        ) : (
-          <X
-            className="text-red-500 w-7 h-7 cursor-pointer"
-            onClick={() => onToggleVisibility(page)}
-          />
-        )}
+        <EnableDisable
+          enabled={page.isPageVisible}
+          data={page}
+          handleToggle={onToggleVisibility}
+        />
       </div>
     ),
   },

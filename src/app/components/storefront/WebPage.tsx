@@ -37,6 +37,8 @@ import {
 import { WebPageSchema } from "@/validations/formValidations";
 import type { WebPageFormValues } from "./types";
 import { Button } from "@/components/ui/button";
+import { REGEX } from "@/const/regex";
+import { generatePageUrl } from "./utils";
 
 const LIST_PATH = "/manage/storefront/web-pages";
 
@@ -72,42 +74,11 @@ const WebPage = () => {
   }, [id, isEdit, dispatch, reset]);
 
   useEffect(() => {
-    if (!isUrlManuallyEdited) {
-      if (urlSettingData?.format_type == UrlSettingEnums.SEO_OPTIMIZED_SHORT) {
-        if (watchedName) {
-          const slug = generateSlug(watchedName);
-          setValue(WebPageField.PageUrl, `/${slug}`);
-        }
-      } else if (
-        urlSettingData?.format_type == UrlSettingEnums.SEO_OPTIMIZED_LONG
-      ) {
-        if (watchedName) {
-          const slug = generateSlug(watchedName);
-          setValue(WebPageField.PageUrl, `/pages/${slug}`);
-        }
-      }
-      const formatType = urlSettingData?.format_type;
-      const customFormat = urlSettingData?.custom_format;
+    if (isUrlManuallyEdited || !watchedName) return;
 
-      if (formatType === UrlSettingEnums.CUSTOM && customFormat) {
-        if (watchedName) {
-          const replacements = {
-            "%pagename%": watchedName ? generateSlug(watchedName) : "",
-          };
-
-          const finalUrl = Object.entries(replacements)
-            .reduce(
-              (url, [key, value]) => url.replace(new RegExp(key, "gi"), value),
-              customFormat,
-            )
-            .replace(/%[^%]+%/g, "")
-            .replace(/\/+/g, "/")
-            .replace(/\/$/g, "");
-          if (finalUrl) {
-            setValue(WebPageField.PageUrl, finalUrl);
-          }
-        }
-      }
+    const url = generatePageUrl(watchedName, urlSettingData);
+    if (url) {
+      setValue(WebPageField.PageUrl, url);
     }
   }, [watchedName, isUrlManuallyEdited]);
   useEffect(() => {
@@ -210,13 +181,13 @@ const WebPage = () => {
                 label="Page URL"
                 control={control}
                 onKeyDown={(e) => {
-                  if (/[$*&@!=+%`'"^|]/.test(e.key)) {
+                  if (REGEX.URL_BLOCKED_CHARS.test(e.key)) {
                     e.preventDefault();
                   }
                 }}
                 onPaste={(e) => {
                   const pasted = e.clipboardData.getData("text");
-                  if (/[$*&@!=+%`'"^|]/.test(pasted)) {
+                  if (REGEX.URL_BLOCKED_CHARS.test(pasted)) {
                     e.preventDefault();
                   }
                 }}
@@ -226,46 +197,9 @@ const WebPage = () => {
                 className="btn-outline-primary !py-2 h-13"
                 onClick={() => {
                   setIsUrlManuallyEdited(false);
-                  if (
-                    urlSettingData?.format_type ==
-                    UrlSettingEnums.SEO_OPTIMIZED_SHORT
-                  ) {
-                    if (watchedName) {
-                      const slug = generateSlug(watchedName);
-                      setValue(WebPageField.PageUrl, `/${slug}`);
-                    }
-                  } else if (
-                    urlSettingData?.format_type == "seo_optimized_long"
-                  ) {
-                    if (watchedName) {
-                      const slug = generateSlug(watchedName);
-                      setValue(WebPageField.PageUrl, `/pages/${slug}`);
-                    }
-                  }
-                  const formatType = urlSettingData?.format_type;
-                  const customFormat = urlSettingData?.custom_format;
-
-                  if (formatType === "custom" && customFormat) {
-                    if (watchedName) {
-                      const replacements = {
-                        "%pagename%": watchedName
-                          ? generateSlug(watchedName)
-                          : "",
-                      };
-
-                      const finalUrl = Object.entries(replacements)
-                        .reduce(
-                          (url, [key, value]) =>
-                            url.replace(new RegExp(key, "gi"), value),
-                          customFormat,
-                        )
-                        .replace(/%[^%]+%/g, "")
-                        .replace(/\/+/g, "/")
-                        .replace(/\/$/g, "");
-                      if (finalUrl) {
-                        setValue(WebPageField.PageUrl, finalUrl);
-                      }
-                    }
+                  const url = generatePageUrl(watchedName, urlSettingData);
+                  if (url) {
+                    setValue(WebPageField.PageUrl, url);
                   }
                 }}
               >
