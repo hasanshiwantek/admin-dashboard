@@ -116,29 +116,19 @@ const AddCouponCode = () => {
     }
   };
 
-  // Keep both tab components in the AppTabs configuration
-  const tabs = [
-    {
-      key: "general",
-      label: "General",
-      content: (
-        <GeneralCouponTab
-          control={control}
-          watch={watch}
-        />
-      ),
-    },
-    // {
-    //   key: "advanced",
-    //   label: "Advanced",
-    //   content: (
-    //     <AdvancedCouponTab
-    //       watch={watch}
-    //       setValue={setValue}
-    //     />
-    //   ),
-    // },
-  ];
+
+ const tabs = [
+  {
+    key: "general",
+    label: "General",
+    content: <GeneralCouponTab />,
+  },
+  // {
+  //   key: "advanced",
+  //   label: "Advanced",
+  //   content: <AdvancedCouponTab />,
+  // },
+];
 
   const handleCancel = () => {
     if (isSubmitting || isLoading) return;

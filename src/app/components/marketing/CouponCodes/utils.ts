@@ -1,14 +1,11 @@
+import { toBoolean } from "@/lib/utils";
 import { CouponCodeForm } from "./types";
 
 
 export const mapCouponDataToForm = (
   couponData: any,
 ): CouponCodeForm => {
-  const toBoolean = (value: any): boolean =>
-    value === "1" ||
-    value === 1 ||
-    value === "true" ||
-    value === true;
+  
 
   return {
     couponCode: couponData.couponCode || "",

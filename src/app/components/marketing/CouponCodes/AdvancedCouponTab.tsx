@@ -1,39 +1,30 @@
-
 "use client";
 
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Info } from "lucide-react";
-import {
-  Control,
-  UseFormSetValue,
-  UseFormWatch,
-} from "react-hook-form";
-import { AdvancedCouponTabProps, CouponCodeForm } from "./types";
+
+import { CouponCodeForm } from "./types";
 import PageTitle from "@/components/ui/PageTitle";
+import { useFormContext } from "@/components/form/Form";
 
+const AdvancedCouponTab = () => {
+      const { watch, setValue } = useFormContext<CouponCodeForm>();
 
-
-const AdvancedCouponTab = ({
-  watch,
-  setValue,
-}: AdvancedCouponTabProps) => {
   return (
     <div className="mt-6">
       {/* Location Restriction Settings */}
       <div className="bg-white border rounded-lg p-8 mb-6">
-       <PageTitle
-  title="Location restriction settings"
-  hideActionButton
-  containerClassName="mb-6"
-  textContainerClassName="mb-0 gap-0"
-  titleClassName="text-xl! font-semibold! text-gray-800!"
-/>
+        <PageTitle
+          title="Location restriction settings"
+          hideActionButton
+          containerClassName="mb-6"
+          textContainerClassName="mb-0 gap-0"
+          titleClassName="text-xl! font-semibold! text-gray-800!"
+        />
 
         <div className="grid grid-cols-[200px_1fr] items-center gap-4">
-          <Label className="text-right text-gray-700">
-            Limit by location
-          </Label>
+          <Label className="text-right text-gray-700">Limit by location</Label>
 
           <div className="flex items-center space-x-2">
             <Checkbox
@@ -58,17 +49,15 @@ const AdvancedCouponTab = ({
       {/* Shipping Method Restriction Settings */}
       <div className="bg-white border rounded-lg p-8">
         <PageTitle
-  title="Shipping method restriction settings"
-  hideActionButton
-  containerClassName="mb-6"
-  textContainerClassName="mb-0 gap-0"
-  titleClassName="text-xl! font-semibold! text-gray-800!"
-/>
+          title="Shipping method restriction settings"
+          hideActionButton
+          containerClassName="mb-6"
+          textContainerClassName="mb-0 gap-0"
+          titleClassName="text-xl! font-semibold! text-gray-800!"
+        />
 
         <div className="grid grid-cols-[200px_1fr] items-center gap-4">
-          <Label className="text-right text-gray-700">
-            Limit By Shipping
-          </Label>
+          <Label className="text-right text-gray-700">Limit By Shipping</Label>
 
           <div className="flex items-center space-x-2">
             <Checkbox

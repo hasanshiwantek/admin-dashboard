@@ -6,14 +6,16 @@ import RadioGroupField from "@/components/form/fields/RadioGroupField";
 import CheckboxField from "@/components/form/fields/CheckboxField";
 import { Info } from "lucide-react";
 
-import { CouponCodeForm, GeneralCouponTabProps } from "./types";
+import { CouponCodeForm, } from "./types";
 import { AppliesToOptions, CouponFormFields, DiscountType, DiscountTypeOptions } from "./constant";
 import PageTitle from "@/components/ui/PageTitle";
+import { useFormContext } from "@/components/form/Form";
 
 
 
-const GeneralCouponTab = ({ control, watch }: GeneralCouponTabProps) => {
-  const discountType = watch("discountType");
+const GeneralCouponTab = () => {
+    const { control, watch } = useFormContext<CouponCodeForm>();
+      const discountType = watch("discountType");
 
   return (
     <div className="mt-6 space-y-6">
