@@ -15,6 +15,7 @@ import userPermissionSlice from "./slices/userPermission"
 import storeLogsSlice from "./slices/storeLogsSlice"
 import orderSettingsReducer from "./slices/orderSettingsSlice"
 import productSettingsReducer from "./slices/productSettingsSlice"
+import marketingSettingsReducer from "./slices/marketingSettingsSlice"
 
 export const store = configureStore({
   reducer: {
@@ -34,6 +35,7 @@ export const store = configureStore({
     storeLogs: storeLogsSlice,
     orderSettings: orderSettingsReducer,
     productSettings: productSettingsReducer,
+    marketingSettings: marketingSettingsReducer,
   },
 });
 // Infer types

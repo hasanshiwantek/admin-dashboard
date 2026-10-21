@@ -28,6 +28,7 @@ import {
 } from "@/app/(protected)/manage/settings/(products)/inventory/constant";
 import { GiftWrappingFormNames } from "@/app/(protected)/manage/settings/(products)/gift-wrapping/constant";
 import { CommentSettingsFormNames } from "@/app/(protected)/manage/settings/(products)/comments/constant";
+import { PromotionSettingsFormNames } from "@/app/(protected)/manage/settings/(marketing)/promotions/constant";
 import { BlogFormFieldName } from "@/app/components/blog/constant";
 import { MessageField } from "@/app/components/orders/message/helper/constant";
 import {
@@ -650,6 +651,19 @@ export const CommentSettingsSchema = object({
     .of(string().required())
     .default([]),
   [CommentSettingsFormNames.OnlyPastCustomers]: flag(true),
+});
+// #endregion
+
+// #endregion
+
+// #region Marketing Settings
+
+// #region Promotions
+export const PromotionSettingsSchema = object({
+  [PromotionSettingsFormNames.CalculationMethod]: text(),
+  [PromotionSettingsFormNames.MaxCouponsPerOrder]: text(),
+  [PromotionSettingsFormNames.AllowZeroPriceTrigger]: flag(),
+  [PromotionSettingsFormNames.AllowOnCustomPriceOverrides]: flag(),
 });
 // #endregion
 

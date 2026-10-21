@@ -4,10 +4,10 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { SelectOption } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { Ref } from "react";
+import { ReactNode, Ref } from "react";
 
 type RadioGroupFieldProps = {
-  options: readonly SelectOption[];
+  options: readonly (Omit<SelectOption, "label"> & { label: ReactNode })[];
   value?: string | null;
   onChange?: (value: string) => void;
   onBlur?: () => void;

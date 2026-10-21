@@ -174,6 +174,14 @@ const ProductSettingRoutes: SettingRoute[] = [
   },
 ];
 
+const MarketingSettingRoutes: SettingRoute[] = [
+  {
+    id: "promotions",
+    title: "Promotions and coupons",
+    description: "Promotion calculation rules and coupon limits",
+  },
+];
+
 export const SettingsRoutesList: SettingGroup[] = [
   {
     group: "Setup",
@@ -190,6 +198,10 @@ export const SettingsRoutesList: SettingGroup[] = [
   {
     group: "Products",
     routes: ProductSettingRoutes,
+  },
+  {
+    group: "Marketing",
+    routes: MarketingSettingRoutes,
   },
   {
     group: "Advanced",
