@@ -1,9 +1,9 @@
 import React from 'react'
-import ManageOrders from '@/app/components/orders/manage/ManageOrders'
+import ManageReturns from './ManageReturns'
 const page = () => {
   return (
     <div className='p-10'>
-        <ManageOrders/>
+        <ManageReturns/>
     </div>
   )
 }
