@@ -16,7 +16,7 @@ import {
 import { fieldPath } from "../utils";
 import InlineFieldRow from "./InlineFieldRow";
 import SettingsCard from "../../_components/SettingsCard";
-import SettingsNotice from "./SettingsNotice";
+import SettingsNotice from "../../_components/SettingsNotice";
 
 const TRANSACTIONAL_EMAILS_ROUTE = "/manage/marketing/transactional-emails";
 const HINT_CLASS = "pt-3 text-[1.4rem]! text-gray-700!";

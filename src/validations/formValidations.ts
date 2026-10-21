@@ -22,6 +22,10 @@ import { OrderNotificationFormNames } from "@/app/(protected)/manage/settings/(o
 import { isEmailEnabled } from "@/app/(protected)/manage/settings/(orders)/order-notifications/utils";
 import { ReturnSettingsFormNames } from "@/app/(protected)/manage/settings/(orders)/return-settings/constant";
 import { OrderStatusesFormNames } from "@/app/(protected)/manage/settings/(orders)/order-statuses/constant";
+import {
+  BackorderMessageFormNames,
+  InventoryFormNames,
+} from "@/app/(protected)/manage/settings/(products)/inventory/constant";
 import { BlogFormFieldName } from "@/app/components/blog/constant";
 import {
   PageTypeEnums,
@@ -449,3 +453,60 @@ export const WebPageSchema = object({
   // #endregion
 
   // #endregion
+
+// #region Products Settings
+
+// #region Inventory
+  const optionalEmail = () =>
+    text().trim().email("Enter a valid email address");
+
+  // A text input that's needed only while its checkbox is ticked
+  const textWhenChecked = (checkbox: InventoryFormNames, message: string) =>
+    text()
+      .trim()
+      .when(checkbox, {
+        is: true,
+        then: (schema) => schema.required(message),
+      });
+
+  export const InventorySettingsSchema = object({
+    [InventoryFormNames.ProductUnavailableAction]: text(),
+    [InventoryFormNames.OptionUnavailableAction]: text(),
+    [InventoryFormNames.HideOutOfStockInFiltering]: flag(),
+    [InventoryFormNames.UpdateStockLevels]: text(),
+    [InventoryFormNames.AutoAdjustStockLevels]: flag(),
+    [InventoryFormNames.StockLevelDisplay]: text(),
+    [InventoryFormNames.ShowPreOrderInventory]: flag(),
+    [InventoryFormNames.OutOfStockMessage]: text(),
+    [InventoryFormNames.ShowOutOfStockOnListing]: flag(),
+    [InventoryFormNames.ShowQuantityOnBackorder]: flag(),
+    [InventoryFormNames.ShowBackorderMessage]: flag(),
+    [InventoryFormNames.BackorderMessages]: array()
+      .of(
+        object({
+          [BackorderMessageFormNames.MessageId]: text(),
+          [BackorderMessageFormNames.Name]: string()
+            .trim()
+            .required("Name is required"),
+          [BackorderMessageFormNames.Message]: text(),
+          [BackorderMessageFormNames.IsDefault]: flag(),
+        }),
+      )
+      .default([]),
+    [InventoryFormNames.ShowQuantityOnHand]: flag(),
+    [InventoryFormNames.ShowBackorderPrompt]: flag(),
+    [InventoryFormNames.BackorderPromptText]: textWhenChecked(
+      InventoryFormNames.ShowBackorderPrompt,
+      "Enter the backorder availability prompt",
+    ),
+    [InventoryFormNames.ShowShippingExpectation]: flag(),
+    [InventoryFormNames.ShippingExpectationText]: textWhenChecked(
+      InventoryFormNames.ShowShippingExpectation,
+      "Enter the shipping expectation message",
+    ),
+    [InventoryFormNames.LowStockEmail]: optionalEmail(),
+    [InventoryFormNames.OutOfStockEmail]: optionalEmail(),
+  });
+  // #endregion
+
+// #endregion
