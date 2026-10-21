@@ -6,7 +6,11 @@ import {
 } from "@/app/(protected)/manage/marketing/banners/constant";
 import { needsLocationId } from "@/app/(protected)/manage/marketing/banners/utils";
 import { BlogFormFieldName } from "@/app/components/blog/constant";
-import { PageTypeEnums, WebPageField } from "@/app/components/storefront/constants";
+import { RatingValue, ReviewField, ReviewStatus } from "@/app/components/products/reviews/edit/helper/constant";
+import {
+  PageTypeEnums,
+  WebPageField,
+} from "@/app/components/storefront/constants";
 import { boolean, date, object, ref, string, number, mixed, array } from "yup";
 
 export const bannerSchema = object({
@@ -117,4 +121,17 @@ export const WebPageSchema = object({
   [WebPageField.MetaKeywords]: string().nullable().default(""),
   [WebPageField.MetaDescription]: string().nullable().default(""),
   [WebPageField.SearchKeywords]: string().nullable().default(""),
+});
+
+// ReviewSchema
+export const ReviewSchema = object({
+  [ReviewField.Name]: string().trim().required("Review title is required"),
+  [ReviewField.Comment]: string().trim().required("Review is required"),
+  [ReviewField.UserName]: string().trim().required("Author name is required"),
+  [ReviewField.Approved]: string()
+    .oneOf(Object.values(ReviewStatus), "Invalid status")
+    .required("Status is required"),
+  [ReviewField.Rating]: string()
+    .oneOf(Object.values(RatingValue), "Invalid rating")
+    .required("Rating is required"),
 });
