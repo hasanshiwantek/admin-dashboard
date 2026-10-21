@@ -28,6 +28,7 @@ type InputFieldBaseProps<T extends FieldValues, C extends ElementType> = {
   containerClassName?: string;
   labelClassName?: string;
   controlClassName?: string;
+  errorClassName?: string;
 };
 
 export type InputFieldProps<
@@ -56,6 +57,7 @@ export function InputField<
   labelClassName,
   controlClassName,
   isTextArea,
+  errorClassName,
   ...componentProps
 }: InputFieldProps<T, C>) {
   const formContext = useFormContext<T>();
@@ -108,7 +110,10 @@ export function InputField<
           }}
         />
         {fieldState.error ? (
-          <ValidationError message={fieldState.error.message} />
+          <ValidationError
+            className={errorClassName}
+            message={fieldState.error.message}
+          />
         ) : (
           hint && <p className="text-base text-gray-500">{hint}</p>
         )}

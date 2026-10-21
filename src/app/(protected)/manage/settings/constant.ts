@@ -166,6 +166,10 @@ export const SettingsRoutesList: SettingGroup[] = [
     routes: GeneralSettingRoutes,
   },
   {
+    group: "Orders",
+    routes: OrderSettingRoutes,
+  },
+  {
     group: "Advanced",
     routes: AdvancedSettingRoutes,
     checks: [
