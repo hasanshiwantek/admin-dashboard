@@ -46,6 +46,7 @@ function ParentCategoryField({
         path: "",
       }}
       onChange={(val) => onChange(val?.id ?? null)}
+      className="max-w-full"
     />
   );
 }

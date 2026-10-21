@@ -12,9 +12,8 @@ export type FormVals = {
   seo_meta_description: string;
   seo_search_keywords: string;
   image?: File | null;
-  channel:string
+  channel: number;
 };
-
 
 export type ApiCategory = {
   id: number;

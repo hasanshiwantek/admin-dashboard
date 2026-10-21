@@ -23,14 +23,15 @@ type InputFieldBaseProps<T extends FieldValues, C extends ElementType> = {
   label?: ReactNode;
   required?: boolean;
   hint?: ReactNode;
+  hintPosition?: "top" | "bottom";
   layout?: "horizontal" | "vertical";
   valuePropName?: string;
   changePropName?: string;
   containerClassName?: string;
   labelClassName?: string;
   controlClassName?: string;
-  rightElement?: ReactNode;
-  leftElement?: ReactNode;
+  afterFieldComponent?: ReactNode;
+  beforeFieldComponent?: ReactNode;
   errorClassName?: string;
   startIcon?: ReactNode;
   endIcon?: ReactNode;
@@ -74,6 +75,7 @@ export function InputField<
   label,
   required,
   hint,
+  hintPosition = "bottom",
   layout = "horizontal",
   valuePropName = "value",
   changePropName = "onChange",
@@ -81,8 +83,8 @@ export function InputField<
   labelClassName,
   controlClassName,
   isTextArea,
-  rightElement,
-  leftElement,
+  afterFieldComponent,
+  beforeFieldComponent,
   errorClassName,
   startIcon,
   endIcon,
@@ -106,6 +108,8 @@ export function InputField<
   const horizontal = layout === "horizontal";
   const FieldControl = isTextArea ? Textarea : Component;
   const LabelAddon = (FieldControl as FieldComponentWithAddon).LabelAddon;
+  const hintOnTop = !!hint && hintPosition === "top";
+  const hintNode = hint && <p className="text-base text-gray-500">{hint}</p>;
 
   const handleChange = (input: unknown) => {
     if (!getValueOnChange) return field.onChange(input);
@@ -125,6 +129,7 @@ export function InputField<
       className={cn(
         "font-normal text-gray-600 2xl:text-2xl!",
         horizontal && "justify-end text-right pt-3",
+        horizontal && hintOnTop && "pt-[2.8rem]",
         labelClassName,
       )}
     >
@@ -161,8 +166,9 @@ export function InputField<
         labelNode
       )}
       <div className={cn("flex flex-col gap-2 min-w-0", controlClassName)}>
+        {hintOnTop && hintNode}
         <div className="flex items-center gap-2">
-          {leftElement}
+          {beforeFieldComponent}
           <div className="min-w-0 flex-1">
             <InputWrapper
               startIcon={startIcon}
@@ -188,7 +194,7 @@ export function InputField<
             </InputWrapper>
           </div>
 
-          {rightElement}
+          {afterFieldComponent}
         </div>
 
         {fieldState.error ? (
@@ -197,7 +203,7 @@ export function InputField<
             className={errorClassName}
           />
         ) : (
-          hint && <p className="text-base text-gray-500">{hint}</p>
+          !hintOnTop && hintNode
         )}
       </div>
     </div>

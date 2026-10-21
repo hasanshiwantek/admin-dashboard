@@ -14,8 +14,7 @@ export const FIELD_LABEL_CLASS =
   "font-semibold text-gray-800 2xl:text-[1.5rem]!";
 export const FIELD_CONTROL_CLASS = "max-w-[42rem]";
 // Fills the control width; long option labels end in "…" instead of overflowing
-export const SELECT_CLASS =
-  "max-w-none font-normal [&>[data-slot=select-value]]:block [&>[data-slot=select-value]]:min-w-0 [&>[data-slot=select-value]]:truncate [&>[data-slot=select-value]]:text-[1.4rem]";
+export const SELECT_CLASS = "max-w-none [&_input]:text-[1.4rem]!";
 
 // ─── Field names ──────────────────────────────────────────────
 

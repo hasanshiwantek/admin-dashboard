@@ -38,7 +38,7 @@ const GeneralCouponTab = () => {
             containerClassName="grid grid-cols-[200px_1fr] items-center gap-4"
             labelClassName="text-right text-gray-700"
             controlClassName="max-w-md"
-            rightElement={<Info className="w-4 h-4 text-gray-400 shrink-0" />}
+            afterFieldComponent={<Info className="w-4 h-4 text-gray-400 shrink-0" />}
           />
         </div>
 
@@ -51,7 +51,7 @@ const GeneralCouponTab = () => {
             containerClassName="grid grid-cols-[200px_1fr] items-center gap-4"
             labelClassName="text-right text-gray-700"
             controlClassName="max-w-md"
-            rightElement={<Info className="w-4 h-4 text-gray-400 shrink-0" />}
+            afterFieldComponent={<Info className="w-4 h-4 text-gray-400 shrink-0" />}
           />
         </div>
 
@@ -66,7 +66,7 @@ const GeneralCouponTab = () => {
             containerClassName="grid grid-cols-[200px_1fr] items-center gap-4"
             labelClassName="text-right text-gray-700"
             controlClassName="max-w-md"
-            rightElement={<Info className="w-4 h-4 text-gray-400" />}
+            afterFieldComponent={<Info className="w-4 h-4 text-gray-400" />}
           />
         </div>
 
@@ -81,8 +81,8 @@ const GeneralCouponTab = () => {
             step="0.01"
             containerClassName="grid grid-cols-[200px_1fr] items-center gap-4"
             controlClassName="max-w-md"
-            leftElement={<span className="text-gray-600">$</span>}
-            rightElement={
+            beforeFieldComponent={<span className="text-gray-600">$</span>}
+            afterFieldComponent={
               <>
                 <span className="text-gray-600">off the order total</span>
                 <Info className="w-4 h-4 text-gray-400" />
@@ -107,8 +107,8 @@ const GeneralCouponTab = () => {
             className="w-full max-w-[190px]"
             containerClassName="mb-6"
             controlClassName="flex-row items-center gap-2"
-            leftElement={<span className="text-gray-600">$</span>}
-            rightElement={<Info className="w-4 h-4 text-gray-400 shrink-0" />}
+            beforeFieldComponent={<span className="text-gray-600">$</span>}
+            afterFieldComponent={<Info className="w-4 h-4 text-gray-400 shrink-0" />}
           />
         </div>
 
@@ -173,7 +173,7 @@ const GeneralCouponTab = () => {
             className="max-w-[200px]"
             labelClassName="text-right text-gray-700"
             controlClassName="flex-row items-center gap-2"
-            rightElement={<Info className="w-4 h-4 text-gray-400 shrink-0" />}
+            afterFieldComponent={<Info className="w-4 h-4 text-gray-400 shrink-0" />}
           />
         </div>
       </div>

@@ -1,3 +1,6 @@
+import { StoreObject } from "@/redux/slices/configSlice";
+import { getFromStorage } from "@/utils/storage";
+
 export const BASE62_STRING =
   "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
@@ -74,3 +77,11 @@ export enum DateTimeFormat {
 }
 
 export const STOREFRONT_URL = "https://server-blink.vercel.app";
+
+export const currentStore = getFromStorage<StoreObject>(
+  LocalStorageKeys.CurrentStore,
+);
+
+export const availableStores = getFromStorage<StoreObject[]>(
+  LocalStorageKeys.AvailableStores,
+);

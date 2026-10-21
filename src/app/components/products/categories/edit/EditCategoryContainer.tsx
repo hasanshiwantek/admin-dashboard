@@ -27,6 +27,7 @@ import {
   INVALID_SLUG_CHARS,
   editCategoryDefaultValues,
 } from "./constant";
+import { StoreObject } from "@/redux/slices/configSlice";
 
 const EMPTY_TREE: any[] = [];
 
@@ -106,7 +107,7 @@ const useEditCategoryContainer = () => {
   // Channel is the currently selected store
   useEffect(() => {
     const stores =
-      getFromStorage<any[]>(LocalStorageKeys.AvailableStores, []) ?? [];
+      getFromStorage<StoreObject[]>(LocalStorageKeys.AvailableStores, []) ?? [];
     const savedStoreId = Number(getFromStorage(LocalStorageKeys.StoreId));
     const selected = stores.find((store) => store.id === savedStoreId);
 
