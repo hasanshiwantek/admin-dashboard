@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { getReturnOrders } from "@/redux/slices/orderSlice";
-import { getReturnsColumns } from "./ReturnsColumns";
+import { getReturnsColumns } from "./columns";
 
 export default function useReturnsContainer() {
   const dispatch = useAppDispatch();
