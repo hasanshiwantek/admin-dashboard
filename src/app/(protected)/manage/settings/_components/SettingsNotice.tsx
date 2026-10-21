@@ -1,10 +1,11 @@
 import { cn } from "@/lib/utils";
-import { Info, TriangleAlert } from "lucide-react";
+import { CircleCheck, Info, TriangleAlert } from "lucide-react";
 import { SettingsNoticeProps } from "./type";
 
 const TONE_CLASS = {
   info: "border-blue-500 bg-blue-50",
   warning: "border-yellow-500 bg-yellow-50",
+  success: "border-green-500 bg-green-50",
 };
 
 const TONE_ICON = {
@@ -12,9 +13,10 @@ const TONE_ICON = {
   warning: (
     <TriangleAlert className="size-8 shrink-0 fill-yellow-500 text-white" />
   ),
+  success: <CircleCheck className="size-8 shrink-0 fill-green-600 text-white" />,
 };
 
-// Callout with a coloured left border: "info" (blue) or "warning" (yellow)
+// Callout with a coloured left border: "info" (blue), "warning" (yellow) or "success" (green)
 const SettingsNotice = ({
   tone = "info",
   showIcon,

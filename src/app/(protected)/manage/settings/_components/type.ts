@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 
 export interface SettingsNoticeProps {
-  tone?: "info" | "warning";
+  tone?: "info" | "warning" | "success";
   /** Leading icon matching the tone */
   showIcon?: boolean;
   children: ReactNode;

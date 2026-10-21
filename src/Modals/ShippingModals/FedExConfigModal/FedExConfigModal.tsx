@@ -20,7 +20,6 @@ import {
 import DeliveryServicesField from "./DeliveryServicesField";
 import useFedExConfigModalContainer from "./FedExConfigModalContainer";
 import { FedExConfigModalProps, FedExSelectFieldConfig } from "./type";
-import UnitInput from "./UnitInput";
 
 const FedExConfigModal = ({
   trigger,
@@ -171,9 +170,9 @@ const FedExConfigModal = ({
               {...fieldProps}
               name={field.name}
               label={field.label}
-              Component={UnitInput}
-              unit={field.unit}
-              unitPosition={field.unitPosition}
+              type="number"
+              startIcon={field.startIcon}
+              endIcon={field.endIcon}
             />
           )}
         />

@@ -162,11 +162,11 @@ const ProductSettingRoutes: SettingRoute[] = [
     title: "Inventory",
     description: "What shoppers will see when a product is out of stock, etc.",
   },
-  // {
-  //   id: "gift-wrapping",
-  //   title: "Gift wrapping",
-  //   description: "Name your gift wrapping option, set a price, etc.",
-  // },
+  {
+    id: "gift-wrapping",
+    title: "Gift wrapping",
+    description: "Name your gift wrapping option, set a price, etc.",
+  },
   // {
   //   id: "comments",
   //   title: "Comments",

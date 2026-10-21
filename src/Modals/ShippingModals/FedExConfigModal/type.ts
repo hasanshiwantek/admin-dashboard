@@ -18,8 +18,8 @@ export interface FedExSelectFieldConfig {
 export interface FedExUnitFieldConfig {
   name: FedExField;
   label: string;
-  unit: string;
-  unitPosition: "prefix" | "suffix";
+  startIcon?: string;
+  endIcon?: string;
 }
 
 export interface FedExDeliveryService {
@@ -35,13 +35,4 @@ export interface DeliveryServicesFieldProps {
   value?: string[];
   onChange?: (value: string[]) => void;
   id?: string;
-}
-
-// Field component for InputField: a number input with a unit box
-export interface UnitInputProps
-  extends Omit<React.ComponentProps<"input">, "value" | "onChange"> {
-  unit: string;
-  unitPosition: "prefix" | "suffix";
-  value?: string;
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }

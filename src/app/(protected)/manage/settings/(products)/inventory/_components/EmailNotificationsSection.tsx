@@ -2,7 +2,6 @@ import InputField from "@/components/form/InputField";
 import { ListRenderer } from "@/components/ListRenderer.tsx/ListRenderer";
 import SettingsCard from "../../../_components/SettingsCard";
 import {
-  EMAIL_NOTIFICATION_PLACEHOLDER,
   emailNotificationFields,
   FIELD_CONTROL_CLASS,
   FIELD_LABEL_CLASS,
@@ -21,7 +20,7 @@ const EmailNotificationsSection = () => (
           label={field.label}
           type="email"
           layout="vertical"
-          placeholder={EMAIL_NOTIFICATION_PLACEHOLDER}
+          placeholder="Enter an email address to enable this notification"
           labelClassName={FIELD_LABEL_CLASS}
           controlClassName={FIELD_CONTROL_CLASS}
         />

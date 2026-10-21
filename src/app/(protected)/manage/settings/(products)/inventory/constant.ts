@@ -9,9 +9,6 @@ import type {
 export const BACKORDERS_LEARN_MORE_URL =
   "https://support.bigcommerce.com/s/article/Backorders";
 
-export const EMAIL_NOTIFICATION_PLACEHOLDER =
-  "Enter an email address to enable this notification";
-
 // Label above the field, control capped at the width in the design
 export const FIELD_LABEL_CLASS =
   "font-semibold text-gray-800 2xl:text-[1.5rem]!";

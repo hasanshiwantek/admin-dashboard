@@ -26,6 +26,7 @@ import {
   BackorderMessageFormNames,
   InventoryFormNames,
 } from "@/app/(protected)/manage/settings/(products)/inventory/constant";
+import { GiftWrappingFormNames } from "@/app/(protected)/manage/settings/(products)/gift-wrapping/constant";
 import { BlogFormFieldName } from "@/app/components/blog/constant";
 import { MessageField } from "@/app/components/orders/message/helper/constant";
 import {
@@ -619,6 +620,25 @@ export const InventorySettingsSchema = object({
   ),
   [InventoryFormNames.LowStockEmail]: optionalEmail(),
   [InventoryFormNames.OutOfStockEmail]: optionalEmail(),
+});
+// #endregion
+
+// #region Gift Wrapping
+export const GiftWrappingSchema = object({
+  [GiftWrappingFormNames.Name]: string().trim().required("Name is required"),
+  [GiftWrappingFormNames.PreviewImage]: mixed<File | string>()
+    .nullable()
+    .default(null),
+  [GiftWrappingFormNames.Price]: string()
+    .trim()
+    .required("Price is required")
+    .test(
+      "price",
+      "Price must be a number of 0 or more",
+      (value) => !value || (!isNaN(Number(value)) && Number(value) >= 0),
+    ),
+  [GiftWrappingFormNames.AllowGiftMessages]: flag(true),
+  [GiftWrappingFormNames.IsVisible]: flag(true),
 });
 // #endregion
 
