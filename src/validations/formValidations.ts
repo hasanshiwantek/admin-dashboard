@@ -20,13 +20,19 @@ import {
 } from "@/app/(protected)/manage/settings/(general)/constant";
 import { OrderNotificationFormNames } from "@/app/(protected)/manage/settings/(orders)/order-notifications/constant";
 import { isEmailEnabled } from "@/app/(protected)/manage/settings/(orders)/order-notifications/utils";
-import { ReturnSettingsFormNames } from "@/app/(protected)/manage/settings/(orders)/return-settings/constant";
 import { OrderStatusesFormNames } from "@/app/(protected)/manage/settings/(orders)/order-statuses/constant";
+import { ReturnSettingsFormNames } from "@/app/(protected)/manage/settings/(orders)/return-settings/constant";
 import {
   BackorderMessageFormNames,
   InventoryFormNames,
 } from "@/app/(protected)/manage/settings/(products)/inventory/constant";
 import { BlogFormFieldName } from "@/app/components/blog/constant";
+import { MessageField } from "@/app/components/orders/message/helper/constant";
+import {
+  RatingValue,
+  ReviewField,
+  ReviewStatus,
+} from "@/app/components/products/reviews/edit/helper/constant";
 import {
   PageTypeEnums,
   WebPageField,
@@ -39,7 +45,17 @@ import {
   ShipByWeightField,
 } from "@/Modals/ShippingModals/ShipByWeightModal/constant";
 import { DisplayNameField } from "@/Modals/ShippingModals/ShippingQuotesDisplayNameModal/constant";
-import { array, boolean, date, mixed, number, object, ref, string } from "yup";
+import {
+  array,
+  boolean,
+  date,
+  InferType,
+  mixed,
+  number,
+  object,
+  ref,
+  string,
+} from "yup";
 
 export const BannerSchema = object({
   [BannerField.Title]: string().trim().required("Banner name is required"),
@@ -348,7 +364,9 @@ export const GeneralSettingsSchema = object({
 // ─── Order notifications ──────────────────────────────────────
 
 export const OrderNotificationSchema = object({
-  [OrderNotificationFormNames.Methods]: array().of(string().required()).default([]),
+  [OrderNotificationFormNames.Methods]: array()
+    .of(string().required())
+    .default([]),
   [OrderNotificationFormNames.CustomerEmailStatuses]: array()
     .of(string().required())
     .default([]),
@@ -397,6 +415,84 @@ export const BlogSchema = object({
   [BlogFormFieldName.Thumbnail]: mixed<FileList>().nullable().optional(),
 });
 
+export const CouponCodeSchema = object({
+  couponCode: string().trim().required("Coupon code is required"),
+
+  couponName: string().trim().required("Coupon name is required"),
+
+  discountType: string()
+    .oneOf([
+      "per_total_discount",
+      "per_item_discount",
+      "percentage_discount",
+      "shipping_discount",
+      "free_shipping",
+    ])
+    .defined(),
+
+  discountAmount: string().defined(),
+  minimumPurchase: string().defined(),
+
+  limitTotalUses: boolean().defined(),
+  limitUsesPerCustomer: boolean().defined(),
+  excludeCartDiscounts: boolean().defined(),
+  enabled: boolean().defined(),
+
+  expiration: string().defined(),
+
+  appliesToCategories: boolean().defined(),
+  appliesToProducts: boolean().defined(),
+
+  categoryIds: array().of(string().defined()).defined(),
+
+  productIds: string().nullable().defined(),
+
+  limitByLocation: boolean().defined(),
+  limitByShipping: boolean().defined(),
+
+  appliesTo: string()
+    .oneOf(["categories", "products"])
+    .required("Choose what this coupon applies to"),
+})
+  .test("discount-amount-validation", function (values) {
+    if (!values || values.discountType === "free_shipping") {
+      return true;
+    }
+
+    const amount = values.discountAmount;
+
+    if (!amount || amount.trim() === "") {
+      return this.createError({
+        path: "discountAmount",
+        message: "Discount amount is required",
+      });
+    }
+
+    if (!(Number(amount) > 0)) {
+      return this.createError({
+        path: "discountAmount",
+        message: "Discount amount must be greater than 0",
+      });
+    }
+
+    return true;
+  })
+  .test("category-validation", function (values) {
+    if (
+      values?.appliesToCategories &&
+      (!values.categoryIds || values.categoryIds.length === 0)
+    ) {
+      return this.createError({
+        path: "categoryIds",
+        message: "Select at least one category",
+      });
+    }
+
+    return true;
+  });
+
+export type CouponCodeForm = InferType<typeof CouponCodeSchema>;
+// WebPageSchema
 export const WebPageSchema = object({
   [WebPageField.PageType]: string().required("Page type is required"),
   [WebPageField.PageName]: string().trim().required("Page name is required"),
@@ -428,85 +524,102 @@ export const WebPageSchema = object({
   [WebPageField.SearchKeywords]: string().nullable().default(""),
 });
 
+// ReviewSchema
+export const ReviewSchema = object({
+  [ReviewField.Name]: string().trim().required("Review title is required"),
+  [ReviewField.Comment]: string().trim().required("Review is required"),
+  [ReviewField.UserName]: string().trim().required("Author name is required"),
+  [ReviewField.Approved]: string()
+    .oneOf(Object.values(ReviewStatus), "Invalid status")
+    .required("Status is required"),
+  [ReviewField.Rating]: string()
+    .oneOf(Object.values(RatingValue), "Invalid rating")
+    .required("Rating is required"),
+});
+
+// MessageSchema
+export const MessageSchema = object({
+  [MessageField.Email]: string().email().required("Email is required"),
+  [MessageField.Subject]: string().trim().required("Subject is required"),
+  [MessageField.Message]: string().trim().required("Message is required"),
+});
 
 // #region Orders Settings
 
 // #region Return
-  export const ReturnSettingsSchema = object({
-    [ReturnSettingsFormNames.EnableReturns]: flag(),
-  });
-  // #endregion
+export const ReturnSettingsSchema = object({
+  [ReturnSettingsFormNames.EnableReturns]: flag(),
+});
+// #endregion
 
-  // #region Order Statuses
-  export const OrderStatusesSchema = object({
-    [OrderStatusesFormNames.Statuses]: array()
-      .of(
-        object({
-          [OrderStatusesFormNames.Id]: string().required(),
-          [OrderStatusesFormNames.Name]: string()
-            .trim()
-            .required("Cannot be empty or blank. Please enter an order status."),
-        }),
-      )
-      .default([]),
-  });
-  // #endregion
+// #region Order Statuses
+export const OrderStatusesSchema = object({
+  [OrderStatusesFormNames.Statuses]: array()
+    .of(
+      object({
+        [OrderStatusesFormNames.Id]: string().required(),
+        [OrderStatusesFormNames.Name]: string()
+          .trim()
+          .required("Cannot be empty or blank. Please enter an order status."),
+      }),
+    )
+    .default([]),
+});
 
-  // #endregion
+// #endregion
 
 // #region Products Settings
 
 // #region Inventory
-  const optionalEmail = () =>
-    text().trim().email("Enter a valid email address");
+const optionalEmail = () => text().trim().email("Enter a valid email address");
 
-  // A text input that's needed only while its checkbox is ticked
-  const textWhenChecked = (checkbox: InventoryFormNames, message: string) =>
-    text()
-      .trim()
-      .when(checkbox, {
-        is: true,
-        then: (schema) => schema.required(message),
-      });
+// A text input that's needed only while its checkbox is ticked
+const textWhenChecked = (checkbox: InventoryFormNames, message: string) =>
+  text()
+    .trim()
+    .when(checkbox, {
+      is: true,
+      then: (schema) => schema.required(message),
+    });
 
-  export const InventorySettingsSchema = object({
-    [InventoryFormNames.ProductUnavailableAction]: text(),
-    [InventoryFormNames.OptionUnavailableAction]: text(),
-    [InventoryFormNames.HideOutOfStockInFiltering]: flag(),
-    [InventoryFormNames.UpdateStockLevels]: text(),
-    [InventoryFormNames.AutoAdjustStockLevels]: flag(),
-    [InventoryFormNames.StockLevelDisplay]: text(),
-    [InventoryFormNames.ShowPreOrderInventory]: flag(),
-    [InventoryFormNames.OutOfStockMessage]: text(),
-    [InventoryFormNames.ShowOutOfStockOnListing]: flag(),
-    [InventoryFormNames.ShowQuantityOnBackorder]: flag(),
-    [InventoryFormNames.ShowBackorderMessage]: flag(),
-    [InventoryFormNames.BackorderMessages]: array()
-      .of(
-        object({
-          [BackorderMessageFormNames.MessageId]: text(),
-          [BackorderMessageFormNames.Name]: string()
-            .trim()
-            .required("Name is required"),
-          [BackorderMessageFormNames.Message]: text(),
-          [BackorderMessageFormNames.IsDefault]: flag(),
-        }),
-      )
-      .default([]),
-    [InventoryFormNames.ShowQuantityOnHand]: flag(),
-    [InventoryFormNames.ShowBackorderPrompt]: flag(),
-    [InventoryFormNames.BackorderPromptText]: textWhenChecked(
-      InventoryFormNames.ShowBackorderPrompt,
-      "Enter the backorder availability prompt",
-    ),
-    [InventoryFormNames.ShowShippingExpectation]: flag(),
-    [InventoryFormNames.ShippingExpectationText]: textWhenChecked(
-      InventoryFormNames.ShowShippingExpectation,
-      "Enter the shipping expectation message",
-    ),
-    [InventoryFormNames.LowStockEmail]: optionalEmail(),
-    [InventoryFormNames.OutOfStockEmail]: optionalEmail(),
-  });
-  // #endregion
+export const InventorySettingsSchema = object({
+  [InventoryFormNames.ProductUnavailableAction]: text(),
+  [InventoryFormNames.OptionUnavailableAction]: text(),
+  [InventoryFormNames.HideOutOfStockInFiltering]: flag(),
+  [InventoryFormNames.UpdateStockLevels]: text(),
+  [InventoryFormNames.AutoAdjustStockLevels]: flag(),
+  [InventoryFormNames.StockLevelDisplay]: text(),
+  [InventoryFormNames.ShowPreOrderInventory]: flag(),
+  [InventoryFormNames.OutOfStockMessage]: text(),
+  [InventoryFormNames.ShowOutOfStockOnListing]: flag(),
+  [InventoryFormNames.ShowQuantityOnBackorder]: flag(),
+  [InventoryFormNames.ShowBackorderMessage]: flag(),
+  [InventoryFormNames.BackorderMessages]: array()
+    .of(
+      object({
+        [BackorderMessageFormNames.MessageId]: text(),
+        [BackorderMessageFormNames.Name]: string()
+          .trim()
+          .required("Name is required"),
+        [BackorderMessageFormNames.Message]: text(),
+        [BackorderMessageFormNames.IsDefault]: flag(),
+      }),
+    )
+    .default([]),
+  [InventoryFormNames.ShowQuantityOnHand]: flag(),
+  [InventoryFormNames.ShowBackorderPrompt]: flag(),
+  [InventoryFormNames.BackorderPromptText]: textWhenChecked(
+    InventoryFormNames.ShowBackorderPrompt,
+    "Enter the backorder availability prompt",
+  ),
+  [InventoryFormNames.ShowShippingExpectation]: flag(),
+  [InventoryFormNames.ShippingExpectationText]: textWhenChecked(
+    InventoryFormNames.ShowShippingExpectation,
+    "Enter the shipping expectation message",
+  ),
+  [InventoryFormNames.LowStockEmail]: optionalEmail(),
+  [InventoryFormNames.OutOfStockEmail]: optionalEmail(),
+});
+// #endregion
 
 // #endregion
