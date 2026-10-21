@@ -11,3 +11,10 @@ export const transformGetReviewPayload = (review: any): ReviewFormValues => ({
     review?.rating ?? RatingValue.Five,
   ) as RatingValue,
 });
+export const transformPostReviewPayload = (values: ReviewFormValues) => ({
+  subject: values[ReviewField.Name],
+  comment: values[ReviewField.Comment],
+  name: values[ReviewField.UserName] || "",
+  approved: values[ReviewField.Approved] === ReviewStatus.Approved,
+  rating: Number(values[ReviewField.Rating]),
+});

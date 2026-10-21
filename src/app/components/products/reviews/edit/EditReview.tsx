@@ -13,7 +13,10 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { getReviewById, updateReview } from "@/redux/slices/reviewSlice";
 import { ReviewSchema } from "@/validations/formValidations";
 import { ReviewFormValues } from "./helper/type";
-import { transformGetReviewPayload } from "./helper/utils";
+import {
+  transformGetReviewPayload,
+  transformPostReviewPayload,
+} from "./helper/utils";
 import {
   RATING_OPTIONS,
   REVIEW_STATUS_OPTIONS,
@@ -39,37 +42,13 @@ const EditReview = () => {
     resolver: yupResolver(ReviewSchema),
     defaultValues: reviewDefaultValues,
   });
-
   const { control, reset } = form;
 
-  // Fetch review on mount
-  useEffect(() => {
-    if (reviewId) {
-      dispatch(getReviewById({ id: reviewId }));
-    }
-  }, [reviewId, dispatch]);
-
-  // Reset form when review data arrives
-  useEffect(() => {
-    const data = currentReview?.data ?? currentReview;
-    if (data && String(data.id) === String(reviewId)) {
-      reset(transformGetReviewPayload(data));
-    }
-  }, [currentReview, reviewId, reset]);
-
   const onSubmit = async (values: ReviewFormValues) => {
-    const payload = {
-      subject: values.name,
-      comment: values.comment,
-      name: values.userName || "",
-      approved: values.approved == ReviewStatus.Approved,
-      rating: Number(values.rating),
-    };
-
+    const payload = transformPostReviewPayload(values);
     const result = await dispatch(
       updateReview({ id: reviewId, data: payload }),
     );
-
     if (updateReview.rejected.match(result)) {
       errorMessage((result.payload as string) || "Failed to update review");
       return;
@@ -77,7 +56,19 @@ const EditReview = () => {
 
     router.push(LIST_PATH);
   };
+  // Fetch review on mount
+  useEffect(() => {
+    if (reviewId) {
+      dispatch(getReviewById({ id: reviewId }));
+    }
+  }, [reviewId, dispatch]);
 
+  useEffect(() => {
+    const data = currentReview?.data ?? currentReview;
+    if (data && String(data.id) === String(reviewId)) {
+      reset(transformGetReviewPayload(data));
+    }
+  }, [currentReview, reviewId, reset]);
   return (
     <PageLayout>
       <PageTitle
