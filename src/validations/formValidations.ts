@@ -18,6 +18,10 @@ import {
   UrlStructureField,
   WebsiteField,
 } from "@/app/(protected)/manage/settings/(general)/constant";
+import { OrderNotificationFormNames } from "@/app/(protected)/manage/settings/(orders)/order-notifications/constant";
+import { isEmailEnabled } from "@/app/(protected)/manage/settings/(orders)/order-notifications/utils";
+import { ReturnSettingsFormNames } from "@/app/(protected)/manage/settings/(orders)/return-settings/constant";
+import { OrderStatusesFormNames } from "@/app/(protected)/manage/settings/(orders)/order-statuses/constant";
 import { BlogFormFieldName } from "@/app/components/blog/constant";
 import {
   RatingValue,
@@ -343,6 +347,25 @@ export const GeneralSettingsSchema = object({
 
 // ─── Admin users (add / edit) ─────────────────────────────────
 
+// ─── Order notifications ──────────────────────────────────────
+
+export const OrderNotificationSchema = object({
+  [OrderNotificationFormNames.Methods]: array().of(string().required()).default([]),
+  [OrderNotificationFormNames.CustomerEmailStatuses]: array()
+    .of(string().required())
+    .default([]),
+  // Needed only while the "Email Message" method is enabled
+  [OrderNotificationFormNames.EmailAddress]: text()
+    .trim()
+    .when(OrderNotificationFormNames.Methods, {
+      is: (methods?: string[]) => isEmailEnabled(methods),
+      then: (schema) =>
+        schema
+          .required("Email address is required")
+          .email("Enter a valid email address"),
+    }),
+});
+
 export const AdminUserSchema = object({
   [UserField.FirstName]: string().trim().required("First name is required"),
   [UserField.LastName]: string().trim().required("Last name is required"),
@@ -427,3 +450,26 @@ export const MessageSchema = object({
   [MessageField.Subject]: string().trim().required("Subject is required"),
   [MessageField.Message]: string().trim().required("Message is required"),
 });
+
+// #region Orders Settings
+
+// #region Return
+  export const ReturnSettingsSchema = object({
+    [ReturnSettingsFormNames.EnableReturns]: flag(),
+  });
+  // #endregion
+
+  // #region Order Statuses
+  export const OrderStatusesSchema = object({
+    [OrderStatusesFormNames.Statuses]: array()
+      .of(
+        object({
+          [OrderStatusesFormNames.Id]: string().required(),
+          [OrderStatusesFormNames.Name]: string()
+            .trim()
+            .required("Cannot be empty or blank. Please enter an order status."),
+        }),
+      )
+      .default([]),
+  });
+  // #endregion
