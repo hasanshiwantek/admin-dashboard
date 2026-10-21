@@ -1,4 +1,4 @@
-import { formatDateTime } from "@/lib/utils";
+import { formatDateTime, replaceNullWithPlaceholder } from "@/lib/utils";
 import { getSelectedStore } from "@/utils/storage";
 import Link from "next/link";
 import { FaCircleMinus, FaCirclePlus } from "react-icons/fa6";
@@ -68,7 +68,7 @@ export const getReturnsColumns = (
         href={`/manage/orders?orderIdFrom=${ret.orderId}&orderIdTo=${ret.orderId}&expand=${ret.orderId}`}
         className=" text-[15px]"
       >
-        Order# {ret.orderNumber || "N/A"}
+        Order# {replaceNullWithPlaceholder(ret.orderNumber)}
       </Link>
     ),
   },
@@ -80,7 +80,7 @@ export const getReturnsColumns = (
         href={`/manage/orders/customer/${ret.customerId}`}
         className=" text-[15px]"
       >
-        {ret.customerName || "Guest"}
+        {replaceNullWithPlaceholder(ret.customerName)}
       </Link>
     ),
   },
@@ -88,8 +88,6 @@ export const getReturnsColumns = (
     key: "createdAt",
     header: "Date",
     render: (ret: any) =>
-      ret.createdAt
-        ? formatDateTime(ret.createdAt)
-        : "N/A",
+      ret.createdAt ? formatDateTime(ret.createdAt) : "N/A",
   },
 ];
