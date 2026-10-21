@@ -1,12 +1,12 @@
 import React from "react";
-import AddMessage from "@/app/components/orders/message/AddMessage";
+import MessageForm from "@/app/components/orders/message/MessageForm";
 
 const page = () => {
-    return (
-        <div className="p-10">
-            <AddMessage />
-        </div>
-    );
+  return (
+    <div className="p-10">
+      <MessageForm />
+    </div>
+  );
 };
 
 export default page;

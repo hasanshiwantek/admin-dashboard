@@ -24,9 +24,15 @@ import { ReturnSettingsFormNames } from "@/app/(protected)/manage/settings/(orde
 import { OrderStatusesFormNames } from "@/app/(protected)/manage/settings/(orders)/order-statuses/constant";
 import { BlogFormFieldName } from "@/app/components/blog/constant";
 import {
+  RatingValue,
+  ReviewField,
+  ReviewStatus,
+} from "@/app/components/products/reviews/edit/helper/constant";
+import {
   PageTypeEnums,
   WebPageField,
 } from "@/app/components/storefront/constants";
+import { boolean, date, object, ref, string, number, mixed, array } from "yup";
 import { ShippingAddressField } from "@/Modals/ShippingModals/ConfigureShippingAddressModal/constant";
 import { ChargeShippingType } from "@/Modals/ShippingModals/constant";
 import { FedExField } from "@/Modals/ShippingModals/FedExConfigModal/constant";
@@ -35,7 +41,7 @@ import {
   ShipByWeightField,
 } from "@/Modals/ShippingModals/ShipByWeightModal/constant";
 import { DisplayNameField } from "@/Modals/ShippingModals/ShippingQuotesDisplayNameModal/constant";
-import { array, boolean, date, mixed, number, object, ref, string } from "yup";
+import { MessageField } from "@/app/components/orders/message/helper/constant";
 
 export const BannerSchema = object({
   [BannerField.Title]: string().trim().required("Banner name is required"),
@@ -393,6 +399,7 @@ export const BlogSchema = object({
   [BlogFormFieldName.Thumbnail]: mixed<FileList>().nullable().optional(),
 });
 
+// WebPageSchema
 export const WebPageSchema = object({
   [WebPageField.PageType]: string().required("Page type is required"),
   [WebPageField.PageName]: string().trim().required("Page name is required"),
@@ -424,6 +431,25 @@ export const WebPageSchema = object({
   [WebPageField.SearchKeywords]: string().nullable().default(""),
 });
 
+// ReviewSchema
+export const ReviewSchema = object({
+  [ReviewField.Name]: string().trim().required("Review title is required"),
+  [ReviewField.Comment]: string().trim().required("Review is required"),
+  [ReviewField.UserName]: string().trim().required("Author name is required"),
+  [ReviewField.Approved]: string()
+    .oneOf(Object.values(ReviewStatus), "Invalid status")
+    .required("Status is required"),
+  [ReviewField.Rating]: string()
+    .oneOf(Object.values(RatingValue), "Invalid rating")
+    .required("Rating is required"),
+});
+
+// MessageSchema
+export const MessageSchema = object({
+  [MessageField.Email]: string().email().required("Email is required"),
+  [MessageField.Subject]: string().trim().required("Subject is required"),
+  [MessageField.Message]: string().trim().required("Message is required"),
+});
 
 // #region Orders Settings
 
@@ -446,6 +472,4 @@ export const WebPageSchema = object({
       )
       .default([]),
   });
-  // #endregion
-
   // #endregion
