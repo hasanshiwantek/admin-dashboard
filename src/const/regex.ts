@@ -16,4 +16,8 @@ export const REGEX = {
   DECIMAL_SANITIZE: /[^\d.]/g,
   DECIMAL_DUPLICATE_POINT: /\.(.*)\./g,
   DECIMAL_LEADING_ZEROS: /^0+(?=\d)/,
+  SLUG_BLOCKED_CHARS: /[#$*&@!=+%`'":;<>{}[]|]/,
+
+  // Blocked characters (for Page URL)
+  URL_BLOCKED_CHARS: /[$*&@!=+%`'"^|]/,
 };

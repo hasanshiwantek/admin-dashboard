@@ -28,8 +28,12 @@ type InputFieldBaseProps<T extends FieldValues, C extends ElementType> = {
   containerClassName?: string;
   labelClassName?: string;
   controlClassName?: string;
+<<<<<<< HEAD
   rightElement?: ReactNode;
   leftElement?: ReactNode;
+=======
+  errorClassName?: string;
+>>>>>>> 4175f95b83dc2415fd5362976434c2a0aa165ebd
 };
 
 export type InputFieldProps<
@@ -58,8 +62,12 @@ export function InputField<
   labelClassName,
   controlClassName,
   isTextArea,
+<<<<<<< HEAD
   rightElement,
   leftElement,
+=======
+  errorClassName,
+>>>>>>> 4175f95b83dc2415fd5362976434c2a0aa165ebd
   ...componentProps
 }: InputFieldProps<T, C>) {
   const formContext = useFormContext<T>();
@@ -97,6 +105,7 @@ export function InputField<
         horizontal && <span />
       )}
       <div className={cn("flex flex-col gap-2 min-w-0", controlClassName)}>
+<<<<<<< HEAD
   <div className="flex items-center gap-2">
     {leftElement}
     <div className="min-w-0 flex-1">
@@ -126,6 +135,31 @@ export function InputField<
     hint && <p className="text-base text-gray-500">{hint}</p>
   )}
 </div>
+=======
+        <FieldControl
+          {...componentProps}
+          id={id}
+          aria-invalid={!!fieldState.error}
+          name={field.name}
+          ref={field.ref}
+          onBlur={field.onBlur}
+          {...{
+            // Native inputs must stay controlled, so they get "" instead of null.
+            [valuePropName]:
+              field.value ?? (valuePropName === "value" ? "" : undefined),
+            [changePropName]: field.onChange,
+          }}
+        />
+        {fieldState.error ? (
+          <ValidationError
+            className={errorClassName}
+            message={fieldState.error.message}
+          />
+        ) : (
+          hint && <p className="text-base text-gray-500">{hint}</p>
+        )}
+      </div>
+>>>>>>> 4175f95b83dc2415fd5362976434c2a0aa165ebd
     </div>
   );
 }
