@@ -207,7 +207,7 @@ export default function AddSubCategoryPage() {
 
   const onSubmit = async (vals: FormVals) => {
     const payload = { ...vals, channel: selectedStore?.name };
-    console.log(vals, "aaaaaaa", selectedStore, payload);
+  
     try {
       setSaving(true);
 
