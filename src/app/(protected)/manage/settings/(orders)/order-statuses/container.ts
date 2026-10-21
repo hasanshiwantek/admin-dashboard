@@ -13,7 +13,6 @@ import { getOrderStatusColumns } from "./columns";
 import {
   orderStatusesDefaults,
   OrderStatusesFormNames,
-  RESTORE_DEFAULT_LABEL,
 } from "./constant";
 import { OrderStatusesFormValues, OrderStatusRow } from "./type";
 import {
@@ -72,7 +71,7 @@ const useOrderStatusesContainer = () => {
   };
 
   const rowActions = (): RowAction<OrderStatusRow>[] => [
-    { label: RESTORE_DEFAULT_LABEL, onClick: handleRestoreDefault },
+    { label: "Restore to default", onClick: handleRestoreDefault },
   ];
 
   const onSubmit = async (values: OrderStatusesFormValues) => {

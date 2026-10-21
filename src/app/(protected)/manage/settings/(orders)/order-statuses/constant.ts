@@ -3,8 +3,6 @@ import type { OrderStatusRow, OrderStatusesFormValues } from "./type";
 export const ORDER_STATUSES_LEARN_MORE_URL =
   "https://support.bigcommerce.com/s/article/Order-Statuses";
 
-export const RESTORE_DEFAULT_LABEL = "Restore to default";
-
 export enum OrderStatusesFormNames {
   Statuses = "statuses",
   Id = "id",

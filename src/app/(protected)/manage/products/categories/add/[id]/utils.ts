@@ -11,6 +11,7 @@ export function buildCategoryPayload(vals: FormVals): Record<string, any> {
     description: vals.description || "",
     isVisible: vals.is_visible ? 1 : 0,
     parentId: vals.parent?.id ?? "",
+    channel: vals.channel,
     templateLayout: vals.template_layout,
     sortOrder: Number(vals.sort_order) || 0,
     defaultProductSort: vals.default_product_sort,
@@ -20,7 +21,7 @@ export function buildCategoryPayload(vals: FormVals): Record<string, any> {
     seoSearchKeywords: vals.seo_search_keywords || "",
   };
 }
-
+  
 export const generateCategorySlug = (
   name: string,
   urlSettingData: any,
