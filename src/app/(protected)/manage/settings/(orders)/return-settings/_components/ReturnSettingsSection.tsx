@@ -8,6 +8,7 @@ const ReturnSettingsSection = () => (
     <InputField
       name={ReturnSettingsFormNames.EnableReturns}
       label="Enable Returns System?"
+      hideColon
       Component={CheckboxField}
       text="Yes, enable returns requests"
       containerClassName="items-center!"

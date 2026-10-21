@@ -18,7 +18,7 @@ import {
 import { fieldPath } from "../utils";
 import InlineFieldRow from "./InlineFieldRow";
 import SettingsCard from "../../_components/SettingsCard";
-import SettingsNotice from "./SettingsNotice";
+import SettingsNotice from "../../_components/SettingsNotice";
 
 const name = (field: SecurityPrivacyField) =>
   fieldPath(GeneralSection.SecurityPrivacy, field);
@@ -40,6 +40,7 @@ const SecurityPrivacySection = () => {
         <InputField
           name={name(SecurityPrivacyField.EnforcePasswordComplexity)}
           label="Configure complexity of the shopper's password?"
+          hideColon
           Component={CheckboxField}
           text="Yes, I would like to enforce complexity rules for shopper passwords"
         />
@@ -94,6 +95,7 @@ const SecurityPrivacySection = () => {
         <InputField
           name={name(SecurityPrivacyField.EnableRecaptchaStorefront)}
           label="Enable reCAPTCHA on storefront?"
+          hideColon
           Component={CheckboxField}
           text="Yes, enable reCAPTCHA security"
         />
@@ -127,6 +129,7 @@ const SecurityPrivacySection = () => {
         <InputField
           name={name(SecurityPrivacyField.EnableRecaptchaPrelaunch)}
           label="Enable reCAPTCHA on a storefront pre-launch login page?"
+          hideColon
           Component={CheckboxField}
           text="Yes, enable reCAPTCHA security on the pre-launch login page."
         />

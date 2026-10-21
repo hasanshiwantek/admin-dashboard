@@ -134,8 +134,8 @@ export const fedexDestinationTypeSelect: FedExSelectFieldConfig = {
 };
 
 export const fedexQuoteUnitFields: FedExUnitFieldConfig[] = [
-  { name: FedExField.PkgValue, label: "Package value", unit: "$", unitPosition: "prefix" },
-  { name: FedExField.PkgLength, label: "Package length", unit: "Inches", unitPosition: "suffix" },
-  { name: FedExField.PkgWidth, label: "Package width", unit: "Inches", unitPosition: "suffix" },
-  { name: FedExField.PkgHeight, label: "Package height", unit: "Inches", unitPosition: "suffix" },
+  { name: FedExField.PkgValue, label: "Package value", startIcon: "$" },
+  { name: FedExField.PkgLength, label: "Package length", endIcon: "Inches" },
+  { name: FedExField.PkgWidth, label: "Package width", endIcon: "Inches" },
+  { name: FedExField.PkgHeight, label: "Package height", endIcon: "Inches" },
 ];

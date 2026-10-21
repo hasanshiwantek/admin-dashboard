@@ -9,7 +9,7 @@ import {
 } from "../constant";
 import { fieldPath } from "../utils";
 import SettingsCard from "../../_components/SettingsCard";
-import SettingsNotice from "./SettingsNotice";
+import SettingsNotice from "../../_components/SettingsNotice";
 
 const name = (field: WebsiteField) => fieldPath(GeneralSection.Website, field);
 

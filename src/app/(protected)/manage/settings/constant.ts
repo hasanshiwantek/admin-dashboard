@@ -156,6 +156,24 @@ const OrderSettingRoutes: SettingRoute[] = [
   },
 ];
 
+const ProductSettingRoutes: SettingRoute[] = [
+  {
+    id: "inventory",
+    title: "Inventory",
+    description: "What shoppers will see when a product is out of stock, etc.",
+  },
+  {
+    id: "gift-wrapping",
+    title: "Gift wrapping",
+    description: "Name your gift wrapping option, set a price, etc.",
+  },
+  {
+    id: "comments",
+    title: "Comments",
+    description: "Shoppers comments about products",
+  },
+];
+
 export const SettingsRoutesList: SettingGroup[] = [
   {
     group: "Setup",
@@ -168,6 +186,10 @@ export const SettingsRoutesList: SettingGroup[] = [
   {
     group: "Orders",
     routes: OrderSettingRoutes,
+  },
+  {
+    group: "Products",
+    routes: ProductSettingRoutes,
   },
   {
     group: "Advanced",

@@ -6,11 +6,6 @@ import type {
   UrlStructureSectionConfig,
 } from "../type";
 
-export interface SettingsNoticeProps {
-  tone?: "info" | "warning";
-  children: ReactNode;
-}
-
 export interface InlineFieldRowProps {
   /** Left column label, aligned with InputField's horizontal labels */
   label?: ReactNode;
