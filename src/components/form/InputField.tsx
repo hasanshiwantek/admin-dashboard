@@ -28,6 +28,8 @@ type InputFieldBaseProps<T extends FieldValues, C extends ElementType> = {
   containerClassName?: string;
   labelClassName?: string;
   controlClassName?: string;
+  rightElement?: ReactNode;
+  leftElement?: ReactNode;
   errorClassName?: string;
 };
 
@@ -57,6 +59,8 @@ export function InputField<
   labelClassName,
   controlClassName,
   isTextArea,
+  rightElement,
+  leftElement,
   errorClassName,
   ...componentProps
 }: InputFieldProps<T, C>) {
@@ -95,29 +99,35 @@ export function InputField<
         horizontal && <span />
       )}
       <div className={cn("flex flex-col gap-2 min-w-0", controlClassName)}>
-        <FieldControl
-          {...componentProps}
-          id={id}
-          aria-invalid={!!fieldState.error}
-          name={field.name}
-          ref={field.ref}
-          onBlur={field.onBlur}
-          {...{
-            // Native inputs must stay controlled, so they get "" instead of null.
-            [valuePropName]:
-              field.value ?? (valuePropName === "value" ? "" : undefined),
-            [changePropName]: field.onChange,
-          }}
-        />
-        {fieldState.error ? (
-          <ValidationError
-            className={errorClassName}
-            message={fieldState.error.message}
-          />
-        ) : (
-          hint && <p className="text-base text-gray-500">{hint}</p>
-        )}
-      </div>
+  <div className="flex items-center gap-2">
+    {leftElement}
+    <div className="min-w-0 flex-1">
+        
+
+      <FieldControl
+        {...componentProps}
+        id={id}
+        aria-invalid={!!fieldState.error}
+        name={field.name}
+        ref={field.ref}
+        onBlur={field.onBlur}
+        {...{
+          [valuePropName]:
+            field.value ?? (valuePropName === "value" ? "" : undefined),
+          [changePropName]: field.onChange,
+        }}
+      />
+    </div>
+
+    {rightElement}
+  </div>
+
+  {fieldState.error ? (
+    <ValidationError message={fieldState.error.message} />
+  ) : (
+    hint && <p className="text-base text-gray-500">{hint}</p>
+  )}
+</div>
     </div>
   );
 }

@@ -32,7 +32,7 @@ import {
   PageTypeEnums,
   WebPageField,
 } from "@/app/components/storefront/constants";
-import { boolean, date, object, ref, string, number, mixed, array } from "yup";
+import { boolean, date, object, ref, string, number, mixed, array, InferType } from "yup";
 import { ShippingAddressField } from "@/Modals/ShippingModals/ConfigureShippingAddressModal/constant";
 import { ChargeShippingType } from "@/Modals/ShippingModals/constant";
 import { FedExField } from "@/Modals/ShippingModals/FedExConfigModal/constant";
@@ -399,6 +399,83 @@ export const BlogSchema = object({
   [BlogFormFieldName.Thumbnail]: mixed<FileList>().nullable().optional(),
 });
 
+export const CouponCodeSchema = object({
+  couponCode: string().trim().required("Coupon code is required"),
+
+  couponName: string().trim().required("Coupon name is required"),
+
+  discountType: string()
+    .oneOf([
+      "per_total_discount",
+      "per_item_discount",
+      "percentage_discount",
+      "shipping_discount",
+      "free_shipping",
+    ])
+    .defined(),
+
+  discountAmount: string().defined(),
+  minimumPurchase: string().defined(),
+
+  limitTotalUses: boolean().defined(),
+  limitUsesPerCustomer: boolean().defined(),
+  excludeCartDiscounts: boolean().defined(),
+  enabled: boolean().defined(),
+
+  expiration: string().defined(),
+
+  appliesToCategories: boolean().defined(),
+  appliesToProducts: boolean().defined(),
+
+  categoryIds: array().of(string().defined()).defined(),
+
+  productIds: string().nullable().defined(),
+
+  limitByLocation: boolean().defined(),
+  limitByShipping: boolean().defined(),
+
+  appliesTo: string()
+    .oneOf(["categories", "products"])
+    .required("Choose what this coupon applies to"),
+})
+  .test("discount-amount-validation", function (values) {
+    if (!values || values.discountType === "free_shipping") {
+      return true;
+    }
+
+    const amount = values.discountAmount;
+
+    if (!amount || amount.trim() === "") {
+      return this.createError({
+        path: "discountAmount",
+        message: "Discount amount is required",
+      });
+    }
+
+    if (!(Number(amount) > 0)) {
+      return this.createError({
+        path: "discountAmount",
+        message: "Discount amount must be greater than 0",
+      });
+    }
+
+    return true;
+  })
+  .test("category-validation", function (values) {
+    if (
+      values?.appliesToCategories &&
+      (!values.categoryIds || values.categoryIds.length === 0)
+    ) {
+      return this.createError({
+        path: "categoryIds",
+        message: "Select at least one category",
+      });
+    }
+
+    return true;
+  });
+
+export type CouponCodeForm = InferType<typeof CouponCodeSchema>;
 // WebPageSchema
 export const WebPageSchema = object({
   [WebPageField.PageType]: string().required("Page type is required"),
@@ -472,4 +549,4 @@ export const MessageSchema = object({
       )
       .default([]),
   });
-  // #endregion
+

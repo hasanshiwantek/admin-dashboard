@@ -214,3 +214,8 @@ export const createFormData = <T extends Record<string, any>>(
 
   return formData;
 };
+export const toBoolean = (value: unknown): boolean =>
+  value === "1" ||
+  value === 1 ||
+  value === "true" ||
+  value === true;
