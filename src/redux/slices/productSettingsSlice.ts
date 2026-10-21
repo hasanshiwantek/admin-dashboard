@@ -5,9 +5,14 @@ import type {
   InventorySettingsPayload,
 } from "@/app/(protected)/manage/settings/(products)/inventory/type";
 import type { GiftWrapping } from "@/app/(protected)/manage/settings/(products)/gift-wrapping/type";
+import type {
+  CommentSettings,
+  CommentSettingsPayload,
+} from "@/app/(protected)/manage/settings/(products)/comments/type";
 
 const INVENTORY_ENDPOINT = "dashboard/product-settings/inventory";
 const GIFT_WRAPPING_ENDPOINT = "dashboard/product-settings/gift-wrapping";
+const COMMENTS_ENDPOINT = "dashboard/product-settings/comments";
 const MULTIPART = { headers: { "Content-Type": "multipart/form-data" } };
 
 export const fetchInventorySettings = createAsyncThunk(
@@ -112,6 +117,34 @@ export const deleteGiftWrappings = createAsyncThunk(
   }
 );
 
+export const fetchCommentSettings = createAsyncThunk(
+  "productSettings/fetchCommentSettings",
+  async (_, thunkAPI) => {
+    try {
+      const res = await axiosInstance.get(COMMENTS_ENDPOINT);
+      return res.data?.data ?? res.data;
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to fetch comment settings"
+      );
+    }
+  }
+);
+
+export const updateCommentSettings = createAsyncThunk(
+  "productSettings/updateCommentSettings",
+  async (data: CommentSettingsPayload, thunkAPI) => {
+    try {
+      const res = await axiosInstance.post(COMMENTS_ENDPOINT, data);
+      return res.data?.data ?? data;
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to save comment settings"
+      );
+    }
+  }
+);
+
 const initialState = {
   inventorySettings: null as InventorySettings | null,
   inventoryLoading: false,
@@ -122,6 +155,9 @@ const initialState = {
   giftWrappingLoading: false,
   giftWrappingSaving: false,
   giftWrappingDeleting: false,
+  commentSettings: null as CommentSettings | null,
+  commentLoading: false,
+  commentSaving: false,
 };
 
 const productSettingsSlice = createSlice({
@@ -200,6 +236,26 @@ const productSettingsSlice = createSlice({
       })
       .addCase(deleteGiftWrappings.rejected, (state) => {
         state.giftWrappingDeleting = false;
+      })
+      .addCase(fetchCommentSettings.pending, (state) => {
+        state.commentLoading = true;
+      })
+      .addCase(fetchCommentSettings.fulfilled, (state, action) => {
+        state.commentLoading = false;
+        state.commentSettings = action.payload;
+      })
+      .addCase(fetchCommentSettings.rejected, (state) => {
+        state.commentLoading = false;
+      })
+      .addCase(updateCommentSettings.pending, (state) => {
+        state.commentSaving = true;
+      })
+      .addCase(updateCommentSettings.fulfilled, (state, action) => {
+        state.commentSaving = false;
+        state.commentSettings = action.payload;
+      })
+      .addCase(updateCommentSettings.rejected, (state) => {
+        state.commentSaving = false;
       });
   },
 });

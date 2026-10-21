@@ -27,6 +27,7 @@ import {
   InventoryFormNames,
 } from "@/app/(protected)/manage/settings/(products)/inventory/constant";
 import { GiftWrappingFormNames } from "@/app/(protected)/manage/settings/(products)/gift-wrapping/constant";
+import { CommentSettingsFormNames } from "@/app/(protected)/manage/settings/(products)/comments/constant";
 import { BlogFormFieldName } from "@/app/components/blog/constant";
 import { MessageField } from "@/app/components/orders/message/helper/constant";
 import {
@@ -639,6 +640,16 @@ export const GiftWrappingSchema = object({
     ),
   [GiftWrappingFormNames.AllowGiftMessages]: flag(true),
   [GiftWrappingFormNames.IsVisible]: flag(true),
+});
+// #endregion
+
+// #region Comments
+export const CommentSettingsSchema = object({
+  [CommentSettingsFormNames.CommentSystem]: text(),
+  [CommentSettingsFormNames.EnabledFor]: array()
+    .of(string().required())
+    .default([]),
+  [CommentSettingsFormNames.OnlyPastCustomers]: flag(true),
 });
 // #endregion
 

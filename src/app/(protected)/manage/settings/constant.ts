@@ -167,11 +167,11 @@ const ProductSettingRoutes: SettingRoute[] = [
     title: "Gift wrapping",
     description: "Name your gift wrapping option, set a price, etc.",
   },
-  // {
-  //   id: "comments",
-  //   title: "Comments",
-  //   description: "Shoppers comments about products",
-  // },
+  {
+    id: "comments",
+    title: "Comments",
+    description: "Shoppers comments about products",
+  },
 ];
 
 export const SettingsRoutesList: SettingGroup[] = [

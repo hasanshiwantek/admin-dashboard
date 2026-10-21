@@ -1,6 +1,7 @@
 "use client";
 
 import { ListRenderer } from "@/components/ListRenderer.tsx/ListRenderer";
+import { Button } from "@/components/ui/button";
 import { SelectOption } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import CheckboxField from "./CheckboxField";
@@ -10,18 +11,50 @@ type CheckboxListFieldProps = {
   value?: string[] | null;
   onChange?: (value: string[]) => void;
   onBlur?: () => void;
+  showSelectAll?: boolean;
   id?: string;
   disabled?: boolean;
   className?: string;
   "aria-invalid"?: boolean;
 };
 
+const LINK_BUTTON_CLASS = "h-auto p-0 text-[1.4rem] font-normal text-link";
+
 const toggleValue = (list: string[], value: string) =>
   list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
 
-// Bordered, scrollable multi-checkbox list with checked rows highlighted.
-// The value is the array of checked option values. Set the box height
-// with className, e.g. className="h-[17rem]".
+const SelectAllLinks = ({
+  options,
+  onChange,
+  showSelectAll,
+  disabled,
+}: CheckboxListFieldProps) =>
+  showSelectAll ? (
+    <span className="text-[1.4rem] text-gray-600">
+      (
+      <Button
+        type="button"
+        variant="link"
+        className={LINK_BUTTON_CLASS}
+        disabled={disabled}
+        onClick={() => onChange?.(options.map((option) => option.value))}
+      >
+        Select All
+      </Button>
+      {" / "}
+      <Button
+        type="button"
+        variant="link"
+        className={LINK_BUTTON_CLASS}
+        disabled={disabled}
+        onClick={() => onChange?.([])}
+      >
+        Unselect All
+      </Button>
+      )
+    </span>
+  ) : null;
+
 export function CheckboxListField({
   options,
   value,
@@ -72,5 +105,7 @@ export function CheckboxListField({
     </div>
   );
 }
+
+CheckboxListField.LabelAddon = SelectAllLinks;
 
 export default CheckboxListField;

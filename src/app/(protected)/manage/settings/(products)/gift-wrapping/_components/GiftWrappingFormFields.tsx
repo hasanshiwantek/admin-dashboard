@@ -35,12 +35,14 @@ const GiftWrappingFormFields = () => (
     <InputField
       name={GiftWrappingFormNames.AllowGiftMessages}
       label="Allow Gift Messages?"
+      hideColon
       Component={CheckboxField}
       text="Yes, allow customers to add custom message"
     />
     <InputField
       name={GiftWrappingFormNames.IsVisible}
       label="Visible?"
+      hideColon
       Component={CheckboxField}
       text="Yes, show this wrapping option to customers"
     />

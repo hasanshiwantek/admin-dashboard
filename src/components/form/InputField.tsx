@@ -37,10 +37,22 @@ type InputFieldBaseProps<T extends FieldValues, C extends ElementType> = {
   startIconClassName?: string;
   endIconClassName?: string;
   inputWrapperClassName?: string;
-  /** Hides the ":" after the label text (default true) */
   hideColon?: boolean;
   labelStartComponent?: ReactNode;
   labelEndComponent?: ReactNode;
+  getValueOnChange?: (change: { name: FieldPath<T>; value: unknown }) => void;
+  runAfterOnChange?: boolean;
+};
+
+export type FieldLabelAddon = ElementType<any>;
+type FieldComponentWithAddon = { LabelAddon?: FieldLabelAddon };
+
+const getEventValue = (input: unknown) => {
+  if (input && typeof input === "object" && "target" in input) {
+    const target = (input as { target: HTMLInputElement }).target;
+    return target.type === "checkbox" ? target.checked : target.value;
+  }
+  return input;
 };
 
 export type InputFieldProps<
@@ -77,9 +89,11 @@ export function InputField<
   startIconClassName,
   endIconClassName,
   inputWrapperClassName,
-  hideColon = true,
+  hideColon = false,
   labelStartComponent,
   labelEndComponent,
+  getValueOnChange,
+  runAfterOnChange,
   ...componentProps
 }: InputFieldProps<T, C>) {
   const formContext = useFormContext<T>();
@@ -91,6 +105,38 @@ export function InputField<
   const id = `field-${String(name).replace(/\./g, "-")}`;
   const horizontal = layout === "horizontal";
   const FieldControl = isTextArea ? Textarea : Component;
+  const LabelAddon = (FieldControl as FieldComponentWithAddon).LabelAddon;
+
+  const handleChange = (input: unknown) => {
+    if (!getValueOnChange) return field.onChange(input);
+
+    if (runAfterOnChange) {
+      field.onChange(input);
+      getValueOnChange({ name, value: getEventValue(input) });
+    } else {
+      getValueOnChange({ name, value: field.value });
+      field.onChange(input);
+    }
+  };
+
+  const labelNode = label ? (
+    <Label
+      htmlFor={id}
+      className={cn(
+        "font-normal text-gray-600 2xl:text-2xl!",
+        horizontal && "justify-end text-right pt-3",
+        labelClassName,
+      )}
+    >
+      {labelStartComponent}
+      {label}
+      {!hideColon && ":"}
+      {required && <span className="text-red-500!">*</span>}
+      {labelEndComponent}
+    </Label>
+  ) : (
+    horizontal && <span />
+  );
 
   return (
     <div
@@ -101,23 +147,18 @@ export function InputField<
         containerClassName,
       )}
     >
-      {label ? (
-        <Label
-          htmlFor={id}
-          className={cn(
-            "font-normal text-gray-600 2xl:text-2xl!",
-            horizontal && "justify-end text-right pt-3",
-            labelClassName,
-          )}
-        >
-          {labelStartComponent}
-          {label}
-          {!hideColon && ":"}
-          {required && <span className="text-red-500!">*</span>}
-          {labelEndComponent}
-        </Label>
+      {LabelAddon ? (
+        // Kept outside <Label> so clicking the addon can't activate the label
+        <div className={cn("flex flex-col gap-3", horizontal && "items-end")}>
+          {labelNode}
+          <LabelAddon
+            {...componentProps}
+            value={field.value}
+            onChange={handleChange}
+          />
+        </div>
       ) : (
-        horizontal && <span />
+        labelNode
       )}
       <div className={cn("flex flex-col gap-2 min-w-0", controlClassName)}>
         <div className="flex items-center gap-2">
@@ -141,7 +182,7 @@ export function InputField<
                 {...{
                   [valuePropName]:
                     field.value ?? (valuePropName === "value" ? "" : undefined),
-                  [changePropName]: field.onChange,
+                  [changePropName]: handleChange,
                 }}
               />
             </InputWrapper>

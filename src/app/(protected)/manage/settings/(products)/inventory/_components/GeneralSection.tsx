@@ -24,6 +24,7 @@ const GeneralSection = ({
     <InputField
       name={InventoryFormNames.ProductUnavailableAction}
       label="When a product can no longer be sold"
+      hideColon
       layout="vertical"
       Component={SelectField}
       className={SELECT_CLASS}
@@ -34,6 +35,7 @@ const GeneralSection = ({
     <InputField
       name={InventoryFormNames.OptionUnavailableAction}
       label="When a product option can no longer be sold"
+      hideColon
       layout="vertical"
       Component={SelectField}
       className={SELECT_CLASS}
@@ -52,6 +54,7 @@ const GeneralSection = ({
     <InputField
       name={InventoryFormNames.UpdateStockLevels}
       label="Update stock levels"
+      hideColon
       layout="vertical"
       Component={SelectField}
       className={SELECT_CLASS}
