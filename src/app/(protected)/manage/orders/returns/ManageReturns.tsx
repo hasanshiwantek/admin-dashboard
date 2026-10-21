@@ -1,13 +1,13 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Table from "@/components/ui/Table/Table";
-import TableTabs from "@/components/ui/Table/TableTabs";
 import { IoFilterOutline } from "react-icons/io5";
 import { X } from "lucide-react";
 import useReturnsContainer from "./useReturnsContainer";
 import { renderExpandedRow } from "./ReturnExpandedRow"; // ← add this
+import PageTitle from "@/components/ui/PageTitle";
+import { Button } from "@/components/ui/button";
 const TOOLBAR_CONTROL = "h-14! py-4! my-0!";
 
 const TABS = [{ id: "all", label: "All returns" }];
@@ -37,21 +37,21 @@ const ManageReturns = () => {
             onChange={(e) => setKeyword(e.target.value)}
           />
           {keyword && (
-            <button
+            <Button
               type="button"
               onClick={() => setKeyword("")}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
             >
               <X size={18} />
-            </button>
+            </Button>
           )}
         </div>
-        <button
+        <Button
           type="button"
           className={`btn-outline-primary ${TOOLBAR_CONTROL} rounded-l-none`}
         >
           <IoFilterOutline />
-        </button>
+        </Button>
       </div>
     </div>
   );
@@ -59,7 +59,7 @@ const ManageReturns = () => {
   return (
     <div className="bg-store-bg min-h-screen mt-20">
       <div className="mb-6 px-4">
-        <h1 className="font-light 2xl:text-5xl">View Return Requests</h1>
+        <PageTitle title="View Return Requests" hideActionButton />
       </div>
 
       <div className="bg-white p-4 shadow-sm">
