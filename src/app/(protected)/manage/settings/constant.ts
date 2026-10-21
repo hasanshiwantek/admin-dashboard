@@ -144,16 +144,16 @@ const OrderSettingRoutes: SettingRoute[] = [
     description:
       "Brief messages informing you that an order has been placed, etc.",
   },
-  {
-    id: "return-settings",
-    title: "Returns",
-    description: "Products return rules",
-  },
-  {
-    id: "order-statuses",
-    title: "Statuses",
-    description: "Order statuses and order status descriptions",
-  },
+  // {
+  //   id: "return-settings",
+  //   title: "Returns",
+  //   description: "Products return rules",
+  // },
+  // {
+  //   id: "order-statuses",
+  //   title: "Statuses",
+  //   description: "Order statuses and order status descriptions",
+  // },
 ];
 
 export const SettingsRoutesList: SettingGroup[] = [
@@ -164,6 +164,10 @@ export const SettingsRoutesList: SettingGroup[] = [
   {
     group: "General",
     routes: GeneralSettingRoutes,
+  },
+  {
+    group: "Orders",
+    routes: OrderSettingRoutes,
   },
   {
     group: "Advanced",

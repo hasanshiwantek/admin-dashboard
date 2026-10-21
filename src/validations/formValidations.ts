@@ -18,6 +18,8 @@ import {
   UrlStructureField,
   WebsiteField,
 } from "@/app/(protected)/manage/settings/(general)/constant";
+import { OrderNotificationFormNames } from "@/app/(protected)/manage/settings/(orders)/order-notifications/constant";
+import { isEmailEnabled } from "@/app/(protected)/manage/settings/(orders)/order-notifications/utils";
 import { BlogFormFieldName } from "@/app/components/blog/constant";
 import {
   PageTypeEnums,
@@ -336,6 +338,25 @@ export const GeneralSettingsSchema = object({
 });
 
 // ─── Admin users (add / edit) ─────────────────────────────────
+
+// ─── Order notifications ──────────────────────────────────────
+
+export const OrderNotificationSchema = object({
+  [OrderNotificationFormNames.Methods]: array().of(string().required()).default([]),
+  [OrderNotificationFormNames.CustomerEmailStatuses]: array()
+    .of(string().required())
+    .default([]),
+  // Needed only while the "Email Message" method is enabled
+  [OrderNotificationFormNames.EmailAddress]: text()
+    .trim()
+    .when(OrderNotificationFormNames.Methods, {
+      is: (methods?: string[]) => isEmailEnabled(methods),
+      then: (schema) =>
+        schema
+          .required("Email address is required")
+          .email("Enter a valid email address"),
+    }),
+});
 
 export const AdminUserSchema = object({
   [UserField.FirstName]: string().trim().required("First name is required"),
