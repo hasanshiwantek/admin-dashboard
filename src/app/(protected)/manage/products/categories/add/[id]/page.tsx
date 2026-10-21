@@ -206,10 +206,12 @@ export default function AddSubCategoryPage() {
   }, [dispatch]);
 
   const onSubmit = async (vals: FormVals) => {
+    const payload = { ...vals, channel: selectedStore?.name };
+  
     try {
       setSaving(true);
 
-      const basePayload = buildCategoryPayload(vals);
+      const basePayload = buildCategoryPayload(payload);
       const fd = new FormData();
 
       Object.entries(basePayload).forEach(([k, v]) => {
