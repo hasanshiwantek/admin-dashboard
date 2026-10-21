@@ -1,3 +1,5 @@
+
+
 export interface CouponCodeForm {
   couponCode: string;
   couponName: string;
@@ -20,4 +22,6 @@ export interface CouponCodeForm {
   productIds: string | null;
   limitByLocation: boolean;
   limitByShipping: boolean;
+ appliesTo: "categories" | "products";
 }
+

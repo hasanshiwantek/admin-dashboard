@@ -1,231 +1,75 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { Plus, MoreHorizontal, ExternalLink, ChevronDown } from "lucide-react";
-import { Button } from "@/components/ui/button"; // Shadcn button
-import { Switch } from "@/components/ui/switch"; // Shadcn switch
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"; // Shadcn table
-import OrderActionsDropdown from "../orders/OrderActionsDropdown";
 import Link from "next/link";
-import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
-import { fetchBlogs, deleteBlog } from "@/redux/slices/storefrontSlice";
-import { useRouter } from "next/navigation";
-import { refetchBlogs } from "@/lib/storeFrontUtils";
-import Spinner from "../loader/Spinner";
+import { ExternalLink, Plus } from "lucide-react";
 import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
-import { useAlert } from "@/hooks/useAlert";
-// Mock data
+import Table from "@/components/ui/Table/Table";
+import useBlogTableContainer from "./useBlogTableContainer";
+import { getSelectedStore } from "@/utils/storage";
+import PageTitle from "@/components/ui/PageTitle";
 
 export default function BlogTable() {
-  const { blogs, loading, error } = useAppSelector(
-    (state: any) => state.storefront,
-  );
-  const posts = blogs?.data;
-  const [activeTab, setActiveTab] = useState("published");
-  const [visible, setVisible] = useState(true);
-  const dispatch = useAppDispatch();
-  const router = useRouter();
-  const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const { showAlert, Alert } = useAlert();
-  const [deletePost, setDeletePost] = useState<any>(null);
-  // const filteredPosts = posts?.filter((p: any) =>
-  //   activeTab === "published" ? p.status === "published" : p.status === "draft"
-  // );
-
-  const editdropdownActions = (post: any) => [
-    {
-      label: "View",
-      onClick: () => {
-        // Get the base URL from selected store
-        const selectedStore = JSON.parse(
-          localStorage.getItem("availableStores") || "[]",
-        ).find(
-          (store: any) => store.id === Number(localStorage.getItem("storeId")),
-        );
-
-        if (selectedStore?.baseUrl && post?.slug) {
-          // Open product page on storefront
-          window.open(`${selectedStore.baseUrl}/blogs/${post?.slug}`, "_blank");
-        } else {
-          showAlert({
-            title: "Store or Blog Not Found",
-            message: "Store URL or blog not found.",
-          });
-        }
-      },
-    },
-    {
-      label: "Edit",
-      onClick: () => router.push(`/manage/storefront/blog/edit/${post.id}`),
-    },
-    {
-      label: "Delete",
-      onClick: () => {
-        setDeletePost(post);
-        setOpenDeleteModal(true);
-      },
-    },
-  ];
-
-  useEffect(() => {
-    dispatch(fetchBlogs());
-  }, [dispatch]);
+  const {
+    posts,
+    loading,
+    error,
+    openDeleteModal,
+    setOpenDeleteModal,
+    confirmDelete,
+    getDropdownActions,
+    Alert,
+    columns,
+  } = useBlogTableContainer();
 
   return (
     <div className="p-10">
       {/* Header */}
       <div className="flex justify-between items-center mb-6 border-b border-gray-200 pb-3">
-        <h1 className="!font-light 2xl:!text-5xl">Blog</h1>
-        <Link
-          href="https://nts-ecommerce.vercel.app/blogs"
-          target="_blank"
-          className="flex items-center text-blue-600 hover:text-blue-800 text-sm font-medium 2xl:!text-2xl"
-        >
-          View blog <ExternalLink className="ml-1 h-4 w-4" />
-        </Link>
+        <PageTitle title="Blog" hideActionButton />
+        {getSelectedStore()?.baseUrl && (
+          <Link
+            href={`${getSelectedStore()?.baseUrl}/blogs` || "#"}
+            target="_blank"
+            className="flex items-center text-blue-600 hover:text-blue-800 text-sm font-medium 2xl:!text-2xl"
+          >
+            View blog <ExternalLink className="ml-1 h-4 w-4" />
+          </Link>
+        )}
       </div>
-      <div className=" bg-white  rounded-md shadow-sm p-10 ">
-        {/* Tabs */}
-        <div className="flex border-b border-gray-200 mb-6">
-          {["published"].map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`pb-3 px-4 text-xl 2xl:!text-2xl font-medium transition-colors ${
-                activeTab === tab
-                  ? "text-blue-600 border-b-4 border-blue-600"
-                  : "text-gray-500 hover:text-gray-700"
-              }`}
-            >
-              {tab.charAt(0).toUpperCase() + tab.slice(1)}
-            </button>
-          ))}
-        </div>
 
+      <div className="bg-white rounded-md shadow-sm p-10">
         {/* Toolbar */}
-        <div className="flex flex-wrap items-center gap-4 mb-4 border-b border-gray-100 p-2 rounded-md bg-gray-50/50">
-          <div className="flex items-center gap-2">
-            <Link href={"/manage/storefront/blog/add"}>
-              <button title="New Post" className="btn-outline-primary">
-                <Plus className="h-7 w-7" />
-              </button>
-            </Link>
-          </div>
+        <div className="flex flex-wrap items-center gap-4 mb-6">
+          <Link href="/manage/storefront/blog/add">
+            <button className="btn-outline-primary flex items-center gap-2">
+              <Plus className="h-5 w-5" />
+            </button>
+          </Link>
         </div>
 
-        {/* Table */}
-        <Table>
-          <TableHeader className="!h-18">
-            <TableRow>
-              <TableHead>Title</TableHead>
-              <TableHead>Author</TableHead>
-              <TableHead>Published On</TableHead>
-              <TableHead>Action</TableHead>
-            </TableRow>
-          </TableHeader>
-
-          <TableBody>
-            {loading ? (
-              <TableRow>
-                <TableCell colSpan={4} className="text-center py-10">
-                  <div className="flex flex-col items-center justify-center">
-                    <Spinner />
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : error ? (
-              <TableRow>
-                <TableCell colSpan={4} className="text-center py-10">
-                  <p className="text-red-600 font-semibold">
-                    ⚠️ Failed to load blogs
-                  </p>
-                  <p className="text-gray-500 text-sm mt-1">{error}</p>
-                </TableCell>
-              </TableRow>
-            ) : posts?.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={4}
-                  className="text-center py-10 text-gray-500"
-                >
-                  No blog posts found.
-                </TableCell>
-              </TableRow>
-            ) : (
-              posts?.map((post: any) => (
-                <TableRow key={post.id} className="!h-18">
-                  <TableCell className="font-medium">
-                    <Link
-                      href={`/manage/storefront/blog/edit/${post.id}`}
-                      className="text-blue-600 hover:border-b capitalize 2xl:!text-2xl"
-                    >
-                      {post.title || "Untitled"}
-                    </Link>
-                  </TableCell>
-
-                  <TableCell className="2xl:!text-2xl">
-                    {post.author || "—"}
-                  </TableCell>
-
-                  <TableCell className="2xl:!text-2xl">
-                    {post.createdAt
-                      ? new Date(post.createdAt).toLocaleString("en-US", {
-                          dateStyle: "medium",
-                          timeStyle: "short",
-                        })
-                      : "N/A"}
-                  </TableCell>
-
-                  <TableCell>
-                    <OrderActionsDropdown
-                      actions={editdropdownActions(post)}
-                      trigger={
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="text-xl cursor-pointer"
-                        >
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      }
-                    />
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-
-        {/* Footer */}
+        {/* Generic Table */}
+        <Table
+          bare
+          data={posts}
+          columns={columns}
+          getRowId={(post) => post.id}
+          loading={loading}
+          error={error}
+          emptyMessage="No blog posts found."
+          hideRecordCount
+          rowActions={getDropdownActions}
+          selectable={false}
+        />
       </div>
+
       <ConfirmationModal
         open={openDeleteModal}
         onOpenChange={setOpenDeleteModal}
         variant="warning"
         title="Delete blog?"
         description="Are you sure you want to delete this blog?"
-        onConfirm={async () => {
-          try {
-            const resultAction = await dispatch(
-              deleteBlog({ id: deletePost?.id }),
-            );
-
-            if ((resultAction as any).meta.requestStatus === "fulfilled") {
-              setOpenDeleteModal(false);
-
-              setTimeout(() => {
-                refetchBlogs(dispatch);
-              }, 700);
-            }
-          } catch (err) {}
-        }}
+        onConfirm={confirmDelete}
       />
+
       <Alert />
     </div>
   );
