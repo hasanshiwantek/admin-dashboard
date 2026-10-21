@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/utils";
 import { getSelectedStore } from "@/utils/storage";
 import Link from "next/link";
 import { FaCircleMinus, FaCirclePlus } from "react-icons/fa6";
@@ -88,7 +89,7 @@ export const getReturnsColumns = (
     header: "Date",
     render: (ret: any) =>
       ret.createdAt
-        ? new Date(ret.createdAt).toLocaleDateString("en-US")
+        ? formatDateTime(ret.createdAt)
         : "N/A",
   },
 ];
