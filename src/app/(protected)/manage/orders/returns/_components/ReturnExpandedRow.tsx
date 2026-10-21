@@ -1,3 +1,4 @@
+import { replaceNullWithPlaceholder } from "@/lib/utils";
 import Image from "next/image";
 
 export const renderExpandedRow = (ret: any) => (
@@ -12,7 +13,7 @@ export const renderExpandedRow = (ret: any) => (
         <label className="text-[12px] w-1/3">Return Reason</label>
         <input
           disabled
-          value={ret.reason || "N/A"}
+          value={replaceNullWithPlaceholder(ret.reason)}
           className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm bg-[var(--color-background-subtle)] h-16"
         />
       </div>
@@ -21,7 +22,7 @@ export const renderExpandedRow = (ret: any) => (
         <label className="text-[12px] w-1/3">Return Action</label>
         <input
           disabled
-          value={ret.returnAction || "N/A"}
+          value={replaceNullWithPlaceholder(ret.returnAction)}
           className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm bg-[var(--color-background-subtle)] h-16"
         />
       </div>
@@ -31,7 +32,7 @@ export const renderExpandedRow = (ret: any) => (
         <textarea
           disabled
           rows={6}
-          value={ret.comments || "No comments provided"}
+          value={replaceNullWithPlaceholder(ret.comments)}
           className="flex-1 border border-gray-300 rounded px-3 py-2 text-[12px] bg-[var(--color-background-subtle)] resize-none"
         />
       </div>

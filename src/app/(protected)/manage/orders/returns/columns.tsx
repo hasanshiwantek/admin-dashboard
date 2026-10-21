@@ -87,7 +87,6 @@ export const getReturnsColumns = (
   {
     key: "createdAt",
     header: "Date",
-    render: (ret: any) =>
-      ret.createdAt ? formatDateTime(ret.createdAt) : "N/A",
+    render: (ret: any) => formatDateTime(ret.createdAt),
   },
 ];
