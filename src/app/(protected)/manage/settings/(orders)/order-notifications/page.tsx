@@ -10,7 +10,8 @@ import TestNotificationSentModal from "@/Modals/SettingsModals/TestNotificationS
 import { ReactNode } from "react";
 import EmailMessageSection from "./_components/EmailMessageSection";
 import GeneralSettingsSection from "./_components/GeneralSettingsSection";
-import { NotificationTab, SETTINGS_ROUTE } from "./constant";
+import { SETTINGS_ROUTE } from "../constant";
+import { NotificationTab } from "./constant";
 import useOrderNotificationsContainer from "./container";
 
 const OrderNotificationsPage = () => {

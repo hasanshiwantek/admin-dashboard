@@ -20,6 +20,7 @@ import {
 } from "@/app/(protected)/manage/settings/(general)/constant";
 import { OrderNotificationFormNames } from "@/app/(protected)/manage/settings/(orders)/order-notifications/constant";
 import { isEmailEnabled } from "@/app/(protected)/manage/settings/(orders)/order-notifications/utils";
+import { ReturnSettingsFormNames } from "@/app/(protected)/manage/settings/(orders)/return-settings/constant";
 import { BlogFormFieldName } from "@/app/components/blog/constant";
 import {
   PageTypeEnums,
@@ -421,3 +422,14 @@ export const WebPageSchema = object({
   [WebPageField.MetaDescription]: string().nullable().default(""),
   [WebPageField.SearchKeywords]: string().nullable().default(""),
 });
+
+
+// #region Orders Settings
+
+// #region Return
+  export const ReturnSettingsSchema = object({
+    [ReturnSettingsFormNames.EnableReturns]: flag(),
+  });
+  // #endregion
+ 
+  // #endregion

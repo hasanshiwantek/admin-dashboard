@@ -144,11 +144,11 @@ const OrderSettingRoutes: SettingRoute[] = [
     description:
       "Brief messages informing you that an order has been placed, etc.",
   },
-  // {
-  //   id: "return-settings",
-  //   title: "Returns",
-  //   description: "Products return rules",
-  // },
+  {
+    id: "return-settings",
+    title: "Returns",
+    description: "Products return rules",
+  },
   // {
   //   id: "order-statuses",
   //   title: "Statuses",

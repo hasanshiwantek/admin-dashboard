@@ -2,8 +2,6 @@ import { BULK_STATUS_ACTIONS } from "@/app/components/orders/constant";
 import type { SelectOption } from "@/components/ui/select";
 import type { OrderNotificationFormValues } from "./type";
 
-export const SETTINGS_ROUTE = "/manage/settings";
-
 export enum NotificationTab {
   General = "general",
   EmailMessage = "email-message",

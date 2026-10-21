@@ -13,10 +13,10 @@ import { toast } from "react-toastify";
 import {
   NotificationMethod,
   NotificationTab,
-  OrderNotificationFormNames,
   orderNotificationDefaults,
-  SETTINGS_ROUTE,
+  OrderNotificationFormNames,
 } from "./constant";
+import { SETTINGS_ROUTE } from "../constant";
 import { OrderNotificationFormValues } from "./type";
 import {
   getTabForErrors,
@@ -48,7 +48,10 @@ const useOrderNotificationsContainer = () => {
   });
   const { control, reset, trigger, getValues } = form;
 
-  const methods = useWatch({ control, name: OrderNotificationFormNames.Methods });
+  const methods = useWatch({
+    control,
+    name: OrderNotificationFormNames.Methods,
+  });
   const tabs = getVisibleTabs(methods);
 
   // A method's tab disappears when it's unchecked; fall back to General
@@ -87,7 +90,6 @@ const useOrderNotificationsContainer = () => {
     if (!valid) return;
 
     const emailAddress = getValues(OrderNotificationFormNames.EmailAddress);
-    setTestSentTo(emailAddress);
     const result = await dispatch(
       testOrderNotification({ method: NotificationMethod.Email, emailAddress }),
     );
@@ -95,6 +97,7 @@ const useOrderNotificationsContainer = () => {
       toast.error(result.payload as string);
       return;
     }
+    setTestSentTo(emailAddress);
   };
 
   return {
