@@ -11,7 +11,13 @@ import type {
 } from "@/app/(protected)/manage/settings/(orders)/return-settings/type";
 
 const NOTIFICATIONS_ENDPOINT = "dashboard/order-settings/notifications";
+import type {
+  OrderStatus,
+  OrderStatusesPayload,
+} from "@/app/(protected)/manage/settings/(orders)/order-statuses/type";
+
 const RETURNS_ENDPOINT = "dashboard/order-settings/returns";
+const STATUSES_ENDPOINT = "dashboard/order-settings/statuses";
 
 export const fetchOrderNotificationSettings = createAsyncThunk(
   "orderSettings/fetchNotificationSettings",
@@ -83,6 +89,34 @@ export const updateReturnSettings = createAsyncThunk(
   }
 );
 
+export const fetchOrderStatuses = createAsyncThunk(
+  "orderSettings/fetchOrderStatuses",
+  async (_, thunkAPI) => {
+    try {
+      const res = await axiosInstance.get(STATUSES_ENDPOINT);
+      return res.data?.data ?? res.data;
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to fetch order statuses"
+      );
+    }
+  }
+);
+
+export const updateOrderStatuses = createAsyncThunk(
+  "orderSettings/updateOrderStatuses",
+  async (data: OrderStatusesPayload, thunkAPI) => {
+    try {
+      const res = await axiosInstance.post(STATUSES_ENDPOINT, data);
+      return res.data?.data ?? data.statuses;
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to save order statuses"
+      );
+    }
+  }
+);
+
 const initialState = {
   notificationSettings: null as OrderNotificationSettings | null,
   notificationLoading: false,
@@ -91,6 +125,9 @@ const initialState = {
   returnSettings: null as ReturnSettings | null,
   returnLoading: false,
   returnSaving: false,
+  orderStatuses: null as OrderStatus[] | null,
+  statusesLoading: false,
+  statusesSaving: false,
 };
 
 const orderSettingsSlice = createSlice({
@@ -148,6 +185,26 @@ const orderSettingsSlice = createSlice({
       })
       .addCase(updateReturnSettings.rejected, (state) => {
         state.returnSaving = false;
+      })
+      .addCase(fetchOrderStatuses.pending, (state) => {
+        state.statusesLoading = true;
+      })
+      .addCase(fetchOrderStatuses.fulfilled, (state, action) => {
+        state.statusesLoading = false;
+        state.orderStatuses = action.payload;
+      })
+      .addCase(fetchOrderStatuses.rejected, (state) => {
+        state.statusesLoading = false;
+      })
+      .addCase(updateOrderStatuses.pending, (state) => {
+        state.statusesSaving = true;
+      })
+      .addCase(updateOrderStatuses.fulfilled, (state, action) => {
+        state.statusesSaving = false;
+        state.orderStatuses = action.payload;
+      })
+      .addCase(updateOrderStatuses.rejected, (state) => {
+        state.statusesSaving = false;
       });
   },
 });

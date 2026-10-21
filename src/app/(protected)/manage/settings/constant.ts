@@ -149,11 +149,11 @@ const OrderSettingRoutes: SettingRoute[] = [
     title: "Returns",
     description: "Products return rules",
   },
-  // {
-  //   id: "order-statuses",
-  //   title: "Statuses",
-  //   description: "Order statuses and order status descriptions",
-  // },
+  {
+    id: "order-statuses",
+    title: "Statuses",
+    description: "Order statuses and order status descriptions",
+  },
 ];
 
 export const SettingsRoutesList: SettingGroup[] = [

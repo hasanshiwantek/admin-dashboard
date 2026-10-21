@@ -21,6 +21,7 @@ import {
 import { OrderNotificationFormNames } from "@/app/(protected)/manage/settings/(orders)/order-notifications/constant";
 import { isEmailEnabled } from "@/app/(protected)/manage/settings/(orders)/order-notifications/utils";
 import { ReturnSettingsFormNames } from "@/app/(protected)/manage/settings/(orders)/return-settings/constant";
+import { OrderStatusesFormNames } from "@/app/(protected)/manage/settings/(orders)/order-statuses/constant";
 import { BlogFormFieldName } from "@/app/components/blog/constant";
 import {
   PageTypeEnums,
@@ -431,5 +432,20 @@ export const WebPageSchema = object({
     [ReturnSettingsFormNames.EnableReturns]: flag(),
   });
   // #endregion
- 
+
+  // #region Order Statuses
+  export const OrderStatusesSchema = object({
+    [OrderStatusesFormNames.Statuses]: array()
+      .of(
+        object({
+          [OrderStatusesFormNames.Id]: string().required(),
+          [OrderStatusesFormNames.Name]: string()
+            .trim()
+            .required("Cannot be empty or blank. Please enter an order status."),
+        }),
+      )
+      .default([]),
+  });
+  // #endregion
+
   // #endregion
