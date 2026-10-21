@@ -37,6 +37,7 @@ import {
   ShipByWeightField,
 } from "@/Modals/ShippingModals/ShipByWeightModal/constant";
 import { DisplayNameField } from "@/Modals/ShippingModals/ShippingQuotesDisplayNameModal/constant";
+import { MessageField } from "@/app/components/orders/message/helper/constant";
 
 export const BannerSchema = object({
   [BannerField.Title]: string().trim().required("Banner name is required"),
@@ -418,4 +419,11 @@ export const ReviewSchema = object({
   [ReviewField.Rating]: string()
     .oneOf(Object.values(RatingValue), "Invalid rating")
     .required("Rating is required"),
+});
+
+// MessageSchema
+export const MessageSchema = object({
+  [MessageField.Email]: string().email().required("Email is required"),
+  [MessageField.Subject]: string().trim().required("Subject is required"),
+  [MessageField.Message]: string().trim().required("Message is required"),
 });
