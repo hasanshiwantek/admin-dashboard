@@ -46,6 +46,7 @@ import ShippingDetails from "./ShippingDetails";
 import SidebarNavigation from "./SidebarNavigation";
 import StoreFront from "./StoreFront";
 import { useAlert } from "@/hooks/useAlert";
+import { getSelectedStore } from "@/utils/storage";
 
 export default function AddProductPage() {
   const dispatch = useAppDispatch();
@@ -565,15 +566,7 @@ export default function AddProductPage() {
                   type="button"
                   className="flex items-center gap-1 text-blue-600 text-sm font-medium hover:underline whitespace-nowrap"
                   onClick={() => {
-                    const availableStores = JSON.parse(
-                      localStorage.getItem("availableStores") || "[]",
-                    );
-                    const selectedStoreId = Number(
-                      localStorage.getItem("storeId"),
-                    );
-                    const selectedStore = availableStores.find(
-                      (s: any) => s.id === selectedStoreId,
-                    );
+                    const selectedStore = getSelectedStore();
                     if (selectedStore?.baseUrl)
                       window.open(
                         `${selectedStore.baseUrl}${product?.productUrl[0] == "/" ? product?.productUrl.slice(1) : product?.productUrl}`,
@@ -606,15 +599,7 @@ export default function AddProductPage() {
                       <button
                         className="w-full text-left px-4 py-2 text-xl hover:bg-blue-50 text-gray-700"
                         onClick={() => {
-                          const availableStores = JSON.parse(
-                            localStorage.getItem("availableStores") || "[]",
-                          );
-                          const selectedStoreId = Number(
-                            localStorage.getItem("storeId"),
-                          );
-                          const selectedStore = availableStores.find(
-                            (s: any) => s.id === selectedStoreId,
-                          );
+                          const selectedStore = getSelectedStore();
                           setDropdownOpen(false);
                           if (selectedStore?.baseUrl)
                             window.open(
@@ -628,12 +613,11 @@ export default function AddProductPage() {
                       <button
                         className="w-full text-left px-4 py-2 text-xl hover:bg-gray-50 text-gray-700"
                         onClick={() => {
+                          if (!product?.id) return;
                           setDropdownOpen(false);
-                          localStorage.setItem(
-                            "filterProductId",
-                            String(product.id),
+                          router.push(
+                            `/manage/orders?productId=${product?.id}`,
                           );
-                          router.push("/manage/orders");
                         }}
                       >
                         View orders
@@ -642,6 +626,7 @@ export default function AddProductPage() {
                         className="w-full text-left px-4 py-2 text-xl hover:bg-gray-50 text-gray-700"
                         onClick={async () => {
                           setDropdownOpen(false);
+                          if (!product?.id) return;
                           await dispatch(deleteProduct({ ids: [product?.id] }));
                           navigateFromForm(goBack);
                         }}

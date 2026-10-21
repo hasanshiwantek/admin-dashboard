@@ -1,4 +1,5 @@
 import { LocalStorageKeys } from "@/const/appConstants";
+import { Store } from "@/types/types";
 
 // setInStorage
 export const setInStorage = <T>(
@@ -58,3 +59,9 @@ export function setInSessionStorage(
     console.error(err);
   }
 }
+export const getSelectedStore = (): Store | undefined => {
+  const stores = (getFromStorage("availableStores") || []) as Store[];
+  const storeId = Number(getFromStorage("storeId"));
+
+  return stores?.find((store) => store.id == storeId);
+};

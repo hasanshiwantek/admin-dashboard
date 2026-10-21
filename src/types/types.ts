@@ -113,3 +113,7 @@ export type StoreItem = {
   id: number;
   name?: string;
 };
+export interface Store {
+  id: number;
+  [key: string]: any;
+}

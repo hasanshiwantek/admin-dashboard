@@ -12,13 +12,13 @@ import PageTitle from "@/components/ui/PageTitle";
 import RichTextEditor from "@/components/ui/RichTextEditor";
 import { useBrandNameMap } from "@/hooks/useFilterValueFormatter";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
-import DescriptionEditorQuill from "@/components/ui/DescriptionEditorQuill";
+
 import {
   createBanner,
   getBannerById,
   updateBanner,
 } from "@/redux/slices/marketingSlice";
-import { bannerSchema } from "@/validations/formValidations";
+import { BannerSchema } from "@/validations/formValidations";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo } from "react";
@@ -56,7 +56,7 @@ const BannerForm = ({ bannerId }: BannerFormProps) => {
   );
 
   const form = useForm<BannerFormValues>({
-    resolver: yupResolver(bannerSchema),
+    resolver: yupResolver(BannerSchema),
     defaultValues: bannerDefaultValues,
   });
   const { control, reset, setValue, watch } = form;
