@@ -14,6 +14,7 @@ import {
 } from "react-hook-form";
 import { useFormContext } from "./Form";
 import InputWrapper from "./InputWrapper";
+import { User } from "lucide-react";
 
 type InputFieldBaseProps<T extends FieldValues, C extends ElementType> = {
   name: FieldPath<T>;
@@ -38,7 +39,7 @@ type InputFieldBaseProps<T extends FieldValues, C extends ElementType> = {
   startIconClassName?: string;
   endIconClassName?: string;
   inputWrapperClassName?: string;
-  hideColon?: boolean;
+  showColon?: boolean;
   labelStartComponent?: ReactNode;
   labelEndComponent?: ReactNode;
   getValueOnChange?: (change: { name: FieldPath<T>; value: unknown }) => void;
@@ -91,7 +92,7 @@ export function InputField<
   startIconClassName,
   endIconClassName,
   inputWrapperClassName,
-  hideColon = false,
+  showColon = false,
   labelStartComponent,
   labelEndComponent,
   getValueOnChange,
@@ -135,7 +136,7 @@ export function InputField<
     >
       {labelStartComponent}
       {label}
-      {!hideColon && ":"}
+      {showColon && ":"}
       {required && <span className="text-red-500!">*</span>}
       {labelEndComponent}
     </Label>
