@@ -18,17 +18,22 @@ import {
   UrlStructureField,
   WebsiteField,
 } from "@/app/(protected)/manage/settings/(general)/constant";
+import { PromotionSettingsFormNames } from "@/app/(protected)/manage/settings/(marketing)/promotions/constant";
 import { OrderNotificationFormNames } from "@/app/(protected)/manage/settings/(orders)/order-notifications/constant";
 import { isEmailEnabled } from "@/app/(protected)/manage/settings/(orders)/order-notifications/utils";
 import { OrderStatusesFormNames } from "@/app/(protected)/manage/settings/(orders)/order-statuses/constant";
 import { ReturnSettingsFormNames } from "@/app/(protected)/manage/settings/(orders)/return-settings/constant";
+import { CommentSettingsFormNames } from "@/app/(protected)/manage/settings/(products)/comments/constant";
+import { GiftWrappingFormNames } from "@/app/(protected)/manage/settings/(products)/gift-wrapping/constant";
 import {
   BackorderMessageFormNames,
   InventoryFormNames,
 } from "@/app/(protected)/manage/settings/(products)/inventory/constant";
-import { GiftWrappingFormNames } from "@/app/(protected)/manage/settings/(products)/gift-wrapping/constant";
-import { CommentSettingsFormNames } from "@/app/(protected)/manage/settings/(products)/comments/constant";
-import { PromotionSettingsFormNames } from "@/app/(protected)/manage/settings/(marketing)/promotions/constant";
+import {
+  OfflinePaymentFormNames,
+  PaymentConfigFormNames,
+  PaymentCurrencyFormNames,
+} from "@/app/(protected)/manage/settings/(setup)/payment/constant";
 import { BlogFormFieldName } from "@/app/components/blog/constant";
 import { MessageField } from "@/app/components/orders/message/helper/constant";
 import {
@@ -652,6 +657,37 @@ export const CommentSettingsSchema = object({
     .default([]),
   [CommentSettingsFormNames.OnlyPastCustomers]: flag(true),
 });
+// #endregion
+
+// #endregion
+
+// #region Setup Settings
+
+// #region Payment
+export const PaymentCurrencySchema = object({
+  [PaymentCurrencyFormNames.Currency]: string().required(
+    "Currency is required",
+  ),
+});
+
+export const PaymentConfigSchema = object({
+  [PaymentConfigFormNames.TestCardPayments]: flag(),
+});
+
+export const OfflinePaymentSchema = (infoName: string) =>
+  object({
+    [OfflinePaymentFormNames.DisplayName]: string()
+      .trim()
+      .required("Display name is required"),
+    [OfflinePaymentFormNames.AvailableCountries]: array()
+      .of(string().required())
+      .min(1, "Please select one or more available countries")
+      .required()
+      .default([]),
+    [OfflinePaymentFormNames.Instructions]: string()
+      .trim()
+      .required(`${infoName} is required`),
+  });
 // #endregion
 
 // #endregion
