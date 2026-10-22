@@ -13,7 +13,7 @@ export type PaymentCurrencyFormValues = yup.InferType<
 export type PaymentConfigFormValues = yup.InferType<typeof PaymentConfigSchema>;
 
 export type OfflinePaymentFormValues = yup.InferType<
-  typeof OfflinePaymentSchema
+  ReturnType<typeof OfflinePaymentSchema>
 >;
 
 // Everything that differs between the offline methods' setup forms
