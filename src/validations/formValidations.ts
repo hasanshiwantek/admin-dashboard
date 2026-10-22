@@ -40,6 +40,10 @@ import {
   SpecialHourFormNames,
 } from "@/app/(protected)/manage/settings/(setup)/locations/constant";
 import { PickupMethodFormNames } from "@/app/(protected)/manage/settings/(setup)/pickup-methods/constant";
+import {
+  TaxClassesFormNames,
+  TaxClassRowFormNames,
+} from "@/app/(protected)/manage/settings/(setup)/tax/(basic)/constant";
 import { BlogFormFieldName } from "@/app/components/blog/constant";
 import { MessageField } from "@/app/components/orders/message/helper/constant";
 import {
@@ -772,6 +776,23 @@ export const PickupMethodSchema = object({
   [PickupMethodFormNames.Instructions]: string()
     .trim()
     .required("Instruction message for pickup is required."),
+});
+// #endregion
+
+// #region Basic Tax
+export const TaxClassesSchema = object({
+  [TaxClassesFormNames.Classes]: array()
+    .of(
+      object({
+        [TaxClassRowFormNames.ClassId]: text(),
+        [TaxClassRowFormNames.Label]: string()
+          .trim()
+          .required("Tax class label is required"),
+        [TaxClassRowFormNames.IsDefault]: flag(),
+      }),
+    )
+    .required()
+    .default([]),
 });
 // #endregion
 

@@ -21,14 +21,12 @@ const LocationAddressSection = ({
       name={LocationFormNames.Address1}
       label="Address 1"
       required
-      hideColon
       layout="vertical"
       controlClassName={FULL_WIDTH}
     />
     <InputField
       name={LocationFormNames.Address2}
       label="Address 2"
-      hideColon
       layout="vertical"
       controlClassName={FULL_WIDTH}
     />
@@ -38,14 +36,12 @@ const LocationAddressSection = ({
         name={LocationFormNames.City}
         label="City"
         required
-        hideColon
         layout="vertical"
       />
       <InputField
         name={LocationFormNames.Country}
         label="Country"
         required
-        hideColon
         layout="vertical"
         Component={SelectField}
         options={countryOptions}
@@ -55,7 +51,6 @@ const LocationAddressSection = ({
         name={LocationFormNames.PostalCode}
         label="Postal code"
         required={isUnitedStates}
-        hideColon
         layout="vertical"
       />
       {isUnitedStates ? (
@@ -63,7 +58,6 @@ const LocationAddressSection = ({
           name={LocationFormNames.State}
           label="State"
           required
-          hideColon
           layout="vertical"
           Component={SelectField}
           options={usStateOptions}
@@ -73,7 +67,6 @@ const LocationAddressSection = ({
         <InputField
           name={LocationFormNames.State}
           label="State"
-          hideColon
           layout="vertical"
         />
       )}
@@ -93,7 +86,6 @@ const LocationAddressSection = ({
         name={LocationFormNames.Latitude}
         label="Latitude"
         required
-        hideColon
         layout="vertical"
         type="number"
       />
@@ -101,7 +93,6 @@ const LocationAddressSection = ({
         name={LocationFormNames.Longitude}
         label="Longitude"
         required
-        hideColon
         layout="vertical"
         type="number"
       />

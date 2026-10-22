@@ -40,7 +40,6 @@ const LocationDetailsSection = ({
     <InputField
       name={LocationFormNames.Description}
       label="Description"
-      hideColon
       layout="vertical"
       hint="Additional details about this location that your customers should know."
       hintPosition="top"

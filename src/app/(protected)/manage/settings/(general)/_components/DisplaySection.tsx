@@ -71,7 +71,6 @@ const DisplaySection = () => (
       <InputField
         name={name(DisplayField.ShowProductPrice)}
         label="Show Product's Price?"
-        hideColon
         Component={CheckboxField}
         text="Yes, show the product's price in my store"
       />

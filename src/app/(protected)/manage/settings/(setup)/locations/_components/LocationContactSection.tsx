@@ -11,7 +11,6 @@ const LocationContactSection = () => (
     <InputField
       name={LocationFormNames.Phone}
       label="Phone"
-      hideColon
       layout="vertical"
       type="tel"
       controlClassName="max-w-[41.6rem]"
@@ -20,7 +19,6 @@ const LocationContactSection = () => (
       name={LocationFormNames.Email}
       label="Email"
       required
-      hideColon
       layout="vertical"
       type="email"
       controlClassName="max-w-[41.6rem]"

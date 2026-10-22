@@ -62,6 +62,7 @@ export default function Table<T>({
   onToggleRow,
   onToggleAll,
   selectAllInHeader = false,
+  isRowSelectable,
   hideRecordCount,
   rowActions,
   bulkActions,
@@ -85,7 +86,9 @@ export default function Table<T>({
   tableWrapperClassName,
   bottomPaginationClassName,
 }: TableProps<T>) {
-  const rowIds = data.map(getRowId);
+  const rowIds = (
+    isRowSelectable ? data.filter(isRowSelectable) : data
+  ).map(getRowId);
   const isAllSelected =
     rowIds.length > 0 && rowIds.every((id) => selectedIds.includes(id));
 
@@ -358,6 +361,7 @@ export default function Table<T>({
                         <TableCell>
                           <Checkbox
                             checked={selectedIds.includes(id)}
+                            disabled={isRowSelectable && !isRowSelectable(row)}
                             onCheckedChange={(checked: boolean) =>
                               onToggleRow?.(id, checked)
                             }

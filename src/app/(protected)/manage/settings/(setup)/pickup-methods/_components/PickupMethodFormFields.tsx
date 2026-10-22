@@ -14,7 +14,6 @@ const PickupMethodFormFields = ({ locations }: PickupMethodFormFieldsProps) => (
     <InputField
       name={PickupMethodFormNames.Name}
       label="Name"
-      hideColon
       layout="vertical"
       className={FIELD_WIDTH}
       labelClassName={labelClassName}
@@ -22,7 +21,6 @@ const PickupMethodFormFields = ({ locations }: PickupMethodFormFieldsProps) => (
     <InputField
       name={PickupMethodFormNames.LocationId}
       label="Location"
-      hideColon
       layout="vertical"
       Component={SelectField}
       options={locations}
@@ -35,7 +33,6 @@ const PickupMethodFormFields = ({ locations }: PickupMethodFormFieldsProps) => (
     <InputField
       name={PickupMethodFormNames.EstimatedReadyTime}
       label="Estimated ready-for-pickup time"
-      hideColon
       layout="vertical"
       hint="The expected time between an order being placed and a customer being able to pick it up."
       hintPosition="top"
@@ -45,7 +42,6 @@ const PickupMethodFormFields = ({ locations }: PickupMethodFormFieldsProps) => (
     <InputField
       name={PickupMethodFormNames.Instructions}
       label="Instruction message for pickup"
-      hideColon
       layout="vertical"
       hint="Let your customers know what to bring and do when they arrive at your store to pick up their order."
       hintPosition="top"

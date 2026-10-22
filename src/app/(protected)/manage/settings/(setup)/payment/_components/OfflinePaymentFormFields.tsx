@@ -13,7 +13,6 @@ const OfflinePaymentFormFields = ({ method }: OfflinePaymentFormFieldsProps) => 
       name={OfflinePaymentFormNames.DisplayName}
       label={method.displayNameLabel}
       required
-      hideColon
       layout="vertical"
       hint={method.displayNameHint}
       hintPosition="top"
@@ -25,7 +24,6 @@ const OfflinePaymentFormFields = ({ method }: OfflinePaymentFormFieldsProps) => 
       name={OfflinePaymentFormNames.AvailableCountries}
       label={method.countriesLabel}
       required
-      hideColon
       layout="vertical"
       hint={method.countriesHint}
       hintPosition="top"
@@ -41,7 +39,6 @@ const OfflinePaymentFormFields = ({ method }: OfflinePaymentFormFieldsProps) => 
       name={OfflinePaymentFormNames.Instructions}
       label={method.instructionsLabel}
       required
-      hideColon
       layout="vertical"
       hint={method.instructionsHint}
       hintPosition="top"

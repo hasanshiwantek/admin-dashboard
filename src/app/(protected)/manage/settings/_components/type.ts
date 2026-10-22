@@ -19,4 +19,5 @@ export interface SettingsCardProps {
   action?: ReactNode;
   children: ReactNode;
   className?: string;
+  titleClassName?: string;
 }
