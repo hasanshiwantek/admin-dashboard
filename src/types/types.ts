@@ -115,5 +115,6 @@ export type StoreItem = {
 };
 export interface Store {
   id: number;
+  storeHash: string;
   [key: string]: any;
 }
