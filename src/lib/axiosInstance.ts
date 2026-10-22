@@ -1,6 +1,6 @@
 import axios from "axios";
 import { errorMessage, successMessage } from "@/utils/message";
-import { getFromStorage, removeFromStorage } from "@/utils/storage";
+import { getFromStorage, getSelectedStore, removeFromStorage } from "@/utils/storage";
 
 const axiosInstance = axios.create({
   baseURL:
@@ -12,11 +12,15 @@ axiosInstance.interceptors.request.use((config) => {
   if (typeof window != "undefined") {
     const token = getFromStorage("token");
     const storeId = getFromStorage("storeId");
+    const storeHash = getSelectedStore()?.storeHash;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     if (storeId) {
       config.headers["storeId"] = Number(storeId);
+    }
+    if (storeHash) {
+      config.headers["X-Store-Hash"] = storeHash;
     }
   }
 
