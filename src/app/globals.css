@@ -67,6 +67,8 @@
   --color-sky-cyan-blue: var(--sky-cyan-blue);
   --color-deep-cobalt-blue: var(--deep-cobalt-blue);
   --color-crimson-red: var(--crimson-red);
+  --color-pale-ash-gray: var(--pale-ash-gray);
+  --color-smoky-gray: var(--smoky-gray);
 }
 
 :root {
@@ -142,6 +144,10 @@
   --deep-cobalt-blue: #0a66c2;
   /* strong deep red, e.g. Pinterest share button */
   --crimson-red: #e60023;
+  /* light neutral grey, e.g. form control borders */
+  --pale-ash-gray: #d1d0d4;
+  /* mid neutral grey, e.g. form control border hover */
+  --smoky-gray: #86848c;
 }
 
 *::before,

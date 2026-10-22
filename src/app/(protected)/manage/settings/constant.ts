@@ -17,11 +17,11 @@ const SetupSettingRoutes: SettingRoute[] = [
   //   description:
   //     "Currencies customers will see and be charged in at your store",
   // },
-  // {
-  //   id: "payments",
-  //   title: "Payments",
-  //   description: "Payment methods for the currencies you support in your store",
-  // },
+  {
+    id: "payment",
+    title: "Payments",
+    description: "Payment methods for the currencies you support in your store",
+  },
   // {
   //   id: "locations",
   //   title: "Locations",
