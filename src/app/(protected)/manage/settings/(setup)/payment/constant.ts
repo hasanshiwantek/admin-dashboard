@@ -5,7 +5,8 @@ import type {
   PaymentConfigFormValues,
   PaymentCurrencyFormValues,
 } from "./type";
-import { countriesHint, toTitleCase } from "./utils";
+import { toTitleCase } from "@/lib/utils";
+import { countriesHint } from "./utils";
 
 export const PAYMENT_ROUTE = "/manage/settings/payment";
 export const PAYMENT_METHODS_LEARN_MORE_URL =

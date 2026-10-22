@@ -22,12 +22,12 @@ const SetupSettingRoutes: SettingRoute[] = [
     title: "Payments",
     description: "Payment methods for the currencies you support in your store",
   },
-  // {
-  //   id: "locations",
-  //   title: "Locations",
-  //   description:
-  //     "Locations represent the physical places where you stock inventory",
-  // },
+  {
+    id: "locations",
+    title: "Locations",
+    description:
+      "Locations represent the physical places where you stock inventory",
+  },
   // {
   //   id: "pickup",
   //   title: "Pick up methods",

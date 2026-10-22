@@ -34,6 +34,11 @@ import {
   PaymentConfigFormNames,
   PaymentCurrencyFormNames,
 } from "@/app/(protected)/manage/settings/(setup)/payment/constant";
+import {
+  LocationFormNames,
+  OpeningHourFormNames,
+  SpecialHourFormNames,
+} from "@/app/(protected)/manage/settings/(setup)/locations/constant";
 import { BlogFormFieldName } from "@/app/components/blog/constant";
 import { MessageField } from "@/app/components/orders/message/helper/constant";
 import {
@@ -688,6 +693,70 @@ export const OfflinePaymentSchema = (infoName: string) =>
       .trim()
       .required(`${infoName} is required`),
   });
+// #endregion
+
+// #region Locations
+const coordinate = (label: string, max: number) =>
+  string()
+    .trim()
+    .required(`${label} is required`)
+    .test(
+      "coordinate",
+      `${label} must be between -${max} and ${max}`,
+      (value) =>
+        !value || (Number.isFinite(Number(value)) && Math.abs(Number(value)) <= max),
+    );
+
+export const LocationSchema = object({
+  [LocationFormNames.Name]: string().trim().required("Name is required"),
+  [LocationFormNames.Code]: text(),
+  [LocationFormNames.Address1]: string()
+    .trim()
+    .required("Address 1 is required"),
+  [LocationFormNames.Address2]: text(),
+  [LocationFormNames.City]: string().trim().required("City is required"),
+  [LocationFormNames.Country]: string().required("Country is required"),
+  [LocationFormNames.PostalCode]: string()
+    .trim()
+    .required("Postal code is required"),
+  [LocationFormNames.State]: string().trim().required("State is required"),
+  [LocationFormNames.Latitude]: coordinate("Latitude", 90),
+  [LocationFormNames.Longitude]: coordinate("Longitude", 180),
+  [LocationFormNames.Phone]: text(),
+  [LocationFormNames.Email]: string()
+    .trim()
+    .email("Enter a valid email address")
+    .required("Email is required"),
+  [LocationFormNames.ShowDetails]: flag(true),
+  [LocationFormNames.Description]: text(),
+  [LocationFormNames.OpeningHours]: array()
+    .of(
+      object({
+        [OpeningHourFormNames.Day]: string().required(),
+        [OpeningHourFormNames.Open]: flag(),
+        [OpeningHourFormNames.Opening]: text(),
+        [OpeningHourFormNames.Closing]: text(),
+      }),
+    )
+    .required()
+    .default([]),
+  [LocationFormNames.SpecialHours]: array()
+    .of(
+      object({
+        [SpecialHourFormNames.Name]: string()
+          .trim()
+          .required("Name is required"),
+        [SpecialHourFormNames.Date]: string().required("Date is required"),
+        [SpecialHourFormNames.Open]: flag(),
+        [SpecialHourFormNames.AllDay]: flag(),
+        [SpecialHourFormNames.Opening]: text(),
+        [SpecialHourFormNames.Closing]: text(),
+        [SpecialHourFormNames.Annual]: flag(),
+      }),
+    )
+    .required()
+    .default([]),
+});
 // #endregion
 
 // #endregion

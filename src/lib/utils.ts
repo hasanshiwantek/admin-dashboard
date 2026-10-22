@@ -215,5 +215,21 @@ export const createFormData = <T extends Record<string, any>>(
   return formData;
 };
 
+export const toNumber = (value: string) => (value ? Number(value) : null);
+
 export const toBoolean = (value: unknown): boolean =>
   value === "1" || value === 1 || value === "true" || value === true;
+
+const TITLE_CASE_LOWERCASE_WORDS = ["and", "of", "the"];
+
+// "ANTIGUA AND BARBUDA" -> "Antigua and Barbuda"
+export const toTitleCase = (text: string) =>
+  text
+    .toLowerCase()
+    .split(" ")
+    .map((word, index) =>
+      index > 0 && TITLE_CASE_LOWERCASE_WORDS.includes(word)
+        ? word
+        : word.charAt(0).toUpperCase() + word.slice(1),
+    )
+    .join(" ");
