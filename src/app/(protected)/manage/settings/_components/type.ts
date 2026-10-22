@@ -9,6 +9,8 @@ export interface SettingsNoticeProps {
 
 // Shared by several settings routes
 export interface SettingsCardProps {
+  /** Lets a side nav scroll to the card */
+  id?: string;
   title?: string;
   description?: ReactNode;
   /** Shown right after the title, e.g. a "New" badge */

@@ -188,9 +188,9 @@ li {
   @apply text-xl font-medium leading-relaxed tracking-wide;
 }
 
-span {
+/* span {
   @apply text-lg font-bold leading-relaxed tracking-wide text-[#5e637a];
-}
+} */
 
 p {
   color: #313440;

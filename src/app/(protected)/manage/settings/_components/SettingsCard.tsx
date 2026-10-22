@@ -4,6 +4,7 @@ import { SettingsCardProps } from "./type";
 
 // White card that groups related settings under a title
 const SettingsCard = ({
+  id,
   title,
   description,
   titleAdornment,
@@ -12,6 +13,7 @@ const SettingsCard = ({
   className,
 }: SettingsCardProps) => (
   <section
+    id={id}
     className={cn(
       "flex flex-col gap-5 rounded-sm border border-gray-200 bg-white p-10",
       className,

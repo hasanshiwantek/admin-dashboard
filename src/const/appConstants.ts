@@ -10,13 +10,46 @@ export enum UrlSettingEnums {
   CUSTOM = "custom",
 }
 
+// Every action a record can offer, e.g. in an ActionButton menu
 export enum ActionEnums {
+  // Create / change
   CREATE = "create",
-  UPDATE = "update",
-  DELETE = "delete",
-  DUPLICATE = "duplicate",
-  SAVE = "save",
   ADD = "add",
+  UPDATE = "update",
+  EDIT = "edit",
+  SAVE = "save",
+  DUPLICATE = "duplicate",
+  COPY = "copy",
+  RENAME = "rename",
+  MOVE = "move",
+  ASSIGN = "assign",
+  SET_DEFAULT = "set-default",
+
+  // Remove
+  DELETE = "delete",
+  ARCHIVE = "archive",
+  RESTORE = "restore",
+
+  // Status
+  ENABLE = "enable",
+  DISABLE = "disable",
+  PUBLISH = "publish",
+  UNPUBLISH = "unpublish",
+  APPROVE = "approve",
+  REJECT = "reject",
+  CANCEL = "cancel",
+  REFUND = "refund",
+
+  // View / share
+  VIEW = "view",
+  PREVIEW = "preview",
+  PRINT = "print",
+  DOWNLOAD = "download",
+  EXPORT = "export",
+  IMPORT = "import",
+  SHARE = "share",
+  SEND = "send",
+  RESEND = "resend",
 }
 
 export enum UserRolesEnum {

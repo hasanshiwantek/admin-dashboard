@@ -11,6 +11,10 @@ export interface PageTitleProps {
   onButtonClick?: () => void;
   icon?: ReactNode;
   hideActionButton?: boolean;
+  /** Shown right after the title, e.g. a status badge */
+  titleAdornment?: ReactNode;
+  /** Replaces the default action button, e.g. an actions menu */
+  action?: ReactNode;
   containerClassName?: string;
   textContainerClassName?: string;
   titleClassName?: string;
@@ -25,6 +29,8 @@ const PageTitle = ({
   onButtonClick,
   icon = <Plus className="w-6! h-6! mr-1!" />,
   hideActionButton,
+  titleAdornment,
+  action,
   containerClassName,
   textContainerClassName,
   titleClassName,
@@ -40,14 +46,17 @@ const PageTitle = ({
       )}
     >
       <div className={cn("flex flex-col gap-6 mb-5", textContainerClassName)}>
-        <h1
-          className={cn(
-            "text-5xl 2xl:text-[3.2rem] font-extralight text-gray-600",
-            titleClassName,
-          )}
-        >
-          {title}
-        </h1>
+        <div className="flex items-center gap-6">
+          <h1
+            className={cn(
+              "text-5xl 2xl:text-[3.2rem] font-extralight text-gray-600",
+              titleClassName,
+            )}
+          >
+            {title}
+          </h1>
+          {titleAdornment}
+        </div>
         {description && (
           <p
             className={cn("text-base text-gray-500", descriptionClassName)}
@@ -56,7 +65,8 @@ const PageTitle = ({
           </p>
         )}
       </div>
-      {!hideActionButton && (
+      {action}
+      {!action && !hideActionButton && (
         <Button
           size={size}
           onClick={onButtonClick}
