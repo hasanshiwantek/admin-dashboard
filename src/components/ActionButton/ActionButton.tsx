@@ -1,6 +1,5 @@
 "use client";
 
-import { ActionEnums } from "@/const/appConstants";
 import { ListRenderer } from "@/components/ListRenderer.tsx/ListRenderer";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,6 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ActionEnums } from "@/const/appConstants";
 import { cn } from "@/lib/utils";
 import { Ellipsis } from "lucide-react";
 import { ActionButtonProps } from "./type";
@@ -21,7 +21,7 @@ const ActionButton = <TData, TAction extends ActionEnums = ActionEnums>({
   label = "Actions",
   icon = <Ellipsis className="size-7" />,
   align = "end",
-  triggerClassName,
+  triggerProps,
   contentClassName,
 }: ActionButtonProps<TData, TAction>) => {
   const handleAction = onAction(data);
@@ -31,10 +31,10 @@ const ActionButton = <TData, TAction extends ActionEnums = ActionEnums>({
       <DropdownMenuTrigger asChild>
         <Button
           type="button"
-          variant="outline"
+          variant="ghost"
           size="icon"
           aria-label={label}
-          className={triggerClassName}
+          {...triggerProps}
         >
           {icon}
         </Button>

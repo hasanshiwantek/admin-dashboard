@@ -28,11 +28,11 @@ const SetupSettingRoutes: SettingRoute[] = [
     description:
       "Locations represent the physical places where you stock inventory",
   },
-  // {
-  //   id: "pickup",
-  //   title: "Pick up methods",
-  //   description: "Create and edit in-person pick up methods for online orders.",
-  // },
+  {
+    id: "pickup-methods",
+    title: "Pick up methods",
+    description: "Create and edit in-person pick up methods for online orders.",
+  },
   {
     id: "shipping",
     title: "Shipping",
