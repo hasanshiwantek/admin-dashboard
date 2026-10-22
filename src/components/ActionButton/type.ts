@@ -1,5 +1,6 @@
 import { ActionEnums } from "@/const/appConstants";
 import { ReactNode } from "react";
+import { ButtonProps } from "../ui/button";
 
 export interface ActionItem<TAction extends ActionEnums = ActionEnums> {
   type: TAction;
@@ -14,12 +15,10 @@ export interface ActionButtonProps<
 > {
   data: TData;
   actions: ActionItem<TAction>[];
-  /** Curried: called with the data, then with the picked action's type */
   onAction: (data: TData) => (action: TAction) => void;
-  /** Accessible name for the trigger */
   label?: string;
   icon?: ReactNode;
   align?: "start" | "center" | "end";
-  triggerClassName?: string;
+  triggerProps?: ButtonProps;
   contentClassName?: string;
 }

@@ -58,6 +58,9 @@ const LocationFormPage = () => {
             actions={locationActions}
             onAction={handleLocationAction}
             label="Location actions"
+            triggerProps={{
+              variant: "outline",
+            }}
           />
         ),
       }}

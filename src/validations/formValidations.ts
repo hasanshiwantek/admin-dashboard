@@ -39,6 +39,7 @@ import {
   OpeningHourFormNames,
   SpecialHourFormNames,
 } from "@/app/(protected)/manage/settings/(setup)/locations/constant";
+import { PickupMethodFormNames } from "@/app/(protected)/manage/settings/(setup)/pickup-methods/constant";
 import { BlogFormFieldName } from "@/app/components/blog/constant";
 import { MessageField } from "@/app/components/orders/message/helper/constant";
 import {
@@ -756,6 +757,21 @@ export const LocationSchema = object({
     )
     .required()
     .default([]),
+});
+// #endregion
+
+// #region Pickup Methods
+export const PickupMethodSchema = object({
+  [PickupMethodFormNames.Name]: string().trim().required("Name is required."),
+  [PickupMethodFormNames.LocationId]: string().required(
+    "Location is required.",
+  ),
+  [PickupMethodFormNames.EstimatedReadyTime]: string()
+    .trim()
+    .required("Estimated ready-for-pickup time is required."),
+  [PickupMethodFormNames.Instructions]: string()
+    .trim()
+    .required("Instruction message for pickup is required."),
 });
 // #endregion
 
