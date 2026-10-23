@@ -183,18 +183,18 @@ h3 {
   @apply text-xl font-light text-[#303540]; /* 1.2rem */
 }
 
-p,
+/* p,
 li {
   @apply text-xl font-medium leading-relaxed tracking-wide;
-}
+} */
 
 /* span {
   @apply text-lg font-bold leading-relaxed tracking-wide text-[#5e637a];
 } */
 
-p {
+/* p {
   color: #313440;
-}
+} */
 
 /* Buttons (Optional Custom Tailwind Styling) */
 

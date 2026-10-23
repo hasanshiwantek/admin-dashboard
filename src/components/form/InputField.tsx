@@ -14,7 +14,6 @@ import {
 } from "react-hook-form";
 import { useFormContext } from "./Form";
 import InputWrapper from "./InputWrapper";
-import { User } from "lucide-react";
 
 type InputFieldBaseProps<T extends FieldValues, C extends ElementType> = {
   name: FieldPath<T>;
@@ -110,6 +109,10 @@ export function InputField<
   const FieldControl = isTextArea ? Textarea : Component;
   const LabelAddon = (FieldControl as FieldComponentWithAddon).LabelAddon;
   const hintOnTop = !!hint && hintPosition === "top";
+  const controlWidthClassName =
+    beforeFieldComponent || afterFieldComponent
+      ? cn("max-w-none", (componentProps as { className?: string }).className)
+      : (componentProps as { className?: string }).className;
   const hintNode = hint && <p className="text-base text-gray-500">{hint}</p>;
 
   const handleChange = (input: unknown) => {
@@ -181,6 +184,7 @@ export function InputField<
             >
               <FieldControl
                 {...componentProps}
+                className={controlWidthClassName}
                 id={id}
                 aria-invalid={!!fieldState.error}
                 name={field.name}

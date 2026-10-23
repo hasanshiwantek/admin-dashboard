@@ -5,6 +5,7 @@ import { BasicTaxTab, defaultTaxZones, editTaxZoneRoute } from "../constant";
 import useBasicTaxShellContainer from "../sharedContainer";
 import { TaxZone } from "../type";
 import { getTaxZoneColumns } from "./columns";
+import { duplicateTaxZoneRoute, taxZoneRatesRoute } from "./constant";
 
 const useTaxZonesPageContainer = () => {
   const router = useRouter();
@@ -27,7 +28,12 @@ const useTaxZonesPageContainer = () => {
   const handleZoneAction = (zone: TaxZone) => (action: ActionEnums) => {
     switch (action) {
       case ActionEnums.EDIT:
+      case ActionEnums.EDIT_SETTINGS:
         return router.push(editTaxZoneRoute(zone.id));
+      case ActionEnums.EDIT_RATES:
+        return router.push(taxZoneRatesRoute(zone.id));
+      case ActionEnums.DUPLICATE:
+        return router.push(duplicateTaxZoneRoute(zone.id));
       case ActionEnums.DELETE:
         return setDeleteTarget(zone);
     }

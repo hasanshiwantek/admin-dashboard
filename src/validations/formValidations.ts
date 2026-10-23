@@ -44,6 +44,13 @@ import {
   TaxClassesFormNames,
   TaxClassRowFormNames,
 } from "@/app/(protected)/manage/settings/(setup)/tax/(basic)/constant";
+import {
+  TaxRateClassFormNames,
+  TaxRateFormNames,
+  TaxZoneAppliesTo,
+  TaxZoneBasedOn,
+  TaxZoneSettingsFormNames,
+} from "@/app/(protected)/manage/settings/(setup)/tax/(basic)/tax-zones/constant";
 import { BlogFormFieldName } from "@/app/components/blog/constant";
 import { MessageField } from "@/app/components/orders/message/helper/constant";
 import {
@@ -793,6 +800,81 @@ export const TaxClassesSchema = object({
     )
     .required()
     .default([]),
+});
+
+const stringList = () => array().of(string().required()).required().default([]);
+
+// The list a zone is "based on" must have entries; the other two are ignored
+const zoneListWhen = (basedOn: TaxZoneBasedOn, message: string) =>
+  stringList().when(TaxZoneSettingsFormNames.BasedOn, {
+    is: basedOn,
+    then: (schema) => schema.min(1, message),
+  });
+
+export const TaxZoneSettingsSchema = object({
+  [TaxZoneSettingsFormNames.Name]: string()
+    .trim()
+    .required("Tax zone name is required"),
+  [TaxZoneSettingsFormNames.BasedOn]: text(),
+  [TaxZoneSettingsFormNames.Countries]: zoneListWhen(
+    TaxZoneBasedOn.Countries,
+    "Select at least one country",
+  ),
+  [TaxZoneSettingsFormNames.SubdivisionCountry]: text(),
+  [TaxZoneSettingsFormNames.Subdivisions]: zoneListWhen(
+    TaxZoneBasedOn.Subdivisions,
+    "Select at least one subdivision",
+  ),
+  [TaxZoneSettingsFormNames.PostalCodeCountry]: text(),
+  [TaxZoneSettingsFormNames.PostalCodes]: text().when(
+    TaxZoneSettingsFormNames.BasedOn,
+    {
+      is: TaxZoneBasedOn.PostalCodes,
+      then: (schema) => schema.trim().required("Enter at least one postal code"),
+    },
+  ),
+  [TaxZoneSettingsFormNames.AppliesTo]: text(),
+  [TaxZoneSettingsFormNames.CustomerGroups]: stringList().when(
+    TaxZoneSettingsFormNames.AppliesTo,
+    {
+      is: TaxZoneAppliesTo.Groups,
+      then: (schema) => schema.min(1, "Select at least one customer group"),
+    },
+  ),
+  [TaxZoneSettingsFormNames.IsEnabled]: flag(true),
+  [TaxZoneSettingsFormNames.PriceDisplay]: text(),
+  [TaxZoneSettingsFormNames.ShowBothOnListing]: flag(),
+  [TaxZoneSettingsFormNames.ShowBothOnDetail]: flag(),
+});
+
+export const TaxRateSchema = object({
+  [TaxRateFormNames.Name]: string().trim().required("Tax rate name is required"),
+  [TaxRateFormNames.ClassRates]: array()
+    .of(
+      object({
+        [TaxRateClassFormNames.ClassId]: text(),
+        [TaxRateClassFormNames.ClassName]: text(),
+        // Blank means no rate for that class
+        [TaxRateClassFormNames.Rate]: text().test(
+          "percent",
+          "Enter a rate between 0 and 100",
+          (value) =>
+            !value ||
+            (!isNaN(Number(value)) && Number(value) >= 0 && Number(value) <= 100),
+        ),
+      }),
+    )
+    .required()
+    .default([]),
+  [TaxRateFormNames.Priority]: string()
+    .trim()
+    .required("Calculation priority is required")
+    .test(
+      "priority",
+      "Enter a whole number of 0 or more",
+      (value) => !value || /^\d+$/.test(value),
+    ),
+  [TaxRateFormNames.IsEnabled]: flag(true),
 });
 // #endregion
 

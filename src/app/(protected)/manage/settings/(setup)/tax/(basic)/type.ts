@@ -14,6 +14,17 @@ export interface TaxZone {
   zoneType: string;
   pricesIncludeTax: boolean;
   isEnabled: boolean;
+  // Zone settings form; see tax-zones/type.ts
+  basedOn?: string;
+  countries?: string[];
+  subdivisionCountry?: string;
+  subdivisions?: string[];
+  postalCodeCountry?: string;
+  postalCodes?: string[];
+  appliesTo?: string;
+  customerGroups?: string[];
+  showBothOnListing?: boolean;
+  showBothOnDetail?: boolean;
 }
 
 export type TaxClassesFormValues = yup.InferType<typeof TaxClassesSchema>;
