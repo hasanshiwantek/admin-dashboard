@@ -137,6 +137,27 @@ export const urlSettings = createAsyncThunk(
   }
 );
 
+// Regenerates existing URLs of one section with its saved format
+export const updateExistingUrls = createAsyncThunk(
+  "dashboard/url-settings/bulk-update",
+  async ({ data, sectionName }: {
+    data: { updateAll: boolean; createRedirects: boolean };
+    sectionName: "product" | "category" | "webpage";
+  }, thunkAPI) => {
+    try {
+      const response = await axiosInstance.post(
+        `dashboard/url-settings/${sectionName}/bulk-update`,
+        data
+      );
+      return response.data;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to update URLs"
+      );
+    }
+  }
+);
+
 // export const fetchUrlSettings = createAsyncThunk(
 //   "dashboard/url-settings/product",
 //   async (_, thunkAPI) => {

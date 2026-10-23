@@ -2,6 +2,9 @@
 
 import { useFormContext } from "@/components/form/Form";
 import InputField from "@/components/form/InputField";
+import { Button } from "@/components/ui/button";
+import { updateUrlsCopy } from "@/Modals/SettingsModals/UpdateUrlsModal/constant";
+import UpdateUrlsModal from "@/Modals/SettingsModals/UpdateUrlsModal/UpdateUrlsModal";
 import { useWatch } from "react-hook-form";
 import { GeneralSection, UrlFormat } from "../constant";
 import { fieldPath } from "../utils";
@@ -29,6 +32,16 @@ const UrlStructureCard = ({ section }: UrlStructureCardProps) => {
             disabled={format !== UrlFormat.Custom}
             placeholder={section.customPlaceholder}
             containerClassName="max-w-lg"
+          />
+        }
+        action={
+          <UpdateUrlsModal
+            section={section.apiSection}
+            trigger={
+              <Button type="button" variant="outline" size="xl" className="text-2xl">
+                {updateUrlsCopy[section.apiSection].title}...
+              </Button>
+            }
           />
         }
       />

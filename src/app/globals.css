@@ -345,7 +345,7 @@ img {
 
 @layer components {
   .error-message {
-    @apply text-sm font-medium text-error-msg!;
+    @apply text-[12px] font-medium text-error-msg!;
   }
   .validation-dot {
     @apply h-2.5 w-2.5 rounded-full bg-red-500 shadow-sm;

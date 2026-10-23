@@ -51,6 +51,16 @@ import {
   TaxZoneBasedOn,
   TaxZoneSettingsFormNames,
 } from "@/app/(protected)/manage/settings/(setup)/tax/(basic)/tax-zones/constant";
+import {
+  DnsRecordFormNames,
+  DnsSection,
+  MailForwardFormNames,
+  MailServerFormNames,
+  MailServerMode,
+  MxRecordFormNames,
+  WebHostFormNames,
+  ZoneDetailFormNames,
+} from "@/app/(protected)/manage/settings/(domain)/dns/constant";
 import { BlogFormFieldName } from "@/app/components/blog/constant";
 import { MessageField } from "@/app/components/orders/message/helper/constant";
 import {
@@ -63,6 +73,10 @@ import {
   WebPageField,
 } from "@/app/components/storefront/constants";
 import { ShippingAddressField } from "@/Modals/ShippingModals/ConfigureShippingAddressModal/constant";
+import {
+  UpdateUrlsFormNames,
+  UpdateUrlsScope,
+} from "@/Modals/SettingsModals/UpdateUrlsModal/constant";
 import { ChargeShippingType } from "@/Modals/ShippingModals/constant";
 import { FedExField } from "@/Modals/ShippingModals/FedExConfigModal/constant";
 import {
@@ -250,6 +264,13 @@ const customUrl = (formatField: UrlStructureField) =>
     is: UrlFormat.Custom,
     then: (schema) => schema.trim().required("Enter a custom URL format"),
   });
+
+export const UpdateUrlsSchema = object({
+  [UpdateUrlsFormNames.Scope]: string()
+    .oneOf(Object.values(UpdateUrlsScope))
+    .default(UpdateUrlsScope.NotCustomized),
+  [UpdateUrlsFormNames.CreateRedirects]: flag(true),
+});
 
 export const GeneralSettingsSchema = object({
   [GeneralSection.Website]: object({
@@ -875,6 +896,108 @@ export const TaxRateSchema = object({
       (value) => !value || /^\d+$/.test(value),
     ),
   [TaxRateFormNames.IsEnabled]: flag(true),
+});
+// #endregion
+
+// #endregion
+
+// #region Domain Settings
+
+// #region DNS
+const positiveWholeNumber = (label: string) =>
+  string()
+    .trim()
+    .required(`${label} is required`)
+    .test("whole", `${label} must be a whole number above 0`, (value) =>
+      !value || (/^\d+$/.test(value) && Number(value) > 0),
+    );
+
+export const DnsSettingsSchema = object({
+  [DnsSection.MailServers]: object({
+    [MailServerFormNames.Mode]: text(),
+    // Forwarding rows only matter when forwarding is the chosen option
+    [MailServerFormNames.Forwards]: array()
+      .of(
+        object({
+          [MailForwardFormNames.DisplayAddress]: text(),
+          [MailForwardFormNames.ForwardTo]: text(),
+        }),
+      )
+      .required()
+      .default([])
+      .when(MailServerFormNames.Mode, {
+        is: MailServerMode.Forward,
+        then: (schema) =>
+          schema.of(
+            object({
+              [MailForwardFormNames.DisplayAddress]: string()
+                .trim()
+                .required("Display address is required")
+                .matches(/^[^\s@]+$/, "Enter only the part before the @"),
+              [MailForwardFormNames.ForwardTo]: string()
+                .trim()
+                .email("Enter a valid email address")
+                .required("Forward email is required"),
+            }),
+          ),
+      }),
+    // MX rows only matter when an external email host is the chosen option
+    [MailServerFormNames.MxRecords]: array()
+      .of(
+        object({
+          [MxRecordFormNames.Host]: text(),
+          [MxRecordFormNames.Value]: text(),
+          [MxRecordFormNames.Ttl]: text(),
+          [MxRecordFormNames.Priority]: text(),
+        }),
+      )
+      .required()
+      .default([])
+      .when(MailServerFormNames.Mode, {
+        is: MailServerMode.External,
+        then: (schema) =>
+          schema.of(
+            object({
+              [MxRecordFormNames.Host]: string()
+                .trim()
+                .required("Host is required"),
+              [MxRecordFormNames.Value]: string()
+                .trim()
+                .required("Mail server is required"),
+              [MxRecordFormNames.Ttl]: positiveWholeNumber("Time to live"),
+              // Blank falls back to the default priority
+              [MxRecordFormNames.Priority]: text().test(
+                "priority",
+                "Priority must be a whole number",
+                (value) => !value || /^\d+$/.test(value),
+              ),
+            }),
+          ),
+      }),
+  }),
+  [DnsSection.WebHosts]: object({
+    [WebHostFormNames.Records]: array()
+      .of(
+        object({
+          [DnsRecordFormNames.RecordId]: text(),
+          [DnsRecordFormNames.Type]: string().required("Type is required"),
+          [DnsRecordFormNames.Host]: string().trim().required("Host is required"),
+          [DnsRecordFormNames.Value]: string()
+            .trim()
+            .required("Value is required"),
+          [DnsRecordFormNames.Ttl]: positiveWholeNumber("Time to live"),
+          [DnsRecordFormNames.IsManaged]: flag(),
+        }),
+      )
+      .required()
+      .default([]),
+  }),
+  [DnsSection.ZoneDetails]: object({
+    [ZoneDetailFormNames.Refresh]: positiveWholeNumber("Refresh"),
+    [ZoneDetailFormNames.Retry]: positiveWholeNumber("Retry"),
+    [ZoneDetailFormNames.Expire]: positiveWholeNumber("Expire"),
+    [ZoneDetailFormNames.Minimum]: positiveWholeNumber("Minimum"),
+  }),
 });
 // #endregion
 

@@ -52,7 +52,12 @@ export function Form<T extends FieldValues, TTransformed = T>({
     <FormContext.Provider value={form as AnyForm}>
       <form
         noValidate
-        onSubmit={form.handleSubmit(onSubmit, onInvalid)}
+        // A modal's form is portaled but still a React child of the page's
+        // form, so its submit would bubble up and submit the page too
+        onSubmit={(event) => {
+          event.stopPropagation();
+          return form.handleSubmit(onSubmit, onInvalid)(event);
+        }}
         className={cn("flex flex-col", footer !== false && "pb-28", className)}
       >
         <div
