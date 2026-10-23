@@ -8,7 +8,7 @@ export const fetchOrderMessages = createAsyncThunk(
     "orderMessage/fetchAll",
     async ({ orderId }: { orderId: string | number }, thunkAPI) => {
         try {
-            const res = await axiosInstance.get(`web/customer-messages/admin-messages?order_id=${orderId}`);
+            const res = await axiosInstance.get(`dashboard/customer-messages/admin-messages?order_id=${orderId}`);
             return res?.data;
         } catch (err: any) {
             return thunkAPI.rejectWithValue(
@@ -26,7 +26,7 @@ export const sendOrderMessage = createAsyncThunk(
     ) => {
         try {
             const res = await axiosInstance.post(
-                `web/customer-messages/admin-reply`,
+                `dashboard/customer-messages/admin-reply`,
                 data
             );
             return res?.data;
@@ -46,7 +46,7 @@ export const markMessageStatus = createAsyncThunk(
     ) => {
         try {
             const res = await axiosInstance.post(
-                `web/customer-messages/mark-read`,
+                `dashboard/customer-messages/mark-read`,
                 // `dashboard/orders/${orderId}/messages/${id}/status`,
                 { ids: messageId }
             );
@@ -67,7 +67,7 @@ export const unreadMessageStatus = createAsyncThunk(
     ) => {
         try {
             const res = await axiosInstance.post(
-                `web/customer-messages/mark-unread`,
+                `dashboard/customer-messages/mark-unread`,
                 { ids: messageId }
             );
             return res?.data;
@@ -87,7 +87,7 @@ export const toggleFlagHeaders = createAsyncThunk(
     ) => {
         try {
             const res = await axiosInstance.post(
-                `web/customer-messages/toggle-flag`,
+                `dashboard/customer-messages/toggle-flag`,
                 { ids: messageId, flag }
             );
             return res?.data;
@@ -102,7 +102,7 @@ export const getMessageById = createAsyncThunk(
     "orderMessage/getMessageById",
     async ({ id }: { id: any }, thunkAPI) => {
         try {
-            const res = await axiosInstance.get(`web/customer-messages/show/${id}`);
+            const res = await axiosInstance.get(`dashboard/customer-messages/show/${id}`);
             return res?.data;
         } catch (err: any) {
             return thunkAPI.rejectWithValue(
@@ -132,7 +132,7 @@ export const deleteOrderMessages = createAsyncThunk(
     ) => {
         try {
             const res = await axiosInstance.post(
-                `web/customer-messages/delete`,
+                `dashboard/customer-messages/delete`,
                 { ids }
             );
             return res?.data;
@@ -149,7 +149,7 @@ export const updateMessage = createAsyncThunk(
     async ({ id, data }: { id: any; data: any }, thunkAPI) => {
         try {
             const res = await axiosInstance.put(
-                `web/customer-messages/update/${id}`,
+                `dashboard/customer-messages/update/${id}`,
                 data
             );
             return res?.data;
