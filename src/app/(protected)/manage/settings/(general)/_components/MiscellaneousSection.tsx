@@ -17,6 +17,8 @@ import { fieldPath } from "../utils";
 import InlineFieldRow from "./InlineFieldRow";
 import SettingsCard from "../../_components/SettingsCard";
 import SettingsNotice from "../../_components/SettingsNotice";
+import { CircleHelp } from "lucide-react";
+import HelpTooltip from "@/components/HelpTooltip/HelpTooltip";
 
 const TRANSACTIONAL_EMAILS_ROUTE = "/manage/marketing/transactional-emails";
 const HINT_CLASS = "pt-3 text-[1.4rem]! text-gray-700!";
@@ -92,6 +94,13 @@ const MiscellaneousSection = () => {
           type="email"
           placeholder="info@example.com"
           controlClassName="max-w-md"
+          afterFieldComponent={
+            <HelpTooltip
+              side="right"
+              content="The email address where all system notifications should be sent to."
+              iconClassName="fill-muted-plum-gray"
+            />
+          }
         />
         <InputField
           name={name(MiscellaneousField.RequireMarketingConsent)}
@@ -144,6 +153,13 @@ const MiscellaneousSection = () => {
           type="email"
           placeholder="info@example.com"
           controlClassName="max-w-md"
+          afterFieldComponent={
+            <HelpTooltip
+              side="right"
+              content="Who should these abandoned and converted emails be sent to? Enter a single email address here."
+              iconClassName="fill-muted-plum-gray"
+            />
+          }
         />
       </SettingsCard>
 
@@ -167,6 +183,13 @@ const MiscellaneousSection = () => {
           type="number"
           min={1}
           controlClassName="max-w-xs"
+          afterFieldComponent={
+            <HelpTooltip
+              side="right"
+             content="Set the order number that the next order placed in your store will receive."
+              iconClassName="fill-muted-plum-gray"
+            />
+          }
         />
       </SettingsCard>
 

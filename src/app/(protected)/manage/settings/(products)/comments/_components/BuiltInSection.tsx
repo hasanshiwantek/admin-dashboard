@@ -35,6 +35,7 @@ const BuiltInSection = () => (
         options={commentTargetOptions}
         showSelectAll
         className="h-[17rem]"
+        showColon = {true}
       />
       <InputField
         name={CommentSettingsFormNames.OnlyPastCustomers}

@@ -12,6 +12,7 @@ const GeneralSettingsSection = () => (
       options={commentSystemOptions}
       className="h-[19rem] max-w-[42rem] content-start gap-0 rounded-sm border border-gray-300 bg-white p-3"
       optionClassName="gap-4 text-[1.4rem]! text-gray-800"
+      showColon ={true}
     />
   </SettingsCard>
 );

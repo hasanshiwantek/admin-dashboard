@@ -10,8 +10,12 @@ import {
   stockLevelDisplayOptions,
 } from "../constant";
 import { StockLevelSectionProps } from "./type";
+import { CircleHelp } from "lucide-react";
+import HelpTooltip from "@/components/HelpTooltip/HelpTooltip";
 
-const StockLevelSection = ({ showPreOrderInventory }: StockLevelSectionProps) => (
+const StockLevelSection = ({
+  showPreOrderInventory,
+}: StockLevelSectionProps) => (
   <SettingsCard title="Stock level">
     <InputField
       name={InventoryFormNames.StockLevelDisplay}
@@ -22,6 +26,13 @@ const StockLevelSection = ({ showPreOrderInventory }: StockLevelSectionProps) =>
       options={stockLevelDisplayOptions}
       labelClassName={FIELD_LABEL_CLASS}
       controlClassName={FIELD_CONTROL_CLASS}
+      labelEndComponent={
+        <HelpTooltip
+          side="right"
+        content="Showing shoppers that stock is running low encourages them to buy sooner rather than later."
+          iconClassName="fill-muted-plum-gray"
+        />
+      }
     />
     {showPreOrderInventory && (
       <InputField
@@ -37,6 +48,13 @@ const StockLevelSection = ({ showPreOrderInventory }: StockLevelSectionProps) =>
       layout="vertical"
       labelClassName={FIELD_LABEL_CLASS}
       controlClassName={FIELD_CONTROL_CLASS}
+      labelEndComponent={
+        <HelpTooltip
+          side="right"
+          content="This is the message shoppers will see when a product is out of stock."
+          iconClassName="fill-muted-plum-gray"
+        />
+      }
     />
     <InputField
       name={InventoryFormNames.ShowOutOfStockOnListing}

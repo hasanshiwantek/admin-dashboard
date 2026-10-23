@@ -7,6 +7,8 @@ import {
   OrderNotificationFormNames,
 } from "../constant";
 
+import HelpTooltip from "@/components/HelpTooltip/HelpTooltip";
+
 const GeneralSettingsSection = () => (
   <SettingsCard title="Notification Settings">
     <InputField
@@ -15,6 +17,25 @@ const GeneralSettingsSection = () => (
       Component={CheckboxListField}
       options={notificationMethodOptions}
       className="h-[17rem]"
+      showColon={true}
+      afterFieldComponent={
+        <HelpTooltip
+          side="right"
+          content={
+            <div className="flex flex-col gap-1">
+              <strong>Notification Methods</strong>
+              <p>
+                Choose a list of notification methods to trigger when your store
+                receives a new order. You can choose multiple notification
+                methods if required.
+              </p>
+              <p>When you click</p>
+            </div>
+          }
+          iconClassName="fill-muted-plum-gray"
+        />
+      }
+      controlClassName="max-w-2xl!"
     />
     <InputField
       name={OrderNotificationFormNames.CustomerEmailStatuses}
@@ -22,6 +43,24 @@ const GeneralSettingsSection = () => (
       Component={CheckboxListField}
       options={customerEmailStatusOptions}
       className="h-[17rem]"
+      showColon={true}
+      afterFieldComponent={
+        <HelpTooltip
+          side="right"
+          content={
+            <div className="flex flex-col gap-1">
+              <strong>Email customers when</strong>
+              <p>
+                When changing the status of an order an email can be sent to the
+                customer automatically to notify him/her of the change. Choose
+                which statuses you
+              </p>
+            </div>
+          }
+          iconClassName="fill-muted-plum-gray"
+        />
+      }
+      controlClassName="max-w-2xl!"
     />
   </SettingsCard>
 );
