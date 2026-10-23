@@ -60,5 +60,5 @@ export const CategoryFormDefaults: FormVals = {
   seo_meta_description: "",
   seo_search_keywords: "",
   image: null,
-  channel: currentStore?.id!,
+  channel: currentStore?.id as number,
 };
