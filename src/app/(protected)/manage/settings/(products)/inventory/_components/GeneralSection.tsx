@@ -16,6 +16,7 @@ import {
 } from "../constant";
 import { GeneralSectionProps } from "./type";
 import { CircleHelp } from "lucide-react";
+import HelpTooltip from "@/components/HelpTooltip/HelpTooltip";
 
 const GeneralSection = ({
   showHideInFiltering,
@@ -31,9 +32,22 @@ const GeneralSection = ({
       options={productUnavailableOptions}
       labelClassName={FIELD_LABEL_CLASS}
       controlClassName={FIELD_CONTROL_CLASS}
-        labelEndComponent={
-          <CircleHelp className="w-6 h-6 text-muted-foreground" />
-        }
+      labelEndComponent={
+        <HelpTooltip
+          side="right"
+          content={
+            <div className="flex flex-col gap-1">
+              <p>
+                The total amount of inventory available to sell is the sum of
+                &quot;on hand&quot; stock and the &quot;backorder limit&quot;,
+                minus any &quot;safety stock&quot; and &quot;qty
+                backordered&quot;.
+              </p>
+            </div>
+          }
+          iconClassName="fill-muted-plum-gray"
+        />
+      }
     />
     <InputField
       name={InventoryFormNames.OptionUnavailableAction}
@@ -44,9 +58,23 @@ const GeneralSection = ({
       options={optionUnavailableOptions}
       labelClassName={FIELD_LABEL_CLASS}
       controlClassName={FIELD_CONTROL_CLASS}
-       labelEndComponent={
-          <CircleHelp className="w-6 h-6 text-muted-foreground" />
-        }
+      labelEndComponent={
+        <HelpTooltip
+          side="right"
+          content={
+            <div className="flex flex-col gap-1">
+              <p>
+                Available to Sell (ATS) is a calculated value that represents
+                the quantity of inventory that can be currently sold to
+                customers. It is calculated as: Quantity on Hand + (Sum of
+                Additions) - (Sum of Deductions). ATS defaults to zero if the
+                calculation results in less than zero.
+              </p>
+            </div>
+          }
+          iconClassName="fill-muted-plum-gray"
+        />
+      }
     />
     {showHideInFiltering && (
       <InputField
@@ -68,9 +96,9 @@ const GeneralSection = ({
     />
     {showBackorderNotice && (
       <SettingsNotice showIcon>
-        Backordering functionality is not compatible with this option. To
-        ensure accurate inventory tracking, please update stock levels when the
-        order is placed.{" "}
+        Backordering functionality is not compatible with this option. To ensure
+        accurate inventory tracking, please update stock levels when the order
+        is placed.{" "}
         <Link
           href={BACKORDERS_LEARN_MORE_URL}
           target="_blank"

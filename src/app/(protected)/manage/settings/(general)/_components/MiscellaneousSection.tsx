@@ -18,6 +18,7 @@ import InlineFieldRow from "./InlineFieldRow";
 import SettingsCard from "../../_components/SettingsCard";
 import SettingsNotice from "../../_components/SettingsNotice";
 import { CircleHelp } from "lucide-react";
+import HelpTooltip from "@/components/HelpTooltip/HelpTooltip";
 
 const TRANSACTIONAL_EMAILS_ROUTE = "/manage/marketing/transactional-emails";
 const HINT_CLASS = "pt-3 text-[1.4rem]! text-gray-700!";
@@ -93,9 +94,20 @@ const MiscellaneousSection = () => {
           type="email"
           placeholder="info@example.com"
           controlClassName="max-w-md"
-           afterFieldComponent={
-              <CircleHelp  className="w-6 h-6 text-muted-foreground" />
-            }
+          afterFieldComponent={
+            <HelpTooltip
+              side="right"
+              content={
+                <div className="flex flex-col gap-1">
+                  <p>
+                    The email address where all system notifications should be
+                    sent to.
+                  </p>
+                </div>
+              }
+              iconClassName="fill-muted-plum-gray"
+            />
+          }
         />
         <InputField
           name={name(MiscellaneousField.RequireMarketingConsent)}
@@ -148,9 +160,20 @@ const MiscellaneousSection = () => {
           type="email"
           placeholder="info@example.com"
           controlClassName="max-w-md"
-           afterFieldComponent={
-              <CircleHelp  className="w-6 h-6 text-muted-foreground" />
-            }
+          afterFieldComponent={
+            <HelpTooltip
+              side="right"
+              content={
+                <div className="flex flex-col gap-1">
+                  <p>
+                    Who should these abandoned and converted emails be sent to?
+                    Enter a single email address here.
+                  </p>
+                </div>
+              }
+              iconClassName="fill-muted-plum-gray"
+            />
+          }
         />
       </SettingsCard>
 
@@ -174,9 +197,20 @@ const MiscellaneousSection = () => {
           type="number"
           min={1}
           controlClassName="max-w-xs"
-           afterFieldComponent={
-              <CircleHelp  className="w-6 h-6 text-muted-foreground" />
-            }
+          afterFieldComponent={
+            <HelpTooltip
+              side="right"
+              content={
+                <div className="flex flex-col gap-1">
+                  <p>
+                    Set the order number that the next order placed in your
+                    store will receive.
+                  </p>
+                </div>
+              }
+              iconClassName="fill-muted-plum-gray"
+            />
+          }
         />
       </SettingsCard>
 

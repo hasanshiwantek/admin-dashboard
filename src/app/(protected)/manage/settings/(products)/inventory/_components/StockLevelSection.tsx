@@ -11,8 +11,11 @@ import {
 } from "../constant";
 import { StockLevelSectionProps } from "./type";
 import { CircleHelp } from "lucide-react";
+import HelpTooltip from "@/components/HelpTooltip/HelpTooltip";
 
-const StockLevelSection = ({ showPreOrderInventory }: StockLevelSectionProps) => (
+const StockLevelSection = ({
+  showPreOrderInventory,
+}: StockLevelSectionProps) => (
   <SettingsCard title="Stock level">
     <InputField
       name={InventoryFormNames.StockLevelDisplay}
@@ -23,9 +26,20 @@ const StockLevelSection = ({ showPreOrderInventory }: StockLevelSectionProps) =>
       options={stockLevelDisplayOptions}
       labelClassName={FIELD_LABEL_CLASS}
       controlClassName={FIELD_CONTROL_CLASS}
-       labelEndComponent={
-          <CircleHelp className="w-6 h-6 text-muted-foreground" />
-        }
+      labelEndComponent={
+        <HelpTooltip
+          side="right"
+          content={
+            <div className="flex flex-col gap-1">
+              <p>
+                Showing shoppers that stock is running low encourages them to
+                buy sooner rather than later.
+              </p>
+            </div>
+          }
+          iconClassName="fill-muted-plum-gray"
+        />
+      }
     />
     {showPreOrderInventory && (
       <InputField
@@ -41,9 +55,20 @@ const StockLevelSection = ({ showPreOrderInventory }: StockLevelSectionProps) =>
       layout="vertical"
       labelClassName={FIELD_LABEL_CLASS}
       controlClassName={FIELD_CONTROL_CLASS}
-       labelEndComponent={
-          <CircleHelp className="w-6 h-6 text-muted-foreground" />
-        }
+      labelEndComponent={
+        <HelpTooltip
+          side="right"
+          content={
+            <div className="flex flex-col gap-1">
+              <p>
+                This is the message shoppers will see when a product is out of
+                stock.
+              </p>
+            </div>
+          }
+          iconClassName="fill-muted-plum-gray"
+        />
+      }
     />
     <InputField
       name={InventoryFormNames.ShowOutOfStockOnListing}

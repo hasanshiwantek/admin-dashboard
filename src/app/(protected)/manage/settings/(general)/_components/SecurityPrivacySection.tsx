@@ -20,6 +20,7 @@ import InlineFieldRow from "./InlineFieldRow";
 import SettingsCard from "../../_components/SettingsCard";
 import SettingsNotice from "../../_components/SettingsNotice";
 import { CircleHelp, Info } from "lucide-react";
+import HelpTooltip from "@/components/HelpTooltip/HelpTooltip";
 
 const name = (field: SecurityPrivacyField) =>
   fieldPath(GeneralSection.SecurityPrivacy, field);
@@ -65,7 +66,6 @@ const SecurityPrivacySection = () => {
               min={1}
               layout="vertical"
               className="w-24"
-              
             />
             <InputField
               name={name(SecurityPrivacyField.CustomLogoutDurationUnit)}
@@ -82,7 +82,6 @@ const SecurityPrivacySection = () => {
           label="Shopper activity extends logout duration"
           Component={CheckboxField}
           text="Yes, extend my shoppers' logout duration while they are active"
-          
         />
       </SettingsCard>
 
@@ -93,9 +92,20 @@ const SecurityPrivacySection = () => {
           Component={SelectField}
           options={controlPanelTimeoutOptions}
           controlClassName="max-w-xs"
-           afterFieldComponent={
-    <CircleHelp  className="w-6 h-6 text-muted-foreground" />
-  }
+          afterFieldComponent={
+            <HelpTooltip
+              side="right"
+              content={
+                <div className="flex flex-col gap-1">
+                  <p>
+                    This is how long you can work in the BigCommerce control
+                    panel without being logged out for security reasons.
+                  </p>
+                </div>
+              }
+              iconClassName="fill-muted-plum-gray"
+            />
+          }
         />
         <InputField
           name={name(SecurityPrivacyField.EnableRecaptchaStorefront)}
@@ -111,20 +121,48 @@ const SecurityPrivacySection = () => {
               label="reCAPTCHA Site Key"
               placeholder="(Site Key)"
               controlClassName="max-w-md"
-              showColon ={true}
-                   afterFieldComponent={
-    <CircleHelp  className="w-6 h-6 text-muted-foreground" />
-  }
+              showColon={true}
+              afterFieldComponent={
+                <HelpTooltip
+                  side="right"
+                  content={
+                    <div className="flex flex-col gap-1">
+                      <strong>reCAPTCHA Site Key?</strong>
+                      <p>
+                        By entering the reCAPTCHA keys, these keys will be used
+                        for all reCAPTCHA in your store. If these keys are not
+                        specified, the BigCommerce reCAPTCHA keys will be used
+                        instead.
+                      </p>
+                    </div>
+                  }
+                  iconClassName="fill-muted-plum-gray"
+                />
+              }
             />
             <InputField
               name={name(SecurityPrivacyField.RecaptchaSecretKey)}
               label="reCAPTCHA Secret Key"
               placeholder="(Secret Key)"
               controlClassName="max-w-md"
-                 showColon ={true}
-                 afterFieldComponent={
-    <CircleHelp  className="w-6 h-6 text-muted-foreground" />
-  }
+              showColon={true}
+              afterFieldComponent={
+                <HelpTooltip
+                  side="right"
+                  content={
+                    <div className="flex flex-col gap-1">
+                      <strong>reCAPTCHA Secret Key?</strong>
+                      <p>
+                        By entering the reCAPTCHA keys, these keys will be used
+                        for all reCAPTCHA in your store. If these keys are not
+                        specified, the BigCommerce reCAPTCHA keys will be used
+                        instead.
+                      </p>
+                    </div>
+                  }
+                  iconClassName="fill-muted-plum-gray"
+                />
+              }
             />
           </>
         )}
