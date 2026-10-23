@@ -1,21 +1,17 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
 import { usePermissions } from "@/hooks/usePermissions";
-import { getFromStorage } from "@/utils/storage";
 import {
   AccessContext,
   AccessRule,
-  filterByAccess as filterItems,
   hasAccess as checkItem,
+  filterByAccess as filterItems,
 } from "@/utils/access";
+import { getFromStorage } from "@/utils/storage";
+import { useCallback, useEffect, useState } from "react";
 
 type AccessData = AccessContext["data"];
 
-// Binds permissions so callers only pass items.
-// Checks run against `data` (any object, e.g. an API response);
-// falls back to the logged-in user when no data is given.
-// A per-call `data` overrides the hook-level one.
 export function useAccess(data?: AccessData) {
   const { can, loaded } = usePermissions();
   const [user, setUser] = useState<AccessData>(null);

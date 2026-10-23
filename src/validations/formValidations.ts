@@ -18,12 +18,65 @@ import {
   UrlStructureField,
   WebsiteField,
 } from "@/app/(protected)/manage/settings/(general)/constant";
+import { PromotionSettingsFormNames } from "@/app/(protected)/manage/settings/(marketing)/promotions/constant";
+import { OrderNotificationFormNames } from "@/app/(protected)/manage/settings/(orders)/order-notifications/constant";
+import { isEmailEnabled } from "@/app/(protected)/manage/settings/(orders)/order-notifications/utils";
+import { OrderStatusesFormNames } from "@/app/(protected)/manage/settings/(orders)/order-statuses/constant";
+import { ReturnSettingsFormNames } from "@/app/(protected)/manage/settings/(orders)/return-settings/constant";
+import { CommentSettingsFormNames } from "@/app/(protected)/manage/settings/(products)/comments/constant";
+import { GiftWrappingFormNames } from "@/app/(protected)/manage/settings/(products)/gift-wrapping/constant";
+import {
+  BackorderMessageFormNames,
+  InventoryFormNames,
+} from "@/app/(protected)/manage/settings/(products)/inventory/constant";
+import {
+  OfflinePaymentFormNames,
+  PaymentConfigFormNames,
+  PaymentCurrencyFormNames,
+} from "@/app/(protected)/manage/settings/(setup)/payment/constant";
+import {
+  LocationFormNames,
+  OpeningHourFormNames,
+  SpecialHourFormNames,
+} from "@/app/(protected)/manage/settings/(setup)/locations/constant";
+import { PickupMethodFormNames } from "@/app/(protected)/manage/settings/(setup)/pickup-methods/constant";
+import {
+  TaxClassesFormNames,
+  TaxClassRowFormNames,
+} from "@/app/(protected)/manage/settings/(setup)/tax/(basic)/constant";
+import {
+  TaxRateClassFormNames,
+  TaxRateFormNames,
+  TaxZoneAppliesTo,
+  TaxZoneBasedOn,
+  TaxZoneSettingsFormNames,
+} from "@/app/(protected)/manage/settings/(setup)/tax/(basic)/tax-zones/constant";
+import {
+  DnsRecordFormNames,
+  DnsSection,
+  MailForwardFormNames,
+  MailServerFormNames,
+  MailServerMode,
+  MxRecordFormNames,
+  WebHostFormNames,
+  ZoneDetailFormNames,
+} from "@/app/(protected)/manage/settings/(domain)/dns/constant";
 import { BlogFormFieldName } from "@/app/components/blog/constant";
+import { MessageField } from "@/app/components/orders/message/helper/constant";
+import {
+  RatingValue,
+  ReviewField,
+  ReviewStatus,
+} from "@/app/components/products/reviews/edit/helper/constant";
 import {
   PageTypeEnums,
   WebPageField,
 } from "@/app/components/storefront/constants";
 import { ShippingAddressField } from "@/Modals/ShippingModals/ConfigureShippingAddressModal/constant";
+import {
+  UpdateUrlsFormNames,
+  UpdateUrlsScope,
+} from "@/Modals/SettingsModals/UpdateUrlsModal/constant";
 import { ChargeShippingType } from "@/Modals/ShippingModals/constant";
 import { FedExField } from "@/Modals/ShippingModals/FedExConfigModal/constant";
 import {
@@ -31,7 +84,17 @@ import {
   ShipByWeightField,
 } from "@/Modals/ShippingModals/ShipByWeightModal/constant";
 import { DisplayNameField } from "@/Modals/ShippingModals/ShippingQuotesDisplayNameModal/constant";
-import { array, boolean, date, mixed, number, object, ref, string } from "yup";
+import {
+  array,
+  boolean,
+  date,
+  InferType,
+  mixed,
+  number,
+  object,
+  ref,
+  string,
+} from "yup";
 
 export const BannerSchema = object({
   [BannerField.Title]: string().trim().required("Banner name is required"),
@@ -202,6 +265,13 @@ const customUrl = (formatField: UrlStructureField) =>
     then: (schema) => schema.trim().required("Enter a custom URL format"),
   });
 
+export const UpdateUrlsSchema = object({
+  [UpdateUrlsFormNames.Scope]: string()
+    .oneOf(Object.values(UpdateUrlsScope))
+    .default(UpdateUrlsScope.NotCustomized),
+  [UpdateUrlsFormNames.CreateRedirects]: flag(true),
+});
+
 export const GeneralSettingsSchema = object({
   [GeneralSection.Website]: object({
     [WebsiteField.HomePageTitle]: text(),
@@ -337,6 +407,27 @@ export const GeneralSettingsSchema = object({
 
 // ─── Admin users (add / edit) ─────────────────────────────────
 
+// ─── Order notifications ──────────────────────────────────────
+
+export const OrderNotificationSchema = object({
+  [OrderNotificationFormNames.Methods]: array()
+    .of(string().required())
+    .default([]),
+  [OrderNotificationFormNames.CustomerEmailStatuses]: array()
+    .of(string().required())
+    .default([]),
+  // Needed only while the "Email Message" method is enabled
+  [OrderNotificationFormNames.EmailAddress]: text()
+    .trim()
+    .when(OrderNotificationFormNames.Methods, {
+      is: (methods?: string[]) => isEmailEnabled(methods),
+      then: (schema) =>
+        schema
+          .required("Email address is required")
+          .email("Enter a valid email address"),
+    }),
+});
+
 export const AdminUserSchema = object({
   [UserField.FirstName]: string().trim().required("First name is required"),
   [UserField.LastName]: string().trim().required("Last name is required"),
@@ -370,6 +461,84 @@ export const BlogSchema = object({
   [BlogFormFieldName.Thumbnail]: mixed<FileList>().nullable().optional(),
 });
 
+export const CouponCodeSchema = object({
+  couponCode: string().trim().required("Coupon code is required"),
+
+  couponName: string().trim().required("Coupon name is required"),
+
+  discountType: string()
+    .oneOf([
+      "per_total_discount",
+      "per_item_discount",
+      "percentage_discount",
+      "shipping_discount",
+      "free_shipping",
+    ])
+    .defined(),
+
+  discountAmount: string().defined(),
+  minimumPurchase: string().defined(),
+
+  limitTotalUses: boolean().defined(),
+  limitUsesPerCustomer: boolean().defined(),
+  excludeCartDiscounts: boolean().defined(),
+  enabled: boolean().defined(),
+
+  expiration: string().defined(),
+
+  appliesToCategories: boolean().defined(),
+  appliesToProducts: boolean().defined(),
+
+  categoryIds: array().of(string().defined()).defined(),
+
+  productIds: string().nullable().defined(),
+
+  limitByLocation: boolean().defined(),
+  limitByShipping: boolean().defined(),
+
+  appliesTo: string()
+    .oneOf(["categories", "products"])
+    .required("Choose what this coupon applies to"),
+})
+  .test("discount-amount-validation", function (values) {
+    if (!values || values.discountType === "free_shipping") {
+      return true;
+    }
+
+    const amount = values.discountAmount;
+
+    if (!amount || amount.trim() === "") {
+      return this.createError({
+        path: "discountAmount",
+        message: "Discount amount is required",
+      });
+    }
+
+    if (!(Number(amount) > 0)) {
+      return this.createError({
+        path: "discountAmount",
+        message: "Discount amount must be greater than 0",
+      });
+    }
+
+    return true;
+  })
+  .test("category-validation", function (values) {
+    if (
+      values?.appliesToCategories &&
+      (!values.categoryIds || values.categoryIds.length === 0)
+    ) {
+      return this.createError({
+        path: "categoryIds",
+        message: "Select at least one category",
+      });
+    }
+
+    return true;
+  });
+
+export type CouponCodeForm = InferType<typeof CouponCodeSchema>;
+// WebPageSchema
 export const WebPageSchema = object({
   [WebPageField.PageType]: string().required("Page type is required"),
   [WebPageField.PageName]: string().trim().required("Page name is required"),
@@ -400,3 +569,449 @@ export const WebPageSchema = object({
   [WebPageField.MetaDescription]: string().nullable().default(""),
   [WebPageField.SearchKeywords]: string().nullable().default(""),
 });
+
+// ReviewSchema
+export const ReviewSchema = object({
+  [ReviewField.Name]: string().trim().required("Review title is required"),
+  [ReviewField.Comment]: string().trim().required("Review is required"),
+  [ReviewField.UserName]: string().trim().required("Author name is required"),
+  [ReviewField.Approved]: string()
+    .oneOf(Object.values(ReviewStatus), "Invalid status")
+    .required("Status is required"),
+  [ReviewField.Rating]: string()
+    .oneOf(Object.values(RatingValue), "Invalid rating")
+    .required("Rating is required"),
+});
+
+// MessageSchema
+export const MessageSchema = object({
+  [MessageField.Email]: string().email().required("Email is required"),
+  [MessageField.Subject]: string().trim().required("Subject is required"),
+  [MessageField.Message]: string().trim().required("Message is required"),
+});
+
+// #region Orders Settings
+
+// #region Return
+export const ReturnSettingsSchema = object({
+  [ReturnSettingsFormNames.EnableReturns]: flag(),
+});
+// #endregion
+
+// #region Order Statuses
+export const OrderStatusesSchema = object({
+  [OrderStatusesFormNames.Statuses]: array()
+    .of(
+      object({
+        [OrderStatusesFormNames.Id]: string().required(),
+        [OrderStatusesFormNames.Name]: string()
+          .trim()
+          .required("Cannot be empty or blank. Please enter an order status."),
+      }),
+    )
+    .default([]),
+});
+
+// #endregion
+
+// #region Products Settings
+
+// #region Inventory
+const optionalEmail = () => text().trim().email("Enter a valid email address");
+
+// A text input that's needed only while its checkbox is ticked
+const textWhenChecked = (checkbox: InventoryFormNames, message: string) =>
+  text()
+    .trim()
+    .when(checkbox, {
+      is: true,
+      then: (schema) => schema.required(message),
+    });
+
+export const InventorySettingsSchema = object({
+  [InventoryFormNames.ProductUnavailableAction]: text(),
+  [InventoryFormNames.OptionUnavailableAction]: text(),
+  [InventoryFormNames.HideOutOfStockInFiltering]: flag(),
+  [InventoryFormNames.UpdateStockLevels]: text(),
+  [InventoryFormNames.AutoAdjustStockLevels]: flag(),
+  [InventoryFormNames.StockLevelDisplay]: text(),
+  [InventoryFormNames.ShowPreOrderInventory]: flag(),
+  [InventoryFormNames.OutOfStockMessage]: text(),
+  [InventoryFormNames.ShowOutOfStockOnListing]: flag(),
+  [InventoryFormNames.ShowQuantityOnBackorder]: flag(),
+  [InventoryFormNames.ShowBackorderMessage]: flag(),
+  [InventoryFormNames.BackorderMessages]: array()
+    .of(
+      object({
+        [BackorderMessageFormNames.MessageId]: text(),
+        [BackorderMessageFormNames.Name]: string()
+          .trim()
+          .required("Name is required"),
+        [BackorderMessageFormNames.Message]: text(),
+        [BackorderMessageFormNames.IsDefault]: flag(),
+      }),
+    )
+    .default([]),
+  [InventoryFormNames.ShowQuantityOnHand]: flag(),
+  [InventoryFormNames.ShowBackorderPrompt]: flag(),
+  [InventoryFormNames.BackorderPromptText]: textWhenChecked(
+    InventoryFormNames.ShowBackorderPrompt,
+    "Enter the backorder availability prompt",
+  ),
+  [InventoryFormNames.ShowShippingExpectation]: flag(),
+  [InventoryFormNames.ShippingExpectationText]: textWhenChecked(
+    InventoryFormNames.ShowShippingExpectation,
+    "Enter the shipping expectation message",
+  ),
+  [InventoryFormNames.LowStockEmail]: optionalEmail(),
+  [InventoryFormNames.OutOfStockEmail]: optionalEmail(),
+});
+// #endregion
+
+// #region Gift Wrapping
+export const GiftWrappingSchema = object({
+  [GiftWrappingFormNames.Name]: string().trim().required("Name is required"),
+  [GiftWrappingFormNames.PreviewImage]: mixed<File | string>()
+    .nullable()
+    .default(null),
+  [GiftWrappingFormNames.Price]: string()
+    .trim()
+    .required("Price is required")
+    .test(
+      "price",
+      "Price must be a number of 0 or more",
+      (value) => !value || (!isNaN(Number(value)) && Number(value) >= 0),
+    ),
+  [GiftWrappingFormNames.AllowGiftMessages]: flag(true),
+  [GiftWrappingFormNames.IsVisible]: flag(true),
+});
+// #endregion
+
+// #region Comments
+export const CommentSettingsSchema = object({
+  [CommentSettingsFormNames.CommentSystem]: text(),
+  [CommentSettingsFormNames.EnabledFor]: array()
+    .of(string().required())
+    .default([]),
+  [CommentSettingsFormNames.OnlyPastCustomers]: flag(true),
+});
+// #endregion
+
+// #endregion
+
+// #region Setup Settings
+
+// #region Payment
+export const PaymentCurrencySchema = object({
+  [PaymentCurrencyFormNames.Currency]: string().required(
+    "Currency is required",
+  ),
+});
+
+export const PaymentConfigSchema = object({
+  [PaymentConfigFormNames.TestCardPayments]: flag(),
+});
+
+export const OfflinePaymentSchema = (infoName: string) =>
+  object({
+    [OfflinePaymentFormNames.DisplayName]: string()
+      .trim()
+      .required("Display name is required"),
+    [OfflinePaymentFormNames.AvailableCountries]: array()
+      .of(string().required())
+      .min(1, "Please select one or more available countries")
+      .required()
+      .default([]),
+    [OfflinePaymentFormNames.Instructions]: string()
+      .trim()
+      .required(`${infoName} is required`),
+  });
+// #endregion
+
+// #region Locations
+const coordinate = (label: string, max: number) =>
+  string()
+    .trim()
+    .required(`${label} is required`)
+    .test(
+      "coordinate",
+      `${label} must be between -${max} and ${max}`,
+      (value) =>
+        !value || (Number.isFinite(Number(value)) && Math.abs(Number(value)) <= max),
+    );
+
+export const LocationSchema = object({
+  [LocationFormNames.Name]: string().trim().required("Name is required"),
+  [LocationFormNames.Code]: text(),
+  [LocationFormNames.Address1]: string()
+    .trim()
+    .required("Address 1 is required"),
+  [LocationFormNames.Address2]: text(),
+  [LocationFormNames.City]: string().trim().required("City is required"),
+  [LocationFormNames.Country]: string().required("Country is required"),
+  [LocationFormNames.PostalCode]: string()
+    .trim()
+    .required("Postal code is required"),
+  [LocationFormNames.State]: string().trim().required("State is required"),
+  [LocationFormNames.Latitude]: coordinate("Latitude", 90),
+  [LocationFormNames.Longitude]: coordinate("Longitude", 180),
+  [LocationFormNames.Phone]: text(),
+  [LocationFormNames.Email]: string()
+    .trim()
+    .email("Enter a valid email address")
+    .required("Email is required"),
+  [LocationFormNames.ShowDetails]: flag(true),
+  [LocationFormNames.Description]: text(),
+  [LocationFormNames.OpeningHours]: array()
+    .of(
+      object({
+        [OpeningHourFormNames.Day]: string().required(),
+        [OpeningHourFormNames.Open]: flag(),
+        [OpeningHourFormNames.Opening]: text(),
+        [OpeningHourFormNames.Closing]: text(),
+      }),
+    )
+    .required()
+    .default([]),
+  [LocationFormNames.SpecialHours]: array()
+    .of(
+      object({
+        [SpecialHourFormNames.Name]: string()
+          .trim()
+          .required("Name is required"),
+        [SpecialHourFormNames.Date]: string().required("Date is required"),
+        [SpecialHourFormNames.Open]: flag(),
+        [SpecialHourFormNames.AllDay]: flag(),
+        [SpecialHourFormNames.Opening]: text(),
+        [SpecialHourFormNames.Closing]: text(),
+        [SpecialHourFormNames.Annual]: flag(),
+      }),
+    )
+    .required()
+    .default([]),
+});
+// #endregion
+
+// #region Pickup Methods
+export const PickupMethodSchema = object({
+  [PickupMethodFormNames.Name]: string().trim().required("Name is required."),
+  [PickupMethodFormNames.LocationId]: string().required(
+    "Location is required.",
+  ),
+  [PickupMethodFormNames.EstimatedReadyTime]: string()
+    .trim()
+    .required("Estimated ready-for-pickup time is required."),
+  [PickupMethodFormNames.Instructions]: string()
+    .trim()
+    .required("Instruction message for pickup is required."),
+});
+// #endregion
+
+// #region Basic Tax
+export const TaxClassesSchema = object({
+  [TaxClassesFormNames.Classes]: array()
+    .of(
+      object({
+        [TaxClassRowFormNames.ClassId]: text(),
+        [TaxClassRowFormNames.Label]: string()
+          .trim()
+          .required("Tax class label is required"),
+        [TaxClassRowFormNames.IsDefault]: flag(),
+      }),
+    )
+    .required()
+    .default([]),
+});
+
+const stringList = () => array().of(string().required()).required().default([]);
+
+// The list a zone is "based on" must have entries; the other two are ignored
+const zoneListWhen = (basedOn: TaxZoneBasedOn, message: string) =>
+  stringList().when(TaxZoneSettingsFormNames.BasedOn, {
+    is: basedOn,
+    then: (schema) => schema.min(1, message),
+  });
+
+export const TaxZoneSettingsSchema = object({
+  [TaxZoneSettingsFormNames.Name]: string()
+    .trim()
+    .required("Tax zone name is required"),
+  [TaxZoneSettingsFormNames.BasedOn]: text(),
+  [TaxZoneSettingsFormNames.Countries]: zoneListWhen(
+    TaxZoneBasedOn.Countries,
+    "Select at least one country",
+  ),
+  [TaxZoneSettingsFormNames.SubdivisionCountry]: text(),
+  [TaxZoneSettingsFormNames.Subdivisions]: zoneListWhen(
+    TaxZoneBasedOn.Subdivisions,
+    "Select at least one subdivision",
+  ),
+  [TaxZoneSettingsFormNames.PostalCodeCountry]: text(),
+  [TaxZoneSettingsFormNames.PostalCodes]: text().when(
+    TaxZoneSettingsFormNames.BasedOn,
+    {
+      is: TaxZoneBasedOn.PostalCodes,
+      then: (schema) => schema.trim().required("Enter at least one postal code"),
+    },
+  ),
+  [TaxZoneSettingsFormNames.AppliesTo]: text(),
+  [TaxZoneSettingsFormNames.CustomerGroups]: stringList().when(
+    TaxZoneSettingsFormNames.AppliesTo,
+    {
+      is: TaxZoneAppliesTo.Groups,
+      then: (schema) => schema.min(1, "Select at least one customer group"),
+    },
+  ),
+  [TaxZoneSettingsFormNames.IsEnabled]: flag(true),
+  [TaxZoneSettingsFormNames.PriceDisplay]: text(),
+  [TaxZoneSettingsFormNames.ShowBothOnListing]: flag(),
+  [TaxZoneSettingsFormNames.ShowBothOnDetail]: flag(),
+});
+
+export const TaxRateSchema = object({
+  [TaxRateFormNames.Name]: string().trim().required("Tax rate name is required"),
+  [TaxRateFormNames.ClassRates]: array()
+    .of(
+      object({
+        [TaxRateClassFormNames.ClassId]: text(),
+        [TaxRateClassFormNames.ClassName]: text(),
+        // Blank means no rate for that class
+        [TaxRateClassFormNames.Rate]: text().test(
+          "percent",
+          "Enter a rate between 0 and 100",
+          (value) =>
+            !value ||
+            (!isNaN(Number(value)) && Number(value) >= 0 && Number(value) <= 100),
+        ),
+      }),
+    )
+    .required()
+    .default([]),
+  [TaxRateFormNames.Priority]: string()
+    .trim()
+    .required("Calculation priority is required")
+    .test(
+      "priority",
+      "Enter a whole number of 0 or more",
+      (value) => !value || /^\d+$/.test(value),
+    ),
+  [TaxRateFormNames.IsEnabled]: flag(true),
+});
+// #endregion
+
+// #endregion
+
+// #region Domain Settings
+
+// #region DNS
+const positiveWholeNumber = (label: string) =>
+  string()
+    .trim()
+    .required(`${label} is required`)
+    .test("whole", `${label} must be a whole number above 0`, (value) =>
+      !value || (/^\d+$/.test(value) && Number(value) > 0),
+    );
+
+export const DnsSettingsSchema = object({
+  [DnsSection.MailServers]: object({
+    [MailServerFormNames.Mode]: text(),
+    // Forwarding rows only matter when forwarding is the chosen option
+    [MailServerFormNames.Forwards]: array()
+      .of(
+        object({
+          [MailForwardFormNames.DisplayAddress]: text(),
+          [MailForwardFormNames.ForwardTo]: text(),
+        }),
+      )
+      .required()
+      .default([])
+      .when(MailServerFormNames.Mode, {
+        is: MailServerMode.Forward,
+        then: (schema) =>
+          schema.of(
+            object({
+              [MailForwardFormNames.DisplayAddress]: string()
+                .trim()
+                .required("Display address is required")
+                .matches(/^[^\s@]+$/, "Enter only the part before the @"),
+              [MailForwardFormNames.ForwardTo]: string()
+                .trim()
+                .email("Enter a valid email address")
+                .required("Forward email is required"),
+            }),
+          ),
+      }),
+    // MX rows only matter when an external email host is the chosen option
+    [MailServerFormNames.MxRecords]: array()
+      .of(
+        object({
+          [MxRecordFormNames.Host]: text(),
+          [MxRecordFormNames.Value]: text(),
+          [MxRecordFormNames.Ttl]: text(),
+          [MxRecordFormNames.Priority]: text(),
+        }),
+      )
+      .required()
+      .default([])
+      .when(MailServerFormNames.Mode, {
+        is: MailServerMode.External,
+        then: (schema) =>
+          schema.of(
+            object({
+              [MxRecordFormNames.Host]: string()
+                .trim()
+                .required("Host is required"),
+              [MxRecordFormNames.Value]: string()
+                .trim()
+                .required("Mail server is required"),
+              [MxRecordFormNames.Ttl]: positiveWholeNumber("Time to live"),
+              // Blank falls back to the default priority
+              [MxRecordFormNames.Priority]: text().test(
+                "priority",
+                "Priority must be a whole number",
+                (value) => !value || /^\d+$/.test(value),
+              ),
+            }),
+          ),
+      }),
+  }),
+  [DnsSection.WebHosts]: object({
+    [WebHostFormNames.Records]: array()
+      .of(
+        object({
+          [DnsRecordFormNames.RecordId]: text(),
+          [DnsRecordFormNames.Type]: string().required("Type is required"),
+          [DnsRecordFormNames.Host]: string().trim().required("Host is required"),
+          [DnsRecordFormNames.Value]: string()
+            .trim()
+            .required("Value is required"),
+          [DnsRecordFormNames.Ttl]: positiveWholeNumber("Time to live"),
+          [DnsRecordFormNames.IsManaged]: flag(),
+        }),
+      )
+      .required()
+      .default([]),
+  }),
+  [DnsSection.ZoneDetails]: object({
+    [ZoneDetailFormNames.Refresh]: positiveWholeNumber("Refresh"),
+    [ZoneDetailFormNames.Retry]: positiveWholeNumber("Retry"),
+    [ZoneDetailFormNames.Expire]: positiveWholeNumber("Expire"),
+    [ZoneDetailFormNames.Minimum]: positiveWholeNumber("Minimum"),
+  }),
+});
+// #endregion
+
+// #endregion
+
+// #region Marketing Settings
+
+// #region Promotions
+export const PromotionSettingsSchema = object({
+  [PromotionSettingsFormNames.CalculationMethod]: text(),
+  [PromotionSettingsFormNames.MaxCouponsPerOrder]: text(),
+  [PromotionSettingsFormNames.AllowZeroPriceTrigger]: flag(),
+  [PromotionSettingsFormNames.AllowOnCustomPriceOverrides]: flag(),
+});
+// #endregion
+
+// #endregion

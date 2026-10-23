@@ -15,6 +15,7 @@ const CheckboxSettingsList = ({ section, items }: CheckboxSettingsListProps) => 
       <InputField
         name={fieldPath(section, item.field)}
         label={item.label}
+        showColon={!item.label.endsWith("?")}
         Component={CheckboxField}
         text={item.text}
       />

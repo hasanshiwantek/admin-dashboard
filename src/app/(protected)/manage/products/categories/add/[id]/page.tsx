@@ -1,40 +1,37 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
-import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
-import {
-  fetchCategoryById,
-  fetchCategories,
-  addCategory,
-} from "@/redux/slices/categorySlice";
-import Link from "next/link";
-import { Input } from "@/components/ui/input";
+import Spinner from "@/app/components/loader/Spinner";
+import CategoryDropdown from "@/app/components/products/categories/CategoryDropdown";
+import Form from "@/components/form/Form";
+import InputField from "@/components/form/InputField";
+import SelectField from "@/components/form/fields/SelectField";
+import PageTitle from "@/components/ui/PageTitle";
+import RichTextEditor from "@/components/ui/RichTextEditor";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import CategoryDropdown from "@/app/components/products/categories/CategoryDropdown";
-import Spinner from "@/app/components/loader/Spinner";
+import { availableStores, LocalStorageKeys } from "@/const/appConstants";
+import { REGEX } from "@/const/regex";
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
+import {
+  addCategory,
+  fetchCategories,
+  fetchCategoryById,
+} from "@/redux/slices/categorySlice";
+import { StoreObject } from "@/redux/slices/configSlice";
 import { fetchUrlSettings } from "@/redux/slices/homeSlice";
-import { useSearchParams } from "next/navigation";
-import { LocalStorageKeys, UrlSettingEnums } from "@/const/appConstants";
 import { getFromStorage, setInStorage } from "@/utils/storage";
-import { generateSlug } from "@/lib/productUtils";
-import { findCategoryPath } from "@/lib/categoryUtils";
-import InputField from "@/components/form/InputField";
-import RichTextEditor from "@/components/ui/RichTextEditor";
-import Form from "@/components/form/Form";
-import SelectField from "@/components/form/fields/SelectField";
-import { ApiCategory, FormVals } from "./type";
+import Link from "next/link";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
+import React, { useCallback, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import {
   CategoryField,
   CategoryFormDefaults,
   DefaultProductSortOptions,
   TemplateLayoutOptions,
 } from "./constant";
+import { ApiCategory, FormVals } from "./type";
 import { buildCategoryPayload, generateCategorySlug } from "./utils";
-import PageTitle from "@/components/ui/PageTitle";
-import { REGEX } from "@/const/regex";
 
 const EMPTY_TREE: any[] = [];
 
@@ -107,17 +104,6 @@ export default function AddSubCategoryPage() {
     );
   }, [parentCategory, setValue]);
 
-  // Update parent path when tree loads
-  useEffect(() => {
-    const parentId = watch("parent")?.id;
-    if (parentId && catTree?.length) {
-      const p = findCategoryPath(catTree, parentId);
-      if (p) {
-        setValue("parent", { id: parentId, path: p }, { shouldDirty: false });
-      }
-    }
-  }, [catTree, watch, setValue]);
-
   const nameVal = watch("name");
   const slugVal = watch("slug");
 
@@ -146,10 +132,6 @@ export default function AddSubCategoryPage() {
   //   });
   //   return () => subscription.unsubscribe();
   // }, [watch, isUrlManuallyEdited]);
-
-  const onPickParent = (val: { id: number; path: string }) => {
-    setValue("parent", { id: val.id, path: val.path }, { shouldDirty: true });
-  };
 
   const onImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0] || null;
@@ -187,7 +169,7 @@ export default function AddSubCategoryPage() {
   // Load selected store
   useEffect(() => {
     const parsedStores =
-      getFromStorage<any[]>(LocalStorageKeys.AvailableStores, []) ?? [];
+      getFromStorage<StoreObject[]>(LocalStorageKeys.AvailableStores, []) ?? [];
     const savedStoreId = Number(getFromStorage(LocalStorageKeys.StoreId));
     const selected = parsedStores.find(
       (store: any) => store.id === savedStoreId,
@@ -206,10 +188,12 @@ export default function AddSubCategoryPage() {
   }, [dispatch]);
 
   const onSubmit = async (vals: FormVals) => {
+    const payload = { ...vals, channel: selectedStore?.name };
+
     try {
       setSaving(true);
 
-      const basePayload = buildCategoryPayload(vals);
+      const basePayload = buildCategoryPayload(payload);
       const fd = new FormData();
 
       Object.entries(basePayload).forEach(([k, v]) => {
@@ -289,115 +273,107 @@ export default function AddSubCategoryPage() {
             textContainerClassName="mb-0"
           />
 
-          <div className="mb-8">
-            <InputField
-              name={CategoryField.Name}
-              label="Display name"
-              control={control}
-              placeholder="Category display name"
-            />
-          </div>
+          <InputField
+            name={CategoryField.Name}
+            label="Display name"
+            control={control}
+            placeholder="Category display name"
+            containerClassName="mb-8"
+          />
 
-          <div className="mb-8 flex gap-5 ">
-            <div>
-              <InputField
-                name={CategoryField.Slug}
-                label="URL"
-                control={control}
-                placeholder="/audio-video-devices-1/"
-                onKeyDown={(e) => {
-                  if (REGEX.SLUG_BLOCKED_CHARS.test(e.key)) {
-                    e.preventDefault();
-                  }
-                }}
-                onPaste={(e) => {
-                  const pasted = e.clipboardData.getData("text");
-                  if (REGEX.SLUG_BLOCKED_CHARS.test(pasted)) {
-                    e.preventDefault();
-                  }
-                }}
-              />
-            </div>
-            <Button
-              type="button"
-              variant="ghost"
-              className="text-xl text-blue-600 hover:underline 2xl:!text-[1.6rem] mb-1"
-              onClick={onResetSlug}
-            >
-              Reset
-            </Button>
-          </div>
+          <InputField
+            name={CategoryField.Slug}
+            label="URL"
+            control={control}
+            placeholder="/audio-video-devices-1/"
+            onKeyDown={(e) => {
+              if (REGEX.SLUG_BLOCKED_CHARS.test(e.key)) {
+                e.preventDefault();
+              }
+            }}
+            onPaste={(e) => {
+              const pasted = e.clipboardData.getData("text");
+              if (REGEX.SLUG_BLOCKED_CHARS.test(pasted)) {
+                e.preventDefault();
+              }
+            }}
+            containerClassName="mb-8"
+            controlClassName="max-w-[36rem]"
+            afterFieldComponent={
+              <Button
+                type="button"
+                variant="ghost"
+                className="text-xl text-blue-600 hover:underline 2xl:!text-[1.6rem]"
+                onClick={onResetSlug}
+              >
+                Reset
+              </Button>
+            }
+          />
 
-          <div className="mb-8">
-            <InputField
-              name={CategoryField.Description}
-              label="Description…"
-              Component={RichTextEditor}
-              control={control}
-              controlClassName="max-w-7xl"
-              height={300}
-              minHeight={250}
-            />
-          </div>
+          <InputField
+            name={CategoryField.Description}
+            label="Description…"
+            Component={RichTextEditor}
+            control={control}
+            controlClassName="max-w-7xl"
+            height={300}
+            minHeight={250}
+            containerClassName="mb-8"
+          />
 
-          <div className="mb-8 flex gap-6 items-center ml-40">
-            <Label className="font-normal text-gray-600 2xl:text-2xl! ">
-              Channel
-            </Label>
-            <Input disabled value={selectedStore?.name || ""} />
-          </div>
+          <InputField
+            name={CategoryField.Channel}
+            label="Channel"
+            control={control}
+            Component={SelectField}
+            options={availableStores ?? []}
+            labelKey="name"
+            valueKey="id"
+            disabled
+            containerClassName="mb-8"
+          />
 
-          <div className="mb-5 flex gap-3 items-center ml-40">
-            <Label className="font-normal text-gray-600 2xl:text-2xl!  pt-2">
-              Parent category
-            </Label>
-            <div>
-              <p className="text-xs text-muted-foreground mb-2">
-                Adding sub-category under: {parentCategory?.name}
-              </p>
-              <CategoryDropdown
-                categoryData={catTree}
-                value={{
-                  id: watch("parent")?.id ?? null,
-                  path: watch("parent")?.path ?? "",
-                }}
-                onChange={onPickParent}
-              />
-            </div>
-          </div>
+          <InputField
+            name={CategoryField.Parent}
+            label="Parent category"
+            Component={CategoryDropdown}
+            control={control}
+            categoryData={catTree}
+            hint={`Adding sub-category under: ${parentCategory?.name ?? ""}`}
+            hintPosition="bottom"
+            containerClassName="mb-8"
+          />
 
-          <div className="mb-8">
-            <InputField
-              name={CategoryField.TemplateLayout}
-              label="Template layout file"
-              Component={SelectField}
-              control={control}
-              options={TemplateLayoutOptions}
-              placeholder="Select layout"
-            />
-          </div>
+          <InputField
+            name={CategoryField.TemplateLayout}
+            label="Template layout file"
+            Component={SelectField}
+            control={control}
+            options={TemplateLayoutOptions}
+            placeholder="Select layout"
+            containerClassName="mb-8"
+          />
 
-          <div className="mb-8">
-            <InputField
-              name={CategoryField.SortOrder}
-              label="Sort order"
-              control={control}
-              type="number"
-              min={0}
-              step={1}
-            />
-          </div>
+          <InputField
+            name={CategoryField.SortOrder}
+            label="Sort order"
+            control={control}
+            type="number"
+            min={0}
+            step={1}
+            containerClassName="mb-8"
+          />
 
-          <div className="mb-8">
-            <InputField
-              name={CategoryField.DefaultProductSort}
-              label="Default product sort"
-              Component={SelectField}
-              control={control}
-              options={DefaultProductSortOptions}
-              placeholder="Use storefront settings default"
-            />
-          </div>
+          <InputField
+            name={CategoryField.DefaultProductSort}
+            label="Default product sort"
+            Component={SelectField}
+            control={control}
+            options={DefaultProductSortOptions}
+            placeholder="Use storefront settings default"
+            containerClassName="mb-8"
+          />
 
           {/* Image */}
           <div className="mb-2">
@@ -475,36 +451,32 @@ export default function AddSubCategoryPage() {
             textContainerClassName="mb-0"
           />
 
-          <div className="mb-8">
-            <InputField
-              name={CategoryField.SeoHomeTitle}
-              label="Home page title (Optional)"
-              control={control}
-            />
-          </div>
-          <div className="mb-8">
-            <InputField
-              name={CategoryField.SeoMetaKeywords}
-              label="Meta keywords (Optional)"
-              control={control}
-              placeholder="comma,separated,keywords"
-            />
-          </div>
-          <div className="mb-8">
-            <InputField
-              name={CategoryField.SeoMetaDescription}
-              label="Meta description (Optional)"
-              control={control}
-            />
-          </div>
-          <div className="mb-8">
-            <InputField
-              name={CategoryField.SeoSearchKeywords}
-              label="Search keywords (Optional)"
-              control={control}
-              placeholder="comma,separated,keywords"
-            />
-          </div>
+          <InputField
+            name={CategoryField.SeoHomeTitle}
+            label="Home page title (Optional)"
+            control={control}
+            containerClassName="mb-8"
+          />
+          <InputField
+            name={CategoryField.SeoMetaKeywords}
+            label="Meta keywords (Optional)"
+            control={control}
+            placeholder="comma,separated,keywords"
+            containerClassName="mb-8"
+          />
+          <InputField
+            name={CategoryField.SeoMetaDescription}
+            label="Meta description (Optional)"
+            control={control}
+            containerClassName="mb-8"
+          />
+          <InputField
+            name={CategoryField.SeoSearchKeywords}
+            label="Search keywords (Optional)"
+            control={control}
+            placeholder="comma,separated,keywords"
+            containerClassName="mb-8"
+          />
         </div>
       </div>
     </Form>

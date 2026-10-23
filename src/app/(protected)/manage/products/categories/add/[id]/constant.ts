@@ -1,3 +1,6 @@
+import { currentStore } from "@/const/appConstants";
+import { FormVals } from "./type";
+
 export enum CategoryField {
   Name = "name",
   Slug = "slug",
@@ -12,6 +15,7 @@ export enum CategoryField {
   SeoMetaDescription = "seo_meta_description",
   SeoSearchKeywords = "seo_search_keywords",
   Image = "image",
+  Channel = "channel",
 }
 
 export enum DefaultProductSort {
@@ -42,7 +46,7 @@ export const TemplateLayoutOptions = [
   { value: TemplateLayout.Default, label: "Default" },
 ] as const;
 
-export const CategoryFormDefaults = {
+export const CategoryFormDefaults: FormVals = {
   name: "",
   slug: "",
   description: "",
@@ -56,4 +60,5 @@ export const CategoryFormDefaults = {
   seo_meta_description: "",
   seo_search_keywords: "",
   image: null,
+  channel: currentStore?.id as number,
 };

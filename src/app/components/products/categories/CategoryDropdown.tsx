@@ -1,8 +1,7 @@
-// components/CategoryDropdown.tsx
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { Input } from "@/components/ui/input";
+import SelectField from "@/components/form/fields/SelectField";
+import { useMemo } from "react";
 
 type Category = {
   id: number;
@@ -17,97 +16,56 @@ type FlattenedCategory = {
   path: string;
 };
 
+const flattenCategories = (
+  categories: Category[],
+  parentPath = "",
+): FlattenedCategory[] =>
+  categories.flatMap((cat) => {
+    const path = parentPath ? `${parentPath} / ${cat.name}` : cat.name;
+    return [
+      { id: cat.id, name: cat.name, path },
+      ...flattenCategories(cat.subcategories ?? [], path),
+    ];
+  });
+
 export default function CategoryDropdown({
   categoryData,
   value,
   onChange,
+  className,
 }: {
   categoryData: Category[];
   value: { id: number | null; path: string };
   onChange: (val: { id: number; path: string }) => void;
+  className?: string;
 }) {
-  const [search, setSearch] = useState("");
-  const [showList, setShowList] = useState(false);
+  const categories = useMemo(
+    () => flattenCategories(categoryData),
+    [categoryData],
+  );
 
-  const flattenCategories = (
-    categories: Category[],
-    parentPath = ""
-  ): FlattenedCategory[] => {
-    let result: FlattenedCategory[] = [];
-    for (const cat of categories) {
-      const currentPath = parentPath ? `${parentPath} / ${cat.name}` : cat.name;
-      result.push({ id: cat.id, name: cat.name, path: currentPath });
-
-      if (cat.subcategories?.length) {
-        result = result.concat(
-          flattenCategories(cat.subcategories, currentPath)
-        );
-      }
-    }
-    return result;
+  const handleChange = (id: string) => {
+    const category = categories.find((cat) => String(cat.id) === id);
+    if (category) onChange({ id: category.id, path: category.path });
   };
 
-  const flattened = useMemo(
-    () => flattenCategories(categoryData),
-    [categoryData]
-  );
-
-  const filtered = flattened.filter((cat) =>
-    cat.path.toLowerCase().includes(search.toLowerCase())
-  );
-
-  useEffect(() => {
-    if (value?.path) {
-      setSearch(value.path);
-    } else {
-      setSearch("");
-    }
-  }, [value?.path]);
-
   return (
-    <div className="relative">
-      <Input
-        placeholder="Start typing category name"
-        value={search}
-        onChange={(e) => {
-          const value = e.target.value;
-          setSearch(value);
-          setShowList(value.length > 0);
-        }}
-        onFocus={() => {
-          if (search.length > 0) {
-            setShowList(true);
-          }
-        }}
-        className="!max-w-full"
-      />
-
-      {showList && (
-        <div className="absolute z-40 mt-1 max-h-64 w-full overflow-auto rounded-md border bg-white shadow-md">
-          {filtered.length ? (
-            filtered.map((cat) => (
-              <div
-                key={cat.id}
-                className="cursor-pointer px-4 py-2 hover:bg-muted"
-                onClick={() => {
-                  onChange({ id: cat.id, path: cat.path });
-                  setSearch(cat.path);
-                  setShowList(false);
-                }}
-              >
-                <h3 className="font-medium">{cat.name}</h3>
-                <span className="!font-medium text-muted-foreground">
-                  {cat.path}
-                </span>
-              </div>
-            ))
-          ) : (
-            <p className="px-4 py-2 text-sm text-muted-foreground">
-              No results found
-            </p>
-          )}
+    <SelectField
+      options={categories}
+      value={value?.id != null ? String(value.id) : null}
+      onChange={handleChange}
+      valueKey="id"
+      labelKey="path"
+      renderOption={(cat) => (
+        <div>
+          <h3 className="font-medium">{cat.name}</h3>
+          <span className="!font-medium text-muted-foreground">
+            {cat.path}
+          </span>
         </div>
       )}
-    </div>
+      placeholder="Start typing category name"
+      className={className}
+    />
   );
 }

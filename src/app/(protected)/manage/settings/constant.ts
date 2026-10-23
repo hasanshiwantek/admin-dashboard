@@ -17,33 +17,33 @@ const SetupSettingRoutes: SettingRoute[] = [
   //   description:
   //     "Currencies customers will see and be charged in at your store",
   // },
-  // {
-  //   id: "payments",
-  //   title: "Payments",
-  //   description: "Payment methods for the currencies you support in your store",
-  // },
-  // {
-  //   id: "locations",
-  //   title: "Locations",
-  //   description:
-  //     "Locations represent the physical places where you stock inventory",
-  // },
-  // {
-  //   id: "pickup",
-  //   title: "Pick up methods",
-  //   description: "Create and edit in-person pick up methods for online orders.",
-  // },
+  {
+    id: "payment",
+    title: "Payments",
+    description: "Payment methods for the currencies you support in your store",
+  },
+  {
+    id: "locations",
+    title: "Locations",
+    description:
+      "Locations represent the physical places where you stock inventory",
+  },
+  {
+    id: "pickup-methods",
+    title: "Pick up methods",
+    description: "Create and edit in-person pick up methods for online orders.",
+  },
   {
     id: "shipping",
     title: "Shipping",
     description:
       "Store's origin address, shipping zones, and shipping services",
   },
-  // {
-  //   id: "tax",
-  //   title: "Tax",
-  //   description: "Your own tax rules and recommended services",
-  // },
+  {
+    id: "tax",
+    title: "Tax",
+    description: "Your own tax rules and recommended services",
+  },
 ];
 const GeneralSettingRoutes: SettingRoute[] = [
   {
@@ -156,6 +156,40 @@ const OrderSettingRoutes: SettingRoute[] = [
   },
 ];
 
+const ProductSettingRoutes: SettingRoute[] = [
+  {
+    id: "inventory",
+    title: "Inventory",
+    description: "What shoppers will see when a product is out of stock, etc.",
+  },
+  {
+    id: "gift-wrapping",
+    title: "Gift wrapping",
+    description: "Name your gift wrapping option, set a price, etc.",
+  },
+  {
+    id: "comments",
+    title: "Comments",
+    description: "Shoppers comments about products",
+  },
+];
+
+const MarketingSettingRoutes: SettingRoute[] = [
+  {
+    id: "promotions",
+    title: "Promotions and coupons",
+    description: "Promotion calculation rules and coupon limits",
+  },
+];
+
+const DomainSettingRoutes: SettingRoute[] = [
+  {
+    id: "dns",
+    title: "Email & DNS records",
+    description: "Manage your domain, subdomain, and email records",
+  },
+];
+
 export const SettingsRoutesList: SettingGroup[] = [
   {
     group: "Setup",
@@ -164,6 +198,22 @@ export const SettingsRoutesList: SettingGroup[] = [
   {
     group: "General",
     routes: GeneralSettingRoutes,
+  },
+  {
+    group: "Orders",
+    routes: OrderSettingRoutes,
+  },
+  {
+    group: "Products",
+    routes: ProductSettingRoutes,
+  },
+  {
+    group: "Marketing",
+    routes: MarketingSettingRoutes,
+  },
+  {
+    group: "Domain",
+    routes: DomainSettingRoutes,
   },
   {
     group: "Advanced",

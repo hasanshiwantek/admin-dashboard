@@ -6,19 +6,12 @@ import type {
   UrlStructureSectionConfig,
 } from "../type";
 
-export interface SettingsNoticeProps {
-  tone?: "info" | "warning";
-  children: ReactNode;
-}
-
 export interface InlineFieldRowProps {
-  /** Left column label, aligned with InputField's horizontal labels */
   label?: ReactNode;
   children: ReactNode;
   className?: string;
 }
 
-// Field component for InputField: one share network on/off tile
 export interface ShareNetworkToggleProps {
   network: ShareNetworkConfig;
   value?: boolean;
@@ -30,11 +23,10 @@ export interface UrlStructureCardProps {
   section: UrlStructureSectionConfig;
 }
 
-// Field component for InputField: the three URL format radios
 export interface UrlFormatFieldProps {
   section: UrlStructureSectionConfig;
-  /** Rendered next to the "Custom" option */
   customInput: ReactNode;
+  action?: ReactNode;
   value?: string;
   onChange?: (value: string) => void;
   id?: string;

@@ -114,6 +114,7 @@ export default function CategoryModal({
             categoryData={dropdownData}
             value={ddValue}
             onChange={handleDropdownPick}
+            className="max-w-full"
           />
         </div>
 

@@ -67,6 +67,8 @@
   --color-sky-cyan-blue: var(--sky-cyan-blue);
   --color-deep-cobalt-blue: var(--deep-cobalt-blue);
   --color-crimson-red: var(--crimson-red);
+  --color-pale-ash-gray: var(--pale-ash-gray);
+  --color-smoky-gray: var(--smoky-gray);
 }
 
 :root {
@@ -142,6 +144,10 @@
   --deep-cobalt-blue: #0a66c2;
   /* strong deep red, e.g. Pinterest share button */
   --crimson-red: #e60023;
+  /* light neutral grey, e.g. form control borders */
+  --pale-ash-gray: #d1d0d4;
+  /* mid neutral grey, e.g. form control border hover */
+  --smoky-gray: #86848c;
 }
 
 *::before,
@@ -177,18 +183,18 @@ h3 {
   @apply text-xl font-light text-[#303540]; /* 1.2rem */
 }
 
-p,
+/* p,
 li {
   @apply text-xl font-medium leading-relaxed tracking-wide;
-}
+} */
 
-span {
+/* span {
   @apply text-lg font-bold leading-relaxed tracking-wide text-[#5e637a];
-}
+} */
 
-p {
+/* p {
   color: #313440;
-}
+} */
 
 /* Buttons (Optional Custom Tailwind Styling) */
 
@@ -339,7 +345,7 @@ img {
 
 @layer components {
   .error-message {
-    @apply text-sm font-medium text-error-msg!;
+    @apply text-[12px] font-medium text-error-msg!;
   }
   .validation-dot {
     @apply h-2.5 w-2.5 rounded-full bg-red-500 shadow-sm;
