@@ -1,5 +1,12 @@
+import type { ActionItem } from "@/components/ActionButton/type";
+import { ActionEnums } from "@/const/appConstants";
 import { TAX_ROUTE } from "../constant";
-import type { TaxClass, TaxClassFormRow, TaxClassesFormValues, TaxZone } from "./type";
+import type {
+  TaxClass,
+  TaxClassFormRow,
+  TaxClassesFormValues,
+  TaxZone,
+} from "./type";
 
 export const BASIC_TAX_SETUP_URL =
   "https://support.bigcommerce.com/s/article/Manual-Tax-Setup";
@@ -23,6 +30,17 @@ export const basicTaxTabs = [
 export const ADD_TAX_ZONE_ROUTE = `${basicTaxTabRoute(BasicTaxTab.Zones)}/add`;
 export const editTaxZoneRoute = (id: number | string) =>
   `${basicTaxTabRoute(BasicTaxTab.Zones)}/${id}`;
+
+export const taxZoneActions: ActionItem[] = [
+  { type: ActionEnums.EDIT_SETTINGS, label: "Edit settings" },
+  { type: ActionEnums.EDIT_RATES, label: "Edit rates" },
+  { type: ActionEnums.DUPLICATE, label: "Duplicate zone" },
+  {
+    type: ActionEnums.DELETE,
+    label: "Delete",
+    checks: [{ key: "isDefault", value: false }],
+  },
+];
 
 export enum TaxClassesFormNames {
   Classes = "classes",

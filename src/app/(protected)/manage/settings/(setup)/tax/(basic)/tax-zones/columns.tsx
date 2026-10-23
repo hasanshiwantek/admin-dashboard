@@ -1,24 +1,13 @@
 import ActionButton from "@/components/ActionButton/ActionButton";
-import { ActionItem } from "@/components/ActionButton/type";
 import EnableDisable from "@/components/common/EnableDisable";
 import HelpTooltip from "@/components/HelpTooltip/HelpTooltip";
 import { ColumnDef } from "@/components/ui/Table/types";
 import { ActionEnums } from "@/const/appConstants";
+import { taxZoneActions } from "../constant";
 import { TaxZone } from "../type";
 import { formatPriceDisplay } from "../utils";
 
 const CELL_TEXT = "text-[1.4rem]! font-normal! text-text-heading!";
-
-// The default zone can be edited but never deleted
-const getZoneActions = (zone: TaxZone): ActionItem[] => [
-  { type: ActionEnums.EDIT, label: "Edit" },
-  { type: ActionEnums.EDIT_SETTINGS, label: "Edit settings" },
-  { type: ActionEnums.EDIT_RATES, label: "Edit rates" },
-  { type: ActionEnums.DUPLICATE, label: "Duplicate zone" },
-  ...(zone.isDefault
-    ? []
-    : [{ type: ActionEnums.DELETE, label: "Delete" } as ActionItem]),
-];
 
 export const getTaxZoneColumns = ({
   onAction,
@@ -79,7 +68,7 @@ export const getTaxZoneColumns = ({
     render: (zone) => (
       <ActionButton
         data={zone}
-        actions={getZoneActions(zone)}
+        actions={taxZoneActions}
         onAction={onAction}
         label={`Actions for ${zone.name}`}
       />

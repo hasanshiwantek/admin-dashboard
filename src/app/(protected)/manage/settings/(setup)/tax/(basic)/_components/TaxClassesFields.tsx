@@ -2,49 +2,69 @@ import InputField from "@/components/form/InputField";
 import { ListRenderer } from "@/components/ListRenderer.tsx/ListRenderer";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import RemoveTaxClassModal from "@/Modals/TaxModals/RemoveTaxClassModal/RemoveTaxClassModal";
 import { CircleMinus, CirclePlus } from "lucide-react";
 import { TaxClassesFormNames, TaxClassRowFormNames } from "../constant";
 import { TaxClassesFieldsProps, TaxClassRowProps } from "./type";
 
 const ICON_BUTTON = "size-9 text-muted-plum-gray hover:text-text-heading";
 
-const TaxClassRow = ({ index, isDefault, onAdd, onRemove }: TaxClassRowProps) => (
-  <div className="flex items-start gap-2">
-    <InputField
-      name={`${TaxClassesFormNames.Classes}.${index}.${TaxClassRowFormNames.Label}`}
-      layout="vertical"
-      disabled={isDefault}
-      containerClassName="mb-0 w-full"
-      // The default row has no remove button, so it reaches under that slot
-      className={cn(
-        "max-w-none rounded-none",
-        isDefault ? "w-[57rem] bg-gray-100 disabled:opacity-100" : "w-[54rem]",
-      )}
-    />
+const TaxClassRow = ({
+  index,
+  isDefault,
+  isSaved,
+  onAdd,
+  onRemove,
+}: TaxClassRowProps) => {
+  const removeButton = (
     <Button
       type="button"
       variant="ghost"
       size="icon"
-      aria-label="Add a tax class below"
-      onClick={() => onAdd(index)}
+      aria-label="Remove this tax class"
+      onClick={isSaved ? undefined : () => onRemove(index)}
       className={ICON_BUTTON}
     >
-      <CirclePlus className="size-6" />
+      <CircleMinus className="size-6" />
     </Button>
-    {!isDefault && (
+  );
+
+  return (
+    <div className="flex items-start gap-2">
+      <InputField
+        name={`${TaxClassesFormNames.Classes}.${index}.${TaxClassRowFormNames.Label}`}
+        layout="vertical"
+        disabled={isDefault}
+        containerClassName="mb-0 w-full"
+        className={cn(
+          "max-w-none rounded-none py-7!",
+          isDefault
+            ? "w-[57rem] bg-gray-100 disabled:opacity-100"
+            : "w-[54rem]",
+        )}
+      />
       <Button
         type="button"
         variant="ghost"
         size="icon"
-        aria-label="Remove this tax class"
-        onClick={() => onRemove(index)}
+        aria-label="Add a tax class below"
+        onClick={() => onAdd(index)}
         className={ICON_BUTTON}
       >
-        <CircleMinus className="size-6" />
+        <CirclePlus className="size-6" />
       </Button>
-    )}
-  </div>
-);
+      {!isDefault &&
+        (isSaved ? (
+          <RemoveTaxClassModal
+            trigger={removeButton}
+            onRemove={() => onRemove(index)}
+          />
+        ) : (
+          removeButton
+        ))}
+    </div>
+  );
+};
 
 const TaxClassesFields = ({ rows, onAdd, onRemove }: TaxClassesFieldsProps) => (
   <div className="flex flex-col gap-2">
@@ -57,6 +77,7 @@ const TaxClassesFields = ({ rows, onAdd, onRemove }: TaxClassesFieldsProps) => (
         <TaxClassRow
           index={index}
           isDefault={row.isDefault}
+          isSaved={row.isSaved}
           onAdd={onAdd}
           onRemove={onRemove}
         />

@@ -28,6 +28,7 @@ import TableTabs from "./TableTabs";
 import { ColumnDef, TableProps } from "./types";
 
 const sortKeyOf = (col: ColumnDef<any>) => col.sortKey ?? col.key;
+const SELECT_CELL_CLASS = "[&>[role=checkbox]]:block";
 
 export default function Table<T>({
   data,
@@ -286,7 +287,7 @@ export default function Table<T>({
           <TableHeader className="h-18">
             <TableRow>
               {selectable && (
-                <TableHead className="w-12">
+                <TableHead className={cn("w-12", SELECT_CELL_CLASS)}>
                   {selectAllInHeader && (
                     <Checkbox
                       checked={isAllSelected}
@@ -358,7 +359,7 @@ export default function Table<T>({
                   <Fragment key={id}>
                     <TableRow>
                       {selectable && (
-                        <TableCell>
+                        <TableCell className={SELECT_CELL_CLASS}>
                           <Checkbox
                             checked={selectedIds.includes(id)}
                             disabled={isRowSelectable && !isRowSelectable(row)}

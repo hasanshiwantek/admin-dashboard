@@ -95,7 +95,7 @@ const ModalFooter = ({
       size="xl"
       onClick={isSubmit ? undefined : onSave}
       disabled={pending || saveDisabled}
-      className={cn("btn-primary text-xl! 2xl:text-2xl!", saveButtonClassName)}
+      className={cn("bg-primaryColor text-xl 2xl:text-2xl", saveButtonClassName)}
     >
       {pending ? loadingText : saveText}
     </Button>

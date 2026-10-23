@@ -41,7 +41,11 @@ const useTaxClassesPageContainer = () => {
   return {
     shell,
     form,
-    rows: fields.map((field) => ({ key: field.id, isDefault: field.isDefault })),
+    rows: fields.map((field) => ({
+      key: field.id,
+      isDefault: field.isDefault,
+      isSaved: !!field.classId,
+    })),
     handleAddClass: (index: number) => insert(index + 1, newTaxClassRow),
     handleRemoveClass: remove,
     onSubmit,

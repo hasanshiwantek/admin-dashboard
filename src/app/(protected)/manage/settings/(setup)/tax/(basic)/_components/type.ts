@@ -15,12 +15,13 @@ export interface BasicTaxSectionProps {
 export interface TaxClassRowProps {
   index: number;
   isDefault: boolean;
+  isSaved: boolean;
   onAdd: (index: number) => void;
   onRemove: (index: number) => void;
 }
 
 export interface TaxClassesFieldsProps {
-  rows: { key: string; isDefault: boolean }[];
+  rows: { key: string; isDefault: boolean; isSaved: boolean }[];
   onAdd: (index: number) => void;
   onRemove: (index: number) => void;
 }

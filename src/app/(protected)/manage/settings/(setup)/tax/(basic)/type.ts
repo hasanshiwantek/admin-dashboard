@@ -10,7 +10,6 @@ export interface TaxClass {
 export interface TaxZone {
   id: number;
   name: string;
-  /** The zone for every customer no other zone matches */
   isDefault: boolean;
   zoneType: string;
   pricesIncludeTax: boolean;

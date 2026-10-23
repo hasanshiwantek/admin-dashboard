@@ -18,11 +18,10 @@ const ResetBasicTaxModal = ({ trigger, onReset }: ResetBasicTaxModalProps) => {
       loadingText="Resetting..."
       saveButtonClassName="bg-danger-red border-danger-red hover:bg-dark-danger-red hover:text-white"
     >
-      <div className="flex items-start gap-4">
-        <AlertTriangle className="size-8 shrink-0 text-yellow-600" />
+      <div className="flex flex-col items-center gap-4">
+        <AlertTriangle className="size-24 shrink-0 text-danger-red" />
         <p className="text-[1.4rem]! text-gray-700!">
-          This clears your tax classes, rates and zones and restores the
-          default values. This action cannot be undone.
+          This will reset your manual tax configuration to default values. No taxes will be collected unless you have a tax provider service enabled.
         </p>
       </div>
     </Modal>

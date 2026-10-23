@@ -32,7 +32,7 @@ const DeleteGiftWrappingModal = ({
       saveButtonClassName="bg-danger-red! border-danger-red! hover:bg-dark-danger-red! hover:text-white!"
     >
       <div className="flex flex-col items-center gap-4">
-        <AlertTriangle className="size-24 shrink-0 text-yellow-600" />
+        <AlertTriangle className="size-24 shrink-0 text-danger-red" />
         <p className="text-[1.4rem]! text-gray-700!">
           {many
             ? `Are you sure you want to delete these ${ids.length} gift wrapping options?`
