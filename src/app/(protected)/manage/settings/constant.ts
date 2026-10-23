@@ -182,6 +182,14 @@ const MarketingSettingRoutes: SettingRoute[] = [
   },
 ];
 
+const DomainSettingRoutes: SettingRoute[] = [
+  {
+    id: "dns",
+    title: "Email & DNS records",
+    description: "Manage your domain, subdomain, and email records",
+  },
+];
+
 export const SettingsRoutesList: SettingGroup[] = [
   {
     group: "Setup",
@@ -202,6 +210,10 @@ export const SettingsRoutesList: SettingGroup[] = [
   {
     group: "Marketing",
     routes: MarketingSettingRoutes,
+  },
+  {
+    group: "Domain",
+    routes: DomainSettingRoutes,
   },
   {
     group: "Advanced",
