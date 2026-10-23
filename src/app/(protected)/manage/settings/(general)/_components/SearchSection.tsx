@@ -9,6 +9,7 @@ import {
 } from "../constant";
 import { fieldPath } from "../utils";
 import SettingsCard from "../../_components/SettingsCard";
+import { CircleHelp } from "lucide-react";
 
 const name = (field: SearchField) => fieldPath(GeneralSection.Search, field);
 
@@ -19,18 +20,30 @@ const SearchSection = () => (
       label="Default Product Sort"
       Component={SelectField}
       options={searchSortOptions}
+       afterFieldComponent={
+          <CircleHelp  className="w-6 h-6 text-muted-foreground" />
+        }
+         controlClassName="max-w-md"
     />
     <InputField
       name={name(SearchField.DefaultContentSort)}
       label="Default Content Sort"
       Component={SelectField}
       options={contentSortOptions}
+       afterFieldComponent={
+          <CircleHelp  className="w-6 h-6 text-muted-foreground" />
+        }
+          controlClassName="max-w-md"
     />
     <InputField
       name={name(SearchField.StorefrontSearchLogic)}
       label="Storefront Search Logic"
       Component={SelectField}
       options={searchLogicOptions}
+       afterFieldComponent={
+          <CircleHelp  className="w-6 h-6 text-muted-foreground" />
+        }
+        controlClassName="max-w-md"
     />
   </SettingsCard>
 );

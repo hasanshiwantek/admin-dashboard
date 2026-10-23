@@ -17,6 +17,7 @@ import { fieldPath } from "../utils";
 import InlineFieldRow from "./InlineFieldRow";
 import SettingsCard from "../../_components/SettingsCard";
 import SettingsNotice from "../../_components/SettingsNotice";
+import { CircleHelp } from "lucide-react";
 
 const TRANSACTIONAL_EMAILS_ROUTE = "/manage/marketing/transactional-emails";
 const HINT_CLASS = "pt-3 text-[1.4rem]! text-gray-700!";
@@ -92,6 +93,9 @@ const MiscellaneousSection = () => {
           type="email"
           placeholder="info@example.com"
           controlClassName="max-w-md"
+           afterFieldComponent={
+              <CircleHelp  className="w-6 h-6 text-muted-foreground" />
+            }
         />
         <InputField
           name={name(MiscellaneousField.RequireMarketingConsent)}
@@ -144,6 +148,9 @@ const MiscellaneousSection = () => {
           type="email"
           placeholder="info@example.com"
           controlClassName="max-w-md"
+           afterFieldComponent={
+              <CircleHelp  className="w-6 h-6 text-muted-foreground" />
+            }
         />
       </SettingsCard>
 
@@ -151,7 +158,7 @@ const MiscellaneousSection = () => {
         <InputField
           name={name(MiscellaneousField.AllowPurchasing)}
           label="Allow Purchasing?"
-          hideColon
+        
           Component={CheckboxField}
           text="Yes, allow people to purchase from my store"
         />
@@ -168,6 +175,9 @@ const MiscellaneousSection = () => {
           type="number"
           min={1}
           controlClassName="max-w-xs"
+           afterFieldComponent={
+              <CircleHelp  className="w-6 h-6 text-muted-foreground" />
+            }
         />
       </SettingsCard>
 

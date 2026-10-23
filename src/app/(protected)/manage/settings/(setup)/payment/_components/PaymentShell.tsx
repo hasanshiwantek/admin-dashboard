@@ -58,6 +58,7 @@ const PaymentShell = ({
         Component={SelectField}
         options={currencyOptions}
         controlClassName="max-w-[45rem]"
+        showColon={true}
       />
     </Form>
 

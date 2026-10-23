@@ -17,6 +17,7 @@ import { fieldPath } from "../utils";
 import CheckboxSettingsList from "./CheckboxSettingsList";
 import InlineFieldRow from "./InlineFieldRow";
 import SettingsCard from "../../_components/SettingsCard";
+import { CircleHelp } from "lucide-react";
 
 const section = GeneralSection.Display;
 const name = (field: DisplayField) => fieldPath(section, field);
@@ -30,6 +31,9 @@ const DisplaySection = () => (
         Component={SelectField}
         options={breadcrumbOptions}
         controlClassName="max-w-md"
+        afterFieldComponent={
+          <CircleHelp className="w-6 h-6 text-muted-foreground" />
+        }
       />
       <CheckboxSettingsList
         section={section}
@@ -54,6 +58,9 @@ const DisplaySection = () => (
         Component={SelectField}
         options={categorySortOptions}
         controlClassName="max-w-md"
+        afterFieldComponent={
+          <CircleHelp className="w-6 h-6 text-muted-foreground" />
+        }
       />
       <InlineFieldRow label="Menu Display Depth" className="items-center">
         <InputField
@@ -71,7 +78,6 @@ const DisplaySection = () => (
       <InputField
         name={name(DisplayField.ShowProductPrice)}
         label="Show Product's Price?"
-        hideColon
         Component={CheckboxField}
         text="Yes, show the product's price in my store"
       />
@@ -81,6 +87,11 @@ const DisplaySection = () => (
         Component={SelectField}
         options={priceDisplayOptions}
         controlClassName="max-w-sm"
+        afterFieldComponent={
+          <span className="text-blue-600 text-sm cursor-pointer whitespace-nowrap">
+            Learn more
+          </span>
+        }
       />
       <InputField
         name={name(DisplayField.ListPageDefaultPrice)}
@@ -88,6 +99,11 @@ const DisplaySection = () => (
         Component={SelectField}
         options={priceDisplayOptions}
         controlClassName="max-w-sm"
+        afterFieldComponent={
+          <span className="text-blue-600 text-sm cursor-pointer whitespace-nowrap">
+            Learn more
+          </span>
+        }
       />
       <CheckboxSettingsList
         section={section}
@@ -96,6 +112,10 @@ const DisplaySection = () => (
       <InputField
         name={name(DisplayField.DefaultPreOrderMessage)}
         label="Default Pre-Order Message"
+         controlClassName="max-w-md"
+         afterFieldComponent={
+          <CircleHelp className="w-6 h-6 text-muted-foreground" />
+        }
       />
     </SettingsCard>
   </div>

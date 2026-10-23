@@ -10,17 +10,36 @@ import {
 import { fieldPath } from "../utils";
 import SettingsCard from "../../_components/SettingsCard";
 import SettingsNotice from "../../_components/SettingsNotice";
+import { CircleHelp } from "lucide-react";
 
 const name = (field: WebsiteField) => fieldPath(GeneralSection.Website, field);
 
 const WebsiteSection = () => (
   <div className="flex flex-col gap-8">
     <SettingsCard title="Search Engine Optimization">
-      <InputField name={name(WebsiteField.HomePageTitle)} label="Home Page Title" />
-      <InputField name={name(WebsiteField.MetaKeywords)} label="Meta Keywords" />
+      <InputField
+        name={name(WebsiteField.HomePageTitle)}
+        label="Home Page Title"
+        controlClassName="max-w-md"
+        afterFieldComponent={
+          <CircleHelp className="w-6 h-6 text-muted-foreground" />
+        }
+      />
+      <InputField
+        name={name(WebsiteField.MetaKeywords)}
+        label="Meta Keywords"
+        controlClassName="max-w-md"
+        afterFieldComponent={
+          <CircleHelp className="w-6 h-6 text-muted-foreground" />
+        }
+      />
       <InputField
         name={name(WebsiteField.MetaDescription)}
         label="Meta Description"
+        controlClassName="max-w-md"
+        afterFieldComponent={
+          <CircleHelp className="w-6 h-6 text-muted-foreground" />
+        }
       />
       <InputField
         name={name(WebsiteField.WwwRedirect)}
@@ -28,6 +47,10 @@ const WebsiteSection = () => (
         Component={SelectField}
         options={wwwRedirectOptions}
         placeholder="-- Choose a redirect option --"
+        controlClassName="max-w-md"
+        afterFieldComponent={
+          <CircleHelp className="w-6 h-6 text-muted-foreground" />
+        }
       />
     </SettingsCard>
 

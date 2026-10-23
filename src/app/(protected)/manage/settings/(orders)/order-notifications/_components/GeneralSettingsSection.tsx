@@ -6,6 +6,7 @@ import {
   notificationMethodOptions,
   OrderNotificationFormNames,
 } from "../constant";
+import { CircleHelp } from "lucide-react";
 
 const GeneralSettingsSection = () => (
   <SettingsCard title="Notification Settings">
@@ -15,14 +16,26 @@ const GeneralSettingsSection = () => (
       Component={CheckboxListField}
       options={notificationMethodOptions}
       className="h-[17rem]"
+      showColon={true}
+        afterFieldComponent={
+    <CircleHelp className="size-5 shrink-0 text-muted-foreground" />
+  }
+  controlClassName="max-w-2xl!"
+
     />
-    <InputField
-      name={OrderNotificationFormNames.CustomerEmailStatuses}
-      label="Email customers when"
-      Component={CheckboxListField}
-      options={customerEmailStatusOptions}
-      className="h-[17rem]"
-    />
+   <InputField
+  name={OrderNotificationFormNames.CustomerEmailStatuses}
+  label="Email customers when"
+  Component={CheckboxListField}
+  options={customerEmailStatusOptions}
+  className="h-[17rem]"
+  showColon={true}
+  afterFieldComponent={
+    <CircleHelp className="size-5 shrink-0 text-muted-foreground" />
+  }
+  controlClassName="max-w-2xl!"
+ 
+/>
   </SettingsCard>
 );
 

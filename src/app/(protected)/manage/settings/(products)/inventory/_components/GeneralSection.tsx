@@ -15,6 +15,7 @@ import {
   updateStockLevelsOptions,
 } from "../constant";
 import { GeneralSectionProps } from "./type";
+import { CircleHelp } from "lucide-react";
 
 const GeneralSection = ({
   showHideInFiltering,
@@ -24,24 +25,28 @@ const GeneralSection = ({
     <InputField
       name={InventoryFormNames.ProductUnavailableAction}
       label="When a product can no longer be sold"
-      hideColon
       layout="vertical"
       Component={SelectField}
       className={SELECT_CLASS}
       options={productUnavailableOptions}
       labelClassName={FIELD_LABEL_CLASS}
       controlClassName={FIELD_CONTROL_CLASS}
+        labelEndComponent={
+          <CircleHelp className="w-6 h-6 text-muted-foreground" />
+        }
     />
     <InputField
       name={InventoryFormNames.OptionUnavailableAction}
       label="When a product option can no longer be sold"
-      hideColon
       layout="vertical"
       Component={SelectField}
       className={SELECT_CLASS}
       options={optionUnavailableOptions}
       labelClassName={FIELD_LABEL_CLASS}
       controlClassName={FIELD_CONTROL_CLASS}
+       labelEndComponent={
+          <CircleHelp className="w-6 h-6 text-muted-foreground" />
+        }
     />
     {showHideInFiltering && (
       <InputField
@@ -54,7 +59,6 @@ const GeneralSection = ({
     <InputField
       name={InventoryFormNames.UpdateStockLevels}
       label="Update stock levels"
-      hideColon
       layout="vertical"
       Component={SelectField}
       className={SELECT_CLASS}

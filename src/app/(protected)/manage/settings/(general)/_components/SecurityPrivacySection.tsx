@@ -19,6 +19,7 @@ import { fieldPath } from "../utils";
 import InlineFieldRow from "./InlineFieldRow";
 import SettingsCard from "../../_components/SettingsCard";
 import SettingsNotice from "../../_components/SettingsNotice";
+import { CircleHelp, Info } from "lucide-react";
 
 const name = (field: SecurityPrivacyField) =>
   fieldPath(GeneralSection.SecurityPrivacy, field);
@@ -40,7 +41,6 @@ const SecurityPrivacySection = () => {
         <InputField
           name={name(SecurityPrivacyField.EnforcePasswordComplexity)}
           label="Configure complexity of the shopper's password?"
-          hideColon
           Component={CheckboxField}
           text="Yes, I would like to enforce complexity rules for shopper passwords"
         />
@@ -65,6 +65,7 @@ const SecurityPrivacySection = () => {
               min={1}
               layout="vertical"
               className="w-24"
+              
             />
             <InputField
               name={name(SecurityPrivacyField.CustomLogoutDurationUnit)}
@@ -81,6 +82,7 @@ const SecurityPrivacySection = () => {
           label="Shopper activity extends logout duration"
           Component={CheckboxField}
           text="Yes, extend my shoppers' logout duration while they are active"
+          
         />
       </SettingsCard>
 
@@ -91,11 +93,13 @@ const SecurityPrivacySection = () => {
           Component={SelectField}
           options={controlPanelTimeoutOptions}
           controlClassName="max-w-xs"
+           afterFieldComponent={
+    <CircleHelp  className="w-6 h-6 text-muted-foreground" />
+  }
         />
         <InputField
           name={name(SecurityPrivacyField.EnableRecaptchaStorefront)}
           label="Enable reCAPTCHA on storefront?"
-          hideColon
           Component={CheckboxField}
           text="Yes, enable reCAPTCHA security"
         />
@@ -105,16 +109,22 @@ const SecurityPrivacySection = () => {
             <InputField
               name={name(SecurityPrivacyField.RecaptchaSiteKey)}
               label="reCAPTCHA Site Key"
-              required
               placeholder="(Site Key)"
               controlClassName="max-w-md"
+              showColon ={true}
+                   afterFieldComponent={
+    <CircleHelp  className="w-6 h-6 text-muted-foreground" />
+  }
             />
             <InputField
               name={name(SecurityPrivacyField.RecaptchaSecretKey)}
               label="reCAPTCHA Secret Key"
-              required
               placeholder="(Secret Key)"
               controlClassName="max-w-md"
+                 showColon ={true}
+                 afterFieldComponent={
+    <CircleHelp  className="w-6 h-6 text-muted-foreground" />
+  }
             />
           </>
         )}
@@ -129,7 +139,6 @@ const SecurityPrivacySection = () => {
         <InputField
           name={name(SecurityPrivacyField.EnableRecaptchaPrelaunch)}
           label="Enable reCAPTCHA on a storefront pre-launch login page?"
-          hideColon
           Component={CheckboxField}
           text="Yes, enable reCAPTCHA security on the pre-launch login page."
         />

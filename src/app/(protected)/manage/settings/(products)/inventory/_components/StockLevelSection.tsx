@@ -10,19 +10,22 @@ import {
   stockLevelDisplayOptions,
 } from "../constant";
 import { StockLevelSectionProps } from "./type";
+import { CircleHelp } from "lucide-react";
 
 const StockLevelSection = ({ showPreOrderInventory }: StockLevelSectionProps) => (
   <SettingsCard title="Stock level">
     <InputField
       name={InventoryFormNames.StockLevelDisplay}
       label="Stock level display"
-      hideColon
       layout="vertical"
       Component={SelectField}
       className={SELECT_CLASS}
       options={stockLevelDisplayOptions}
       labelClassName={FIELD_LABEL_CLASS}
       controlClassName={FIELD_CONTROL_CLASS}
+       labelEndComponent={
+          <CircleHelp className="w-6 h-6 text-muted-foreground" />
+        }
     />
     {showPreOrderInventory && (
       <InputField
@@ -35,10 +38,12 @@ const StockLevelSection = ({ showPreOrderInventory }: StockLevelSectionProps) =>
     <InputField
       name={InventoryFormNames.OutOfStockMessage}
       label="Out of stock message"
-      hideColon
       layout="vertical"
       labelClassName={FIELD_LABEL_CLASS}
       controlClassName={FIELD_CONTROL_CLASS}
+       labelEndComponent={
+          <CircleHelp className="w-6 h-6 text-muted-foreground" />
+        }
     />
     <InputField
       name={InventoryFormNames.ShowOutOfStockOnListing}
