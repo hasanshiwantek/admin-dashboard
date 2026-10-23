@@ -158,7 +158,6 @@ const MiscellaneousSection = () => {
         <InputField
           name={name(MiscellaneousField.AllowPurchasing)}
           label="Allow Purchasing?"
-        
           Component={CheckboxField}
           text="Yes, allow people to purchase from my store"
         />

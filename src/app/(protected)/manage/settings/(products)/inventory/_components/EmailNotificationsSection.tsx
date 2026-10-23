@@ -18,7 +18,6 @@ const EmailNotificationsSection = () => (
         <InputField
           name={field.name}
           label={field.label}
-          hideColon
           type="email"
           layout="vertical"
           placeholder="Enter an email address to enable this notification"

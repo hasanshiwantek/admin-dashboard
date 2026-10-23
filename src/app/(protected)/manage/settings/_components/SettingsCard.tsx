@@ -11,6 +11,7 @@ const SettingsCard = ({
   action,
   children,
   className,
+  titleClassName,
 }: SettingsCardProps) => (
   <section
     id={id}
@@ -28,6 +29,7 @@ const SettingsCard = ({
             hideActionButton
             containerClassName="mb-0"
             textContainerClassName="mb-0 gap-3"
+            titleClassName={titleClassName}
             descriptionClassName="text-[1.4rem]! text-gray-600!"
           />
           {titleAdornment}
