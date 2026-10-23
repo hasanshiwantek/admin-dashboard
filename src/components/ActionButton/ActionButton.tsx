@@ -9,11 +9,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ActionEnums } from "@/const/appConstants";
+import { useAccess } from "@/hooks/useAccess";
 import { cn } from "@/lib/utils";
 import { Ellipsis } from "lucide-react";
 import { ActionButtonProps } from "./type";
 
-// "…" button that opens a menu of actions for `data`
 const ActionButton = <TData, TAction extends ActionEnums = ActionEnums>({
   data,
   actions,
@@ -24,7 +24,14 @@ const ActionButton = <TData, TAction extends ActionEnums = ActionEnums>({
   triggerProps,
   contentClassName,
 }: ActionButtonProps<TData, TAction>) => {
+  const { filterByAccess } = useAccess();
   const handleAction = onAction(data);
+  const visibleActions = filterByAccess(
+    actions,
+    data as Record<string, unknown>,
+  );
+
+  if (!visibleActions.length) return null;
 
   return (
     <DropdownMenu>
@@ -44,7 +51,7 @@ const ActionButton = <TData, TAction extends ActionEnums = ActionEnums>({
         className={cn("min-w-[22rem]", contentClassName)}
       >
         <ListRenderer
-          data={actions}
+          data={visibleActions}
           keyExtractor={(action) => action.type}
           emptyComponent={<></>}
           className="space-y-0!"
@@ -53,7 +60,7 @@ const ActionButton = <TData, TAction extends ActionEnums = ActionEnums>({
               disabled={action.disabled}
               onSelect={() => handleAction(action.type)}
               className={cn(
-                "cursor-pointer px-6 py-3 text-[1.4rem]",
+                "cursor-pointer px-6 py-3 text-[1.4rem] outline-none!",
                 action.className,
               )}
             >

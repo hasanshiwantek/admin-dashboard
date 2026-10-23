@@ -85,6 +85,9 @@ export interface TableProps<T> {
   onToggleRow?: (id: number | string, checked: boolean) => void;
   onToggleAll?: (checked: boolean, allIds: (number | string)[]) => void;
   selectAllInHeader?: boolean;
+  /** Rows it returns false for get a disabled checkbox and are left out of
+   *  select all, e.g. a default record that can't be deleted */
+  isRowSelectable?: (row: T) => boolean;
   hideRecordCount?: boolean;
 
   rowActions?: (row: T) => RowAction<T>[];

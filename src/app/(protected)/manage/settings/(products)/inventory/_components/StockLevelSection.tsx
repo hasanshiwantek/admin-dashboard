@@ -16,7 +16,6 @@ const StockLevelSection = ({ showPreOrderInventory }: StockLevelSectionProps) =>
     <InputField
       name={InventoryFormNames.StockLevelDisplay}
       label="Stock level display"
-      hideColon
       layout="vertical"
       Component={SelectField}
       className={SELECT_CLASS}
@@ -35,7 +34,6 @@ const StockLevelSection = ({ showPreOrderInventory }: StockLevelSectionProps) =>
     <InputField
       name={InventoryFormNames.OutOfStockMessage}
       label="Out of stock message"
-      hideColon
       layout="vertical"
       labelClassName={FIELD_LABEL_CLASS}
       controlClassName={FIELD_CONTROL_CLASS}

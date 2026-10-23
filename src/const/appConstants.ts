@@ -24,6 +24,8 @@ export enum ActionEnums {
   MOVE = "move",
   ASSIGN = "assign",
   SET_DEFAULT = "set-default",
+  EDIT_SETTINGS = "edit-settings",
+  EDIT_RATES = "edit-rates",
 
   // Remove
   DELETE = "delete",

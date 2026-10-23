@@ -8,7 +8,6 @@ const LocationGeneralSection = () => (
       name={LocationFormNames.Name}
       label="Name"
       required
-      hideColon
       layout="vertical"
       hint="This is the location name customers will see."
       hintPosition="top"
@@ -17,7 +16,6 @@ const LocationGeneralSection = () => (
     <InputField
       name={LocationFormNames.Code}
       label="Code"
-      hideColon
       layout="vertical"
       hint="The identifier you use internally for this location."
       hintPosition="top"

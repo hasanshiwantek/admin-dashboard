@@ -1,8 +1,12 @@
 import { ActionEnums } from "@/const/appConstants";
+import type { AccessRule } from "@/utils/access";
 import { ReactNode } from "react";
 import { ButtonProps } from "../ui/button";
 
-export interface ActionItem<TAction extends ActionEnums = ActionEnums> {
+// `permission` hides the action when the user lacks it; `checks` run against
+// the button's `data` (e.g. { key: "isDefault", value: false })
+export interface ActionItem<TAction extends ActionEnums = ActionEnums>
+  extends AccessRule {
   type: TAction;
   label: ReactNode;
   disabled?: boolean;

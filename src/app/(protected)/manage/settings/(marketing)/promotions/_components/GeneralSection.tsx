@@ -41,7 +41,6 @@ const GeneralSection = () => (
     <InputField
       name={PromotionSettingsFormNames.CalculationMethod}
       label="When multiple promotions are in a cart, calculate them"
-      hideColon
       layout="vertical"
       labelClassName={LABEL_CLASS}
       Component={RadioGroupField}
@@ -60,7 +59,6 @@ const GeneralSection = () => (
           </span>
         </span>
       }
-      hideColon
       layout="vertical"
       labelClassName={LABEL_CLASS}
       Component={SelectField}

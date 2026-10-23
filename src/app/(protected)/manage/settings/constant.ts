@@ -39,11 +39,11 @@ const SetupSettingRoutes: SettingRoute[] = [
     description:
       "Store's origin address, shipping zones, and shipping services",
   },
-  // {
-  //   id: "tax",
-  //   title: "Tax",
-  //   description: "Your own tax rules and recommended services",
-  // },
+  {
+    id: "tax",
+    title: "Tax",
+    description: "Your own tax rules and recommended services",
+  },
 ];
 const GeneralSettingRoutes: SettingRoute[] = [
   {
