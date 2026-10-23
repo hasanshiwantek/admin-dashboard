@@ -9,6 +9,7 @@ import { UrlFormatFieldProps } from "./type";
 const UrlFormatField = ({
   section,
   customInput,
+  action,
   value,
   onChange,
   id,
@@ -43,6 +44,11 @@ const UrlFormatField = ({
           </div>
         )}
       />
+      {action && (
+        <div className="grid grid-cols-[18rem_1fr] gap-4">
+          <div className="col-start-2">{action}</div>
+        </div>
+      )}
     </RadioGroup>
   );
 };

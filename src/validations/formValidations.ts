@@ -73,6 +73,10 @@ import {
   WebPageField,
 } from "@/app/components/storefront/constants";
 import { ShippingAddressField } from "@/Modals/ShippingModals/ConfigureShippingAddressModal/constant";
+import {
+  UpdateUrlsFormNames,
+  UpdateUrlsScope,
+} from "@/Modals/SettingsModals/UpdateUrlsModal/constant";
 import { ChargeShippingType } from "@/Modals/ShippingModals/constant";
 import { FedExField } from "@/Modals/ShippingModals/FedExConfigModal/constant";
 import {
@@ -260,6 +264,13 @@ const customUrl = (formatField: UrlStructureField) =>
     is: UrlFormat.Custom,
     then: (schema) => schema.trim().required("Enter a custom URL format"),
   });
+
+export const UpdateUrlsSchema = object({
+  [UpdateUrlsFormNames.Scope]: string()
+    .oneOf(Object.values(UpdateUrlsScope))
+    .default(UpdateUrlsScope.NotCustomized),
+  [UpdateUrlsFormNames.CreateRedirects]: flag(true),
+});
 
 export const GeneralSettingsSchema = object({
   [GeneralSection.Website]: object({
