@@ -35,15 +35,7 @@ const DisplaySection = () => (
         afterFieldComponent={
           <HelpTooltip
             side="right"
-            content={
-              <div className="flex flex-col gap-1">
-                <p>
-                  How should product breadcrumbs be displayed at the top of your
-                  product detail pages in your store? Breadcrumbs are
-                  navigational aids that help shoppers navigate your store.
-                </p>
-              </div>
-            }
+            content="How should product breadcrumbs be displayed at the top of your product detail pages in your store? Breadcrumbs are navigational aids that help shoppers navigate your store."
             iconClassName="fill-muted-plum-gray"
           />
         }
@@ -138,17 +130,7 @@ const DisplaySection = () => (
         afterFieldComponent={
           <HelpTooltip
             side="right"
-            content={
-              <div className="flex flex-col gap-1">
-                <p>
-                  The default message to be shown in your store when a release
-                  date is specified for a pre-order product. You can also change
-                  the message for each individual product in the Products
-                  section of the control panel. To place the product&apos;s
-                  release date into the message, use the %%DATE%% placeholder.
-                </p>
-              </div>
-            }
+          content="The default message to be shown in your store when a release date is specified for a pre-order product. You can also change the message for each individual product in the Products section of the control panel. To place the product's release date into the message, use the %%DATE%% placeholder."
             iconClassName="fill-muted-plum-gray"
           />
         }

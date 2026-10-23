@@ -24,14 +24,7 @@ const WebsiteSection = () => (
         afterFieldComponent={
           <HelpTooltip
             side="right"
-            content={
-              <div className="flex flex-col gap-1">
-                <p>
-                  Specify a page title for the home page of your store, or leave
-                  blank to use the store name set above.
-                </p>
-              </div>
-            }
+           content="Specify a page title for the home page of your store, or leave blank to use the store name set above."
             iconClassName="fill-muted-plum-gray "
           />
         }
@@ -43,16 +36,7 @@ const WebsiteSection = () => (
         afterFieldComponent={
           <HelpTooltip
             side="right"
-            content={
-              <div className="flex flex-col gap-1">
-                <p>
-                  The meta keywords to display in the header of each page on
-                  your site. These words should explain what you sell online.
-                  Separate each word with a comma, such as action dvd&apos;s,
-                  comedy dvd&apos;s, etc.
-                </p>
-              </div>
-            }
+          content="The meta keywords to display in the header of each page on your site. These words should explain what you sell online. Separate each word with a comma, such as action dvd's, comedy dvd's, etc."
             iconClassName="fill-muted-plum-gray"
           />
         }
@@ -64,16 +48,7 @@ const WebsiteSection = () => (
         afterFieldComponent={
           <HelpTooltip
             side="right"
-            content={
-              <div className="flex flex-col gap-1">
-                <p>
-                  The meta description to display in the header on each page of
-                  your site. Use a brief sentence to describe your eCommerce
-                  shop as this is the text Google will use to describe your site
-                  in its search results.
-                </p>
-              </div>
-            }
+            content="The meta description to display in the header on each page of your site. Use a brief sentence to describe your eCommerce shop as this is the text Google will use to describe your site in its search results."
             iconClassName="fill-muted-plum-gray"
           />
         }
@@ -88,21 +63,7 @@ const WebsiteSection = () => (
         afterFieldComponent={
           <HelpTooltip
             side="right"
-            content={
-              <div className="flex flex-col gap-1">
-                <p>
-                  Allowing your store to be browsed on both
-                  &apos;yourstore.com&apos; and &apos;www.yourstore.com&apos;
-                  may be seen by Google as duplicate content so it&apos;s a good
-                  idea to choose to display your store either with
-                  &apos;www&apos; in the domain or without. You can choose which
-                  you&apos;d prefer here. This will not affect any subdomains
-                  you setup under Setup & Tools -&gt; DNS Records. While your
-                  store is still on a my.bigcommerce.com subdomain, you cannot
-                  redirect to www.
-                </p>
-              </div>
-            }
+         content="Allowing your store to be browsed on both 'yourstore.com' and 'www.yourstore.com' may be seen by Google as duplicate content so it's a good idea to choose to display your store either with 'www' in the domain or without. You can choose which you'd prefer here. This will not affect any subdomains you setup under Setup & Tools -> DNS Records. While your store is still on a my.bigcommerce.com subdomain, you cannot redirect to www."
             iconClassName="fill-muted-plum-gray"
           />
         }

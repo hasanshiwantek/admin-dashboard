@@ -29,14 +29,7 @@ const StockLevelSection = ({
       labelEndComponent={
         <HelpTooltip
           side="right"
-          content={
-            <div className="flex flex-col gap-1">
-              <p>
-                Showing shoppers that stock is running low encourages them to
-                buy sooner rather than later.
-              </p>
-            </div>
-          }
+        content="Showing shoppers that stock is running low encourages them to buy sooner rather than later."
           iconClassName="fill-muted-plum-gray"
         />
       }
@@ -58,14 +51,7 @@ const StockLevelSection = ({
       labelEndComponent={
         <HelpTooltip
           side="right"
-          content={
-            <div className="flex flex-col gap-1">
-              <p>
-                This is the message shoppers will see when a product is out of
-                stock.
-              </p>
-            </div>
-          }
+          content="This is the message shoppers will see when a product is out of stock."
           iconClassName="fill-muted-plum-gray"
         />
       }

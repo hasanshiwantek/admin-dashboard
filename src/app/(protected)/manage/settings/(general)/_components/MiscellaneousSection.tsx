@@ -97,14 +97,7 @@ const MiscellaneousSection = () => {
           afterFieldComponent={
             <HelpTooltip
               side="right"
-              content={
-                <div className="flex flex-col gap-1">
-                  <p>
-                    The email address where all system notifications should be
-                    sent to.
-                  </p>
-                </div>
-              }
+              content="The email address where all system notifications should be sent to."
               iconClassName="fill-muted-plum-gray"
             />
           }
@@ -163,14 +156,7 @@ const MiscellaneousSection = () => {
           afterFieldComponent={
             <HelpTooltip
               side="right"
-              content={
-                <div className="flex flex-col gap-1">
-                  <p>
-                    Who should these abandoned and converted emails be sent to?
-                    Enter a single email address here.
-                  </p>
-                </div>
-              }
+              content="Who should these abandoned and converted emails be sent to? Enter a single email address here."
               iconClassName="fill-muted-plum-gray"
             />
           }
@@ -200,14 +186,7 @@ const MiscellaneousSection = () => {
           afterFieldComponent={
             <HelpTooltip
               side="right"
-              content={
-                <div className="flex flex-col gap-1">
-                  <p>
-                    Set the order number that the next order placed in your
-                    store will receive.
-                  </p>
-                </div>
-              }
+             content="Set the order number that the next order placed in your store will receive."
               iconClassName="fill-muted-plum-gray"
             />
           }

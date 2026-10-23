@@ -9,7 +9,6 @@ import {
 } from "../constant";
 import { fieldPath } from "../utils";
 import SettingsCard from "../../_components/SettingsCard";
-import { CircleHelp } from "lucide-react";
 import HelpTooltip from "@/components/HelpTooltip/HelpTooltip";
 
 const name = (field: SearchField) => fieldPath(GeneralSection.Search, field);
@@ -24,14 +23,7 @@ const SearchSection = () => (
       afterFieldComponent={
         <HelpTooltip
           side="right"
-          content={
-            <div className="flex flex-col gap-1">
-              <p>
-                This is the default sorting order for all the products that are
-                found in the search.
-              </p>
-            </div>
-          }
+          content="This is the default sorting order for all the products that are found in the search."
           iconClassName="fill-muted-plum-gray"
         />
       }
@@ -45,14 +37,7 @@ const SearchSection = () => (
       afterFieldComponent={
         <HelpTooltip
           side="right"
-          content={
-            <div className="flex flex-col gap-1">
-              <p>
-                This is the default sorting order for all information & news
-                items that are found in the search.
-              </p>
-            </div>
-          }
+         content="This is the default sorting order for all information & news items that are found in the search."
           iconClassName="fill-muted-plum-gray"
         />
       }
@@ -66,16 +51,7 @@ const SearchSection = () => (
       afterFieldComponent={
         <HelpTooltip
           side="right"
-          content={
-            <div className="flex flex-col gap-1">
-              <p>
-                This setting only controls search results on your storefront
-                (the path shoppers see). Searches in the admin area of your
-                store (the control panel) always shows results that contains all
-                words.
-              </p>
-            </div>
-          }
+         content="This setting only controls search results on your storefront (the path shoppers see). Searches in the admin area of your store (the control panel) always shows results that contains all words."
           iconClassName="fill-muted-plum-gray"
         />
       }

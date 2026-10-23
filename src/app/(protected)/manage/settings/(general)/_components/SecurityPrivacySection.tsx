@@ -95,14 +95,7 @@ const SecurityPrivacySection = () => {
           afterFieldComponent={
             <HelpTooltip
               side="right"
-              content={
-                <div className="flex flex-col gap-1">
-                  <p>
-                    This is how long you can work in the BigCommerce control
-                    panel without being logged out for security reasons.
-                  </p>
-                </div>
-              }
+              content="This is how long you can work in the BigCommerce control panel without being logged out for security reasons."
               iconClassName="fill-muted-plum-gray"
             />
           }

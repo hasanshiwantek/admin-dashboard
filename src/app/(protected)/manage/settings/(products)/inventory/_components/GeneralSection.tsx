@@ -35,16 +35,7 @@ const GeneralSection = ({
       labelEndComponent={
         <HelpTooltip
           side="right"
-          content={
-            <div className="flex flex-col gap-1">
-              <p>
-                The total amount of inventory available to sell is the sum of
-                &quot;on hand&quot; stock and the &quot;backorder limit&quot;,
-                minus any &quot;safety stock&quot; and &quot;qty
-                backordered&quot;.
-              </p>
-            </div>
-          }
+          content="The total amount of inventory available to sell is the sum of 'on hand' stock and the 'backorder limit', minus any 'safety stock' and 'qty backordered'."
           iconClassName="fill-muted-plum-gray"
         />
       }
@@ -61,17 +52,7 @@ const GeneralSection = ({
       labelEndComponent={
         <HelpTooltip
           side="right"
-          content={
-            <div className="flex flex-col gap-1">
-              <p>
-                Available to Sell (ATS) is a calculated value that represents
-                the quantity of inventory that can be currently sold to
-                customers. It is calculated as: Quantity on Hand + (Sum of
-                Additions) - (Sum of Deductions). ATS defaults to zero if the
-                calculation results in less than zero.
-              </p>
-            </div>
-          }
+          content="Available to Sell (ATS) is a calculated value that represents the quantity of inventory that can be currently sold to customers. It is calculated as: Quantity on Hand + (Sum of Additions) - (Sum of Deductions). ATS defaults to zero if the calculation results in less than zero."
           iconClassName="fill-muted-plum-gray"
         />
       }
