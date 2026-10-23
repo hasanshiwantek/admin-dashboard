@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { fetchMyPermissions } from "@/redux/slices/userPermission";
 import { buildPermissionSet, canAccessRoute } from "@/const/permissions";
+import { getSelectedStore } from "@/utils/storage";
 
 export type PermissionCheck = string | string[];
 
@@ -14,7 +15,10 @@ export function usePermissions() {
   );
 
   useEffect(() => {
-    if (myPermissionsStatus === "idle") dispatch(fetchMyPermissions());
+      const storeHash = getSelectedStore()?.storeHash;
+    if (myPermissionsStatus === "idle" && storeHash) {
+      dispatch(fetchMyPermissions());
+    }
   }, [myPermissionsStatus]);
 
   const permissionSet = useMemo(
