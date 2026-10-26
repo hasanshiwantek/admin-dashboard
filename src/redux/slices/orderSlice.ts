@@ -1,7 +1,7 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "@/lib/axiosInstance";
-import { errorMessage } from "@/utils/message";
 import { buildQueryParams } from "@/lib/utils";
+import { errorMessage } from "@/utils/message";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 type ApplyCouponArgs = {
   couponCode: string;
@@ -604,15 +604,14 @@ export const fetchAllShipments = createAsyncThunk(
     try {
       const filteredArgs = Object.fromEntries(
         Object.entries(args || {}).filter(
-          ([key, value]) =>
-            !(key === "status" && value === "All shipments")
-        )
+          ([key, value]) => !(key === "status" && value === "All shipments"),
+        ),
       );
 
       const queryParams = buildQueryParams(filteredArgs);
 
       const res = await axiosInstance.get(
-        `dashboard/shipments/list-shipment?${queryParams}`
+        `dashboard/shipments/list-shipment?${queryParams}`,
       );
 
       return res.data;
@@ -620,10 +619,10 @@ export const fetchAllShipments = createAsyncThunk(
       console.error("❌ Error fetching shipments:", err);
 
       return thunkAPI.rejectWithValue(
-        err.response?.data?.message || "Failed to fetch shipments"
+        err.response?.data?.message || "Failed to fetch shipments",
       );
     }
-  }
+  },
 );
 
 // ADD SHIPMENT ORDER
@@ -908,7 +907,7 @@ export const fetchShippingRates = createAsyncThunk(
   async ({ data }: { data: any }, thunkAPI) => {
     try {
       const res = await axiosInstance.post(
-        `web/checkout/get-shipping-rates`,
+        `dashboard/checkout/get-shipping-rates`,
         data,
       );
       return res.data;
@@ -919,21 +918,6 @@ export const fetchShippingRates = createAsyncThunk(
     }
   },
 );
-// export const applyCoupon = createAsyncThunk(
-//   "order/fetchCouponByCode",
-//   async (couponCode: string, { rejectWithValue }) => {
-//     try {
-//       const res = await axiosInstance.get("web/coupons/get-couponcode", {
-//         params: { couponCode },
-//       });
-//       return res.data;
-//     } catch (err: any) {
-//       return rejectWithValue(
-//         err?.response?.data || { message: "Coupon request failed" }
-//       );
-//     }
-//   }
-// );
 
 export const applyCoupon = createAsyncThunk(
   "order/fetchCouponByCode",
