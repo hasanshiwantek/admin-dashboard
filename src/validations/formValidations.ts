@@ -95,6 +95,8 @@ import {
   ref,
   string,
 } from "yup";
+import { CustomerField } from "@/app/(protected)/manage/customers/constant";
+import { REGEX } from "@/const/regex";
 
 export const BannerSchema = object({
   [BannerField.Title]: string().trim().required("Banner name is required"),
@@ -737,7 +739,8 @@ const coordinate = (label: string, max: number) =>
       "coordinate",
       `${label} must be between -${max} and ${max}`,
       (value) =>
-        !value || (Number.isFinite(Number(value)) && Math.abs(Number(value)) <= max),
+        !value ||
+        (Number.isFinite(Number(value)) && Math.abs(Number(value)) <= max),
     );
 
 export const LocationSchema = object({
@@ -851,7 +854,8 @@ export const TaxZoneSettingsSchema = object({
     TaxZoneSettingsFormNames.BasedOn,
     {
       is: TaxZoneBasedOn.PostalCodes,
-      then: (schema) => schema.trim().required("Enter at least one postal code"),
+      then: (schema) =>
+        schema.trim().required("Enter at least one postal code"),
     },
   ),
   [TaxZoneSettingsFormNames.AppliesTo]: text(),
@@ -869,7 +873,9 @@ export const TaxZoneSettingsSchema = object({
 });
 
 export const TaxRateSchema = object({
-  [TaxRateFormNames.Name]: string().trim().required("Tax rate name is required"),
+  [TaxRateFormNames.Name]: string()
+    .trim()
+    .required("Tax rate name is required"),
   [TaxRateFormNames.ClassRates]: array()
     .of(
       object({
@@ -881,7 +887,9 @@ export const TaxRateSchema = object({
           "Enter a rate between 0 and 100",
           (value) =>
             !value ||
-            (!isNaN(Number(value)) && Number(value) >= 0 && Number(value) <= 100),
+            (!isNaN(Number(value)) &&
+              Number(value) >= 0 &&
+              Number(value) <= 100),
         ),
       }),
     )
@@ -908,8 +916,10 @@ const positiveWholeNumber = (label: string) =>
   string()
     .trim()
     .required(`${label} is required`)
-    .test("whole", `${label} must be a whole number above 0`, (value) =>
-      !value || (/^\d+$/.test(value) && Number(value) > 0),
+    .test(
+      "whole",
+      `${label} must be a whole number above 0`,
+      (value) => !value || (/^\d+$/.test(value) && Number(value) > 0),
     );
 
 export const DnsSettingsSchema = object({
@@ -981,7 +991,9 @@ export const DnsSettingsSchema = object({
         object({
           [DnsRecordFormNames.RecordId]: text(),
           [DnsRecordFormNames.Type]: string().required("Type is required"),
-          [DnsRecordFormNames.Host]: string().trim().required("Host is required"),
+          [DnsRecordFormNames.Host]: string()
+            .trim()
+            .required("Host is required"),
           [DnsRecordFormNames.Value]: string()
             .trim()
             .required("Value is required"),
@@ -1015,3 +1027,37 @@ export const PromotionSettingsSchema = object({
 // #endregion
 
 // #endregion
+
+// #region Customer 
+const passwordRules = string()
+  .required("Password is required")
+  .min(7, "Password must be at least 7 characters")
+  .matches(REGEX.HAS_LETTER, "Password must contain at least one letter")
+  .matches(REGEX.HAS_NUMBER, "Password must contain at least one number");
+export const createCustomerSchema = (isEdit: boolean) =>
+  object({
+    [CustomerField.firstName]: string().required("First name is required"),
+    [CustomerField.lastName]: string().required("Last name is required"),
+    [CustomerField.companyName]: string().defined(),
+    [CustomerField.email]: string()
+      .email("Enter a valid email address")
+      .required("Email is required"),
+    [CustomerField.customerGroup]: string().defined(),
+    [CustomerField.phone]: string().defined(),
+    [CustomerField.storeCredit]: string().defined(),
+    [CustomerField.acsEmail]: string().defined(),
+    [CustomerField.forceReset]: string().defined(),
+    [CustomerField.taxCode]: string().defined(),
+    [CustomerField.password]: isEdit ? string().defined() : passwordRules,
+    [CustomerField.confirmPassword]: isEdit
+      ? string().defined()
+      : string()
+          .required("Confirm password is required")
+          .oneOf([ref(CustomerField.password)], "Passwords do not match"),
+    [CustomerField.analytics]: string().defined(),
+    [CustomerField.functional]: string().defined(),
+    [CustomerField.targeting]: string().defined(),
+    [CustomerField.address]: string().defined(),
+    [CustomerField.state]: string().defined(),
+    [CustomerField.country]: string().defined(),
+  });

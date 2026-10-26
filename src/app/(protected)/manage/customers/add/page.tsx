@@ -1,11 +1,7 @@
 import React from "react";
-import AddCustomer from "@/app/components/customers/add/AddCustomer";
+import AddCustomerForm from "../AddCustomerForm";
 const page = () => {
-  return (
-    <div>
-      <AddCustomer />
-    </div>
-  );
+  return <AddCustomerForm />;
 };
 
 export default page;
