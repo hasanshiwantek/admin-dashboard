@@ -1,7 +1,7 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/Button";
+import { Checkbox } from "@/components/ui/Checkbox";
 import { Input } from "@/components/ui/input";
 import {
   Sheet,
@@ -17,7 +17,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/components/ui/Table";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { sanitizeNumberInput } from "@/lib/productUtils";
 import { cn } from "@/lib/utils";
@@ -290,9 +290,10 @@ export default function EditStockSheet({
         {/* Actions */}
         <div className="sticky bottom-0 flex w-full gap-3 border-t bg-white p-6">
           <Button
+            variant="outline"
             size={"xl"}
             type="button"
-            className={cn("btn-outline-primary w-1/2", {
+            className={cn("w-1/2", {
               "cursor-not-allowed! opacity-60": hasValidationErrors,
             })}
             onClick={handleSave}
@@ -302,9 +303,10 @@ export default function EditStockSheet({
           </Button>
 
           <Button
+            variant="primary"
             size={"xl"}
             type="button"
-            className={cn("btn-primary w-1/2", {
+            className={cn("w-1/2", {
               "cursor-not-allowed! opacity-60": hasValidationErrors,
             })}
             onClick={handleSaveAndExit}

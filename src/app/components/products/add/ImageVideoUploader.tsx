@@ -6,6 +6,7 @@ import { ImageIcon, UploadCloudIcon, PlusIcon } from "lucide-react";
 import ImagePreviewList from "./ImagePreviewList";
 import AddFromUrlModal from "./AddFromUrlModal";
 import { PreviewItem } from "@/types/types";
+import { Button } from "@/components/ui/Button";
 // export type PreviewItem = {
 //   file: File ;
 //   url: string;
@@ -127,22 +128,26 @@ export default function ImageVideoUploader({ initialImages }: Props) {
       <div className="flex items-center justify-between mb-2">
         <h1 className="my-5 text-xl font-semibold 2xl:!text-[2.4rem]">Images & Videos</h1>
         <div className="flex space-x-4">
-          <button
+          <Button
+            variant="outline"
+            size="md"
             type="button"
-            className="btn-outline-primary flex items-center border border-gray-300 px-4 py-2 rounded-md text-sm 2xl:!text-2xl"
+            className="flex items-center border border-gray-300 px-4 py-2 rounded-md text-sm 2xl:!text-2xl"
             onClick={() => setIsUrlModalOpen(true)}
           >
             <PlusIcon className="w-5 h-5 mr-2" />
             Add from URL
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="outline"
+            size="md"
             type="button"
             onClick={handleUploadClick}
-            className="btn-outline-primary flex items-center border border-gray-300 px-4 py-2 rounded-md text-sm 2xl:!text-2xl"
+            className="flex items-center border border-gray-300 px-4 py-2 rounded-md text-sm 2xl:!text-2xl"
           >
             <UploadCloudIcon className="w-5 h-5 mr-2" />
             Upload Images
-          </button>
+          </Button>
         </div>
       </div>
 

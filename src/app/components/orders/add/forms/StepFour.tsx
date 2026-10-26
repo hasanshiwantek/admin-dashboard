@@ -15,6 +15,7 @@ import { errorMessage } from "@/utils/message";
 import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
 import { getFromStorage } from "@/utils/storage";
 import { StoreItem } from "@/types/types";
+import { Button } from "@/components/ui/Button";
 export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
   const dispatch = useAppDispatch();
   const { handleSubmit, getValues } = useFormContext();
@@ -425,31 +426,33 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
         <OrderReview step={step} setStep={setStep} />
       </div>
       <div className="sticky bottom-0 w-full border-t p-6 bg-white flex justify-end gap-4">
-        <button
+        <Button
+          variant="outline"
+          size="md"
           type="button"
-          className="btn-outline-primary"
           onClick={() => setStep(step - 1)}
         >
           Back
-        </button>
+        </Button>
 
-        <button
+        <Button
+          variant="outline"
+          size="md"
           type="button"
           onClick={handleCancel}
-          className="btn-outline-primary"
         >
           Cancel
-        </button>
+        </Button>
 
         <div className="flex gap-4">
           {isEditMode ? (
-            <button type="submit" className="btn-primary">
+            <Button variant="primary" size="md" type="submit">
               Update Order
-            </button>
+            </Button>
           ) : (
-            <button disabled={loading} type="submit" className="btn-primary">
+            <Button variant="primary" size="md" disabled={loading} type="submit">
               {loading ? "Save..." : "Save"}
-            </button>
+            </Button>
           )}
         </div>
       </div>

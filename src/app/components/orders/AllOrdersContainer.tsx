@@ -28,6 +28,7 @@ import {
   ORDER_FILTER_LABELS,
   OrderTabs,
   STATUS_MAP,
+  UPDATE_STATUS_ACTION_PREFIX,
 } from "./constant";
 import { findCountry } from "./utils";
 import { downloadExport } from "@/redux/slices/exportSlice";
@@ -295,7 +296,7 @@ const useAllOrdersContainer = () => {
   // ----- Bulk action ("Confirm") -----
   const handleConfirmClick = async () => {
     if (
-      selectedAction.startsWith("updateMultiOrderStatus:") &&
+      selectedAction.startsWith(UPDATE_STATUS_ACTION_PREFIX) &&
       selectedOrders.length > 0
     ) {
       const statusId = selectedAction.split(":")[1];

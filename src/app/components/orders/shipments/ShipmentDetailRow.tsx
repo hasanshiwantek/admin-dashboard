@@ -9,6 +9,7 @@ import {
 import {replaceNullWithPlaceholder} from "@/lib/utils"
 import Link from "next/link";
 import { useAlert } from "@/hooks/useAlert";
+import { Button } from "@/components/ui/Button";
 type ShipmentDetailRowProps = {
   shipment: any;
 };
@@ -90,13 +91,15 @@ const ShipmentDetailRow = ({
             Billing
           </h4>
 
-          <button
+          <Button
+            variant="outline"
+            size="md"
             type="button"
-            className="btn-outline-primary text-sm mt-3"
+            className="text-sm mt-3"
             onClick={handleCopyBilling}
           >
             Copy
-          </button>
+          </Button>
         </div>
 
         <div className="flex flex-col gap-3 min-w-0">
@@ -199,13 +202,15 @@ const ShipmentDetailRow = ({
             Shipping
           </h4>
 
-          <button
+          <Button
+            variant="outline"
+            size="md"
             type="button"
-            className="btn-outline-primary text-sm mt-3"
+            className="text-sm mt-3"
             onClick={handleCopyShipping}
           >
             Copy
-          </button>
+          </Button>
         </div>
 
         <div className="flex flex-col gap-3 min-w-0">

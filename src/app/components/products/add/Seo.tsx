@@ -1,5 +1,5 @@
 // BasicInfoForm.tsx
-import { Checkbox } from "@/components/ui/checkbox";
+import { Checkbox } from "@/components/ui/Checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -19,6 +19,7 @@ import { useEffect, useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { HiQuestionMarkCircle } from "react-icons/hi2";
 import { ValidationError } from "@/components/ui/validation-error";
+import { Button } from "@/components/ui/Button";
 
 export default function Seo({ hasDuplicate }: { hasDuplicate: boolean }) {
   const { register, setValue, watch, formState: { errors } } = useFormContext();
@@ -195,13 +196,14 @@ export default function Seo({ hasDuplicate }: { hasDuplicate: boolean }) {
                 className="mt-1"
                 message={errors.productUrl?.message}
               />
-              <button
-                className="btn-outline-primary"
+              <Button
+                variant="outline"
+                size="md"
                 type="button"
                 onClick={handleResetProductUrl}
               >
                 Reset
-              </button>
+              </Button>
             </div>
             {showRedirectCheckbox && (
               <div className="mt-3 flex items-center gap-3 pl-1">

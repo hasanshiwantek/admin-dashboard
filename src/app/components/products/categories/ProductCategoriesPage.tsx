@@ -1,6 +1,6 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/Button";
+import { Checkbox } from "@/components/ui/Checkbox";
 import {
   Table,
   TableBody,
@@ -8,7 +8,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/components/ui/Table";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { findCategoryAncestors } from "@/lib/categoryUtils";
 import {
@@ -204,8 +204,9 @@ export default function ProductCategoriesPage() {
             </h1>
 
             <Button
+              variant="primary"
               size="xl"
-              className="flex items-center gap-2 btn-primary"
+              className="flex items-center gap-2"
               onClick={() => setOpen(true)}
               type="button"
             >
@@ -243,29 +244,32 @@ export default function ProductCategoriesPage() {
                 }
               />
 
-              <button
+              <Button
+                variant="outline"
+                size="md"
                 type="button"
-                className="btn-outline-primary"
                 onClick={() => handleBulkVisibility(true)}
               >
                 Enable Visibility
-              </button>
+              </Button>
 
-              <button
+              <Button
+                variant="outline"
+                size="md"
                 type="button"
-                className="btn-outline-primary"
                 onClick={() => handleBulkVisibility(false)}
               >
                 Disable Visibility
-              </button>
+              </Button>
 
-              <button
+              <Button
+                variant="outline"
+                size="md"
                 type="button"
-                className="btn-outline-primary"
                 onClick={handleDelete}
               >
                 Delete
-              </button>
+              </Button>
             </div>
           </div>
 

@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useFormContext } from "react-hook-form";
 import FulfillmentOptions from "../Fulfillment/FulfillmentOptions";
 import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
+import { Button } from "@/components/ui/Button";
 
 export default function StepThree({ step, setStep }: any) {
   const { handleSubmit, setValue, watch, getValues, resetField } =
@@ -101,25 +102,27 @@ export default function StepThree({ step, setStep }: any) {
 
       {/* Footer buttons */}
       <div className="sticky bottom-0 w-full border-t p-6 bg-white flex justify-end gap-4">
-        <button
+        <Button
+          variant="outline"
+          size="md"
           type="button"
           onClick={handleCancel}
-          className="btn-outline-primary"
         >
           Cancel
-        </button>
+        </Button>
 
-        <button
+        <Button
+          variant="outline"
+          size="md"
           type="button"
-          className="btn-outline-primary"
           onClick={() => setStep(step - 1)}
         >
           Back
-        </button>
+        </Button>
 
-        <button type="submit" className="btn-primary">
+        <Button variant="primary" size="md" type="submit">
           Next
-        </button>
+        </Button>
       </div>
       <ConfirmationModal
   open={showCancelModal}

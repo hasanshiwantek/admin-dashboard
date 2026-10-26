@@ -4,7 +4,7 @@ import InputField from "@/components/form/InputField";
 import CheckboxField from "@/components/form/fields/CheckboxField";
 import SelectField from "@/components/form/fields/SelectField";
 import PageTitle from "@/components/ui/PageTitle";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { ChevronDown, HelpCircle } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";

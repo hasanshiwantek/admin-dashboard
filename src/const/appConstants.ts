@@ -92,6 +92,9 @@ export enum DateTimeFormat {
   /** Example: Sep 25, 2026, 12:00 AM */
   SHORT_DATE_TIME = "MMM DD, YYYY, h:mm A",
 
+  /** Example: 01 Jan 2024 14:30:00 */
+  DATE_TIME_SECONDS = "DD MMM YYYY HH:mm:ss",
+
   /** Example: 1st Jan 2024 */
   ORDINAL_DATE = "Do MMM YYYY",
 

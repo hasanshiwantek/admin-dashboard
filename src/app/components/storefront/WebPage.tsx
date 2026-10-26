@@ -12,7 +12,7 @@ import RadioGroupField from "@/components/form/fields/RadioGroupField";
 import PageTitle from "@/components/ui/PageTitle";
 import RichTextEditor from "@/components/ui/RichTextEditor";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Checkbox } from "@/components/ui/Checkbox";
 import { cn } from "@/lib/utils";
 
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
@@ -34,7 +34,7 @@ import {
 } from "./constants";
 import { WebPageSchema } from "@/validations/formValidations";
 import type { WebPageFormValues } from "./types";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { REGEX } from "@/const/regex";
 import { generatePageUrl } from "./utils";
 
@@ -139,15 +139,16 @@ const WebPage = () => {
           onCancel: () => router.push(LIST_PATH),
           loading: form.formState.isSubmitting,
           extraActions: (
-            <button
+            <Button
+              variant="primary"
+              size="md"
               type="submit"
-              className="btn-primary"
               onClick={() => {
                 submitActionRef.current = isEdit ? "keepEditing" : "addAnother";
               }}
             >
               {isEdit ? "Save & Keep Editing" : "Save & Add Another"}
-            </button>
+            </Button>
           ),
         }}
       >
@@ -191,8 +192,9 @@ const WebPage = () => {
                 }}
               />
               <Button
+                variant="outline"
                 type="button"
-                className="btn-outline-primary !py-2 h-13"
+                className="!py-2 h-13"
                 onClick={() => {
                   setIsUrlManuallyEdited(false);
                   const url = generatePageUrl(watchedName, urlSettingData);

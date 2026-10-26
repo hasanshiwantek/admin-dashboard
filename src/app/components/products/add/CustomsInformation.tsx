@@ -1,9 +1,9 @@
 "use client";
 
 import { useFieldArray, useFormContext } from "react-hook-form";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Checkbox } from "@/components/ui/Checkbox";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -12,7 +12,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/Select";
 import { Trash2 } from "lucide-react";
 import { useEffect } from "react";
 import { countriesList } from "@/const/location";

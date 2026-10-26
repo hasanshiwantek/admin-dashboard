@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import Table from "@/components/ui/Table/Table";
 import SettingsNotice from "../../../_components/SettingsNotice";
 import { DNS_FORM_TABLE_CLASS, EXTERNAL_EMAIL_HOSTING_URL } from "../constant";
@@ -15,7 +15,7 @@ const ExternalEmailFields = ({
       <SettingsNotice tone="info">
         <span className="flex flex-wrap items-center gap-2">
           Learn how to set up an external email hosting solution.
-          <Button asChild size="sm" className="btn-primary h-auto py-2">
+          <Button variant="primary" asChild size="sm" className="h-auto py-2">
             <a
               href={EXTERNAL_EMAIL_HOSTING_URL}
               target="_blank"

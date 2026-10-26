@@ -2,7 +2,7 @@
 import React, { useEffect, useRef } from "react";
 import { useFormContext, Controller } from "react-hook-form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Checkbox } from "@/components/ui/Checkbox";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 const templates = [

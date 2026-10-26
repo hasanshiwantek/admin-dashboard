@@ -9,12 +9,12 @@ import {
   TableHead,
   TableBody,
   TableCell,
-} from "@/components/ui/table";
+} from "@/components/ui/Table";
 import { MoreHorizontal } from "lucide-react";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Checkbox } from "@/components/ui/Checkbox";
 import DestinationDialog from "./DestinationDialog";
 import OrderActionsDropdown from "../../OrderActionsDropdown";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 export default function MultipleAddressForm() {
   const { getValues, setValue, watch } = useFormContext();
   const products = getValues("selectedProducts") || [];
@@ -204,14 +204,15 @@ export default function MultipleAddressForm() {
         </Table>
       </div>
 
-      <button
+      <Button
+        variant="outline"
+        size="md"
         type="button"
-        className="btn-outline-primary"
         onClick={() => setOpen(true)}
         disabled={selected.length === 0}
       >
         Select destination for products
-      </button>
+      </Button>
 
       {/* Destination Dialog */}
       <DestinationDialog

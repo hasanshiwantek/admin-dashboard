@@ -5,7 +5,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { AlertDialogHeader, AlertDialogTitle, AlertDialogDescription,
   AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { buttonVariants } from "@/components/ui/Button";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/Select";
 
 type Props = { trigger: React.ReactNode; onConfirm: (format: 'csv' | 'xml') => void };
 
@@ -44,8 +45,8 @@ export default function ExportShipmentsDialog({ trigger, onConfirm }: Props) {
 
         {/* Footer */}
         <AlertDialogFooter className="px-6 py-4 border-t">
-          <AlertDialogCancel className="btn-outline-primary">Cancel</AlertDialogCancel>
-          <AlertDialogAction className="btn-primary" onClick={() => onConfirm(format)}>
+          <AlertDialogCancel className={buttonVariants({ variant: "outline", size: "md" })}>Cancel</AlertDialogCancel>
+          <AlertDialogAction className={buttonVariants({ variant: "primary", size: "md" })} onClick={() => onConfirm(format)}>
             Export shipments
           </AlertDialogAction>
         </AlertDialogFooter>

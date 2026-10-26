@@ -1,7 +1,7 @@
 "use client";
 
 import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/input";
 import Table from "@/components/ui/Table/Table";
 import TableTabs from "@/components/ui/Table/TableTabs";
@@ -81,7 +81,7 @@ const AllCustomers = () => {
       <div className="flex flex-wrap gap-4 mb-6 items-center">
         <Button
           variant="outline"
-          className={`flex items-center gap-2 !px-6 btn-outline-primary 2xl:!text-2xl ${TOOLBAR_CONTROL}`}
+          className={`flex items-center gap-2 !px-6 2xl:!text-2xl ${TOOLBAR_CONTROL}`}
           onClick={() => router.push("/manage/customers/add")}
           permission="add_customer"
         >
@@ -90,7 +90,7 @@ const AllCustomers = () => {
 
         <Button
           variant="outline"
-          className={`flex items-center gap-2 !px-6 btn-outline-primary ${TOOLBAR_CONTROL}`}
+          className={`flex items-center gap-2 !px-6 ${TOOLBAR_CONTROL}`}
           onClick={deleteCustomerHandler}
         >
           <Trash className="!w-5 !h-5" />
@@ -99,7 +99,7 @@ const AllCustomers = () => {
         <Button
           onClick={handleExport}
           variant="outline"
-          className={`flex items-center gap-2 !px-6 btn-outline-primary 2xl:!text-2xl ${TOOLBAR_CONTROL}`}
+          className={`flex items-center gap-2 !px-6 2xl:!text-2xl ${TOOLBAR_CONTROL}`}
           permission="export_customers"
         >
           <DownloadIcon className="!w-5 !h-5" /> Export selected customers
@@ -113,8 +113,8 @@ const AllCustomers = () => {
         />
 
         <Button
-          variant="default"
-          className={`flex items-center gap-2 !px-6 btn-outline-primary 2xl:!text-2xl ${TOOLBAR_CONTROL}`}
+          variant="outline"
+          className={`flex items-center gap-2 !px-6 2xl:!text-2xl ${TOOLBAR_CONTROL}`}
           onClick={filterHandler}
         >
           <SearchIcon className="!w-5 !h-5" /> Search

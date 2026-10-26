@@ -14,6 +14,7 @@ import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional
 import useAllShipmentContainer from "./AllShipmentContainer";
 import TableTabs from "@/components/ui/Table/TableTabs";
 import { X } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 
 const Shipments = () => {
   const {
@@ -81,23 +82,26 @@ const Shipments = () => {
           <div className="flex flex-wrap gap-3 items-center mb-1">
            
 
-            <button
+            <Button
+              variant="outline"
+              size="md"
               type="button"
-              className="btn-outline-primary"
               onClick={handleShipmentDelete}
             >
               <MdDelete className="w-7 h-7 2xl:h-9 2xl:w-10" />
-            </button>
+            </Button>
 
 
             <ExportShipmentsDialog
               trigger={
-                <button
+                <Button
+                  variant="outline"
+                  size="md"
                   type="button"
-                  className="btn-outline-primary 2xl:!text-2xl"
+                  className="2xl:!text-2xl"
                 >
                   Export all
-                </button>
+                </Button>
               }
               onConfirm={(format) => handleExport(format)}
             />
@@ -129,24 +133,28 @@ const Shipments = () => {
   )}
 </div>
 
-              <button
+              <Button
+                variant="outline"
+                size="md"
                 type="button"
-                className="btn-outline-primary h-full"
+                className="h-full"
                 onClick={() => table.submitSearch()}
               >
                 <IoFilterOutline />
-              </button>
+              </Button>
             </div>
 
         
 
             <Link href="/manage/orders/shipments/search-shipments">
-              <button
+              <Button
+                variant="outline"
+                size="md"
                 type="button"
-                className="btn-outline-primary 2xl:!text-2xl"
+                className="2xl:!text-2xl"
               >
                 Search
-              </button>
+              </Button>
             </Link>
           </div>
         </div>

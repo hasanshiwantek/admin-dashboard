@@ -9,7 +9,7 @@ import {
   SelectValue,
   SelectContent,
   SelectItem,
-} from "@/components/ui/select";
+} from "@/components/ui/Select";
 import {
   Tooltip,
   TooltipContent,
@@ -20,6 +20,7 @@ import { HiQuestionMarkCircle } from "react-icons/hi2";
 import { advanceReturnOrderSearch } from "@/redux/slices/orderSlice";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/Button";
 
 const Page = () => {
   const dispatch = useAppDispatch();
@@ -268,16 +269,17 @@ const Page = () => {
 
       {/* SUBMIT BUTTON */}
       <div className="sticky bottom-0 w-full border-t p-6 bg-white flex justify-end gap-4">
-        <button
-          className="btn-outline-primary"
+        <Button
+          variant="outline"
+          size="md"
           type="button"
           onClick={() => router.back()}
         >
           Cancel
-        </button>
-        <button className="btn-primary" type="submit">
+        </Button>
+        <Button variant="primary" size="md" type="submit">
           Search
-        </button>
+        </Button>
       </div>
     </form>
   );

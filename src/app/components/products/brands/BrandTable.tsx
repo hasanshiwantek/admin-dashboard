@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Trash } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Checkbox } from "@/components/ui/Checkbox";
 import {
   Table,
   TableBody,
@@ -10,13 +10,13 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/components/ui/Table";
 import { Settings } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 
 import OrderActionsDropdown from "../../orders/OrderActionsDropdown";
-import { Button } from "@/components/ui/button";
-import Pagination from "@/components/ui/pagination";
+import { Button } from "@/components/ui/Button";
+import Pagination from "@/components/ui/Pagination";
 import Link from "next/link";
 import {
   fetchBrands,
@@ -132,13 +132,13 @@ const BrandTable = () => {
         </div>
         <div className="flex items-center gap-5 ">
           <Link href={"/manage/products/brands/add"}>
-            <button className="btn-outline-primary 2xl:!text-2xl">
+            <Button variant="outline" size="md" className="2xl:!text-2xl">
               Add a Brand...
-            </button>
+            </Button>
           </Link>
-          <button className="btn-outline-primary" onClick={deleteBrandHandler}>
+          <Button variant="outline" size="md" onClick={deleteBrandHandler}>
             <Trash className="!w-6 !h-6 2xl:!h-8" />
-          </button>
+          </Button>
           <Input
             className="2xl:!text-2xl 2xl:!h-[37.98px]"
             type="text"
@@ -146,15 +146,19 @@ const BrandTable = () => {
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
           />
-          <button
-            className="btn-outline-primary 2xl:!text-2xl"
+          <Button
+            variant="outline"
+            size="md"
+            className="2xl:!text-2xl"
             onClick={filterHandler}
             type="button"
           >
             Filter
-          </button>
-          <button
-            className="btn-outline-primary 2xl:!text-2xl"
+          </Button>
+          <Button
+            variant="outline"
+            size="md"
+            className="2xl:!text-2xl"
             disabled={!keyword}
             onClick={() => {
               setKeyword("");
@@ -163,7 +167,7 @@ const BrandTable = () => {
             type="button"
           >
             Clear
-          </button>
+          </Button>
         </div>
         <div className="flex justify-end">
           <Pagination

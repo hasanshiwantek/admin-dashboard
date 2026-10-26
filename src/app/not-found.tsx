@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import LayoutWrapper from "./components/layout/LayoutWrapper";
 
 export default function NotFound() {
@@ -23,7 +23,7 @@ export default function NotFound() {
 
         {/* Call to action */}
         <Link href="/manage/dashboard">
-          <Button className="mt-4 !p-6 text-lg btn-primary">
+          <Button variant="primary" className="mt-4 !p-6 text-lg">
             ⬅ Return Home
           </Button>
         </Link>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { ReactNode } from "react";
 
@@ -44,9 +44,10 @@ export function FormFooter({
       )}
       {extraActions}
       <Button
+        variant="primary"
         type="submit"
         size="xl"
-        className="btn-primary text-xl! 2xl:text-2xl!"
+        className="text-xl! 2xl:text-2xl!"
         disabled={loading || disabled}
       >
         {loading ? loadingText : submitText}

@@ -1,5 +1,4 @@
 import React from "react";
-import styles from "@/styles/orders/Order.module.css";
 import AllOrders from "@/app/components/orders/AllOrders";
 const page = () => {
   return (

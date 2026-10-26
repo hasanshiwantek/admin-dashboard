@@ -11,17 +11,17 @@ import {
 import OrderActionsDropdown from "../../orders/OrderActionsDropdown";
 import FilterSettingsPage from "./FilterSettingsPage";
 // --- SHADCN/UI Imports ---
-import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/Button";
+import { Card, CardHeader, CardContent } from "@/components/ui/Card";
+import { Badge } from "@/components/ui/Badge";
+import { Checkbox } from "@/components/ui/Checkbox";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/Select";
 // New Table Component Imports
 import {
   Table,
@@ -30,7 +30,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/components/ui/Table";
 
 // --- APPLICATION DATA & LOGIC ---
 
@@ -288,9 +288,9 @@ const FilterationPage = () => {
         {/* Floating Save Button */}
 
         <div className="flex justify-end  gap-10 items-center fixed w-full bottom-0 right-0  bg-white/90 z-10 shadow-xs border-t  p-4">
-          <button className="btn-primary" onClick={handleSave}>
+          <Button variant="primary" size="md" onClick={handleSave}>
             Save
-          </button>
+          </Button>
         </div>
       </div>
     </div>

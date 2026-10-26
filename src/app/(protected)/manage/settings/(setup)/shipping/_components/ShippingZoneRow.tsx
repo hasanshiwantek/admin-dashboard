@@ -1,13 +1,13 @@
 "use client";
 
 import { ListRenderer } from "@/components/ListRenderer.tsx/ListRenderer";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Switch } from "@/components/ui/switch";
+import { Switch } from "@/components/ui/Switch";
 import { Globe } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";

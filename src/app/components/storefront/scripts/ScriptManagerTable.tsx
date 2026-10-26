@@ -8,23 +8,23 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/Table";
+import { Button } from "@/components/ui/Button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/components/ui/DropdownMenu";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/Select";
 import { MoreHorizontal, Plus, AlertCircle } from "lucide-react";
-import Pagination from "@/components/ui/pagination";
+import Pagination from "@/components/ui/Pagination";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
@@ -82,7 +82,7 @@ const handleDelete = (id: any, scriptName: string) => {
           <div className="flex items-center justify-between px-6 py-4 border-b bg-gray-50">
             <h2 className="!font-medium ">Installed scripts</h2>
             <Link href={"/manage/storefront/script-manager/add"}>
-              <button className="btn-primary">Create a script</button>
+              <Button variant="primary" size="md">Create a script</Button>
             </Link>
           </div>
 
@@ -176,10 +176,10 @@ const handleDelete = (id: any, scriptName: string) => {
                           analytics, conversion pixels, or custom functionality.
                         </p>
                         <Button
+                          variant="primary"
                           onClick={() =>
                             router.push("/manage/storefront/script-manager/add")
                           }
-                          className="btn-primary"
                           size="sm"
                         >
                           <Plus className="w-4 h-4 mr-2" />

@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import PageLayout from "@/components/ui/PageLayout";
 import Table from "@/components/ui/Table/Table";
 import DeletePickupMethodModal from "@/Modals/PickupMethodModals/DeletePickupMethodModal/DeletePickupMethodModal";
@@ -48,7 +48,7 @@ const PickupMethodsPage = () => {
         title="Pick up methods"
         className="border-0 shadow-sm"
         action={
-          <Button asChild size="xl" className="btn-primary">
+          <Button variant="primary" asChild size="xl">
             <Link href={ADD_PICKUP_METHOD_ROUTE}>
               <Plus className="size-6" />
               Add new

@@ -2,7 +2,7 @@
 
 import { useFormContext } from "@/components/form/Form";
 import InputField from "@/components/form/InputField";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { updateUrlsCopy } from "@/Modals/SettingsModals/UpdateUrlsModal/constant";
 import UpdateUrlsModal from "@/Modals/SettingsModals/UpdateUrlsModal/UpdateUrlsModal";
 import { useWatch } from "react-hook-form";

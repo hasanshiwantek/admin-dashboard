@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { Textarea } from "@/components/ui/textarea";
 import { HelpCircle } from "lucide-react";
 import {
@@ -11,7 +11,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/Select";
 import Link from "next/link";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { useParams, useRouter } from "next/navigation";
@@ -264,11 +264,11 @@ const EditBrand = () => {
 
       <div className="sticky bottom-0 w-full border-t p-6 bg-white flex justify-end gap-4">
         <Link href="/manage/products/brands/">
-          <button className="btn-outline-primary">Cancel</button>
+          <Button variant="outline" size="md">Cancel</Button>
         </Link>
-        <button className="btn-primary" type="submit" onClick={handleSubmit}>
+        <Button variant="primary" size="md" type="submit" onClick={handleSubmit}>
           Save
-        </button>
+        </Button>
       </div>
       <Alert />
     </div>

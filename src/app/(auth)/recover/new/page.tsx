@@ -1,5 +1,5 @@
 "use client";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/input";
 import { forgotPasswordUser } from "@/redux/slices/authSlice";
 import type { AppDispatch, RootState } from "@/redux/store";

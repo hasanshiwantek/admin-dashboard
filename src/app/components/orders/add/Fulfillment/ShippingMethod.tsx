@@ -7,7 +7,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-} from "@/components/ui/select";
+} from "@/components/ui/Select";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { fetchShippingRates } from "@/redux/slices/orderSlice";
 import { useEffect } from "react";

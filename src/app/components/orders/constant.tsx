@@ -1,7 +1,7 @@
-import { SelectOption } from "@/components/ui/select";
+import { SelectOption } from "@/components/ui/Select";
 import { TableTab } from "@/components/ui/Table/types";
 import { BadgeCheck, BadgeX, TriangleAlert } from "lucide-react";
-import { RiskInfo, StatusOption } from "./types";
+import { OrderActionOption, RiskInfo, StatusOption } from "./types";
 
 export const COMPLETED = "completed";
 export const AUTHORIZED = "authorized";
@@ -158,6 +158,17 @@ export const BULK_ORDER_ACTIONS: SelectOption[] = [
     label: "Capture funds for selected",
     value: BulkOrderAction.BulkCapture,
   },
+];
+
+export const UPDATE_STATUS_ACTION_PREFIX = "updateMultiOrderStatus:";
+
+export const ORDER_ACTION_OPTIONS: OrderActionOption[] = [
+  ...BULK_ORDER_ACTIONS,
+  ...BULK_STATUS_ACTIONS.map((action) => ({
+    label: action.label,
+    value: `${UPDATE_STATUS_ACTION_PREFIX}${action.value}`,
+    group: "Update status for selected to:",
+  })),
 ];
 
 export const riskConfig: Record<string, RiskInfo> = {

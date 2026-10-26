@@ -4,7 +4,7 @@ import Form from "@/components/form/Form";
 import LoadingOverlay from "@/components/LoadingOverlay/LoadingOverlay";
 import { LOADING_DIM_CLASS } from "@/components/LoadingOverlay/constant";
 import AppTabs from "@/components/ui/AppTabs/AppTabs";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import {
   Dialog,
   DialogContent,

@@ -1,6 +1,6 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/Button";
+import { Checkbox } from "@/components/ui/Checkbox";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -8,7 +8,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/Select";
 
 import {
   Table,
@@ -17,7 +17,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/components/ui/Table";
 import {
   PlusIcon,
   DownloadIcon,
@@ -27,7 +27,7 @@ import {
 } from "lucide-react";
 import React, { useState, useEffect, Fragment } from "react";
 import OrderActionsDropdown from "../../orders/OrderActionsDropdown";
-import Pagination from "@/components/ui/pagination";
+import Pagination from "@/components/ui/Pagination";
 import { FaCirclePlus, FaCircleMinus } from "react-icons/fa6";
 import { useParams, useSearchParams } from "next/navigation";
 import * as XLSX from "xlsx";
@@ -312,14 +312,14 @@ const CustomerDetail = () => {
         <Link href={"/manage/customers/add"}>
           <Button
             variant="outline"
-            className="flex items-center gap-2 !p-6 btn-outline-primary 2xl:!text-2xl"
+            className="flex items-center gap-2 !p-6 2xl:!text-2xl"
           >
             <PlusIcon className="!w-5 !h-5" /> Add
           </Button>
         </Link>
         {/* <Button
                     variant="outline"
-                    className="flex items-center gap-2 !p-6 btn-outline-primary"
+                    className="flex items-center gap-2 !p-6"
                     onClick={deleteCustomerHandler}
                 >
                     <Trash className="!w-5 !h-5" />
@@ -327,7 +327,7 @@ const CustomerDetail = () => {
         {/* <Button
                     onClick={handleExport}
                     variant="outline"
-                    className="flex items-center gap-2 !p-6 btn-outline-primary 2xl:!text-2xl"
+                    className="flex items-center gap-2 !p-6 2xl:!text-2xl"
                 >
                     <DownloadIcon className="!w-5 !h-5" /> Export selected customers
                 </Button> */}
@@ -449,7 +449,7 @@ const CustomerDetail = () => {
                                                     }
                                                 />
                                                 <Button
-                                                    className="ml-2 !h-12 !px-4 btn-primary 2xl:!text-2xl"
+                                                    className="ml-2 !h-12 !px-4 2xl:!text-2xl"
                                                     onClick={() => updateCustomerStoreCredit(customer?.id)}
                                                 >
                                                     Save

@@ -3,7 +3,7 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+} from "@/components/ui/Collapsible";
 import {
   SidebarMenu,
   SidebarMenuButton,
@@ -11,14 +11,12 @@ import {
   SidebarMenuSub,
   SidebarMenuSubItem,
   SidebarProvider,
-} from "@/components/ui/sidebar";
-import { useSidebarData } from "@/const/sidebarDataDynamic"; // jahan file rakhi hai
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-
+} from "@/components/ui/Sidebar";
+import { useSidebarData } from "@/const/sidebarDataDynamic";
 import { ChevronDown, ChevronRight } from "lucide-react";
-import { usePathname } from "next/navigation";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export const SideBar = ({
   onClose,

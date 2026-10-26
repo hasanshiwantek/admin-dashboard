@@ -47,6 +47,7 @@ import SidebarNavigation from "./SidebarNavigation";
 import StoreFront from "./StoreFront";
 import { useAlert } from "@/hooks/useAlert";
 import { getSelectedStore } from "@/utils/storage";
+import { Button } from "@/components/ui/Button";
 
 export default function AddProductPage() {
   const dispatch = useAppDispatch();
@@ -674,18 +675,21 @@ export default function AddProductPage() {
               <Seo hasDuplicate={Boolean(product?.hasDuplicate)} />
               <OpenGraph isEdit={isEdit} />
               <div className="flex justify-end gap-4 items-center fixed w-full bottom-0 right-0 bg-white/90 z-10 shadow-xs border-t p-4">
-                <button
-                  className="btn-outline-primary"
+                <Button
+                  variant="outline"
+                  size="md"
                   type="button"
                   onClick={() => handleBackNavigation()}
                 >
                   Cancel
-                </button>
+                </Button>
 
-                <button
+                <Button
+                  variant="outline"
+                  size="md"
                   type="submit"
                   disabled={isLoading}
-                  className="btn-outline-primary flex items-center gap-2"
+                  className="flex items-center gap-2"
                   onClick={() => {
                     submitActionRef.current = "save";
                   }}
@@ -694,12 +698,14 @@ export default function AddProductPage() {
                     <span className="h-4 w-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
                   )}
                   Save
-                </button>
+                </Button>
 
-                <button
+                <Button
+                  variant="outline"
+                  size="md"
                   type="submit"
                   disabled={isLoading}
-                  className="btn-outline-primary flex items-center gap-2"
+                  className="flex items-center gap-2"
                   onClick={() => {
                     submitActionRef.current = "duplicate";
                   }}
@@ -708,12 +714,14 @@ export default function AddProductPage() {
                     <span className="h-4 w-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
                   )}
                   Save & Duplicate
-                </button>
+                </Button>
 
-                <button
+                <Button
+                  variant="outline"
+                  size="md"
                   type="submit"
                   disabled={isLoading}
-                  className="btn-outline-primary flex items-center gap-2"
+                  className="flex items-center gap-2"
                   onClick={() => {
                     submitActionRef.current = "addAnother";
                   }}
@@ -722,12 +730,14 @@ export default function AddProductPage() {
                     <span className="h-4 w-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
                   )}
                   Save & Add Another
-                </button>
+                </Button>
 
-                <button
+                <Button
+                  variant="primary"
+                  size="md"
                   type="submit"
                   disabled={isLoading}
-                  className="btn-primary flex items-center gap-2"
+                  className="flex items-center gap-2"
                   onClick={() => {
                     submitActionRef.current = "viewProducts";
                   }}
@@ -736,7 +746,7 @@ export default function AddProductPage() {
                     <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                   )}
                   {isLoading ? "Saving..." : "Save & View Products"}
-                </button>
+                </Button>
               </div>
             </form>
           </FormProvider>

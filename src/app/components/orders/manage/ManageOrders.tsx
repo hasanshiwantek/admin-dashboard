@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import {
   Table,
   TableBody,
@@ -10,7 +10,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/components/ui/Table";
 import { FaCircleMinus, FaCirclePlus } from "react-icons/fa6";
 import { useAppSelector, useAppDispatch } from "@/hooks/useReduxHooks";
 import { getReturnOrders } from "@/redux/slices/orderSlice";
@@ -223,7 +223,7 @@ const ManageOrders = () => {
 
           {/* Advance Search button */}
           {/* <Link href={"/manage/orders/view-returns"}>
-            <button className="btn-outline-primary flex justify-start gap-1 items-center !text-xl">
+            <button className="flex justify-start gap-1 items-center !text-xl">
               Advance Search
             </button>
           </Link> */}

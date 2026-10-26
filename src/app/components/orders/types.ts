@@ -14,6 +14,58 @@ export interface StatusOption {
   color: string;
 }
 
+export interface OrderActionOption {
+  label: string;
+  value: string;
+  group?: string;
+}
+
+export interface OrderProduct {
+  name: string;
+  sku?: string;
+  price: number;
+  quantity: number;
+  productUrl?: string;
+  optionSet?: { title?: string };
+  brand?: { name?: string };
+}
+
+export interface OrderTotalRow {
+  label: string;
+  value: string;
+}
+
+export interface OrderInfoItem {
+  key: string;
+  label: ReactNode;
+  content: ReactNode;
+  rowClassName?: string;
+}
+
+export interface OrderInfoListProps {
+  items: (OrderInfoItem | false | null | undefined)[];
+}
+
+export interface OrderSectionHeaderProps {
+  title: string;
+  onCopy?: () => void;
+}
+
+export interface OrderBillingDetailsProps {
+  order: any;
+  onCaptureFunds: (paymentIntentId: string) => void;
+}
+
+export interface OrderShippingDetailsProps {
+  order: any;
+}
+
+export interface OrderItemsSummaryProps {
+  order: any;
+  onViewShipmentId: (orderId: number | string) => void;
+  onShipItems: (order: any) => void;
+}
+
 export interface OrderDetailRowProps {
   order: any;
   onCaptureFunds: (paymentIntentId: string) => void;

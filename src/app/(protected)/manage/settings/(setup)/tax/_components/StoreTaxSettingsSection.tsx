@@ -1,5 +1,5 @@
 import { ListRenderer } from "@/components/ListRenderer.tsx/ListRenderer";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 import SettingsCard from "../../../_components/SettingsCard";
 import { STORE_TAX_SETTINGS_ROUTE } from "../constant";

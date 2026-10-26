@@ -1,6 +1,6 @@
 import { ListRenderer } from "@/components/ListRenderer.tsx/ListRenderer";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/Button";
+import { Checkbox } from "@/components/ui/Checkbox";
 import { DeliveryServicesFieldProps } from "./type";
 import { toggleInList } from "./utils";
 

@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { Plus } from "lucide-react";
-import { Button, ButtonProps } from "./button";
+import { Button, ButtonProps } from "./Button";
 import { cn } from "@/lib/utils";
 
 export interface PageTitleProps {
@@ -68,10 +68,11 @@ const PageTitle = ({
       {action}
       {!action && !hideActionButton && (
         <Button
+          variant="primary"
           size={size}
           onClick={onButtonClick}
           className={cn(
-            "btn-primary flex justify-start items-center text-2xl! 2xl:text-[1.6rem]!",
+            "flex justify-start items-center text-2xl! 2xl:text-[1.6rem]!",
             className,
           )}
           {...restButtonProps}

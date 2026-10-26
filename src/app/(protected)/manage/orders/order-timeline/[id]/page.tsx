@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/Card";
 import { Separator } from "@/components/ui/separator";
 import dayjs from "dayjs";
 import { Loader, ArrowRight, Percent, } from "lucide-react";

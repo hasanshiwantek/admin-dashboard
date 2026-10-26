@@ -8,7 +8,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/Select";
 import {
   Tooltip,
   TooltipContent,
@@ -18,6 +18,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { HiQuestionMarkCircle } from "react-icons/hi2";
+import { Button } from "@/components/ui/Button";
 const OrderSearch = () => {
   const router = useRouter();
   const [formData, setFormData] = useState({
@@ -434,16 +435,17 @@ const OrderSearch = () => {
 
       {/* SUBMIT BUTTON */}
       <div className="sticky bottom-0 w-full border-t p-6 bg-white flex justify-end gap-4">
-        <button
+        <Button
+          variant="outline"
+          size="md"
           onClick={() => router.push("/manage/orders")}
-          className="btn-outline-primary"
           type="button"
         >
           Cancel
-        </button>
-        <button className="btn-primary" type="submit">
+        </Button>
+        <Button variant="primary" size="md" type="submit">
           Search
-        </button>
+        </Button>
       </div>
     </form>
   );

@@ -1,7 +1,7 @@
 "use client";
 import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
 import Table from "@/components/ui/Table/Table";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import useAllReviewsContainer from "./helpers/useAllReviewsContainer";
 export default function AllReviews() {
   const {
@@ -51,7 +51,6 @@ export default function AllReviews() {
         <div className="flex flex-wrap gap-3 items-center mb-4">
           <Button
             variant="outline"
-            className="btn-outline-primary"
             onClick={handleDeleteSelected}
             disabled={!selectedIds.length}
           >
@@ -59,7 +58,6 @@ export default function AllReviews() {
           </Button>
           <Button
             variant="outline"
-            className="btn-outline-primary"
             onClick={handleApproveSelected}
             disabled={!selectedIds.length}
           >
@@ -67,7 +65,6 @@ export default function AllReviews() {
           </Button>
           <Button
             variant="outline"
-            className="btn-outline-primary"
             onClick={handleDisapproveSelected}
             disabled={!selectedIds.length}
           >

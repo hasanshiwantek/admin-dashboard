@@ -10,7 +10,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/components/ui/Card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -19,9 +19,10 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/Select";
 import { updateUserPofile } from "@/redux/slices/authSlice";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
+import { Button } from "@/components/ui/Button";
 const languageOptions = [
   { value: "en", label: "English (English)" },
   { value: "es-es", label: "Español (Castellano) (Spanish/Castilian)" },
@@ -134,16 +135,18 @@ const Page = () => {
         {/* Floating Action Buttons */}
         <div className="flex justify-end  gap-10 items-center fixed w-full bottom-0 right-0  bg-white/90 z-10 shadow-xs border-t  p-4">
           <div className=" flex justify-end space-x-8">
-            <button onClick={handleCancel} className="btn-outline-primary">
+            <Button variant="outline" size="md" onClick={handleCancel}>
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="primary"
+              size="md"
               onClick={handleSave}
-              className="btn-primary flex items-center"
+              className="flex items-center"
             >
               <Save className="mr-1 -mt-1 h-5 w-5" />
               Save
-            </button>
+            </Button>
           </div>
         </div>
       </div>

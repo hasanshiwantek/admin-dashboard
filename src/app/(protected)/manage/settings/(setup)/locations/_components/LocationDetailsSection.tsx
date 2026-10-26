@@ -1,6 +1,6 @@
 import CheckboxField from "@/components/form/fields/CheckboxField";
 import InputField from "@/components/form/InputField";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import Table from "@/components/ui/Table/Table";
 import { cn } from "@/lib/utils";
 import { Plus } from "lucide-react";

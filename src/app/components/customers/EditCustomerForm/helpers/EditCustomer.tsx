@@ -5,13 +5,13 @@ import { Label } from "@/components/ui/label";
 import React, { useEffect, useState } from "react";
 
 import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Checkbox } from "@/components/ui/Checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/components/ui/DropdownMenu";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import {
   addCustomer,

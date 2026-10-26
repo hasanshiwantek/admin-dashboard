@@ -1,15 +1,15 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/Button";
+import { Checkbox } from "@/components/ui/Checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/components/ui/DropdownMenu";
 import { Input } from "@/components/ui/input";
-import Pagination from "@/components/ui/pagination";
+import Pagination from "@/components/ui/Pagination";
 import {
   Table,
   TableBody,
@@ -17,7 +17,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/components/ui/Table";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import {
   deleteCouponCodes,
@@ -197,12 +197,13 @@ const confirmDelete = async () => {
           {/* Action Bar */}
           <div className="flex items-center gap-8 px-6 py-4 border-b">
             <Link href={"/manage/marketing/coupon-codes/add"}>
-              <button className="btn-outline-primary">
+              <Button variant="outline" size="md">
                 Create a coupon code
-              </button>
+              </Button>
             </Link>
-            <button
-              className="btn-outline-primary"
+            <Button
+              variant="outline"
+              size="md"
               disabled={selectedCoupons.length === 0 || deleteLoading}
               onClick={handleDeleteSelected}
             >
@@ -211,7 +212,7 @@ const confirmDelete = async () => {
               ) : (
                 <Trash2 className="h-6 w-6 fill-blue-600" />
               )}
-            </button>
+            </Button>
 
             <div className="flex items-center border rounded 2xl:h-[37.98px]">
               <Input
@@ -230,13 +231,15 @@ const confirmDelete = async () => {
                   ×
                 </button>
               )}
-              <button
-                className="btn-outline-primary h-full"
+              <Button
+                variant="outline"
+                size="md"
+                className="h-full"
                 onClick={filterCouponHandler}
                 type="button"
               >
                 <IoFilterOutline />
-              </button>
+              </Button>
             </div>
             <div className="flex-1" />
             <Pagination

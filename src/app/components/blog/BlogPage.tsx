@@ -20,7 +20,7 @@ import { BlogSchema } from "@/validations/formValidations";
 import { blogDefaultValues, BlogFormFieldName } from "./constant";
 import { BlogFormValues, FieldLabelProps } from "./type";
 import PageTitle from "@/components/ui/PageTitle";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { createFormData } from "@/lib/utils";
 import { transformBlogFormValues } from "./utils";
 const LABEL_CLASS =
@@ -142,8 +142,8 @@ export default function BlogPage() {
           loading: loading || form.formState.isSubmitting,
           extraActions: (
             <Button
+              variant="outline"
               type="button"
-              className="btn-outline-primary"
               disabled={loading}
               onClick={handleDraftSave}
             >

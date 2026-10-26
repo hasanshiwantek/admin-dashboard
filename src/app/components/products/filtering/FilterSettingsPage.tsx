@@ -1,9 +1,9 @@
 "use client";
 import React, { useState } from "react";
 import { ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/Button";
+import { Card, CardContent } from "@/components/ui/Card";
+import { Checkbox } from "@/components/ui/Checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -12,7 +12,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/Select";
 
 // Define filter configurations
 const filterConfigs = {
@@ -280,12 +280,12 @@ const FilterSettingsPage: React.FC<FilterSettingsPageProps> = ({
         {/* Fixed Bottom Action Buttons */}
         <div className="flex justify-end  gap-10 items-center fixed w-full bottom-0 right-0  bg-white/90 z-10 shadow-xs border-t  p-4">
           <div className="flex justify-end gap-8 px-8">
-            <button className="btn-outline-primary" onClick={onCancel}>
+            <Button variant="outline" size="md" onClick={onCancel}>
               Cancel
-            </button>
-            <button onClick={handleSave} className="btn-primary">
+            </Button>
+            <Button variant="primary" size="md" onClick={handleSave}>
               Save
-            </button>
+            </Button>
           </div>
         </div>
       </div>

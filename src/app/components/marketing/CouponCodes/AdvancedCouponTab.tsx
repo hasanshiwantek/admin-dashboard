@@ -1,6 +1,6 @@
 "use client";
 
-import { Checkbox } from "@/components/ui/checkbox";
+import { Checkbox } from "@/components/ui/Checkbox";
 import { Label } from "@/components/ui/label";
 import { Info } from "lucide-react";
 

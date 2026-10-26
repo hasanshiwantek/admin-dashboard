@@ -1,7 +1,7 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox"; // Added Checkbox component
+import { Button } from "@/components/ui/Button";
+import { Checkbox } from "@/components/ui/Checkbox"; // Added Checkbox component
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -11,7 +11,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/Select";
 import {
   Table,
   TableBody,
@@ -19,7 +19,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/components/ui/Table";
 import { Textarea } from "@/components/ui/textarea";
 import { usePermissions } from "@/hooks/usePermissions";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
@@ -750,9 +750,9 @@ export default function OrderReview({ step, setStep }: any) {
                   className="text-sm"
                 />
                 <Button
+                  variant="outline"
                   onClick={handleApplyManualDiscount}
                   type="button"
-                  className="btn-outline-primary"
                 >
                   Apply
                 </Button>
@@ -768,9 +768,9 @@ export default function OrderReview({ step, setStep }: any) {
                   }}
                 />
                 <Button
+                  variant="outline"
                   onClick={handleApplyCoupon}
                   type="button"
-                  className="btn-outline-primary"
                 >
                   {loading ? "Loading.." : "Apply"}
                 </Button>

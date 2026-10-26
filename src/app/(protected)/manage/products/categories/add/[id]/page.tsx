@@ -7,7 +7,7 @@ import InputField from "@/components/form/InputField";
 import SelectField from "@/components/form/fields/SelectField";
 import PageTitle from "@/components/ui/PageTitle";
 import RichTextEditor from "@/components/ui/RichTextEditor";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { Label } from "@/components/ui/label";
 import { availableStores, LocalStorageKeys } from "@/const/appConstants";
 import { REGEX } from "@/const/regex";

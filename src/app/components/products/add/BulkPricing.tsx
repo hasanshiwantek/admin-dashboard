@@ -15,8 +15,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/Select";
+import { Button } from "@/components/ui/Button";
 import { Trash2 } from "lucide-react";
 import {
   decimalValidation,
@@ -33,7 +33,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/components/ui/Table";
 
 export default function BulkPricing() {
   const { control, register, setValue, formState } = useFormContext();

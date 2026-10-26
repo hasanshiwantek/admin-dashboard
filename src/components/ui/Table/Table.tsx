@@ -3,9 +3,9 @@
 import Spinner from "@/app/components/loader/Spinner";
 import OrderActionsDropdown from "@/app/components/orders/OrderActionsDropdown";
 import ChipList, { type ChipItem } from "@/components/Chips/ChipList";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import Pagination from "@/components/ui/pagination";
+import { Button } from "@/components/ui/Button";
+import { Checkbox } from "@/components/ui/Checkbox";
+import Pagination from "@/components/ui/Pagination";
 import {
   TableBody,
   TableCell,
@@ -13,7 +13,7 @@ import {
   TableHeader,
   TableRow,
   Table as UITable,
-} from "@/components/ui/table";
+} from "@/components/ui/Table";
 import { cn } from "@/lib/utils";
 import {
   ChevronDown,
@@ -194,9 +194,11 @@ export default function Table<T>({
 
           {toolbar}
 
-          <button
+          <Button
+            variant="outline"
+            size="md"
             onClick={() => onSearchSubmit?.()}
-            className="btn-outline-primary flex justify-start gap-1 items-center 2xl:!text-[1.6rem]"
+            className="flex justify-start gap-1 items-center 2xl:!text-[1.6rem]"
           >
             <IoSearchOutline
               size={20}
@@ -204,7 +206,7 @@ export default function Table<T>({
               className="cursor-pointer text-inherit!"
             />
             Search
-          </button>
+          </Button>
         </div>
       )}
 

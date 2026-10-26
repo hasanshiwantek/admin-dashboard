@@ -1,5 +1,5 @@
 "use client";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Checkbox } from "@/components/ui/Checkbox";
 import { Label } from "@/components/ui/label";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { fetchCategories } from "@/redux/slices/categorySlice";

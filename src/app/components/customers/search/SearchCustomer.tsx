@@ -7,7 +7,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/Select";
 import {
   Tooltip,
   TooltipContent,
@@ -19,6 +19,7 @@ import { Country, State } from "country-state-city";
 import { Info } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
+import { Button } from "@/components/ui/Button";
 const SearchCustomer = () => {
   const dispatch = useAppDispatch();
 
@@ -417,16 +418,17 @@ const SearchCustomer = () => {
         </div>
 
         <div className="sticky bottom-0 w-full border-t p-6 bg-white flex justify-end gap-4">
-          <button
+          <Button
+            variant="outline"
+            size="md"
             onClick={() => router.push("/manage/customers")}
             type="button"
-            className="btn-outline-primary"
           >
             Cancel
-          </button>
-          <button type="submit" className="btn-primary">
+          </Button>
+          <Button variant="primary" size="md" type="submit">
             Search
-          </button>
+          </Button>
         </div>
       </form>
     </div>

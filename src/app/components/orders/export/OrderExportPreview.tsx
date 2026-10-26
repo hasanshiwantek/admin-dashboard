@@ -6,9 +6,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/components/ui/Table";
 import { useEffect, useState } from "react";
-import Pagination from "@/components/ui/pagination";
+import Pagination from "@/components/ui/Pagination";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { fetchAllOrders } from "@/redux/slices/orderSlice";
 import Spinner from "../../loader/Spinner";

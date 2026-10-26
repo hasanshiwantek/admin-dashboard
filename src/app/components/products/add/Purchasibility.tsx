@@ -3,7 +3,7 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Switch } from "@/components/ui/switch";
+import { Switch } from "@/components/ui/Switch";
 import {
   Tooltip,
   TooltipContent,

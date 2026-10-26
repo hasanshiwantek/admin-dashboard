@@ -7,6 +7,7 @@ import { importTrackingNumbers } from "@/redux/slices/orderSlice"; // Update thi
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { useRouter } from "next/navigation";
 import { useAlert } from "@/hooks/useAlert";
+import { Button } from "@/components/ui/Button";
 
 const ImportCsv = () => {
   const methods = useForm({
@@ -100,24 +101,26 @@ const ImportCsv = () => {
 
           <div className="sticky bottom-0 w-full border-t p-6 bg-white flex justify-end gap-4 shadow-lg">
             {step === 2 && (
-              <button
+              <Button
+                variant="outline"
+                size="md"
                 type="button"
-                className="btn-outline-primary"
                 onClick={() => setStep(1)}
               >
                 Previous
-              </button>
+              </Button>
             )}
-            <button
+            <Button
+              variant="outline"
+              size="md"
               type="button"
-              className="btn-outline-primary"
               onClick={() => router.push("/manage/orders")}
             >
               Cancel
-            </button>
-            <button type="submit" className="btn-primary">
+            </Button>
+            <Button variant="primary" size="md" type="submit">
               {step === 2 ? "Import" : "Next »"}
-            </button>
+            </Button>
           </div>
         </form>
       </FormProvider>

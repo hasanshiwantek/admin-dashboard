@@ -1,7 +1,7 @@
 // BasicInfoForm.tsx
 "use client";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/Button";
+import { Checkbox } from "@/components/ui/Checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -10,7 +10,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/Select";
 import { ValidationError } from "@/components/ui/validation-error";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { fetchBrands } from "@/redux/slices/productSlice";

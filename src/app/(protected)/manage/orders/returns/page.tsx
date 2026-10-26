@@ -7,7 +7,7 @@ import { X } from "lucide-react";
 import useReturnsContainer from "./returnsContainer";
 import { renderExpandedRow } from "./_components/ReturnExpandedRow";
 import PageTitle from "@/components/ui/PageTitle";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 const TOOLBAR_CONTROL = "h-14! py-4! my-0!";
 
 const Page = () => {
@@ -45,8 +45,9 @@ const Page = () => {
           )}
         </div>
         <Button
+          variant="outline"
           type="button"
-          className={`btn-outline-primary ${TOOLBAR_CONTROL} rounded-l-none`}
+          className={`${TOOLBAR_CONTROL} rounded-l-none`}
         >
           <IoFilterOutline />
         </Button>

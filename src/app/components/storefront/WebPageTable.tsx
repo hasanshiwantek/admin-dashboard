@@ -3,7 +3,7 @@
 import { Trash } from "lucide-react";
 import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
 import Table from "@/components/ui/Table/Table";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import useWebPageTableContainer from "./useWebPageTableContainer";
 import PageTitle from "@/components/ui/PageTitle";
 
@@ -41,7 +41,7 @@ const WebPageTable = () => {
         <div className="flex items-center gap-5">
           <Button
             variant="outline"
-            className={`btn-outline-primary 2xl:!text-2xl ${TOOLBAR_CONTROL}`}
+            className={`2xl:!text-2xl ${TOOLBAR_CONTROL}`}
             onClick={() => router.push("/manage/storefront/web-pages/add")}
           >
             Create a Web Page
@@ -49,7 +49,7 @@ const WebPageTable = () => {
 
           <Button
             variant="outline"
-            className={`btn-outline-primary ${TOOLBAR_CONTROL}`}
+            className={`${TOOLBAR_CONTROL}`}
             onClick={deleteWebpageHandler}
           >
             <Trash className="!w-6 !h-6" />

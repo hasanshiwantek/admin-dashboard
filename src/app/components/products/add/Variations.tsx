@@ -1,6 +1,6 @@
 // BasicInfoForm.tsx
 import { useFormContext } from "react-hook-form";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { Plus } from "lucide-react";
 
 
@@ -22,7 +22,7 @@ export default function Variations() {
                     <h2>Variant Options</h2>
                     <div className="flex flex-col justify-center items-center gap-5 mt-4">
                         <span>No Option has been added yet.</span>
-                        <button className="btn-outline-primary flex items-center"><Plus className="!h-5 !w-5"/> Add Variant Option</button>
+                        <Button variant="outline" size="md" className="flex items-center"><Plus className="!h-5 !w-5"/> Add Variant Option</Button>
                     </div>
                 </div>
                 <div className="mt-6">

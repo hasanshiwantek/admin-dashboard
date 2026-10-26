@@ -2,8 +2,8 @@
 
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/Button";
+import { Checkbox } from "@/components/ui/Checkbox";
 import { Search } from "lucide-react";
 import {
   Table,
@@ -12,8 +12,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import Pagination from "@/components/ui/pagination";
+} from "@/components/ui/Table";
+import Pagination from "@/components/ui/Pagination";
 const CustomerGroups = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState("50");
@@ -25,10 +25,10 @@ const CustomerGroups = () => {
       <div className="flex items-center justify-between">
         <h1 className="font-light">Customer groups</h1>
         <div className="flex gap-2">
-          <Button variant="outline" className="btn-outline-primary !p-6">
+          <Button variant="outline" className="!p-6">
             Manage default customer groups
           </Button>
-          <Button className="btn-primary !p-6">+ Create new</Button>
+          <Button variant="primary" className="!p-6">+ Create new</Button>
         </div>
       </div>
 
@@ -46,7 +46,7 @@ const CustomerGroups = () => {
             />
           </div>
           <div>
-            <Button variant="outline" className="btn-outline-primary !p-6">
+            <Button variant="outline" className="!p-6">
               Search
             </Button>
           </div>

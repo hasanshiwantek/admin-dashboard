@@ -20,6 +20,7 @@ import AllProductsColumn from "./AllProductsColumn";
 import { BOOLEAN_FILTERS, ProductTabs } from "./constant";
 import { useAlert } from "@/hooks/useAlert";
 import { downloadExport } from "@/redux/slices/exportSlice";
+import { Button } from "@/components/ui/Button";
 
 const useAllProductsContainer = () => {
   const allProducts = useAppSelector((state: any) => state.product.products);
@@ -421,21 +422,21 @@ const useAllProductsContainer = () => {
 
   const bulkActions = (
     <>
-      <button className="btn-outline-primary" onClick={handleExportProducts}>
+      <Button variant="outline" size="md" onClick={handleExportProducts}>
         Export
-      </button>
-      <button className="btn-outline-primary" onClick={handlebulkEdit}>
+      </Button>
+      <Button variant="outline" size="md" onClick={handlebulkEdit}>
         Bulk edit
-      </button>
-      <button className="btn-outline-primary" onClick={handleEditInventory}>
+      </Button>
+      <Button variant="outline" size="md" onClick={handleEditInventory}>
         Edit Inventory
-      </button>
+      </Button>
       <OrderActionsDropdown
         actions={editdropdownActions}
         trigger={
-          <button className="text-xl cursor-pointer btn-outline-primary">
+          <Button variant="outline" size="md" className="text-xl cursor-pointer">
             •••
-          </button>
+          </Button>
         }
       />
       <Alert />

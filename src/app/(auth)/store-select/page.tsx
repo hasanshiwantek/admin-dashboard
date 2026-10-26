@@ -12,8 +12,8 @@ import {
   SelectValue,
   SelectContent,
   SelectItem,
-} from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/Select";
+import { Button } from "@/components/ui/Button";
 
 export default function StoreSelectPage() {
   const dispatch = useDispatch();

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
@@ -13,7 +13,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/Select";
 import { Info, X, Loader2 } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { createScripts, fetchScriptById, updateScript } from "@/redux/slices/storefrontSlice";
@@ -493,22 +493,25 @@ const AddScript = () => {
 
         {/* Footer Buttons */}
         <div className="sticky bottom-0 w-full border-t p-6 bg-white flex justify-end gap-4 shadow-lg">
-          <button
+          <Button
+            variant="outline"
+            size="md"
             type="button"
-            className="btn-outline-primary"
             onClick={() => router.push("/manage/storefront/script-manager")}
             disabled={loading}
           >
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="primary"
+            size="md"
             type="submit"
-            className="btn-primary flex items-center gap-2"
+            className="flex items-center gap-2"
             disabled={loading}
           >
             {loading && <Loader2 className="w-4 h-4 animate-spin" />}
             {loading ? (isEditMode ? "Updating..." : "Creating...") : (isEditMode ? "Update" : "Save")}
-          </button>
+          </Button>
         </div>
       </form>
     </div>

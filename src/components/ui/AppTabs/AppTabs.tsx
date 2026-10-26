@@ -5,7 +5,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/components/ui/DropdownMenu";
 import { cn } from "@/lib/utils";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
@@ -102,7 +102,7 @@ export default function AppTabs<T extends TabItem = TabItem>({
                 <DropdownMenuItem
                   key={tab.key}
                   disabled={tab.disabled}
-                  className="cursor-pointer text-lg"
+                  className="cursor-pointer px-6 py-3 text-[1.4rem] outline-none!"
                   onClick={() => select(tab.key)}
                 >
                   {tab.label}
