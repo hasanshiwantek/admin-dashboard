@@ -7,14 +7,14 @@ import { useRouter } from "next/navigation";
 import { useForm, useWatch } from "react-hook-form";
 import { Country, State } from "country-state-city";
 
-import { DEFAULT_VALUES, LIST_PATH } from "./constant";
+import { searchCustomerDefaultValues, LIST_PATH } from "./constant";
 import type { SearchCustomerValues } from "./type";
 
 export const useSearchCustomerContainer = () => {
   const router = useRouter();
 
   const form = useForm<SearchCustomerValues>({
-    defaultValues: DEFAULT_VALUES,
+    defaultValues: searchCustomerDefaultValues,
   });
 
   const { control, setValue } = form;

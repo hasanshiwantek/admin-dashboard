@@ -5,8 +5,8 @@ import InputField from "@/components/form/InputField";
 import SelectField from "@/components/form/fields/SelectField";
 import HelpTooltip from "@/components/HelpTooltip/HelpTooltip";
 
-import { DATE_OPTIONS, SearchCustomerFields, SORT_BY_OPTIONS, SORT_ORDER_OPTIONS } from "./constant";
-import { useSearchCustomerContainer } from "./useSearchCustomerContainer";
+import { DATE_OPTIONS, SearchCustomerFields, SortByOptions, SortOrderOptions,} from "./constant";
+import { useSearchCustomerContainer } from "./Container";
 import PageTitle from "@/components/ui/PageTitle";
 
 const SearchCustomer = () => {
@@ -208,7 +208,7 @@ const SearchCustomer = () => {
             label="Customer"
             control={control}
             Component={SelectField}
-            options={SORT_BY_OPTIONS}
+            options={SortByOptions}
             placeholder="ID"
             layout="vertical"
             labelClassName="2xl:text-2xl!"
@@ -219,7 +219,7 @@ const SearchCustomer = () => {
             label="in"
             control={control}
             Component={SelectField}
-            options={SORT_ORDER_OPTIONS}
+            options={SortOrderOptions}
             placeholder="Ascending order"
             layout="vertical"
             labelClassName="2xl:text-2xl!"

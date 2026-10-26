@@ -21,7 +21,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { toast } from "react-toastify";
-import { COMPLETED, riskConfig } from "./constant";
+import { COMPLETED, DateTimeFormat, riskConfig } from "./constant";
 import { OrderDetailRowProps } from "./types";
 import { findCountry } from "./utils";
 import { replaceNullWithPlaceholder } from "@/lib/utils";
@@ -169,7 +169,7 @@ export default function OrderDetailRow({
                 order?.billingInformation?.updatedAt
                   ? formatDateTime(
                       order.billingInformation.updatedAt,
-                      "DD MMM YYYY HH:mm:ss",
+                      DateTimeFormat.FullDateTime,
                     )
                   : null,
               )}
@@ -343,7 +343,11 @@ export default function OrderDetailRow({
 
           <div className="flex items-center gap-2">
             <span>
-              {formatDateTime(order?.updatedAt, "DD MMM YYYY HH:mm:ss", "N/A")}
+              {formatDateTime(
+                order?.updatedAt,
+                DateTimeFormat.FullDateTime,
+                "N/A",
+              )}
             </span>
           </div>
 
@@ -389,12 +393,12 @@ export default function OrderDetailRow({
                 <span className="text-[13px]">
                   {" "}
                   {order?.products?.length} items @{" "}
-                  {formatDateTime(order?.updatedAt, "DD MMM YYYY")}{" "}
+                 {formatDateTime(order?.updatedAt, DateTimeFormat.DateOnly)}{" "}
                 </span>
               </div>
               <div className="flex text-[13px]!">
-                <span >Tracking #: </span>
-                <span >{replaceNullWithPlaceholder(order?.trackingNumber)}</span>
+                <span>Tracking #: </span>
+                <span>{replaceNullWithPlaceholder(order?.trackingNumber)}</span>
               </div>
             </div>
           )}

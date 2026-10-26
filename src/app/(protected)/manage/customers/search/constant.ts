@@ -6,7 +6,7 @@ import { SearchCustomerValues, SelectOption } from "./type";
 
 export const LIST_PATH = "/manage/customers";
 
-export const DEFAULT_VALUES: SearchCustomerValues = {
+export const searchCustomerDefaultValues: SearchCustomerValues = {
   searchKeywords: "",
   startsWith: "",
   phone: "",
@@ -44,14 +44,14 @@ export const DATE_OPTIONS: SelectOption[] = [
   { value: DateFilter.Custom, label: "Custom period" },
 ];
 
-export const SORT_BY_OPTIONS: SelectOption[] = [
+export const SortByOptions: SelectOption[] = [
   { value: "id", label: "ID" },
   { value: "name", label: "Name" },
   { value: "email", label: "Email" },
   { value: "orders", label: "Orders" },
 ];
 
-export const SORT_ORDER_OPTIONS: SelectOption[] = [
+export const SortOrderOptions: SelectOption[] = [
   { value: "asc", label: "Ascending order" },
   { value: "desc", label: "Descending order" },
 ];
