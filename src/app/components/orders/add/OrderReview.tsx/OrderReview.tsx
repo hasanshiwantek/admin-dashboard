@@ -585,7 +585,7 @@ export default function OrderReview({ step, setStep }: any) {
                         p.image?.[0]?.url;
 
                       return (
-                        <TableRow key={p.id ?? idx}>
+                        <TableRow key={p?.uniqueId ?? idx}>
                           <TableCell className="align-top">
                             {imagePath ? (
                               <Image

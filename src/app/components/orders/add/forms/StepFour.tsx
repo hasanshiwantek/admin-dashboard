@@ -184,6 +184,7 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
           products:
             values.selectedProducts?.map((product: any) => ({
               productId: product.id,
+              uniqueId: product?.uniqueId,
               quantity: product.quantity || 1,
               ...(Number(product.actualPrice) !== Number(product.price)
                 ? { price: Number(product.price ?? 0) }
@@ -207,10 +208,12 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
               products:
                 dest.products?.map((p: any) => ({
                   productId: p.id,
+                  uniqueId: p.uniqueId,
                   quantity: p.quantity || 1,
                 })) ||
                 values.selectedProducts?.map((product: any) => ({
                   productId: product.id,
+                  uniqueId: product.uniqueId,
                   quantity: product.quantity || 1,
                 })) ||
                 [],
@@ -305,6 +308,7 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
           products:
             values.selectedProducts?.map((product: any) => ({
               productId: product.id,
+              uniqueId: product.uniqueId,
               quantity: product.quantity || 1,
               ...(Number(product.actualPrice) !== Number(product.price)
                 ? { price: Number(product.price ?? 0) }
@@ -327,28 +331,29 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
               products:
                 dest.products?.map((p: any) => ({
                   productId: p.id,
+                  uniqueId: p.uniqueId,
                   quantity: p.quantity || 1,
                 })) || [],
             })) || [],
         };
       }
     })();
-
-    setLoading(true);
+    console.log("finalPayload", finalPayload);
+    // setLoading(true);
     try {
       let resultAction: any;
 
-      if (isEditMode && orderId) {
-        resultAction = await dispatch(
-          updateOrder({ id: orderId, data: finalPayload }),
-        );
-      } else if (isNewCustomer) {
-        resultAction = await dispatch(
-          addOrderForNewCustomer({ data: finalPayload }),
-        );
-      } else {
-        resultAction = await dispatch(addOrder({ data: finalPayload }));
-      }
+      // if (isEditMode && orderId) {
+      //   resultAction = await dispatch(
+      //     updateOrder({ id: orderId, data: finalPayload }),
+      //   );
+      // } else if (isNewCustomer) {
+      //   resultAction = await dispatch(
+      //     addOrderForNewCustomer({ data: finalPayload }),
+      //   );
+      // } else {
+      //   resultAction = await dispatch(addOrder({ data: finalPayload }));
+      // }
 
       if (
         addOrder.fulfilled.match(resultAction) ||

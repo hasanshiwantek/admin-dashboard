@@ -32,44 +32,11 @@ export default function StepTwo({ step, setStep }: any) {
     setValue("selectedProducts", selectedProducts);
   }, [selectedProducts, setValue]);
 
-  // const handleAddProduct = (product: any) => {
-  //   setSelectedProducts((prev) =>
-  //     prev.find((p) => p.id === product.id)
-  //       ? prev
-  //       : [...prev, { ...product, quantity: 1 }],
-  //   );
-  // };
-  const handleAddProduct = (product: any) => {
-    const minQty = Number(product?.minPurchaseQuantity) > 0
-      ? Number(product.minPurchaseQuantity)
-      : 1;
-    const maxQty = Number(product?.maxPurchaseQuantity) > 0
-      ? Number(product.maxPurchaseQuantity)
-      : null;
-    const actualPrice = product?.price
-
-    setSelectedProducts((prev) =>
-      prev.find((p) => p.id === product.id)
-        ? prev
-        : [
-          ...prev,
-          {
-            ...product,
-            quantity: minQty,
-            minPurchaseQuantity: minQty,
-            maxPurchaseQuantity: maxQty,
-            actualPrice
-          },
-        ]
-    );
+  const handleCancel = () => {
+    setShowCancelModal(true);
   };
-
-
-const handleCancel = () => {
-  setShowCancelModal(true);
-};
   const handleProductSelect = (product: any) => {
-    if (selectedProducts.some((p) => p.id === product.id)) return;
+    // if (selectedProducts.some((p) => p.id === product.id)) return;
 
     const minQty =
       Number(product?.minPurchaseQuantity) > 0
@@ -79,61 +46,50 @@ const handleCancel = () => {
       Number(product?.maxPurchaseQuantity) > 0
         ? Number(product.maxPurchaseQuantity)
         : null;
-    const actualPrice = product.price
-
+    const actualPrice = product.price;
 
     setSelectedProducts((prev) => [
       ...prev,
       {
         ...product,
+        uniqueId: crypto.randomUUID(),
         quantity: minQty,
         minPurchaseQuantity: minQty,
         maxPurchaseQuantity: maxQty,
-        actualPrice
+        actualPrice,
       },
     ]);
   };
   const handleDeleteProduct = (id: number) => {
-    setSelectedProducts((prev) => prev.filter((p) => p.id !== id));
+    setSelectedProducts((prev) => prev.filter((p) => p.uniqueId !== id));
   };
 
   const handleAddCustomProduct = (product: any) => {
     setSelectedProducts((prev) => [...prev, product]);
   };
 
-
-  // const handleQtyChange = (id: number, quantity: number) => {
-  //   setSelectedProducts((prev) =>
-  //     prev.map((p) => {
-  //       if (p.id !== id) return p;
-
-  //       const minQty = Number(p.minPurchaseQuantity) > 0 ? Number(p.minPurchaseQuantity) : 1;
-  //       const maxQty = Number(p.maxPurchaseQuantity) > 0 ? Number(p.maxPurchaseQuantity) : Infinity;
-  //       const nextQty = Math.min(Math.max(Number(quantity) || minQty, minQty), maxQty);
-
-  //       return { ...p, quantity: nextQty };
-  //     })
-  //   );
-  // };
-
   const handleQtyChange = (id: number, quantity: number | string) => {
     setSelectedProducts((prev) =>
       prev.map((p) => {
-        if (p.id !== id) return p;
+        if (p.uniqueId !== id) return p;
 
-        if (quantity === "" || quantity === null || Number.isNaN(Number(quantity))) {
+        if (
+          quantity === "" ||
+          quantity === null ||
+          Number.isNaN(Number(quantity))
+        ) {
           return { ...p, quantity: "" };
         }
 
         return { ...p, quantity: Number(quantity) };
-      })
+      }),
     );
   };
 
   const handlePriceChange = (id: number | string, price: number) => {
     setSelectedProducts((prev) => {
       const next = prev.map((p) =>
-        p.id === id ? { ...p, price: Number(price) } : p,
+        p.uniqueId === id ? { ...p, price: Number(price) } : p,
       );
       setValue("selectedProducts", next, { shouldDirty: true });
       return next;
@@ -156,7 +112,7 @@ const handleCancel = () => {
         <div className="bg-white p-5 flex  gap-10 items-center justify-center">
           <div className="flex items-center gap-6 ">
             <Label>Search</Label>
-            <ProductSearchInput onSelect={handleAddProduct} />
+            <ProductSearchInput onSelect={handleProductSelect} />
           </div>
 
           <div className="flex items-center gap-2">
@@ -206,16 +162,16 @@ const handleCancel = () => {
         </button>
       </div>
       <ConfirmationModal
-  open={showCancelModal}
-  onOpenChange={setShowCancelModal}
-  variant="warning"
-  title="Cancel order?"
-  description="Are you sure you want to cancel this order?"
-  onConfirm={() => {
-    setShowCancelModal(false);
-    router.push("/manage/orders/");
-  }}
-/>
+        open={showCancelModal}
+        onOpenChange={setShowCancelModal}
+        variant="warning"
+        title="Cancel order?"
+        description="Are you sure you want to cancel this order?"
+        onConfirm={() => {
+          setShowCancelModal(false);
+          router.push("/manage/orders/");
+        }}
+      />
     </form>
   );
 }

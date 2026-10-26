@@ -22,7 +22,7 @@ export default function ProductTable({
   products,
   onQtyChange,
   onDelete,
-  onPriceChange
+  onPriceChange,
 }: {
   products: any[];
   onQtyChange: (id: number, quantity: number) => void;
@@ -31,11 +31,10 @@ export default function ProductTable({
 }) {
   const getTotal = (p: any) => parseFloat(p.price || "0") * (p.quantity || 1);
 
-  const subtotal = products.reduce((sum, p) => sum + getTotal(p), 0);
+  const subtotal = products?.reduce((sum, p) => sum + getTotal(p), 0);
 
   return (
     <div>
-
       <div className="border rounded-md overflow-hidden">
         <Table>
           <TableHeader className="bg-muted">
@@ -51,7 +50,7 @@ export default function ProductTable({
 
           <TableBody className="!bg-white p-4 h-30">
             {products.map((product) => (
-              <TableRow key={product.id}>
+              <TableRow key={product.uniqueId}>
                 {/* Product Image */}
                 <TableCell>
                   {(product.image?.[1]?.path || product.image?.[0]?.path) && (
@@ -75,27 +74,22 @@ export default function ProductTable({
 
                 {/* Quantity */}
                 <TableCell>
-                  {/* <Input
-                    type="number"
-                    min={product.minPurchaseQuantity || 1}
-                    max={product.maxPurchaseQuantity || undefined}
-                    value={product.quantity}
-                    onChange={(e) =>
-                      onQtyChange(product.id, parseInt(e.target.value) || 1)
-                    }
-                  /> */}
                   <Input
                     type="number"
                     min={product.minPurchaseQuantity || 1}
                     max={product.maxPurchaseQuantity || undefined}
-                    value={product.quantity === "" || product.quantity == null ? "" : product.quantity}
+                    value={
+                      product.quantity === "" || product.quantity == null
+                        ? ""
+                        : product.quantity
+                    }
                     onChange={(e) => {
                       const raw = e.target.value;
                       if (raw === "") {
-                        onQtyChange(product.id, "" as any);
+                        onQtyChange(product.uniqueId, "" as any);
                         return;
                       }
-                      onQtyChange(product.id, Number(raw));
+                      onQtyChange(product.uniqueId, Number(raw));
                     }}
                     onBlur={() => {
                       const minQty =
@@ -111,7 +105,7 @@ export default function ProductTable({
                         Number.isFinite(current) && current > 0
                           ? Math.min(Math.max(current, minQty), maxQty)
                           : minQty;
-                      onQtyChange(product.id, next);
+                      onQtyChange(product.uniqueId, next);
                     }}
                   />
                 </TableCell>
@@ -125,7 +119,10 @@ export default function ProductTable({
                     step="0.01"
                     value={product.price ?? 0}
                     onChange={(e) =>
-                      onPriceChange(product.id, parseFloat(e.target.value) || 0)
+                      onPriceChange(
+                        product.uniqueId,
+                        parseFloat(e.target.value) || 0,
+                      )
                     }
                     className="w-28"
                   />
@@ -144,7 +141,7 @@ export default function ProductTable({
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem
-                        onClick={() => onDelete(product.id)}
+                        onClick={() => onDelete(product.uniqueId)}
                         className="text-red-600"
                       >
                         <Trash2 className="w-4 h-4 mr-2" />
@@ -161,10 +158,12 @@ export default function ProductTable({
       {/* Subtotal */}
       <div className="flex justify-end w-full">
         <div className="flex justify-end font-semibold my-5 items-center bg-gray-700 text-white p-4 text-xl w-fit rounded-md">
-          <span className="ml-2 !text-xl font-semibold !text-white"> Subtotal: ${subtotal.toFixed(2)}</span>
+          <span className="ml-2 !text-xl font-semibold !text-white">
+            {" "}
+            Subtotal: ${subtotal.toFixed(2)}
+          </span>
         </div>
       </div>
     </div>
-
   );
 }
