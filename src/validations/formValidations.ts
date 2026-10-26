@@ -95,7 +95,7 @@ import {
   ref,
   string,
 } from "yup";
-import { CustomerField } from "@/app/(protected)/manage/customers/constant";
+import { CustomerField } from "@/app/(protected)/manage/customers/add/constant";
 import { REGEX } from "@/const/regex";
 
 export const BannerSchema = object({

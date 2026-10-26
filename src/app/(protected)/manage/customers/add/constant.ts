@@ -1,6 +1,8 @@
-import * as yup from "yup";
 import type { CustomerFormValues } from "./types";
-
+export enum YesNo {
+  Yes = "true",
+  No = "false",
+}
 export enum CustomerField {
   firstName = "firstName",
   lastName = "lastName",
@@ -30,8 +32,8 @@ export const customerDefaultValues: CustomerFormValues = {
   [CustomerField.customerGroup]: "",
   [CustomerField.phone]: "",
   [CustomerField.storeCredit]: "0.00",
-  [CustomerField.acsEmail]: "true",
-  [CustomerField.forceReset]: "false",
+  [CustomerField.acsEmail]: YesNo.Yes,
+  [CustomerField.forceReset]: YesNo.No,
   [CustomerField.taxCode]: "",
   [CustomerField.password]: "",
   [CustomerField.confirmPassword]: "",
@@ -44,6 +46,6 @@ export const customerDefaultValues: CustomerFormValues = {
 };
 
 export const yesNoOptions = [
-  { value: "true", label: "Yes" },
-  { value: "false", label: "No" },
+  { value: YesNo.Yes, label: "Yes" },
+  { value: YesNo.No, label: "No" },
 ];

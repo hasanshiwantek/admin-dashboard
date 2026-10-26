@@ -1,4 +1,4 @@
-import { CustomerField } from "./constant";
+import { CustomerField, YesNo } from "./constant";
 import type { CustomerFormValues } from "./types";
 
 // API response → form values (for reset)
@@ -10,8 +10,8 @@ export const transformGetCustomerPayload = (data: any): CustomerFormValues => ({
   [CustomerField.customerGroup]: data?.customerGroup || "",
   [CustomerField.phone]: data?.phone || "",
   [CustomerField.storeCredit]: data?.storeCredit || "0.00",
-  [CustomerField.acsEmail]: data?.receiveReviewEmails ? "true" : "false",
-  [CustomerField.forceReset]: data?.forcePasswordReset ? "true" : "false",
+  [CustomerField.acsEmail]: data?.receiveReviewEmails ? YesNo.Yes : YesNo.No,
+  [CustomerField.forceReset]: data?.forcePasswordReset ? YesNo.Yes : YesNo.No,
   [CustomerField.taxCode]: data?.taxExemptCode || "",
   [CustomerField.password]: "",
   [CustomerField.confirmPassword]: "",
@@ -39,8 +39,8 @@ export const transformPostCustomerPayload = (
     state: values[CustomerField.state],
     address: values[CustomerField.address],
     storeCredit: values[CustomerField.storeCredit],
-    receiveReviewEmails: values[CustomerField.acsEmail] === "true",
-    forcePasswordReset: values[CustomerField.forceReset] === "true",
+    receiveReviewEmails: values[CustomerField.acsEmail] === YesNo.Yes,
+    forcePasswordReset: values[CustomerField.forceReset] === YesNo.Yes,
     taxExemptCode: values[CustomerField.taxCode],
     analytics: values[CustomerField.analytics],
     functional: values[CustomerField.functional],
