@@ -554,7 +554,7 @@ export const WebPageSchema = object({
       then: (schema) =>
         schema
           .required("Link is required")
-          .matches(/^https:\/\//i, "Link must start with https://"),
+          .matches(REGEX.HTTPS_PREFIX, "Link must start with https://"),
     }),
   [WebPageField.RawHtml]: string().nullable().default(""),
   [WebPageField.EmailQuestionsTo]: string()
@@ -901,7 +901,7 @@ export const TaxRateSchema = object({
     .test(
       "priority",
       "Enter a whole number of 0 or more",
-      (value) => !value || /^\d+$/.test(value),
+      (value) => !value || REGEX.WHOLE_NUMBER.test(value),
     ),
   [TaxRateFormNames.IsEnabled]: flag(true),
 });
@@ -919,7 +919,8 @@ const positiveWholeNumber = (label: string) =>
     .test(
       "whole",
       `${label} must be a whole number above 0`,
-      (value) => !value || (/^\d+$/.test(value) && Number(value) > 0),
+      (value) =>
+        !value || (REGEX.WHOLE_NUMBER.test(value) && Number(value) > 0),
     );
 
 export const DnsSettingsSchema = object({
@@ -943,7 +944,10 @@ export const DnsSettingsSchema = object({
               [MailForwardFormNames.DisplayAddress]: string()
                 .trim()
                 .required("Display address is required")
-                .matches(/^[^\s@]+$/, "Enter only the part before the @"),
+                .matches(
+                  REGEX.EMAIL_LOCAL_PART,
+                  "Enter only the part before the @",
+                ),
               [MailForwardFormNames.ForwardTo]: string()
                 .trim()
                 .email("Enter a valid email address")
@@ -979,7 +983,7 @@ export const DnsSettingsSchema = object({
               [MxRecordFormNames.Priority]: text().test(
                 "priority",
                 "Priority must be a whole number",
-                (value) => !value || /^\d+$/.test(value),
+                (value) => !value || REGEX.WHOLE_NUMBER.test(value),
               ),
             }),
           ),
@@ -1028,7 +1032,7 @@ export const PromotionSettingsSchema = object({
 
 // #endregion
 
-// #region Customer 
+// #region Customer
 const passwordRules = string()
   .required("Password is required")
   .min(7, "Password must be at least 7 characters")

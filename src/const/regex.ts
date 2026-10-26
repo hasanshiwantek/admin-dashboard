@@ -21,7 +21,12 @@ export const REGEX = {
   // Blocked characters (for Page URL)
   URL_BLOCKED_CHARS: /[$*&@!=+%`'"^|]/,
 
+  //Email
+  EMAIL_LOCAL_PART: /^[^\s@]+$/,
 
   HAS_LETTER: /[a-zA-Z]/,
   HAS_NUMBER: /\d/,
+
+  // HTTPS URL
+  HTTPS_PREFIX: /^https:\/\//i,
 };
