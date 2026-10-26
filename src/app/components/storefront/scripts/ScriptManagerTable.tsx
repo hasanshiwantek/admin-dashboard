@@ -214,7 +214,7 @@ const ScriptManagerTable = () => {
                       {script.script_type || "N/A"}
                     </TableCell>
                     <TableCell>
-                      {formatDateTime(script.created_at, "MMM D, YYYY")}
+                      {formatDateTime(script?.created_at, "MMM D, YYYY")}
                     </TableCell>
                     <TableCell className="text-right">
                       <DropdownMenu modal={false}>
