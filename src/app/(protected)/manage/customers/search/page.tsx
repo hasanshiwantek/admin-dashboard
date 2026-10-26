@@ -5,7 +5,7 @@ import InputField from "@/components/form/InputField";
 import SelectField from "@/components/form/fields/SelectField";
 import HelpTooltip from "@/components/HelpTooltip/HelpTooltip";
 
-import { DATE_OPTIONS, SearchCustomerFields, SortByOptions, SortOrderOptions,} from "./constant";
+import { DateOptions,  SearchCustomerFields, SortByOptions, SortOrderOptions,} from "./constant";
 import { useSearchCustomerContainer } from "./Container";
 import PageTitle from "@/components/ui/PageTitle";
 
@@ -186,7 +186,7 @@ const SearchCustomer = () => {
             label="Date joined"
             control={control}
             Component={SelectField}
-            options={DATE_OPTIONS}
+            options={DateOptions}
             placeholder="-- Choose a registration date --"
             layout="vertical"
             labelClassName="2xl:text-2xl!"

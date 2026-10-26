@@ -9,6 +9,7 @@ import { Country, State } from "country-state-city";
 
 import { searchCustomerDefaultValues, LIST_PATH } from "./constant";
 import type { SearchCustomerValues } from "./type";
+import { buildQueryParams } from "@/lib/utils";
 
 export const useSearchCustomerContainer = () => {
   const router = useRouter();
@@ -56,19 +57,11 @@ export const useSearchCustomerContainer = () => {
     });
   };
 
-  const handleSearch = (values: SearchCustomerValues) => {
-    const queryParams = new URLSearchParams();
+const handleSearch = (values: SearchCustomerValues) => {
+  const query = buildQueryParams(values);
 
-    Object.entries(values).forEach(([key, value]) => {
-      if (value !== "" && value !== null && value !== undefined) {
-        queryParams.set(key, String(value));
-      }
-    });
-
-    const query = queryParams.toString();
-
-    router.push(query ? `${LIST_PATH}?${query}` : LIST_PATH);
-  };
+  router.push(query ? `${LIST_PATH}?${query}` : LIST_PATH);
+};
 
   const handleCancel = () => {
     router.push(LIST_PATH);

@@ -33,7 +33,7 @@ export enum DateFilter {
   ThisYear = "this_year",
   Custom = "custom",
 }
-export const DATE_OPTIONS: SelectOption[] = [
+export const DateOptions: SelectOption[] = [
   { value: DateFilter.Today, label: "Today" },
   { value: DateFilter.Yesterday, label: "Yesterday" },
   { value: DateFilter.Last24Hours, label: "Last 24 hours" },
