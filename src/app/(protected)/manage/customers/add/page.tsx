@@ -6,15 +6,9 @@ import SelectField from "@/components/form/fields/SelectField";
 import PageLayout from "@/components/ui/PageLayout";
 import PageTitle from "@/components/ui/PageTitle";
 import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { Info } from "lucide-react";
 import { CustomerField, yesNoOptions } from "./constant";
 import { useCustomerFormContainer } from "./container";
+import HelpTooltip from "@/components/HelpTooltip/HelpTooltip";
 
 const LIST_PATH = "/manage/customers/";
 
@@ -171,9 +165,6 @@ const page = () => {
             name={CustomerField.acsEmail}
             label="Receive ACS/review emails"
             layout="vertical"
-            labelEndComponent={
-              <Info className="ml-1 inline h-4 w-4 text-muted-foreground" />
-            }
             Component={SelectField}
             control={control}
             options={yesNoOptions}
@@ -183,9 +174,6 @@ const page = () => {
             name={CustomerField.forceReset}
             label="Force password reset on next login"
             layout="vertical"
-            labelEndComponent={
-              <Info className="ml-1 inline h-4 w-4 text-muted-foreground" />
-            }
             Component={SelectField}
             control={control}
             options={yesNoOptions}
@@ -212,48 +200,34 @@ const page = () => {
           <section className="flex flex-col gap-8 border-t border-gray-200 pt-8">
             <PageTitle title="Password" hideActionButton />
 
-            <TooltipProvider>
-              <InputField
-                layout="vertical"
-                name={CustomerField.password}
-                label="Password"
-                labelEndComponent={
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Info className="ml-1 h-4 w-4 cursor-pointer text-muted-foreground" />
-                    </TooltipTrigger>
-                    <TooltipContent className="max-w-xs">
-                      Specify the password this customer should use to log in to
+            <InputField
+              layout="vertical"
+              name={CustomerField.password}
+              label="Password"
+              labelEndComponent={
+                <HelpTooltip
+                  content="Specify the password this customer should use to log in to
                       your store. Once logged in, the customer can view past
-                      orders, submit return requests, etc.
-                    </TooltipContent>
-                  </Tooltip>
-                }
-                hint="Passwords must be at least 7 characters long and contain both alphabetic and numeric characters."
-                control={control}
-                type="password"
-                required
-              />
+                      orders, submit return requests, etc."
+                />
+              }
+              hint="Passwords must be at least 7 characters long and contain both alphabetic and numeric characters."
+              control={control}
+              type="password"
+              required
+            />
 
-              <InputField
-                name={CustomerField.confirmPassword}
-                label="Confirm password"
-                layout="vertical"
-                labelEndComponent={
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Info className="ml-1 h-4 w-4 cursor-pointer text-muted-foreground" />
-                    </TooltipTrigger>
-                    <TooltipContent className="max-w-xs">
-                      Confirm the password entered above by entering it again.
-                    </TooltipContent>
-                  </Tooltip>
-                }
-                control={control}
-                type="password"
-                required
-              />
-            </TooltipProvider>
+            <InputField
+              name={CustomerField.confirmPassword}
+              label="Confirm password"
+              layout="vertical"
+              labelEndComponent={
+                <HelpTooltip content="Confirm the password entered above by entering it again." />
+              }
+              control={control}
+              type="password"
+              required
+            />
           </section>
         )}
       </Form>
