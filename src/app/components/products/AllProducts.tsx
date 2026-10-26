@@ -16,7 +16,6 @@ export default function AllProducts() {
     table,
     selectedProductIds,
     setSelectedIds,
-    getRowActions,
     currentPage,
     totalPages,
     perPage,
@@ -34,7 +33,7 @@ export default function AllProducts() {
     productDeleteMessage,
     productDeleteConfirm,
     closeProductDeleteConfirm,
-    router
+    router,
   } = useAllProductsContainer();
 
   return (
@@ -76,7 +75,6 @@ export default function AllProducts() {
         onToggleAll={(checked, allIds) =>
           setSelectedIds(checked ? allIds.map(Number) : [])
         }
-        rowActions={(product) => getRowActions(product)}
         bulkActions={bulkActions}
         pagination={{
           currentPage,

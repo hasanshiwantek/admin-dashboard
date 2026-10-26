@@ -1,3 +1,4 @@
+import { ActionEnums } from "@/const/appConstants";
 import { AppDispatch } from "@/redux/store";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { ReactNode } from "react";
@@ -74,6 +75,7 @@ export interface OrderDetailRowProps {
 }
 
 export interface OrderColumnsProps {
+  onAction: (order: any) => (action: ActionEnums) => void;
   router: AppRouterInstance;
   dispatch: AppDispatch;
   refetch: () => void;

@@ -1,4 +1,6 @@
+import { ActionItem } from "@/components/ActionButton/type";
 import { TableTab } from "@/components/ui/Table/types";
+import { ActionEnums } from "@/const/appConstants";
 
 export const ProductTabs: TableTab[] = [
   { key: "All", label: "All", filters: {} },
@@ -36,3 +38,26 @@ export const BOOLEAN_FILTERS = new Set([
   "outOfStock",
   "inventoryLow",
 ]);
+
+export const PRODUCT_ROW_ACTIONS: ActionItem[] = [
+  { type: ActionEnums.ADD_TO_CATEGORIES, label: "Add to categories" },
+  { type: ActionEnums.REMOVE_FROM_CATEGORIES, label: "Remove from categories" },
+  { type: ActionEnums.ENABLE, label: "Enable visibility" },
+  { type: ActionEnums.DISABLE, label: "Disable visibility" },
+  { type: ActionEnums.FEATURE, label: "Make featured" },
+  { type: ActionEnums.UNFEATURE, label: "Make not featured" },
+  { type: ActionEnums.DELETE, label: "Delete" },
+  { type: ActionEnums.EDIT, label: "Edit" },
+  { type: ActionEnums.DUPLICATE, label: "Duplicate" },
+  { type: ActionEnums.VIEW_STOREFRONT, label: "View Storefront" },
+];
+
+export const PRODUCT_BULK_ACTIONS: ActionItem[] = [
+  { type: ActionEnums.ADD_TO_CATEGORIES, label: "Add to categories" },
+  { type: ActionEnums.REMOVE_FROM_CATEGORIES, label: "Remove from categories" },
+  { type: ActionEnums.ENABLE, label: "Enable visibility" },
+  { type: ActionEnums.DISABLE, label: "Disable visibility" },
+  { type: ActionEnums.FEATURE, label: "Make featured" },
+  { type: ActionEnums.UNFEATURE, label: "Make not featured" },
+  { type: ActionEnums.DELETE, label: "Delete" },
+];

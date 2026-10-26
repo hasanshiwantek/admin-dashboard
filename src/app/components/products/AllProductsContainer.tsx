@@ -15,9 +15,9 @@ import {
 import { useRouter } from "next/navigation";
 import React from "react";
 import * as XLSX from "xlsx";
-import OrderActionsDropdown from "../orders/OrderActionsDropdown";
+import ActionButton from "@/components/ActionButton/ActionButton";
 import AllProductsColumn from "./AllProductsColumn";
-import { BOOLEAN_FILTERS, ProductTabs } from "./constant";
+import { BOOLEAN_FILTERS, PRODUCT_BULK_ACTIONS, ProductTabs } from "./constant";
 import { useAlert } from "@/hooks/useAlert";
 import { downloadExport } from "@/redux/slices/exportSlice";
 import { Button } from "@/components/ui/Button";
@@ -144,229 +144,126 @@ const useAllProductsContainer = () => {
     }
   };
 
-  // Per-row actions dropdown.
-  const getRowActions = (product: any) => [
-    {
-      label: "Add to categories",
-      onClick: () => {
-        const defaults = getProductCategoryIds(product);
-        setCategoryAction(ActionEnums.ADD);
-        setCategoryProductIds([product.id]);
-        setCategoryModalDefaults(defaults);
-        setCategoryModalOpen(true);
-      },
-    },
-    {
-      label: "Remove from categories",
-      onClick: () => {
-        const defaults = getProductCategoryIds(product);
-        setCategoryAction(ActionEnums.DELETE);
-        setCategoryProductIds([product.id]);
-        setCategoryModalDefaults(defaults);
-        setCategoryModalOpen(true);
-      },
-    },
-    {
-      label: "Enable visibility",
-      onClick: async () => {
-        const result = await dispatch(
-          updateProduct({
-            body: {
-              products: [{ id: [product?.id], fields: { isVisible: 1 } }],
-            },
-          }),
-        );
-        if (updateProduct.fulfilled.match(result)) table.refetch();
-      },
-    },
-    {
-      label: "Disable visibility",
-      onClick: async () => {
-        const result = await dispatch(
-          updateProduct({
-            body: {
-              products: [{ id: [product?.id], fields: { isVisible: 0 } }],
-            },
-          }),
-        );
-        if (updateProduct.fulfilled.match(result)) table.refetch();
-      },
-    },
-    {
-      label: "Make featured",
-      onClick: async () => {
-        const result = await dispatch(
-          updateProduct({
-            body: {
-              products: [{ id: [product?.id], fields: { isFeatured: 1 } }],
-            },
-          }),
-        );
-        if (updateProduct.fulfilled.match(result)) table.refetch();
-      },
-    },
-    {
-      label: "Make not featured",
-      onClick: async () => {
-        const result = await dispatch(
-          updateProduct({
-            body: {
-              products: [{ id: [product?.id], fields: { isFeatured: 0 } }],
-            },
-          }),
-        );
-        if (updateProduct.fulfilled.match(result)) table.refetch();
-      },
-    },
+  // Shared by the row and bulk action menus
+  const openCategoryModal = (
+    ids: number[],
+    action: ActionEnums.ADD | ActionEnums.DELETE,
+    defaults: string[],
+  ) => {
+    setCategoryAction(action);
+    setCategoryProductIds(ids);
+    setCategoryModalDefaults(defaults);
+    setCategoryModalOpen(true);
+  };
 
-    {
-      label: "Delete",
-      onClick: () => {
-        setPendingDeleteProductIds([product.id]);
-        setShowProductDeleteConfirm(true);
-      },
-    },
-    {
-      label: "Edit",
-      onClick: () => {
-        router.push(`/manage/products/edit/${product?.id}`);
-      },
-    },
-    {
-      label: "Duplicate",
-      onClick: () => {
-        router.push(
-          `/manage/products/dublicate/${product?.id}?isDuplicate=true`,
-        );
-      },
-    },
-    {
-      label: "View Storefront",
-      onClick: () => {
-        const selectedStore = JSON.parse(
-          localStorage.getItem("availableStores") || "[]",
-        ).find(
-          (store: any) => store.id === Number(localStorage.getItem("storeId")),
-        );
+  const updateProductFields = async (
+    ids: number[],
+    fields: Record<string, number>,
+  ) => {
+    const result = await dispatch(
+      updateProduct({ body: { products: [{ id: ids, fields }] } }),
+    );
+    return updateProduct.fulfilled.match(result);
+  };
 
-        if (selectedStore?.baseUrl && product?.productUrl) {
-          window.open(
-            `${selectedStore.baseUrl}${product.productUrl}`,
-            "_blank",
-          );
-        } else {
-          showAlert({
-            title: "Store or Product Not Found",
-            message: "Store URL or Product SKU not found.",
-          });
-        }
-      },
-    },
-  ];
+  const confirmDeleteProducts = (ids: number[]) => {
+    setPendingDeleteProductIds(ids);
+    setShowProductDeleteConfirm(true);
+  };
 
-  // Bulk actions dropdown (shown when rows are selected).
-  const editdropdownActions = [
-    {
-      label: "Add to categories",
-      onClick: () => {
-        const selected = productList.filter((p: any) =>
-          selectedProductIds.includes(p.id),
-        );
-        const defaults = deriveDefaultsForSelection(selected, "intersection");
-        setCategoryAction(ActionEnums.ADD);
-        setCategoryProductIds(selectedProductIds);
-        setCategoryModalDefaults(defaults);
-        setCategoryModalOpen(true);
-      },
-    },
-    {
-      label: "Remove from categories",
-      onClick: () => {
-        const selected = productList.filter((p: any) =>
-          selectedProductIds.includes(p.id),
-        );
-        const defaults = deriveDefaultsForSelection(selected, "union");
-        setCategoryAction(ActionEnums.DELETE);
-        setCategoryProductIds(selectedProductIds);
-        setCategoryModalDefaults(defaults);
-        setCategoryModalOpen(true);
-      },
-    },
-    {
-      label: "Enable visiblity",
-      onClick: async () => {
-        const result = await dispatch(
-          updateProduct({
-            body: {
-              products: [{ id: selectedProductIds, fields: { isVisible: 1 } }],
-            },
-          }),
-        );
+  const openStorefront = (product: any) => {
+    const selectedStore = JSON.parse(
+      localStorage.getItem("availableStores") || "[]",
+    ).find(
+      (store: any) => store.id === Number(localStorage.getItem("storeId")),
+    );
 
-        if (updateProduct.fulfilled.match(result)) {
-          table.refetch();
-          clearSelection();
-        }
-      },
-    },
-    {
-      label: "Disable visiblity",
-      onClick: async () => {
-        const result = await dispatch(
-          updateProduct({
-            body: {
-              products: [{ id: selectedProductIds, fields: { isVisible: 0 } }],
-            },
-          }),
-        );
+    if (selectedStore?.baseUrl && product?.productUrl) {
+      window.open(`${selectedStore.baseUrl}${product.productUrl}`, "_blank");
+    } else {
+      showAlert({
+        title: "Store or Product Not Found",
+        message: "Store URL or Product SKU not found.",
+      });
+    }
+  };
 
-        if (updateProduct.fulfilled.match(result)) {
-          table.refetch();
-          clearSelection();
-        }
-      },
-    },
-    {
-      label: "Make featured",
-      onClick: async () => {
-        const result = await dispatch(
-          updateProduct({
-            body: {
-              products: [{ id: selectedProductIds, fields: { isFeatured: 1 } }],
-            },
-          }),
-        );
-        if (updateProduct.fulfilled.match(result)) {
-          table.refetch();
-          clearSelection();
-        }
-      },
-    },
-    {
-      label: "Make Not featured",
-      onClick: async () => {
-        const result = await dispatch(
-          updateProduct({
-            body: {
-              products: [{ id: selectedProductIds, fields: { isFeatured: 0 } }],
-            },
-          }),
-        );
-        if (updateProduct.fulfilled.match(result)) {
-          table.refetch();
-          clearSelection();
-        }
-      },
-    },
+  // Per-row actions menu.
+  const handleProductAction = (product: any) => async (action: ActionEnums) => {
+    const ids = [product.id];
+    const updateRow = async (fields: Record<string, number>) => {
+      if (await updateProductFields(ids, fields)) table.refetch();
+    };
 
-    {
-      label: "Delete",
-      onClick: () => {
-        setPendingDeleteProductIds(selectedProductIds);
-        setShowProductDeleteConfirm(true);
-      },
-    },
-  ];
+    switch (action) {
+      case ActionEnums.ADD_TO_CATEGORIES:
+        return openCategoryModal(
+          ids,
+          ActionEnums.ADD,
+          getProductCategoryIds(product),
+        );
+      case ActionEnums.REMOVE_FROM_CATEGORIES:
+        return openCategoryModal(
+          ids,
+          ActionEnums.DELETE,
+          getProductCategoryIds(product),
+        );
+      case ActionEnums.ENABLE:
+        return updateRow({ isVisible: 1 });
+      case ActionEnums.DISABLE:
+        return updateRow({ isVisible: 0 });
+      case ActionEnums.FEATURE:
+        return updateRow({ isFeatured: 1 });
+      case ActionEnums.UNFEATURE:
+        return updateRow({ isFeatured: 0 });
+      case ActionEnums.DELETE:
+        return confirmDeleteProducts(ids);
+      case ActionEnums.EDIT:
+        return router.push(`/manage/products/edit/${product.id}`);
+      case ActionEnums.DUPLICATE:
+        return router.push(
+          `/manage/products/dublicate/${product.id}?isDuplicate=true`,
+        );
+      case ActionEnums.VIEW_STOREFRONT:
+        return openStorefront(product);
+    }
+  };
+
+  // Bulk actions menu (shown when rows are selected).
+  const handleBulkAction = (ids: number[]) => async (action: ActionEnums) => {
+    const selected = productList.filter((p: any) => ids.includes(p.id));
+    const updateSelected = async (fields: Record<string, number>) => {
+      if (await updateProductFields(ids, fields)) {
+        table.refetch();
+        clearSelection();
+      }
+    };
+
+    switch (action) {
+      case ActionEnums.ADD_TO_CATEGORIES:
+        return openCategoryModal(
+          ids,
+          ActionEnums.ADD,
+          deriveDefaultsForSelection(selected, "intersection"),
+        );
+      case ActionEnums.REMOVE_FROM_CATEGORIES:
+        return openCategoryModal(
+          ids,
+          ActionEnums.DELETE,
+          deriveDefaultsForSelection(selected, "union"),
+        );
+      case ActionEnums.ENABLE:
+        return updateSelected({ isVisible: 1 });
+      case ActionEnums.DISABLE:
+        return updateSelected({ isVisible: 0 });
+      case ActionEnums.FEATURE:
+        return updateSelected({ isFeatured: 1 });
+      case ActionEnums.UNFEATURE:
+        return updateSelected({ isFeatured: 0 });
+      case ActionEnums.DELETE:
+        return confirmDeleteProducts(ids);
+    }
+  };
 
   const handleEditInventory = () => {
     const selected = productList.filter((p: any) =>
@@ -431,19 +328,21 @@ const useAllProductsContainer = () => {
       <Button variant="outline" size="md" onClick={handleEditInventory}>
         Edit Inventory
       </Button>
-      <OrderActionsDropdown
-        actions={editdropdownActions}
-        trigger={
-          <Button variant="outline" size="md" className="text-xl cursor-pointer">
-            •••
-          </Button>
-        }
+      <ActionButton
+        data={selectedProductIds}
+        actions={PRODUCT_BULK_ACTIONS}
+        onAction={handleBulkAction}
+        label="More actions for selected products"
+        // icon="•••"
+        align="start"
+        triggerProps={{ variant: "outline", size: "md", className: "text-xl" }}
       />
       <Alert />
     </>
   );
 
   const columns = AllProductsColumn({
+    onAction: handleProductAction,
     router,
     dispatch,
     refetch: table.refetch,
@@ -458,7 +357,6 @@ const useAllProductsContainer = () => {
     table,
     selectedProductIds,
     setSelectedIds,
-    getRowActions,
     currentPage,
     totalPages,
     perPage,

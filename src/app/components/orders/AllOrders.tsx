@@ -1,8 +1,8 @@
 "use client";
 
+import SelectField from "@/components/form/fields/SelectField";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/input";
-import SelectField from "@/components/form/fields/SelectField";
 import Table from "@/components/ui/Table/Table";
 import TableTabs from "@/components/ui/Table/TableTabs";
 import { X } from "lucide-react";
@@ -32,7 +32,6 @@ const AllOrders = () => {
     activeTab,
     filterLabels,
 
-    rowActions,
     isRowExpanded,
     renderExpandedRow,
 
@@ -193,7 +192,6 @@ const AllOrders = () => {
           onToggleAll={(checked, allIds) =>
             table.setSelectedIds(checked ? allIds.map(Number) : [])
           }
-          rowActions={rowActions}
           renderExpandedRow={renderExpandedRow}
           isRowExpanded={isRowExpanded}
           sort={table.sort}

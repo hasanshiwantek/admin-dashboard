@@ -1,5 +1,6 @@
+import ActionButton from "@/components/ActionButton/ActionButton";
 import { ColumnDef } from "@/components/ui/Table/types";
-import { LocalStorageKeys } from "@/const/appConstants";
+import { ActionEnums, LocalStorageKeys } from "@/const/appConstants";
 import { StoreObject } from "@/redux/slices/configSlice";
 import { updateProduct } from "@/redux/slices/productSlice";
 import { AppDispatch } from "@/redux/store";
@@ -11,14 +12,17 @@ import FeaturedToggle from "../dropdowns/FeaturedToggle";
 import VisibilityToggle from "../dropdowns/VisibilityToggle";
 import EditPriceSheet from "./EditPriceSheet";
 import EditStockSheet from "./EditStockSheet";
+import { PRODUCT_ROW_ACTIONS } from "./constant";
 
 type ColumnsProps = {
+  onAction: (product: any) => (action: ActionEnums) => void;
   router: AppRouterInstance;
   dispatch: AppDispatch;
   refetch: () => void;
 };
 
 const AllProductsColumn = ({
+  onAction,
   router,
   dispatch,
   refetch,
@@ -163,6 +167,17 @@ const AllProductsColumn = ({
           );
           if (updateProduct.fulfilled.match(result)) refetch();
         }}
+      />
+    ),
+  },
+  {
+    key: "actions",
+    render: (product) => (
+      <ActionButton
+        data={product}
+        actions={PRODUCT_ROW_ACTIONS}
+        onAction={onAction}
+        label={`Actions for ${product?.name}`}
       />
     ),
   },
