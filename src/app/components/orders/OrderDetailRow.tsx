@@ -236,7 +236,7 @@ export default function OrderDetailRow({
           )}
           {risk && (
             <div className="flex items-center gap-1.5">
-              <span className="!text-blue-400">
+              <span className="text-blue-400!">
                 {replaceNullWithPlaceholder(risk.extendLabel)}
               </span>
             </div>
@@ -250,7 +250,7 @@ export default function OrderDetailRow({
           <h4 className="font-semibold text-[18px] text-[#34313f]">Shipping</h4>
 
           <button
-            className="w-[48px] !px-2 !py-1 flex items-center gap-1 text-[#4B71FC] border border-[#4B71FC] text-base"
+            className="w-[48px] px-2! py-1! flex items-center gap-1 text-[#4B71FC] border border-[#4B71FC] text-base"
             onClick={() => copyBilling(order?.billingInformation)}
           >
             <Copy size={8} />
@@ -367,7 +367,7 @@ export default function OrderDetailRow({
 
       <div className="flex flex-wrap max-w-full ">
         {/* Left - Item count */}
-        <div className="flex flex-col border-r pr-1 pt-2 mr-1 ">
+        <div className="flex flex-col border-r pr-1 pt-2 mr-1 text-[16px]! ">
           <h4 className="whitespace-nowrap">{order?.products?.length} items</h4>
         </div>
 
@@ -379,22 +379,22 @@ export default function OrderDetailRow({
                 <div className="flex ">
                   <span
                     onClick={() => onViewShipmentId(order.id)}
-                    className="!text-blue-400 cursor-pointer"
+                    className="text-blue-400! cursor-pointer text-[14px] hover:underline"
                   >
                     Shipment #{order?.shipmentId}
                   </span>
                 </div>
               )}
               <div className="flex ">
-                <span>
+                <span className="text-[13px]">
                   {" "}
                   {order?.products?.length} items @{" "}
                   {formatDateTime(order?.updatedAt, "DD MMM YYYY")}{" "}
                 </span>
               </div>
-              <div className="flex ">
-                <span>Tracking #: </span>
-                <span>{replaceNullWithPlaceholder(order?.trackingNumber)}</span>
+              <div className="flex text-[13px]!">
+                <span >Tracking #: </span>
+                <span >{replaceNullWithPlaceholder(order?.trackingNumber)}</span>
               </div>
             </div>
           )}
@@ -427,7 +427,7 @@ export default function OrderDetailRow({
                             message: "Store URL or Product SKU not found.",
                           });
                       }}
-                      className="!text-[#6F8DFD] font-light cursor-pointer hover:underline whitespace-normal break-words leading-snug max-w-[300px]"
+                      className="text-[#6F8DFD]! text-[13px]! font-light cursor-pointer hover:underline whitespace-normal break-words leading-snug max-w-[300px]"
                     >
                       {item?.name}
                     </span>
@@ -435,7 +435,7 @@ export default function OrderDetailRow({
                   <p className="text-xs text-gray-500">
                     {item?.optionSet?.title}
                   </p>
-                  <p className="text-sm mt-1">
+                  <p className="text-sm mt-1 text-[12px] text-gray-500 whitespace-normal break-words leading-snug ">
                     {item?.sku}
                     <br />
 
@@ -472,7 +472,7 @@ export default function OrderDetailRow({
           </div>
 
           {/* Totals */}
-          <div className="bg-[#E4E7ED] text-[#34313f] p-4 text-sm space-y-2">
+          <div className="bg-[#E4E7ED] text-[#34313f] p-4 text-xl! space-y-2">
             <div className="flex justify-between">
               <span>Subtotal</span>
               <span>
