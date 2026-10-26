@@ -31,6 +31,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { fetchScripts, deleteScript } from "@/redux/slices/storefrontSlice";
 import Spinner from "../../loader/Spinner";
 import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
+import { formatDateTime } from "@/lib/utils";
 const ScriptManagerTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState("50");
@@ -213,16 +214,7 @@ const ScriptManagerTable = () => {
                       {script.script_type || "N/A"}
                     </TableCell>
                     <TableCell>
-                      {script.created_at
-                        ? new Date(script.created_at).toLocaleDateString(
-                            "en-US",
-                            {
-                              year: "numeric",
-                              month: "short",
-                              day: "numeric",
-                            },
-                          )
-                        : "N/A"}
+                      {formatDateTime(script.created_at, "MMM D, YYYY")}
                     </TableCell>
                     <TableCell className="text-right">
                       <DropdownMenu modal={false}>

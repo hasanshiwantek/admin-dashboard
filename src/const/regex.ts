@@ -23,5 +23,5 @@ export const REGEX = {
 
 
   HAS_LETTER: /[a-zA-Z]/,
-  HAS_NUMBER: /[0-9]/,
+  HAS_NUMBER: /\d/,
 };
