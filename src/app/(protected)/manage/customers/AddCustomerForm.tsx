@@ -197,9 +197,7 @@ const AddCustomerForm = () => {
         }}
       >
         <section className="flex flex-col gap-8 pb-10">
-          <h2 className="text-2xl font-semibold text-gray-700">
-            Customer details
-          </h2>
+          <PageTitle title={`Customer details`} hideActionButton />
 
           <InputField
             name={CustomerField.firstName}
@@ -351,7 +349,8 @@ const AddCustomerForm = () => {
         {/* Password section – only shown / required on create */}
         {!isEdit && (
           <section className="flex flex-col gap-8 border-t border-gray-200 pt-8">
-            <h2 className="text-2xl font-semibold text-gray-700">Password</h2>
+            <PageTitle title={`Password`} hideActionButton />
+
             <TooltipProvider>
               <InputField
                 layout="vertical"
