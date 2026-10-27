@@ -5,7 +5,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { AlertDialogHeader, AlertDialogTitle, AlertDialogDescription,
   AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/Select";
 
 type Props = { trigger: React.ReactNode; onConfirm: (format: 'csv' | 'xml') => void };
 

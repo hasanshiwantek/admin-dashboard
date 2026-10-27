@@ -1,6 +1,8 @@
 import {
   BannerDateType,
-  BannerField,
+  BannerFormNames,
+} from "@/app/(protected)/manage/marketing/banners/[id]/constant";
+import {
   BannerLocation,
   BannerPlacement,
 } from "@/app/(protected)/manage/marketing/banners/constant";
@@ -99,18 +101,18 @@ import {
 } from "yup";
 
 export const BannerSchema = object({
-  [BannerField.Title]: string().trim().required("Banner name is required"),
-  [BannerField.Content]: string().nullable(),
-  [BannerField.LocationType]: string()
+  [BannerFormNames.Title]: string().trim().required("Banner name is required"),
+  [BannerFormNames.Content]: string().nullable(),
+  [BannerFormNames.LocationType]: string()
     .oneOf(
       Object.values(BannerLocation),
       "Choose where this banner should appear",
     )
     .required("Choose where this banner should appear"),
-  [BannerField.LocationId]: string()
+  [BannerFormNames.LocationId]: string()
     .nullable()
     .default(null)
-    .when(BannerField.LocationType, ([type], schema) =>
+    .when(BannerFormNames.LocationType, ([type], schema) =>
       needsLocationId(type)
         ? schema.required(
             type === BannerLocation.Brand
@@ -119,31 +121,31 @@ export const BannerSchema = object({
           )
         : schema,
     ),
-  [BannerField.DateType]: string()
+  [BannerFormNames.DateType]: string()
     .oneOf(Object.values(BannerDateType))
     .required(),
-  [BannerField.StartDate]: date()
+  [BannerFormNames.StartDate]: date()
     .nullable()
     .default(null)
-    .when(BannerField.DateType, {
+    .when(BannerFormNames.DateType, {
       is: BannerDateType.Range,
       then: (schema) => schema.required("Start date is required"),
     }),
-  [BannerField.EndDate]: date()
+  [BannerFormNames.EndDate]: date()
     .nullable()
     .default(null)
-    .when(BannerField.DateType, {
+    .when(BannerFormNames.DateType, {
       is: BannerDateType.Range,
       then: (schema) =>
         schema
           .required("End date is required")
           .min(
-            ref(BannerField.StartDate),
+            ref(BannerFormNames.StartDate),
             "End date must be after the start date",
           ),
     }),
-  [BannerField.Visible]: boolean().default(true).nullable(),
-  [BannerField.Placement]: string()
+  [BannerFormNames.Visible]: boolean().default(true).nullable(),
+  [BannerFormNames.Placement]: string()
     .oneOf(Object.values(BannerPlacement), "Choose a placement")
     .required("Choose a placement"),
 });

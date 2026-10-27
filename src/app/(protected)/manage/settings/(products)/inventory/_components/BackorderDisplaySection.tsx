@@ -1,5 +1,5 @@
 import { ListRenderer } from "@/components/ListRenderer.tsx/ListRenderer";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/button";
 import Table from "@/components/ui/Table/Table";
 import { ValidationError } from "@/components/ui/validation-error";

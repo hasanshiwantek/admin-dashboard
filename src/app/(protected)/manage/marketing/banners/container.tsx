@@ -11,10 +11,12 @@ import {
   updateBanner,
 } from "@/redux/slices/marketingSlice";
 import { ListFilter, Trash } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import BannersColumn from "./columns";
+import { ADD_BANNER_ROUTE, editBannerRoute } from "./constant";
 
 const TOOLBAR_CONTROL = "h-14! py-4! my-0!";
 
@@ -82,8 +84,7 @@ const useBannerListingPageContainer = () => {
   const getRowActions = (banner: any) => [
     {
       label: "Edit",
-      onClick: () =>
-        router.push(`/manage/marketing/banners/${banner?.id}/edit`),
+      onClick: () => router.push(editBannerRoute(banner?.id)),
     },
   ];
 
@@ -104,12 +105,12 @@ const useBannerListingPageContainer = () => {
         )}
       >
         <Button
+          asChild
           variant="outline"
           size="xl"
           className={cn("2xl:!text-2xl", TOOLBAR_CONTROL)}
-          onClick={() => router.push("/manage/marketing/banners/create")}
         >
-          Create a banner
+          <Link href={ADD_BANNER_ROUTE}>Create a banner</Link>
         </Button>
         <Button
           variant="outline"

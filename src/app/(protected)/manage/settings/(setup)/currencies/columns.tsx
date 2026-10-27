@@ -1,6 +1,6 @@
 import ActionButton from "@/components/ActionButton/ActionButton";
 import { ActionItem } from "@/components/ActionButton/type";
-import { Switch } from "@/components/ui/switch";
+import { Switch } from "@/components/ui/Switch";
 import { ColumnDef } from "@/components/ui/Table/types";
 import { ActionEnums } from "@/const/appConstants";
 import Link from "next/link";

@@ -12,7 +12,7 @@ import RadioGroupField from "@/components/form/fields/RadioGroupField";
 import PageTitle from "@/components/ui/PageTitle";
 import RichTextEditor from "@/components/ui/RichTextEditor";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Checkbox } from "@/components/ui/Checkbox";
 import { cn } from "@/lib/utils";
 
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";

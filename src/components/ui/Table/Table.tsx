@@ -4,7 +4,7 @@ import Spinner from "@/app/components/loader/Spinner";
 import OrderActionsDropdown from "@/app/components/orders/OrderActionsDropdown";
 import ChipList, { type ChipItem } from "@/components/Chips/ChipList";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Checkbox } from "@/components/ui/Checkbox";
 import Pagination from "@/components/ui/pagination";
 import {
   TableBody,
@@ -13,7 +13,7 @@ import {
   TableHeader,
   TableRow,
   Table as UITable,
-} from "@/components/ui/table";
+} from "@/components/ui/Table";
 import { cn } from "@/lib/utils";
 import {
   ChevronDown,
@@ -87,9 +87,9 @@ export default function Table<T>({
   tableWrapperClassName,
   bottomPaginationClassName,
 }: TableProps<T>) {
-  const rowIds = (
-    isRowSelectable ? data.filter(isRowSelectable) : data
-  ).map(getRowId);
+  const rowIds = (isRowSelectable ? data.filter(isRowSelectable) : data).map(
+    getRowId,
+  );
   const isAllSelected =
     rowIds.length > 0 && rowIds.every((id) => selectedIds.includes(id));
 
@@ -114,10 +114,9 @@ export default function Table<T>({
           const label = filterLabels?.[key] ?? key;
           const display = values
             .map((v) => (formatFilterValue ? formatFilterValue(key, v) : v))
-            .reduce<ReactNode[]>(
-              (acc, part, i) => (i === 0 ? [part] : [...acc, ", ", part]),
-              [],
-            );
+            .reduce<
+              ReactNode[]
+            >((acc, part, i) => (i === 0 ? [part] : [...acc, ", ", part]), []);
           return {
             id: key,
             label: (

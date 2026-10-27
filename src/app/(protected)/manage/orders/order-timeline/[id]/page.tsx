@@ -1,14 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { Card, CardContent } from "@/components/ui/Card";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
-import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import dayjs from "dayjs";
-import { Loader, ArrowRight, Percent, } from "lucide-react";
 import { orderTimeline } from "@/redux/slices/orderSlice";
+import { ArrowRight, Loader, Percent } from "lucide-react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function OrderTimelinePage() {
   const { id } = useParams();
@@ -41,22 +39,18 @@ export default function OrderTimelinePage() {
       {/* ================= PAGE HEADER ================= */}
       <div className="h-[75px] bg-white border-t-[3px] border-[#060a3e] border-b border-[#d9d9d9] flex items-center px-[40px]">
         <div className="flex items-center gap-[16px]">
-          <span className="!text-[16px] !font-normal">
-            Orders
-          </span>
+          <span className="!text-[16px] !font-normal">Orders</span>
 
-          <span className="!text-[29px] leading-none ] font-light">
-            ›
-          </span>
+          <span className="!text-[29px] leading-none ] font-light">›</span>
 
           <h1 className="m-0 !text-[30px] leading-[36px] !font-light ">
             Order timeline -{" "}
             <Link
-  href={`/manage/orders?orderIdFrom=${id}&orderIdTo=${id}&expand=${id}`}
-  className="!text-[#4d70ff] !font-normal !text-[30px] hover:!underline"
->
-  Order #{orderNumber}
-</Link>
+              href={`/manage/orders?orderIdFrom=${id}&orderIdTo=${id}&expand=${id}`}
+              className="!text-[#4d70ff] !font-normal !text-[30px] hover:!underline"
+            >
+              Order #{orderNumber}
+            </Link>
           </h1>
         </div>
       </div>
@@ -83,8 +77,7 @@ export default function OrderTimelinePage() {
 
             <div className="space-y-[29px]">
               {timelineEvents.map((event: any, index: any) => {
-                const isTaxEvent =
-                  event.title?.toLowerCase().includes("tax");
+                const isTaxEvent = event.title?.toLowerCase().includes("tax");
 
                 return (
                   <div
@@ -194,11 +187,10 @@ export default function OrderTimelinePage() {
 
                         {event.details &&
                           !Array.isArray(event.details) &&
-                          Object.entries(event.details).map(
-                            ([key, value]) => (
-                              <p
-                                key={key}
-                                className="
+                          Object.entries(event.details).map(([key, value]) => (
+                            <p
+                              key={key}
+                              className="
                                   m-0
                                   !text-[16px]
                                   leading-[29px]
@@ -206,19 +198,16 @@ export default function OrderTimelinePage() {
                                   text-[#18375d]
                                   font-normal
                                 "
-                              >
-                                <span className="font-medium">
-                                  {key
-                                    .replace(/_/g, " ")
-                                    .replace(/\b\w/g, (c) =>
-                                      c.toUpperCase()
-                                    )}
-                                  :
-                                </span>{" "}
-                                {String(value)}
-                              </p>
-                            )
-                          )}
+                            >
+                              <span className="font-medium">
+                                {key
+                                  .replace(/_/g, " ")
+                                  .replace(/\b\w/g, (c) => c.toUpperCase())}
+                                :
+                              </span>{" "}
+                              {String(value)}
+                            </p>
+                          ))}
                       </CardContent>
                     </Card>
                   </div>

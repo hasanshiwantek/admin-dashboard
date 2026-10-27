@@ -1,4 +1,4 @@
-import type { SelectOption } from "@/components/ui/select";
+import type { SelectOption } from "@/components/ui/Select";
 import { PAYMENT_ROUTE } from "../payment/constant";
 import { SHIPPING_ROUTE } from "../shipping/constant";
 import { TAX_ROUTE } from "../tax/constant";

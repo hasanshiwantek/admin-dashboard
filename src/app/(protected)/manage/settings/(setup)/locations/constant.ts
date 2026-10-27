@@ -1,5 +1,5 @@
 import { countriesListIconsRaw, statesList } from "@/const/location";
-import type { SelectOption } from "@/components/ui/select";
+import type { SelectOption } from "@/components/ui/Select";
 import { toTitleCase } from "@/lib/utils";
 import countries from "i18n-iso-countries";
 import type {

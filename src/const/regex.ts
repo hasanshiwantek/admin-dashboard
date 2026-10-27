@@ -9,6 +9,13 @@ export const REGEX = {
   PRODUCT_URL_MULTIPLE_SLASHES: /\/+/g,
   PRODUCT_URL_TRAILING_SLASH: /\/$/g,
   PRODUCT_URL_NORMALIZE: /^\/+|\/+$/g,
+  LEADING_SLASHES: /^\/+/,
+  TRAILING_SLASHES: /\/+$/,
+
+  // HTML
+  // An <img>, <video> or <iframe> tag: shows something even with no text
+  HTML_MEDIA_TAG: /<(img|video|iframe)\b/i,
+  HTML_TAGS_AND_NBSP: /<[^>]*>|&nbsp;/g,
 
   // Numeric input
   NUMERIC_DIGIT: /^\d$/,
