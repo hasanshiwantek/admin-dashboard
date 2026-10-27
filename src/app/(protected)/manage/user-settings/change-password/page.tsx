@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Save, AlertTriangle, Eye, EyeOff } from "lucide-react"; // Added AlertTriangle for the warning box
 import { useRouter } from "next/navigation";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

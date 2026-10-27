@@ -7,7 +7,7 @@ import type { AppDispatch, RootState } from "@/redux/store";
 import { setStoreId } from "@/redux/slices/configSlice";
 import { Eye, EyeOff } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import Cookies from "js-cookie";
 import Image from "next/image";

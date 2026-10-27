@@ -1,6 +1,6 @@
 import InputField from "@/components/form/InputField";
 import { ListRenderer } from "@/components/ListRenderer.tsx/ListRenderer";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import RemoveTaxClassModal from "@/Modals/TaxModals/RemoveTaxClassModal/RemoveTaxClassModal";
 import { CircleMinus, CirclePlus } from "lucide-react";

@@ -1,7 +1,7 @@
 import { ActionEnums } from "@/const/appConstants";
 import type { AccessRule } from "@/utils/access";
 import { ReactNode } from "react";
-import { ButtonProps } from "../ui/button";
+import { ButtonProps } from "../ui/Button";
 
 // `permission` hides the action when the user lacks it; `checks` run against
 // the button's `data` (e.g. { key: "isDefault", value: false })

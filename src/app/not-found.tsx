@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import LayoutWrapper from "./components/layout/LayoutWrapper";
 
 export default function NotFound() {

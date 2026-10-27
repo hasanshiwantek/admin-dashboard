@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { Plus } from "lucide-react";
-import { Button, ButtonProps } from "./button";
+import { Button, ButtonProps } from "./Button";
 import { cn } from "@/lib/utils";
 
 export interface PageTitleProps {

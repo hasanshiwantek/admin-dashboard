@@ -1,7 +1,7 @@
 import RadioGroupField from "@/components/form/fields/RadioGroupField";
 import InputField from "@/components/form/InputField";
 import { ListRenderer } from "@/components/ListRenderer.tsx/ListRenderer";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { X } from "lucide-react";
 import { ReactNode } from "react";
 import SettingsCard from "../../../_components/SettingsCard";

@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import FedExConfigModal from "@/Modals/ShippingModals/FedExConfigModal/FedExConfigModal";
 import ShipByWeightModal from "@/Modals/ShippingModals/ShipByWeightModal/ShipByWeightModal";
 import ShippingQuotesDisplayNameModal from "@/Modals/ShippingModals/ShippingQuotesDisplayNameModal/ShippingQuotesDisplayNameModal";

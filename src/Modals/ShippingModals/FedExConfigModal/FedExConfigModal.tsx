@@ -4,7 +4,7 @@ import { ListRenderer } from "@/components/ListRenderer.tsx/ListRenderer";
 import CheckboxField from "@/components/form/fields/CheckboxField";
 import SelectField from "@/components/form/fields/SelectField";
 import InputField from "@/components/form/InputField";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import Modal from "@/components/Modal/Modal";
 import { useModal } from "@/components/Modal/ModalContainer";
 import { countriesList, statesList } from "@/const/location";

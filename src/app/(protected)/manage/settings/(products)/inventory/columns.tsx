@@ -1,5 +1,5 @@
 import InputField from "@/components/form/InputField";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ColumnDef } from "@/components/ui/Table/types";
 import DeleteBackorderMessageModal from "@/Modals/SettingsModals/DeleteBackorderMessageModal/DeleteBackorderMessageModal";

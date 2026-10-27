@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { useForm, FormProvider } from "react-hook-form";
 import { useEffect, useMemo, useState } from "react";
 import CategoryTreeSm from "./add/CategoryTreeSm";

@@ -34,7 +34,7 @@ import {
 } from "./constants";
 import { WebPageSchema } from "@/validations/formValidations";
 import type { WebPageFormValues } from "./types";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { REGEX } from "@/const/regex";
 import { generatePageUrl } from "./utils";
 

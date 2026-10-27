@@ -1,6 +1,6 @@
 // BasicInfoForm.tsx
 "use client";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

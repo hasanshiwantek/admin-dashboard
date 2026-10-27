@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 import { addBrand } from "@/redux/slices/productSlice";
 import { useAppDispatch } from "@/hooks/useReduxHooks";

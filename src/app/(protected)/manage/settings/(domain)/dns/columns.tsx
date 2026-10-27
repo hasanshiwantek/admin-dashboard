@@ -1,6 +1,6 @@
 import { SelectField } from "@/components/form/fields/SelectField";
 import InputField from "@/components/form/InputField";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { ColumnDef } from "@/components/ui/Table/types";
 import { X } from "lucide-react";
 import { DnsRecordRow, MxRecordRow } from "./_components/type";

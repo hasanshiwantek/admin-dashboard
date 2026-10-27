@@ -1,6 +1,6 @@
 import { ListRenderer } from "@/components/ListRenderer.tsx/ListRenderer";
 import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import Table from "@/components/ui/Table/Table";
 import { ValidationError } from "@/components/ui/validation-error";
 import { ExternalLink, Plus, Rocket } from "lucide-react";

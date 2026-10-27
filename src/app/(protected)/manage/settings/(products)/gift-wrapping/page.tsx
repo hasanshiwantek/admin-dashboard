@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import PageLayout from "@/components/ui/PageLayout";
 import Table from "@/components/ui/Table/Table";
 import DeleteGiftWrappingModal from "@/Modals/SettingsModals/DeleteGiftWrappingModal/DeleteGiftWrappingModal";
