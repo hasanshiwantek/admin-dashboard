@@ -10,8 +10,8 @@ import {
   SelectValue,
   SelectContent,
   SelectItem,
-} from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
+} from "@/components/ui/Select";
+import { Checkbox } from "@/components/ui/Checkbox";
 import CustomerSearchDropdown, { Customer } from "./CustomerSearchDropdown";
 import {
   fetchCustomerAddresses,

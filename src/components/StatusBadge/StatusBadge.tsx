@@ -1,4 +1,4 @@
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/components/ui/Badge";
 import { cn } from "@/lib/utils";
 import { STATUS_BADGE_TONE_CLASS } from "./constant";
 import { StatusBadgeProps } from "./type";

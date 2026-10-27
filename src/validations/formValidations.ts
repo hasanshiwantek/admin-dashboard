@@ -1,11 +1,23 @@
 import {
   BannerDateType,
-  BannerField,
+  BannerFormNames,
+} from "@/app/(protected)/manage/marketing/banners/[id]/constant";
+import {
   BannerLocation,
   BannerPlacement,
 } from "@/app/(protected)/manage/marketing/banners/constant";
 import { needsLocationId } from "@/app/(protected)/manage/marketing/banners/utils";
 import { UserField } from "@/app/(protected)/manage/settings/(advanced)/users/constant";
+import {
+  DnsRecordFormNames,
+  DnsSection,
+  MailForwardFormNames,
+  MailServerFormNames,
+  MailServerMode,
+  MxRecordFormNames,
+  WebHostFormNames,
+  ZoneDetailFormNames,
+} from "@/app/(protected)/manage/settings/(domain)/dns/constant";
 import {
   DisplayField,
   GeneralSection,
@@ -29,16 +41,17 @@ import {
   BackorderMessageFormNames,
   InventoryFormNames,
 } from "@/app/(protected)/manage/settings/(products)/inventory/constant";
-import {
-  OfflinePaymentFormNames,
-  PaymentConfigFormNames,
-  PaymentCurrencyFormNames,
-} from "@/app/(protected)/manage/settings/(setup)/payment/constant";
+import { CurrencyFormNames } from "@/app/(protected)/manage/settings/(setup)/currencies/constant";
 import {
   LocationFormNames,
   OpeningHourFormNames,
   SpecialHourFormNames,
 } from "@/app/(protected)/manage/settings/(setup)/locations/constant";
+import {
+  OfflinePaymentFormNames,
+  PaymentConfigFormNames,
+  PaymentCurrencyFormNames,
+} from "@/app/(protected)/manage/settings/(setup)/payment/constant";
 import { PickupMethodFormNames } from "@/app/(protected)/manage/settings/(setup)/pickup-methods/constant";
 import {
   TaxClassesFormNames,
@@ -51,16 +64,6 @@ import {
   TaxZoneBasedOn,
   TaxZoneSettingsFormNames,
 } from "@/app/(protected)/manage/settings/(setup)/tax/(basic)/tax-zones/constant";
-import {
-  DnsRecordFormNames,
-  DnsSection,
-  MailForwardFormNames,
-  MailServerFormNames,
-  MailServerMode,
-  MxRecordFormNames,
-  WebHostFormNames,
-  ZoneDetailFormNames,
-} from "@/app/(protected)/manage/settings/(domain)/dns/constant";
 import { BlogFormFieldName } from "@/app/components/blog/constant";
 import { MessageField } from "@/app/components/orders/message/helper/constant";
 import {
@@ -72,11 +75,12 @@ import {
   PageTypeEnums,
   WebPageField,
 } from "@/app/components/storefront/constants";
-import { ShippingAddressField } from "@/Modals/ShippingModals/ConfigureShippingAddressModal/constant";
+import { AddCurrencyFormNames } from "@/Modals/CurrencyModals/AddCurrencyModal/constant";
 import {
   UpdateUrlsFormNames,
   UpdateUrlsScope,
 } from "@/Modals/SettingsModals/UpdateUrlsModal/constant";
+import { ShippingAddressField } from "@/Modals/ShippingModals/ConfigureShippingAddressModal/constant";
 import { ChargeShippingType } from "@/Modals/ShippingModals/constant";
 import { FedExField } from "@/Modals/ShippingModals/FedExConfigModal/constant";
 import {
@@ -99,18 +103,18 @@ import { CustomerField } from "@/app/(protected)/manage/customers/add/constant";
 import { REGEX } from "@/const/regex";
 
 export const BannerSchema = object({
-  [BannerField.Title]: string().trim().required("Banner name is required"),
-  [BannerField.Content]: string().nullable(),
-  [BannerField.LocationType]: string()
+  [BannerFormNames.Title]: string().trim().required("Banner name is required"),
+  [BannerFormNames.Content]: string().nullable(),
+  [BannerFormNames.LocationType]: string()
     .oneOf(
       Object.values(BannerLocation),
       "Choose where this banner should appear",
     )
     .required("Choose where this banner should appear"),
-  [BannerField.LocationId]: string()
+  [BannerFormNames.LocationId]: string()
     .nullable()
     .default(null)
-    .when(BannerField.LocationType, ([type], schema) =>
+    .when(BannerFormNames.LocationType, ([type], schema) =>
       needsLocationId(type)
         ? schema.required(
             type === BannerLocation.Brand
@@ -119,31 +123,31 @@ export const BannerSchema = object({
           )
         : schema,
     ),
-  [BannerField.DateType]: string()
+  [BannerFormNames.DateType]: string()
     .oneOf(Object.values(BannerDateType))
     .required(),
-  [BannerField.StartDate]: date()
+  [BannerFormNames.StartDate]: date()
     .nullable()
     .default(null)
-    .when(BannerField.DateType, {
+    .when(BannerFormNames.DateType, {
       is: BannerDateType.Range,
       then: (schema) => schema.required("Start date is required"),
     }),
-  [BannerField.EndDate]: date()
+  [BannerFormNames.EndDate]: date()
     .nullable()
     .default(null)
-    .when(BannerField.DateType, {
+    .when(BannerFormNames.DateType, {
       is: BannerDateType.Range,
       then: (schema) =>
         schema
           .required("End date is required")
           .min(
-            ref(BannerField.StartDate),
+            ref(BannerFormNames.StartDate),
             "End date must be after the start date",
           ),
     }),
-  [BannerField.Visible]: boolean().default(true).nullable(),
-  [BannerField.Placement]: string()
+  [BannerFormNames.Visible]: boolean().default(true).nullable(),
+  [BannerFormNames.Placement]: string()
     .oneOf(Object.values(BannerPlacement), "Choose a placement")
     .required("Choose a placement"),
 });
@@ -807,6 +811,49 @@ export const PickupMethodSchema = object({
   [PickupMethodFormNames.Instructions]: string()
     .trim()
     .required("Instruction message for pickup is required."),
+});
+// #endregion
+
+// #region Currencies
+export const AddCurrencySchema = object({
+  [AddCurrencyFormNames.Code]: string().required("Currency code is required."),
+});
+
+export const CurrencySchema = object({
+  [CurrencyFormNames.Name]: string()
+    .trim()
+    .required("Display name is required."),
+  [CurrencyFormNames.DefaultForCountries]: array()
+    .of(string().required())
+    .required()
+    .default([]),
+  [CurrencyFormNames.TransactingCurrency]: string().required(
+    "Transacting currency is required.",
+  ),
+  [CurrencyFormNames.ExchangeRateType]: string().required(),
+  [CurrencyFormNames.ExchangeRate]: string()
+    .trim()
+    .required("Exchange rate is required.")
+    .test(
+      "exchangeRate",
+      "Exchange rate must be a number greater than 0.",
+      (value) => !isNaN(Number(value)) && Number(value) > 0,
+    ),
+  [CurrencyFormNames.Symbol]: string()
+    .trim()
+    .required("Currency symbol is required."),
+  [CurrencyFormNames.SymbolLocation]: string().required(
+    "Symbol location is required.",
+  ),
+  [CurrencyFormNames.DecimalToken]: string().required(
+    "Decimal separator is required.",
+  ),
+  [CurrencyFormNames.ThousandsToken]: string().required(
+    "Thousands separator is required.",
+  ),
+  [CurrencyFormNames.DecimalPlaces]: string().required(
+    "Decimal places is required.",
+  ),
 });
 // #endregion
 
