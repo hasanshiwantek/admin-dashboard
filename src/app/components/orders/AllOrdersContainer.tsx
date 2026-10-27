@@ -189,10 +189,6 @@ const useAllOrdersContainer = () => {
   // ----- Per-row actions dropdown -----
   const rowActions = (order: any) => [
     {
-      label: "Edit order",
-      onClick: () => router.push(`/manage/orders/edit/${order.id}`),
-    },
-    {
       label: "Print invoice",
       onClick: async () => {
         if (!order?.id) return;

@@ -1,4 +1,4 @@
-import { SelectOption } from "@/components/ui/select";
+import { SelectOption } from "@/components/ui/Select";
 import { TableTab } from "@/components/ui/Table/types";
 import { BadgeCheck, BadgeX, TriangleAlert } from "lucide-react";
 import { RiskInfo, StatusOption } from "./types";

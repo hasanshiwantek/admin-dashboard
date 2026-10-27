@@ -8,9 +8,9 @@ import {
   PopoverAnchor,
   PopoverContent,
 } from "@/components/ui/popover";
-import { SelectOption } from "@/components/ui/select";
+import { SelectOption } from "@/components/ui/Select";
 import { cn } from "@/lib/utils";
-import { CheckIcon, ChevronDownIcon } from "lucide-react";
+import { CheckIcon, ChevronDownIcon, Loader2Icon } from "lucide-react";
 import {
   KeyboardEvent,
   MouseEvent,
@@ -35,6 +35,9 @@ type SelectFieldBaseProps<T> = {
   id?: string;
   name?: string;
   disabled?: boolean;
+  /** Options are still loading: disables the field and shows a spinner */
+  loading?: boolean;
+  loadingText?: string;
   className?: string;
   "aria-invalid"?: boolean;
   ref?: Ref<HTMLInputElement>;
@@ -75,10 +78,14 @@ export function SelectField<T = SelectOption>({
   id,
   name,
   disabled,
+  loading,
+  loadingText = "Loading...",
   className,
   "aria-invalid": invalid,
   ref,
 }: SelectFieldProps<T>) {
+  const isDisabled = disabled || loading;
+  const shownPlaceholder = loading ? loadingText : placeholder;
   const getOptionValue =
     getValueProp ?? ((option: T) => readKey(option, valueKey ?? "value"));
   const getOptionLabel =
@@ -128,7 +135,7 @@ export function SelectField<T = SelectOption>({
   };
 
   const openList = () => {
-    if (disabled || open) return;
+    if (isDisabled || open) return;
     setOpen(true);
     setQuery(multi ? "" : selectedLabel);
     setFiltering(false);
@@ -194,8 +201,8 @@ export function SelectField<T = SelectOption>({
     "aria-expanded": open,
     "aria-controls": listId,
     "aria-invalid": invalid,
-    disabled,
-    onFocus: openList,
+    disabled: isDisabled,
+    // Not on focus: a dialog auto-focuses its first field and would pop the list open
     onClick: openList,
     onChange: (event: { target: { value: string } }) => {
       setQuery(event.target.value);
@@ -227,7 +234,7 @@ export function SelectField<T = SelectOption>({
                 "flex min-h-13 w-full cursor-text flex-wrap items-center gap-2 rounded-sm border border-pale-ash-gray bg-white py-2 pr-10 pl-2 transition-colors hover:border-smoky-gray",
                 "focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-300",
                 invalid && "border-destructive",
-                disabled && "pointer-events-none opacity-50",
+                isDisabled && "pointer-events-none opacity-50",
               )}
             >
               <ListRenderer
@@ -246,7 +253,7 @@ export function SelectField<T = SelectOption>({
               <input
                 {...inputProps}
                 value={query}
-                placeholder={placeholder}
+                placeholder={shownPlaceholder}
                 className="min-w-40 flex-1 bg-transparent px-2 py-1 text-xl! text-gray-600 outline-none placeholder:text-gray-400"
               />
             </div>
@@ -254,11 +261,17 @@ export function SelectField<T = SelectOption>({
             <Input
               {...inputProps}
               value={open ? query : selectedLabel}
-              placeholder={open && selectedLabel ? selectedLabel : placeholder}
+              placeholder={
+                open && selectedLabel ? selectedLabel : shownPlaceholder
+              }
               className="max-w-full truncate pr-10"
             />
           )}
-          <ChevronDownIcon className="pointer-events-none absolute right-3 top-1/2 size-6 -translate-y-1/2 opacity-50" />
+          {loading ? (
+            <Loader2Icon className="pointer-events-none absolute right-3 top-1/2 size-6 -translate-y-1/2 animate-spin text-gray-400" />
+          ) : (
+            <ChevronDownIcon className="pointer-events-none absolute right-3 top-1/2 size-6 -translate-y-1/2 opacity-50" />
+          )}
         </div>
       </PopoverAnchor>
       <PopoverContent

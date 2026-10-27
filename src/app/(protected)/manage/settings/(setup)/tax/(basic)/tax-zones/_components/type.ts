@@ -1,4 +1,4 @@
-import { SelectOption } from "@/components/ui/select";
+import { SelectOption } from "@/components/ui/Select";
 import { ReactNode } from "react";
 import type useTaxZoneShellContainer from "../zoneShellContainer";
 

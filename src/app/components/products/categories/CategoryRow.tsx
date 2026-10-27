@@ -1,8 +1,8 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { TableCell, TableRow } from "@/components/ui/table";
+import { Checkbox } from "@/components/ui/Checkbox";
+import { TableCell, TableRow } from "@/components/ui/Table";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { refetchCategories } from "@/lib/categoryUtils";
 import { buildQueryParams } from "@/lib/utils";

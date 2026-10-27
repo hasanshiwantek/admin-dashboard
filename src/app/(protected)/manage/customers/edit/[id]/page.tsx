@@ -3,7 +3,6 @@ import EditCustomer from "@/app/components/customers/EditCustomerForm/helpers/Ed
 const page = () => {
   return (
     <div className="border border-2">
-      {/* <AddCustomer /> */}
       <EditCustomer />
     </div>
   );
