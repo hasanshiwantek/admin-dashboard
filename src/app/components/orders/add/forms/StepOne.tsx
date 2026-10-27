@@ -24,6 +24,7 @@ import { removeCouponUsage, resetCoupon } from "@/redux/slices/orderSlice";
 import { errorMessage } from "@/utils/message";
 import { useAppSelector } from "@/hooks/useReduxHooks";
 import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
+import { REGEX } from "@/const/regex";
 
 interface CustomerAddress {
   id: number;
@@ -274,8 +275,8 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
                         // Skip extra checks when the field is not required and empty
                         if (!value) return true;
 
-                        const hasLetter = /[a-zA-Z]/.test(value);
-                        const hasNumber = /\d/.test(value);
+                        const hasLetter = REGEX.HAS_LETTER.test(value);
+                        const hasNumber = REGEX.HAS_NUMBER.test(value);
 
                         if (!hasLetter || !hasNumber) {
                           return "Password must contain both alphabetic and numeric characters";

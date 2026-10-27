@@ -3,7 +3,6 @@ import AddAddress from "@/app/components/customers/EditCustomerForm/add/AddAddre
 const page = () => {
   return (
     <div>
-      {/* <AddCustomer /> */}
       <AddAddress />
     </div>
   );

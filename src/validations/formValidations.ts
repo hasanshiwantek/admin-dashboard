@@ -99,6 +99,8 @@ import {
   ref,
   string,
 } from "yup";
+import { CustomerField } from "@/app/(protected)/manage/customers/add/constant";
+import { REGEX } from "@/const/regex";
 
 export const BannerSchema = object({
   [BannerFormNames.Title]: string().trim().required("Banner name is required"),
@@ -556,7 +558,7 @@ export const WebPageSchema = object({
       then: (schema) =>
         schema
           .required("Link is required")
-          .matches(/^https:\/\//i, "Link must start with https://"),
+          .matches(REGEX.HTTPS_PREFIX, "Link must start with https://"),
     }),
   [WebPageField.RawHtml]: string().nullable().default(""),
   [WebPageField.EmailQuestionsTo]: string()
@@ -946,7 +948,7 @@ export const TaxRateSchema = object({
     .test(
       "priority",
       "Enter a whole number of 0 or more",
-      (value) => !value || /^\d+$/.test(value),
+      (value) => !value || REGEX.WHOLE_NUMBER.test(value),
     ),
   [TaxRateFormNames.IsEnabled]: flag(true),
 });
@@ -964,7 +966,8 @@ const positiveWholeNumber = (label: string) =>
     .test(
       "whole",
       `${label} must be a whole number above 0`,
-      (value) => !value || (/^\d+$/.test(value) && Number(value) > 0),
+      (value) =>
+        !value || (REGEX.WHOLE_NUMBER.test(value) && Number(value) > 0),
     );
 
 export const DnsSettingsSchema = object({
@@ -988,7 +991,10 @@ export const DnsSettingsSchema = object({
               [MailForwardFormNames.DisplayAddress]: string()
                 .trim()
                 .required("Display address is required")
-                .matches(/^[^\s@]+$/, "Enter only the part before the @"),
+                .matches(
+                  REGEX.EMAIL_LOCAL_PART,
+                  "Enter only the part before the @",
+                ),
               [MailForwardFormNames.ForwardTo]: string()
                 .trim()
                 .email("Enter a valid email address")
@@ -1024,7 +1030,7 @@ export const DnsSettingsSchema = object({
               [MxRecordFormNames.Priority]: text().test(
                 "priority",
                 "Priority must be a whole number",
-                (value) => !value || /^\d+$/.test(value),
+                (value) => !value || REGEX.WHOLE_NUMBER.test(value),
               ),
             }),
           ),
@@ -1072,3 +1078,37 @@ export const PromotionSettingsSchema = object({
 // #endregion
 
 // #endregion
+
+// #region Customer
+const passwordRules = string()
+  .required("Password is required")
+  .min(7, "Password must be at least 7 characters")
+  .matches(REGEX.HAS_LETTER, "Password must contain at least one letter")
+  .matches(REGEX.HAS_NUMBER, "Password must contain at least one number");
+export const createCustomerSchema = (isEdit: boolean) =>
+  object({
+    [CustomerField.firstName]: string().required("First name is required"),
+    [CustomerField.lastName]: string().required("Last name is required"),
+    [CustomerField.companyName]: string().defined(),
+    [CustomerField.email]: string()
+      .email("Enter a valid email address")
+      .required("Email is required"),
+    [CustomerField.customerGroup]: string().defined(),
+    [CustomerField.phone]: string().defined(),
+    [CustomerField.storeCredit]: string().defined(),
+    [CustomerField.acsEmail]: string().defined(),
+    [CustomerField.forceReset]: string().defined(),
+    [CustomerField.taxCode]: string().defined(),
+    [CustomerField.password]: isEdit ? string().defined() : passwordRules,
+    [CustomerField.confirmPassword]: isEdit
+      ? string().defined()
+      : string()
+          .required("Confirm password is required")
+          .oneOf([ref(CustomerField.password)], "Passwords do not match"),
+    [CustomerField.analytics]: string().defined(),
+    [CustomerField.functional]: string().defined(),
+    [CustomerField.targeting]: string().defined(),
+    [CustomerField.address]: string().defined(),
+    [CustomerField.state]: string().defined(),
+    [CustomerField.country]: string().defined(),
+  });
