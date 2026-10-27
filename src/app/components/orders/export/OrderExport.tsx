@@ -8,7 +8,7 @@ import { exportOrderCsv } from "@/redux/slices/orderSlice";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { useSearchParams } from "next/navigation";
 import { ExportTab, ExportModalStatus } from "@/types/types";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import ExportModal from "@/Modals/ExportModal";
 import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
 import { useRouter } from "next/navigation";

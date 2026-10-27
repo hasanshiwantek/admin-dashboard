@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import ResetBasicTaxModal from "@/Modals/TaxModals/ResetBasicTaxModal/ResetBasicTaxModal";
 import Link from "next/link";
 import SettingsCard from "../../../../_components/SettingsCard";

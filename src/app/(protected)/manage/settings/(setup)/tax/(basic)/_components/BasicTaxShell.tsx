@@ -1,7 +1,7 @@
 "use client";
 
 import AppTabs from "@/components/ui/AppTabs/AppTabs";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import PageLayout from "@/components/ui/PageLayout";
 import Link from "next/link";
 import { TAX_ROUTE } from "../../constant";

@@ -4,7 +4,7 @@ import { useSafeBack } from "@/hooks/useSafeBack";
 import { cn } from "@/lib/utils";
 import { ArrowLeft } from "lucide-react";
 import { ReactNode } from "react";
-import { Button, ButtonProps } from "./button";
+import { Button, ButtonProps } from "./Button";
 
 export interface BackNavigationButtonProps
   extends Omit<ButtonProps, "onClick" | "children"> {

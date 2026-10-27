@@ -1,6 +1,6 @@
 import { ColumnDef } from "@/components/ui/Table/types";
 import { Flag, Ellipsis } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import OrderActionsDropdown from "../OrderActionsDropdown";
 import { cn, formatDateTime } from "@/lib/utils";
 

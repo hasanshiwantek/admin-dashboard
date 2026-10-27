@@ -8,7 +8,7 @@ import { ExportTab, ExportModalStatus } from "@/types/types";
 import ExportOptions from "./ExportOption";
 import ExportPreview from "./ExportPreview";
 import { exportCsv } from "@/redux/slices/productSlice";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import ExportModal from "@/Modals/ExportModal";
 import { useRouter } from "next/navigation";
 import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";

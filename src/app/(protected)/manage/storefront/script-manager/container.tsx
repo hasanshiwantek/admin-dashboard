@@ -1,7 +1,7 @@
 "use client";
 
 import type { RowAction, TableSort } from "@/components/ui/Table/types";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { deleteScript, fetchScripts } from "@/redux/slices/storefrontSlice";
 import { Plus } from "lucide-react";

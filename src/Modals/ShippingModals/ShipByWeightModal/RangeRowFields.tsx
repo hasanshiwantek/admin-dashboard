@@ -1,5 +1,5 @@
 import InputField from "@/components/form/InputField";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { Plus, Trash2 } from "lucide-react";
 import { ShipByWeightField } from "./constant";
 import { RangeRowFieldsProps, ShipByWeightFormValues } from "./type";
