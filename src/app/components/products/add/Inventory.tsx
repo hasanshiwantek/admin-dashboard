@@ -3,7 +3,7 @@
 import { useFormContext, Controller } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Checkbox } from "@/components/ui/Checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { wholeNumberValidation } from "@/validations/validations";
 import { ValidationError } from "@/components/ui/validation-error";

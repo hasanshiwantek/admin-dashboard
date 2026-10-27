@@ -1,4 +1,4 @@
-import type { SelectOption } from "@/components/ui/select";
+import type { SelectOption } from "@/components/ui/Select";
 import type { FedexConfigSchema } from "@/validations/formValidations";
 import * as yup from "yup";
 import { ShippingMethodModalProps } from "../type";

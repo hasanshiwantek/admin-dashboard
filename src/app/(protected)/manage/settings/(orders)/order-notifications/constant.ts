@@ -1,5 +1,5 @@
 import { BULK_STATUS_ACTIONS } from "@/app/components/orders/constant";
-import type { SelectOption } from "@/components/ui/select";
+import type { SelectOption } from "@/components/ui/Select";
 import type { OrderNotificationFormValues } from "./type";
 
 export enum NotificationTab {

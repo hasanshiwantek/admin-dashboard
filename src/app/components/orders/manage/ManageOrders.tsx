@@ -10,7 +10,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/components/ui/Table";
 import { FaCircleMinus, FaCirclePlus } from "react-icons/fa6";
 import { useAppSelector, useAppDispatch } from "@/hooks/useReduxHooks";
 import { getReturnOrders } from "@/redux/slices/orderSlice";

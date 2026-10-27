@@ -1,4 +1,4 @@
-import type { SelectOption } from "@/components/ui/select";
+import type { SelectOption } from "@/components/ui/Select";
 import type { CommentSettingsFormValues } from "./type";
 
 export const PRODUCT_REVIEWS_LEARN_MORE_URL =

@@ -8,7 +8,7 @@ import {
   PopoverAnchor,
   PopoverContent,
 } from "@/components/ui/popover";
-import { SelectOption } from "@/components/ui/select";
+import { SelectOption } from "@/components/ui/Select";
 import { cn } from "@/lib/utils";
 import { CheckIcon, ChevronDownIcon, Loader2Icon } from "lucide-react";
 import {

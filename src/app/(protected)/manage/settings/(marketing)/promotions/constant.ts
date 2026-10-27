@@ -1,4 +1,4 @@
-import type { SelectOption } from "@/components/ui/select";
+import type { SelectOption } from "@/components/ui/Select";
 import type { PromotionSettingsFormValues } from "./type";
 
 export const PROMOTION_PRIORITIZATION_URL =

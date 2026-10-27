@@ -6,7 +6,7 @@ import { updateUserEmail } from "@/redux/slices/authSlice";
 // --- SHADCN/UI Imports ---
 // Assuming standard import paths for your styled components
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/Card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAlert } from "@/hooks/useAlert";

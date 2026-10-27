@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Trash } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Checkbox } from "@/components/ui/Checkbox";
 import {
   Table,
   TableBody,
@@ -10,7 +10,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/components/ui/Table";
 import { Settings } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 
