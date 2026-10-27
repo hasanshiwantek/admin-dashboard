@@ -99,6 +99,9 @@ import {
   ref,
   string,
 } from "yup";
+import { CustomerField } from "@/app/(protected)/manage/customers/add/constant";
+import { REGEX } from "@/const/regex";
+import { AddressField } from "@/app/(protected)/manage/customers/edit/[id]/[addressId]/constant";
 
 export const BannerSchema = object({
   [BannerFormNames.Title]: string().trim().required("Banner name is required"),
@@ -495,7 +498,10 @@ export const CouponCodeSchema = object({
 
   categoryIds: array().of(string().defined()).defined(),
 
-  productIds: string().nullable().defined(),
+  productIds: array()
+  .of(string().defined())
+  .default([])
+  .defined(),
 
   limitByLocation: boolean().defined(),
   limitByShipping: boolean().defined(),
@@ -528,18 +534,20 @@ export const CouponCodeSchema = object({
     return true;
   })
   .test("category-validation", function (values) {
-    if (
-      values?.appliesToCategories &&
-      (!values.categoryIds || values.categoryIds.length === 0)
-    ) {
-      return this.createError({
-        path: "categoryIds",
-        message: "Select at least one category",
-      });
-    }
-
+  // Category validation sirf categories select hone par chalegi
+  if (values?.appliesTo !== "categories") {
     return true;
-  });
+  }
+
+  if (!values.categoryIds || values.categoryIds.length === 0) {
+    return this.createError({
+      path: "categoryIds",
+      message: "Select at least one category",
+    });
+  }
+
+  return true;
+});
 
 export type CouponCodeForm = InferType<typeof CouponCodeSchema>;
 // WebPageSchema
@@ -556,7 +564,7 @@ export const WebPageSchema = object({
       then: (schema) =>
         schema
           .required("Link is required")
-          .matches(/^https:\/\//i, "Link must start with https://"),
+          .matches(REGEX.HTTPS_PREFIX, "Link must start with https://"),
     }),
   [WebPageField.RawHtml]: string().nullable().default(""),
   [WebPageField.EmailQuestionsTo]: string()
@@ -946,7 +954,7 @@ export const TaxRateSchema = object({
     .test(
       "priority",
       "Enter a whole number of 0 or more",
-      (value) => !value || /^\d+$/.test(value),
+      (value) => !value || REGEX.WHOLE_NUMBER.test(value),
     ),
   [TaxRateFormNames.IsEnabled]: flag(true),
 });
@@ -964,7 +972,8 @@ const positiveWholeNumber = (label: string) =>
     .test(
       "whole",
       `${label} must be a whole number above 0`,
-      (value) => !value || (/^\d+$/.test(value) && Number(value) > 0),
+      (value) =>
+        !value || (REGEX.WHOLE_NUMBER.test(value) && Number(value) > 0),
     );
 
 export const DnsSettingsSchema = object({
@@ -988,7 +997,10 @@ export const DnsSettingsSchema = object({
               [MailForwardFormNames.DisplayAddress]: string()
                 .trim()
                 .required("Display address is required")
-                .matches(/^[^\s@]+$/, "Enter only the part before the @"),
+                .matches(
+                  REGEX.EMAIL_LOCAL_PART,
+                  "Enter only the part before the @",
+                ),
               [MailForwardFormNames.ForwardTo]: string()
                 .trim()
                 .email("Enter a valid email address")
@@ -1024,7 +1036,7 @@ export const DnsSettingsSchema = object({
               [MxRecordFormNames.Priority]: text().test(
                 "priority",
                 "Priority must be a whole number",
-                (value) => !value || /^\d+$/.test(value),
+                (value) => !value || REGEX.WHOLE_NUMBER.test(value),
               ),
             }),
           ),
@@ -1072,3 +1084,58 @@ export const PromotionSettingsSchema = object({
 // #endregion
 
 // #endregion
+
+// #region Customer
+const passwordRules = string()
+  .required("Password is required")
+  .min(7, "Password must be at least 7 characters")
+  .matches(REGEX.HAS_LETTER, "Password must contain at least one letter")
+  .matches(REGEX.HAS_NUMBER, "Password must contain at least one number");
+export const createCustomerSchema = (isEdit: boolean) =>
+  object({
+    [CustomerField.firstName]: string().required("First name is required"),
+    [CustomerField.lastName]: string().required("Last name is required"),
+    [CustomerField.companyName]: string().defined(),
+    [CustomerField.email]: string()
+      .email("Enter a valid email address")
+      .required("Email is required"),
+    [CustomerField.customerGroup]: string().defined(),
+    [CustomerField.phone]: string().defined(),
+    [CustomerField.storeCredit]: string().defined(),
+    [CustomerField.acsEmail]: string().defined(),
+    [CustomerField.forceReset]: string().defined(),
+    [CustomerField.taxCode]: string().defined(),
+    [CustomerField.password]: isEdit ? string().defined() : passwordRules,
+    [CustomerField.confirmPassword]: isEdit
+      ? string().defined()
+      : string()
+          .required("Confirm password is required")
+          .oneOf([ref(CustomerField.password)], "Passwords do not match"),
+    [CustomerField.analytics]: string().defined(),
+    [CustomerField.functional]: string().defined(),
+    [CustomerField.targeting]: string().defined(),
+    [CustomerField.address]: string().defined(),
+    [CustomerField.state]: string().defined(),
+    [CustomerField.country]: string().defined(),
+  });
+// #endregion Customer
+
+// #region Address
+export const AddressSchema = object({
+  [AddressField.firstName]: string().trim().required("First name is required"),
+  [AddressField.lastName]: string().trim().required("Last name is required"),
+  [AddressField.companyName]: string().defined(),
+  [AddressField.phoneNumber]: string().defined(),
+  [AddressField.addressLine1]: string()
+    .trim()
+    .required("Address line 1 is required"),
+  [AddressField.addressLine2]: string().defined(),
+  [AddressField.city]: string().trim().required("City is required"),
+  [AddressField.state]: string().required("State is required"),
+  [AddressField.country]: string().required("Country is required"),
+  [AddressField.zip]: string().defined(),
+  [AddressField.type]: string().defined(),
+  [AddressField.isDefault]: boolean().defined(),
+});
+
+// #endregion Address
