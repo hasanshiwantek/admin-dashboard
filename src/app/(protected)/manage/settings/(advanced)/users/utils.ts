@@ -25,7 +25,7 @@ export const transformGetUser = (
     [UserField.LastName]: rest.join(" "),
     [UserField.Email]: user?.email ?? "",
     [UserField.PhoneNumber]: user?.phoneNumber ?? "",
-    [UserField.UserRole]: String(user?.userRole ?? UserRolesEnum.ADMIN),
+    [UserField.UserRole]: String(user?.userRole ?? UserRolesEnum.SALES_STAFF),
     [UserField.Permissions]: toPermissionIds(permissions),
   };
 };
