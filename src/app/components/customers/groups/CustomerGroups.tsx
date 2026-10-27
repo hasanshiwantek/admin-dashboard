@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/Checkbox";
-import { Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import Pagination from "@/components/ui/Pagination";
 import {
   Table,
   TableBody,
@@ -13,7 +12,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/Table";
-import Pagination from "@/components/ui/Pagination";
+import { Search } from "lucide-react";
+import { useState } from "react";
+
 const CustomerGroups = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState("50");
@@ -28,7 +29,9 @@ const CustomerGroups = () => {
           <Button variant="outline" className="!p-6">
             Manage default customer groups
           </Button>
-          <Button variant="primary" className="!p-6">+ Create new</Button>
+          <Button variant="primary" className="!p-6">
+            + Create new
+          </Button>
         </div>
       </div>
 

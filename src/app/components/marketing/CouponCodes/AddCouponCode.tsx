@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -32,7 +31,6 @@ const AddCouponCode = () => {
   const couponId = params?.id;
   const isEditMode = !!couponId;
 
-
   const random = values[Math.floor(Math.random() * values.length)];
 
   const methods = useForm<CouponCodeForm>({
@@ -43,7 +41,7 @@ const AddCouponCode = () => {
     },
   });
 
-  const { watch, setValue, reset, control } = methods;
+  const { watch, setValue, reset, control,  } = methods;
 
   const dispatch = useAppDispatch();
   const router = useRouter();
@@ -63,14 +61,12 @@ const AddCouponCode = () => {
     setIsLoading(true);
 
     try {
-      const result = await dispatch(
-        getCouponById({ id: couponId }),
-      ).unwrap();
+      const result = await dispatch(getCouponById({ id: couponId })).unwrap();
 
       const couponData = result?.couponcode || result?.data;
 
       if (couponData) {
-          reset(mapCouponDataToForm(couponData));
+        reset(mapCouponDataToForm(couponData));
       }
     } catch (error: any) {
       console.error("Error fetching coupon:", error);
@@ -79,12 +75,15 @@ const AddCouponCode = () => {
     }
   };
 
+
   // Create or update coupon
   const onSubmit = async (data: CouponCodeForm) => {
+    
     setIsSubmitting(true);
 
     try {
       if (isEditMode) {
+        console.log("edit");
         const result = await dispatch(
           updateCouponCode({
             id: couponId,
@@ -94,9 +93,7 @@ const AddCouponCode = () => {
 
         console.log("Coupon updated successfully:", result);
       } else {
-        const result = await dispatch(
-          createCoupon({ data }),
-        ).unwrap();
+        const result = await dispatch(createCoupon({ data })).unwrap();
 
         console.log("Coupon created successfully:", result);
       }
@@ -106,9 +103,7 @@ const AddCouponCode = () => {
       }, 2000);
     } catch (error: any) {
       console.error(
-        `Error ${
-          isEditMode ? "updating" : "creating"
-        } coupon:`,
+        `Error ${isEditMode ? "updating" : "creating"} coupon:`,
         error,
       );
     } finally {
@@ -116,19 +111,18 @@ const AddCouponCode = () => {
     }
   };
 
-
- const tabs = [
-  {
-    key: "general",
-    label: "General",
-    content: <GeneralCouponTab />,
-  },
-  // {
-  //   key: "advanced",
-  //   label: "Advanced",
-  //   content: <AdvancedCouponTab />,
-  // },
-];
+  const tabs = [
+    {
+      key: "general",
+      label: "General",
+      content: <GeneralCouponTab />,
+    },
+    // {
+    //   key: "advanced",
+    //   label: "Advanced",
+    //   content: <AdvancedCouponTab />,
+    // },
+  ];
 
   const handleCancel = () => {
     if (isSubmitting || isLoading) return;
@@ -142,9 +136,7 @@ const AddCouponCode = () => {
       <div className="w-full h-screen flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-          <p className="text-gray-600">
-            Loading coupon data...
-          </p>
+          <p className="text-gray-600">Loading coupon data...</p>
         </div>
       </div>
     );
@@ -155,29 +147,26 @@ const AddCouponCode = () => {
       {/* Header */}
       <div className="p-10 border-b">
         <PageTitle
-  title={isEditMode ? "Edit coupon code" : "Create a coupon code"}
-  description={
-    isEditMode
-      ? "Update the coupon code details below."
-      : "Coupon codes allow you to provide customers with discounts on products available for purchase from your store. Fill out the form below to create a unique coupon code."
-  }
-  hideActionButton
-  containerClassName="mb-6"
-  textContainerClassName="mb-0 gap-2"
-  titleClassName="font-light! text-3xl! 2xl:text-5xl! text-gray-800!"
-/>
+          title={isEditMode ? "Edit coupon code" : "Create a coupon code"}
+          description={
+            isEditMode
+              ? "Update the coupon code details below."
+              : "Coupon codes allow you to provide customers with discounts on products available for purchase from your store. Fill out the form below to create a unique coupon code."
+          }
+          hideActionButton
+          containerClassName="mb-6"
+          textContainerClassName="mb-0 gap-2"
+          titleClassName="font-light! text-3xl! 2xl:text-5xl! text-gray-800!"
+        />
       </div>
 
       <Form
         form={methods}
         onSubmit={onSubmit}
         footer={{
-          submitText: isEditMode
-            ? "Update Coupon Code"
-            : "Create Coupon Code",
+          submitText: isEditMode ? "Update Coupon Code" : "Create Coupon Code",
           onCancel: handleCancel,
-          loading:
-            isSubmitting || methods.formState.isSubmitting,
+          loading: isSubmitting || methods.formState.isSubmitting,
           disabled: isLoading || isSubmitting,
         }}
         className="max-w-full"

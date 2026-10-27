@@ -1,30 +1,31 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
-import { useFormContext } from "react-hook-form";
+import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
+import { Button } from "@/components/ui/Button";
+import { Checkbox } from "@/components/ui/Checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Select,
-  SelectTrigger,
-  SelectValue,
   SelectContent,
   SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/Select";
-import { Checkbox } from "@/components/ui/Checkbox";
-import CustomerSearchDropdown, { Customer } from "./CustomerSearchDropdown";
+import { REGEX } from "@/const/regex";
+import { useAppSelector } from "@/hooks/useReduxHooks";
 import {
   fetchCustomerAddresses,
   fetchCustomerByEmail,
 } from "@/redux/slices/customerSlice";
-import { useDispatch } from "react-redux";
-import { useRouter } from "next/navigation";
-import { Country, State } from "country-state-city";
 import { removeCouponUsage, resetCoupon } from "@/redux/slices/orderSlice";
 import { errorMessage } from "@/utils/message";
-import { useAppSelector } from "@/hooks/useReduxHooks";
-import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
-import { Button } from "@/components/ui/Button";
+import { Country, State } from "country-state-city";
+import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import { useFormContext } from "react-hook-form";
+import { useDispatch } from "react-redux";
+import CustomerSearchDropdown, { Customer } from "./CustomerSearchDropdown";
 
 interface CustomerAddress {
   id: number;
@@ -268,8 +269,21 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
                       required:
                         orderType === "new" ? "Password is required" : false,
                       minLength: {
-                        value: 6,
-                        message: "Password must be at least 6 characters",
+                        value: 7,
+                        message: "Password must be at least 7 characters",
+                      },
+                      validate: (value) => {
+                        // Skip extra checks when the field is not required and empty
+                        if (!value) return true;
+
+                        const hasLetter = REGEX.HAS_LETTER.test(value);
+                        const hasNumber = REGEX.HAS_NUMBER.test(value);
+
+                        if (!hasLetter || !hasNumber) {
+                          return "Password must contain both alphabetic and numeric characters";
+                        }
+
+                        return true;
                       },
                     })}
                     id="password"

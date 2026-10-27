@@ -1,16 +1,15 @@
 "use client";
 
-import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
-
 import { Button } from "@/components/ui/Button";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { Calendar } from "./Calendar";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
 
 export function DatePicker({
   date,

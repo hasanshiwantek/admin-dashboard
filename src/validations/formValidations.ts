@@ -1,11 +1,23 @@
 import {
   BannerDateType,
-  BannerField,
+  BannerFormNames,
+} from "@/app/(protected)/manage/marketing/banners/[id]/constant";
+import {
   BannerLocation,
   BannerPlacement,
 } from "@/app/(protected)/manage/marketing/banners/constant";
 import { needsLocationId } from "@/app/(protected)/manage/marketing/banners/utils";
 import { UserField } from "@/app/(protected)/manage/settings/(advanced)/users/constant";
+import {
+  DnsRecordFormNames,
+  DnsSection,
+  MailForwardFormNames,
+  MailServerFormNames,
+  MailServerMode,
+  MxRecordFormNames,
+  WebHostFormNames,
+  ZoneDetailFormNames,
+} from "@/app/(protected)/manage/settings/(domain)/dns/constant";
 import {
   DisplayField,
   GeneralSection,
@@ -29,16 +41,17 @@ import {
   BackorderMessageFormNames,
   InventoryFormNames,
 } from "@/app/(protected)/manage/settings/(products)/inventory/constant";
-import {
-  OfflinePaymentFormNames,
-  PaymentConfigFormNames,
-  PaymentCurrencyFormNames,
-} from "@/app/(protected)/manage/settings/(setup)/payment/constant";
+import { CurrencyFormNames } from "@/app/(protected)/manage/settings/(setup)/currencies/constant";
 import {
   LocationFormNames,
   OpeningHourFormNames,
   SpecialHourFormNames,
 } from "@/app/(protected)/manage/settings/(setup)/locations/constant";
+import {
+  OfflinePaymentFormNames,
+  PaymentConfigFormNames,
+  PaymentCurrencyFormNames,
+} from "@/app/(protected)/manage/settings/(setup)/payment/constant";
 import { PickupMethodFormNames } from "@/app/(protected)/manage/settings/(setup)/pickup-methods/constant";
 import {
   TaxClassesFormNames,
@@ -51,16 +64,6 @@ import {
   TaxZoneBasedOn,
   TaxZoneSettingsFormNames,
 } from "@/app/(protected)/manage/settings/(setup)/tax/(basic)/tax-zones/constant";
-import {
-  DnsRecordFormNames,
-  DnsSection,
-  MailForwardFormNames,
-  MailServerFormNames,
-  MailServerMode,
-  MxRecordFormNames,
-  WebHostFormNames,
-  ZoneDetailFormNames,
-} from "@/app/(protected)/manage/settings/(domain)/dns/constant";
 import { BlogFormFieldName } from "@/app/components/blog/constant";
 import { MessageField } from "@/app/components/orders/message/helper/constant";
 import {
@@ -72,11 +75,12 @@ import {
   PageTypeEnums,
   WebPageField,
 } from "@/app/components/storefront/constants";
-import { ShippingAddressField } from "@/Modals/ShippingModals/ConfigureShippingAddressModal/constant";
+import { AddCurrencyFormNames } from "@/Modals/CurrencyModals/AddCurrencyModal/constant";
 import {
   UpdateUrlsFormNames,
   UpdateUrlsScope,
 } from "@/Modals/SettingsModals/UpdateUrlsModal/constant";
+import { ShippingAddressField } from "@/Modals/ShippingModals/ConfigureShippingAddressModal/constant";
 import { ChargeShippingType } from "@/Modals/ShippingModals/constant";
 import { FedExField } from "@/Modals/ShippingModals/FedExConfigModal/constant";
 import {
@@ -95,20 +99,23 @@ import {
   ref,
   string,
 } from "yup";
+import { CustomerField } from "@/app/(protected)/manage/customers/add/constant";
+import { REGEX } from "@/const/regex";
+import { AddressField } from "@/app/(protected)/manage/customers/edit/[id]/[addressId]/constant";
 
 export const BannerSchema = object({
-  [BannerField.Title]: string().trim().required("Banner name is required"),
-  [BannerField.Content]: string().nullable(),
-  [BannerField.LocationType]: string()
+  [BannerFormNames.Title]: string().trim().required("Banner name is required"),
+  [BannerFormNames.Content]: string().nullable(),
+  [BannerFormNames.LocationType]: string()
     .oneOf(
       Object.values(BannerLocation),
       "Choose where this banner should appear",
     )
     .required("Choose where this banner should appear"),
-  [BannerField.LocationId]: string()
+  [BannerFormNames.LocationId]: string()
     .nullable()
     .default(null)
-    .when(BannerField.LocationType, ([type], schema) =>
+    .when(BannerFormNames.LocationType, ([type], schema) =>
       needsLocationId(type)
         ? schema.required(
             type === BannerLocation.Brand
@@ -117,31 +124,31 @@ export const BannerSchema = object({
           )
         : schema,
     ),
-  [BannerField.DateType]: string()
+  [BannerFormNames.DateType]: string()
     .oneOf(Object.values(BannerDateType))
     .required(),
-  [BannerField.StartDate]: date()
+  [BannerFormNames.StartDate]: date()
     .nullable()
     .default(null)
-    .when(BannerField.DateType, {
+    .when(BannerFormNames.DateType, {
       is: BannerDateType.Range,
       then: (schema) => schema.required("Start date is required"),
     }),
-  [BannerField.EndDate]: date()
+  [BannerFormNames.EndDate]: date()
     .nullable()
     .default(null)
-    .when(BannerField.DateType, {
+    .when(BannerFormNames.DateType, {
       is: BannerDateType.Range,
       then: (schema) =>
         schema
           .required("End date is required")
           .min(
-            ref(BannerField.StartDate),
+            ref(BannerFormNames.StartDate),
             "End date must be after the start date",
           ),
     }),
-  [BannerField.Visible]: boolean().default(true).nullable(),
-  [BannerField.Placement]: string()
+  [BannerFormNames.Visible]: boolean().default(true).nullable(),
+  [BannerFormNames.Placement]: string()
     .oneOf(Object.values(BannerPlacement), "Choose a placement")
     .required("Choose a placement"),
 });
@@ -491,7 +498,10 @@ export const CouponCodeSchema = object({
 
   categoryIds: array().of(string().defined()).defined(),
 
-  productIds: string().nullable().defined(),
+  productIds: array()
+  .of(string().defined())
+  .default([])
+  .defined(),
 
   limitByLocation: boolean().defined(),
   limitByShipping: boolean().defined(),
@@ -524,18 +534,20 @@ export const CouponCodeSchema = object({
     return true;
   })
   .test("category-validation", function (values) {
-    if (
-      values?.appliesToCategories &&
-      (!values.categoryIds || values.categoryIds.length === 0)
-    ) {
-      return this.createError({
-        path: "categoryIds",
-        message: "Select at least one category",
-      });
-    }
-
+  // Category validation sirf categories select hone par chalegi
+  if (values?.appliesTo !== "categories") {
     return true;
-  });
+  }
+
+  if (!values.categoryIds || values.categoryIds.length === 0) {
+    return this.createError({
+      path: "categoryIds",
+      message: "Select at least one category",
+    });
+  }
+
+  return true;
+});
 
 export type CouponCodeForm = InferType<typeof CouponCodeSchema>;
 // WebPageSchema
@@ -552,7 +564,7 @@ export const WebPageSchema = object({
       then: (schema) =>
         schema
           .required("Link is required")
-          .matches(/^https:\/\//i, "Link must start with https://"),
+          .matches(REGEX.HTTPS_PREFIX, "Link must start with https://"),
     }),
   [WebPageField.RawHtml]: string().nullable().default(""),
   [WebPageField.EmailQuestionsTo]: string()
@@ -737,7 +749,8 @@ const coordinate = (label: string, max: number) =>
       "coordinate",
       `${label} must be between -${max} and ${max}`,
       (value) =>
-        !value || (Number.isFinite(Number(value)) && Math.abs(Number(value)) <= max),
+        !value ||
+        (Number.isFinite(Number(value)) && Math.abs(Number(value)) <= max),
     );
 
 export const LocationSchema = object({
@@ -807,6 +820,49 @@ export const PickupMethodSchema = object({
 });
 // #endregion
 
+// #region Currencies
+export const AddCurrencySchema = object({
+  [AddCurrencyFormNames.Code]: string().required("Currency code is required."),
+});
+
+export const CurrencySchema = object({
+  [CurrencyFormNames.Name]: string()
+    .trim()
+    .required("Display name is required."),
+  [CurrencyFormNames.DefaultForCountries]: array()
+    .of(string().required())
+    .required()
+    .default([]),
+  [CurrencyFormNames.TransactingCurrency]: string().required(
+    "Transacting currency is required.",
+  ),
+  [CurrencyFormNames.ExchangeRateType]: string().required(),
+  [CurrencyFormNames.ExchangeRate]: string()
+    .trim()
+    .required("Exchange rate is required.")
+    .test(
+      "exchangeRate",
+      "Exchange rate must be a number greater than 0.",
+      (value) => !isNaN(Number(value)) && Number(value) > 0,
+    ),
+  [CurrencyFormNames.Symbol]: string()
+    .trim()
+    .required("Currency symbol is required."),
+  [CurrencyFormNames.SymbolLocation]: string().required(
+    "Symbol location is required.",
+  ),
+  [CurrencyFormNames.DecimalToken]: string().required(
+    "Decimal separator is required.",
+  ),
+  [CurrencyFormNames.ThousandsToken]: string().required(
+    "Thousands separator is required.",
+  ),
+  [CurrencyFormNames.DecimalPlaces]: string().required(
+    "Decimal places is required.",
+  ),
+});
+// #endregion
+
 // #region Basic Tax
 export const TaxClassesSchema = object({
   [TaxClassesFormNames.Classes]: array()
@@ -851,7 +907,8 @@ export const TaxZoneSettingsSchema = object({
     TaxZoneSettingsFormNames.BasedOn,
     {
       is: TaxZoneBasedOn.PostalCodes,
-      then: (schema) => schema.trim().required("Enter at least one postal code"),
+      then: (schema) =>
+        schema.trim().required("Enter at least one postal code"),
     },
   ),
   [TaxZoneSettingsFormNames.AppliesTo]: text(),
@@ -869,7 +926,9 @@ export const TaxZoneSettingsSchema = object({
 });
 
 export const TaxRateSchema = object({
-  [TaxRateFormNames.Name]: string().trim().required("Tax rate name is required"),
+  [TaxRateFormNames.Name]: string()
+    .trim()
+    .required("Tax rate name is required"),
   [TaxRateFormNames.ClassRates]: array()
     .of(
       object({
@@ -881,7 +940,9 @@ export const TaxRateSchema = object({
           "Enter a rate between 0 and 100",
           (value) =>
             !value ||
-            (!isNaN(Number(value)) && Number(value) >= 0 && Number(value) <= 100),
+            (!isNaN(Number(value)) &&
+              Number(value) >= 0 &&
+              Number(value) <= 100),
         ),
       }),
     )
@@ -893,7 +954,7 @@ export const TaxRateSchema = object({
     .test(
       "priority",
       "Enter a whole number of 0 or more",
-      (value) => !value || /^\d+$/.test(value),
+      (value) => !value || REGEX.WHOLE_NUMBER.test(value),
     ),
   [TaxRateFormNames.IsEnabled]: flag(true),
 });
@@ -908,8 +969,11 @@ const positiveWholeNumber = (label: string) =>
   string()
     .trim()
     .required(`${label} is required`)
-    .test("whole", `${label} must be a whole number above 0`, (value) =>
-      !value || (/^\d+$/.test(value) && Number(value) > 0),
+    .test(
+      "whole",
+      `${label} must be a whole number above 0`,
+      (value) =>
+        !value || (REGEX.WHOLE_NUMBER.test(value) && Number(value) > 0),
     );
 
 export const DnsSettingsSchema = object({
@@ -933,7 +997,10 @@ export const DnsSettingsSchema = object({
               [MailForwardFormNames.DisplayAddress]: string()
                 .trim()
                 .required("Display address is required")
-                .matches(/^[^\s@]+$/, "Enter only the part before the @"),
+                .matches(
+                  REGEX.EMAIL_LOCAL_PART,
+                  "Enter only the part before the @",
+                ),
               [MailForwardFormNames.ForwardTo]: string()
                 .trim()
                 .email("Enter a valid email address")
@@ -969,7 +1036,7 @@ export const DnsSettingsSchema = object({
               [MxRecordFormNames.Priority]: text().test(
                 "priority",
                 "Priority must be a whole number",
-                (value) => !value || /^\d+$/.test(value),
+                (value) => !value || REGEX.WHOLE_NUMBER.test(value),
               ),
             }),
           ),
@@ -981,7 +1048,9 @@ export const DnsSettingsSchema = object({
         object({
           [DnsRecordFormNames.RecordId]: text(),
           [DnsRecordFormNames.Type]: string().required("Type is required"),
-          [DnsRecordFormNames.Host]: string().trim().required("Host is required"),
+          [DnsRecordFormNames.Host]: string()
+            .trim()
+            .required("Host is required"),
           [DnsRecordFormNames.Value]: string()
             .trim()
             .required("Value is required"),
@@ -1015,3 +1084,58 @@ export const PromotionSettingsSchema = object({
 // #endregion
 
 // #endregion
+
+// #region Customer
+const passwordRules = string()
+  .required("Password is required")
+  .min(7, "Password must be at least 7 characters")
+  .matches(REGEX.HAS_LETTER, "Password must contain at least one letter")
+  .matches(REGEX.HAS_NUMBER, "Password must contain at least one number");
+export const createCustomerSchema = (isEdit: boolean) =>
+  object({
+    [CustomerField.firstName]: string().required("First name is required"),
+    [CustomerField.lastName]: string().required("Last name is required"),
+    [CustomerField.companyName]: string().defined(),
+    [CustomerField.email]: string()
+      .email("Enter a valid email address")
+      .required("Email is required"),
+    [CustomerField.customerGroup]: string().defined(),
+    [CustomerField.phone]: string().defined(),
+    [CustomerField.storeCredit]: string().defined(),
+    [CustomerField.acsEmail]: string().defined(),
+    [CustomerField.forceReset]: string().defined(),
+    [CustomerField.taxCode]: string().defined(),
+    [CustomerField.password]: isEdit ? string().defined() : passwordRules,
+    [CustomerField.confirmPassword]: isEdit
+      ? string().defined()
+      : string()
+          .required("Confirm password is required")
+          .oneOf([ref(CustomerField.password)], "Passwords do not match"),
+    [CustomerField.analytics]: string().defined(),
+    [CustomerField.functional]: string().defined(),
+    [CustomerField.targeting]: string().defined(),
+    [CustomerField.address]: string().defined(),
+    [CustomerField.state]: string().defined(),
+    [CustomerField.country]: string().defined(),
+  });
+// #endregion Customer
+
+// #region Address
+export const AddressSchema = object({
+  [AddressField.firstName]: string().trim().required("First name is required"),
+  [AddressField.lastName]: string().trim().required("Last name is required"),
+  [AddressField.companyName]: string().defined(),
+  [AddressField.phoneNumber]: string().defined(),
+  [AddressField.addressLine1]: string()
+    .trim()
+    .required("Address line 1 is required"),
+  [AddressField.addressLine2]: string().defined(),
+  [AddressField.city]: string().trim().required("City is required"),
+  [AddressField.state]: string().required("State is required"),
+  [AddressField.country]: string().required("Country is required"),
+  [AddressField.zip]: string().defined(),
+  [AddressField.type]: string().defined(),
+  [AddressField.isDefault]: boolean().defined(),
+});
+
+// #endregion Address

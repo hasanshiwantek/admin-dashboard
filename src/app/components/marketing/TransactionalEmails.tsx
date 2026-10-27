@@ -1,6 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/DropdownMenu";
 import {
   Select,
   SelectContent,
@@ -8,15 +15,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/Select";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/DropdownMenu";
-import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
-import { Ellipsis, MoreVertical } from "lucide-react";
+import { Ellipsis } from "lucide-react";
+import { useState } from "react";
 
 interface EmailTemplate {
   id: string;
@@ -81,7 +81,8 @@ const emailTemplatesData: EmailTemplate[] = [
   {
     id: "9",
     title: "Product Review Request",
-    description: "Sent to customer after purchasing a product to request a review",
+    description:
+      "Sent to customer after purchasing a product to request a review",
     enabled: true,
   },
   {
@@ -93,9 +94,8 @@ const emailTemplatesData: EmailTemplate[] = [
 ];
 
 const TransactionalEmails = () => {
-  const [templates, setTemplates] = useState<EmailTemplate[]>(
-    emailTemplatesData
-  );
+  const [templates, setTemplates] =
+    useState<EmailTemplate[]>(emailTemplatesData);
   const [selectedChannel, setSelectedChannel] = useState("global");
 
   const toggleTemplate = (id: string) => {
@@ -103,8 +103,8 @@ const TransactionalEmails = () => {
       templates.map((template) =>
         template.id === id
           ? { ...template, enabled: !template.enabled }
-          : template
-      )
+          : template,
+      ),
     );
   };
 
@@ -112,9 +112,7 @@ const TransactionalEmails = () => {
     <div className="p-10 ">
       {/* Header */}
       <div className="px-8 py-5">
-        <h1  className="!font-light 2xl:!text-5xl">
-          Transactional emails
-        </h1>
+        <h1 className="!font-light 2xl:!text-5xl">Transactional emails</h1>
       </div>
 
       {/* Main Content */}
@@ -156,7 +154,9 @@ const TransactionalEmails = () => {
                   <h3 className="!text-2xl font-normal !text-blue-600 mb-1">
                     {template.title}
                   </h3>
-                  <p className="text-sm text-gray-600">{template.description}</p>
+                  <p className="text-sm text-gray-600">
+                    {template.description}
+                  </p>
                 </div>
 
                 {/* Right Actions */}
@@ -184,7 +184,10 @@ const TransactionalEmails = () => {
                         <Ellipsis className="!h-6 !w-6" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end"  className="w-[150px] space-y-4">
+                    <DropdownMenuContent
+                      align="end"
+                      className="w-[150px] space-y-4"
+                    >
                       <DropdownMenuItem className="cursor-pointer">
                         Edit Template
                       </DropdownMenuItem>

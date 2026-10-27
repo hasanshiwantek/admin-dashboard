@@ -1,5 +1,6 @@
+import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
-import { CircleCheck, Info, TriangleAlert } from "lucide-react";
+import { CircleCheck, Info, TriangleAlert, X } from "lucide-react";
 import { SettingsNoticeProps } from "./type";
 
 const TONE_CLASS = {
@@ -20,11 +21,24 @@ const TONE_ICON = {
 const SettingsNotice = ({
   tone = "info",
   showIcon,
+  onDismiss,
   children,
 }: SettingsNoticeProps) => (
   <div className={cn("flex items-start gap-3 border-l-4 p-4", TONE_CLASS[tone])}>
     {showIcon && TONE_ICON[tone]}
-    <p className="text-[1.4rem]! text-gray-700!">{children}</p>
+    <p className="flex-1 text-[1.4rem]! text-gray-700!">{children}</p>
+    {onDismiss && (
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon"
+        aria-label="Dismiss"
+        onClick={onDismiss}
+        className="size-8 shrink-0 text-gray-700"
+      >
+        <X className="size-6" />
+      </Button>
+    )}
   </div>
 );
 

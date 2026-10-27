@@ -19,8 +19,6 @@ import {
   restrictDecimalInput,
   restrictDecimalPaste,
   restrictDecimalValue,
-  restrictWholeNumberInput,
-  restrictWholeNumberPaste,
 } from "@/validations/validations";
 import { Plus } from "lucide-react";
 import Link from "next/link";

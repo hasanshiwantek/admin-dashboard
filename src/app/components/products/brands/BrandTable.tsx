@@ -1,8 +1,6 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { Trash } from "lucide-react";
-import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/Checkbox";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -11,26 +9,29 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/Table";
-import { Settings } from "lucide-react";
+import { Settings, Trash } from "lucide-react";
 import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
-import OrderActionsDropdown from "../../orders/OrderActionsDropdown";
+import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
 import { Button } from "@/components/ui/Button";
 import Pagination from "@/components/ui/Pagination";
-import Link from "next/link";
+import { useAlert } from "@/hooks/useAlert";
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
+import { refetchBrands } from "@/lib/brandUtils";
 import {
-  fetchBrands,
   deleteBrand,
   fetchBrandByKeyword,
+  fetchBrands,
 } from "@/redux/slices/productSlice";
-import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { refetchBrands } from "@/lib/brandUtils";
 import Spinner from "../../loader/Spinner";
-import { useAlert } from "@/hooks/useAlert";
-import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
+import OrderActionsDropdown from "../../orders/OrderActionsDropdown";
+
 const BrandTable = () => {
   const router = useRouter();
+  const dispatch = useAppDispatch();
 
   const getDropdownActions = (brand: any) => [
     {
@@ -38,7 +39,6 @@ const BrandTable = () => {
       onClick: () => router.push(`/manage/products/brands/edit/${brand.id}`),
     },
   ];
-  const dispatch = useAppDispatch();
 
   const brands = useAppSelector((state: any) => state.product.brands);
   const loading = useAppSelector((state: any) => state.product.loading);
@@ -74,7 +74,6 @@ const BrandTable = () => {
     );
   };
 
- 
   const deleteBrandHandler = () => {
     if (selectedIds.length === 0) {
       showAlert({

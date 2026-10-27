@@ -117,10 +117,7 @@ export default function Pricing() {
                   onKeyDown={restrictDecimalInput}
                   onPaste={restrictDecimalPaste}
                   onInput={restrictDecimalValue}
-                  {...register(
-                    "costPrice",
-                    decimalValidation("Cost Price"),
-                  )}
+                  {...register("costPrice", decimalValidation("Cost Price"))}
                 />
                 <ValidationError message={errors.costPrice?.message} />
               </div>
@@ -146,10 +143,7 @@ export default function Pricing() {
                   onKeyDown={restrictDecimalInput}
                   onPaste={restrictDecimalPaste}
                   onInput={restrictDecimalValue}
-                  {...register(
-                    "salePrice",
-                    decimalValidation("Sale Price"),
-                  )}
+                  {...register("salePrice", decimalValidation("Sale Price"))}
                 />
                 <ValidationError message={errors.salePrice?.message} />
               </div>
