@@ -3,7 +3,10 @@ import { ColumnDef } from "@/components/ui/Table/types";
 import { DateTimeFormat } from "@/const/appConstants";
 import { formatDateTime } from "@/lib/utils";
 import Link from "next/link";
-import BannerLocationCell from "./BannerLocationCell";
+import BannerLocationCell from "./_components/BannerLocationCell";
+import { editBannerRoute } from "./constant";
+
+const CELL_CLASS = "py-5 2xl:text-[1.6rem]! align-start!";
 
 type ColumnsProps = {
   toggleEnable: (banner: any) => void;
@@ -18,31 +21,29 @@ const BannersColumn = ({
     key: "title",
     header: "Banner name",
     sortable: true,
-    className: "2xl:text-[1.6rem]!",
+    className: CELL_CLASS,
     render: (row) => (
-      <Link href={`/manage/marketing/banners/${row?.id}/edit`}>
-        {row?.title}
-      </Link>
+      <Link href={editBannerRoute(row?.id)}>{row?.title}</Link>
     ),
   },
   {
     key: "locationType",
     header: "Location",
     sortable: true,
-    className: "2xl:text-[1.6rem]!",
+    className: CELL_CLASS,
     render: (row) => <BannerLocationCell banner={row} baseUrl={baseUrl} />,
   },
   {
     key: "createdAt",
     header: "Date created",
     sortable: true,
-    className: "2xl:text-[1.6rem]!",
+    className: CELL_CLASS,
     render: (row) => formatDateTime(row?.createdAt, DateTimeFormat.SHORT_DATE),
   },
   {
     key: "visible",
     header: "Visible",
-    className: "2xl:text-[1.6rem]!",
+    className: CELL_CLASS,
     render(row) {
       return (
         <EnableDisable

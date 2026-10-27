@@ -25,12 +25,10 @@ const BannerListingPage = () => {
   return (
     <PageLayout>
       <PageTitle
-        title={"Banners"}
-        titleClassName={"text-6xl!"}
-        description={
-          "Use banners to advertise sales, display promotions, share important information and to add special design elements. Only the most recently created banner will show even if multiple banners are set to visible (and have an active date range)"
-        }
-        descriptionClassName={"text-2xl!"}
+        title="Banners"
+        titleClassName="text-6xl!"
+        description="Use banners to advertise sales, display promotions, share important information and to add special design elements. Only the most recently created banner will show even if multiple banners are set to visible (and have an active date range)"
+        descriptionClassName="text-2xl!"
         hideActionButton
       />
       <Table<any>
