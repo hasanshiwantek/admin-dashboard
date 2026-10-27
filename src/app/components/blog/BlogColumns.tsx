@@ -1,4 +1,4 @@
-import { formatDateTime } from "@/lib/utils";
+import { formatDateTime, replaceNullWithPlaceholder } from "@/lib/utils";
 import Link from "next/link";
 
 export const getBlogColumns = () => [
@@ -25,7 +25,7 @@ export const getBlogColumns = () => [
   className: "2xl:text-2xl! ",
   render: (post: any) => (
     <div className="block whitespace-normal break-words">
-      {post.author || "—"}
+    {replaceNullWithPlaceholder(post.author, "—")}
     </div>
   ),
 },
