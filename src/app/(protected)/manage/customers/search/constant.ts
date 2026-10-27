@@ -1,6 +1,7 @@
 
 
-import { SearchCustomerValues, SelectOption } from "./type";
+import { SelectOption } from "@/components/ui/select";
+import { SearchCustomerValues,  } from "./type";
 
 
 

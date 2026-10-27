@@ -198,7 +198,3 @@ export const ORDER_FILTER_LABELS: Record<string, string> = {
   productId: "Product",
 };
 
-export enum DateTimeFormat {
-  FullDateTime = "DD MMM YYYY HH:mm:ss",
-  DateOnly = "DD MMM YYYY",
-}

@@ -21,10 +21,11 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { toast } from "react-toastify";
-import { COMPLETED, DateTimeFormat, riskConfig } from "./constant";
+import { COMPLETED,  riskConfig } from "./constant";
 import { OrderDetailRowProps } from "./types";
 import { findCountry } from "./utils";
 import { replaceNullWithPlaceholder } from "@/lib/utils";
+import { DateTimeFormat } from "@/const/appConstants";
 
 const copyBilling = (info: any) => {
   if (!info) return;
@@ -169,7 +170,7 @@ export default function OrderDetailRow({
                 order?.billingInformation?.updatedAt
                   ? formatDateTime(
                       order.billingInformation.updatedAt,
-                      DateTimeFormat.FullDateTime,
+                      DateTimeFormat.FULL_DATE_TIME,
                     )
                   : null,
               )}
@@ -345,7 +346,7 @@ export default function OrderDetailRow({
             <span>
               {formatDateTime(
                 order?.updatedAt,
-                DateTimeFormat.FullDateTime,
+                DateTimeFormat.FULL_DATE_TIME,
                 "N/A",
               )}
             </span>
@@ -393,7 +394,7 @@ export default function OrderDetailRow({
                 <span className="text-[13px]">
                   {" "}
                   {order?.products?.length} items @{" "}
-                 {formatDateTime(order?.updatedAt, DateTimeFormat.DateOnly)}{" "}
+                 {formatDateTime(order?.updatedAt, DateTimeFormat.ORDINAL_DATE)}{" "}
                 </span>
               </div>
               <div className="flex text-[13px]!">

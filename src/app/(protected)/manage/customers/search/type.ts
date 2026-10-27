@@ -18,7 +18,3 @@ export type SearchCustomerValues = {
   sortOrder: string;
 };
 
-export type SelectOption = {
-  value: string;
-  label: string;
-};
