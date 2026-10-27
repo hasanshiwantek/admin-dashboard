@@ -86,7 +86,7 @@ const ShipmentDetailRow = ({
       {/* Billing */}
       <div className="flex min-w-0">
         <div className="flex flex-col border-r pr-3 mr-3 shrink-0">
-          <h4 className="font-bold text-lg">
+          <h4 className="font-semibold text-[16px]!">
             Billing
           </h4>
 
@@ -101,7 +101,7 @@ const ShipmentDetailRow = ({
 
         <div className="flex flex-col gap-3 min-w-0">
           <div className="flex items-start gap-2">
-            <div className="text-sm">
+            <div className="text-[12px]! font-normal">
               <p>
                 {replaceNullWithPlaceholder(
                   shipment?.order?.billingAddress?.name
@@ -149,7 +149,7 @@ const ShipmentDetailRow = ({
           <div className="flex items-center gap-2">
             <Phone className="w-5 h-5 text-gray-400 shrink-0" />
 
-            <span className="text-sm">
+            <span className="text-[12px]! font-normal">
               {replaceNullWithPlaceholder(
                 shipment?.order?.billingAddress?.phone
               )}
@@ -161,7 +161,7 @@ const ShipmentDetailRow = ({
              
             <Link 
               href={`mailto:${replaceNullWithPlaceholder(shipment?.order?.billingAddress?.email)}`}
-              className="text-[12px]! text-blue-400! break-all"
+              className="text-[14px]! text-blue-400! break-all"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -183,7 +183,7 @@ const ShipmentDetailRow = ({
           <div className="flex items-center gap-2">
             <Clock className="w-5 h-5 text-gray-400 shrink-0" />
 
-            <span className="text-sm">
+            <span className="text-[12px]! font-normal">
               {replaceNullWithPlaceholder(
                 shipment?.order?.updatedAt
               )}
@@ -195,7 +195,7 @@ const ShipmentDetailRow = ({
       {/* Shipping */}
       <div className="flex min-w-0">
         <div className="flex flex-col border-r pr-3 mr-3 shrink-0">
-          <h4 className="font-bold text-lg">
+          <h4 className="font-semibold text-[16px]!">
             Shipping
           </h4>
 
@@ -210,7 +210,7 @@ const ShipmentDetailRow = ({
 
         <div className="flex flex-col gap-3 min-w-0">
           <div className="flex items-start gap-2">
-            <div className="text-sm">
+            <div className="text-[12px]! font-normal">
               <p>
                 {replaceNullWithPlaceholder(
                   `${shipment?.order?.billingInformation?.firstName || ""} ${
@@ -268,7 +268,7 @@ const ShipmentDetailRow = ({
           <div className="flex items-center gap-2">
             <Phone className="w-5 h-5 text-gray-400 shrink-0" />
 
-            <span className="text-sm">
+            <span className="text-[12px]! font-normal">
               {replaceNullWithPlaceholder(
                 shipment?.order?.billingInformation?.phone
               )}
@@ -293,7 +293,7 @@ const ShipmentDetailRow = ({
           <div className="flex items-center gap-2">
             <IdCard className="w-5 h-5 text-gray-400 shrink-0" />
 
-            <span className="text-sm">
+            <span className="text-[12px]! font-normal">
               {replaceNullWithPlaceholder(
                 shipment?.shippingMethod
               )}
@@ -303,7 +303,7 @@ const ShipmentDetailRow = ({
           <div className="flex items-center gap-2">
             <Clock className="w-5 h-5 text-gray-400 shrink-0" />
 
-            <span className="text-sm">
+            <span className="text-[12px]! font-normal">
               {replaceNullWithPlaceholder(
                 shipment?.dateShipped
               )}
@@ -315,13 +315,13 @@ const ShipmentDetailRow = ({
       {/* Shipped Items */}
       <div className="flex min-w-0">
         <div className="flex flex-col border-r pr-3 mr-3 shrink-0">
-          <h4 className="font-bold text-lg">
+          <h4 className="font-semibold text-[16px]!">
             Shipped
             <br />
             Items
           </h4>
 
-          <div className="mt-3 text-sm">
+          <div className="mt-3 text-[12px]! font-normal">
             {shipment?.orderProducts?.length || 0}{" "}
             items
           </div>
@@ -333,7 +333,7 @@ const ShipmentDetailRow = ({
       <div key={product?.id ?? index} className="flex items-start gap-2">
         <IdCard className="w-5 h-5 text-gray-400 shrink-0 mt-0.5" />
 
-        <div className="text-sm min-w-0">
+        <div className="text-[12px]! font-normal min-w-0">
           <p className="font-medium">
             {replaceNullWithPlaceholder(product?.quantity, "0")} x{" "}
 
@@ -378,10 +378,10 @@ const ShipmentDetailRow = ({
             </span>
           </p>
 
-          <p className="text-sm">
+          <p className="text-[12px]! font-normal">
             {replaceNullWithPlaceholder(product?.brand?.name, "—")}
           </p>
-          <p className="text-sm">
+          <p className="text-[12px]! font-normal">
             {replaceNullWithPlaceholder(product?.sku, "—")}
           </p>
         </div>
