@@ -54,17 +54,6 @@ export function buildAddressPayload(
     [AddressField.addressLine2]: form[AddressField.addressLine2],
   };
 
-  if (mode === "add") {
-    return {
-      ...sharedFields,
-      [AddressField.firstName]: form[AddressField.firstName],
-      [AddressField.lastName]: form[AddressField.lastName],
-      [AddressField.companyName]: form[AddressField.companyName],
-      [AddressField.phoneNumber]: form[AddressField.phoneNumber],
-      [AddressField.addressLine1]: form[AddressField.addressLine1],
-    };
-  }
-
   return {
     ...sharedFields,
     [AddressField.firstName]: form[AddressField.firstName],
