@@ -1,6 +1,6 @@
 import { DateTimeFormat } from "@/const/appConstants";
 import type { ColumnDef } from "@/components/ui/Table/types";
-import { formatDateTime } from "@/lib/utils";
+import { formatDateTime, replaceNullWithPlaceholder } from "@/lib/utils";
 import { ScriptRecord } from "./type";
 import { REGEX } from "@/const/regex";
 
@@ -10,7 +10,7 @@ const scriptColumns: ColumnDef<ScriptRecord>[] = [
     header: "Name",
     sortable: true,
     className: "font-medium",
-    render: (script) => script.script_name || "Untitled Script",
+    render: (script) => replaceNullWithPlaceholder(script.script_name),
   },
   {
     key: "location",
@@ -18,21 +18,23 @@ const scriptColumns: ColumnDef<ScriptRecord>[] = [
     sortable: true,
     className: "capitalize",
     render: (script) =>
-      script.location?.replace(REGEX.UPPERCASE_LETTER, " $1").trim() || "N/A",
+      replaceNullWithPlaceholder(
+        script.location?.replace(REGEX.UPPERCASE_LETTER, " $1").trim(),
+      ),
   },
   {
     key: "placement",
     header: "Placement",
     sortable: true,
     className: "capitalize",
-    render: (script) => script.placement || "N/A",
+    render: (script) => replaceNullWithPlaceholder(script.placement),
   },
   {
     key: "script_type",
     header: "Type",
     sortable: true,
     className: "uppercase",
-    render: (script) => script.script_type || "N/A",
+    render: (script) => replaceNullWithPlaceholder(script.script_type),
   },
   {
     key: "created_at",
