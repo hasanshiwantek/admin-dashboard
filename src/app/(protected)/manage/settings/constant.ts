@@ -11,12 +11,12 @@ const SetupSettingRoutes: SettingRoute[] = [
     title: "Localization",
     description: "Languages and regional settings for your storefronts",
   },
-  // {
-  //   id: "currencies",
-  //   title: "Currencies",
-  //   description:
-  //     "Currencies customers will see and be charged in at your store",
-  // },
+  {
+    id: "currencies",
+    title: "Currencies",
+    description:
+      "Currencies customers will see and be charged in at your store",
+  },
   {
     id: "payment",
     title: "Payments",

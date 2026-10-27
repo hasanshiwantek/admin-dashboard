@@ -38,11 +38,11 @@ const ScriptManagerTable = () => {
   const totalPages = 20;
   const router = useRouter();
   const dispatch = useAppDispatch();
-const [showDeleteModal, setShowDeleteModal] = useState(false);
-const [pendingDeleteScript, setPendingDeleteScript] = useState<{
-  id: any;
-  name: string;
-} | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [pendingDeleteScript, setPendingDeleteScript] = useState<{
+    id: any;
+    name: string;
+  } | null>(null);
   const scripts = useAppSelector((state: any) => state.storefront.scriptData);
 
   const { loading, error } = useAppSelector((state: any) => state.storefront);
@@ -52,15 +52,14 @@ const [pendingDeleteScript, setPendingDeleteScript] = useState<{
     dispatch(fetchScripts());
   }, [dispatch]);
 
- 
-const handleDelete = (id: any, scriptName: string) => {
-  setPendingDeleteScript({
-    id,
-    name: scriptName,
-  });
+  const handleDelete = (id: any, scriptName: string) => {
+    setPendingDeleteScript({
+      id,
+      name: scriptName,
+    });
 
-  setShowDeleteModal(true);
-};
+    setShowDeleteModal(true);
+  };
   return (
     <div className=" ">
       {/* Header Section */}
@@ -216,13 +215,13 @@ const handleDelete = (id: any, scriptName: string) => {
                     <TableCell>
                       {script.created_at
                         ? new Date(script.created_at).toLocaleDateString(
-                          "en-US",
-                          {
-                            year: "numeric",
-                            month: "short",
-                            day: "numeric",
-                          }
-                        )
+                            "en-US",
+                            {
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                            },
+                          )
                         : "N/A"}
                     </TableCell>
                     <TableCell className="text-right">
@@ -243,7 +242,7 @@ const handleDelete = (id: any, scriptName: string) => {
                           <DropdownMenuItem
                             onClick={() =>
                               router.push(
-                                `/manage/storefront/script-manager/edit/${script.id}`
+                                `/manage/storefront/script-manager/edit/${script.id}`,
                               )
                             }
                             className="cursor-pointer"
@@ -266,53 +265,34 @@ const handleDelete = (id: any, scriptName: string) => {
             </TableBody>
           </Table>
         </div>
-        {/* Pagination Footer */}
-        {/* <div className="flex items-center justify-end px-6 py-4 ">
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={setCurrentPage}
-            perPage={perPage}
-            onPerPageChange={setPerPage}
-          />
-        </div> */}
-        {/* Footer Note */}
-        <p className="mt-4">
-          Looking for BigCommerce provided Analytics scripts? They can be found
-          in the
-          <a href="#" className="text-blue-600 hover:underline">
-            Advanced Settings &gt; Data Solutions
-          </a>
-          section.
-        </p>
       </div>
       <ConfirmationModal
-  open={showDeleteModal}
-  onOpenChange={setShowDeleteModal}
-  variant="warning"
-  title="Delete Script?"
-  description={`Are you sure you want to delete "${pendingDeleteScript?.name}"?`}
-  onConfirm={async () => {
-    if (!pendingDeleteScript) return;
+        open={showDeleteModal}
+        onOpenChange={setShowDeleteModal}
+        variant="warning"
+        title="Delete Script?"
+        description={`Are you sure you want to delete "${pendingDeleteScript?.name}"?`}
+        onConfirm={async () => {
+          if (!pendingDeleteScript) return;
 
-    try {
-      const resultAction = await dispatch(
-        deleteScript({ id: pendingDeleteScript.id })
-      );
+          try {
+            const resultAction = await dispatch(
+              deleteScript({ id: pendingDeleteScript.id }),
+            );
 
-      if (deleteScript.fulfilled.match(resultAction)) {
-        setTimeout(() => {
-          dispatch(fetchScripts());
-        }, 2000);
-      }
-    } catch (error) {
-      console.error("Error deleting script:", error);
-    } finally {
-      setShowDeleteModal(false);
-      setPendingDeleteScript(null);
-    }
-  }}
-/>
+            if (deleteScript.fulfilled.match(resultAction)) {
+              setTimeout(() => {
+                dispatch(fetchScripts());
+              }, 2000);
+            }
+          } catch (error) {
+            console.error("Error deleting script:", error);
+          } finally {
+            setShowDeleteModal(false);
+            setPendingDeleteScript(null);
+          }
+        }}
+      />
     </div>
   );
 };

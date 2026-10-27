@@ -16,6 +16,8 @@ export const REGEX = {
   DECIMAL_SANITIZE: /[^\d.]/g,
   DECIMAL_DUPLICATE_POINT: /\.(.*)\./g,
   DECIMAL_LEADING_ZEROS: /^0+(?=\d)/,
+  // Gap before each group of three digits from the right, e.g. 1|234|567
+  THOUSANDS_GROUP: /\B(?=(\d{3})+(?!\d))/g,
   SLUG_BLOCKED_CHARS: /[#$*&@!=+%`'":;<>{}[]|]/,
 
   // Blocked characters (for Page URL)

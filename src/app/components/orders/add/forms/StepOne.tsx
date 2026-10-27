@@ -267,8 +267,21 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
                       required:
                         orderType === "new" ? "Password is required" : false,
                       minLength: {
-                        value: 6,
-                        message: "Password must be at least 6 characters",
+                        value: 7,
+                        message: "Password must be at least 7 characters",
+                      },
+                      validate: (value) => {
+                        // Skip extra checks when the field is not required and empty
+                        if (!value) return true;
+
+                        const hasLetter = /[a-zA-Z]/.test(value);
+                        const hasNumber = /\d/.test(value);
+
+                        if (!hasLetter || !hasNumber) {
+                          return "Password must contain both alphabetic and numeric characters";
+                        }
+
+                        return true;
                       },
                     })}
                     id="password"
