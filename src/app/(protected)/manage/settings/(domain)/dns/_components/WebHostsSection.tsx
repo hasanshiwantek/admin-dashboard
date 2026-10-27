@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import Table from "@/components/ui/Table/Table";
 import SettingsCard from "../../../_components/SettingsCard";
 import SettingsNotice from "../../../_components/SettingsNotice";

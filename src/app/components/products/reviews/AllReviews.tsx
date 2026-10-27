@@ -1,7 +1,7 @@
 "use client";
 import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
 import Table from "@/components/ui/Table/Table";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import useAllReviewsContainer from "./helpers/useAllReviewsContainer";
 export default function AllReviews() {
   const {

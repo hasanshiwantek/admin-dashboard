@@ -1,6 +1,6 @@
 import { LOADING_DIM_CLASS } from "@/components/LoadingOverlay/constant";
 import LoadingOverlay from "@/components/LoadingOverlay/LoadingOverlay";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import Table from "@/components/ui/Table/Table";
 import { cn } from "@/lib/utils";
 import AddCurrencyModal from "@/Modals/CurrencyModals/AddCurrencyModal/AddCurrencyModal";

@@ -1,5 +1,5 @@
 import { ListRenderer } from "@/components/ListRenderer.tsx/ListRenderer";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { CircleAlert } from "lucide-react";
 import { SectionNavProps } from "./type";

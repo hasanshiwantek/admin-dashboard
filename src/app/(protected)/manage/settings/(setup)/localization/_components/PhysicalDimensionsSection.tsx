@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 
 import SelectField from "@/components/form/fields/SelectField";
 import InputField from "@/components/form/InputField";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { Label } from "@/components/ui/label";
 import PageTitle from "@/components/ui/PageTitle";
 import {

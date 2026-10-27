@@ -5,7 +5,7 @@ import { useForm, FormProvider } from "react-hook-form";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { useSearchParams } from "next/navigation";
 import { ExportTab, ExportModalStatus } from "@/types/types";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import ExportModal from "@/Modals/ExportModal";
 import CustomerExportOptions from "./CustomerExportOptions";
 import CustomerExportPreview from "./CustomerExportPreview";

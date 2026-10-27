@@ -1,6 +1,6 @@
 import CheckboxField from "@/components/form/fields/CheckboxField";
 import InputField from "@/components/form/InputField";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { ColumnDef } from "@/components/ui/Table/types";
 import { X } from "lucide-react";
 import TimeField from "../_components/TimeField";

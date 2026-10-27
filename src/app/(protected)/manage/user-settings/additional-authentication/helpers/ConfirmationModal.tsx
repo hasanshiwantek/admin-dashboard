@@ -6,7 +6,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { ShieldCheck, ShieldOff, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 

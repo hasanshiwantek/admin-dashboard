@@ -3,7 +3,7 @@
 import { downloadFile } from "@/lib/utils";
 import { useEffect } from "react";
 import { ExportModalProps, ExportModalStatus } from "@/types/types";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 
 export default function ExportModal({
     open,

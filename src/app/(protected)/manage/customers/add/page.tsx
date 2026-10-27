@@ -5,14 +5,14 @@ import InputField from "@/components/form/InputField";
 import SelectField from "@/components/form/fields/SelectField";
 import PageLayout from "@/components/ui/PageLayout";
 import PageTitle from "@/components/ui/PageTitle";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { CustomerField, yesNoOptions } from "./constant";
 import { useCustomerFormContainer } from "./container";
 import HelpTooltip from "@/components/HelpTooltip/HelpTooltip";
 
 const LIST_PATH = "/manage/customers/";
 
-const page = () => {
+const AddCustomerPage = () => {
   const {
     form,
     control,
@@ -237,4 +237,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default AddCustomerPage;

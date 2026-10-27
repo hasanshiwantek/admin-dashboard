@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
 } from "@radix-ui/react-dropdown-menu";
 import { FaStar, FaRegStar } from "react-icons/fa";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 interface FeaturedToggleProps {
   productId: number;
   isFeatured: boolean;

@@ -4,7 +4,7 @@ import Form from "@/components/form/Form";
 import InputField from "@/components/form/InputField";
 import SelectField from "@/components/form/fields/SelectField";
 import PageLayout from "@/components/ui/PageLayout";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { AddressField, addressTypeOptions } from "./constant";
 import { useAddressFormContainer } from "./container";
 import { RadioGroupField } from "@/components/form/fields/RadioGroupField";

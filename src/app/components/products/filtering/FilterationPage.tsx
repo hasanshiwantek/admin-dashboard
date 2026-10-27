@@ -11,7 +11,7 @@ import {
 import OrderActionsDropdown from "../../orders/OrderActionsDropdown";
 import FilterSettingsPage from "./FilterSettingsPage";
 // --- SHADCN/UI Imports ---
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { Card, CardHeader, CardContent } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Checkbox } from "@/components/ui/Checkbox";

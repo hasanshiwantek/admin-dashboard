@@ -1,5 +1,5 @@
 import { ListRenderer } from "@/components/ListRenderer.tsx/ListRenderer";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import PageTitle from "@/components/ui/PageTitle";
 import ConfigureShippingAddressModal from "@/Modals/ShippingModals/ConfigureShippingAddressModal/ConfigureShippingAddressModal";
