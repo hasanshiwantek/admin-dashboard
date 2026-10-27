@@ -7,6 +7,16 @@ import {
 import { needsLocationId } from "@/app/(protected)/manage/marketing/banners/utils";
 import { UserField } from "@/app/(protected)/manage/settings/(advanced)/users/constant";
 import {
+  DnsRecordFormNames,
+  DnsSection,
+  MailForwardFormNames,
+  MailServerFormNames,
+  MailServerMode,
+  MxRecordFormNames,
+  WebHostFormNames,
+  ZoneDetailFormNames,
+} from "@/app/(protected)/manage/settings/(domain)/dns/constant";
+import {
   DisplayField,
   GeneralSection,
   LogoutOption,
@@ -29,16 +39,17 @@ import {
   BackorderMessageFormNames,
   InventoryFormNames,
 } from "@/app/(protected)/manage/settings/(products)/inventory/constant";
-import {
-  OfflinePaymentFormNames,
-  PaymentConfigFormNames,
-  PaymentCurrencyFormNames,
-} from "@/app/(protected)/manage/settings/(setup)/payment/constant";
+import { CurrencyFormNames } from "@/app/(protected)/manage/settings/(setup)/currencies/constant";
 import {
   LocationFormNames,
   OpeningHourFormNames,
   SpecialHourFormNames,
 } from "@/app/(protected)/manage/settings/(setup)/locations/constant";
+import {
+  OfflinePaymentFormNames,
+  PaymentConfigFormNames,
+  PaymentCurrencyFormNames,
+} from "@/app/(protected)/manage/settings/(setup)/payment/constant";
 import { PickupMethodFormNames } from "@/app/(protected)/manage/settings/(setup)/pickup-methods/constant";
 import {
   TaxClassesFormNames,
@@ -51,16 +62,6 @@ import {
   TaxZoneBasedOn,
   TaxZoneSettingsFormNames,
 } from "@/app/(protected)/manage/settings/(setup)/tax/(basic)/tax-zones/constant";
-import {
-  DnsRecordFormNames,
-  DnsSection,
-  MailForwardFormNames,
-  MailServerFormNames,
-  MailServerMode,
-  MxRecordFormNames,
-  WebHostFormNames,
-  ZoneDetailFormNames,
-} from "@/app/(protected)/manage/settings/(domain)/dns/constant";
 import { BlogFormFieldName } from "@/app/components/blog/constant";
 import { MessageField } from "@/app/components/orders/message/helper/constant";
 import {
@@ -72,11 +73,12 @@ import {
   PageTypeEnums,
   WebPageField,
 } from "@/app/components/storefront/constants";
-import { ShippingAddressField } from "@/Modals/ShippingModals/ConfigureShippingAddressModal/constant";
+import { AddCurrencyFormNames } from "@/Modals/CurrencyModals/AddCurrencyModal/constant";
 import {
   UpdateUrlsFormNames,
   UpdateUrlsScope,
 } from "@/Modals/SettingsModals/UpdateUrlsModal/constant";
+import { ShippingAddressField } from "@/Modals/ShippingModals/ConfigureShippingAddressModal/constant";
 import { ChargeShippingType } from "@/Modals/ShippingModals/constant";
 import { FedExField } from "@/Modals/ShippingModals/FedExConfigModal/constant";
 import {
@@ -737,7 +739,8 @@ const coordinate = (label: string, max: number) =>
       "coordinate",
       `${label} must be between -${max} and ${max}`,
       (value) =>
-        !value || (Number.isFinite(Number(value)) && Math.abs(Number(value)) <= max),
+        !value ||
+        (Number.isFinite(Number(value)) && Math.abs(Number(value)) <= max),
     );
 
 export const LocationSchema = object({
@@ -807,6 +810,49 @@ export const PickupMethodSchema = object({
 });
 // #endregion
 
+// #region Currencies
+export const AddCurrencySchema = object({
+  [AddCurrencyFormNames.Code]: string().required("Currency code is required."),
+});
+
+export const CurrencySchema = object({
+  [CurrencyFormNames.Name]: string()
+    .trim()
+    .required("Display name is required."),
+  [CurrencyFormNames.DefaultForCountries]: array()
+    .of(string().required())
+    .required()
+    .default([]),
+  [CurrencyFormNames.TransactingCurrency]: string().required(
+    "Transacting currency is required.",
+  ),
+  [CurrencyFormNames.ExchangeRateType]: string().required(),
+  [CurrencyFormNames.ExchangeRate]: string()
+    .trim()
+    .required("Exchange rate is required.")
+    .test(
+      "exchangeRate",
+      "Exchange rate must be a number greater than 0.",
+      (value) => !isNaN(Number(value)) && Number(value) > 0,
+    ),
+  [CurrencyFormNames.Symbol]: string()
+    .trim()
+    .required("Currency symbol is required."),
+  [CurrencyFormNames.SymbolLocation]: string().required(
+    "Symbol location is required.",
+  ),
+  [CurrencyFormNames.DecimalToken]: string().required(
+    "Decimal separator is required.",
+  ),
+  [CurrencyFormNames.ThousandsToken]: string().required(
+    "Thousands separator is required.",
+  ),
+  [CurrencyFormNames.DecimalPlaces]: string().required(
+    "Decimal places is required.",
+  ),
+});
+// #endregion
+
 // #region Basic Tax
 export const TaxClassesSchema = object({
   [TaxClassesFormNames.Classes]: array()
@@ -851,7 +897,8 @@ export const TaxZoneSettingsSchema = object({
     TaxZoneSettingsFormNames.BasedOn,
     {
       is: TaxZoneBasedOn.PostalCodes,
-      then: (schema) => schema.trim().required("Enter at least one postal code"),
+      then: (schema) =>
+        schema.trim().required("Enter at least one postal code"),
     },
   ),
   [TaxZoneSettingsFormNames.AppliesTo]: text(),
@@ -869,7 +916,9 @@ export const TaxZoneSettingsSchema = object({
 });
 
 export const TaxRateSchema = object({
-  [TaxRateFormNames.Name]: string().trim().required("Tax rate name is required"),
+  [TaxRateFormNames.Name]: string()
+    .trim()
+    .required("Tax rate name is required"),
   [TaxRateFormNames.ClassRates]: array()
     .of(
       object({
@@ -881,7 +930,9 @@ export const TaxRateSchema = object({
           "Enter a rate between 0 and 100",
           (value) =>
             !value ||
-            (!isNaN(Number(value)) && Number(value) >= 0 && Number(value) <= 100),
+            (!isNaN(Number(value)) &&
+              Number(value) >= 0 &&
+              Number(value) <= 100),
         ),
       }),
     )
@@ -908,8 +959,10 @@ const positiveWholeNumber = (label: string) =>
   string()
     .trim()
     .required(`${label} is required`)
-    .test("whole", `${label} must be a whole number above 0`, (value) =>
-      !value || (/^\d+$/.test(value) && Number(value) > 0),
+    .test(
+      "whole",
+      `${label} must be a whole number above 0`,
+      (value) => !value || (/^\d+$/.test(value) && Number(value) > 0),
     );
 
 export const DnsSettingsSchema = object({
@@ -981,7 +1034,9 @@ export const DnsSettingsSchema = object({
         object({
           [DnsRecordFormNames.RecordId]: text(),
           [DnsRecordFormNames.Type]: string().required("Type is required"),
-          [DnsRecordFormNames.Host]: string().trim().required("Host is required"),
+          [DnsRecordFormNames.Host]: string()
+            .trim()
+            .required("Host is required"),
           [DnsRecordFormNames.Value]: string()
             .trim()
             .required("Value is required"),
