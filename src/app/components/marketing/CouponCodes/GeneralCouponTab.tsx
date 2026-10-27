@@ -72,7 +72,7 @@ const GeneralCouponTab = () => {
 
         {discountType !== DiscountType.FreeShipping && (
           <InputField
-            name={CouponFormFields.DiscountType}
+            name={CouponFormFields.DiscountAmount}
             label="Discount amount"
             labelClassName="text-right text-gray-700"
             required
@@ -205,10 +205,7 @@ const GeneralCouponTab = () => {
             control={control}
             showSelectAll
             containerClassName="max-w-5xl"
-            rules={{
-              validate: (value: any) =>
-                value?.length > 0 || "Select at least one category",
-            }}
+           
           />
         )}
 
