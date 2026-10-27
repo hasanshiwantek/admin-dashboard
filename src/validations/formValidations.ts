@@ -491,7 +491,10 @@ export const CouponCodeSchema = object({
 
   categoryIds: array().of(string().defined()).defined(),
 
-  productIds: string().nullable().defined(),
+  productIds: array()
+  .of(string().defined())
+  .default([])
+  .defined(),
 
   limitByLocation: boolean().defined(),
   limitByShipping: boolean().defined(),
@@ -524,18 +527,20 @@ export const CouponCodeSchema = object({
     return true;
   })
   .test("category-validation", function (values) {
-    if (
-      values?.appliesToCategories &&
-      (!values.categoryIds || values.categoryIds.length === 0)
-    ) {
-      return this.createError({
-        path: "categoryIds",
-        message: "Select at least one category",
-      });
-    }
-
+  // Category validation sirf categories select hone par chalegi
+  if (values?.appliesTo !== "categories") {
     return true;
-  });
+  }
+
+  if (!values.categoryIds || values.categoryIds.length === 0) {
+    return this.createError({
+      path: "categoryIds",
+      message: "Select at least one category",
+    });
+  }
+
+  return true;
+});
 
 export type CouponCodeForm = InferType<typeof CouponCodeSchema>;
 // WebPageSchema

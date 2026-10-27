@@ -14,7 +14,7 @@ export const DefaultCouponCodeFormValues: CouponCodeForm = {
   appliesToCategories: true,
   appliesToProducts: false,
   categoryIds: [],
-  productIds: null,
+productIds: [],
   limitByLocation: false,
   limitByShipping: false,
   appliesTo: "categories",

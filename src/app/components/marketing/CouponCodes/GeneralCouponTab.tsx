@@ -205,10 +205,7 @@ const GeneralCouponTab = () => {
             control={control}
             showSelectAll
             containerClassName="max-w-5xl"
-            rules={{
-              validate: (value: any) =>
-                value?.length > 0 || "Select at least one category",
-            }}
+           
           />
         )}
 
