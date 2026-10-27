@@ -12,7 +12,7 @@ import OrderActionsDropdown from "../../orders/OrderActionsDropdown";
 import FilterSettingsPage from "./FilterSettingsPage";
 // --- SHADCN/UI Imports ---
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardContent } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -30,7 +30,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/components/ui/Table";
 
 // --- APPLICATION DATA & LOGIC ---
 

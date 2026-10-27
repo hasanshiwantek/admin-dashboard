@@ -9,7 +9,7 @@ import {
   TableHead,
   TableBody,
   TableCell,
-} from "@/components/ui/table";
+} from "@/components/ui/Table";
 import { MoreHorizontal } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import DestinationDialog from "./DestinationDialog";

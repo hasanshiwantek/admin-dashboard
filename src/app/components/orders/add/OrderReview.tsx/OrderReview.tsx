@@ -19,7 +19,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/components/ui/Table";
 import { Textarea } from "@/components/ui/textarea";
 import { usePermissions } from "@/hooks/usePermissions";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";

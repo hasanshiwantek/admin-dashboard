@@ -33,7 +33,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/components/ui/Table";
 
 export default function BulkPricing() {
   const { control, register, setValue, formState } = useFormContext();

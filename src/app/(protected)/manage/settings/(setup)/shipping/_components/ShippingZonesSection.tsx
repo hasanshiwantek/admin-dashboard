@@ -1,6 +1,6 @@
 import { ListRenderer } from "@/components/ListRenderer.tsx/ListRenderer";
 import ListRowSkeleton from "@/components/Skeletons/ListRowSkeleton";
-import { Card } from "@/components/ui/card";
+import { Card } from "@/components/ui/Card";
 import PageTitle from "@/components/ui/PageTitle";
 import { SKELETON_ROW_COUNT } from "../constant";
 import ShippingZoneRow from "./ShippingZoneRow";

@@ -12,7 +12,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/components/ui/Table";
 import Pagination from "@/components/ui/pagination";
 const CustomerGroups = () => {
   const [currentPage, setCurrentPage] = useState(1);

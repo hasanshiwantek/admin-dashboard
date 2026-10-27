@@ -17,7 +17,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/components/ui/Table";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { sanitizeNumberInput } from "@/lib/productUtils";
 import { cn } from "@/lib/utils";

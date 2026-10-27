@@ -14,7 +14,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/components/ui/Table";
 import { Checkbox } from "@/components/ui/checkbox";
 import Spinner from "../../loader/Spinner";
 import { FaCircleMinus, FaCirclePlus } from "react-icons/fa6";

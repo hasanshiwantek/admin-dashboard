@@ -4,7 +4,7 @@ import { Mail, Smartphone, Save,  } from "lucide-react";
 
 // --- SHADCN/UI Imports ---
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/Card";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { confirmAuthenticator, disableEmail2FA, enableAuthenticator2FA, enableEmail2FA, fetchTwofaStatus } from "@/redux/slices/authSlice";
 import DisablePasswordModal from "./helpers/DiablePasswordModal";
