@@ -16,7 +16,7 @@ export const userDefaults: UserFormValues = {
   [UserField.LastName]: "",
   [UserField.Email]: "",
   [UserField.PhoneNumber]: "",
-  [UserField.UserRole]: String(UserRolesEnum.USER),
+  [UserField.UserRole]: String(UserRolesEnum.SALES_STAFF),
   [UserField.Permissions]: [],
 };
 
