@@ -17,14 +17,18 @@ export const getBlogColumns = () => [
       </Link>
     ),
   },
-  {
-    key: "author",
-    header: "Author",
-    width: "25%",
-    headClassName: "2xl:!text-[1.6rem]",
-    className: "2xl:!text-2xl",
-    render: (post: any) => post.author || "—",
-  },
+{
+  key: "author",
+  header: "Author",
+  width: "25%",
+  headClassName: "2xl:!text-[1.6rem]",
+  className: "2xl:!text-2xl ",
+  render: (post: any) => (
+    <div className="block whitespace-normal break-words">
+      {post.author || "—"}
+    </div>
+  ),
+},
   {
     key: "createdAt",
     header: "Published On",
