@@ -97,6 +97,7 @@ import {
 } from "yup";
 import { CustomerField } from "@/app/(protected)/manage/customers/add/constant";
 import { REGEX } from "@/const/regex";
+import { AddressField } from "@/app/(protected)/manage/customers/edit/[id]/[addressId]/constant";
 
 export const BannerSchema = object({
   [BannerField.Title]: string().trim().required("Banner name is required"),
@@ -1065,3 +1066,24 @@ export const createCustomerSchema = (isEdit: boolean) =>
     [CustomerField.state]: string().defined(),
     [CustomerField.country]: string().defined(),
   });
+// #endregion Customer
+
+// #region Address
+export const AddressSchema = object({
+  [AddressField.firstName]: string().trim().required("First name is required"),
+  [AddressField.lastName]: string().trim().required("Last name is required"),
+  [AddressField.companyName]: string().defined(),
+  [AddressField.phoneNumber]: string().defined(),
+  [AddressField.addressLine1]: string()
+    .trim()
+    .required("Address line 1 is required"),
+  [AddressField.addressLine2]: string().defined(),
+  [AddressField.city]: string().trim().required("City is required"),
+  [AddressField.state]: string().required("State is required"),
+  [AddressField.country]: string().required("Country is required"),
+  [AddressField.zip]: string().defined(),
+  [AddressField.type]: string().defined(),
+  [AddressField.isDefault]: boolean().defined(),
+});
+
+// #endregion Address
