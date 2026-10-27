@@ -45,6 +45,11 @@ export function buildAddressPayload(
 ): Record<string, number | string | boolean> {
   const sharedFields = {
     customerId: customerId,
+    [AddressField.firstName]: form[AddressField.firstName],
+    [AddressField.lastName]: form[AddressField.lastName],
+    [AddressField.companyName]: form[AddressField.companyName],
+    [AddressField.phoneNumber]: form[AddressField.phoneNumber],
+    [AddressField.addressLine1]: form[AddressField.addressLine1],
     [AddressField.city]: form[AddressField.city],
     [AddressField.state]: form[AddressField.state],
     [AddressField.zip]: form[AddressField.zip],
@@ -56,10 +61,5 @@ export function buildAddressPayload(
 
   return {
     ...sharedFields,
-    [AddressField.firstName]: form[AddressField.firstName],
-    [AddressField.lastName]: form[AddressField.lastName],
-    [AddressField.companyName]: form[AddressField.companyName],
-    [AddressField.phoneNumber]: form[AddressField.phoneNumber],
-    [AddressField.addressLine1]: form[AddressField.addressLine1],
   };
 }
