@@ -38,4 +38,6 @@ export const REGEX = {
 
   // HTTPS URL
   HTTPS_PREFIX: /^https:\/\//i,
+
+  UPPERCASE_LETTER: /([A-Z])/g,
 };
