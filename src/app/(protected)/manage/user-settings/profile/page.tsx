@@ -19,7 +19,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/Select";
 import { updateUserPofile } from "@/redux/slices/authSlice";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 const languageOptions = [

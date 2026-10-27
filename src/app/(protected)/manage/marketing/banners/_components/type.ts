@@ -1,4 +1,4 @@
-import type { SelectOption } from "@/components/ui/select";
+import type { SelectOption } from "@/components/ui/Select";
 import type { BannerDateType } from "../[id]/constant";
 import type { BannerLocation, BannerPlacement } from "../constant";
 

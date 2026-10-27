@@ -11,7 +11,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/Select";
 import Link from "next/link";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { useParams, useRouter } from "next/navigation";

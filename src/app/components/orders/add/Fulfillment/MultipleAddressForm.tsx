@@ -11,7 +11,7 @@ import {
   TableCell,
 } from "@/components/ui/Table";
 import { MoreHorizontal } from "lucide-react";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Checkbox } from "@/components/ui/Checkbox";
 import DestinationDialog from "./DestinationDialog";
 import OrderActionsDropdown from "../../OrderActionsDropdown";
 import { Button } from "@/components/ui/button";

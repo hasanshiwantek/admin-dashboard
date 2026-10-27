@@ -5,7 +5,7 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+} from "@/components/ui/Collapsible";
 import { ChevronDown } from "lucide-react";
 import OfflinePaymentMethodRow from "./OfflinePaymentMethodRow";
 import { OfflinePaymentMethodsSectionProps } from "./type";

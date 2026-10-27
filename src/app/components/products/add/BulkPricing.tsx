@@ -15,7 +15,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/Select";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 import {

@@ -15,7 +15,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/Select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Country, State } from "country-state-city";
 import { useAlert } from "@/hooks/useAlert";

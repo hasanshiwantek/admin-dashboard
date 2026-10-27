@@ -1,5 +1,5 @@
 import { ListRenderer } from "@/components/ListRenderer.tsx/ListRenderer";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Checkbox } from "@/components/ui/Checkbox";
 import { cn } from "@/lib/utils";
 import { togglePermission } from "../utils";
 import { PermissionGroupFieldProps } from "./type";

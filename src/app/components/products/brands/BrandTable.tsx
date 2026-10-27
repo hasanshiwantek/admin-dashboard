@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Trash } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Checkbox } from "@/components/ui/Checkbox";
 import {
   Table,
   TableBody,
