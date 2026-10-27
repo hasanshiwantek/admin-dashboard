@@ -38,3 +38,4 @@ export const getBlogColumns = () => [
     render: (post: any) => formatDateTime(post?.createdAt),
   },
 ];
+ 
