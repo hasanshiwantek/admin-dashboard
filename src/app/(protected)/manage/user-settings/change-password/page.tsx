@@ -4,7 +4,7 @@ import { Save, AlertTriangle, Eye, EyeOff } from "lucide-react"; // Added AlertT
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/Card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { logout, profileUpdatePassword } from "@/redux/slices/authSlice";

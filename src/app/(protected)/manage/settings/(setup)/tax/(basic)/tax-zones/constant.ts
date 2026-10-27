@@ -1,5 +1,5 @@
 import type { ActionItem } from "@/components/ActionButton/type";
-import type { SelectOption } from "@/components/ui/select";
+import type { SelectOption } from "@/components/ui/Select";
 import { ActionEnums } from "@/const/appConstants";
 import { ADD_TAX_ZONE_ROUTE, editTaxZoneRoute } from "../constant";
 import type {

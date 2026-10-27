@@ -22,6 +22,7 @@ export default function AddressForm() {
     submitAddress,
     router,
     isEdit,
+    cancelUrl,
   } = useAddressFormContainer();
 
   return (
@@ -39,7 +40,7 @@ export default function AddressForm() {
         footer={{
           submitText: isEdit ? "Update Address" : "Add Address",
           loading: form.formState.isSubmitting,
-          onCancel: () => router.back(),
+          onCancel: () => router.push(cancelUrl),
           extraActions: !isEdit ? (
             <Button
               type="button"
@@ -61,7 +62,6 @@ export default function AddressForm() {
         }}
       >
         <section className="flex w-full flex-col gap-8 pb-10">
-
           <div className="grid w-full grid-cols-1 gap-8 md:grid-cols-2">
             <InputField
               name={AddressField.firstName}

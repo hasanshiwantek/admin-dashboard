@@ -12,7 +12,7 @@ import {
   SelectValue,
   SelectContent,
   SelectItem,
-} from "@/components/ui/select";
+} from "@/components/ui/Select";
 import { Button } from "@/components/ui/button";
 
 export default function StoreSelectPage() {

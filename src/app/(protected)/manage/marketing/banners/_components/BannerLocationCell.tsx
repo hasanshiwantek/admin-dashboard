@@ -1,11 +1,6 @@
-import { BANNER_PLACEMENT_LABELS } from "./constant";
-import { BannerLocationSource } from "./types";
-import { getBannerLocationLink } from "./utils";
-
-type BannerLocationCellProps = {
-  banner: BannerLocationSource;
-  baseUrl?: string;
-};
+import { BANNER_PLACEMENT_LABELS } from "../constant";
+import { getBannerLocationLink } from "../utils";
+import { BannerLocationCellProps } from "./type";
 
 const BannerLocationCell = ({ banner, baseUrl }: BannerLocationCellProps) => {
   const { label, href } = getBannerLocationLink(banner, baseUrl);

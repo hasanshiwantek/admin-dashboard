@@ -31,7 +31,9 @@ export function useAddressFormContainer() {
   });
   const { control, reset, setValue } = form;
   const country = useWatch({ control, name: AddressField.country });
-
+  const cancelUrl = customerId
+    ? `/manage/customers/edit/${customerId}`
+    : "/manage/customers";
   const countryOptions = useMemo(
     () =>
       Country.getAllCountries().map((item) => ({
@@ -146,5 +148,6 @@ export function useAddressFormContainer() {
     submitAddress,
     router,
     isEdit,
+    cancelUrl,
   };
 }

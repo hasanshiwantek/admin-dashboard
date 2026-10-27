@@ -1,0 +1,669 @@
+"use client";
+import React, { useState, useEffect, useMemo } from "react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/Select";
+import { Info } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Textarea } from "@/components/ui/textarea";
+import { addCustomer } from "@/redux/slices/customerSlice";
+import { useAppDispatch } from "@/hooks/useReduxHooks";
+
+import { Country, State } from "country-state-city";
+import { useRouter, useParams } from "next/navigation";
+import {
+  checkCustomerEmail,
+  fetchCustomerById,
+  updateCustomer,
+} from "@/redux/slices/customerSlice";
+import Link from "next/link";
+import { useSelector } from "react-redux";
+import { useAlert } from "@/hooks/useAlert";
+const AddCustomer = () => {
+  const { id } = useParams(); // dynamic route
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const isEdit = !!id;
+  const [saveAndAddAnother, setSaveAndAddAnother] = useState(false);
+  const [passwordMismatch, setPasswordMismatch] = useState(false);
+    const { showAlert, Alert } = useAlert();
+  const [emailError, setEmailError] = useState("");
+  const [emailChecking, setEmailChecking] = useState(false);
+  const [checkedEmail, setCheckedEmail] = useState("");
+  const [formData, setFormData] = useState<any>({
+    firstName: "",
+    lastName: "",
+    companyName: "",
+    email: "",
+    customerGroup: "",
+    phone: "",
+    storeCredit: "0.00",
+    acsEmail: true,
+    forceReset: false,
+    taxCode: "",
+    password: "",
+    confirmPassword: "",
+    analytics: "",
+    functional: "",
+    targeting: "",
+    address: "",
+    state: "",
+    country: "",
+  });
+
+  // Country list — same dynamic logic as Add Address
+  const countryList = Country.getAllCountries().map((c) => ({
+    name: c.name,
+    code: c.isoCode,
+  }));
+
+  // States/Provinces load dynamically from the selected country
+  const stateList = useMemo(() => {
+    if (!formData.country) return [];
+
+    return State.getStatesOfCountry(formData.country).map((s) => ({
+      name: s.name,
+      code: s.isoCode,
+    }));
+  }, [formData.country]);
+
+  const updateField = (field: any, value: any) => {
+    setFormData((prev: any) => ({ ...prev, [field]: value }));
+  };
+
+  useEffect(() => {
+    if (isEdit) {
+      dispatch(fetchCustomerById({ id: id })).then((res: any) => {
+        const c = res.payload.data;
+        if (c) {
+          setFormData({
+            firstName: c.firstName || "",
+            lastName: c.lastName || "",
+            companyName: c.companyName || "",
+            email: c.email || "",
+            customerGroup: c.customerGroup || "",
+            phone: c.phone || "",
+            storeCredit: c.storeCredit || "0.00",
+            acsEmail: c.receiveReviewEmails,
+            forceReset: c.forcePasswordReset,
+            taxCode: c.taxExemptCode || "",
+            password: "",
+            confirmPassword: "",
+            analytics: c.analytics || "",
+            functional: c.fuctional || "",
+            targeting: c.targeting || "",
+            address: c.address || "",
+            state: c.state || "",
+            country: c.country || "",
+          });
+        }
+      });
+    }
+  }, [id, isEdit]);
+
+  // Returns true when the email is available (always true in edit mode)
+  const checkEmail = async (email: string) => {
+    if (isEdit || !email) return true;
+    if (email === checkedEmail) return !emailError;
+
+    setEmailChecking(true);
+    try {
+      const res: any = await dispatch(checkCustomerEmail({ email }));
+      const isAvailable =
+        res.meta.requestStatus === "fulfilled" && res.payload?.status;
+      const message = isAvailable
+        ? ""
+        : res.payload?.message || "This email cannot be used.";
+      setEmailError(message);
+      setCheckedEmail(email);
+      return !!isAvailable;
+    } finally {
+      setEmailChecking(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const isEmailAvailable = await checkEmail(formData.email);
+    if (!isEmailAvailable) {
+      setSaveAndAddAnother(false);
+      return;
+    }
+
+    const payload = {
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      companyName: formData.companyName,
+      email: formData.email,
+      customerGroup: formData.customerGroup,
+      phone: formData.phone,
+      country: formData.country,
+      state: formData.state,
+      address: formData.address,
+      storeCredit: formData.storeCredit,
+      receiveReviewEmails: formData.acsEmail,
+      forcePasswordReset: formData.forceReset,
+      taxExemptCode: formData.taxCode,
+      password: formData.password,
+      password_confirmation: formData.confirmPassword,
+      analytics: formData.analytics,
+      functional: formData.functional,
+      targeting: formData.targeting,
+    };
+    setLoading(true);
+    try {
+      const resultAction = isEdit
+        ? await dispatch(updateCustomer({ id: id, data: payload }))
+        : await dispatch(addCustomer({ data: payload }));
+      if (resultAction.meta.requestStatus === "fulfilled") {
+        if (saveAndAddAnother && !isEdit) {
+          setFormData({
+            firstName: "",
+            lastName: "",
+            companyName: "",
+            email: "",
+            customerGroup: "",
+            phone: "",
+            storeCredit: "0.00",
+            acsEmail: true,
+            forceReset: false,
+            taxCode: "",
+            password: "",
+            confirmPassword: "",
+            analytics: "",
+            functional: "",
+            targeting: "",
+            address: "",
+            state: "",
+            country: "",
+          });
+          setSaveAndAddAnother(false); // reset flag
+          setCheckedEmail("");
+          setEmailError("");
+        } else {
+          setTimeout(() => {
+            router.push("/manage/customers/");
+          }, 700);
+        }
+      } else {
+        showAlert({
+  title: "Customer Save Failed",
+  message: "Customer save failed.",
+});
+      }
+    } catch (error) {
+      console.error("Submit error:", error);
+     showAlert({
+  title: "Unexpected Error",
+  message: "Unexpected error occurred.",
+});
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div>
+      <form onSubmit={handleSubmit}>
+        <div className="p-10">
+          {/* Header */}
+          <div className="mb-6">
+            <h1 className=" !font-light 2xl:!text-5xl">
+              {isEdit ? "Update" : "Add"} customer
+            </h1>
+          </div>
+
+          {/* Tabs */}
+          <div className="flex gap-6 border-b mb-6">
+            <button
+              className="pb-2 text-xl font-medium border-b-3 border-blue-500 2xl:!text-2xl"
+              type="button"
+            >
+              Customer details
+            </button>
+            {/* <button
+              className="pb-2 text-xl font-medium text-gray-500 2xl:!text-2xl"
+              type="button"
+            >
+              Custom address book
+            </button> */}
+          </div>
+
+          <div className="p-6">
+            <h1 className="!font-semibold mb-4 2xl:!text-[2.4rem]">Customer details</h1>
+
+            <div className="bg-white p-6 rounded-md border space-y-9 ">
+              {/* First Name */}
+              <div className="space-y-1">
+                <Label className="2xl:!text-2xl">First name</Label>
+                <Input
+                  placeholder=""
+                  value={formData.firstName}
+                  onChange={(e) => updateField("firstName", e.target.value)}
+                  required
+                />
+              </div>
+
+              {/* Last Name */}
+              <div className="space-y-1">
+                <Label className="2xl:!text-2xl">Last name</Label>
+                <Input
+                  placeholder=""
+                  value={formData.lastName}
+                  onChange={(e) => updateField("lastName", e.target.value)}
+                  required
+                />
+              </div>
+
+              {/* Company Name */}
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <Label className="2xl:!text-2xl">Company name</Label>
+                  <span className="text-sm text-muted-foreground">
+                    (optional)
+                  </span>
+                </div>
+                <Input
+                  placeholder=""
+                  value={formData.companyName}
+                  onChange={(e) => updateField("companyName", e.target.value)}
+                />
+              </div>
+
+              {/* Email */}
+              <div className="space-y-1">
+                <Label className="2xl:!text-2xl">Email</Label>
+                <Input
+                  type="email"
+                  placeholder=""
+                  value={formData.email}
+                  onChange={(e) => {
+                    updateField("email", e.target.value);
+                    setEmailError("");
+                    setCheckedEmail("");
+                  }}
+                  onBlur={(e) => {
+                    if (e.target.checkValidity()) checkEmail(e.target.value);
+                  }}
+                  aria-invalid={!!emailError}
+                  required
+                />
+                {emailChecking && (
+                  <p className="text-sm text-muted-foreground">
+                    Checking email...
+                  </p>
+                )}
+                {emailError && (
+                  <p className="text-sm text-red-500!">{emailError}</p>
+                )}
+              </div>
+
+              <div className="space-y-1">
+                <Label className="2xl:!text-2xl">Address</Label>
+                <Textarea
+                  className="w-[28rem] h-[60px]"
+                  rows={10}
+                  value={formData.address}
+                  onChange={(e) => updateField("address", e.target.value)}
+                />
+              </div>
+
+              <div className="space-y-1">
+                <Label className="2xl:!text-2xl">Country</Label>
+                <Select
+                  value={formData.country}
+                onValueChange={(value) => {
+  updateField("country", value);
+  updateField("state", "");
+}}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select country" />
+                  </SelectTrigger>
+                  <SelectContent className="overflow-y-scroll h-96">
+                    {countryList.map((c) => (
+                      <SelectItem key={c.code} value={c.code}>
+                        {c.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-1">
+                <Label className="2xl:!text-2xl">State</Label>
+                <Select
+                  value={formData.state}
+                  onValueChange={(value) => updateField("state", value)}
+                  disabled={!formData.country}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select state" />
+                  </SelectTrigger>
+                  <SelectContent className="overflow-y-scroll h-96">
+                    {stateList.map((state) => (
+                      <SelectItem key={state.code} value={state.code}>
+                        {state.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Customer Group */}
+              {/* <div className="space-y-1">
+                <Label className="2xl:!text-2xl">Customer group</Label>
+                <Select
+                  value={formData.customerGroup}
+                  onValueChange={(value) => updateField("customerGroup", value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select group" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="retail">Retail</SelectItem>
+                    <SelectItem value="vip">VIP</SelectItem>
+                    <SelectItem value="wholesale">Wholesale</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div> */}
+
+              {/* Phone */}
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <Label className="2xl:!text-2xl">Phone</Label>
+                  <span className="text-xs text-muted-foreground">
+                    (optional)
+                  </span>
+                </div>
+                <Input
+                  placeholder=""
+                  value={formData.phone}
+                  onChange={(e) => updateField("phone", e.target.value)}
+                />
+              </div>
+
+              {/* Store Credit */}
+              {/* <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <Label className="flex items-center gap-1 2xl:!text-2xl">
+                    Store credit
+                    <Info className="w-3 h-3 text-muted-foreground" />
+                  </Label>
+                  <span className="text-xs text-muted-foreground">
+                    (optional)
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-muted-foreground">$</span>
+                  <Input
+                    placeholder="0.00"
+                    value={formData.storeCredit}
+                    onChange={(e) => updateField("storeCredit", e.target.value)}
+                  />
+                </div>
+              </div> */}
+
+              {/* ACS Emails */}
+              <div className="space-y-1">
+                <Label className="flex items-center gap-1 2xl:!text-2xl">
+                  Receive ACS/review emails
+                  <Info className="w-3 h-3 text-muted-foreground" />
+                </Label>
+                <Select
+                  value={formData.acsEmail ? "true" : "false"}
+                  onValueChange={(value) =>
+                    updateField("acsEmail", value === "true")
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Yes or No" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="true">Yes</SelectItem>
+                    <SelectItem value="false">No</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Force Password Reset */}
+              <div className="space-y-1">
+                <Label className="flex items-center gap-1 2xl:!text-2xl">
+                  Force password reset on next login
+                  <Info className="w-3 h-3 text-muted-foreground" />
+                </Label>
+                <Select
+                  value={formData.forceReset ? "true" : "false"}
+                  onValueChange={(value) =>
+                    updateField("forceReset", value === "true")
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Yes or No" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="true">Yes</SelectItem>
+                    <SelectItem value="false">No</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Tax Exempt Code */}
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <Label className="2xl:!text-2xl">Tax exempt code</Label>
+                  <span className="text-xs text-muted-foreground">
+                    (optional)
+                  </span>
+                </div>
+                <Input
+                  placeholder=""
+                  value={formData.taxCode}
+                  onChange={(e) => updateField("taxCode", e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* <div className="p-6">
+            <h1 className=" !font-semibold mb-4 2xl:!text-[2.4rem]">Data Prefernces</h1>
+
+            <div className="bg-white p-6 border rounded-md space-y-7 ">
+              <div className="space-y-1">
+                <div className="flex items-center gap-1">
+                  <Label className="2xl:!text-2xl">Analytics</Label>
+                </div>
+                <Select
+                  value={formData.analytics}
+                  onValueChange={(value) => updateField("analytics", value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Not set" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="notSet">Not Set</SelectItem>
+                    <SelectItem value="accepted">Accepted</SelectItem>
+                    <SelectItem value="rejected">Rejected</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-1">
+                <div className="flex items-center gap-1">
+                  <Label className="2xl:!text-2xl">Functional</Label>
+                </div>
+                <Select
+                  value={formData.functional}
+                  onValueChange={(value) => updateField("functional", value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Not set" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="notSet">Not Set</SelectItem>
+                    <SelectItem value="accepted">Accepted</SelectItem>
+                    <SelectItem value="rejected">Rejected</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-1">
+                <div className="flex items-center gap-1">
+                  <Label className="2xl:!text-2xl">Targeting/Advertising</Label>
+                </div>
+                <Select
+                  value={formData.targeting}
+                  onValueChange={(value) => updateField("targeting", value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Not set" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="notSet">Not Set</SelectItem>
+                    <SelectItem value="accepted">Accepted</SelectItem>
+                    <SelectItem value="rejected">Rejected</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div> */}
+
+          <div className="p-6">
+            <h1 className=" !font-semibold mb-4 2xl:!text-[2.4rem]">Password</h1>
+
+            <div className="bg-white p-6 border rounded-md space-y-7 ">
+              <TooltipProvider>
+                {/* Password Field */}
+                <div className="space-y-1">
+                  <div className="flex items-center gap-1">
+                    <Label className="2xl:!text-2xl">Password</Label>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Info className="w-4 h-4 text-muted-foreground cursor-pointer" />
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-xs">
+                        <>
+                          Specify the password this customer should use to log
+                          in to your store. Once logged in, the customer can
+                          view past orders, submit return requests, etc.
+                        </>
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
+                  <p className="text-xs text-muted-foreground 2xl:!text-2xl">
+                    Passwords must be at least 7 characters long and contain
+                    both alphabetic and numeric characters.
+                  </p>
+                 <Input
+  type="password"
+  value={formData.password}
+  onChange={(e) => {
+    const password = e.target.value;
+
+    updateField("password", password);
+
+    setPasswordMismatch(
+      formData.confirmPassword.length > 0 &&
+        password !== formData.confirmPassword
+    );
+  }}
+  required={!isEdit}
+  disabled={isEdit}
+/>
+                </div>
+
+                {/* Confirm Password Field */}
+                <div className="space-y-1">
+                  <div className="flex items-center gap-1">
+                    <Label className="2xl:!text-2xl">Confirm password</Label>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Info className="w-4 h-4 text-muted-foreground cursor-pointer" />
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-xs">
+                        <>
+                          Confirm the password entered above by entering it
+                          again.
+                        </>
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
+                  <Input
+  type="password"
+  value={formData.confirmPassword}
+  onChange={(e) => {
+    const confirmPassword = e.target.value;
+
+    updateField("confirmPassword", confirmPassword);
+
+    setPasswordMismatch(
+      confirmPassword.length > 0 &&
+        confirmPassword !== formData.password
+    );
+  }}
+  required={!isEdit}
+  disabled={isEdit}
+/>
+
+{passwordMismatch && (
+  <p className="text-sm !text-red-500 mt-1">
+    Passwords do not match.
+  </p>
+)}
+                </div>
+              </TooltipProvider>
+            </div>
+          </div>
+        </div>
+
+        <div className="sticky bottom-0 w-full border-t p-6 bg-white flex justify-end gap-4">
+          <Link href={"/manage/customers"}>
+            <button className="!text-xl p-4 !text-blue-500" type="button">
+              Cancel
+            </button>
+          </Link>
+          <button
+            disabled={loading || emailChecking || !!emailError}
+            type="button"
+            className="btn-outline-primary"
+            onClick={() => {
+              setSaveAndAddAnother(true);
+              // trigger form submit manually
+              document
+                .querySelector("form")
+                ?.dispatchEvent(
+                  new Event("submit", { cancelable: true, bubbles: true })
+                );
+            }}
+          >
+            {loading ? "Saving..." : "Save and add another"}
+          </button>
+
+          <button
+            disabled={loading || emailChecking || !!emailError}
+            type="submit"
+            className="btn-primary"
+          >
+            {loading ? "Saving..." : isEdit ? "Update Customer" : "Add Customer"}
+          </button>
+        </div>
+      </form>
+          <Alert />
+    </div>
+  );
+};
+
+export default AddCustomer;

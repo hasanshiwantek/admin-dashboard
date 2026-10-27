@@ -2,7 +2,7 @@ import {
   DEFAULT_SHIPPING_METHOD_ICON,
   shippingMethodIcons,
 } from "../[id]/constant";
-import { Switch } from "@/components/ui/switch";
+import { Switch } from "@/components/ui/Switch";
 import Image from "next/image";
 import ShippingMethodEditModal from "./ShippingMethodEditModal";
 import { ShippingMethodRowProps } from "./type";

@@ -3,14 +3,14 @@ import { useEffect, useState, useMemo } from "react";
 import { useFormContext, Controller } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Checkbox } from "@/components/ui/Checkbox";
 import {
   Select,
   SelectTrigger,
   SelectValue,
   SelectContent,
   SelectItem,
-} from "@/components/ui/select";
+} from "@/components/ui/Select";
 import ShippingMethod from "./ShippingMethod";
 import { Country, State } from "country-state-city";
 import { useAppSelector } from "@/hooks/useReduxHooks";

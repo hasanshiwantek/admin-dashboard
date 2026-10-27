@@ -7,7 +7,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/Select";
 import { UserRolesEnum } from "@/const/appConstants";
 import { RegisterPayload, registerUser } from "@/redux/slices/authSlice";
 import { AppDispatch } from "@/redux/store";
