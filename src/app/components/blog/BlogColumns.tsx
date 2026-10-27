@@ -6,12 +6,12 @@ export const getBlogColumns = () => [
     key: "title",
     header: "Title",
     width: "40%",
-    headClassName: "2xl:!text-[1.6rem]",
+    headClassName: "2xl:text-[1.6rem]!",
     className: "whitespace-normal break-words",
     render: (post: any) => (
       <Link
         href={`/manage/storefront/blog/edit/${post.id}`}
-        className="text-blue-600 hover:underline capitalize 2xl:!text-2xl font-medium"
+        className="text-blue-600 hover:underline capitalize 2xl:text-2xl! font-medium"
       >
         {post?.title || "Untitled"}
       </Link>
@@ -21,8 +21,8 @@ export const getBlogColumns = () => [
   key: "author",
   header: "Author",
   width: "25%",
-  headClassName: "2xl:!text-[1.6rem]",
-  className: "2xl:!text-2xl ",
+  headClassName: "2xl:text-[1.6rem]!",
+  className: "2xl:text-2xl! ",
   render: (post: any) => (
     <div className="block whitespace-normal break-words">
       {post.author || "—"}
@@ -33,8 +33,8 @@ export const getBlogColumns = () => [
     key: "createdAt",
     header: "Published On",
     width: "25%",
-    headClassName: "2xl:!text-[1.6rem]",
-    className: "2xl:!text-2xl",
+    headClassName: "2xl:text-[1.6rem]!",
+    className: "2xl:text-2xl!",
     render: (post: any) => formatDateTime(post?.createdAt),
   },
 ];
