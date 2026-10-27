@@ -19,7 +19,7 @@ export interface CouponCodeForm {
   appliesToCategories: boolean;
   appliesToProducts: boolean;
   categoryIds: string[];
-  productIds: string | null;
+  productIds:  string[];
   limitByLocation: boolean;
   limitByShipping: boolean;
  appliesTo: "categories" | "products";
