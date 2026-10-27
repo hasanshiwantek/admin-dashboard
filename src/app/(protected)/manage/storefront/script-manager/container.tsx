@@ -81,7 +81,6 @@ const useScriptManagerContainer = () => {
 
   const handleDelete = async () => {
     if (!pendingDeleteScript) return;
-
     try {
       const resultAction = await dispatch(
         deleteScript({ id: pendingDeleteScript.id }),
