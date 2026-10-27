@@ -18,6 +18,7 @@ export default function AddressForm() {
     stateOptions,
     Alert,
     handleCountryChange,
+    handleStateChange,
     submitAddress,
     router,
     isEdit,
@@ -164,6 +165,8 @@ export default function AddressForm() {
               placeholder="Select state"
               disabled={!country}
               required
+              getValueOnChange={handleStateChange}
+              runAfterOnChange
               containerClassName="w-full"
               controlClassName="w-full"
               className="w-full max-w-none"

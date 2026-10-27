@@ -79,6 +79,16 @@ export function useAddressFormContainer() {
     }
   };
 
+  const handleStateChange = ({ value }: { value: unknown }) => {
+    if (typeof value === "string") {
+      setValue(AddressField.state, value, {
+        shouldValidate: true,
+        shouldDirty: true,
+        shouldTouch: true,
+      });
+    }
+  };
+
   const submitAddress = async (
     values: AddressFormValues,
     saveAnother = false,
@@ -132,6 +142,7 @@ export function useAddressFormContainer() {
     stateOptions,
     Alert,
     handleCountryChange,
+    handleStateChange,
     submitAddress,
     router,
     isEdit,
