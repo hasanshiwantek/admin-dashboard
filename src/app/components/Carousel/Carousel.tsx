@@ -12,6 +12,7 @@ import {
 } from "@/redux/slices/storefrontSlice";
 import Spinner from "../loader/Spinner";
 import { useAlert } from "@/hooks/useAlert";
+import { Button } from "@/components/ui/Button";
 
 interface Slide {
   id: number;
@@ -629,9 +630,9 @@ const Carousel = () => {
       </div>
 
       <div className="flex justify-end gap-4 items-center fixed w-full bottom-0 right-0 bg-white/90 z-10 shadow-xs border-t p-4">
-        <button type="submit" className="btn-primary">
+        <Button variant="primary" size="md" type="submit">
           Save
-        </button>
+        </Button>
       </div>
       <ConfirmationModal
         open={openDeleteModal}

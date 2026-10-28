@@ -20,6 +20,7 @@ export const REGEX = {
   // Numeric input
   NUMERIC_DIGIT: /^\d$/,
   WHOLE_NUMBER: /^\d+$/,
+  SIGNED_INTEGER: /^-?\d+$/,
   DECIMAL_SANITIZE: /[^\d.]/g,
   DECIMAL_DUPLICATE_POINT: /\.(.*)\./g,
   DECIMAL_LEADING_ZEROS: /^0+(?=\d)/,
@@ -29,6 +30,9 @@ export const REGEX = {
 
   // Blocked characters (for Page URL)
   URL_BLOCKED_CHARS: /[$*&@!=+%`'"^|]/,
+
+  // CSS overflow values that make an element scroll
+  SCROLLABLE_OVERFLOW: /(auto|scroll|overlay)/,
 
   //Email
   EMAIL_LOCAL_PART: /^[^\s@]+$/,

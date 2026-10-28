@@ -1,6 +1,6 @@
 import CheckboxListField from "@/components/form/fields/CheckboxListField";
 import InputField from "@/components/form/InputField";
-import SettingsCard from "../../../_components/SettingsCard";
+import SettingsCard from "@/components/SettingsCard/SettingsCard";
 import {
   customerEmailStatusOptions,
   notificationMethodOptions,

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/Button";
 import Table from "@/components/ui/Table/Table";
 import { cn } from "@/lib/utils";
 import { Plus } from "lucide-react";
-import SettingsCard from "../../../_components/SettingsCard";
+import SettingsCard from "@/components/SettingsCard/SettingsCard";
 import { LocationFormNames, LocationSection } from "../constant";
 import { LocationDetailsSectionProps } from "./type";
 

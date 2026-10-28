@@ -11,7 +11,6 @@ import {
 import { UserRolesEnum } from "@/const/appConstants";
 import { RegisterPayload, registerUser } from "@/redux/slices/authSlice";
 import { AppDispatch } from "@/redux/store";
-import styles from "@/styles/auth/Auth.module.css";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
@@ -98,7 +97,7 @@ export default function RegisterPage() {
   };
   return (
     <div
-      className={`${styles.registerBg} flex flex-col min-h-screen items-center justify-center bg-black `}
+      className="flex flex-col min-h-screen items-center justify-center bg-black"
     >
       <h1 className="!text-5xl mt-10 !text-white">
         Create your beautiful store today

@@ -5,7 +5,7 @@ import Table from "@/components/ui/Table/Table";
 import { ValidationError } from "@/components/ui/validation-error";
 import { ExternalLink, Plus, Rocket } from "lucide-react";
 import Link from "next/link";
-import SettingsCard from "../../../_components/SettingsCard";
+import SettingsCard from "@/components/SettingsCard/SettingsCard";
 import {
   advancedDisplayCheckboxes,
   BACKORDERS_LEARN_MORE_URL,

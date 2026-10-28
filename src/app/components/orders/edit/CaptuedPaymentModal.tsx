@@ -62,17 +62,18 @@ export default function ConfirmationModal({
           <Button
             variant="outline"
             onClick={handleClose}
-            className="btn-outline-primary min-w-[50px] 2xl:!text-2xl h-12"
+            className="min-w-[50px] 2xl:!text-2xl h-12"
           >
             {cancelText}
           </Button>
           <Button
+            variant="outline"
             onClick={() => {
               onConfirm();
               handleClose();
             }}
             disabled={loading}
-            className="btn-outline-primary 2xl:!text-2xl h-12 !text-white !bg-[#64a2e4] min-w-[50px] border-none"
+            className="2xl:!text-2xl h-12 !text-white !bg-[#64a2e4] min-w-[50px] border-none"
           >
             {loading ? "..." : confirmText}
           </Button>

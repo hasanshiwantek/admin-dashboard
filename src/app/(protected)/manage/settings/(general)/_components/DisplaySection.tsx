@@ -16,7 +16,7 @@ import {
 import { fieldPath } from "../utils";
 import CheckboxSettingsList from "./CheckboxSettingsList";
 import InlineFieldRow from "./InlineFieldRow";
-import SettingsCard from "../../_components/SettingsCard";
+import SettingsCard from "@/components/SettingsCard/SettingsCard";
 import { CircleHelp } from "lucide-react";
 import HelpTooltip from "@/components/HelpTooltip/HelpTooltip";
 

@@ -100,16 +100,18 @@ const Page = () => {
         {/* Floating Action Buttons */}
         <div className="flex justify-end  gap-10 items-center fixed w-full bottom-0 right-0  bg-white/90 z-10 shadow-xs border-t  p-4">
           <div className=" flex justify-end space-x-8">
-            <button onClick={handleCancel} className="btn-outline-primary">
+            <Button variant="outline" size="md" onClick={handleCancel}>
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="primary"
+              size="md"
               onClick={handleChangeEmail}
-              className="btn-primary flex items-center"
+              className="flex items-center"
             >
               <Save className="mr-1 -mt-1 h-5 w-5" />
               Save
-            </button>
+            </Button>
           </div>
         </div>
       </div>

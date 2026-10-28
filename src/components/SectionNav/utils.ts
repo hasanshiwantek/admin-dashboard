@@ -23,5 +23,6 @@ export const getNavSections = <T extends FieldValues>(
   sections.map((section) => ({
     id: section.id,
     label: section.label,
+    separatorBefore: section.separatorBefore,
     hasError: sectionHasErrors(section, errors),
   }));

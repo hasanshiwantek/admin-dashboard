@@ -8,7 +8,7 @@ import UpdateUrlsModal from "@/Modals/SettingsModals/UpdateUrlsModal/UpdateUrlsM
 import { useWatch } from "react-hook-form";
 import { GeneralSection, UrlFormat } from "../constant";
 import { fieldPath } from "../utils";
-import SettingsCard from "../../_components/SettingsCard";
+import SettingsCard from "@/components/SettingsCard/SettingsCard";
 import { UrlStructureCardProps } from "./type";
 import UrlFormatField from "./UrlFormatField";
 

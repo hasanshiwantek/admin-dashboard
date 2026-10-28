@@ -5,7 +5,7 @@ import Table from "@/components/ui/Table/Table";
 import { cn } from "@/lib/utils";
 import AddCurrencyModal from "@/Modals/CurrencyModals/AddCurrencyModal/AddCurrencyModal";
 import Link from "next/link";
-import SettingsCard from "../../../_components/SettingsCard";
+import SettingsCard from "@/components/SettingsCard/SettingsCard";
 import { PAYMENT_ROUTE } from "../../payment/constant";
 import { AdditionalCurrenciesSectionProps } from "./type";
 

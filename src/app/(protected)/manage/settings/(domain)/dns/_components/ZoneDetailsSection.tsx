@@ -2,7 +2,7 @@ import InputField from "@/components/form/InputField";
 import HelpTooltip from "@/components/HelpTooltip/HelpTooltip";
 import { ListRenderer } from "@/components/ListRenderer.tsx/ListRenderer";
 import { Button } from "@/components/ui/Button";
-import SettingsCard from "../../../_components/SettingsCard";
+import SettingsCard from "@/components/SettingsCard/SettingsCard";
 import { DnsSection, zoneDetailFields } from "../constant";
 import { fieldPath } from "../utils";
 import { ZoneDetailsSectionProps } from "./type";

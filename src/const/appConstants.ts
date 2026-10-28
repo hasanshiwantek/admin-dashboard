@@ -11,6 +11,20 @@ export enum UrlSettingEnums {
 }
 
 // Every action a record can offer, e.g. in an ActionButton menu
+// How an access check compares the data's value with the check's `value`
+export enum CheckTypeEnums {
+  EQUAL = "equal",
+  NOT_EQUAL = "not-equal",
+  // field is one of `value` (an array), or a field array contains `value`
+  INCLUDES = "includes",
+  NOT_INCLUDES = "not-includes",
+  // field is set (not null, undefined or ""); `value` is ignored
+  EXISTS = "exists",
+  NOT_EXISTS = "not-exists",
+  GREATER_THAN = "greater-than",
+  LESS_THAN = "less-than",
+}
+
 export enum ActionEnums {
   // Create / change
   CREATE = "create",
@@ -23,6 +37,10 @@ export enum ActionEnums {
   RENAME = "rename",
   MOVE = "move",
   ASSIGN = "assign",
+  ADD_TO_CATEGORIES = "add-to-categories",
+  REMOVE_FROM_CATEGORIES = "remove-from-categories",
+  FEATURE = "feature",
+  UNFEATURE = "unfeature",
   SET_DEFAULT = "set-default",
   EDIT_SETTINGS = "edit-settings",
   EDIT_RATES = "edit-rates",
@@ -41,11 +59,21 @@ export enum ActionEnums {
   REJECT = "reject",
   CANCEL = "cancel",
   REFUND = "refund",
+  VOID = "void",
+  CAPTURE = "capture",
+  SHIP = "ship",
 
   // View / share
   VIEW = "view",
   PREVIEW = "preview",
+  VIEW_NOTES = "view-notes",
+  VIEW_SHIPMENTS = "view-shipments",
+  VIEW_TIMELINE = "view-timeline",
+  VIEW_STOREFRONT = "view-storefront",
+  VIEW_ORDERS = "view-orders",
   PRINT = "print",
+  PRINT_INVOICE = "print-invoice",
+  PRINT_PACKING_SLIP = "print-packing-slip",
   DOWNLOAD = "download",
   EXPORT = "export",
   IMPORT = "import",
@@ -83,6 +111,9 @@ export enum LocalStorageKeys {
   AvailableStores = "availableStores",
   CurrentStore = "currentStore",
   StoreId = "storeId",
+  // Products handed from the products list to the inventory / bulk edit pages
+  SelectedProducts = "selectedProducts",
+  BulkEditProducts = "bulkEditProducts",
 }
 
 export enum DateTimeFormat {
@@ -91,6 +122,9 @@ export enum DateTimeFormat {
 
   /** Example: Sep 25, 2026, 12:00 AM */
   SHORT_DATE_TIME = "MMM DD, YYYY, h:mm A",
+
+  /** Example: 01 Jan 2024 14:30:00 */
+  DATE_TIME_SECONDS = "DD MMM YYYY HH:mm:ss",
 
   /** Example: 1st Jan 2024 */
   ORDINAL_DATE = "Do MMM YYYY",
@@ -109,8 +143,6 @@ export enum DateTimeFormat {
 
   /** Example: 14:30 */
   TIME_24H = "HH:mm",
-    FULL_DATE_TIME = "DD MMM YYYY HH:mm:ss",
-
 }
 
 export const STOREFRONT_URL = "https://server-blink.vercel.app";

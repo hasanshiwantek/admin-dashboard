@@ -183,6 +183,8 @@ const initialState = {
   currencies: [] as Currency[],
   currenciesLoading: false,
   defaultCurrency: null as DefaultCurrency | null,
+  // The default currency request has finished (loaded or failed)
+  defaultCurrencyLoaded: false,
   selectedCurrency: null as Currency | null,
   selectedCurrencyLoading: false,
   currencySaving: false,
@@ -210,9 +212,14 @@ const currencySlice = createSlice({
       })
       .addCase(fetchDefaultCurrency.pending, (state) => {
         state.defaultCurrency = null;
+        state.defaultCurrencyLoaded = false;
       })
       .addCase(fetchDefaultCurrency.fulfilled, (state, action) => {
         state.defaultCurrency = action.payload;
+        state.defaultCurrencyLoaded = true;
+      })
+      .addCase(fetchDefaultCurrency.rejected, (state) => {
+        state.defaultCurrencyLoaded = true;
       })
       .addCase(fetchCurrencies.pending, (state) => {
         state.currenciesLoading = true;

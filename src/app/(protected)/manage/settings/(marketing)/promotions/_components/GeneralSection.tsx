@@ -2,7 +2,7 @@ import RadioGroupField from "@/components/form/fields/RadioGroupField";
 import SelectField from "@/components/form/fields/SelectField";
 import InputField from "@/components/form/InputField";
 import Link from "next/link";
-import SettingsCard from "../../../_components/SettingsCard";
+import SettingsCard from "@/components/SettingsCard/SettingsCard";
 import {
   maxCouponsOptions,
   PROMOTION_PRIORITIZATION_URL,

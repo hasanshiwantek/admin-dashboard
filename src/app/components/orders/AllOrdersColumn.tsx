@@ -28,8 +28,11 @@ import { COMPLETED, riskConfig, statusOptions } from "./constant";
 import { OrderColumnsProps } from "./types";
 import { findCountry } from "./utils";
 import { cn } from "@/lib/utils";
+import ActionButton from "@/components/ActionButton/ActionButton";
+import { ORDER_ROW_ACTIONS } from "./constant";
 
 export default function AllOrdersColumn({
+  onAction,
   router,
   dispatch,
   refetch,
@@ -310,6 +313,18 @@ export default function AllOrdersColumn({
           </div>
         );
       },
+    },
+    {
+      key: "actions",
+      width: "90px",
+      render: (order) => (
+        <ActionButton
+          data={order}
+          actions={ORDER_ROW_ACTIONS}
+          onAction={onAction}
+          label={`Actions for order ${order?.id}`}
+        />
+      ),
     },
   ];
 }

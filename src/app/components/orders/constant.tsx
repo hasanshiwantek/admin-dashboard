@@ -1,7 +1,9 @@
+import { ActionItem } from "@/components/ActionButton/type";
 import { SelectOption } from "@/components/ui/Select";
 import { TableTab } from "@/components/ui/Table/types";
+import { ActionEnums, CheckTypeEnums } from "@/const/appConstants";
 import { BadgeCheck, BadgeX, TriangleAlert } from "lucide-react";
-import { RiskInfo, StatusOption } from "./types";
+import { OrderActionOption, RiskInfo, StatusOption } from "./types";
 
 export const COMPLETED = "completed";
 export const AUTHORIZED = "authorized";
@@ -160,6 +162,75 @@ export const BULK_ORDER_ACTIONS: SelectOption[] = [
   },
 ];
 
+export const UPDATE_STATUS_ACTION_PREFIX = "updateMultiOrderStatus:";
+
+export const ORDER_ACTION_OPTIONS: OrderActionOption[] = [
+  ...BULK_ORDER_ACTIONS,
+  ...BULK_STATUS_ACTIONS.map((action) => ({
+    label: action.label,
+    value: `${UPDATE_STATUS_ACTION_PREFIX}${action.value}`,
+    group: "Update status for selected to:",
+  })),
+];
+
+export const ORDER_ROW_ACTIONS: ActionItem[] = [
+  { type: ActionEnums.EDIT, label: "Edit order" },
+  { type: ActionEnums.PRINT_INVOICE, label: "Print invoice" },
+  { type: ActionEnums.PRINT_PACKING_SLIP, label: "Print packing slip" },
+  { type: ActionEnums.RESEND, label: "Resend invoice" },
+  {
+    type: ActionEnums.SEND,
+    label: "Send Message",
+    checks: [{ key: "userType", type: CheckTypeEnums.NOT_EXISTS }],
+  },
+  { type: ActionEnums.VIEW_NOTES, label: "View notes" },
+  {
+    type: ActionEnums.SHIP,
+    label: "Ship items",
+    checks: [{ key: "shipmentId", type: CheckTypeEnums.NOT_EXISTS }],
+  },
+  {
+    type: ActionEnums.CAPTURE,
+    label: "Capture Funds",
+    checks: [
+      { key: "payment.payment_intent_id", type: CheckTypeEnums.EXISTS },
+      {
+        key: "payment.payment_status",
+        value: COMPLETED,
+        type: CheckTypeEnums.NOT_EQUAL,
+      },
+    ],
+  },
+  {
+    type: ActionEnums.VIEW_SHIPMENTS,
+    label: "View shipments",
+    checks: [{ key: "shipmentId", type: CheckTypeEnums.EXISTS }],
+  },
+  {
+    type: ActionEnums.VOID,
+    label: "Void Transaction",
+    checks: [
+      {
+        key: "status",
+        value: ["Shipped", "Awaiting Fulfillment"],
+        type: CheckTypeEnums.NOT_INCLUDES,
+      },
+    ],
+  },
+  {
+    type: ActionEnums.REFUND,
+    label: "Refund",
+    checks: [
+      {
+        key: "status",
+        value: ["Cancelled", "Awaiting Payment"],
+        type: CheckTypeEnums.NOT_INCLUDES,
+      },
+    ],
+  },
+  { type: ActionEnums.VIEW_TIMELINE, label: "View order timeline" },
+];
+
 export const riskConfig: Record<string, RiskInfo> = {
   normal: {
     icon: <BadgeCheck className="w-6 h-6 text-white fill-green-500" />,
@@ -197,4 +268,3 @@ export const ORDER_FILTER_LABELS: Record<string, string> = {
   sortDirection: "Order",
   productId: "Product",
 };
-

@@ -9,7 +9,7 @@ import { ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { GeneralSection, ShareField, shareNetworks } from "../constant";
 import { fieldPath } from "../utils";
-import SettingsCard from "../../_components/SettingsCard";
+import SettingsCard from "@/components/SettingsCard/SettingsCard";
 import ShareNetworkToggle from "./ShareNetworkToggle";
 
 const name = (field: ShareField) => fieldPath(GeneralSection.Share, field);

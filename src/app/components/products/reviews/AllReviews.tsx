@@ -51,7 +51,6 @@ export default function AllReviews() {
         <div className="flex flex-wrap gap-3 items-center mb-4">
           <Button
             variant="outline"
-            className="btn-outline-primary"
             onClick={handleDeleteSelected}
             disabled={!selectedIds.length}
           >
@@ -59,7 +58,6 @@ export default function AllReviews() {
           </Button>
           <Button
             variant="outline"
-            className="btn-outline-primary"
             onClick={handleApproveSelected}
             disabled={!selectedIds.length}
           >
@@ -67,7 +65,6 @@ export default function AllReviews() {
           </Button>
           <Button
             variant="outline"
-            className="btn-outline-primary"
             onClick={handleDisapproveSelected}
             disabled={!selectedIds.length}
           >

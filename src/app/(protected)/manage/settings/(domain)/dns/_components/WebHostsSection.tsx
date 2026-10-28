@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/Button";
 import Table from "@/components/ui/Table/Table";
-import SettingsCard from "../../../_components/SettingsCard";
+import SettingsCard from "@/components/SettingsCard/SettingsCard";
 import SettingsNotice from "../../../_components/SettingsNotice";
 import { DNS_FORM_TABLE_CLASS, EXTERNAL_EMAIL_HOSTING_URL } from "../constant";
 import { WebHostsSectionProps } from "./type";

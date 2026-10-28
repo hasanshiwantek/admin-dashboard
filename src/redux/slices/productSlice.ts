@@ -495,8 +495,10 @@ export const exportCsv = createAsyncThunk(
 // 2. Initial State
 const initialState = {
   products: [],
+  productsLoading: false,
   filterProducts: [],
   singleProduct: [],
+  singleProductLoading: false,
   brands: [],
   loading: false,
   error: null as string | null,
@@ -524,14 +526,17 @@ const productSlice = createSlice({
     builder
       .addCase(fetchAllProducts.pending, (state) => {
         state.loading = true;
+        state.productsLoading = true;
         state.error = null; // reset error
       })
       .addCase(fetchAllProducts.fulfilled, (state, action) => {
         state.loading = false;
+        state.productsLoading = false;
         state.products = action.payload;
       })
       .addCase(fetchAllProducts.rejected, (state, action) => {
         state.loading = false;
+        state.productsLoading = false;
         state.error =
           (action.payload as string) || action.error.message || "Failed";
       })
@@ -564,14 +569,17 @@ const productSlice = createSlice({
 
       .addCase(fetchSingleProduct.pending, (state) => {
         state.loading = true;
+        state.singleProductLoading = true;
         state.error = null; // reset error
       })
       .addCase(fetchSingleProduct.fulfilled, (state, action) => {
         state.loading = false;
+        state.singleProductLoading = false;
         state.singleProduct = action.payload;
       })
       .addCase(fetchSingleProduct.rejected, (state, action) => {
         state.loading = false;
+        state.singleProductLoading = false;
         state.error =
           (action.payload as string) || action.error.message || "Failed";
       })
