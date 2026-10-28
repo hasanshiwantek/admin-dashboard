@@ -9,30 +9,6 @@ import {
 } from "./constant";
 import { ScriptFormValues } from "./types";
 
-const toSnakeCaseValue = (value: unknown): unknown => {
-  if (Array.isArray(value)) return value.map(toSnakeCaseValue);
-  if (value !== null && typeof value === "object") {
-    return Object.fromEntries(
-      Object.entries(value).map(([key, entry]) => [
-        _.snakeCase(key),
-        toSnakeCaseValue(entry),
-      ]),
-    );
-  }
-  return value;
-};
-
-export function toSnakeCase(
-  value: Record<string, unknown>,
-): Record<string, unknown> {
-  return Object.fromEntries(
-    Object.entries(value).map(([key, entry]) => [
-      _.snakeCase(key),
-      toSnakeCaseValue(entry),
-    ]),
-  );
-}
-
 export function toCamelCaseRecord(value: unknown): Record<string, unknown> {
   if (value === null || typeof value !== "object" || Array.isArray(value)) {
     return {};
