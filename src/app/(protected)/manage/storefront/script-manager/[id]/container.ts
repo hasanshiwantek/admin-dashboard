@@ -12,20 +12,15 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { ScriptSchema } from "@/validations/formValidations";
 import {
-  ScriptCategory,
   scriptFormDefaultValues,
-  ScriptLoadMethod,
-  ScriptLocation,
   SCRIPT_MANAGER_ROUTE,
   ScriptFormNames,
-  ScriptPlacement,
   ScriptType,
 } from "./constant";
 import type { ScriptFormValues } from "./types";
 import {
   getLoadedScriptFormValues,
   toCamelCaseRecord,
-  toSnakeCase,
 } from "./utils";
 
 export function useScriptFormContainer() {
@@ -90,11 +85,10 @@ export function useScriptFormContainer() {
           ),
       ),
     );
-    const payload = toSnakeCase({
+    const payload = {
       ...formValues,
       integrityHashes,
-    });
-
+    }
     setLoading(true);
     try {
       if (isEdit && scriptId) {
