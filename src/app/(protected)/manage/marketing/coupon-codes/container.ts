@@ -1,5 +1,6 @@
 "use client";
 
+import { ActionEnums } from "@/const/appConstants";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import {
   deleteCouponCodes,
@@ -107,7 +108,22 @@ export const useCouponCodesContainer = () => {
       setDeletingId(null);
     }
   };
-
+const handleAction = (coupon: any) => (action: ActionEnums) => {
+  switch (action) {
+    case ActionEnums.EDIT:
+      goToEditPage(coupon.id);
+      break;
+    case ActionEnums.DELETE:
+      handleDeleteCoupon(coupon.id);
+      break;
+    case ActionEnums.COPY:
+      navigator.clipboard.writeText(coupon.couponCode);
+      break;
+    case ActionEnums.VIEW:
+      // view orders logic
+      break;
+  }
+};
   const goToEditPage = (id: number) =>
     router.push(`/manage/marketing/coupon-codes/edit/${id}`);
 
@@ -140,5 +156,6 @@ export const useCouponCodesContainer = () => {
     deletingId,
     router,
     dispatch,
+    handleAction
   };
 };

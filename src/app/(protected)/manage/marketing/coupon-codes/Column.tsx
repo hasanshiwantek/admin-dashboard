@@ -2,10 +2,11 @@ import { ColumnDef } from "@/components/ui/Table/types";
 import { Check, X, Loader2, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
-import { CouponColumnsProps } from "../types";
+import { CouponColumnsProps } from "./types";
 import ActionButton from "@/components/ActionButton/ActionButton";
-import { couponActions } from "../constant";
+import { couponActions } from "./constant";
 import { ActionEnums } from "@/const/appConstants";
+import { useCouponCodesContainer } from "./container";
 
 
 export default function CouponColumns({
@@ -14,6 +15,7 @@ export default function CouponColumns({
   handleDeleteCoupon,
   deletingId,
 }: CouponColumnsProps): ColumnDef<any>[] {
+  const { handleAction } = useCouponCodesContainer();
   return [
     {
       key: "couponName",
@@ -65,7 +67,7 @@ export default function CouponColumns({
           />
         ),
     },
-   {
+ {
   key: "actions",
   header: "Action",
   width: "80px",
@@ -73,17 +75,7 @@ export default function CouponColumns({
     <ActionButton
       data={coupon}
       actions={couponActions}
-      onAction={(item) => (action) => {
-        if (action === ActionEnums.EDIT) {
-          goToEditPage(item.id);
-        } else if (action === ActionEnums.DELETE) {
-          handleDeleteCoupon(item.id);
-        } else if (action === ActionEnums.COPY) {
-          // copy logic
-        } else if (action === ActionEnums.VIEW) {
-          
-        }
-      }}
+      onAction={handleAction}
       contentClassName="w-[160px]"
       triggerProps={{
         disabled: deletingId === coupon.id,

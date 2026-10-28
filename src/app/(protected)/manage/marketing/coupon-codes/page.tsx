@@ -8,7 +8,7 @@ import Link from "next/link";
 import { IoFilterOutline } from "react-icons/io5";
 import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
 import { useCouponCodesContainer } from "./container";
-import CouponColumns from "./_components/Column";
+import CouponColumns from "./Column";
 
 import PageTitle from "@/components/ui/PageTitle";
 
