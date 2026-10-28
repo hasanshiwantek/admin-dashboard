@@ -113,6 +113,9 @@ import {
 } from "@/Modals/ShippingModals/ShipByWeightModal/constant";
 import { DisplayNameField } from "@/Modals/ShippingModals/ShippingQuotesDisplayNameModal/constant";
 import type { PreviewItem } from "@/types/types";
+import { BrandFormNames } from "@/app/(protected)/manage/products/brands/[id]/constant";
+import { CategoryFormNames } from "@/app/(protected)/manage/products/categories/[id]/constant";
+import { AddCategoryFormNames } from "@/Modals/CategoryModals/AddCategoryModal/constant";
 import {
   array,
   boolean,
@@ -469,11 +472,39 @@ export const AdminUserSchema = object({
   [UserField.Permissions]: array().of(number().required()).default([]),
 });
 
-export const CategorySchema = object({
-  name: string().trim().required("Enter category display name"),
-  channel: string().required("Channel is required"),
-  parentId: number().nullable(),
-  isVisible: boolean(),
+// A category picked in CategoryDropdown; no id means the root
+const categoryPick = () =>
+  object({
+    id: number().nullable().default(null),
+    path: string().default(""),
+  }).required();
+
+export const AddCategorySchema = object({
+  [AddCategoryFormNames.Name]: string()
+    .trim()
+    .required("Enter category display name"),
+  [AddCategoryFormNames.Channel]: string().required("Channel is required"),
+  [AddCategoryFormNames.Parent]: categoryPick(),
+  [AddCategoryFormNames.IsVisible]: boolean().default(false),
+});
+
+export const CategoryFormSchema = object({
+  [CategoryFormNames.Name]: string()
+    .trim()
+    .required("Enter category display name"),
+  [CategoryFormNames.Slug]: string().default(""),
+  [CategoryFormNames.Channel]: string().default(""),
+  [CategoryFormNames.Description]: string().default(""),
+  [CategoryFormNames.IsVisible]: boolean().default(true),
+  [CategoryFormNames.Parent]: categoryPick(),
+  [CategoryFormNames.TemplateLayout]: string().default(""),
+  [CategoryFormNames.SortOrder]: number().min(0).default(0),
+  [CategoryFormNames.DefaultProductSort]: string().default(""),
+  [CategoryFormNames.SeoHomeTitle]: string().default(""),
+  [CategoryFormNames.SeoMetaKeywords]: string().default(""),
+  [CategoryFormNames.SeoMetaDescription]: string().default(""),
+  [CategoryFormNames.SeoSearchKeywords]: string().default(""),
+  [CategoryFormNames.Image]: mixed<File | string>().nullable().default(null),
 });
 
 export const BlogSchema = object({
@@ -1370,6 +1401,17 @@ export const ProductCategoriesSchema = object({
     .of(string().required())
     .required()
     .default([]),
+});
+
+export const BrandSchema = object({
+  [BrandFormNames.Name]: string().trim().required("Brand name is required"),
+  [BrandFormNames.PageTitle]: text(),
+  [BrandFormNames.MetaKeywords]: text(),
+  [BrandFormNames.MetaDescription]: text(),
+  [BrandFormNames.SearchKeywords]: text(),
+  [BrandFormNames.Logo]: mixed<File | string>().nullable().default(null),
+  [BrandFormNames.BrandUrl]: text(),
+  [BrandFormNames.TemplateLayout]: text(),
 });
 
 export const AddMediaFromUrlSchema = object({

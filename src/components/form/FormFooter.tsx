@@ -33,14 +33,14 @@ export function FormFooter({
       )}
     >
       {onCancel && (
-        <button
+        <Button
           type="button"
           className="text-xl! p-4 text-blue-500! cursor-pointer"
           onClick={onCancel}
           disabled={loading}
         >
           {cancelText}
-        </button>
+        </Button>
       )}
       {extraActions}
       <Button
