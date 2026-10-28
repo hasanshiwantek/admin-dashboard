@@ -18,6 +18,7 @@ import {
 import { Trash2, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import Image from "next/image";
+import useOrderCurrency from "./useOrderCurrency";
 export default function ProductTable({
   products,
   onQtyChange,
@@ -29,6 +30,8 @@ export default function ProductTable({
   onDelete: (id: number) => void;
   onPriceChange: (id: number | string, price: number) => void;
 }) {
+  const { priceStep, formatPrice, toOrderCurrency, fromOrderCurrency } =
+    useOrderCurrency();
   const getTotal = (p: any) => parseFloat(p.price || "0") * (p.quantity || 1);
 
   const subtotal = products.reduce((sum, p) => sum + getTotal(p), 0);
@@ -122,17 +125,20 @@ export default function ProductTable({
                   <Input
                     type="number"
                     min={0}
-                    step="0.01"
-                    value={product.price ?? 0}
+                    step={priceStep}
+                    value={toOrderCurrency(product.price ?? 0)}
                     onChange={(e) =>
-                      onPriceChange(product.id, parseFloat(e.target.value) || 0)
+                      onPriceChange(
+                        product.id,
+                        fromOrderCurrency(parseFloat(e.target.value) || 0),
+                      )
                     }
                     className="w-28"
                   />
                 </TableCell>
                 {/* Total */}
                 <TableCell className="font-medium">
-                  ${getTotal(product).toFixed(2)}
+                  {formatPrice(getTotal(product))}
                 </TableCell>
                 {/* Dropdown Action */}
                 <TableCell className="text-center">
@@ -161,7 +167,7 @@ export default function ProductTable({
       {/* Subtotal */}
       <div className="flex justify-end w-full">
         <div className="flex justify-end font-semibold my-5 items-center bg-gray-700 text-white p-4 text-xl w-fit rounded-md">
-          <span className="ml-2 !text-xl font-semibold !text-white"> Subtotal: ${subtotal.toFixed(2)}</span>
+          <span className="ml-2 !text-xl font-semibold !text-white"> Subtotal: {formatPrice(subtotal)}</span>
         </div>
       </div>
     </div>
