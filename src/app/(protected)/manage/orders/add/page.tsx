@@ -1,6 +1,5 @@
-import React from "react";
-import AnnouncementBanner from "@/app/components/orders/add/AnnouncementBanner";
 import OrderForm from "@/app/components/orders/add/forms/OrderForm";
+
 const page = () => {
   return (
     <div>
@@ -11,6 +10,5 @@ const page = () => {
     </div>
   );
 };
-
 
 export default page;

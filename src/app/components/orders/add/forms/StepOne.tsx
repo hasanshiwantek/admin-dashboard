@@ -1,30 +1,32 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
-import { useFormContext } from "react-hook-form";
+import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
+import SelectField from "@/components/form/fields/SelectField";
+import { Checkbox } from "@/components/ui/Checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Select,
-  SelectTrigger,
-  SelectValue,
   SelectContent,
   SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/Select";
-import { Checkbox } from "@/components/ui/Checkbox";
-import CustomerSearchDropdown, { Customer } from "./CustomerSearchDropdown";
+import { REGEX } from "@/const/regex";
+import { useAppSelector } from "@/hooks/useReduxHooks";
+import { fetchCurrencies } from "@/redux/slices/currencySlice";
 import {
   fetchCustomerAddresses,
   fetchCustomerByEmail,
 } from "@/redux/slices/customerSlice";
-import { useDispatch } from "react-redux";
-import { useRouter } from "next/navigation";
-import { Country, State } from "country-state-city";
 import { removeCouponUsage, resetCoupon } from "@/redux/slices/orderSlice";
 import { errorMessage } from "@/utils/message";
-import { useAppSelector } from "@/hooks/useReduxHooks";
-import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
-import { REGEX } from "@/const/regex";
+import { Country, State } from "country-state-city";
+import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import { useFormContext } from "react-hook-form";
+import { useDispatch } from "react-redux";
+import CustomerSearchDropdown, { Customer } from "./CustomerSearchDropdown";
 
 interface CustomerAddress {
   id: number;
@@ -56,6 +58,9 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
   const dispatch = useDispatch<any>();
   const { appliedCoupon } = useAppSelector((state: any) => state.order);
   const { loading } = useAppSelector((state: any) => state.customer);
+  const { currencies, currenciesLoading } = useAppSelector(
+    (state) => state.currency,
+  );
   const [customerAddresses, setCustomerAddresses] = useState<CustomerAddress[]>(
     [],
   );
@@ -68,6 +73,21 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
   const orderType = watch("orderType") || "existing";
   const billingCountry = watch("billingCountry") || "";
   const billingState = watch("billingState") || "";
+  const currencyCode = watch("selectedCurrency")?.code || "";
+
+  // fetchCurrencies puts the store's default currency first
+  const defaultCurrency =
+    currencies.find((currency) => currency.isDefault) ?? currencies[0];
+
+  const currencyOptions = useMemo(
+    () =>
+      currencies.filter(
+        (currency) =>
+          currency === defaultCurrency ||
+          (currency.isTransactional && currency.enabled),
+      ),
+    [currencies, defaultCurrency],
+  );
 
   const countryList = Country.getAllCountries().map((c) => ({
     name: c.name,
@@ -124,6 +144,10 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
   }, [watch("selectedBillingCustomer"), isEditMode, setValue, watch]);
 
   useEffect(() => {
+    if (!currencies.length) dispatch(fetchCurrencies());
+  }, [currencies.length, dispatch]);
+
+  useEffect(() => {
     if (!pendingState || stateList.length === 0) return;
     const stateExists = stateList.some((s) => s.code === pendingState);
     if (stateExists) {
@@ -138,6 +162,10 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
       return;
     }
 
+    if (!currencyCode) {
+      errorMessage("Please select a currency before proceeding.");
+      return;
+    }
     if (!billingCountry) {
       errorMessage("Please select a Country before proceeding.");
       return;
@@ -165,6 +193,22 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
 
   const handleCancel = () => {
     setShowCancelModal(true);
+  };
+
+  const handleCurrencyChange = (code: string) => {
+    const currency = currencies.find((c) => c.code === code);
+    setValue(
+      "selectedCurrency",
+      currency
+        ? {
+            id: currency.id,
+            code: currency.code,
+            name: currency.name,
+            symbol: currency.symbol,
+            exchangeRate: currency.exchangeRate,
+          }
+        : null,
+    );
   };
 
   const handleUseAddress = (address: CustomerAddress) => {
@@ -371,6 +415,29 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
             ) : (
               <span className="text-gray-400 2xl:!text-2xl">None</span>
             )}
+          </div>
+        </div>
+
+        <h1 className="mb-6 2xl:!text-[2.4rem]">Transactional currency</h1>
+        <div className="p-6 bg-white rounded-sm shadow-md">
+          <div className="flex items-center gap-6">
+            <Label className="2xl:!text-2xl" htmlFor="selectedCurrency">
+              Currency
+            </Label>
+            <SelectField
+              id="selectedCurrency"
+              options={currencyOptions}
+              value={currencyCode}
+              onChange={handleCurrencyChange}
+              getOptionValue={(currency) => currency.code}
+              getOptionLabel={(currency) =>
+                `${currency.name} (${currency.code})`
+              }
+              loading={currenciesLoading && !currencies.length}
+              loadingText="Loading currencies..."
+              placeholder="Select currency"
+              className="max-w-md"
+            />
           </div>
         </div>
 

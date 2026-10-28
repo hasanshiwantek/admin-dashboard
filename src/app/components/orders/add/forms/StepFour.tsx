@@ -1,20 +1,19 @@
 "use client";
-import { useEffect, useState } from "react";
-import OrderReview from "../OrderReview.tsx/OrderReview";
-import { useRouter } from "next/navigation";
+import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import {
   addOrder,
   addOrderForNewCustomer,
-  saveCouponUsageDraft,
+  updateOrder,
 } from "@/redux/slices/orderSlice";
-import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
-import { updateOrder } from "@/redux/slices/orderSlice";
-import { useFormContext } from "react-hook-form";
-import { addCustomerAddress } from "@/redux/slices/customerSlice";
-import { errorMessage } from "@/utils/message";
-import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
-import { getFromStorage } from "@/utils/storage";
 import { StoreItem } from "@/types/types";
+import { errorMessage } from "@/utils/message";
+import { getFromStorage } from "@/utils/storage";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useFormContext } from "react-hook-form";
+import OrderReview from "../OrderReview.tsx/OrderReview";
+
 export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
   const dispatch = useAppDispatch();
   const { handleSubmit, getValues } = useFormContext();
@@ -139,6 +138,7 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
             country: values?.shipping?.country,
           },
           isDraft,
+          selectedCurrency: values.selectedCurrency,
           paymentMethod: buildPaymentMethod(),
           comments: values.customerComments || "",
           staffNotes: values.staffNotes || "",
@@ -219,6 +219,7 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
       } else {
         return {
           isDraft,
+          selectedCurrency: values.selectedCurrency,
           customerId: values.selectedCustomer?.id,
           deviceType: getDeviceType(),
           userType: null,

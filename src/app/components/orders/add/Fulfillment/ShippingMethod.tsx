@@ -10,8 +10,9 @@ import {
 } from "@/components/ui/Select";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { fetchShippingRates } from "@/redux/slices/orderSlice";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
+import useOrderCurrency from "../useOrderCurrency";
 
 export function calculatePackage(products: any[]) {
   const totalWeight = products.reduce((sum, p) => {
@@ -40,7 +41,7 @@ export function calculatePackage(products: any[]) {
 const hasFreeShipping = (p: any) => Boolean(p?.freeShipping);
 const hasFixedShipping = (p: any) => Number(p?.fixedShippingCost) > 0;
 
-export function getProductShippingRate(products: any[]) {
+export function getProductShippingRate(products: any[], currency: string) {
   if (!products?.length) return null;
   if (!products.every((p) => hasFreeShipping(p) || hasFixedShipping(p))) {
     return null;
@@ -58,7 +59,7 @@ export function getProductShippingRate(products: any[]) {
       service_type: "fixed_shipping",
       display_name: "Fixed Shipping",
       total_charge: Number(total.toFixed(2)),
-      currency: "USD",
+      currency: currency || "USD",
       transit_days: null,
       delivery_date: null,
       is_fedex: false,
@@ -71,7 +72,7 @@ export function getProductShippingRate(products: any[]) {
     service_type: "free_shipping",
     display_name: "Free Shipping",
     total_charge: 0,
-    currency: "USD",
+    currency: currency || "USD",
     transit_days: null,
     delivery_date: null,
     is_fedex: false,
@@ -81,6 +82,10 @@ export default function ShippingMethod() {
   const { setValue, watch, getValues } = useFormContext();
   const dispatch = useAppDispatch();
   const values = getValues();
+  const { formatPrice, toOrderCurrency, fromOrderCurrency } =
+    useOrderCurrency();
+  // What the user is typing in the cost box, in the order's currency
+  const [costDraft, setCostDraft] = useState<string | null>(null);
 
   const selectedMethod = watch("shippingMethod") || {};
   const provider =
@@ -92,10 +97,15 @@ export default function ShippingMethod() {
     selectedMethod.method_type === "custom" &&
     (selectedMethod.cost === 0 || selectedMethod.cost === "0")
       ? ""
-      : String(selectedMethod.cost ?? "");
+      : selectedMethod.cost === undefined || selectedMethod.cost === ""
+        ? ""
+        : String(toOrderCurrency(selectedMethod.cost));
   const cart = watch("selectedProducts") || [];
   const { shippingRates } = useAppSelector((state) => state.order);
-  const productShippingRate = getProductShippingRate(cart);
+  const productShippingRate = getProductShippingRate(
+    cart,
+    values?.selectedCurrency?.code,
+  );
   const rates = productShippingRate
     ? [productShippingRate]
     : Array.isArray(shippingRates)
@@ -144,15 +154,18 @@ export default function ShippingMethod() {
     const formatted = e.target.value
       .replace(/[^\d.]/g, "")
       .replace(/^(\d*\.)(.*)$/, (_m, p1, p2) => p1 + p2.replace(/\./g, ""));
+    const usdCost =
+      formatted === "" ? "" : String(fromOrderCurrency(Number(formatted)));
 
+    setCostDraft(formatted);
     setValue(
       "shippingMethod",
       {
         ...selectedMethod,
         method_type: "custom",
         service_type: "custom",
-        total_charge: formatted,
-        cost: formatted,
+        total_charge: usdCost,
+        cost: usdCost,
       },
       { shouldDirty: true },
     );
@@ -166,6 +179,7 @@ export default function ShippingMethod() {
       state: values?.shipping?.state || values?.billingState,
       city: values?.shipping?.city || values?.billingCity,
       zip: values?.shipping?.zip || values?.billingZip,
+      currency: values?.selectedCurrency?.code,
     };
 
     if (
@@ -184,6 +198,7 @@ export default function ShippingMethod() {
               ...(payload?.city?.trim() && { city: payload?.city?.trim() }),
             },
             package: calculatePackage(cart),
+            currency: payload?.currency,
             // "package": {
             //   "total_weight": 12,
             //   "weight_unit": "LB",
@@ -200,9 +215,11 @@ export default function ShippingMethod() {
     values?.shipping?.state,
     values?.shipping?.city,
     values?.shipping?.zip,
+    values?.selectedCurrency,
   ]);
 
   const handleProviderChange = (val: string) => {
+    setCostDraft(null);
     if (val === "none") {
       setValue(
         "shippingMethod",
@@ -212,7 +229,7 @@ export default function ShippingMethod() {
           display_name: "None",
           total_charge: 0,
           cost: "0.00",
-          currency: "USD",
+          currency: values?.selectedCurrency?.code || "USD",
           transit_days: null,
           delivery_date: null,
           service_type: "none",
@@ -232,7 +249,7 @@ export default function ShippingMethod() {
           display_name: selectedMethod.display_name || "Custom",
           total_charge: Number(selectedMethod.total_charge || 0),
           cost: selectedMethod.cost || String(selectedMethod.total_charge || 0),
-          currency: "USD",
+          currency: values?.selectedCurrency?.code || "USD",
           transit_days: null,
           delivery_date: null,
           service_type: "custom",
@@ -284,7 +301,7 @@ export default function ShippingMethod() {
                   ? `${selectedMethod.display_name} — ${
                       Number(selectedMethod.total_charge) === 0
                         ? "Free"
-                        : `$${Number(selectedMethod.total_charge).toFixed(2)}`
+                        : formatPrice(selectedMethod.total_charge)
                     }`
                   : "Select Shipping Provider"}
               </span>
@@ -302,7 +319,7 @@ export default function ShippingMethod() {
                 const price =
                   Number(rate.total_charge) === 0
                     ? "Free"
-                    : `$${Number(rate.total_charge).toFixed(2)}`;
+                    : formatPrice(rate.total_charge);
 
                 return (
                   <SelectItem
@@ -346,7 +363,7 @@ export default function ShippingMethod() {
             <Input
               id="shipping-cost"
               type="text"
-              value={cost}
+              value={costDraft ?? cost}
               onChange={handleCostChange}
               className="mt-1 text-right"
               placeholder="0.00"
