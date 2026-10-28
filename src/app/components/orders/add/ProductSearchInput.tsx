@@ -1,13 +1,10 @@
 "use client";
 import { Input } from "@/components/ui/input";
-import { useState, useEffect, useRef } from "react";
-import {
-  fetchAllProducts,
-  fetchAllPurchasableProducts,
-  fetchFilterProducts,
-} from "@/redux/slices/productSlice";
-import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { useAlert } from "@/hooks/useAlert";
+import { useAppDispatch } from "@/hooks/useReduxHooks";
+import { fetchFilterProducts } from "@/redux/slices/productSlice";
+import { useEffect, useRef, useState } from "react";
+import useOrderCurrency from "./useOrderCurrency";
 export default function ProductSearchInput({ onSelect, register }: any) {
   const dispatch = useAppDispatch();
   const [search, setSearch] = useState("");
@@ -15,6 +12,7 @@ export default function ProductSearchInput({ onSelect, register }: any) {
   const [showDropdown, setShowDropdown] = useState(false);
   const [loading, setLoading] = useState(false);
   const { showAlert, Alert } = useAlert();
+  const { formatPrice } = useOrderCurrency();
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -122,8 +120,7 @@ export default function ProductSearchInput({ onSelect, register }: any) {
                       {product?.name || "Unnamed Product"}
                     </span>
                     <span className="block truncate text-gray-500">
-                      {product?.sku || "No SKU"} / $
-                      {Number(product?.price || 0).toFixed(2)}
+                      {product?.sku || "No SKU"} / {formatPrice(product?.price)}
                     </span>
                   </span>
                 </button>
