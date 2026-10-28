@@ -1,5 +1,5 @@
 import InputField from "@/components/form/InputField";
-import SettingsCard from "../../../_components/SettingsCard";
+import SettingsCard from "@/components/SettingsCard/SettingsCard";
 import { LocationFormNames, LocationSection } from "../constant";
 
 const LocationGeneralSection = () => (

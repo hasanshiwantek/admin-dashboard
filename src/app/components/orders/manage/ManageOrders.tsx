@@ -223,7 +223,7 @@ const ManageOrders = () => {
 
           {/* Advance Search button */}
           {/* <Link href={"/manage/orders/view-returns"}>
-            <button className="btn-outline-primary flex justify-start gap-1 items-center !text-xl">
+            <button className="flex justify-start gap-1 items-center !text-xl">
               Advance Search
             </button>
           </Link> */}

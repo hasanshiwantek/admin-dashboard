@@ -264,11 +264,11 @@ const EditBrand = () => {
 
       <div className="sticky bottom-0 w-full border-t p-6 bg-white flex justify-end gap-4">
         <Link href="/manage/products/brands/">
-          <button className="btn-outline-primary">Cancel</button>
+          <Button variant="outline" size="md">Cancel</Button>
         </Link>
-        <button className="btn-primary" type="submit" onClick={handleSubmit}>
+        <Button variant="primary" size="md" type="submit" onClick={handleSubmit}>
           Save
-        </button>
+        </Button>
       </div>
       <Alert />
     </div>

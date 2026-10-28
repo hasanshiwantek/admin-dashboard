@@ -1,7 +1,7 @@
 import SelectField from "@/components/form/fields/SelectField";
 import InputField from "@/components/form/InputField";
 import { ListRenderer } from "@/components/ListRenderer.tsx/ListRenderer";
-import SettingsCard from "../../../_components/SettingsCard";
+import SettingsCard from "@/components/SettingsCard/SettingsCard";
 import { UserField, userRoleOptions } from "../constant";
 import PermissionGroupField from "./PermissionGroupField";
 import { UserFormFieldsProps } from "./type";

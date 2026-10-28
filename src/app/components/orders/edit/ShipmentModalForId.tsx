@@ -192,7 +192,7 @@ export default function ShipmentModalForId({
                                                 />
 
                                                 <button
-                                                    className="btn-outline-primary 2xl:h-[32.5px] ml-2.5"
+                                                    className="2xl:h-[32.5px] ml-2.5"
                                                     onClick={() => {
                                                         const updatedValue = trackingChanges[shipment?.id];
                                                         if (updatedValue !== undefined) {
@@ -278,7 +278,7 @@ export default function ShipmentModalForId({
                                                                             alt={counrtyBilling?.label || ""}
                                                                         />
                                                                     ) : (
-                                                                        <span className="">🏳️</span>
+                                                                        <span>🏳️</span>
                                                                     )} */}
                                     <span>
                                       {orderDetails?.billingAddress?.country ||
@@ -376,7 +376,7 @@ export default function ShipmentModalForId({
                                                                             alt={counrtyShipping?.label || ""}
                                                                         />
                                                                     ) : (
-                                                                        <span className="">🏳️</span>
+                                                                        <span>🏳️</span>
                                                                     )} */}
                                     <span>
                                       {orderDetails?.billingInformation

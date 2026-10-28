@@ -1,7 +1,7 @@
 import { ListRenderer } from "@/components/ListRenderer.tsx/ListRenderer";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
-import SettingsCard from "../../../_components/SettingsCard";
+import SettingsCard from "@/components/SettingsCard/SettingsCard";
 import { STORE_TAX_SETTINGS_ROUTE } from "../constant";
 import { StoreTaxSettingsSectionProps } from "./type";
 

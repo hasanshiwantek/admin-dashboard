@@ -7,7 +7,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/components/ui/DropdownMenu";
 import { ActionEnums } from "@/const/appConstants";
 import { useAccess } from "@/hooks/useAccess";
 import { cn } from "@/lib/utils";

@@ -95,11 +95,11 @@ const AddBrand = () => {
 
       <div className="fixed bottom-0 left-0 w-full bg-white border-t p-6 flex justify-end gap-4 ">
         <Link href="/manage/products/brands">
-          <button className="btn-outline-primary">Cancel</button>
+          <Button variant="outline" size="md">Cancel</Button>
         </Link>
-        <button className="btn-primary" type="submit" onClick={handleSubmit}>
+        <Button variant="primary" size="md" type="submit" onClick={handleSubmit}>
           Save
-        </button>
+        </Button>
       </div>
     </div>
   );

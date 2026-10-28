@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/Button";
 import { getRequiredSlug } from "@/const/permissions";
 import { usePermissions } from "@/hooks/usePermissions";
 import Link from "next/link";
@@ -32,9 +33,9 @@ export default function PermissionGuard({
           You don't have permission to view this page. Contact your store
           administrator if you need access.
         </p>
-        <Link href="/manage/dashboard" className="btn-primary">
-          Go to dashboard
-        </Link>
+        <Button asChild variant="primary" size="md">
+          <Link href="/manage/dashboard">Go to dashboard</Link>
+        </Button>
       </div>
     );
   }

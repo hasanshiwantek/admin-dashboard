@@ -1,5 +1,6 @@
 "use client";
 import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
+import { Button } from "@/components/ui/Button";
 import { Label } from "@/components/ui/label";
 import { errorMessage } from "@/utils/message";
 import { useRouter } from "next/navigation";
@@ -162,13 +163,15 @@ export default function StepTwo({ step, setStep }: any) {
           </div>
 
           <div className="flex items-center gap-2">
-            <button
-              className="btn-outline-primary !whitespace-nowrap"
+            <Button
+              variant="outline"
+              size="md"
+              className="!whitespace-nowrap"
               type="button"
               onClick={() => setShowModal(true)}
             >
               Browse Categories
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -189,23 +192,25 @@ export default function StepTwo({ step, setStep }: any) {
       </div>
 
       <div className="fixed bottom-0 left-0 w-full border-t p-6 bg-white flex justify-end gap-4">
-        <button
+        <Button
+          variant="outline"
+          size="md"
           type="button"
           onClick={handleCancel}
-          className="btn-outline-primary"
         >
           Cancel
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="outline"
+          size="md"
           type="button"
-          className="btn-outline-primary"
           onClick={() => setStep(step - 1)}
         >
           Back
-        </button>
-        <button type="submit" className="btn-primary">
+        </Button>
+        <Button variant="primary" size="md" type="submit">
           Next
-        </button>
+        </Button>
       </div>
       <ConfirmationModal
         open={showCancelModal}

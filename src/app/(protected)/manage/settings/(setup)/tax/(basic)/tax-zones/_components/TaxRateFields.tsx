@@ -3,7 +3,7 @@ import InputField from "@/components/form/InputField";
 import HelpTooltip from "@/components/HelpTooltip/HelpTooltip";
 import { ListRenderer } from "@/components/ListRenderer.tsx/ListRenderer";
 import Link from "next/link";
-import SettingsCard from "../../../../../_components/SettingsCard";
+import SettingsCard from "@/components/SettingsCard/SettingsCard";
 import { BasicTaxTab, basicTaxTabRoute } from "../../constant";
 import { TaxRateClassFormNames, TaxRateFormNames } from "../constant";
 import { TaxRateFieldsProps } from "./type";

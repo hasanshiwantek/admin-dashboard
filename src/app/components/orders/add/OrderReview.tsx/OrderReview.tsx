@@ -752,9 +752,9 @@ export default function OrderReview({ step, setStep }: any) {
                   className="text-sm"
                 />
                 <Button
+                  variant="outline"
                   onClick={handleApplyManualDiscount}
                   type="button"
-                  className="btn-outline-primary"
                 >
                   Apply
                 </Button>
@@ -770,9 +770,9 @@ export default function OrderReview({ step, setStep }: any) {
                   }}
                 />
                 <Button
+                  variant="outline"
                   onClick={handleApplyCoupon}
                   type="button"
-                  className="btn-outline-primary"
                 >
                   {loading ? "Loading.." : "Apply"}
                 </Button>

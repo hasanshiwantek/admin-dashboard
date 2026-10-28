@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import ExportOptions from "./ExportOptions";
 import ExportPreview from "./ExportPreview";
+import { Button } from "@/components/ui/Button";
 
 export default function ExportPage() {
   const form = useForm({
@@ -57,10 +58,10 @@ export default function ExportPage() {
         </div>
 
         <div className="flex justify-end  gap-10 items-center fixed w-full  bottom-0 right-0  bg-white/90 z-10 shadow-xs border-t  p-4">
-          <button className="btn-outline-primary">Cancel</button>
-          <button className="btn-primary" type="submit">
+          <Button variant="outline" size="md">Cancel</Button>
+          <Button variant="primary" size="md" type="submit">
             Search
-          </button>
+          </Button>
         </div>
 
         {/* Tab Content */}

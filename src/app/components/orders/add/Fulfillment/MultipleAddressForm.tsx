@@ -206,14 +206,15 @@ export default function MultipleAddressForm() {
         </Table>
       </div>
 
-      <button
+      <Button
+        variant="outline"
+        size="md"
         type="button"
-        className="btn-outline-primary"
         onClick={() => setOpen(true)}
         disabled={selected.length === 0}
       >
         Select destination for products
-      </button>
+      </Button>
 
       {/* Destination Dialog */}
       <DestinationDialog

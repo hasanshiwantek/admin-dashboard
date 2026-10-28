@@ -1,7 +1,7 @@
-import styles from "@/styles/Home.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheckCircle, faCircle } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
+import { Button } from "@/components/ui/Button";
 const steps = [
   {
     title: "Add Products",
@@ -37,7 +37,7 @@ const SetupProgress = () => {
   return (
     <div>
       <h1 className="my-5 !text-[2.4rem]">Get started guides</h1>
-      <div className={`${styles.cardBox}`}>
+      <div className="w-full rounded-[0.6rem] bg-white p-8 shadow-xs">
         <h2 className="mb-3 uppercase ">Start Accepting Orders</h2>
         <hr className=" border-[1px] my-4 w-92" />
         <div className={`grid grid-cols-1 md:grid-cols-2 gap-y-8 gap-x-8 `}>
@@ -64,7 +64,7 @@ const SetupProgress = () => {
                 }. ${step.title}`}</h3>
                 <p className="!font-medium  !text-gray-500">{step.desc}</p>
                 <Link href={step?.href}>
-                  <button className="btn-outline-primary">{step.btn}</button>
+                  <Button variant="outline" size="md">{step.btn}</Button>
                 </Link>
               </div>
             </div>

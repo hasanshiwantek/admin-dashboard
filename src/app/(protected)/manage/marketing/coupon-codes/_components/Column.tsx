@@ -1,12 +1,7 @@
 import { ColumnDef } from "@/components/ui/Table/types";
 import { Check, X, Loader2, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+
 import { CouponColumnsProps } from "../types";
 import ActionButton from "@/components/ActionButton/ActionButton";
 import { couponActions } from "../constant";

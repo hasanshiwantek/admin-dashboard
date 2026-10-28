@@ -1,16 +1,31 @@
-'use client'
-import { useState } from 'react';
+"use client";
 import {
-  AlertDialog, AlertDialogTrigger, AlertDialogContent
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { AlertDialogHeader, AlertDialogTitle, AlertDialogDescription,
-  AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/Select";
+import { buttonVariants } from "@/components/ui/Button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/Select";
+import { useState } from "react";
 
-type Props = { trigger: React.ReactNode; onConfirm: (format: 'csv' | 'xml') => void };
+type Props = {
+  trigger: React.ReactNode;
+  onConfirm: (format: "csv" | "xml") => void;
+};
 
 export default function ExportShipmentsDialog({ trigger, onConfirm }: Props) {
-  const [format, setFormat] = useState<'csv'|'xml'>('csv');
+  const [format, setFormat] = useState<"csv" | "xml">("csv");
 
   return (
     <AlertDialog>
@@ -19,7 +34,9 @@ export default function ExportShipmentsDialog({ trigger, onConfirm }: Props) {
       <AlertDialogContent className="min-w-[70rem] p-0 overflow-hidden">
         {/* Header bar */}
         <div className="flex items-center justify-between px-6 py-4 border-b bg-[#34313f]">
-          <AlertDialogTitle className="!text-[2rem] font-light text-gray-700 !text-white">Export</AlertDialogTitle>
+          <AlertDialogTitle className="!text-[2rem] font-light text-white!">
+            Export
+          </AlertDialogTitle>
           <AlertDialogCancel asChild>
             <button className="!text-[2rem] p-0">×</button>
           </AlertDialogCancel>
@@ -33,8 +50,13 @@ export default function ExportShipmentsDialog({ trigger, onConfirm }: Props) {
 
           <div>
             <label className="block text-sm mb-1">Choose a file format</label>
-            <Select value={format} onValueChange={(v)=>setFormat(v as 'csv'|'xml')}>
-              <SelectTrigger className="w-60"><SelectValue placeholder="CSV" /></SelectTrigger>
+            <Select
+              value={format}
+              onValueChange={(v) => setFormat(v as "csv" | "xml")}
+            >
+              <SelectTrigger className="w-60">
+                <SelectValue placeholder="CSV" />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="csv">CSV</SelectItem>
               </SelectContent>
@@ -44,8 +66,15 @@ export default function ExportShipmentsDialog({ trigger, onConfirm }: Props) {
 
         {/* Footer */}
         <AlertDialogFooter className="px-6 py-4 border-t">
-          <AlertDialogCancel className="btn-outline-primary">Cancel</AlertDialogCancel>
-          <AlertDialogAction className="btn-primary" onClick={() => onConfirm(format)}>
+          <AlertDialogCancel
+            className={buttonVariants({ variant: "outline", size: "md" })}
+          >
+            Cancel
+          </AlertDialogCancel>
+          <AlertDialogAction
+            className={buttonVariants({ variant: "primary", size: "md" })}
+            onClick={() => onConfirm(format)}
+          >
             Export shipments
           </AlertDialogAction>
         </AlertDialogFooter>

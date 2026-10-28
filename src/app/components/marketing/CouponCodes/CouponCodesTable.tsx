@@ -1,0 +1,497 @@
+"use client";
+
+import { Button } from "@/components/ui/Button";
+import { Checkbox } from "@/components/ui/Checkbox";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/DropdownMenu";
+import { Input } from "@/components/ui/input";
+import Pagination from "@/components/ui/Pagination";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/Table";
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
+import {
+  deleteCouponCodes,
+  getCouponCodes,
+  searchCouponcode,
+  toggleCouponEnabled,
+} from "@/redux/slices/marketingSlice";
+import { Check, Loader2, MoreHorizontal, Trash2, X } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import { IoFilterOutline } from "react-icons/io5";
+import Spinner from "../../loader/Spinner";
+import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
+interface Coupon {
+  id: string;
+  name: string;
+  code: string;
+  discount: string;
+  expiration: string;
+  uses: number;
+  enabled: boolean;
+}
+
+const CouponCodesTable = () => {
+  const [selectedCoupons, setSelectedCoupons] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage, setPerPage] = useState("10");
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteIds, setDeleteIds] = useState<string[]>([]);
+const [openDeleteModal, setOpenDeleteModal] = useState(false);
+
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+  const { couponCodes, loading, error, deleteLoading } = useAppSelector(
+    (state: any) => state.marketingReducer,
+  );
+
+  const couponsData = couponCodes?.couponcode?.data || [];
+  const totalCount = couponCodes?.couponcode?.total || 0;
+  const totalPages = couponCodes?.couponcode?.last_page || 1;
+  const currentPageFromAPI = couponCodes?.couponcode?.current_page || 1;
+
+  useEffect(() => {
+    dispatch(getCouponCodes());
+  }, [dispatch, currentPage, perPage]);
+
+  const toggleSelectAll = () => {
+    if (selectedCoupons.length === couponsData?.length) {
+      setSelectedCoupons([]);
+    } else {
+      setSelectedCoupons(couponsData?.map((c: any) => c.id));
+    }
+  };
+
+  const toggleSelectCoupon = (id: string) => {
+    if (selectedCoupons.includes(id)) {
+      setSelectedCoupons(selectedCoupons.filter((cid) => cid !== id));
+    } else {
+      setSelectedCoupons([...selectedCoupons, id]);
+    }
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    setSelectedCoupons([]);
+  };
+
+  const handlePerPageChange = (value: string) => {
+    setPerPage(value);
+    setCurrentPage(1);
+    setSelectedCoupons([]);
+  };
+
+  const filterCouponHandler = () => {
+    if (searchQuery.trim()) {
+      dispatch(searchCouponcode({ search: searchQuery, per_page: perPage }));
+    } else {
+      dispatch(getCouponCodes());
+    }
+  };
+
+  const handleSearchKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      filterCouponHandler();
+    }
+  };
+
+  const handleClearSearch = () => {
+    setSearchQuery("");
+    dispatch(getCouponCodes());
+  };
+
+  // Delete single coupon
+  const handleToggleEnabled = async (coupon: any) => {
+    const nextEnabled = !coupon?.enabled;
+
+    try {
+      await dispatch(
+        toggleCouponEnabled({ id: coupon?.id, enabled: nextEnabled }),
+      ).unwrap();
+      dispatch(getCouponCodes());
+    } catch (error: any) {
+      console.error(error || "Failed to update coupon status");
+    }
+  };
+
+
+const handleDeleteCoupon = (id: string) => {
+  setDeleteIds([id]);
+  setOpenDeleteModal(true);
+};
+ 
+const handleDeleteSelected = () => {
+  if (selectedCoupons.length === 0) return;
+
+  setDeleteIds(selectedCoupons);
+  setOpenDeleteModal(true);
+};
+const confirmDelete = async () => {
+  try {
+    if (deleteIds.length === 1) {
+      const id = deleteIds[0];
+
+      setDeletingId(id);
+
+      await dispatch(deleteCouponCodes({ id })).unwrap();
+
+      setSelectedCoupons(selectedCoupons.filter((cid) => cid !== id));
+    } else {
+      await Promise.all(
+        deleteIds.map((id) =>
+          dispatch(deleteCouponCodes({ id })).unwrap()
+        )
+      );
+
+      setSelectedCoupons([]);
+    }
+
+    dispatch(getCouponCodes());
+    setOpenDeleteModal(false);
+  } catch (error: any) {
+    console.error(error || "Failed to delete coupon code");
+  } finally {
+    setDeletingId(null);
+  }
+};
+  const goToEditPage = (id: number) =>
+    router.push(`/manage/marketing/coupon-codes/edit/${id}`);
+
+  return (
+    <div className="p-10">
+      {/* Info Banner */}
+      <div className="bg-amber-50 border-l-4 border-yellow-500 px-6 py-4">
+        <p className="text-xl text-gray-700">
+          Create a greater variety of coupon types including "buy one, get one"
+          and "free gift with purchase" using the{" "}
+          <a href="#" className="text-blue-600 hover:underline">
+            standard promotions editor
+          </a>
+        </p>
+      </div>
+
+      {/* Header */}
+      <div className="px-6 py-6">
+        <h1 className="!font-light 2xl:!text-5xl mb-2">Coupon codes</h1>
+        <p className="text-gray-600">
+          Coupon codes allow you to provide customers with discounts on products
+          available for purchase from your store.
+        </p>
+      </div>
+
+      {/* Main Content */}
+      <div className="px-6 pb-6">
+        <div className="bg-white border rounded-lg">
+          {/* Action Bar */}
+          <div className="flex items-center gap-8 px-6 py-4 border-b">
+            <Link href={"/manage/marketing/coupon-codes/add"}>
+              <Button variant="outline" size="md">
+                Create a coupon code
+              </Button>
+            </Link>
+            <Button
+              variant="outline"
+              size="md"
+              disabled={selectedCoupons.length === 0 || deleteLoading}
+              onClick={handleDeleteSelected}
+            >
+              {deleteLoading ? (
+                <Loader2 className="h-6 w-6 animate-spin" />
+              ) : (
+                <Trash2 className="h-6 w-6 fill-blue-600" />
+              )}
+            </Button>
+
+            <div className="flex items-center border rounded 2xl:h-[37.98px]">
+              <Input
+                className="border-0 focus:ring-0 2xl:!text-2xl"
+                placeholder="Filter by Keyword"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={handleSearchKeyPress}
+              />
+              {searchQuery && (
+                <button
+                  onClick={handleClearSearch}
+                  className="px-2 text-gray-400 hover:text-gray-600"
+                  type="button"
+                >
+                  ×
+                </button>
+              )}
+              <Button
+                variant="outline"
+                size="md"
+                className="h-full"
+                onClick={filterCouponHandler}
+                type="button"
+              >
+                <IoFilterOutline />
+              </Button>
+            </div>
+            <div className="flex-1" />
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+              perPage={perPage}
+              onPerPageChange={handlePerPageChange}
+            />
+          </div>
+
+          {/* Table */}
+          <Table>
+            <TableHeader className="h-18">
+              <TableRow className="bg-gray-50 hover:bg-gray-50">
+                <TableHead className="w-12">
+                  <Checkbox
+                    checked={
+                      selectedCoupons.length === couponsData?.length &&
+                      couponsData?.length > 0
+                    }
+                    onCheckedChange={toggleSelectAll}
+                    disabled={loading || couponsData?.length === 0}
+                  />
+                </TableHead>
+                <TableHead className="font-semibold text-gray-700">
+                  Coupon name
+                </TableHead>
+                <TableHead className="font-semibold text-gray-700">
+                  Coupon code
+                </TableHead>
+                <TableHead className="font-semibold text-gray-700">
+                  Discount
+                </TableHead>
+                <TableHead className="font-semibold text-gray-700">
+                  Expiration
+                </TableHead>
+                <TableHead className="font-semibold text-gray-700">
+                  Enabled
+                </TableHead>
+                <TableHead className="font-semibold text-gray-700">
+                  Action
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {/* Loading State */}
+              {loading && (
+                <TableRow>
+                  <TableCell colSpan={8} className="h-64 text-center">
+                    <div className="flex flex-col items-center justify-center gap-3">
+                      <Spinner />
+                    </div>
+                  </TableCell>
+                </TableRow>
+              )}
+
+              {/* Error State */}
+              {!loading && error && (
+                <TableRow>
+                  <TableCell colSpan={8} className="h-64 text-center">
+                    <div className="flex flex-col items-center justify-center gap-3">
+                      <div className="rounded-full bg-red-100 p-3">
+                        <svg
+                          className="h-6 w-6 text-red-600"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M6 18L18 6M6 6l12 12"
+                          />
+                        </svg>
+                      </div>
+                      <p className="text-gray-900 font-medium">
+                        Failed to load coupon codes
+                      </p>
+                      <p className="text-gray-600 text-sm">
+                        {error?.message ||
+                          "An error occurred while fetching data"}
+                      </p>
+                      <Button
+                        onClick={() => dispatch(getCouponCodes())}
+                        variant="outline"
+                        className="mt-2"
+                      >
+                        Try Again
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              )}
+
+              {/* Empty State */}
+              {!loading && !error && couponsData?.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={8} className="h-64 text-center">
+                    <div className="flex flex-col items-center justify-center gap-3">
+                      <div className="rounded-full bg-gray-100 p-3">
+                        <svg
+                          className="h-6 w-6 text-gray-400"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+                          />
+                        </svg>
+                      </div>
+                      <p className="text-gray-900 font-medium">
+                        No coupon codes found
+                      </p>
+                      <p className="text-gray-600 text-sm">
+                        Get started by creating your first coupon code
+                      </p>
+                      <Link href={"/manage/marketing/coupon-codes/add"}>
+                        <Button className="mt-2">Create a coupon code</Button>
+                      </Link>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              )}
+
+              {/* Data Rows */}
+              {!loading &&
+                !error &&
+                couponsData?.length > 0 &&
+                couponsData?.map((coupon: any) => (
+                  <TableRow
+                    key={coupon?.id}
+                    className="hover:bg-gray-50 transition-colors h-18"
+                  >
+                    <TableCell>
+                      <Checkbox
+                        checked={selectedCoupons.includes(coupon?.id)}
+                        onCheckedChange={() => toggleSelectCoupon(coupon?.id)}
+                        disabled={deletingId === coupon?.id}
+                      />
+                    </TableCell>
+                    <TableCell className="text-blue-600 font-normal">
+                      <Link
+                        href={`/manage/marketing/coupon-codes/edit/${coupon?.id}`}
+                        className="text-inherit! [font-size:inherit]!"
+                      >
+                        {coupon?.couponName}
+                      </Link>
+                    </TableCell>
+
+                    <TableCell className="text-gray-700">
+                      {coupon?.couponCode}
+                    </TableCell>
+                    <TableCell className="text-gray-700">
+                      {coupon?.discountType === "dollarAmountOrder"
+                        ? `$${coupon?.discountAmount}`
+                        : `$${coupon?.discountAmount}`} off the order total
+                    </TableCell>
+                    <TableCell className="text-gray-700">
+                      {coupon?.expiration || "No expiration"}
+                    </TableCell>
+                    <TableCell>
+                      {coupon?.enabled ? (
+                        <Check
+                          className="text-green-500 w-8 h-8 cursor-pointer"
+                          onClick={() => handleToggleEnabled(coupon)}
+                        />
+                      ) : (
+                        <X
+                          className="text-red-500 w-8 h-8 cursor-pointer"
+                          onClick={() => handleToggleEnabled(coupon)}
+                        />
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <DropdownMenu  modal={false}>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 hover:bg-gray-100"
+                            disabled={deletingId === coupon?.id}
+                          >
+                            {deletingId === coupon?.id ? (
+                              <Loader2 className="!h-6 !w-6 animate-spin" />
+                            ) : (
+                              <MoreHorizontal className="!h-6 !w-6 text-gray-600" />
+                            )}
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                          align="end"
+                          className="w-[160px] space-y-4"
+                        >
+                          <DropdownMenuItem
+                            className="cursor-pointer"
+                            onClick={() => goToEditPage(coupon?.id)}
+                          >
+                            Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuItem className="cursor-pointer">
+                            Copy to Clipboard
+                          </DropdownMenuItem>
+                          <DropdownMenuItem className="cursor-pointer">
+                            View Orders
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="cursor-pointer text-red-600 focus:text-red-600"
+                            onClick={() => handleDeleteCoupon(coupon?.id)}
+                          >
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
+
+          {/* Pagination Footer */}
+          <div className="flex items-center justify-end px-6 py-4 border-t">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+              perPage={perPage}
+              onPerPageChange={handlePerPageChange}
+            />
+          </div>
+        </div>
+      </div>
+      <ConfirmationModal
+  open={openDeleteModal}
+  onOpenChange={setOpenDeleteModal}
+  variant="warning"
+  title="Delete coupon?"
+  description={
+    deleteIds.length > 1
+      ? `Are you sure you want to delete ${deleteIds.length} coupon code(s)?`
+      : "Are you sure you want to delete this coupon code?"
+  }
+  loading={deleteLoading}
+  onConfirm={confirmDelete}
+/>
+    </div>
+  );
+};
+
+export default CouponCodesTable;

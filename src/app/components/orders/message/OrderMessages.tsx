@@ -58,25 +58,28 @@ export default function OrderMessages() {
 
       <div className="bg-white p-4 shadow-md">
         <div className="flex flex-wrap gap-3 items-center mb-4">
-          <button
-            className="btn-outline-primary"
+          <Button
+            variant="outline"
+            size="md"
             onClick={() =>
               router.push(`/manage/orders/message/${orderId}/add`)
             }
           >
             Send a Message
-          </button>
+          </Button>
 
-          <button
-            className="btn-outline-primary"
+          <Button
+            variant="outline"
+            size="md"
             onClick={handleDeleteSelected}
             disabled={!selectedIds.length}
           >
             Delete Selected
-          </button>
+          </Button>
 
-          <button
-            className="btn-outline-primary"
+          <Button
+            variant="outline"
+            size="md"
             onClick={() =>
               router.push(
                 `/manage/orders?orderIdFrom=${orderId}&orderIdTo=${orderId}&expand=${orderId}`,
@@ -84,7 +87,7 @@ export default function OrderMessages() {
             }
           >
             View Orders
-          </button>
+          </Button>
         </div>
 
         <Table<any>

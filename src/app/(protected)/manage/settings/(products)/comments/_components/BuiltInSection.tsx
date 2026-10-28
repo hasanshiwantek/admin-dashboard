@@ -2,7 +2,7 @@ import CheckboxField from "@/components/form/fields/CheckboxField";
 import CheckboxListField from "@/components/form/fields/CheckboxListField";
 import InputField from "@/components/form/InputField";
 import Link from "next/link";
-import SettingsCard from "../../../_components/SettingsCard";
+import SettingsCard from "@/components/SettingsCard/SettingsCard";
 import {
   CommentSettingsFormNames,
   commentTargetOptions,

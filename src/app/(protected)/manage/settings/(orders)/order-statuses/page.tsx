@@ -55,9 +55,10 @@ const OrderStatusesPage = () => {
     >
       {!isEditing && (
         <Button
+          variant="primary"
           type="button"
           size="xl"
-          className="btn-primary mb-6 self-start"
+          className="mb-6 self-start"
           onClick={handleEdit}
         >
           Edit

@@ -1,6 +1,7 @@
 "use client";
 import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
 import SelectField from "@/components/form/fields/SelectField";
+import { Button } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -673,16 +674,17 @@ export default function StepOne({ step, setStep, isEditMode }: any) {
       </div>
 
       <div className="sticky bottom-0 w-full border-t p-6 bg-white flex justify-end gap-4">
-        <button
+        <Button
+          variant="outline"
+          size="md"
           type="button"
           onClick={handleCancel}
-          className="btn-outline-primary"
         >
           Cancel
-        </button>
-        <button type="submit" disabled={loading} className="btn-primary">
+        </Button>
+        <Button variant="primary" size="md" type="submit" disabled={loading}>
           {loading ? "Loading..." : "Next"}
-        </button>
+        </Button>
       </div>
       <ConfirmationModal
         open={showCancelModal}

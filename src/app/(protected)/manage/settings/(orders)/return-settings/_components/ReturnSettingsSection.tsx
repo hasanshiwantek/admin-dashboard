@@ -1,6 +1,6 @@
 import CheckboxField from "@/components/form/fields/CheckboxField";
 import InputField from "@/components/form/InputField";
-import SettingsCard from "../../../_components/SettingsCard";
+import SettingsCard from "@/components/SettingsCard/SettingsCard";
 import { ReturnSettingsFormNames } from "../constant";
 
 const ReturnSettingsSection = () => (

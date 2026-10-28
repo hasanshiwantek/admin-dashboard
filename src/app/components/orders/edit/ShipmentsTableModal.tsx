@@ -189,8 +189,10 @@ export default function ShipmentsTableModal({
                           }}
                         />
 
-                        <button
-                          className="btn-outline-primary 2xl:h-[32.5px] ml-2.5"
+                        <Button
+                          variant="outline"
+                          size="md"
+                          className="2xl:h-[32.5px] ml-2.5"
                           onClick={async () => {
                             const updatedValue = trackingChanges[shipment?.id];
                             if (updatedValue !== undefined) {
@@ -207,7 +209,7 @@ export default function ShipmentsTableModal({
                           disabled={shipmentLoader}
                         >
                           {shipmentLoader ? "Saving..." : "Save"}
-                        </button>
+                        </Button>
                       </TableCell>
 
                       <TableCell className="2xl:!text-2xl">
@@ -463,17 +465,18 @@ export default function ShipmentsTableModal({
               router.push(`/manage/orders/shipments?shipmentId=${shipmentId}`);
               handleClose();
             }}
-            className="btn-outline-primary  2xl:!text-2xl h-12"
+            className="2xl:!text-2xl h-12"
           >
             {cancelText}
           </Button>
           <Button
+            variant="outline"
             onClick={() => {
               onConfirm();
               handleClose();
             }}
             disabled={loading}
-            className="btn-outline-primary 2xl:!text-2xl h-12 !text-white !bg-[#64a2e4]  border-none"
+            className="2xl:!text-2xl h-12 !text-white !bg-[#64a2e4] border-none"
           >
             {loading ? "..." : confirmText}
           </Button>

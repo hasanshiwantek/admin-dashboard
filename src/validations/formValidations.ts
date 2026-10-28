@@ -1,3 +1,5 @@
+import { CustomerField } from "@/app/(protected)/manage/customers/add/constant";
+import { AddressField } from "@/app/(protected)/manage/customers/edit/[id]/[addressId]/constant";
 import {
   BannerDateType,
   BannerFormNames,
@@ -7,6 +9,15 @@ import {
   BannerPlacement,
 } from "@/app/(protected)/manage/marketing/banners/constant";
 import { needsLocationId } from "@/app/(protected)/manage/marketing/banners/utils";
+import {
+  BulkPricingTierFormNames,
+  CustomFieldFormNames,
+  DiscountType,
+  HsCodeFormNames,
+  MAX_PURCHASE_QUANTITY,
+  ProductFormNames,
+  PurchasabilityStatus,
+} from "@/app/(protected)/manage/products/[id]/constant";
 import { UserField } from "@/app/(protected)/manage/settings/(advanced)/users/constant";
 import {
   DnsRecordFormNames,
@@ -64,6 +75,14 @@ import {
   TaxZoneBasedOn,
   TaxZoneSettingsFormNames,
 } from "@/app/(protected)/manage/settings/(setup)/tax/(basic)/tax-zones/constant";
+import {
+  ScriptCategory,
+  ScriptFormNames,
+  ScriptLoadMethod,
+  ScriptLocation,
+  ScriptPlacement,
+  ScriptType,
+} from "@/app/(protected)/manage/storefront/script-manager/[id]/constant";
 import { BlogFormFieldName } from "@/app/components/blog/constant";
 import { MessageField } from "@/app/components/orders/message/helper/constant";
 import {
@@ -75,7 +94,12 @@ import {
   PageTypeEnums,
   WebPageField,
 } from "@/app/components/storefront/constants";
+import { REGEX } from "@/const/regex";
 import { AddCurrencyFormNames } from "@/Modals/CurrencyModals/AddCurrencyModal/constant";
+import { AddMediaFromUrlFormNames } from "@/Modals/ProductModals/AddMediaFromUrlModal/constant";
+import { EditProductPricesFormNames } from "@/Modals/ProductModals/EditProductPricesSheet/constant";
+import { EditProductStockFormNames } from "@/Modals/ProductModals/EditProductStockSheet/constant";
+import { ProductCategoriesFormNames } from "@/Modals/ProductModals/ProductCategoriesModal/constant";
 import {
   UpdateUrlsFormNames,
   UpdateUrlsScope,
@@ -88,6 +112,7 @@ import {
   ShipByWeightField,
 } from "@/Modals/ShippingModals/ShipByWeightModal/constant";
 import { DisplayNameField } from "@/Modals/ShippingModals/ShippingQuotesDisplayNameModal/constant";
+import type { PreviewItem } from "@/types/types";
 import {
   array,
   boolean,
@@ -99,9 +124,6 @@ import {
   ref,
   string,
 } from "yup";
-import { CustomerField } from "@/app/(protected)/manage/customers/add/constant";
-import { REGEX } from "@/const/regex";
-import { AddressField } from "@/app/(protected)/manage/customers/edit/[id]/[addressId]/constant";
 
 export const BannerSchema = object({
   [BannerFormNames.Title]: string().trim().required("Banner name is required"),
@@ -498,10 +520,7 @@ export const CouponCodeSchema = object({
 
   categoryIds: array().of(string().defined()).defined(),
 
-  productIds: array()
-  .of(string().defined())
-  .default([])
-  .defined(),
+  productIds: array().of(string().defined()).default([]).defined(),
 
   limitByLocation: boolean().defined(),
   limitByShipping: boolean().defined(),
@@ -534,20 +553,20 @@ export const CouponCodeSchema = object({
     return true;
   })
   .test("category-validation", function (values) {
-  // Category validation sirf categories select hone par chalegi
-  if (values?.appliesTo !== "categories") {
+    // Category validation sirf categories select hone par chalegi
+    if (values?.appliesTo !== "categories") {
+      return true;
+    }
+
+    if (!values.categoryIds || values.categoryIds.length === 0) {
+      return this.createError({
+        path: "categoryIds",
+        message: "Select at least one category",
+      });
+    }
+
     return true;
-  }
-
-  if (!values.categoryIds || values.categoryIds.length === 0) {
-    return this.createError({
-      path: "categoryIds",
-      message: "Select at least one category",
-    });
-  }
-
-  return true;
-});
+  });
 
 export type CouponCodeForm = InferType<typeof CouponCodeSchema>;
 // WebPageSchema
@@ -1139,3 +1158,262 @@ export const AddressSchema = object({
 });
 
 // #endregion Address
+
+// #region Product
+const isNonNegative = (value?: string) =>
+  !value || (Number.isFinite(Number(value)) && Number(value) >= 0);
+
+const decimalPlacesOf = (value?: string) => value?.split(".")[1]?.length ?? 0;
+
+// An amount in the store's default currency. Its decimal places come from the
+// form's context (`useForm({ context: { decimalPlaces } })`), default 2
+const money = (label: string) =>
+  text()
+    .trim()
+    .test("money", `${label} must be a number of 0 or more`, isNonNegative)
+    .test("money-places", function (value) {
+      const places = this.options.context?.decimalPlaces ?? 2;
+      if (decimalPlacesOf(value) <= places) return true;
+      return this.createError({
+        message: places
+          ? `${label} can have at most ${places} decimal places`
+          : `${label} must be a whole amount`,
+      });
+    });
+
+const measurement = (label: string) =>
+  text()
+    .trim()
+    .test(
+      "measurement",
+      `${label} must be a number of 0 or more`,
+      isNonNegative,
+    )
+    .test(
+      "measurement-places",
+      `${label} can have at most 2 decimal places`,
+      (value) => decimalPlacesOf(value) <= 2,
+    );
+
+const wholeNumber = (label: string, max?: number) =>
+  text()
+    .trim()
+    .test(
+      "whole-number",
+      `${label} must be a whole number`,
+      (value) => !value || REGEX.WHOLE_NUMBER.test(value),
+    )
+    .test(
+      "whole-number-max",
+      `${label} must be less than ${(Number(max) + 1).toLocaleString()}`,
+      (value) => !value || max === undefined || Number(value) <= max,
+    );
+
+export const ProductSchema = object({
+  [ProductFormNames.IsVisible]: flag(true),
+  [ProductFormNames.Name]: string().trim().required("Product name is required"),
+  [ProductFormNames.Sku]: string()
+    .trim()
+    .required("SKU is required")
+    .test(
+      "sku",
+      "SKU can't contain $ * & @ ! = + % ` ' \" ^ |",
+      (value) => !REGEX.URL_BLOCKED_CHARS.test(value ?? ""),
+    ),
+  [ProductFormNames.ProductType]: text(),
+  [ProductFormNames.BrandId]: text(),
+  [ProductFormNames.Price]: money("Price").required("Price is required"),
+  [ProductFormNames.Weight]:
+    measurement("Weight").required("Weight is required"),
+  [ProductFormNames.CategoryIds]: array()
+    .of(number().required())
+    .required()
+    .default([]),
+  [ProductFormNames.Description]: text(),
+  [ProductFormNames.Faq]: text(),
+  [ProductFormNames.Images]: array()
+    .of(mixed<PreviewItem>().required())
+    .required()
+    .default([]),
+  [ProductFormNames.Upc]: text(),
+  [ProductFormNames.Bpn]: text(),
+  [ProductFormNames.Mpn]: text(),
+  [ProductFormNames.Gtin]: text(),
+  [ProductFormNames.TaxClass]: text(),
+  [ProductFormNames.CostPrice]: money("Cost"),
+  [ProductFormNames.Msrp]: money("MSRP"),
+  [ProductFormNames.SalePrice]: money("Sale price"),
+  [ProductFormNames.TaxCode]: text(),
+  [ProductFormNames.DiscountType]: text(),
+  [ProductFormNames.BulkPricingTiers]: array()
+    .of(
+      object({
+        [BulkPricingTierFormNames.MinQty]: wholeNumber(
+          "Minimum quantity",
+        ).required("Minimum quantity is required"),
+        [BulkPricingTierFormNames.Price]: money("Discount")
+          .required("Discount is required")
+          .test(
+            "percent",
+            "A % discount can't be more than 100",
+            function (value) {
+              const discountType = this.from?.[1]?.value?.discountType;
+              return (
+                discountType !== DiscountType.Percent || Number(value) <= 100
+              );
+            },
+          ),
+      }),
+    )
+    .required()
+    .default([]),
+  [ProductFormNames.TrackInventory]: flag(true),
+  [ProductFormNames.InventoryLevel]: text(),
+  [ProductFormNames.CurrentStock]: wholeNumber("Current stock"),
+  [ProductFormNames.LowStock]: wholeNumber("Low stock"),
+  [ProductFormNames.IsFeatured]: flag(),
+  [ProductFormNames.SearchKeywords]: text(),
+  [ProductFormNames.SortOrder]: text()
+    .trim()
+    .test(
+      "sort-order",
+      "Sort order must be a whole number",
+      (value) => !value || REGEX.SIGNED_INTEGER.test(value),
+    ),
+  [ProductFormNames.TemplateLayout]: text(),
+  [ProductFormNames.Warranty]: text(),
+  [ProductFormNames.AvailabilityText]: text(),
+  [ProductFormNames.Condition]: text(),
+  [ProductFormNames.ShowCondition]: flag(),
+  [ProductFormNames.CustomFields]: array()
+    .of(
+      object({
+        [CustomFieldFormNames.Name]: string()
+          .trim()
+          .required("Custom field name is required"),
+        [CustomFieldFormNames.Value]: string()
+          .trim()
+          .required("Custom field value is required"),
+      }),
+    )
+    .required()
+    .default([]),
+  [ProductFormNames.RelatedProducts]: flag(true),
+  [ProductFormNames.Width]: measurement("Width"),
+  [ProductFormNames.Height]: measurement("Height"),
+  [ProductFormNames.Depth]: measurement("Depth"),
+  [ProductFormNames.FixedShippingCost]: money("Fixed shipping price"),
+  [ProductFormNames.FreeShipping]: flag(),
+  [ProductFormNames.PurchasabilityStatus]: text(),
+  [ProductFormNames.CallForPricing]: flag(),
+  [ProductFormNames.CallForPricingLabel]: text(),
+  [ProductFormNames.CallForPricingPhone]: text().when(
+    [ProductFormNames.PurchasabilityStatus, ProductFormNames.CallForPricing],
+    ([status, callForPricing], schema) =>
+      status === PurchasabilityStatus.NotAvailable && callForPricing
+        ? schema.required("Phone number is required")
+        : schema,
+  ),
+  [ProductFormNames.MinPurchaseQuantity]: wholeNumber(
+    "Minimum purchase quantity",
+    MAX_PURCHASE_QUANTITY,
+  ),
+  [ProductFormNames.MaxPurchaseQuantity]: wholeNumber(
+    "Maximum purchase quantity",
+    MAX_PURCHASE_QUANTITY,
+  ),
+  [ProductFormNames.ManageCustoms]: flag(),
+  [ProductFormNames.CountryOfOrigin]: text(),
+  [ProductFormNames.CommodityDescription]: text(),
+  [ProductFormNames.HsCodes]: array()
+    .of(
+      object({
+        [HsCodeFormNames.Country]: text(),
+        [HsCodeFormNames.Code]: text(),
+      }),
+    )
+    .required()
+    .default([]),
+  [ProductFormNames.PageTitle]: text(),
+  [ProductFormNames.ProductUrl]: string()
+    .trim()
+    .required("Product URL is required")
+    .test(
+      "product-url",
+      "Product URL contains characters that aren't allowed",
+      (value) => !REGEX.SLUG_BLOCKED_CHARS.test(value ?? ""),
+    ),
+  [ProductFormNames.IsRedirect]: flag(),
+  [ProductFormNames.MetaDescription]: text(),
+  [ProductFormNames.ObjectType]: text(),
+  [ProductFormNames.UseProductName]: flag(true),
+  [ProductFormNames.GraphDescription]: flag(true),
+  [ProductFormNames.ImageOption]: text(),
+});
+
+export const EditProductPricesSchema = object({
+  [EditProductPricesFormNames.Price]:
+    money("Price").required("Price is required"),
+  [EditProductPricesFormNames.SalePrice]: money("Sale price"),
+  [EditProductPricesFormNames.CostPrice]: money("Cost"),
+  [EditProductPricesFormNames.Msrp]: money("MSRP"),
+});
+
+export const EditProductStockSchema = object({
+  [EditProductStockFormNames.CurrentStock]: wholeNumber("Current stock"),
+  [EditProductStockFormNames.LowStock]: wholeNumber("Low stock"),
+  [EditProductStockFormNames.AllowPurchase]: flag(),
+});
+
+export const ProductCategoriesSchema = object({
+  [ProductCategoriesFormNames.Categories]: array()
+    .of(string().required())
+    .required()
+    .default([]),
+});
+
+export const AddMediaFromUrlSchema = object({
+  [AddMediaFromUrlFormNames.Url]: string()
+    .trim()
+    .url("Enter a valid URL")
+    .required("URL is required"),
+});
+// #endregion Product
+// #region Script manager
+export const ScriptSchema = object({
+  [ScriptFormNames.ScriptName]: string()
+    .trim()
+    .required(
+      "Enter a valid script name. Script names can’t include: @$%^&()=<|~`[]{}:",
+    ),
+  [ScriptFormNames.Description]: string().defined(),
+  [ScriptFormNames.Placement]: string()
+    .oneOf(Object.values(ScriptPlacement))
+    .required("Placement is required"),
+  [ScriptFormNames.Location]: string()
+    .oneOf(Object.values(ScriptLocation))
+    .required("Location is required"),
+  [ScriptFormNames.ScriptCategory]: string()
+    .oneOf(Object.values(ScriptCategory))
+    .required("Script category is required"),
+  [ScriptFormNames.ScriptType]: string()
+    .oneOf(Object.values(ScriptType))
+    .required("Script type is required"),
+  [ScriptFormNames.LoadMethod]: string()
+    .oneOf(Object.values(ScriptLoadMethod))
+    .defined(),
+  [ScriptFormNames.ScriptUrl]: string().when(ScriptFormNames.ScriptType, {
+    is: ScriptType.URL,
+    then: (schema) => schema.trim().required("Script URL is required"),
+    otherwise: (schema) => schema.notRequired(),
+  }),
+  [ScriptFormNames.IntegrityHashes]: array().of(string().defined()).defined(),
+  [ScriptFormNames.CurrentIntegrityHash]: string().defined(),
+  [ScriptFormNames.ScriptContents]: string().when(ScriptFormNames.ScriptType, {
+    is: ScriptType.SCRIPT,
+    then: (schema) => schema.trim().required("Script contents are required"),
+    otherwise: (schema) => schema.notRequired(),
+  }),
+});
+
+// #endregion Script manager

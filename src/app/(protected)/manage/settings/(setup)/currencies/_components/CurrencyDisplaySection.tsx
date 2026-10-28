@@ -1,6 +1,6 @@
 import { SelectField } from "@/components/form/fields/SelectField";
 import InputField from "@/components/form/InputField";
-import SettingsCard from "../../../_components/SettingsCard";
+import SettingsCard from "@/components/SettingsCard/SettingsCard";
 import { CurrencyFormNames, FIELD_WIDTH, LABEL_CLASS } from "../constant";
 import { CurrencyDisplaySectionProps } from "./type";
 

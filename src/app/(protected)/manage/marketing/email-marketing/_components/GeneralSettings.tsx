@@ -196,7 +196,7 @@ const GeneralSettings = () => {
               </li>
             </ul>
 
-            <button className="btn-outline-primary">Install now</button>
+            <button>Install now</button>
           </div>
         </div>
       </div> */}

@@ -449,9 +449,9 @@ const LogoPage = () => {
 
       {/* --- ACTION BUTTONS --- */}
       <div className="flex justify-end gap-4 items-center fixed w-full bottom-0 right-0 bg-white/90 z-10 shadow-xs border-t p-4">
-        <button type="submit" className="btn-primary" disabled={loading}>
+        <Button variant="primary" size="md" type="submit" disabled={loading}>
           {loading ? "Saving..." : "Save"}
-        </button>
+        </Button>
       </div>
     </form>
   );

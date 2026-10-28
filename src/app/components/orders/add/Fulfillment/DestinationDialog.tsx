@@ -27,6 +27,7 @@ import { useFormContext } from "react-hook-form";
 import { countriesList } from "@/const/location";
 import ShippingMethod from "./ShippingMethod";
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/Button";
 export default function DestinationDialog({
   open,
   setOpen,
@@ -290,9 +291,11 @@ export default function DestinationDialog({
                     </div>
                   )}
                 </div>
-                <button
+                <Button
+                  variant="primary"
+                  size="md"
                   type="button"
-                  className="btn-primary mt-4"
+                  className="mt-4"
                   onClick={() => {
                     setValue(
                       "destinationForm.firstName",
@@ -330,22 +333,23 @@ export default function DestinationDialog({
                   }}
                 >
                   Use this address
-                </button>
+                </Button>
               </div>
             )}
           </div>
         </div>
         <div>
           <div className="sticky bottom-0 w-full border-t p-6 bg-white flex justify-end gap-4">
-            <button
-              className="btn-outline-primary"
+            <Button
+              variant="outline"
+              size="md"
               onClick={() => setOpen(false)}
             >
               Cancel
-            </button>
-            <button className="btn-primary" onClick={handleAllocateClick}>
+            </Button>
+            <Button variant="primary" size="md" onClick={handleAllocateClick}>
               Allocate Products
-            </button>
+            </Button>
           </div>
         </div>
       </DialogContent>

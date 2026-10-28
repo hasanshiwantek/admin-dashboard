@@ -8,7 +8,7 @@ import {
   searchSortOptions,
 } from "../constant";
 import { fieldPath } from "../utils";
-import SettingsCard from "../../_components/SettingsCard";
+import SettingsCard from "@/components/SettingsCard/SettingsCard";
 import HelpTooltip from "@/components/HelpTooltip/HelpTooltip";
 
 const name = (field: SearchField) => fieldPath(GeneralSection.Search, field);
