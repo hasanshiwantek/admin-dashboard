@@ -1,14 +1,5 @@
 "use client";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import PageTitle from "@/components/ui/PageTitle";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import {
   deleteAllSubscribers,
@@ -17,16 +8,19 @@ import {
 } from "@/redux/slices/marketingSlice";
 import { errorMessage, successMessage } from "@/utils/message";
 import { useState } from "react";
+import ConfirmationModal from "../../../user-settings/additional-authentication/helpers/ConfirmationModal";
 
 const Subscriber = () => {
   const dispatch = useAppDispatch();
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { emailMarketing } = useAppSelector(
     (state: any) => state.marketingReducer,
   );
 
   const handleDeleteAll = async () => {
     try {
+      setLoading(true);
       const res = await dispatch(deleteAllSubscribers()).unwrap();
 
       successMessage(res.message);
@@ -36,8 +30,11 @@ const Subscriber = () => {
       dispatch(getEmailMarketing()); // subscriber count refresh
     } catch (err: any) {
       errorMessage(err);
+    } finally {
+      setLoading(false);
     }
   };
+
   const handleExportSubscribers = async () => {
     try {
       const blob = await dispatch(exportSubscribers()).unwrap();
@@ -62,7 +59,7 @@ const Subscriber = () => {
     <>
       <div>
         <div className="bg-blue-100 border-l-6 border-blue-500 p-5 mb-6 shadow-md">
-          <p className="!text-2xl text-gray-700">
+          <p className="text-2xl! text-gray-700">
             If you are using a third party email service, email subscribers can
             also be synced to your email marketing provider.{" "}
             <a href="#" className="text-blue-600 hover:underline">
@@ -73,9 +70,11 @@ const Subscriber = () => {
         </div>
       </div>
       <div className="flex flex-col gap-8">
-        <h2 className="!text-4xl !font-semibold text-gray-900">
-          Export Newsletter Subscribers
-        </h2>
+        <PageTitle
+          title="Export Newsletter Subscribers"
+          titleClassName="text-4xl! font-semibold! text-gray-900"
+          hideActionButton
+        />
         <div className="bg-white shadow-sm border border-gray-200 p-10">
           <div className="flex items-center gap-6 py-6">
             <div className="flex items-center gap-2">
@@ -115,32 +114,15 @@ const Subscriber = () => {
         </div>
       </div>
 
-      <AlertDialog open={openDeleteModal} onOpenChange={setOpenDeleteModal}>
-        <AlertDialogContent className="sm:max-w-[600px] w-[95%] rounded-2xl p-8">
-          <AlertDialogHeader className="space-y-3">
-            <AlertDialogTitle className="text-2xl font-semibold">
-              Delete All Subscribers?
-            </AlertDialogTitle>
-
-            <AlertDialogDescription className="text-base leading-7 text-gray-600">
-              Are you sure you want to delete all subscribers?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-
-          <AlertDialogFooter className="mt-8 gap-3">
-            <AlertDialogCancel className="h-11 px-6 bg-blue-100 text-blue-700 border-blue-200 hover:bg-blue-200">
-              Cancel
-            </AlertDialogCancel>
-
-            <AlertDialogAction
-              onClick={handleDeleteAll}
-              className="h-11 px-6 bg-red-600 hover:bg-red-700 text-white"
-            >
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <ConfirmationModal
+  open={openDeleteModal}
+  onOpenChange={setOpenDeleteModal}
+  onConfirm={handleDeleteAll}
+  loading={loading}
+  variant="warning"
+  title="Delete All Subscribers?"
+  description="Are you sure you want to delete all subscribers?"
+/>
     </>
   );
 };

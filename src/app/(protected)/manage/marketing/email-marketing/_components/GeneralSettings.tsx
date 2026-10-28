@@ -7,11 +7,10 @@ import { createEmailMarketing } from "@/redux/slices/marketingSlice";
 import { Info } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import {
-  EmailMarketingFormNames,
-  EmailMarketingGeneralSettingsDefaultValues,
-} from "../constants";
-import type { EmailMarketingGeneralSettings } from "../types";
+
+import PageTitle from "@/components/ui/PageTitle";
+import { EmailMarketingFormNames, EmailMarketingGeneralSettingsDefaultValues } from "../constants";
+import { EmailMarketingGeneralSettings } from "../types";
 
 const GeneralSettings = () => {
   const dispatch = useAppDispatch();
@@ -43,9 +42,11 @@ const GeneralSettings = () => {
 
   return (
     <div>
-      <h2 className="text-4xl! font-semibold! text-gray-900 mb-4">
-        Newsletter settings
-      </h2>
+     <PageTitle
+  title="Newsletter settings"
+  titleClassName="text-4xl! font-semibold! text-gray-900 mb-4"
+  hideActionButton
+/>
       <Form
         form={form}
         onSubmit={onSubmit}
