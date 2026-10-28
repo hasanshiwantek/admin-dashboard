@@ -7,7 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/Table";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { useEffect, useState } from "react";
 import Pagination from "@/components/ui/pagination";
 import { Check } from "lucide-react";

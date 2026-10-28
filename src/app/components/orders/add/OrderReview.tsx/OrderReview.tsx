@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/Checkbox"; // Added Checkbox component
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -31,6 +31,7 @@ import {
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
+import useOrderCurrency from "../useOrderCurrency";
 
 // Utility arrays for Select options
 const cardTypes = ["Visa", "Mastercard", "American Express", "Discover"];
@@ -55,6 +56,7 @@ export default function OrderReview({ step, setStep }: any) {
   const { watch, register, setValue, getValues } = useFormContext();
   const dispatch = useAppDispatch();
   const { can } = usePermissions();
+  const { formatPrice, fromOrderCurrency } = useOrderCurrency();
   const hasDraftOrderPermission = can("draft_orders");
   const { appliedCoupon, loading } = useAppSelector(
     (state: any) => state.order,
@@ -142,7 +144,7 @@ export default function OrderReview({ step, setStep }: any) {
     destinationType === "multiple" || shippingDestinations.length > 0;
   const handleApplyManualDiscount = () => {
     const amount = Math.max(Number(manualDiscountInput) || 0, 0);
-    setValue("manualDiscount", amount, { shouldDirty: true });
+    setValue("manualDiscount", fromOrderCurrency(amount), { shouldDirty: true });
   };
 
   useEffect(() => {
@@ -393,7 +395,7 @@ export default function OrderReview({ step, setStep }: any) {
                   <div>{dest.address?.shippingMethod?.provider ?? "None"}</div>
 
                   <div className="font-medium">Shipping cost</div>
-                  <div>$0.00</div>
+                  <div>{formatPrice(0)}</div>
                 </div>
 
                 {/* Products for this destination */}
@@ -420,7 +422,7 @@ export default function OrderReview({ step, setStep }: any) {
                       {dest.products?.map((p: any, pidx: number) => {
                         const quantity = p.quantity || 1;
                         const price = parseFloat(p.price || 0);
-                        const total = (price * quantity).toFixed(2);
+                        const total = price * quantity;
                         const imagePath =
                           p.image?.[1]?.path || p.image?.[0]?.path;
 
@@ -445,10 +447,10 @@ export default function OrderReview({ step, setStep }: any) {
                               {quantity}
                             </TableCell>
                             <TableCell className="text-center align-top">
-                              ${price.toFixed(2)}
+                              {formatPrice(price)}
                             </TableCell>
                             <TableCell className="text-center align-top">
-                              ${total}
+                              {formatPrice(total)}
                             </TableCell>
                           </TableRow>
                         );
@@ -616,22 +618,22 @@ export default function OrderReview({ step, setStep }: any) {
                           <TableCell className="text-center align-top">
                             {hasDiscount && (
                               <div className="text-gray-400 line-through">
-                                ${actualPrice.toFixed(2)}
+                                {formatPrice(actualPrice)}
                               </div>
                             )}
                             <div className={hasDiscount ? "font-medium" : ""}>
-                              ${discountedPrice.toFixed(2)}
+                              {formatPrice(discountedPrice)}
                             </div>
                           </TableCell>
 
                           <TableCell className="text-center align-top">
                             {hasDiscount && (
                               <div className="text-gray-400 line-through">
-                                ${(actualPrice * quantity).toFixed(2)}
+                                {formatPrice(actualPrice * quantity)}
                               </div>
                             )}
                             <div className={hasDiscount ? "font-medium" : ""}>
-                              ${discountedTotal.toFixed(2)}
+                              {formatPrice(discountedTotal)}
                             </div>
                           </TableCell>
                         </TableRow>
@@ -704,13 +706,13 @@ export default function OrderReview({ step, setStep }: any) {
             <div className=" border p-5 rounded-md bg-white space-y-6 !text-[15px]">
               <div className="flex justify-between border-b pb-1">
                 <span className="!text-[15px]">Subtotal</span>
-                <span className="!text-[15px]">${subtotal.toFixed(2)}</span>
+                <span className="!text-[15px]">{formatPrice(subtotal)}</span>
               </div>
 
               {billing?.shippingMethod?.total_charge ? (
                 <div className="flex justify-between">
                   <span>Shipping</span>
-                  <span>${billing?.shippingMethod?.total_charge}</span>
+                  <span>{formatPrice(billing?.shippingMethod?.total_charge)}</span>
                 </div>
               ) : (
                 <></>
@@ -727,19 +729,19 @@ export default function OrderReview({ step, setStep }: any) {
                       (remove)
                     </button>
                   </div>
-                  <span>-${couponDiscount.toFixed(2)}</span>
+                  <span>-{formatPrice(couponDiscount)}</span>
                 </div>
               )}
               {manualDiscount > 0 && (
                 <div className="flex justify-between">
                   <span>Discount</span>
-                  <span>-${manualDiscount.toFixed(2)}</span>
+                  <span>-{formatPrice(manualDiscount)}</span>
                 </div>
               )}
 
               <div className="flex justify-between font-bold !text-[15px]">
                 <span className="!text-[15px]">Grand total</span>
-                <span className="!text-[15px]">${grandTotal.toFixed(2)}</span>
+                <span className="!text-[15px]">{formatPrice(grandTotal)}</span>
               </div>
 
               {/* Discount input */}

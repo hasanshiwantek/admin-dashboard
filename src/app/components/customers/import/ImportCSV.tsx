@@ -12,7 +12,7 @@ import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { useRouter } from "next/navigation";
 import { useAlert } from "@/hooks/useAlert";
 import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 const ImportCsv = () => {
   const methods = useForm({
     defaultValues: {

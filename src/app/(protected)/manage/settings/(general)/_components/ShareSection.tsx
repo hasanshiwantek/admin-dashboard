@@ -2,7 +2,7 @@
 
 import InputField from "@/components/form/InputField";
 import { ListRenderer } from "@/components/ListRenderer.tsx/ListRenderer";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { Switch } from "@/components/ui/Switch";
 import { cn } from "@/lib/utils";
 import { ChevronRight } from "lucide-react";

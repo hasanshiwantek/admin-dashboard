@@ -15,7 +15,7 @@ import { Settings } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 
 import OrderActionsDropdown from "../../orders/OrderActionsDropdown";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import Pagination from "@/components/ui/pagination";
 import Link from "next/link";
 import {

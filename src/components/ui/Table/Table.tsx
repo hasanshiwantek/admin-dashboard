@@ -3,7 +3,7 @@
 import Spinner from "@/app/components/loader/Spinner";
 import OrderActionsDropdown from "@/app/components/orders/OrderActionsDropdown";
 import ChipList, { type ChipItem } from "@/components/Chips/ChipList";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/Checkbox";
 import Pagination from "@/components/ui/pagination";
 import {

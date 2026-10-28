@@ -1,7 +1,7 @@
 import PageTitle from "@/components/ui/PageTitle";
 import Table from "@/components/ui/Table/Table";
 import type { ColumnDef } from "@/components/ui/Table/types";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { HelpCircle, MoreHorizontal } from "lucide-react";
 import { storeFrontLanguage } from "./constant";
 import { StorefrontLanguage } from "./type";

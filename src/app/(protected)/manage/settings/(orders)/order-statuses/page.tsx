@@ -3,7 +3,7 @@
 import Form from "@/components/form/Form";
 import { LOADING_DIM_CLASS } from "@/components/LoadingOverlay/constant";
 import LoadingOverlay from "@/components/LoadingOverlay/LoadingOverlay";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import PageLayout from "@/components/ui/PageLayout";
 import Table from "@/components/ui/Table/Table";
 import { cn } from "@/lib/utils";

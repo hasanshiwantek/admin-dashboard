@@ -1,7 +1,7 @@
 "use client";
 
 import { ListRenderer } from "@/components/ListRenderer.tsx/ListRenderer";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { SelectOption } from "@/components/ui/Select";
 import { cn } from "@/lib/utils";
 import CheckboxField from "./CheckboxField";

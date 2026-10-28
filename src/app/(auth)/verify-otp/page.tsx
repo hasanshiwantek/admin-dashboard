@@ -1,5 +1,5 @@
 "use client";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/input";
 import { resendOtp, verifyOtp } from "@/redux/slices/authSlice";
 import type { AppDispatch } from "@/redux/store";

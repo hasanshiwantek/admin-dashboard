@@ -13,10 +13,12 @@ import {
 import { MoreHorizontal } from "lucide-react";
 import { Checkbox } from "@/components/ui/Checkbox";
 import DestinationDialog from "./DestinationDialog";
+import useOrderCurrency from "../useOrderCurrency";
 import OrderActionsDropdown from "../../OrderActionsDropdown";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 export default function MultipleAddressForm() {
   const { getValues, setValue, watch } = useFormContext();
+  const { formatPrice } = useOrderCurrency();
   const products = getValues("selectedProducts") || [];
 
   const [qtyMap, setQtyMap] = useState<Record<string, number>>({});
@@ -250,7 +252,9 @@ export default function MultipleAddressForm() {
                     </TableCell>
                     <TableCell>Fedex</TableCell>
                     <TableCell>
-                      {dest.products.map((p: any) => p.price)}
+                      {dest.products
+                        .map((p: any) => formatPrice(p.price))
+                        .join(", ")}
                     </TableCell>
                     <TableCell>
                       <OrderActionsDropdown

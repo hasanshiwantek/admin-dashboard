@@ -1,6 +1,6 @@
 import { ListRenderer } from "@/components/ListRenderer.tsx/ListRenderer";
 import StatusBadge from "@/components/StatusBadge/StatusBadge";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 import SettingsCard from "../../../_components/SettingsCard";
 import { BASIC_TAX_ROUTE } from "../constant";

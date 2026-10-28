@@ -1,5 +1,5 @@
 import InputField from "@/components/form/InputField";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import SettingsCard from "../../../_components/SettingsCard";
 import { OrderNotificationFormNames } from "../constant";
 import { EmailMessageSectionProps } from "./type";

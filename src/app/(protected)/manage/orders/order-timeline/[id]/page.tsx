@@ -37,7 +37,7 @@ export default function OrderTimelinePage() {
   return (
     <div className="min-h-screen bg-[#f5f6f8]">
       {/* ================= PAGE HEADER ================= */}
-      <div className="h-[75px] bg-white border-t-[3px] border-[#060a3e] border-b border-[#d9d9d9] flex items-center px-[40px]">
+      <div className="h-[75px] bg-white border-t-[3px] border-[#060a3e] border-b flex items-center px-[40px]">
         <div className="flex items-center gap-[16px]">
           <span className="!text-[16px] !font-normal">Orders</span>
 

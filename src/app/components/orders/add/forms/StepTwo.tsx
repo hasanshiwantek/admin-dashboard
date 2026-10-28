@@ -1,14 +1,13 @@
 "use client";
+import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
+import { Label } from "@/components/ui/label";
+import { errorMessage } from "@/utils/message";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
-import { useRouter } from "next/navigation";
 import ProductSearchInput from "../ProductSearchInput";
-import ProductTable from "../ProductTable";
-import { Label } from "@/components/ui/label";
-import AddCustomProductModal from "../AddCustomProductModal";
 import ProductSelectModal from "../ProductSelectModal";
-import { errorMessage } from "@/utils/message";
-import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
+import ProductTable from "../ProductTable";
 
 export default function StepTwo({ step, setStep }: any) {
   const { setValue, handleSubmit, control } = useFormContext();
@@ -40,34 +39,35 @@ export default function StepTwo({ step, setStep }: any) {
   //   );
   // };
   const handleAddProduct = (product: any) => {
-    const minQty = Number(product?.minPurchaseQuantity) > 0
-      ? Number(product.minPurchaseQuantity)
-      : 1;
-    const maxQty = Number(product?.maxPurchaseQuantity) > 0
-      ? Number(product.maxPurchaseQuantity)
-      : null;
-    const actualPrice = product?.price
+    const minQty =
+      Number(product?.minPurchaseQuantity) > 0
+        ? Number(product.minPurchaseQuantity)
+        : 1;
+    const maxQty =
+      Number(product?.maxPurchaseQuantity) > 0
+        ? Number(product.maxPurchaseQuantity)
+        : null;
+    const actualPrice = product?.price;
 
     setSelectedProducts((prev) =>
       prev.find((p) => p.id === product.id)
         ? prev
         : [
-          ...prev,
-          {
-            ...product,
-            quantity: minQty,
-            minPurchaseQuantity: minQty,
-            maxPurchaseQuantity: maxQty,
-            actualPrice
-          },
-        ]
+            ...prev,
+            {
+              ...product,
+              quantity: minQty,
+              minPurchaseQuantity: minQty,
+              maxPurchaseQuantity: maxQty,
+              actualPrice,
+            },
+          ],
     );
   };
 
-
-const handleCancel = () => {
-  setShowCancelModal(true);
-};
+  const handleCancel = () => {
+    setShowCancelModal(true);
+  };
   const handleProductSelect = (product: any) => {
     if (selectedProducts.some((p) => p.id === product.id)) return;
 
@@ -79,8 +79,7 @@ const handleCancel = () => {
       Number(product?.maxPurchaseQuantity) > 0
         ? Number(product.maxPurchaseQuantity)
         : null;
-    const actualPrice = product.price
-
+    const actualPrice = product.price;
 
     setSelectedProducts((prev) => [
       ...prev,
@@ -89,7 +88,7 @@ const handleCancel = () => {
         quantity: minQty,
         minPurchaseQuantity: minQty,
         maxPurchaseQuantity: maxQty,
-        actualPrice
+        actualPrice,
       },
     ]);
   };
@@ -100,7 +99,6 @@ const handleCancel = () => {
   const handleAddCustomProduct = (product: any) => {
     setSelectedProducts((prev) => [...prev, product]);
   };
-
 
   // const handleQtyChange = (id: number, quantity: number) => {
   //   setSelectedProducts((prev) =>
@@ -121,12 +119,16 @@ const handleCancel = () => {
       prev.map((p) => {
         if (p.id !== id) return p;
 
-        if (quantity === "" || quantity === null || Number.isNaN(Number(quantity))) {
+        if (
+          quantity === "" ||
+          quantity === null ||
+          Number.isNaN(Number(quantity))
+        ) {
           return { ...p, quantity: "" };
         }
 
         return { ...p, quantity: Number(quantity) };
-      })
+      }),
     );
   };
 
@@ -206,16 +208,16 @@ const handleCancel = () => {
         </button>
       </div>
       <ConfirmationModal
-  open={showCancelModal}
-  onOpenChange={setShowCancelModal}
-  variant="warning"
-  title="Cancel order?"
-  description="Are you sure you want to cancel this order?"
-  onConfirm={() => {
-    setShowCancelModal(false);
-    router.push("/manage/orders/");
-  }}
-/>
+        open={showCancelModal}
+        onOpenChange={setShowCancelModal}
+        variant="warning"
+        title="Cancel order?"
+        description="Are you sure you want to cancel this order?"
+        onConfirm={() => {
+          setShowCancelModal(false);
+          router.push("/manage/orders/");
+        }}
+      />
     </form>
   );
 }
