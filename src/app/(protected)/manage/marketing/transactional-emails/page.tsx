@@ -16,6 +16,7 @@ import { EmailTemplate } from "./types";
 import { ChannelOptions, emailTemplatesData } from "./constant";
 
 import SelectField from "@/components/form/fields/SelectField";
+import { Button } from "@/components/ui/Button";
 
 const Page = () => {
   const [templates, setTemplates] =
