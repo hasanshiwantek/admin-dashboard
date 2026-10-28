@@ -19,7 +19,6 @@ export default function OrderForm({ orderId }: { orderId: string }) {
   const handleNext = (data: any) => {
     setFormData((prev) => ({ ...prev, ...data }));
   };
-  console.log({ watch: methods.watch() });
   useEffect(() => {
     if (!orderId) return;
 
