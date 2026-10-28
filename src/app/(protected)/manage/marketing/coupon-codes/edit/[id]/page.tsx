@@ -1,5 +1,6 @@
 import React from 'react'
-import AddCouponCode from '@/app/components/marketing/CouponCodes/AddCouponCode'
+import AddCouponCode from '../../_components/AddCouponCode'
+
 const page = () => {
   return (
     <div >

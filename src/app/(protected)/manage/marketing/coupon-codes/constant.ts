@@ -1,4 +1,7 @@
-import { CouponCodeForm } from "./types";
+import { ActionEnums } from "@/const/appConstants";
+import { CouponCodeForm } from "./types"
+
+
 
 export const DefaultCouponCodeFormValues: CouponCodeForm = {
   couponCode: "",
@@ -68,3 +71,9 @@ export enum CouponFormFields {
   LimitByLocation = "limitByLocation",
   LimitByShipping = "limitByShipping",
 }
+export const couponActions = [
+  { type: ActionEnums.EDIT, label: "Edit" },
+  { type: ActionEnums.COPY, label: "Copy to Clipboard" },
+  { type: ActionEnums.VIEW, label: "View Orders" },
+  { type: ActionEnums.DELETE, label: "Delete", className: "text-red-600" },
+];

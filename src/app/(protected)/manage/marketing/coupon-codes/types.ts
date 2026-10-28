@@ -25,3 +25,10 @@ export interface CouponCodeForm {
  appliesTo: "categories" | "products";
 }
 
+export interface CouponColumnsProps {
+  goToEditPage: (id: number) => void;
+  handleToggleEnabled: (coupon: any) => void;
+handleDeleteCoupon: (id: number) => void;   // string → number
+  deletingId: number | null;
+}
+

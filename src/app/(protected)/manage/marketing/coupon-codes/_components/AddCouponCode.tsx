@@ -14,17 +14,17 @@ import {
 } from "@/redux/slices/marketingSlice";
 
 import { generateUniqueCode } from "@/lib/utils";
-import { DefaultCouponCodeFormValues, values } from "./constant";
-import { CouponCodeForm } from "./types";
+import { DefaultCouponCodeFormValues, values } from "../constant";
+import { CouponCodeForm } from "../types";
 import { CouponCodeSchema } from "@/validations/formValidations";
 
 import AppTabs from "@/components/ui/AppTabs/AppTabs";
 import Form from "@/components/form/Form";
 
-import GeneralCouponTab from "./GeneralCouponTab";
-import AdvancedCouponTab from "./AdvancedCouponTab";
+
 import PageTitle from "@/components/ui/PageTitle";
-import { mapCouponDataToForm } from "./utils";
+import { mapCouponDataToForm } from "../utils";
+import GeneralCouponTab from "./GeneralCouponTab";
 
 const AddCouponCode = () => {
   const params = useParams();

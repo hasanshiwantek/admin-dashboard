@@ -17,6 +17,9 @@ import { ChannelOptions, emailTemplatesData } from "./constant";
 
 import SelectField from "@/components/form/fields/SelectField";
 import { Button } from "@/components/ui/Button";
+import { ListRenderer } from "@/components/ListRenderer.tsx/ListRenderer";
+import ActionButton from "@/components/ActionButton/ActionButton";
+import { ActionEnums } from "@/const/appConstants";
 
 const Page = () => {
   const [templates, setTemplates] =
@@ -68,13 +71,12 @@ const Page = () => {
           </div>
 
           {/* Templates List */}
-          <div className="divide-y">
-            {templates.map((template) => (
-              <div
-                key={template.id}
-                className="px-15 py-5 flex items-start justify-between hover:bg-gray-50 transition-colors"
-              >
-                {/* Left Content */}
+          <ListRenderer
+            data={templates}
+            keyExtractor={(template) => template.id}
+            className="divide-y"
+            renderItem={(template) => (
+              <div className="px-15 py-5 flex items-start justify-between hover:bg-gray-50 transition-colors">
                 <div className="flex-1">
                   <h3 className="text-2xl! font-normal text-blue-600! mb-1">
                     {template.title}
@@ -84,7 +86,6 @@ const Page = () => {
                   </p>
                 </div>
 
-                {/* Right Actions */}
                 <div className="flex items-center gap-3 ml-4">
                   {template.enabled ? (
                     <Badge className="bg-green-600 hover:bg-green-700 text-white! px-3 py-1 text-[10px] font-medium">
@@ -99,35 +100,28 @@ const Page = () => {
                     </Badge>
                   )}
 
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-blue-600 hover:bg-blue-50"
-                      >
-                        <Ellipsis className="!h-6 !w-6" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent
-                      align="end"
-                      className="w-[150px] space-y-4"
-                    >
-                      <DropdownMenuItem className="cursor-pointer">
-                        Edit Template
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        className="cursor-pointer"
-                        onClick={() => toggleTemplate(template.id)}
-                      >
-                        {template.enabled ? "Disable" : "Enable"}
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  <ActionButton
+                    data={template}
+                    actions={[
+                      { type: ActionEnums.EDIT, label: "Edit Template" },
+                      {
+                        type: "toggle" as ActionEnums,
+                        label: template.enabled ? "Disable" : "Enable",
+                      },
+                    ]}
+                    onAction={(item) => (action) => {
+                      if (action === ActionEnums.EDIT) {
+                        // edit
+                      } else {
+                        toggleTemplate(item.id);
+                      }
+                    }}
+                    contentClassName="w-[150px]"
+                  />
                 </div>
               </div>
-            ))}
-          </div>
+            )}
+          />
         </div>
       </div>
     </div>
