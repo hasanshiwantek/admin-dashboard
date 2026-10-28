@@ -14,8 +14,9 @@ export default function CouponColumns({
   handleToggleEnabled,
   handleDeleteCoupon,
   deletingId,
+  handleAction
 }: CouponColumnsProps): ColumnDef<any>[] {
-  const { handleAction } = useCouponCodesContainer();
+  
   return [
     {
       key: "couponName",

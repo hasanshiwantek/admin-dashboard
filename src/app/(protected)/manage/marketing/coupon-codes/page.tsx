@@ -11,6 +11,7 @@ import { useCouponCodesContainer } from "./container";
 import CouponColumns from "./Column";
 
 import PageTitle from "@/components/ui/PageTitle";
+import { CouponAddRoute } from "./constant";
 
 const Page = () => {
   const {
@@ -41,6 +42,7 @@ const Page = () => {
     deleteIds,
     deletingId,
     totalCount,
+    handleAction
   } = useCouponCodesContainer();
 
   const columns = CouponColumns({
@@ -48,6 +50,7 @@ const Page = () => {
     handleToggleEnabled,
     handleDeleteCoupon,
     deletingId,
+    handleAction
   });
 
   if (error) {
@@ -60,7 +63,7 @@ const Page = () => {
 
   const topActions = (
   <div className="flex items-center gap-8 px-6 py-4 border-b">
-    <Link href="/manage/marketing/coupon-codes/add">
+    <Link  href={CouponAddRoute}>
       <Button variant="outline" className="btn-outline-primary h-full rounded-none border-0 border-l px-3">
         Create a coupon code
       </Button>

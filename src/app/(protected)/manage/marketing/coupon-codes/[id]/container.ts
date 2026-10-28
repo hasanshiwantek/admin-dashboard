@@ -11,7 +11,7 @@ import {
   updateCouponCode,
 } from "@/redux/slices/marketingSlice";
 import { generateUniqueCode } from "@/lib/utils";
-import { DefaultCouponCodeFormValues, values } from "../constant";
+import { CouponCodesRoute, DefaultCouponCodeFormValues, values } from "../constant";
 import { CouponCodeForm } from "../types";
 import { CouponCodeSchema } from "@/validations/formValidations";
 import { mapCouponDataToForm } from "../utils";
@@ -69,7 +69,7 @@ const useCouponFormContainer = () => {
         await dispatch(createCoupon({ data })).unwrap();
       }
       setTimeout(() => {
-        router.push("/manage/marketing/coupon-codes");
+        router.push(CouponCodesRoute);
       }, 2000);
     } catch (error) {
       console.error(`Error ${isEdit ? "updating" : "creating"} coupon:`, error);
@@ -80,7 +80,7 @@ const useCouponFormContainer = () => {
 
   const handleCancel = () => {
     if (saving || loading) return;
-    router.push("/manage/marketing/coupon-codes");
+ router.push(CouponCodesRoute);
   };
 
   return {

@@ -1,27 +1,59 @@
 "use client";
-import React, { useEffect } from "react";
+
 import AppTabs from "@/components/ui/AppTabs/AppTabs";
-import { TabItem } from "@/components/ui/AppTabs/types";
 import PageLayout from "@/components/ui/PageLayout";
 import PageTitle from "@/components/ui/PageTitle";
-import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
-import { getEmailMarketing } from "@/redux/slices/marketingSlice";
 import GeneralSettings from "./_components/GeneralSettings";
 import Subscriber from "./_components/Subscriber";
-
-
-const tabs: TabItem[] = [
-  { key: "general", label: "General settings", content: <GeneralSettings /> },
-  { key: "subscribers", label: "Subscribers", content: <Subscriber /> },
-];
+import useEmailMarketingContainer from "./container";
 
 const Page = () => {
-  const dispatch = useAppDispatch();
-  const { error } = useAppSelector((state: any) => state.marketingReducer);
+  const {
+    error,
+    loading,
+    emailMarketing,
+    form,
+    allowNewsletterSubscriptions,
+    showNewsletterSummary,
+    onSubmit,
+    handleCancel,
+    openDeleteModal,
+    setOpenDeleteModal,
+    deleteLoading,
+    handleDeleteAll,
+    handleExportSubscribers,
+  } = useEmailMarketingContainer();
 
-  useEffect(() => {
-    dispatch(getEmailMarketing());
-  }, [dispatch]);
+  const tabs = [
+    {
+      key: "general",
+      label: "General settings",
+      content: (
+        <GeneralSettings
+          form={form}
+          loading={loading}
+          allowNewsletterSubscriptions={allowNewsletterSubscriptions}
+          showNewsletterSummary={showNewsletterSummary}
+          onSubmit={onSubmit}
+          handleCancel={handleCancel}
+        />
+      ),
+    },
+    {
+      key: "subscribers",
+      label: "Subscribers",
+      content: (
+        <Subscriber
+          emailMarketing={emailMarketing}
+          openDeleteModal={openDeleteModal}
+          setOpenDeleteModal={setOpenDeleteModal}
+          deleteLoading={deleteLoading}
+          handleDeleteAll={handleDeleteAll}
+          handleExportSubscribers={handleExportSubscribers}
+        />
+      ),
+    },
+  ];
 
   return (
     <PageLayout>

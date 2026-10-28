@@ -1,39 +1,24 @@
 "use client";
 
-import React, { useState } from "react";
-
-
-
 import { Badge } from "@/components/ui/Badge";
-import { Ellipsis } from "lucide-react";
 import PageTitle from "@/components/ui/PageTitle";
-import { EmailTemplate } from "./types";
-import { ChannelOptions, emailTemplatesData } from "./constant";
-
+import { ChannelOptions } from "./constant";
 import SelectField from "@/components/form/fields/SelectField";
-import { Button } from "@/components/ui/Button";
 import { ListRenderer } from "@/components/ListRenderer.tsx/ListRenderer";
 import ActionButton from "@/components/ActionButton/ActionButton";
 import { ActionEnums } from "@/const/appConstants";
+import useTransactionalEmailsContainer from "./container";
 
 const Page = () => {
-  const [templates, setTemplates] =
-    useState<EmailTemplate[]>(emailTemplatesData);
-  const [selectedChannel, setSelectedChannel] = useState("global");
-
-  const toggleTemplate = (id: string) => {
-    setTemplates(
-      templates.map((template) =>
-        template.id === id
-          ? { ...template, enabled: !template.enabled }
-          : template,
-      ),
-    );
-  };
+  const {
+    templates,
+    selectedChannel,
+    setSelectedChannel,
+    handleAction,
+  } = useTransactionalEmailsContainer();
 
   return (
     <div className="p-10">
-      {/* Header */}
       <div className="px-8 py-5">
         <PageTitle
           title="Transactional emails"
@@ -42,9 +27,7 @@ const Page = () => {
         />
       </div>
 
-      {/* Main Content */}
       <div className="p-8">
-        {/* Channel Selector */}
         <div className="bg-white border rounded-sm shadow-sm p-6 mb-6">
           <SelectField
             options={ChannelOptions}
@@ -54,9 +37,7 @@ const Page = () => {
           />
         </div>
 
-        {/* Email Templates Section */}
         <div className="bg-white border shadow-sm rounded-sm">
-          {/* Section Header */}
           <div className="px-6 py-5 border-b">
             <PageTitle
               title="Email Templates"
@@ -65,7 +46,6 @@ const Page = () => {
             />
           </div>
 
-          {/* Templates List */}
           <ListRenderer
             data={templates}
             keyExtractor={(template) => template.id}
@@ -104,13 +84,7 @@ const Page = () => {
                         label: template.enabled ? "Disable" : "Enable",
                       },
                     ]}
-                    onAction={(item) => (action) => {
-                      if (action === ActionEnums.EDIT) {
-                        // edit
-                      } else {
-                        toggleTemplate(item.id);
-                      }
-                    }}
+                    onAction={handleAction}
                     contentClassName="w-[150px]"
                   />
                 </div>

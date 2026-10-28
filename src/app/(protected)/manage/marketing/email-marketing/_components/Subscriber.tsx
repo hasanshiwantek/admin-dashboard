@@ -1,60 +1,25 @@
 "use client";
+
 import PageTitle from "@/components/ui/PageTitle";
-import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
-import {
-  deleteAllSubscribers,
-  exportSubscribers,
-  getEmailMarketing,
-} from "@/redux/slices/marketingSlice";
-import { errorMessage, successMessage } from "@/utils/message";
-import { useState } from "react";
 import ConfirmationModal from "../../../user-settings/additional-authentication/helpers/ConfirmationModal";
 
-const Subscriber = () => {
-  const dispatch = useAppDispatch();
-  const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const { emailMarketing } = useAppSelector(
-    (state: any) => state.marketingReducer,
-  );
+interface SubscriberProps {
+  emailMarketing: any;
+  openDeleteModal: boolean;
+  setOpenDeleteModal: (v: boolean) => void;
+  deleteLoading: boolean;
+  handleDeleteAll: () => void;
+  handleExportSubscribers: () => void;
+}
 
-  const handleDeleteAll = async () => {
-    try {
-      setLoading(true);
-      const res = await dispatch(deleteAllSubscribers()).unwrap();
-
-      successMessage(res.message);
-
-      setOpenDeleteModal(false);
-
-      dispatch(getEmailMarketing()); // subscriber count refresh
-    } catch (err: any) {
-      errorMessage(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleExportSubscribers = async () => {
-    try {
-      const blob = await dispatch(exportSubscribers()).unwrap();
-
-      const url = window.URL.createObjectURL(blob);
-
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "subscribers.csv";
-
-      document.body.appendChild(link);
-      link.click();
-
-      link.remove();
-      window.URL.revokeObjectURL(url);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
+const Subscriber = ({
+  emailMarketing,
+  openDeleteModal,
+  setOpenDeleteModal,
+  deleteLoading,
+  handleDeleteAll,
+  handleExportSubscribers,
+}: SubscriberProps) => {
   return (
     <>
       <div>
@@ -115,14 +80,14 @@ const Subscriber = () => {
       </div>
 
       <ConfirmationModal
-  open={openDeleteModal}
-  onOpenChange={setOpenDeleteModal}
-  onConfirm={handleDeleteAll}
-  loading={loading}
-  variant="warning"
-  title="Delete All Subscribers?"
-  description="Are you sure you want to delete all subscribers?"
-/>
+        open={openDeleteModal}
+        onOpenChange={setOpenDeleteModal}
+        onConfirm={handleDeleteAll}
+        loading={deleteLoading}
+        variant="warning"
+        title="Delete All Subscribers?"
+        description="Are you sure you want to delete all subscribers?"
+      />
     </>
   );
 };
