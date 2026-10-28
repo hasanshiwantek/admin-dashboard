@@ -102,6 +102,14 @@ import {
 import { CustomerField } from "@/app/(protected)/manage/customers/add/constant";
 import { REGEX } from "@/const/regex";
 import { AddressField } from "@/app/(protected)/manage/customers/edit/[id]/[addressId]/constant";
+import {
+  ScriptCategory,
+  ScriptFormNames,
+  ScriptLoadMethod,
+  ScriptLocation,
+  ScriptPlacement,
+  ScriptType,
+} from "@/app/(protected)/manage/storefront/script-manager/[id]/constant";
 
 export const BannerSchema = object({
   [BannerFormNames.Title]: string().trim().required("Banner name is required"),
@@ -498,10 +506,7 @@ export const CouponCodeSchema = object({
 
   categoryIds: array().of(string().defined()).defined(),
 
-  productIds: array()
-  .of(string().defined())
-  .default([])
-  .defined(),
+  productIds: array().of(string().defined()).default([]).defined(),
 
   limitByLocation: boolean().defined(),
   limitByShipping: boolean().defined(),
@@ -534,20 +539,20 @@ export const CouponCodeSchema = object({
     return true;
   })
   .test("category-validation", function (values) {
-  // Category validation sirf categories select hone par chalegi
-  if (values?.appliesTo !== "categories") {
+    // Category validation sirf categories select hone par chalegi
+    if (values?.appliesTo !== "categories") {
+      return true;
+    }
+
+    if (!values.categoryIds || values.categoryIds.length === 0) {
+      return this.createError({
+        path: "categoryIds",
+        message: "Select at least one category",
+      });
+    }
+
     return true;
-  }
-
-  if (!values.categoryIds || values.categoryIds.length === 0) {
-    return this.createError({
-      path: "categoryIds",
-      message: "Select at least one category",
-    });
-  }
-
-  return true;
-});
+  });
 
 export type CouponCodeForm = InferType<typeof CouponCodeSchema>;
 // WebPageSchema
@@ -1139,3 +1144,42 @@ export const AddressSchema = object({
 });
 
 // #endregion Address
+
+// #region Script manager
+export const ScriptSchema = object({
+  [ScriptFormNames.ScriptName]: string()
+    .trim()
+    .required(
+      "Enter a valid script name. Script names can’t include: @$%^&()=<|~`[]{}:",
+    ),
+  [ScriptFormNames.Description]: string().defined(),
+  [ScriptFormNames.Placement]: string()
+    .oneOf(Object.values(ScriptPlacement))
+    .required("Placement is required"),
+  [ScriptFormNames.Location]: string()
+    .oneOf(Object.values(ScriptLocation))
+    .required("Location is required"),
+  [ScriptFormNames.ScriptCategory]: string()
+    .oneOf(Object.values(ScriptCategory))
+    .required("Script category is required"),
+  [ScriptFormNames.ScriptType]: string()
+    .oneOf(Object.values(ScriptType))
+    .required("Script type is required"),
+  [ScriptFormNames.LoadMethod]: string()
+    .oneOf(Object.values(ScriptLoadMethod))
+    .defined(),
+  [ScriptFormNames.ScriptUrl]: string().when(ScriptFormNames.ScriptType, {
+    is: ScriptType.URL,
+    then: (schema) => schema.trim().required("Script URL is required"),
+    otherwise: (schema) => schema.notRequired(),
+  }),
+  [ScriptFormNames.IntegrityHashes]: array().of(string().defined()).defined(),
+  [ScriptFormNames.CurrentIntegrityHash]: string().defined(),
+  [ScriptFormNames.ScriptContents]: string().when(ScriptFormNames.ScriptType, {
+    is: ScriptType.SCRIPT,
+    then: (schema) => schema.trim().required("Script contents are required"),
+    otherwise: (schema) => schema.notRequired(),
+  }),
+});
+
+// #endregion Script manager
