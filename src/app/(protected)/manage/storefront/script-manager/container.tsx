@@ -40,10 +40,10 @@ const useScriptManagerContainer = () => {
     const matchingScripts = searchTerm
       ? scripts.filter((script) =>
           [
-            script.script_name,
+            script.scriptName,
             script.location,
             script.placement,
-            script.script_type,
+            script.scriptType,
           ].some((value) =>
             String(value ?? "")
               .toLocaleLowerCase()
