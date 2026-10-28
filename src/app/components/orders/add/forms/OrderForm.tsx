@@ -8,6 +8,7 @@ import StepOne from "./StepOne";
 import StepThree from "./StepThree";
 import StepTracker from "./StepTracker";
 import StepTwo from "./StepTwo";
+
 export default function OrderForm({ orderId }: { orderId: string }) {
   const methods = useForm(); // ⬅️ this controls ALL steps
   const { reset } = methods;
@@ -18,7 +19,7 @@ export default function OrderForm({ orderId }: { orderId: string }) {
   const handleNext = (data: any) => {
     setFormData((prev) => ({ ...prev, ...data }));
   };
-
+  console.log({ watch: methods.watch() });
   useEffect(() => {
     if (!orderId) return;
 
@@ -61,6 +62,7 @@ export default function OrderForm({ orderId }: { orderId: string }) {
         const transformed = {
           selectedCustomer: order.customer,
           selectedBillingCustomer: customerFromBilling,
+          selectedCurrency: order.selectedCurrency || null,
           email: order.customer?.email || "",
           firstName: order.billingInformation?.firstName || "",
           lastName: order.billingInformation?.lastName || "",
