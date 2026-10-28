@@ -19,13 +19,16 @@ const useTransactionalEmailsContainer = () => {
     );
   };
 
-  const handleAction = (template: EmailTemplate) => (action: ActionEnums) => {
-    if (action === ActionEnums.EDIT) {
+const handleAction = (template: EmailTemplate) => (action: ActionEnums) => {
+  switch (action) {
+    case ActionEnums.EDIT:
       // edit logic
-    } else {
+      break;
+    default:
       toggleTemplate(template.id);
-    }
-  };
+      break;
+  }
+};
 
   return {
     templates,

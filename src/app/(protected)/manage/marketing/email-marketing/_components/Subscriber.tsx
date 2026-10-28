@@ -2,6 +2,7 @@
 
 import PageTitle from "@/components/ui/PageTitle";
 import ConfirmationModal from "../../../user-settings/additional-authentication/helpers/ConfirmationModal";
+import { Button } from "@/components/ui/Button";
 
 interface SubscriberProps {
   emailMarketing: any;
@@ -52,8 +53,8 @@ const Subscriber = ({
             </div>
             <div className="text-xl! text-gray-700">
               <span className="text-2xl!">(</span>
-              <a
-                href="#"
+              <Button
+                
                 onClick={(e) => {
                   e.preventDefault();
                   handleExportSubscribers();
@@ -61,7 +62,7 @@ const Subscriber = ({
                 className="text-blue-600 hover:underline"
               >
                 Download to CSV file
-              </a>
+              </Button>
               <span className="text=[#000000] px-2">or</span>
               <a
                 href="#"

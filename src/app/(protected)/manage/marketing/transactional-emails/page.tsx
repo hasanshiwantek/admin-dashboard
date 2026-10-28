@@ -2,12 +2,13 @@
 
 import { Badge } from "@/components/ui/Badge";
 import PageTitle from "@/components/ui/PageTitle";
-import { ChannelOptions } from "./constant";
+import { ChannelOptions, getTemplateActions } from "./constant";
 import SelectField from "@/components/form/fields/SelectField";
 import { ListRenderer } from "@/components/ListRenderer.tsx/ListRenderer";
 import ActionButton from "@/components/ActionButton/ActionButton";
 import { ActionEnums } from "@/const/appConstants";
 import useTransactionalEmailsContainer from "./container";
+import StatusBadge from "@/components/StatusBadge/StatusBadge";
 
 const Page = () => {
   const {
@@ -62,28 +63,15 @@ const Page = () => {
                 </div>
 
                 <div className="flex items-center gap-3 ml-4">
-                  {template.enabled ? (
-                    <Badge className="bg-green-600 hover:bg-green-700 text-white! px-3 py-1 text-[10px] font-medium">
-                      ENABLED
-                    </Badge>
-                  ) : (
-                    <Badge
-                      variant="outline"
-                      className="border-gray-300 text-gray-600 px-3 py-1 text-[10px] font-medium"
-                    >
-                      DISABLED
-                    </Badge>
-                  )}
+                {template.enabled ? (
+  <StatusBadge tone="success">ENABLED</StatusBadge>
+) : (
+  <StatusBadge tone="neutral">DISABLED</StatusBadge>
+)}
 
                   <ActionButton
                     data={template}
-                    actions={[
-                      { type: ActionEnums.EDIT, label: "Edit Template" },
-                      {
-                        type: "toggle" as ActionEnums,
-                        label: template.enabled ? "Disable" : "Enable",
-                      },
-                    ]}
+                    actions={getTemplateActions(template.enabled)}
                     onAction={handleAction}
                     contentClassName="w-[150px]"
                   />
