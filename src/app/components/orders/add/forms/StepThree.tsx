@@ -1,10 +1,10 @@
 "use client";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useFormContext } from "react-hook-form";
-import FulfillmentOptions from "../Fulfillment/FulfillmentOptions";
 import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
 import { Button } from "@/components/ui/Button";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useFormContext } from "react-hook-form";
+import FulfillmentOptions from "../Fulfillment/FulfillmentOptions";
 
 export default function StepThree({ step, setStep }: any) {
   const { handleSubmit, setValue, watch, getValues, resetField } =
@@ -65,13 +65,12 @@ export default function StepThree({ step, setStep }: any) {
     }
   }, [destinationType, getValues, setValue]);
 
- const handleCancel = () => {
-  setShowCancelModal(true);
-};
+  const handleCancel = () => {
+    setShowCancelModal(true);
+  };
 
   const onSubmit = () => {
     const values = getValues();
-
 
     if (values.destinationType === "multiple") {
       console.log("📦 Multiple Destinations:", values.shippingDestinations);
@@ -125,16 +124,16 @@ export default function StepThree({ step, setStep }: any) {
         </Button>
       </div>
       <ConfirmationModal
-  open={showCancelModal}
-  onOpenChange={setShowCancelModal}
-  variant="warning"
-  title="Cancel order?"
-  description="Are you sure you want to cancel this order?"
-  onConfirm={() => {
-    setShowCancelModal(false);
-    router.push("/manage/orders/");
-  }}
-/>
+        open={showCancelModal}
+        onOpenChange={setShowCancelModal}
+        variant="warning"
+        title="Cancel order?"
+        description="Are you sure you want to cancel this order?"
+        onConfirm={() => {
+          setShowCancelModal(false);
+          router.push("/manage/orders/");
+        }}
+      />
     </form>
   );
 }
