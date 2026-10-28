@@ -9,6 +9,7 @@ import {
   BannerPlacement,
 } from "@/app/(protected)/manage/marketing/banners/constant";
 import { needsLocationId } from "@/app/(protected)/manage/marketing/banners/utils";
+import { AppliesTo } from "@/app/(protected)/manage/marketing/coupon-codes/constant";
 import {
   BulkPricingTierFormNames,
   CustomFieldFormNames,
@@ -554,7 +555,7 @@ export const CouponCodeSchema = object({
   })
 .test("category-validation", function (values) {
   // Agar appliesTo categories nahi ya categoryIds empty nahi to skip
-  if (values?.appliesTo !== "categories") return true;
+  if (values?.appliesTo !== AppliesTo.Categories) return true;
   if (values.categoryIds && values.categoryIds.length > 0) return true;
 
   // Sirf tab error jab categories selected hai lekin koi category nahi
