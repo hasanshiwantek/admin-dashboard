@@ -15,10 +15,11 @@ export const getBrandColumns = ({
     key: "name",
     header: "Brand Name",
     headClassName: "2xl:text-[1.6rem]!",
+    sortable: true,
     render: (brand) => (
       <Link
         href={editBrandRoute(brand.id)}
-        className="text-blue-600! hover:border-b-2 hover:border-b-blue-600 2xl:text-2xl!"
+        className="text-blue-500 hover:text-blue-600 2xl:text-2xl!"
       >
         {brand.name}
       </Link>
@@ -26,6 +27,7 @@ export const getBrandColumns = ({
   },
   {
     key: "productsCount",
+    sortable: true,
     header: "Products",
     headClassName: "2xl:text-[1.6rem]!",
     className: "2xl:text-2xl!",

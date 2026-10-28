@@ -3,7 +3,6 @@
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/input";
 import PageLayout from "@/components/ui/PageLayout";
-import Pagination from "@/components/ui/Pagination";
 import Table from "@/components/ui/Table/Table";
 import DeleteBrandsModal from "@/Modals/BrandModals/DeleteBrandsModal/DeleteBrandsModal";
 import { Trash } from "lucide-react";
@@ -26,18 +25,6 @@ const BrandsPage = () => {
     setDeleteOpen,
     handleDeleted,
   } = useBrandsPageContainer();
-
-  const pager = (
-    <div className="flex justify-end">
-      <Pagination
-        currentPage={table.page}
-        totalPages={pagination?.totalPages ?? 1}
-        onPageChange={table.setPage}
-        perPage={table.perPage}
-        onPerPageChange={table.setPerPage}
-      />
-    </div>
-  );
 
   return (
     <PageLayout
@@ -91,11 +78,11 @@ const BrandsPage = () => {
         </Button>
       </div>
 
-      {pager}
-
       <Table
         data={rows}
         columns={columns}
+        sort={table.sort}
+        onSortChange={table.setSort}
         getRowId={(brand) => brand.id}
         loading={loading}
         emptyMessage="No Brands found."
@@ -106,9 +93,14 @@ const BrandsPage = () => {
           setSelectedIds(checked ? allIds.map(Number) : [])
         }
         selectAllInHeader
+        pagination={{
+          currentPage: table.page,
+          totalPages: pagination?.totalPages ?? 1,
+          onPageChange: table.setPage,
+          perPage: table.perPage,
+          onPerPageChange: table.setPerPage,
+        }}
       />
-
-      {pager}
 
       <DeleteBrandsModal
         brands={deleteTargets}

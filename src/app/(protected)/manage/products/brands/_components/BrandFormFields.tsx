@@ -28,12 +28,28 @@ const BrandFormFields = ({ isEdit }: BrandFormFieldsProps) => (
         label="Brand names"
         required
         isTextArea
-        placeholder={"Nike\nAdidas\nApple"}
-        hint="Enter one brand per line."
         className="min-h-40"
         controlClassName="max-w-[41.6rem]"
         labelEndComponent={
-          <HelpTooltip content="Type the brand names you want to add, one per line, such as Nike, Adidas, Apple and Microsoft." />
+          <HelpTooltip
+            side="right"
+            contentClassName="max-w-[32rem] p-4"
+            content={
+              <div className="flex flex-col gap-2 text-[1.4rem]">
+                <strong className="text-[1.6rem]">Brand Names</strong>
+                <p>
+                  Type the brand names you want to add into the text box. Enter
+                  one brand per line, such as:
+                </p>
+                <ul className="list-disc pl-6">
+                  <li>Nike</li>
+                  <li>ADIDAS</li>
+                  <li>Apple</li>
+                  <li>Microsoft</li>
+                </ul>
+              </div>
+            }
+          />
         }
       />
     )}
