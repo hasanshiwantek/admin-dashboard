@@ -291,9 +291,9 @@ export const deleteCarousal = createAsyncThunk(
   },
 );
 
-export const createScripts = createAsyncThunk(
+export const createScripts = createAsyncThunk<any, Record<string, unknown>>(
   "storefront/createScripts",
-  async (data, thunkAPI) => {
+  async (data: Record<string, unknown>, thunkAPI) => {
     try {
       const res = await axiosInstance.post(
         `dashboard/scripts/add-script`,

@@ -1,3 +1,5 @@
+import { CustomerField } from "@/app/(protected)/manage/customers/add/constant";
+import { AddressField } from "@/app/(protected)/manage/customers/edit/[id]/[addressId]/constant";
 import {
   BannerDateType,
   BannerFormNames,
@@ -6,6 +8,7 @@ import {
   BannerLocation,
   BannerPlacement,
 } from "@/app/(protected)/manage/marketing/banners/constant";
+import { needsLocationId } from "@/app/(protected)/manage/marketing/banners/utils";
 import {
   BulkPricingTierFormNames,
   CustomFieldFormNames,
@@ -15,12 +18,6 @@ import {
   ProductFormNames,
   PurchasabilityStatus,
 } from "@/app/(protected)/manage/products/[id]/constant";
-import type { PreviewItem } from "@/types/types";
-import { AddMediaFromUrlFormNames } from "@/Modals/ProductModals/AddMediaFromUrlModal/constant";
-import { ProductCategoriesFormNames } from "@/Modals/ProductModals/ProductCategoriesModal/constant";
-import { EditProductPricesFormNames } from "@/Modals/ProductModals/EditProductPricesSheet/constant";
-import { EditProductStockFormNames } from "@/Modals/ProductModals/EditProductStockSheet/constant";
-import { needsLocationId } from "@/app/(protected)/manage/marketing/banners/utils";
 import { UserField } from "@/app/(protected)/manage/settings/(advanced)/users/constant";
 import {
   DnsRecordFormNames,
@@ -78,6 +75,14 @@ import {
   TaxZoneBasedOn,
   TaxZoneSettingsFormNames,
 } from "@/app/(protected)/manage/settings/(setup)/tax/(basic)/tax-zones/constant";
+import {
+  ScriptCategory,
+  ScriptFormNames,
+  ScriptLoadMethod,
+  ScriptLocation,
+  ScriptPlacement,
+  ScriptType,
+} from "@/app/(protected)/manage/storefront/script-manager/[id]/constant";
 import { BlogFormFieldName } from "@/app/components/blog/constant";
 import { MessageField } from "@/app/components/orders/message/helper/constant";
 import {
@@ -89,7 +94,12 @@ import {
   PageTypeEnums,
   WebPageField,
 } from "@/app/components/storefront/constants";
+import { REGEX } from "@/const/regex";
 import { AddCurrencyFormNames } from "@/Modals/CurrencyModals/AddCurrencyModal/constant";
+import { AddMediaFromUrlFormNames } from "@/Modals/ProductModals/AddMediaFromUrlModal/constant";
+import { EditProductPricesFormNames } from "@/Modals/ProductModals/EditProductPricesSheet/constant";
+import { EditProductStockFormNames } from "@/Modals/ProductModals/EditProductStockSheet/constant";
+import { ProductCategoriesFormNames } from "@/Modals/ProductModals/ProductCategoriesModal/constant";
 import {
   UpdateUrlsFormNames,
   UpdateUrlsScope,
@@ -102,6 +112,7 @@ import {
   ShipByWeightField,
 } from "@/Modals/ShippingModals/ShipByWeightModal/constant";
 import { DisplayNameField } from "@/Modals/ShippingModals/ShippingQuotesDisplayNameModal/constant";
+import type { PreviewItem } from "@/types/types";
 import {
   array,
   boolean,
@@ -113,9 +124,6 @@ import {
   ref,
   string,
 } from "yup";
-import { CustomerField } from "@/app/(protected)/manage/customers/add/constant";
-import { REGEX } from "@/const/regex";
-import { AddressField } from "@/app/(protected)/manage/customers/edit/[id]/[addressId]/constant";
 
 export const BannerSchema = object({
   [BannerFormNames.Title]: string().trim().required("Banner name is required"),
@@ -512,10 +520,7 @@ export const CouponCodeSchema = object({
 
   categoryIds: array().of(string().defined()).defined(),
 
-  productIds: array()
-  .of(string().defined())
-  .default([])
-  .defined(),
+  productIds: array().of(string().defined()).default([]).defined(),
 
   limitByLocation: boolean().defined(),
   limitByShipping: boolean().defined(),
@@ -548,20 +553,20 @@ export const CouponCodeSchema = object({
     return true;
   })
   .test("category-validation", function (values) {
-  // Category validation sirf categories select hone par chalegi
-  if (values?.appliesTo !== "categories") {
+    // Category validation sirf categories select hone par chalegi
+    if (values?.appliesTo !== "categories") {
+      return true;
+    }
+
+    if (!values.categoryIds || values.categoryIds.length === 0) {
+      return this.createError({
+        path: "categoryIds",
+        message: "Select at least one category",
+      });
+    }
+
     return true;
-  }
-
-  if (!values.categoryIds || values.categoryIds.length === 0) {
-    return this.createError({
-      path: "categoryIds",
-      message: "Select at least one category",
-    });
-  }
-
-  return true;
-});
+  });
 
 export type CouponCodeForm = InferType<typeof CouponCodeSchema>;
 // WebPageSchema
@@ -1179,7 +1184,11 @@ const money = (label: string) =>
 const measurement = (label: string) =>
   text()
     .trim()
-    .test("measurement", `${label} must be a number of 0 or more`, isNonNegative)
+    .test(
+      "measurement",
+      `${label} must be a number of 0 or more`,
+      isNonNegative,
+    )
     .test(
       "measurement-places",
       `${label} can have at most 2 decimal places`,
@@ -1214,9 +1223,8 @@ export const ProductSchema = object({
   [ProductFormNames.ProductType]: text(),
   [ProductFormNames.BrandId]: text(),
   [ProductFormNames.Price]: money("Price").required("Price is required"),
-  [ProductFormNames.Weight]: measurement("Weight").required(
-    "Weight is required",
-  ),
+  [ProductFormNames.Weight]:
+    measurement("Weight").required("Weight is required"),
   [ProductFormNames.CategoryIds]: array()
     .of(number().required())
     .required()
@@ -1245,12 +1253,16 @@ export const ProductSchema = object({
         ).required("Minimum quantity is required"),
         [BulkPricingTierFormNames.Price]: money("Discount")
           .required("Discount is required")
-          .test("percent", "A % discount can't be more than 100", function (
-            value,
-          ) {
-            const discountType = this.from?.[1]?.value?.discountType;
-            return discountType !== DiscountType.Percent || Number(value) <= 100;
-          }),
+          .test(
+            "percent",
+            "A % discount can't be more than 100",
+            function (value) {
+              const discountType = this.from?.[1]?.value?.discountType;
+              return (
+                discountType !== DiscountType.Percent || Number(value) <= 100
+              );
+            },
+          ),
       }),
     )
     .required()
@@ -1340,9 +1352,8 @@ export const ProductSchema = object({
 });
 
 export const EditProductPricesSchema = object({
-  [EditProductPricesFormNames.Price]: money("Price").required(
-    "Price is required",
-  ),
+  [EditProductPricesFormNames.Price]:
+    money("Price").required("Price is required"),
   [EditProductPricesFormNames.SalePrice]: money("Sale price"),
   [EditProductPricesFormNames.CostPrice]: money("Cost"),
   [EditProductPricesFormNames.Msrp]: money("MSRP"),
@@ -1368,3 +1379,41 @@ export const AddMediaFromUrlSchema = object({
     .required("URL is required"),
 });
 // #endregion Product
+// #region Script manager
+export const ScriptSchema = object({
+  [ScriptFormNames.ScriptName]: string()
+    .trim()
+    .required(
+      "Enter a valid script name. Script names can’t include: @$%^&()=<|~`[]{}:",
+    ),
+  [ScriptFormNames.Description]: string().defined(),
+  [ScriptFormNames.Placement]: string()
+    .oneOf(Object.values(ScriptPlacement))
+    .required("Placement is required"),
+  [ScriptFormNames.Location]: string()
+    .oneOf(Object.values(ScriptLocation))
+    .required("Location is required"),
+  [ScriptFormNames.ScriptCategory]: string()
+    .oneOf(Object.values(ScriptCategory))
+    .required("Script category is required"),
+  [ScriptFormNames.ScriptType]: string()
+    .oneOf(Object.values(ScriptType))
+    .required("Script type is required"),
+  [ScriptFormNames.LoadMethod]: string()
+    .oneOf(Object.values(ScriptLoadMethod))
+    .defined(),
+  [ScriptFormNames.ScriptUrl]: string().when(ScriptFormNames.ScriptType, {
+    is: ScriptType.URL,
+    then: (schema) => schema.trim().required("Script URL is required"),
+    otherwise: (schema) => schema.notRequired(),
+  }),
+  [ScriptFormNames.IntegrityHashes]: array().of(string().defined()).defined(),
+  [ScriptFormNames.CurrentIntegrityHash]: string().defined(),
+  [ScriptFormNames.ScriptContents]: string().when(ScriptFormNames.ScriptType, {
+    is: ScriptType.SCRIPT,
+    then: (schema) => schema.trim().required("Script contents are required"),
+    otherwise: (schema) => schema.notRequired(),
+  }),
+});
+
+// #endregion Script manager
