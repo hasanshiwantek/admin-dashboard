@@ -103,7 +103,7 @@ const useScriptManagerContainer = () => {
     {
       label: "Edit",
       onClick: () =>
-        router.push(`/manage/storefront/script-manager/edit/${script.id}`),
+        router.push(`/manage/storefront/script-manager/${script.id}`),
     },
     {
       label: "Delete",
