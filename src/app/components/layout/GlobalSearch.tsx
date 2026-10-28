@@ -1,5 +1,6 @@
 "use client";
 
+import { editProductRoute } from "@/app/(protected)/manage/products/constant";
 import React, { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
@@ -90,7 +91,7 @@ const GlobalSearchBar = () => {
                 id: item.id,
                 label: item.name,
                 subtitle: item.sku || "",
-                url: `/manage/products/edit/${item.id}`,
+                url: editProductRoute(item.id),
             })),
 
             ...orders.map((item: any) => ({

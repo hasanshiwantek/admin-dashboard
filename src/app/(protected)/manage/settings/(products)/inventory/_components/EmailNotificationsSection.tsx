@@ -1,6 +1,6 @@
 import InputField from "@/components/form/InputField";
 import { ListRenderer } from "@/components/ListRenderer.tsx/ListRenderer";
-import SettingsCard from "../../../_components/SettingsCard";
+import SettingsCard from "@/components/SettingsCard/SettingsCard";
 import {
   emailNotificationFields,
   FIELD_CONTROL_CLASS,

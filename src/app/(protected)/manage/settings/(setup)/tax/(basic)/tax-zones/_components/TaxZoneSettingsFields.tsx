@@ -4,7 +4,7 @@ import RadioGroupField from "@/components/form/fields/RadioGroupField";
 import { SelectField } from "@/components/form/fields/SelectField";
 import InputField from "@/components/form/InputField";
 import HelpTooltip from "@/components/HelpTooltip/HelpTooltip";
-import SettingsCard from "../../../../../_components/SettingsCard";
+import SettingsCard from "@/components/SettingsCard/SettingsCard";
 import { countryOptions } from "../../../../locations/constant";
 import {
   customerGroupOptions,

@@ -70,6 +70,7 @@ export enum ActionEnums {
   VIEW_SHIPMENTS = "view-shipments",
   VIEW_TIMELINE = "view-timeline",
   VIEW_STOREFRONT = "view-storefront",
+  VIEW_ORDERS = "view-orders",
   PRINT = "print",
   PRINT_INVOICE = "print-invoice",
   PRINT_PACKING_SLIP = "print-packing-slip",
@@ -110,6 +111,9 @@ export enum LocalStorageKeys {
   AvailableStores = "availableStores",
   CurrentStore = "currentStore",
   StoreId = "storeId",
+  // Products handed from the products list to the inventory / bulk edit pages
+  SelectedProducts = "selectedProducts",
+  BulkEditProducts = "bulkEditProducts",
 }
 
 export enum DateTimeFormat {

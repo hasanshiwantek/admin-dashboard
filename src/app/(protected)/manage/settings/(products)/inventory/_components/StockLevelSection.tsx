@@ -1,7 +1,7 @@
 import CheckboxField from "@/components/form/fields/CheckboxField";
 import SelectField from "@/components/form/fields/SelectField";
 import InputField from "@/components/form/InputField";
-import SettingsCard from "../../../_components/SettingsCard";
+import SettingsCard from "@/components/SettingsCard/SettingsCard";
 import {
   FIELD_CONTROL_CLASS,
   FIELD_LABEL_CLASS,

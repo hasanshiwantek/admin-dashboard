@@ -4,7 +4,7 @@ import { ListRenderer } from "@/components/ListRenderer.tsx/ListRenderer";
 import { Button } from "@/components/ui/Button";
 import { X } from "lucide-react";
 import { ReactNode } from "react";
-import SettingsCard from "../../../_components/SettingsCard";
+import SettingsCard from "@/components/SettingsCard/SettingsCard";
 import {
   DnsSection,
   MailForwardFormNames,

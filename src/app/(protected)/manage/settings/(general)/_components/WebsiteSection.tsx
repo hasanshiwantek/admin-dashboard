@@ -8,7 +8,7 @@ import {
   wwwRedirectOptions,
 } from "../constant";
 import { fieldPath } from "../utils";
-import SettingsCard from "../../_components/SettingsCard";
+import SettingsCard from "@/components/SettingsCard/SettingsCard";
 import SettingsNotice from "../../_components/SettingsNotice";
 import HelpTooltip from "@/components/HelpTooltip/HelpTooltip";
 

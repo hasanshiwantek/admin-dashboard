@@ -1,5 +1,5 @@
 import Table from "@/components/ui/Table/Table";
-import SettingsCard from "../../../_components/SettingsCard";
+import SettingsCard from "@/components/SettingsCard/SettingsCard";
 import { defaultCurrencyColumns } from "../columns";
 import { DefaultCurrencySectionProps } from "./type";
 
