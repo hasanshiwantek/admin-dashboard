@@ -83,7 +83,6 @@ export enum ActionEnums {
 }
 
 export enum UserRolesEnum {
-  ADMIN = 1,
   USER = 2,
   SALES_STAFF = 3,
   SALES_MANAGER = 4,
@@ -92,7 +91,6 @@ export enum UserRolesEnum {
 }
 
 export const UserRoles = {
-  [UserRolesEnum.ADMIN]: "Admin",
   [UserRolesEnum.USER]: "User",
   [UserRolesEnum.SALES_STAFF]: "Sales Staff",
   [UserRolesEnum.SALES_MANAGER]: "Sales Manager",

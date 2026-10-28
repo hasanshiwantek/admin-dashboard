@@ -23,7 +23,7 @@ const initialForm: RegisterPayload = {
   password_confirmation: "",
   phoneNumber: "",
   storeName: "",
-  userRole: UserRolesEnum.ADMIN,
+  userRole: UserRolesEnum.SALES_STAFF,
   businessSize: "",
   region: "",
 };
