@@ -13,7 +13,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { ScriptSchema } from "@/validations/formValidations";
 import {
   ScriptCategory,
-  SCRIPT_FORM_DEFAULT_VALUES,
+  scriptFormDefaultValues,
   ScriptLoadMethod,
   ScriptLocation,
   SCRIPT_MANAGER_ROUTE,
@@ -36,7 +36,7 @@ export function useScriptFormContainer() {
   const router = useRouter();
   const form = useForm<ScriptFormValues>({
     resolver: yupResolver(ScriptSchema),
-    defaultValues: SCRIPT_FORM_DEFAULT_VALUES,
+    defaultValues: scriptFormDefaultValues,
   });
   const { reset, watch } = form;
 
@@ -79,22 +79,16 @@ export function useScriptFormContainer() {
 
   const submitScript = async (values: ScriptFormValues) => {
     const formValues = Object.fromEntries(
-      Object.entries(values).filter(([key]) => {
-        if (key === ScriptFormNames.CurrentIntegrityHash) return false;
-        if (
-          values[ScriptFormNames.ScriptType] === ScriptType.URL &&
-          key === ScriptFormNames.ScriptContents
-        ) {
-          return false;
-        }
-        if (
-          values[ScriptFormNames.ScriptType] === ScriptType.SCRIPT &&
-          key === ScriptFormNames.ScriptUrl
-        ) {
-          return false;
-        }
-        return true;
-      }),
+      Object.entries(values).filter(
+        ([key]) =>
+          !(
+            key === ScriptFormNames.CurrentIntegrityHash ||
+            (values[ScriptFormNames.ScriptType] === ScriptType.URL &&
+              key === ScriptFormNames.ScriptContents) ||
+            (values[ScriptFormNames.ScriptType] === ScriptType.SCRIPT &&
+              key === ScriptFormNames.ScriptUrl)
+          ),
+      ),
     );
     const payload = toSnakeCase({
       ...formValues,

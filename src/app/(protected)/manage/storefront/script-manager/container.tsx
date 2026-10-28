@@ -8,6 +8,7 @@ import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { ScriptRecord } from "./type";
+import { SCRIPT_MANAGER_ROUTE } from "./[id]/constant";
 
 const useScriptManagerContainer = () => {
   const router = useRouter();
@@ -103,7 +104,7 @@ const useScriptManagerContainer = () => {
     {
       label: "Edit",
       onClick: () =>
-        router.push(`/manage/storefront/script-manager/${script.id}`),
+        router.push(`${SCRIPT_MANAGER_ROUTE}/${script.id}`),
     },
     {
       label: "Delete",

@@ -40,7 +40,7 @@ export enum ScriptCategory {
   FUNCTIONAL = "functional",
   TARGETING = "targeting",
 }
-export const SCRIPT_FORM_DEFAULT_VALUES: Partial<ScriptFormValues> = {
+export const scriptFormDefaultValues : Partial<ScriptFormValues> = {
   [ScriptFormNames.ScriptName]: "",
   [ScriptFormNames.Description]: "",
   [ScriptFormNames.Placement]: ScriptPlacement.FOOTER,
@@ -54,7 +54,7 @@ export const SCRIPT_FORM_DEFAULT_VALUES: Partial<ScriptFormValues> = {
   [ScriptFormNames.ScriptContents]: "",
 };
 
-export const SCRIPT_PLACEMENT_OPTIONS = [
+export const ScriptPlacementOptions  = [
   { value: ScriptPlacement.FOOTER, label: "Footer" },
   { value: ScriptPlacement.HEADER, label: "Header" },
 ] as const;

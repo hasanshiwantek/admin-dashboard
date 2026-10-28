@@ -13,7 +13,7 @@ import {
   SCRIPT_LOAD_METHOD_OPTIONS,
   SCRIPT_LOCATION_OPTIONS,
   SCRIPT_MANAGER_ROUTE,
-  SCRIPT_PLACEMENT_OPTIONS,
+  ScriptPlacementOptions,
   ScriptFormNames,
   SCRIPT_TYPE_OPTIONS,
   ScriptType,
@@ -98,7 +98,7 @@ const Page = () => {
             label="Placement"
             layout="vertical"
             Component={RadioGroupField}
-            options={SCRIPT_PLACEMENT_OPTIONS}
+            options={ScriptPlacementOptions}
             className="flex flex-col gap-3"
             optionClassName="cursor-pointer"
           />
