@@ -148,6 +148,8 @@ export const deleteCategory = createAsyncThunk(
 const initialState = {
   categories: [],
   loading: false,
+  selectedCategory: null as Record<string, any> | null,
+  selectedCategoryLoading: false,
   error: null as string | null,
 };
 
@@ -170,6 +172,20 @@ const categorySlice = createSlice({
         state.loading = false;
         state.error =
           (action.payload as string) || action.error.message || "Failed";
+      })
+      .addCase(fetchCategoryById.pending, (state) => {
+        state.selectedCategoryLoading = true;
+      })
+      .addCase(fetchCategoryById.fulfilled, (state, action) => {
+        state.selectedCategoryLoading = false;
+        // Keyed by the requested id, which the response may not include
+        const category = action.payload?.category;
+        state.selectedCategory = category
+          ? { ...category, id: Number(action.meta.arg.id) }
+          : null;
+      })
+      .addCase(fetchCategoryById.rejected, (state) => {
+        state.selectedCategoryLoading = false;
       })
       .addCase(deleteCategory.fulfilled, (state: any, action) => {
         state.loading = false;
