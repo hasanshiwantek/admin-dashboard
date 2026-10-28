@@ -11,12 +11,8 @@ import useTransactionalEmailsContainer from "./container";
 import StatusBadge from "@/components/StatusBadge/StatusBadge";
 
 const Page = () => {
-  const {
-    templates,
-    selectedChannel,
-    setSelectedChannel,
-    handleAction,
-  } = useTransactionalEmailsContainer();
+  const { templates, selectedChannel, setSelectedChannel, handleAction } =
+    useTransactionalEmailsContainer();
 
   return (
     <div className="p-10">
@@ -63,12 +59,9 @@ const Page = () => {
                 </div>
 
                 <div className="flex items-center gap-3 ml-4">
-                {template.enabled ? (
-  <StatusBadge tone="success">ENABLED</StatusBadge>
-) : (
-  <StatusBadge tone="neutral">DISABLED</StatusBadge>
-)}
-
+                  <StatusBadge tone={template.enabled ? "success" : "neutral"}>
+                    {template.enabled ? "Enabled" : "Disabled"}
+                  </StatusBadge>
                   <ActionButton
                     data={template}
                     actions={getTemplateActions(template.enabled)}

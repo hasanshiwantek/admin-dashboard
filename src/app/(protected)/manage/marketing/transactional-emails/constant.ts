@@ -1,3 +1,4 @@
+import { ActionEnums } from "@/const/appConstants";
 import { EmailTemplate } from "./types";
 
 export const emailTemplatesData: EmailTemplate[] = [
@@ -78,4 +79,12 @@ export const ChannelOptions = [
   { value: ChannelType.Global, label: "Global (storefront defaults)" },
   { value: ChannelType.Channel1, label: "Channel 1" },
   { value: ChannelType.Channel2, label: "Channel 2" },
+];
+
+export const getTemplateActions = (enabled: boolean) => [
+  { type: ActionEnums.EDIT, label: "Edit Template" },
+  {
+    type: "toggle" as ActionEnums,
+    label: enabled ? "Disable" : "Enable",
+  },
 ];

@@ -22,9 +22,9 @@ const useTransactionalEmailsContainer = () => {
 const handleAction = (template: EmailTemplate) => (action: ActionEnums) => {
   switch (action) {
     case ActionEnums.EDIT:
-      // edit logic
       break;
-    default:
+    case ActionEnums.DISABLE:
+    case ActionEnums.ENABLE:
       toggleTemplate(template.id);
       break;
   }
