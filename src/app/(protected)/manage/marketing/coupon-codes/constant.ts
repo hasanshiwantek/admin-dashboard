@@ -20,7 +20,7 @@ export const DefaultCouponCodeFormValues: CouponCodeForm = {
 productIds: [],
   limitByLocation: false,
   limitByShipping: false,
-  appliesTo: "categories",
+  appliesTo: "categories" as const,
 };
 
 export enum DiscountType {

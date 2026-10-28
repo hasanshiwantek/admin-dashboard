@@ -4,7 +4,7 @@ import AddCouponCode from '../_components/AddCouponCode'
 const page = () => {
   return (
     <div >
-      <AddCouponCode/>
+      {/* <AddCouponCode/> */}
     </div>
   )
 }

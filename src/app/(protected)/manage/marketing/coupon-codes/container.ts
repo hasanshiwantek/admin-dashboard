@@ -125,7 +125,7 @@ const handleAction = (coupon: any) => (action: ActionEnums) => {
   }
 };
   const goToEditPage = (id: number) =>
-    router.push(`/manage/marketing/coupon-codes/edit/${id}`);
+    router.push(`/manage/marketing/coupon-codes/${id}`);
 
   return {
     couponsData,

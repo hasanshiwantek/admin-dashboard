@@ -552,21 +552,17 @@ export const CouponCodeSchema = object({
 
     return true;
   })
-  .test("category-validation", function (values) {
-    // Category validation sirf categories select hone par chalegi
-    if (values?.appliesTo !== "categories") {
-      return true;
-    }
+.test("category-validation", function (values) {
+  // Agar appliesTo categories nahi ya categoryIds empty nahi to skip
+  if (values?.appliesTo !== "categories") return true;
+  if (values.categoryIds && values.categoryIds.length > 0) return true;
 
-    if (!values.categoryIds || values.categoryIds.length === 0) {
-      return this.createError({
-        path: "categoryIds",
-        message: "Select at least one category",
-      });
-    }
-
-    return true;
+  // Sirf tab error jab categories selected hai lekin koi category nahi
+  return this.createError({
+    path: "categoryIds",
+    message: "Select at least one category",
   });
+})
 
 export type CouponCodeForm = InferType<typeof CouponCodeSchema>;
 // WebPageSchema
