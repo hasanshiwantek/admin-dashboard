@@ -1,6 +1,6 @@
 import InputField from "@/components/form/InputField";
 import { Button } from "@/components/ui/Button";
-import SettingsCard from "../../../_components/SettingsCard";
+import SettingsCard from "@/components/SettingsCard/SettingsCard";
 import { OrderNotificationFormNames } from "../constant";
 import { EmailMessageSectionProps } from "./type";
 import HelpTooltip from "@/components/HelpTooltip/HelpTooltip";

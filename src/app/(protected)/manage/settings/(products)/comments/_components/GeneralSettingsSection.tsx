@@ -1,6 +1,6 @@
 import RadioGroupField from "@/components/form/fields/RadioGroupField";
 import InputField from "@/components/form/InputField";
-import SettingsCard from "../../../_components/SettingsCard";
+import SettingsCard from "@/components/SettingsCard/SettingsCard";
 import { CommentSettingsFormNames, commentSystemOptions } from "../constant";
 
 const GeneralSettingsSection = () => (

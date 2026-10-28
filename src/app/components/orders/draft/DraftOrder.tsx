@@ -114,9 +114,9 @@ const DraftOrder = () => {
       <div className="flex justify-between items-center mb-6">
         <h1 className="2xl:!text-5xl">Draft orders</h1>
         <Link href={"/manage/orders/add"}>
-          <button className="btn-primary flex items-center 2xl:!text-2xl gap-2">
+          <Button variant="primary" size="md" className="flex items-center 2xl:!text-2xl gap-2">
             <Plus className="h-6 w-6" /> Add new
-          </button>
+          </Button>
         </Link>
       </div>
 

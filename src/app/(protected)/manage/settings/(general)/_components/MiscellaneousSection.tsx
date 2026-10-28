@@ -15,7 +15,7 @@ import {
 } from "../constant";
 import { fieldPath } from "../utils";
 import InlineFieldRow from "./InlineFieldRow";
-import SettingsCard from "../../_components/SettingsCard";
+import SettingsCard from "@/components/SettingsCard/SettingsCard";
 import SettingsNotice from "../../_components/SettingsNotice";
 import { CircleHelp } from "lucide-react";
 import HelpTooltip from "@/components/HelpTooltip/HelpTooltip";

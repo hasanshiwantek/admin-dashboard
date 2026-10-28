@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/Table";
 import { useEffect, useState } from "react";
-import Pagination from "@/components/ui/pagination";
+import Pagination from "@/components/ui/Pagination";
 import { Check } from "lucide-react";
 import { IoMdClose } from "react-icons/io";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";

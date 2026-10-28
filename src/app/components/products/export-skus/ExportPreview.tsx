@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/Table";
 import { Button } from "@/components/ui/Button";
 import { useState } from "react";
-import Pagination from "@/components/ui/pagination";
+import Pagination from "@/components/ui/Pagination";
 const previewData = [
   {
     sku: "EWS1200D-10T",

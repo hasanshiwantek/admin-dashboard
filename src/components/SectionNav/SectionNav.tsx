@@ -10,8 +10,9 @@ const SectionNav = ({
   sections,
   activeSection,
   onSectionClick,
+  className,
 }: SectionNavProps) => (
-  <nav className="sticky top-6 hidden lg:block">
+  <nav className={cn("sticky top-6 hidden lg:block", className)}>
     <ListRenderer
       data={sections}
       keyExtractor={(section) => section.id}
@@ -20,26 +21,31 @@ const SectionNav = ({
         const active = activeSection === section.id;
 
         return (
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={() => onSectionClick(section.id)}
-            aria-current={active ? "location" : undefined}
-            className={cn(
-              "h-auto w-full justify-start gap-3 rounded-none border-l-2 px-5 py-3 text-[1.5rem]! font-normal hover:bg-transparent hover:text-primary-blue",
-              active
-                ? "border-primary-blue text-primary-blue"
-                : "border-transparent text-text-heading",
+          <>
+            {section.separatorBefore && (
+              <hr className="my-3 border-border-light" />
             )}
-          >
-            {section.label}
-            {section.hasError && (
-              <CircleAlert
-                aria-label="Has errors"
-                className="size-6! fill-danger-red text-white"
-              />
-            )}
-          </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => onSectionClick(section.id)}
+              aria-current={active ? "location" : undefined}
+              className={cn(
+                "h-auto w-full justify-start gap-3 rounded-none border-l-2 px-5 py-3 text-[1.5rem]! font-normal hover:bg-transparent hover:text-primary-blue",
+                active
+                  ? "border-primary-blue text-primary-blue"
+                  : "border-transparent text-text-heading",
+              )}
+            >
+              {section.label}
+              {section.hasError && (
+                <CircleAlert
+                  aria-label="Has errors"
+                  className="size-8! fill-danger-red text-white"
+                />
+              )}
+            </Button>
+          </>
         );
       }}
     />

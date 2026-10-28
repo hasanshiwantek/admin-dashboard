@@ -2,7 +2,7 @@ import { RadioGroupField } from "@/components/form/fields/RadioGroupField";
 import InputField from "@/components/form/InputField";
 import { Button } from "@/components/ui/Button";
 import { ExternalLink } from "lucide-react";
-import SettingsCard from "../../../_components/SettingsCard";
+import SettingsCard from "@/components/SettingsCard/SettingsCard";
 import {
   CurrencyFormNames,
   EXCHANGE_RATE_LEARN_MORE_URL,

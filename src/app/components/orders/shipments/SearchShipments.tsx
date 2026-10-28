@@ -24,6 +24,7 @@ import { useRouter } from "next/navigation";
 import { advanceShipmentSearch } from "@/redux/slices/orderSlice";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import Link from "next/link";
+import { Button } from "@/components/ui/Button";
 
 const toSearchParams = (formData: Record<string, any>) => {
   const map: Record<string, string> = {
@@ -395,13 +396,13 @@ const SearchShipments = () => {
       {/* SUBMIT BUTTON */}
       <div className="sticky bottom-0 w-full border-t p-6 bg-white flex justify-end gap-4">
         <Link href="/manage/orders/shipments">
-          <button type="button" className="btn-outline-primary">
+          <Button variant="outline" size="md" type="button">
             Cancel
-          </button>
+          </Button>
         </Link>
-        <button className="btn-primary" type="submit">
+        <Button variant="primary" size="md" type="submit">
           Search
-        </button>
+        </Button>
       </div>
     </form>
   );

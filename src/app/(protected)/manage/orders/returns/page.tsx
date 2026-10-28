@@ -45,8 +45,9 @@ const Page = () => {
           )}
         </div>
         <Button
+          variant="outline"
           type="button"
-          className={`btn-outline-primary ${TOOLBAR_CONTROL} rounded-l-none`}
+          className={`${TOOLBAR_CONTROL} rounded-l-none`}
         >
           <IoFilterOutline />
         </Button>

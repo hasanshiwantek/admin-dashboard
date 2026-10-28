@@ -39,52 +39,58 @@ export const restrictDecimalInput = (
   }
 };
 
-export const restrictDecimalValue = (event: FormEvent<HTMLInputElement>) => {
-  const input = event.currentTarget;
-  const nextValue = normalizeDecimalValue(input.value);
+// Keeps at most `decimals` digits after the point, e.g. a currency's places
+export const restrictDecimalValueTo =
+  (decimals: number) => (event: FormEvent<HTMLInputElement>) => {
+    const input = event.currentTarget;
+    const nextValue = normalizeDecimalValue(input.value, decimals);
 
-  if (input.value !== nextValue) input.value = nextValue;
-};
+    if (input.value !== nextValue) input.value = nextValue;
+  };
 
-const normalizeDecimalValue = (value: string) => {
+export const restrictDecimalValue = restrictDecimalValueTo(2);
+
+const normalizeDecimalValue = (value: string, decimals = 2) => {
   const sanitizedValue = value.replace(REGEX.DECIMAL_SANITIZE, "");
   const [rawIntegerPart, ...decimalParts] = sanitizedValue.split(".");
   const integerPart =
     rawIntegerPart.replace(REGEX.DECIMAL_LEADING_ZEROS, "") ||
     (decimalParts.length ? "0" : "");
 
-  return decimalParts.length
-    ? `${integerPart}.${decimalParts.join("").slice(0, 2)}`
+  return decimalParts.length && decimals > 0
+    ? `${integerPart}.${decimalParts.join("").slice(0, decimals)}`
     : integerPart;
 };
 
-export const restrictDecimalPaste = (
-  event: ClipboardEvent<HTMLInputElement>,
-) => {
-  const pastedValue = event.clipboardData
-    .getData("text")
-    .replace(REGEX.DECIMAL_SANITIZE, "");
-  const { value, selectionStart, selectionEnd } = event.currentTarget;
-  // Number inputs may not expose selection positions. Replace their value so
-  // selecting the whole field and pasting does not append to the old value.
-  const hasSelection = selectionStart !== null && selectionEnd !== null;
-  const start = hasSelection ? selectionStart : 0;
-  const end = hasSelection ? selectionEnd : value.length;
-  const normalizedPaste = pastedValue.replace(
-    REGEX.DECIMAL_DUPLICATE_POINT,
-    ".$1",
-  );
-  const nextValue = value.slice(0, start) + normalizedPaste + value.slice(end);
-  const truncatedValue = normalizeDecimalValue(nextValue);
+export const restrictDecimalPasteTo =
+  (decimals: number) => (event: ClipboardEvent<HTMLInputElement>) => {
+    const pastedValue = event.clipboardData
+      .getData("text")
+      .replace(REGEX.DECIMAL_SANITIZE, "");
+    const { value, selectionStart, selectionEnd } = event.currentTarget;
+    // Number inputs may not expose selection positions. Replace their value so
+    // selecting the whole field and pasting does not append to the old value.
+    const hasSelection = selectionStart !== null && selectionEnd !== null;
+    const start = hasSelection ? selectionStart : 0;
+    const end = hasSelection ? selectionEnd : value.length;
+    const normalizedPaste = pastedValue.replace(
+      REGEX.DECIMAL_DUPLICATE_POINT,
+      ".$1",
+    );
+    const nextValue =
+      value.slice(0, start) + normalizedPaste + value.slice(end);
+    const truncatedValue = normalizeDecimalValue(nextValue, decimals);
 
-  event.preventDefault();
-  const valueSetter = Object.getOwnPropertyDescriptor(
-    HTMLInputElement.prototype,
-    "value",
-  )?.set;
-  valueSetter?.call(event.currentTarget, truncatedValue);
-  event.currentTarget.dispatchEvent(new Event("input", { bubbles: true }));
-};
+    event.preventDefault();
+    const valueSetter = Object.getOwnPropertyDescriptor(
+      HTMLInputElement.prototype,
+      "value",
+    )?.set;
+    valueSetter?.call(event.currentTarget, truncatedValue);
+    event.currentTarget.dispatchEvent(new Event("input", { bubbles: true }));
+  };
+
+export const restrictDecimalPaste = restrictDecimalPasteTo(2);
 
 export const restrictWholeNumberInput = (
   event: KeyboardEvent<HTMLInputElement>,

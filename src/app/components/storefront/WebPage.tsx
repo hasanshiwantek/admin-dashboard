@@ -139,15 +139,16 @@ const WebPage = () => {
           onCancel: () => router.push(LIST_PATH),
           loading: form.formState.isSubmitting,
           extraActions: (
-            <button
+            <Button
+              variant="primary"
+              size="md"
               type="submit"
-              className="btn-primary"
               onClick={() => {
                 submitActionRef.current = isEdit ? "keepEditing" : "addAnother";
               }}
             >
               {isEdit ? "Save & Keep Editing" : "Save & Add Another"}
-            </button>
+            </Button>
           ),
         }}
       >
@@ -191,8 +192,9 @@ const WebPage = () => {
                 }}
               />
               <Button
+                variant="outline"
                 type="button"
-                className="btn-outline-primary !py-2 h-13"
+                className="!py-2 h-13"
                 onClick={() => {
                   setIsUrlManuallyEdited(false);
                   const url = generatePageUrl(watchedName, urlSettingData);

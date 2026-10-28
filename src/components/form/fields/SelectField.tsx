@@ -29,6 +29,8 @@ type SelectFieldBaseProps<T> = {
   labelKey?: string;
   getOptionValue?: (option: T) => string;
   getOptionLabel?: (option: T) => string;
+  // A heading is shown above the first option of each group
+  getOptionGroup?: (option: T) => string | undefined;
   renderOption?: (option: T) => ReactNode;
   emptyText?: string;
   placeholder?: string;
@@ -72,6 +74,7 @@ export function SelectField<T = SelectOption>({
   labelKey,
   getOptionValue: getValueProp,
   getOptionLabel: getLabelProp,
+  getOptionGroup,
   renderOption,
   emptyText = "No results found",
   placeholder,
@@ -295,7 +298,7 @@ export function SelectField<T = SelectOption>({
               </p>
             }
             className={cn(
-              "space-y-0! overflow-y-auto p-1!",
+              "no-scrollbar space-y-0! overflow-y-auto p-1!",
               multi ? "max-h-[32rem]" : "max-h-64",
             )}
             renderItem={(option, index) => {
@@ -309,8 +312,16 @@ export function SelectField<T = SelectOption>({
                 onMouseEnter: () => setHighlighted(index),
                 onClick: () => handleSelect(option),
               };
+              const group = getOptionGroup?.(option);
+              const groupHeading = group &&
+                (index === 0 ||
+                  getOptionGroup?.(filtered[index - 1]) !== group) && (
+                  <p className="px-3 pt-3 pb-1 text-[1.3rem] font-semibold text-muted-foreground">
+                    {group}
+                  </p>
+                );
 
-              return multi ? (
+              const item = multi ? (
                 <div
                   {...itemProps}
                   role="option"
@@ -346,6 +357,13 @@ export function SelectField<T = SelectOption>({
                 >
                   {content}
                 </button>
+              );
+
+              return (
+                <>
+                  {groupHeading}
+                  {item}
+                </>
               );
             }}
           />

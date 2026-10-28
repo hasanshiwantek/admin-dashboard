@@ -22,8 +22,10 @@ const buttonVariants = cva(
           "bg-primaryColor text-primary-foreground shadow-xs hover:opacity-90",
         destructive:
           "bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
+        primary:
+          "text-white bg-primaryColor border border-primaryColor font-medium rounded text-xl transition-all my-1 duration-200 cursor-pointer hover:bg-white hover:text-primaryColor",
         outline:
-          "text-[#2c83ec] border border-[#2c83ec] font-medium rounded text-xl transition-all my-1 duration-200 cursor-pointer bg-transparent hover:bg-[#f1f8fe]",
+          "text-primaryColor border border-primaryColor font-medium rounded text-xl transition-all my-1 duration-200 cursor-pointer bg-transparent hover:bg-pale-ice-blue",
         secondary:
           "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
         ghost:
@@ -33,6 +35,7 @@ const buttonVariants = cva(
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",
         sm: "h-8 rounded-sm gap-1.5 px-3 has-[>svg]:px-2.5",
+        md: "h-auto px-4 py-[0.7rem]",
         lg: "h-10 rounded-sm px-6 has-[>svg]:px-4",
         xl: "h-14 rounded-sm px-7 has-[>svg]:px-5",
         xxl: "h-18 rounded-sm px-8 has-[>svg]:px-6",

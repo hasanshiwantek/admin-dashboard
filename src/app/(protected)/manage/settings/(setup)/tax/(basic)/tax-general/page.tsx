@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/Button";
 import ResetBasicTaxModal from "@/Modals/TaxModals/ResetBasicTaxModal/ResetBasicTaxModal";
 import Link from "next/link";
-import SettingsCard from "../../../../_components/SettingsCard";
+import SettingsCard from "@/components/SettingsCard/SettingsCard";
 import { STORE_TAX_SETTINGS_ROUTE } from "../../constant";
 import BasicTaxSection from "../_components/BasicTaxSection";
 import BasicTaxShell from "../_components/BasicTaxShell";

@@ -15,7 +15,7 @@ const ExternalEmailFields = ({
       <SettingsNotice tone="info">
         <span className="flex flex-wrap items-center gap-2">
           Learn how to set up an external email hosting solution.
-          <Button asChild size="sm" className="btn-primary h-auto py-2">
+          <Button variant="primary" asChild size="sm" className="h-auto py-2">
             <a
               href={EXTERNAL_EMAIL_HOSTING_URL}
               target="_blank"

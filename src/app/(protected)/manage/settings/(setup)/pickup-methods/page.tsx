@@ -7,7 +7,7 @@ import DeletePickupMethodModal from "@/Modals/PickupMethodModals/DeletePickupMet
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { SETTINGS_ROUTE } from "../../(products)/constant";
-import SettingsCard from "../../_components/SettingsCard";
+import SettingsCard from "@/components/SettingsCard/SettingsCard";
 import { LOCATIONS_ROUTE } from "../locations/constant";
 import { ADD_PICKUP_METHOD_ROUTE } from "./constant";
 import usePickupMethodsPageContainer from "./container";
@@ -48,7 +48,7 @@ const PickupMethodsPage = () => {
         title="Pick up methods"
         className="border-0 shadow-sm"
         action={
-          <Button asChild size="xl" className="btn-primary">
+          <Button variant="primary" asChild size="xl">
             <Link href={ADD_PICKUP_METHOD_ROUTE}>
               <Plus className="size-6" />
               Add new
