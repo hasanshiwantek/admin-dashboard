@@ -113,6 +113,7 @@ import {
 } from "@/Modals/ShippingModals/ShipByWeightModal/constant";
 import { DisplayNameField } from "@/Modals/ShippingModals/ShippingQuotesDisplayNameModal/constant";
 import type { PreviewItem } from "@/types/types";
+import { BrandFormNames } from "@/app/(protected)/manage/products/brands/[id]/constant";
 import {
   array,
   boolean,
@@ -1370,6 +1371,17 @@ export const ProductCategoriesSchema = object({
     .of(string().required())
     .required()
     .default([]),
+});
+
+export const BrandSchema = object({
+  [BrandFormNames.Name]: string().trim().required("Brand name is required"),
+  [BrandFormNames.PageTitle]: text(),
+  [BrandFormNames.MetaKeywords]: text(),
+  [BrandFormNames.MetaDescription]: text(),
+  [BrandFormNames.SearchKeywords]: text(),
+  [BrandFormNames.Logo]: mixed<File | string>().nullable().default(null),
+  [BrandFormNames.BrandUrl]: text(),
+  [BrandFormNames.TemplateLayout]: text(),
 });
 
 export const AddMediaFromUrlSchema = object({
