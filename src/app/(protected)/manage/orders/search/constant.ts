@@ -31,7 +31,7 @@ export enum OrderStatus {
   PartiallyRefunded = "Partially Refunded",
 }
 
-export const orderStatusOptions = [
+export const OrderStatusOptions = [
   { label: "Awaiting Payment", value: OrderStatus.AwaitingPayment },
   { label: "Pending", value: OrderStatus.Pending },
   { label: "Awaiting Fulfillment", value: OrderStatus.AwaitingFulfillment },
@@ -57,7 +57,7 @@ export enum PaymentMethod {
   CreditCard = "credit_card",
 }
 
-export const paymentMethodOptions = [
+export const PaymentMethodOptions = [
   { label: "Google pay", value: PaymentMethod.GooglePay },
   { label: "Stripe", value: PaymentMethod.Stripe },
   { label: "Credit Card", value: PaymentMethod.CreditCard },
@@ -73,7 +73,7 @@ export enum DateRange {
   CustomPeriod = "CustomPeriod",
 }
 
-export const dateRangeOptions = [
+export const DateRangeOptions = [
   { label: "Today", value: DateRange.Today },
   { label: "Yesterday", value: DateRange.Yesterday },
   { label: "Last 24 hours", value: DateRange.Last24Hours },
@@ -96,7 +96,7 @@ export enum SortDirection {
   Desc = "desc",
 }
 
-export const sortByOptions = [
+export const SortByOptions = [
   { label: "Date", value: SortBy.Date },
   { label: "ID", value: SortBy.Id },
   { label: "Customer", value: SortBy.Customer },
@@ -104,7 +104,7 @@ export const sortByOptions = [
   { label: "Total", value: SortBy.Total },
 ];
 
-export const sortDirectionOptions = [
+export const SortDirectionOptions = [
   { label: "Ascending Order", value: SortDirection.Asc },
   { label: "Descending Order", value: SortDirection.Desc },
 ];
