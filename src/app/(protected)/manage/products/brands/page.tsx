@@ -93,13 +93,7 @@ const BrandsPage = () => {
           setSelectedIds(checked ? allIds.map(Number) : [])
         }
         selectAllInHeader
-        pagination={{
-          currentPage: table.page,
-          totalPages: pagination?.totalPages ?? 1,
-          onPageChange: table.setPage,
-          perPage: table.perPage,
-          onPerPageChange: table.setPerPage,
-        }}
+        pagination={pagination}
       />
 
       <DeleteBrandsModal

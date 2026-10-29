@@ -71,6 +71,8 @@
   --color-smoky-gray: var(--smoky-gray);
   --color-pale-ice-blue: var(--pale-ice-blue);
   --color-soft-ivory-white: var(--soft-ivory-white);
+  --color-text-link: var(--text-link);
+  --color-pure-green: var(--pure-green);
 }
 
 :root {
@@ -154,6 +156,8 @@
   --pale-ice-blue: #f1f8fe;
   /* near-white with a warm tint, e.g. expanded order row background */
   --soft-ivory-white: #fcfcfb;
+  /* plain mid green, e.g. approved review status */
+  --pure-green: #008000;
 }
 
 *::before,
