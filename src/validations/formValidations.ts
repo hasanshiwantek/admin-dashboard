@@ -87,9 +87,9 @@ import { BlogFormFieldName } from "@/app/components/blog/constant";
 import { MessageField } from "@/app/components/orders/message/helper/constant";
 import {
   RatingValue,
-  ReviewField,
+  ReviewFormNames,
   ReviewStatus,
-} from "@/app/components/products/reviews/edit/helper/constant";
+} from "@/app/(protected)/manage/products/reviews/[id]/constant";
 import {
   PageTypeEnums,
   WebPageField,
@@ -634,13 +634,13 @@ export const WebPageSchema = object({
 
 // ReviewSchema
 export const ReviewSchema = object({
-  [ReviewField.Name]: string().trim().required("Review title is required"),
-  [ReviewField.Comment]: string().trim().required("Review is required"),
-  [ReviewField.UserName]: string().trim().required("Author name is required"),
-  [ReviewField.Approved]: string()
+  [ReviewFormNames.Name]: string().trim().required("Review title is required"),
+  [ReviewFormNames.Comment]: string().trim().required("Review is required"),
+  [ReviewFormNames.UserName]: string().nullable().default(""),
+  [ReviewFormNames.Approved]: string()
     .oneOf(Object.values(ReviewStatus), "Invalid status")
     .required("Status is required"),
-  [ReviewField.Rating]: string()
+  [ReviewFormNames.Rating]: string()
     .oneOf(Object.values(RatingValue), "Invalid rating")
     .required("Rating is required"),
 });

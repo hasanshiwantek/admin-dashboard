@@ -99,6 +99,8 @@ export const updateReview = createAsyncThunk(
 
 const initialState = {
     loading: false,
+    reviewsLoading: false,
+    currentReviewLoading: false,
     deleteLoading: false,
     error: null as string | null,
     reviews: [] as any[],
@@ -118,15 +120,18 @@ const reviewSlice = createSlice({
             // fetchAllReviews
             .addCase(fetchAllReviews.pending, (state) => {
                 state.loading = true;
+                state.reviewsLoading = true;
                 state.error = null;
             })
             .addCase(fetchAllReviews.fulfilled, (state, action) => {
                 state.loading = false;
+                state.reviewsLoading = false;
                 state.reviews = action.payload?.data;
                 state.pagination = action.payload?.pagination;
             })
             .addCase(fetchAllReviews.rejected, (state, action) => {
                 state.loading = false;
+                state.reviewsLoading = false;
                 state.error = action.payload as string;
             })
 
@@ -169,13 +174,20 @@ const reviewSlice = createSlice({
             // getReviewById
             .addCase(getReviewById.pending, (state) => {
                 state.loading = true;
+                state.currentReviewLoading = true;
             })
             .addCase(getReviewById.fulfilled, (state, action) => {
                 state.loading = false;
-                state.currentReview = action.payload?.data;
+                state.currentReviewLoading = false;
+                // Keyed by the requested id, which the response may not include
+                const review = action.payload?.data;
+                state.currentReview = review
+                    ? { ...review, id: Number(action.meta.arg.id) }
+                    : null;
             })
             .addCase(getReviewById.rejected, (state, action) => {
                 state.loading = false;
+                state.currentReviewLoading = false;
                 state.error = action.payload as string;
             })
 

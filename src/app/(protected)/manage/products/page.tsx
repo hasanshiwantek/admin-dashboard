@@ -107,14 +107,7 @@ const ProductsPage = () => {
             />
           </>
         }
-        pagination={{
-          currentPage: table.page,
-          totalPages: pagination?.lastPage ?? 1,
-          perPage: table.perPage,
-          total: pagination?.total,
-          onPageChange: table.setPage,
-          onPerPageChange: table.setPerPage,
-        }}
+        pagination={pagination}
       />
 
       <ProductCategoriesModal
