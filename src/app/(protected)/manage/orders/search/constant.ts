@@ -1,17 +1,17 @@
 import { OrderSearchFormValues } from "./type";
 
 export enum OrderSearchField {
-  keywords = "keywords",
-  status = "status",
-  paymentMethod = "paymentMethod",
-  coupon = "coupon",
-  orderIdFrom = "orderIdFrom",
-  orderIdTo = "orderIdTo",
-  orderTotalFrom = "orderTotalFrom",
-  orderTotalTo = "orderTotalTo",
-  dateRange = "dateRange",
-  sortBy = "sortBy",
-  sortDirection = "sortDirection",
+  Keywords = "keywords",
+  Status = "status",
+  PaymentMethod = "paymentMethod",
+  Coupon = "coupon",
+  OrderIdFrom = "orderIdFrom",
+  OrderIdTo = "orderIdTo",
+  OrderTotalFrom = "orderTotalFrom",
+  OrderTotalTo = "orderTotalTo",
+  DateRange = "dateRange",
+  SortBy = "sortBy",
+  SortDirection = "sortDirection",
 }
 
 export enum OrderStatus {
@@ -31,7 +31,7 @@ export enum OrderStatus {
   PartiallyRefunded = "Partially Refunded",
 }
 
-export const OrderStatusOptions = [
+export const orderStatusOptions = [
   { label: "Awaiting Payment", value: OrderStatus.AwaitingPayment },
   { label: "Pending", value: OrderStatus.Pending },
   { label: "Awaiting Fulfillment", value: OrderStatus.AwaitingFulfillment },
@@ -57,7 +57,7 @@ export enum PaymentMethod {
   CreditCard = "credit_card",
 }
 
-export const PaymentMethodOptions = [
+export const paymentMethodOptions = [
   { label: "Google pay", value: PaymentMethod.GooglePay },
   { label: "Stripe", value: PaymentMethod.Stripe },
   { label: "Credit Card", value: PaymentMethod.CreditCard },
@@ -73,7 +73,7 @@ export enum DateRange {
   CustomPeriod = "CustomPeriod",
 }
 
-export const DateRangeOptions = [
+export const dateRangeOptions = [
   { label: "Today", value: DateRange.Today },
   { label: "Yesterday", value: DateRange.Yesterday },
   { label: "Last 24 hours", value: DateRange.Last24Hours },
@@ -96,7 +96,7 @@ export enum SortDirection {
   Desc = "desc",
 }
 
-export const SortByOptions = [
+export const sortByOptions = [
   { label: "Date", value: SortBy.Date },
   { label: "ID", value: SortBy.Id },
   { label: "Customer", value: SortBy.Customer },
@@ -104,7 +104,7 @@ export const SortByOptions = [
   { label: "Total", value: SortBy.Total },
 ];
 
-export const SortDirectionOptions = [
+export const sortDirectionOptions = [
   { label: "Ascending Order", value: SortDirection.Asc },
   { label: "Descending Order", value: SortDirection.Desc },
 ];
@@ -114,15 +114,15 @@ export const ORDER_ROUTES = {
 } as const;
 
 export const defaultValues: OrderSearchFormValues = {
-  [OrderSearchField.keywords]: "",
-  [OrderSearchField.status]: "",
-  [OrderSearchField.paymentMethod]: "",
-  [OrderSearchField.coupon]: "",
-  [OrderSearchField.orderIdFrom]: "",
-  [OrderSearchField.orderIdTo]: "",
-  [OrderSearchField.orderTotalFrom]: "",
-  [OrderSearchField.orderTotalTo]: "",
-  [OrderSearchField.dateRange]: "",
-  [OrderSearchField.sortBy]: "id",
-  [OrderSearchField.sortDirection]: "asc",
+  [OrderSearchField.Keywords]: "",
+  [OrderSearchField.Status]: "",
+  [OrderSearchField.PaymentMethod]: "",
+  [OrderSearchField.Coupon]: "",
+  [OrderSearchField.OrderIdFrom]: "",
+  [OrderSearchField.OrderIdTo]: "",
+  [OrderSearchField.OrderTotalFrom]: "",
+  [OrderSearchField.OrderTotalTo]: "",
+  [OrderSearchField.DateRange]: "",
+  [OrderSearchField.SortBy]: "id",
+  [OrderSearchField.SortDirection]: "asc",
 };
