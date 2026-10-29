@@ -2,7 +2,7 @@ import CheckboxField from "@/components/form/fields/CheckboxField";
 import CheckboxListField from "@/components/form/fields/CheckboxListField";
 import InputField from "@/components/form/InputField";
 import Link from "next/link";
-import SettingsCard from "@/components/SettingsCard/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import {
   CommentSettingsFormNames,
   commentTargetOptions,
@@ -27,7 +27,7 @@ const BuiltInSection = () => (
       </Link>
     </p>
 
-    <SettingsCard title="Built-in Settings">
+    <SectionCard title="Built-in Settings">
       <InputField
         name={CommentSettingsFormNames.EnabledFor}
         label="Enable For"
@@ -57,7 +57,7 @@ const BuiltInSection = () => (
           .
         </p>
       </div>
-    </SettingsCard>
+    </SectionCard>
   </div>
 );
 

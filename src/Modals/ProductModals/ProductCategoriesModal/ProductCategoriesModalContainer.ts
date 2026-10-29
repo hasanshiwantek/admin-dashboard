@@ -58,8 +58,9 @@ const useProductCategoriesContainer = ({
   }, [open, defaultCategoryIds, reset]);
 
   // Picking a category from the search ticks it in the tree
-  const handleSearchPick = (pick: { id: number; path: string }) => {
+  const handleSearchPick = (pick: CategoryPick) => {
     setSearchPick(pick);
+    if (pick.id === null) return;
     const current = getValues(ProductCategoriesFormNames.Categories);
     const id = String(pick.id);
     if (!current.includes(id)) {

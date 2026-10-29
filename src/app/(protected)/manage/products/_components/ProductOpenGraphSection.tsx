@@ -2,7 +2,7 @@ import CheckboxField from "@/components/form/fields/CheckboxField";
 import RadioGroupField from "@/components/form/fields/RadioGroupField";
 import { SelectField } from "@/components/form/fields/SelectField";
 import InputField from "@/components/form/InputField";
-import SettingsCard from "@/components/SettingsCard/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import {
   OpenGraphImageOptions,
   OpenGraphObjectTypeOptions,
@@ -11,7 +11,7 @@ import {
 } from "../[id]/constant";
 
 const ProductOpenGraphSection = () => (
-  <SettingsCard
+  <SectionCard
     id={ProductSection.OpenGraph}
     title="Open graph sharing"
     className="scroll-mt-24"
@@ -47,7 +47,7 @@ const ProductOpenGraphSection = () => (
       options={OpenGraphImageOptions}
       layout="vertical"
     />
-  </SettingsCard>
+  </SectionCard>
 );
 
 export default ProductOpenGraphSection;

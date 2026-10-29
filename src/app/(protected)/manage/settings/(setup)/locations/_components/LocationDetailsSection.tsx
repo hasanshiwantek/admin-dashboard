@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/Button";
 import Table from "@/components/ui/Table/Table";
 import { cn } from "@/lib/utils";
 import { Plus } from "lucide-react";
-import SettingsCard from "@/components/SettingsCard/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import { LocationFormNames, LocationSection } from "../constant";
 import { LocationDetailsSectionProps } from "./type";
 
@@ -24,7 +24,7 @@ const LocationDetailsSection = ({
   specialHourColumns,
   onAddSpecialHour,
 }: LocationDetailsSectionProps) => (
-  <SettingsCard
+  <SectionCard
     id={LocationSection.Details}
     title="Location details"
     description="Shoppers will see this information on the storefront location page."
@@ -86,7 +86,7 @@ const LocationDetailsSection = ({
       <Plus className="size-6" />
       Add special hours
     </Button>
-  </SettingsCard>
+  </SectionCard>
 );
 
 export default LocationDetailsSection;

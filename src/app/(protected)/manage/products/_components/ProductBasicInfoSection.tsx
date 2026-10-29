@@ -1,7 +1,7 @@
 import CheckboxField from "@/components/form/fields/CheckboxField";
 import { SelectField } from "@/components/form/fields/SelectField";
 import InputField from "@/components/form/InputField";
-import SettingsCard from "@/components/SettingsCard/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import { Button } from "@/components/ui/Button";
 import { Plus } from "lucide-react";
 import Link from "next/link";
@@ -21,7 +21,7 @@ const ProductBasicInfoSection = ({
   categories,
   onIdentityChange,
 }: ProductBasicInfoSectionProps) => (
-  <SettingsCard
+  <SectionCard
     id={ProductSection.Basic}
     title="Basic information"
     className="scroll-mt-24"
@@ -108,7 +108,7 @@ const ProductBasicInfoSection = ({
       }
       labelClassName="w-full"
     />
-  </SettingsCard>
+  </SectionCard>
 );
 
 export default ProductBasicInfoSection;

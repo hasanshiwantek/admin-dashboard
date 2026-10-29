@@ -2,7 +2,7 @@ import RadioGroupField from "@/components/form/fields/RadioGroupField";
 import InputField from "@/components/form/InputField";
 import HelpTooltip from "@/components/HelpTooltip/HelpTooltip";
 import PhoneField from "@/components/form/fields/PhoneField";
-import SettingsCard from "@/components/SettingsCard/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import { Switch } from "@/components/ui/Switch";
 import {
   CALL_FOR_PRICING_DEFAULT_COUNTRY,
@@ -21,7 +21,7 @@ const ProductPurchasabilitySection = ({
   showCallForPricing,
   showCallForPricingFields,
 }: ProductPurchasabilitySectionProps) => (
-  <SettingsCard
+  <SectionCard
     id={ProductSection.Purchasability}
     title="Purchasability"
     className="scroll-mt-24"
@@ -87,7 +87,7 @@ const ProductPurchasabilitySection = ({
         {...wholeNumberInputProps}
       />
     </div>
-  </SettingsCard>
+  </SectionCard>
 );
 
 export default ProductPurchasabilitySection;

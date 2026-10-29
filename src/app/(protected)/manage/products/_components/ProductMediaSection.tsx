@@ -1,10 +1,10 @@
 import InputField from "@/components/form/InputField";
-import SettingsCard from "@/components/SettingsCard/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import { MEDIA_ACCEPT, ProductFormNames, ProductSection } from "../[id]/constant";
 import ProductMediaField from "./ProductMediaField";
 
 const ProductMediaSection = () => (
-  <SettingsCard
+  <SectionCard
     id={ProductSection.Images}
     title="Images & videos"
     description="Add images and videos of your product to engage customers."
@@ -16,7 +16,7 @@ const ProductMediaSection = () => (
       Component={ProductMediaField}
       accept={MEDIA_ACCEPT}
     />
-  </SettingsCard>
+  </SectionCard>
 );
 
 export default ProductMediaSection;

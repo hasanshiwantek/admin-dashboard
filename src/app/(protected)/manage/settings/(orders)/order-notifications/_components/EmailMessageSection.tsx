@@ -1,6 +1,6 @@
 import InputField from "@/components/form/InputField";
 import { Button } from "@/components/ui/Button";
-import SettingsCard from "@/components/SettingsCard/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import { OrderNotificationFormNames } from "../constant";
 import { EmailMessageSectionProps } from "./type";
 import HelpTooltip from "@/components/HelpTooltip/HelpTooltip";
@@ -14,7 +14,7 @@ const EmailMessageSection = ({
       To receive an email notification when an order is placed from your store,
       simply enter your email address into the form below.
     </p>
-    <SettingsCard title="Email Message Settings">
+    <SectionCard title="Email Message Settings">
       <InputField
         name={OrderNotificationFormNames.EmailAddress}
         label="Email Address"
@@ -54,7 +54,7 @@ const EmailMessageSection = ({
           {testing ? "Sending test..." : "Test Notification Method"}
         </Button>
       </div>
-    </SettingsCard>
+    </SectionCard>
   </div>
 );
 

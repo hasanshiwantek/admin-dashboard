@@ -1,12 +1,12 @@
 import InputField from "@/components/form/InputField";
-import SettingsCard from "@/components/SettingsCard/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import { ProductFormNames, ProductSection } from "../[id]/constant";
 import { ProductIdentifiersSectionProps } from "./type";
 
 const ProductIdentifiersSection = ({
   onIdentityChange,
 }: ProductIdentifiersSectionProps) => (
-  <SettingsCard
+  <SectionCard
     id={ProductSection.Identifiers}
     title="Product identifiers"
     className="scroll-mt-24"
@@ -47,7 +47,7 @@ const ProductIdentifiersSection = ({
         className="max-w-none"
       />
     </div>
-  </SettingsCard>
+  </SectionCard>
 );
 
 export default ProductIdentifiersSection;

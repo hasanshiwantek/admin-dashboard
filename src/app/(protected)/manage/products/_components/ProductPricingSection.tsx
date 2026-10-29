@@ -1,7 +1,7 @@
 import { SelectField } from "@/components/form/fields/SelectField";
 import InputField from "@/components/form/InputField";
 import HelpTooltip from "@/components/HelpTooltip/HelpTooltip";
-import SettingsCard from "@/components/SettingsCard/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import { Button } from "@/components/ui/Button";
 import Table from "@/components/ui/Table/Table";
 import { ChevronDown, ChevronRight, Plus } from "lucide-react";
@@ -23,7 +23,7 @@ const ProductPricingSection = ({
   bulkPricingColumns,
   onAddTier,
 }: ProductPricingSectionProps) => (
-  <SettingsCard
+  <SectionCard
     id={ProductSection.Pricing}
     title="Pricing"
     className="scroll-mt-24"
@@ -141,7 +141,7 @@ const ProductPricingSection = ({
         </Button>
       </>
     )}
-  </SettingsCard>
+  </SectionCard>
 );
 
 export default ProductPricingSection;

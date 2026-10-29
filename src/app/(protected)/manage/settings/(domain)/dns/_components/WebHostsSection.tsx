@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/Button";
 import Table from "@/components/ui/Table/Table";
-import SettingsCard from "@/components/SettingsCard/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import SettingsNotice from "../../../_components/SettingsNotice";
 import { DNS_FORM_TABLE_CLASS, EXTERNAL_EMAIL_HOSTING_URL } from "../constant";
 import { WebHostsSectionProps } from "./type";
@@ -25,7 +25,7 @@ const WebHostsSection = ({
       </SettingsNotice>
     </div>
 
-    <SettingsCard className="gap-2 border-0 p-10! shadow-sm">
+    <SectionCard className="gap-2 border-0 p-10! shadow-sm">
       <Table
         data={records}
         columns={columns}
@@ -44,7 +44,7 @@ const WebHostsSection = ({
       >
         Add another
       </Button>
-    </SettingsCard>
+    </SectionCard>
   </div>
 );
 
