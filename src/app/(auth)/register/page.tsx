@@ -96,9 +96,7 @@ export default function RegisterPage() {
     }
   };
   return (
-    <div
-      className="flex flex-col min-h-screen items-center justify-center bg-black"
-    >
+    <div className="flex flex-col min-h-screen items-center justify-center bg-black">
       <h1 className="!text-5xl mt-10 !text-white">
         Create your beautiful store today
       </h1>
@@ -168,9 +166,7 @@ export default function RegisterPage() {
 
           <Button
             type="submit"
-            variant="default"
-            size="xxl"
-            className="w-[30rem]  cursor-pointer my-5  bg-blue-600  rounded-lg font-medium !text-2xl focus-within:ring-blue-200 focus-within:border-blue-200 border border-[#2c2c2c]  transition hover:border-blue-200 hover:bg-[#3A426E] "
+            className="w-full sm:w-[28rem] h-20 my-5 bg-blue-600 transition hover:bg-indigo-900"
           >
             CREATE YOUR STORE
           </Button>
