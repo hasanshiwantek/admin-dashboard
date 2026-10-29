@@ -9,6 +9,7 @@ import { DownloadIcon, PlusIcon, SearchIcon, Trash } from "lucide-react";
 import CustomerNotesModal from "@/app/components/customers/edit/CustomerNotesModal";
 import useAllCustomersContainer from "./container";
 import { renderExpandedRow } from "./_components/CustomerDetailRow";
+import PageTitle from "@/components/ui/PageTitle";
 
 // Shared height so toolbar buttons and input line up
 const TOOLBAR_CONTROL = "!h-13 !py-0 !my-0";
@@ -40,13 +41,14 @@ const AllCustomers = () => {
 
     getDropdownActions,
     handleSelectAll,
-    handleSelectOne,
     deleteCustomerHandler,
     filterHandler,
     handleExport,
     router,
     Alert,
     columns,
+    handleToggleRow,
+    paginationConfig,
   } = useAllCustomersContainer();
 
   if (error) {
@@ -60,7 +62,7 @@ const AllCustomers = () => {
   return (
     <div className="p-10">
       <div className="mb-6">
-        <h1 className="!font-light 2xl:!text-5xl">View customers</h1>
+        <PageTitle title="View customers" hideActionButton />
       </div>
       <TableTabs
         tabs={table.tabs}
@@ -72,28 +74,28 @@ const AllCustomers = () => {
       <div className="flex flex-wrap gap-4 mb-6 items-center">
         <Button
           variant="outline"
-          className={`flex items-center gap-2 !px-6 2xl:!text-2xl ${TOOLBAR_CONTROL}`}
+          className={`flex items-center gap-2 px-6! 2xl:text-2xl ${TOOLBAR_CONTROL}`}
           onClick={() => router.push("/manage/customers/add")}
           permission="add_customer"
         >
-          <PlusIcon className="!w-5 !h-5" /> Add
+          <PlusIcon className="w-5 h-5" /> Add
         </Button>
 
         <Button
           variant="outline"
-          className={`flex items-center gap-2 !px-6 ${TOOLBAR_CONTROL}`}
+          className={`flex items-center gap-2 px-6 ${TOOLBAR_CONTROL}`}
           onClick={deleteCustomerHandler}
         >
-          <Trash className="!w-5 !h-5" />
+          <Trash className="w-5 h-5" />
         </Button>
 
         <Button
           onClick={handleExport}
           variant="outline"
-          className={`flex items-center gap-2 !px-6 2xl:!text-2xl ${TOOLBAR_CONTROL}`}
+          className={`flex items-center gap-2 px-6 2xl:text-2xl ${TOOLBAR_CONTROL}`}
           permission="export_customers"
         >
-          <DownloadIcon className="!w-5 !h-5" /> Export selected customers
+          <DownloadIcon className="w-5 h-5" /> Export selected customers
         </Button>
 
         <Input
@@ -105,10 +107,10 @@ const AllCustomers = () => {
 
         <Button
           variant="outline"
-          className={`flex items-center gap-2 !px-6 2xl:!text-2xl ${TOOLBAR_CONTROL}`}
+          className={`flex items-center gap-2 px-6 2xl:text-2xl ${TOOLBAR_CONTROL}`}
           onClick={filterHandler}
         >
-          <SearchIcon className="!w-5 !h-5" /> Search
+          <SearchIcon className="w-5 h-5" /> Search
         </Button>
       </div>
 
@@ -125,16 +127,8 @@ const AllCustomers = () => {
           hideRecordCount
           sort={table.sort}
           onSortChange={table.setSort}
-          selectedIds={selectedCustomers.map((customer) => customer.id)}
-          onToggleRow={(id, checked) => {
-            const customer = customerList.find(
-              (item) => Number(item.id) === Number(id),
-            );
-
-            if (customer) {
-              handleSelectOne(customer, checked);
-            }
-          }}
+          selectedIds={selectedCustomers?.map((customer) => customer?.id)}
+          onToggleRow={handleToggleRow}
           onToggleAll={(checked) => handleSelectAll(checked)}
           rowActions={getDropdownActions}
           renderExpandedRow={(customer) =>
@@ -145,14 +139,7 @@ const AllCustomers = () => {
             )
           }
           isRowExpanded={(customer) => expandedRow === customer?.id}
-          pagination={{
-            currentPage,
-            totalPages,
-            perPage,
-            total,
-            onPageChange: table.setPage,
-            onPerPageChange: table.setPerPage,
-          }}
+          pagination={paginationConfig}
         />
       </div>
 
