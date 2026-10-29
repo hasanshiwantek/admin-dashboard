@@ -2,7 +2,7 @@ import FileField from "@/components/form/fields/FileField";
 import { SelectField } from "@/components/form/fields/SelectField";
 import InputField from "@/components/form/InputField";
 import HelpTooltip from "@/components/HelpTooltip/HelpTooltip";
-import SettingsCard from "@/components/SettingsCard/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import {
   BRAND_LOGO_MAX_SIZE_MB,
   BRAND_LOGO_TYPES,
@@ -12,7 +12,7 @@ import {
 import { BrandFormFieldsProps } from "./type";
 
 const BrandFormFields = ({ isEdit }: BrandFormFieldsProps) => (
-  <SettingsCard title="Brand Details">
+  <SectionCard title="Brand Details">
     {isEdit ? (
       <InputField
         name={BrandFormNames.Name}
@@ -104,7 +104,7 @@ const BrandFormFields = ({ isEdit }: BrandFormFieldsProps) => (
         />
       </>
     )}
-  </SettingsCard>
+  </SectionCard>
 );
 
 export default BrandFormFields;

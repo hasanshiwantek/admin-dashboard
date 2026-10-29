@@ -1,7 +1,7 @@
 import CheckboxField from "@/components/form/fields/CheckboxField";
 import { SelectField } from "@/components/form/fields/SelectField";
 import InputField from "@/components/form/InputField";
-import SettingsCard from "@/components/SettingsCard/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import { Button } from "@/components/ui/Button";
 import Table from "@/components/ui/Table/Table";
 import { Plus } from "lucide-react";
@@ -18,7 +18,7 @@ const ProductCustomsSection = ({
   hsCodeColumns,
   onAddHsCode,
 }: ProductCustomsSectionProps) => (
-  <SettingsCard
+  <SectionCard
     id={ProductSection.Customs}
     title="Customs information"
     description="Helps border officers calculate customs duties and fees when this product ships internationally. Used by installed apps that need it."
@@ -81,7 +81,7 @@ const ProductCustomsSection = ({
         </Button>
       </>
     )}
-  </SettingsCard>
+  </SectionCard>
 );
 
 export default ProductCustomsSection;

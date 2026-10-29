@@ -1,10 +1,10 @@
 import InputField from "@/components/form/InputField";
-import SettingsCard from "@/components/SettingsCard/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import DescriptionEditorQuill from "@/components/ui/DescriptionEditorQuill";
 import { ProductFormNames, ProductSection } from "../[id]/constant";
 
 const ProductDescriptionSection = () => (
-  <SettingsCard
+  <SectionCard
     id={ProductSection.Description}
     title="Description"
     className="scroll-mt-24"
@@ -22,7 +22,7 @@ const ProductDescriptionSection = () => (
       Component={DescriptionEditorQuill}
       placeholder="Write your FAQ here..."
     />
-  </SettingsCard>
+  </SectionCard>
 );
 
 export default ProductDescriptionSection;

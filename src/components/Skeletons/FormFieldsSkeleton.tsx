@@ -2,13 +2,13 @@ import { ReviewFormNames } from "@/app/(protected)/manage/products/reviews/[id]/
 import { ListRenderer } from "@/components/ListRenderer.tsx/ListRenderer";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "./Skeleton";
-import { FormFieldsSkeletonProps } from "./type";
+import { ReviewFormSkeletonProps } from "./type";
 
-const FormFieldsSkeleton = ({
+const ReviewFormSkeleton = ({
   fields,
   layout = "horizontal",
   className,
-}: FormFieldsSkeletonProps) => (
+}: ReviewFormSkeletonProps) => (
   <ListRenderer
     data={fields}
     keyExtractor={(_, index) => index}
@@ -39,4 +39,4 @@ const FormFieldsSkeleton = ({
   />
 );
 
-export default FormFieldsSkeleton;
+export default ReviewFormSkeleton;

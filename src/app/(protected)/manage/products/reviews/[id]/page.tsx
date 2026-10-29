@@ -1,7 +1,7 @@
 "use client";
 
 import Form from "@/components/form/Form";
-import FormFieldsSkeleton from "@/components/Skeletons/FormFieldsSkeleton";
+import ReviewFormSkeleton from "@/components/Skeletons/FormFieldsSkeleton";
 import SkeletonLoader from "@/components/Skeletons/SkeletonLoader";
 import PageLayout from "@/components/ui/PageLayout";
 import ReviewFormFields from "../_components/ReviewFormFields";
@@ -36,7 +36,7 @@ const ReviewFormPage = () => {
         <SkeletonLoader
           loading={loading}
           skeleton={
-            <FormFieldsSkeleton fields={Object.values(ReviewFormNames)} />
+            <ReviewFormSkeleton fields={Object.values(ReviewFormNames)} />
           }
         >
           <ReviewFormFields />

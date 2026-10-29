@@ -8,7 +8,7 @@ import {
   wwwRedirectOptions,
 } from "../constant";
 import { fieldPath } from "../utils";
-import SettingsCard from "@/components/SettingsCard/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import SettingsNotice from "../../_components/SettingsNotice";
 import HelpTooltip from "@/components/HelpTooltip/HelpTooltip";
 
@@ -16,7 +16,7 @@ const name = (field: WebsiteField) => fieldPath(GeneralSection.Website, field);
 
 const WebsiteSection = () => (
   <div className="flex flex-col gap-8">
-    <SettingsCard title="Search Engine Optimization">
+    <SectionCard title="Search Engine Optimization">
       <InputField
         name={name(WebsiteField.HomePageTitle)}
         label="Home Page Title"
@@ -68,17 +68,17 @@ const WebsiteSection = () => (
           />
         }
       />
-    </SettingsCard>
+    </SectionCard>
 
-    <SettingsCard title="HTTPS">
+    <SectionCard title="HTTPS">
       <SettingsNotice>
         All of your storefront website traffic is served via HTTPS. Requests to
         the HTTP version of your storefront will automatically be redirected to
         HTTPS.
       </SettingsNotice>
-    </SettingsCard>
+    </SectionCard>
 
-    <SettingsCard
+    <SectionCard
       title="Search Engine Robots"
       description={
         <>
@@ -100,7 +100,7 @@ const WebsiteSection = () => (
         label="HTTPS robots.txt"
         isTextArea
       />
-    </SettingsCard>
+    </SectionCard>
   </div>
 );
 

@@ -1,7 +1,7 @@
 import CheckboxField from "@/components/form/fields/CheckboxField";
 import RadioGroupField from "@/components/form/fields/RadioGroupField";
 import InputField from "@/components/form/InputField";
-import SettingsCard from "@/components/SettingsCard/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import {
   InventoryLevelOptions,
   ProductFormNames,
@@ -13,7 +13,7 @@ import { ProductInventorySectionProps } from "./type";
 const ProductInventorySection = ({
   trackInventory,
 }: ProductInventorySectionProps) => (
-  <SettingsCard
+  <SectionCard
     id={ProductSection.Inventory}
     title="Inventory"
     className="scroll-mt-24"
@@ -50,7 +50,7 @@ const ProductInventorySection = ({
         </div>
       </>
     )}
-  </SettingsCard>
+  </SectionCard>
 );
 
 export default ProductInventorySection;

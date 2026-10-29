@@ -16,7 +16,7 @@ import {
 import { fieldPath } from "../utils";
 import CheckboxSettingsList from "./CheckboxSettingsList";
 import InlineFieldRow from "./InlineFieldRow";
-import SettingsCard from "@/components/SettingsCard/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import { CircleHelp } from "lucide-react";
 import HelpTooltip from "@/components/HelpTooltip/HelpTooltip";
 
@@ -25,7 +25,7 @@ const name = (field: DisplayField) => fieldPath(section, field);
 
 const DisplaySection = () => (
   <div className="flex flex-col gap-8">
-    <SettingsCard title="Display Settings">
+    <SectionCard title="Display Settings">
       <InputField
         name={name(DisplayField.ProductBreadcrumbs)}
         label="Product Breadcrumbs"
@@ -44,13 +44,13 @@ const DisplaySection = () => (
         section={section}
         items={storefrontDisplayCheckboxes}
       />
-    </SettingsCard>
+    </SectionCard>
 
-    <SettingsCard title="Control Panel">
+    <SectionCard title="Control Panel">
       <CheckboxSettingsList section={section} items={controlPanelCheckboxes} />
-    </SettingsCard>
+    </SectionCard>
 
-    <SettingsCard title="Category Settings">
+    <SectionCard title="Category Settings">
       <InputField
         name={name(DisplayField.CategoryProductList)}
         label="Category Product List"
@@ -86,9 +86,9 @@ const DisplaySection = () => (
         />
         <span className="text-[1.4rem]! text-gray-700!">levels deep</span>
       </InlineFieldRow>
-    </SettingsCard>
+    </SectionCard>
 
-    <SettingsCard title="Product Settings">
+    <SectionCard title="Product Settings">
       <InputField
         name={name(DisplayField.ShowProductPrice)}
         label="Show Product's Price?"
@@ -135,7 +135,7 @@ const DisplaySection = () => (
           />
         }
       />
-    </SettingsCard>
+    </SectionCard>
   </div>
 );
 

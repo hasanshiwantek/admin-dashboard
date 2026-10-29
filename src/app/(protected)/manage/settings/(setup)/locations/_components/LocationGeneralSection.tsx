@@ -1,9 +1,9 @@
 import InputField from "@/components/form/InputField";
-import SettingsCard from "@/components/SettingsCard/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import { LocationFormNames, LocationSection } from "../constant";
 
 const LocationGeneralSection = () => (
-  <SettingsCard id={LocationSection.General} title="General" className="scroll-mt-6">
+  <SectionCard id={LocationSection.General} title="General" className="scroll-mt-6">
     <InputField
       name={LocationFormNames.Name}
       label="Name"
@@ -21,7 +21,7 @@ const LocationGeneralSection = () => (
       hintPosition="top"
       controlClassName="max-w-[41.6rem]"
     />
-  </SettingsCard>
+  </SectionCard>
 );
 
 export default LocationGeneralSection;

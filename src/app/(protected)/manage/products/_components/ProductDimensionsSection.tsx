@@ -1,6 +1,6 @@
 import InputField from "@/components/form/InputField";
 import HelpTooltip from "@/components/HelpTooltip/HelpTooltip";
-import SettingsCard from "@/components/SettingsCard/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import { ProductFormNames, ProductSection } from "../[id]/constant";
 import { measurementInputProps } from "../[id]/utils";
 
@@ -8,7 +8,7 @@ const DIMENSION_HELP =
   "Some shipping companies need the product's physical dimensions to calculate shipping charges.";
 
 const ProductDimensionsSection = () => (
-  <SettingsCard
+  <SectionCard
     id={ProductSection.Dimensions}
     title="Dimensions & weight"
     description="Measurements of the product's shipping container. They help calculate shipping rates and don't show on your storefront."
@@ -51,7 +51,7 @@ const ProductDimensionsSection = () => (
         {...measurementInputProps}
       />
     </div>
-  </SettingsCard>
+  </SectionCard>
 );
 
 export default ProductDimensionsSection;

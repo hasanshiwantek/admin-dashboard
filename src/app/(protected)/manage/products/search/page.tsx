@@ -1,70 +1,48 @@
 "use client";
-import SearchProduct from "@/app/components/products/search/SearchProduct";
-import { useRouter } from "next/navigation";
-import { FormProvider, useForm } from "react-hook-form";
-import { Button } from "@/components/ui/Button";
-const Page = () => {
-  const methods = useForm({
-    defaultValues: {
-      page: 1,
-      pageSize: 50,
-    },
-  });
 
-  const router = useRouter();
-  const onSubmit = (data: Record<string, any>) => {
-    const filteredData = Object.entries(data).reduce(
-      (acc, [key, value]) => {
-        const isEmptyArray = Array.isArray(value) && value.length === 0;
-        const isEmpty =
-          value === "" || value === null || value === undefined || isEmptyArray;
+import Form from "@/components/form/Form";
+import PageLayout from "@/components/ui/PageLayout";
+import ProductSearchFormFields from "./_components/ProductSearchFormFields";
+import useProductSearchPageContainer from "./container";
 
-        const alwaysInclude = ["page", "pageSize"];
-        if (!isEmpty || alwaysInclude.includes(key)) {
-          acc[key] = value;
-        }
-        return acc;
-      },
-      {} as Record<string, any>,
-    );
-
-    // Push every filter to the products page URL; its table container reads the
-    // URL and fetches through fetchAllProducts (no separate advanced-search).
-    const queryParams = new URLSearchParams();
-    Object.entries(filteredData).forEach(([key, value]) => {
-      if (Array.isArray(value)) {
-        value.forEach((v) => queryParams.append(key, String(v)));
-      } else {
-        queryParams.set(key, String(value));
-      }
-    });
-
-    router.push(`/manage/products?${queryParams.toString()}`);
-  };
+const ProductSearchPage = () => {
+  const {
+    form,
+    brands,
+    brandsLoading,
+    currencySymbol,
+    onSubmit,
+    handleCancel,
+  } = useProductSearchPageContainer();
 
   return (
-    <div className="p-10">
-      <FormProvider {...methods}>
-        <form onSubmit={methods.handleSubmit(onSubmit)}>
-          <SearchProduct />
-
-          <div className="flex justify-end  gap-10 items-center fixed w-full bottom-0 right-0  bg-white/90 z-10 shadow-xs border-t  p-4">
-            <Button
-              variant="outline"
-              size="md"
-              type="button"
-              onClick={() => router.push("/manage/products")}
-            >
-              Cancel
-            </Button>
-            <Button variant="primary" size="md" type="submit">
-              Search
-            </Button>
-          </div>
-        </form>
-      </FormProvider>
-    </div>
+    <PageLayout
+      title="Search"
+      titleProps={{
+        description:
+          "Search for specific products using the advanced search options below.",
+        titleClassName: "font-extralight! 2xl:text-[2.4rem]!",
+        descriptionClassName: "2xl:text-2xl!",
+      }}
+    >
+      <Form
+        form={form}
+        onSubmit={onSubmit}
+        bodyClassName="gap-10 border-0 bg-transparent p-0"
+        footer={{
+          submitText: "Search",
+          loadingText: "Searching...",
+          onCancel: handleCancel,
+        }}
+      >
+        <ProductSearchFormFields
+          brands={brands}
+          brandsLoading={brandsLoading}
+          currencySymbol={currencySymbol}
+        />
+      </Form>
+    </PageLayout>
   );
 };
 
-export default Page;
+export default ProductSearchPage;

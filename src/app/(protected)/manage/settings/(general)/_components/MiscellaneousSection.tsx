@@ -15,7 +15,7 @@ import {
 } from "../constant";
 import { fieldPath } from "../utils";
 import InlineFieldRow from "./InlineFieldRow";
-import SettingsCard from "@/components/SettingsCard/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import SettingsNotice from "../../_components/SettingsNotice";
 import { CircleHelp } from "lucide-react";
 import HelpTooltip from "@/components/HelpTooltip/HelpTooltip";
@@ -39,7 +39,7 @@ const MiscellaneousSection = () => {
 
   return (
     <div className="flex flex-col gap-8">
-      <SettingsCard title="Email Settings">
+      <SectionCard title="Email Settings">
         <InlineFieldRow label="Product Review Emails">
           <p className="w-full text-[1.4rem]! text-gray-700!">
             Send emails to customers asking them to review products they have
@@ -161,18 +161,18 @@ const MiscellaneousSection = () => {
             />
           }
         />
-      </SettingsCard>
+      </SectionCard>
 
-      <SettingsCard title="Advanced Store Settings">
+      <SectionCard title="Advanced Store Settings">
         <InputField
           name={name(MiscellaneousField.AllowPurchasing)}
           label="Allow Purchasing?"
           Component={CheckboxField}
           text="Yes, allow people to purchase from my store"
         />
-      </SettingsCard>
+      </SectionCard>
 
-      <SettingsCard title="Order Settings">
+      <SectionCard title="Order Settings">
         <SettingsNotice tone="warning">
           Once your store starts receiving orders this number can only ever be
           increased.
@@ -191,9 +191,9 @@ const MiscellaneousSection = () => {
             />
           }
         />
-      </SettingsCard>
+      </SectionCard>
 
-      <SettingsCard title="Throttler">
+      <SectionCard title="Throttler">
         <InputField
           name={name(MiscellaneousField.EnableThrottler)}
           label="Enable Throttler"
@@ -228,7 +228,7 @@ const MiscellaneousSection = () => {
             />
           </InlineFieldRow>
         )}
-      </SettingsCard>
+      </SectionCard>
     </div>
   );
 };

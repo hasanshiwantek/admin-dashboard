@@ -114,6 +114,7 @@ import {
 import { DisplayNameField } from "@/Modals/ShippingModals/ShippingQuotesDisplayNameModal/constant";
 import type { PreviewItem } from "@/types/types";
 import { BrandFormNames } from "@/app/(protected)/manage/products/brands/[id]/constant";
+import { ProductSearchFormNames } from "@/app/(protected)/manage/products/search/constant";
 import { CategoryFormNames } from "@/app/(protected)/manage/products/categories/[id]/constant";
 import { AddCategoryFormNames } from "@/Modals/CategoryModals/AddCategoryModal/constant";
 import {
@@ -1394,6 +1395,26 @@ export const EditProductStockSchema = object({
   [EditProductStockFormNames.CurrentStock]: wholeNumber("Current stock"),
   [EditProductStockFormNames.LowStock]: wholeNumber("Low stock"),
   [EditProductStockFormNames.AllowPurchase]: flag(),
+});
+
+export const ProductSearchSchema = object({
+  [ProductSearchFormNames.SearchKeywords]: text(),
+  [ProductSearchFormNames.BrandId]: text(),
+  [ProductSearchFormNames.CategoryIds]: array()
+    .of(string().required())
+    .required()
+    .default([]),
+  [ProductSearchFormNames.PriceMin]: optionalNumber("Price from"),
+  [ProductSearchFormNames.PriceMax]: optionalNumber("Price to"),
+  [ProductSearchFormNames.SoldMin]: optionalNumber("Quantity sold from"),
+  [ProductSearchFormNames.SoldMax]: optionalNumber("Quantity sold to"),
+  [ProductSearchFormNames.InventoryMin]: optionalNumber("Inventory from"),
+  [ProductSearchFormNames.InventoryMax]: optionalNumber("Inventory to"),
+  [ProductSearchFormNames.IsVisible]: text(),
+  [ProductSearchFormNames.IsFeatured]: text(),
+  [ProductSearchFormNames.FreeShipping]: text(),
+  [ProductSearchFormNames.SortBy]: text(),
+  [ProductSearchFormNames.SortOrder]: text(),
 });
 
 export const ProductCategoriesSchema = object({

@@ -1,10 +1,10 @@
 import CheckboxField from "@/components/form/fields/CheckboxField";
 import InputField from "@/components/form/InputField";
-import SettingsCard from "@/components/SettingsCard/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import { ReturnSettingsFormNames } from "../constant";
 
 const ReturnSettingsSection = () => (
-  <SettingsCard title="Returns Settings">
+  <SectionCard title="Returns Settings">
     <InputField
       name={ReturnSettingsFormNames.EnableReturns}
       label="Enable Returns System?"
@@ -12,7 +12,7 @@ const ReturnSettingsSection = () => (
       text="Yes, enable returns requests"
       containerClassName="items-center!"
     />
-  </SettingsCard>
+  </SectionCard>
 );
 
 export default ReturnSettingsSection;

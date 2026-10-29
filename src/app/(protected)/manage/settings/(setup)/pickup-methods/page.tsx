@@ -7,7 +7,7 @@ import DeletePickupMethodModal from "@/Modals/PickupMethodModals/DeletePickupMet
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { SETTINGS_ROUTE } from "../../(products)/constant";
-import SettingsCard from "@/components/SettingsCard/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import { LOCATIONS_ROUTE } from "../locations/constant";
 import { ADD_PICKUP_METHOD_ROUTE } from "./constant";
 import usePickupMethodsPageContainer from "./container";
@@ -44,7 +44,7 @@ const PickupMethodsPage = () => {
       }}
       className="min-h-screen p-10"
     >
-      <SettingsCard
+      <SectionCard
         title="Pick up methods"
         className="border-0 shadow-sm"
         action={
@@ -68,7 +68,7 @@ const PickupMethodsPage = () => {
           hideRecordCount
           bare
         />
-      </SettingsCard>
+      </SectionCard>
 
       {deleteTarget && (
         <DeletePickupMethodModal

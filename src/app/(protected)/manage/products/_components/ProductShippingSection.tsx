@@ -1,7 +1,7 @@
 import CheckboxField from "@/components/form/fields/CheckboxField";
 import InputField from "@/components/form/InputField";
 import HelpTooltip from "@/components/HelpTooltip/HelpTooltip";
-import SettingsCard from "@/components/SettingsCard/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import { cn } from "@/lib/utils";
 import { ProductFormNames, ProductSection } from "../[id]/constant";
 import { ProductShippingSectionProps } from "./type";
@@ -10,7 +10,7 @@ const ProductShippingSection = ({
   priceInputProps,
   freeShipping,
 }: ProductShippingSectionProps) => (
-  <SettingsCard
+  <SectionCard
     id={ProductSection.Shipping}
     title="Shipping details"
     className="scroll-mt-24"
@@ -35,7 +35,7 @@ const ProductShippingSection = ({
         containerClassName="pb-3"
       />
     </div>
-  </SettingsCard>
+  </SectionCard>
 );
 
 export default ProductShippingSection;

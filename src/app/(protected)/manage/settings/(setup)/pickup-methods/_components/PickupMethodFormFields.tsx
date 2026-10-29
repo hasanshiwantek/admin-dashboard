@@ -1,6 +1,6 @@
 import { SelectField } from "@/components/form/fields/SelectField";
 import InputField from "@/components/form/InputField";
-import SettingsCard from "@/components/SettingsCard/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import { PickupMethodFormNames } from "../constant";
 import { PickupMethodFormFieldsProps } from "./type";
 
@@ -10,7 +10,7 @@ const FIELD_WIDTH = "max-w-[41.6rem]";
 const labelClassName = "font-bold!";
 
 const PickupMethodFormFields = ({ locations }: PickupMethodFormFieldsProps) => (
-  <SettingsCard title="Details" className="border-0 shadow-sm">
+  <SectionCard title="Details" className="border-0 shadow-sm">
     <InputField
       name={PickupMethodFormNames.Name}
       label="Name"
@@ -49,7 +49,7 @@ const PickupMethodFormFields = ({ locations }: PickupMethodFormFieldsProps) => (
       className={`min-h-[8rem] ${FIELD_WIDTH}`}
       labelClassName={labelClassName}
     />
-  </SettingsCard>
+  </SectionCard>
 );
 
 export default PickupMethodFormFields;
