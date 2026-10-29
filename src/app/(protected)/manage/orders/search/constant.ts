@@ -1,17 +1,17 @@
 import { OrderSearchFormValues } from "./type";
 
 export enum OrderSearchField {
-  keywords = "keywords",
-  status = "status",
-  paymentMethod = "paymentMethod",
-  coupon = "coupon",
-  orderIdFrom = "orderIdFrom",
-  orderIdTo = "orderIdTo",
-  orderTotalFrom = "orderTotalFrom",
-  orderTotalTo = "orderTotalTo",
-  dateRange = "dateRange",
-  sortBy = "sortBy",
-  sortDirection = "sortDirection",
+  Keywords = "keywords",
+  Status = "status",
+  PaymentMethod = "paymentMethod",
+  Coupon = "coupon",
+  OrderIdFrom = "orderIdFrom",
+  OrderIdTo = "orderIdTo",
+  OrderTotalFrom = "orderTotalFrom",
+  OrderTotalTo = "orderTotalTo",
+  DateRange = "dateRange",
+  SortBy = "sortBy",
+  SortDirection = "sortDirection",
 }
 
 export enum OrderStatus {
@@ -114,15 +114,15 @@ export const ORDER_ROUTES = {
 } as const;
 
 export const defaultValues: OrderSearchFormValues = {
-  [OrderSearchField.keywords]: "",
-  [OrderSearchField.status]: "",
-  [OrderSearchField.paymentMethod]: "",
-  [OrderSearchField.coupon]: "",
-  [OrderSearchField.orderIdFrom]: "",
-  [OrderSearchField.orderIdTo]: "",
-  [OrderSearchField.orderTotalFrom]: "",
-  [OrderSearchField.orderTotalTo]: "",
-  [OrderSearchField.dateRange]: "",
-  [OrderSearchField.sortBy]: "id",
-  [OrderSearchField.sortDirection]: "asc",
+  [OrderSearchField.Keywords]: "",
+  [OrderSearchField.Status]: "",
+  [OrderSearchField.PaymentMethod]: "",
+  [OrderSearchField.Coupon]: "",
+  [OrderSearchField.OrderIdFrom]: "",
+  [OrderSearchField.OrderIdTo]: "",
+  [OrderSearchField.OrderTotalFrom]: "",
+  [OrderSearchField.OrderTotalTo]: "",
+  [OrderSearchField.DateRange]: "",
+  [OrderSearchField.SortBy]: "id",
+  [OrderSearchField.SortDirection]: "asc",
 };

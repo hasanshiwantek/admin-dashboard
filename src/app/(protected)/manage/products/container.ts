@@ -212,7 +212,14 @@ const useProductsPageContainer = () => {
     // quick-edit sheets open inside them) mounted
     loading: productsLoading && !rows.length,
     error,
-    pagination: products?.pagination,
+    pagination: {
+      currentPage: table.page,
+      totalPages: products?.pagination?.lastPage ?? 1,
+      perPage: table.perPage,
+      total: products?.pagination?.total,
+      onPageChange: table.setPage,
+      onPerPageChange: table.setPerPage,
+    },
     columns: getProductColumns({
       currency: defaultCurrency ?? FALLBACK_CURRENCY,
       storeName,

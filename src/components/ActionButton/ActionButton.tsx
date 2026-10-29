@@ -34,7 +34,7 @@ const ActionButton = <TData, TAction extends ActionEnums = ActionEnums>({
   if (!visibleActions.length) return null;
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button
           type="button"
