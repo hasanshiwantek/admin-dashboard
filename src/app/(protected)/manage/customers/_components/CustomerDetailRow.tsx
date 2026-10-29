@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { StickyNote } from "lucide-react";
 
-
 export const renderExpandedRow = (
   customer: any,
   setSelectedOrderId: (id: number | null) => void,

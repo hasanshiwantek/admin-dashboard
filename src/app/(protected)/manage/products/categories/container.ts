@@ -33,6 +33,7 @@ import {
   getSubtreeIds,
   trimSlashes,
 } from "./utils";
+import { getSelectedStore } from "@/utils/storage";
 
 const EMPTY_TREE: CategoryNode[] = [];
 const NO_PICK: CategoryPick = { id: null, path: "" };
@@ -152,7 +153,10 @@ const useCategoriesPageContainer = () => {
           return router.push(categoryProductsRoute(category.id));
         case ActionEnums.VIEW_STOREFRONT:
           return window.open(
-            categoryStorefrontUrl(trimSlashes(category.slug ?? "")),
+            categoryStorefrontUrl(
+              getSelectedStore()?.baseUrl,
+              trimSlashes(category.slug ?? ""),
+            ),
             "_blank",
           );
         case ActionEnums.DELETE:

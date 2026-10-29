@@ -35,7 +35,7 @@ export const getCustomerColumns = (
     render: (customer: any) => (
       <div className="text-blue-600 cursor-pointer hover:underline">
         <Link
-          className="2xl:!text-2xl"
+          className="2xl:text-2xl"
           href={`/manage/customers/edit/${customer.id}`}
         >
           {customer.firstName} {customer.lastName}
@@ -46,13 +46,13 @@ export const getCustomerColumns = (
   {
     key: "email",
     header: "Email",
-        width: "30%",
+    width: "30%",
     headClassName: "2xl:!text-[1.6rem]",
     className: "text-blue-500 2xl:!text-2xl  whitespace-normal break-words",
     render: (customer: any) => (
       <Link
         href={`mailto:${customer?.email}`}
-        className="!text-[15px] hover:underline"
+        className="text-[15px] hover:underline"
       >
         {customer?.email || "N/A"}
       </Link>
@@ -77,7 +77,7 @@ export const getCustomerColumns = (
     render: (customer: any) => (
       <Link
         className={cn(
-          "2xl:!text-2xl",
+          "2xl:text-2xl",
           customer?.totalOrders > 0 && "hover:underline text-blue-400",
         )}
         href={

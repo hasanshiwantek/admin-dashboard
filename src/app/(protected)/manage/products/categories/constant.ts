@@ -15,8 +15,8 @@ export const addSubcategoryRoute = (parentId: number | string) =>
   `${CATEGORIES_ROUTE}/${NEW_CATEGORY_ID}?${PARENT_CATEGORY_PARAM}=${parentId}`;
 export const categoryProductsRoute = (id: number | string) =>
   `/manage/products${buildQueryParams({ categoryIds: id })}`;
-export const categoryStorefrontUrl = (slug: string) =>
-  `${STOREFRONT_URL}/category/${slug}`;
+export const categoryStorefrontUrl = (baseUrl: string, slug: string) =>
+  `${baseUrl}category/${slug}`;
 
 // Each tree level is indented by this much in the list (px)
 export const CATEGORY_INDENT = 28;
@@ -39,7 +39,11 @@ export const CATEGORY_ROW_ACTIONS: ActionItem[] = [
     type: ActionEnums.DISABLE,
     label: "Disable visibility",
     checks: [
-      { key: "is_visible", value: VISIBLE_FLAGS, type: CheckTypeEnums.INCLUDES },
+      {
+        key: "is_visible",
+        value: VISIBLE_FLAGS,
+        type: CheckTypeEnums.INCLUDES,
+      },
     ],
   },
   {
