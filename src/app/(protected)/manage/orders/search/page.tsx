@@ -6,11 +6,11 @@ import SelectField from "@/components/form/fields/SelectField";
 import PageLayout from "@/components/ui/PageLayout";
 import {
   OrderSearchField,
-  orderStatusOptions,
-  paymentMethodOptions,
-  dateRangeOptions,
-  sortByOptions,
-  sortDirectionOptions,
+  OrderStatusOptions,
+  PaymentMethodOptions,
+  DateRangeOptions,
+  SortByOptions,
+  SortDirectionOptions,
   ORDER_ROUTES,
 } from "./constant";
 import { useOrderSearchContainer } from "./container";
@@ -53,7 +53,7 @@ export default function OrderSearch() {
               name={OrderSearchField.status}
               label="Status"
               Component={SelectField}
-              options={orderStatusOptions}
+              options={OrderStatusOptions}
               placeholder="-- Choose status --"
             />
 
@@ -61,7 +61,7 @@ export default function OrderSearch() {
               name={OrderSearchField.paymentMethod}
               label="Payment Method"
               Component={SelectField}
-              options={paymentMethodOptions}
+              options={PaymentMethodOptions}
               placeholder="-- Choose payment method --"
             />
 
@@ -107,7 +107,7 @@ export default function OrderSearch() {
               name={OrderSearchField.dateRange}
               label="Date range"
               Component={SelectField}
-              options={dateRangeOptions}
+              options={DateRangeOptions}
               placeholder="-- Choose an order date --"
             />
           </div>
@@ -120,14 +120,14 @@ export default function OrderSearch() {
                 name={OrderSearchField.sortBy}
                 label="Sort by"
                 Component={SelectField}
-                options={sortByOptions}
+                options={SortByOptions}
               />
 
               <InputField
                 name={OrderSearchField.sortDirection}
                 label="Sort direction"
                 Component={SelectField}
-                options={sortDirectionOptions}
+                options={SortDirectionOptions}
               />
             </div>
           </div>
