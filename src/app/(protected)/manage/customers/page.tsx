@@ -9,7 +9,6 @@ import { DownloadIcon, PlusIcon, SearchIcon, Trash } from "lucide-react";
 import CustomerNotesModal from "@/app/components/customers/edit/CustomerNotesModal";
 import useAllCustomersContainer from "./container";
 import { renderExpandedRow } from "./_components/CustomerDetailRow";
-import PageTitle from "@/components/ui/PageTitle";
 import PageLayout from "@/components/ui/PageLayout";
 
 // Shared height so toolbar buttons and input line up

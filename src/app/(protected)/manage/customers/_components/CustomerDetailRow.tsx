@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { StickyNote } from "lucide-react";
+import { formatDateTime } from "@/lib/utils";
 
 export const renderExpandedRow = (
   customer: any,
@@ -48,7 +49,7 @@ export const renderExpandedRow = (
               </span>
 
               <span className="font-medium text-gray-600">
-                {new Date(order.createdAt).toLocaleDateString()}
+                {formatDateTime(order?.createdAt)}
               </span>
 
               <span className="flex items-center justify-end pr-4 text-gray-600">
