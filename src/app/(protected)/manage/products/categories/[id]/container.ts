@@ -29,10 +29,7 @@ import {
   PARENT_CATEGORY_PARAM,
 } from "../constant";
 import type { Category, CategoryNode } from "../type";
-import {
-  buildCategorySlug,
-  trimSlashes,
-} from "../utils";
+import { buildCategorySlug, trimSlashes } from "../utils";
 import {
   CATEGORY_EDIT_ACTIONS,
   categoryDefaults,
@@ -133,38 +130,40 @@ const useCategoryFormPageContainer = () => {
 
   const refreshTree = () => dispatch(fetchCategories());
 
-  const handleCategoryAction = (category: Category) => async (
-    action: ActionEnums,
-  ) => {
-    switch (action) {
-      case ActionEnums.VIEW_STOREFRONT:
-        return window.open(
-          categoryStorefrontUrl(trimSlashes(category.slug ?? "")),
-          "_blank",
-        );
-      case ActionEnums.VIEW:
-        return router.push(categoryProductsRoute(category.id));
-      case ActionEnums.ENABLE:
-      case ActionEnums.DISABLE: {
-        // Saved right away, and kept in the form so Save doesn't revert it
-        const isVisible = action === ActionEnums.ENABLE;
-        const result = await dispatch(
-          updateCategory({
-            id: category.id,
-            data: { name: category.name, isVisible },
-          }),
-        );
-        if (updateCategory.rejected.match(result)) {
-          return errorMessage(result.payload as string);
+  const handleCategoryAction =
+    (category: Category) => async (action: ActionEnums) => {
+      switch (action) {
+        case ActionEnums.VIEW_STOREFRONT:
+          return window.open(
+            categoryStorefrontUrl(
+              getSelectedStore()?.baseUrl,
+              trimSlashes(category.slug ?? ""),
+            ),
+            "_blank",
+          );
+        case ActionEnums.VIEW:
+          return router.push(categoryProductsRoute(category.id));
+        case ActionEnums.ENABLE:
+        case ActionEnums.DISABLE: {
+          // Saved right away, and kept in the form so Save doesn't revert it
+          const isVisible = action === ActionEnums.ENABLE;
+          const result = await dispatch(
+            updateCategory({
+              id: category.id,
+              data: { name: category.name, isVisible },
+            }),
+          );
+          if (updateCategory.rejected.match(result)) {
+            return errorMessage(result.payload as string);
+          }
+          setValue(CategoryFormNames.IsVisible, isVisible);
+          dispatch(fetchCategoryById({ id: category.id }));
+          return refreshTree();
         }
-        setValue(CategoryFormNames.IsVisible, isVisible);
-        dispatch(fetchCategoryById({ id: category.id }));
-        return refreshTree();
+        case ActionEnums.DELETE:
+          return setDeleteOpen(true);
       }
-      case ActionEnums.DELETE:
-        return setDeleteOpen(true);
-    }
-  };
+    };
 
   const onSubmit = async (values: CategoryFormValues) => {
     if (id && values.parent.id === id) {
