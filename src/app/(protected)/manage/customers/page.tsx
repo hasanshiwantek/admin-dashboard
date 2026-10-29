@@ -10,6 +10,7 @@ import CustomerNotesModal from "@/app/components/customers/edit/CustomerNotesMod
 import useAllCustomersContainer from "./container";
 import { renderExpandedRow } from "./_components/CustomerDetailRow";
 import PageTitle from "@/components/ui/PageTitle";
+import PageLayout from "@/components/ui/PageLayout";
 
 // Shared height so toolbar buttons and input line up
 const TOOLBAR_CONTROL = "!h-13 !py-0 !my-0";
@@ -60,10 +61,7 @@ const AllCustomers = () => {
   }
 
   return (
-    <div className="p-10">
-      <div className="mb-6">
-        <PageTitle title="View customers" hideActionButton />
-      </div>
+    <PageLayout title="View customers" className="p-10">
       <TableTabs
         tabs={table.tabs}
         activeTab={activeTab}
@@ -157,7 +155,7 @@ const AllCustomers = () => {
         onConfirm={confirmDeleteCustomers}
       />
       <Alert />
-    </div>
+    </PageLayout>
   );
 };
 
