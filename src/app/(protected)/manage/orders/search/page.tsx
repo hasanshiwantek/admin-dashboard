@@ -6,11 +6,11 @@ import SelectField from "@/components/form/fields/SelectField";
 import PageLayout from "@/components/ui/PageLayout";
 import {
   OrderSearchField,
-  OrderStatusOptions,
-  PaymentMethodOptions,
-  DateRangeOptions,
-  SortByOptions,
-  SortDirectionOptions,
+  orderStatusOptions,
+  paymentMethodOptions,
+  dateRangeOptions,
+  sortByOptions,
+  sortDirectionOptions,
   ORDER_ROUTES,
 } from "./constant";
 import { useOrderSearchContainer } from "./container";
@@ -45,27 +45,27 @@ export default function OrderSearch() {
             <PageTitle title="Advanced Search" hideActionButton />
 
             <InputField
-              name={OrderSearchField.keywords}
+              name={OrderSearchField.Keywords}
               label="Search Keywords"
             />
 
             <InputField
-              name={OrderSearchField.status}
+              name={OrderSearchField.Status}
               label="Status"
               Component={SelectField}
-              options={OrderStatusOptions}
+              options={orderStatusOptions}
               placeholder="-- Choose status --"
             />
 
             <InputField
-              name={OrderSearchField.paymentMethod}
+              name={OrderSearchField.PaymentMethod}
               label="Payment Method"
               Component={SelectField}
-              options={PaymentMethodOptions}
+              options={paymentMethodOptions}
               placeholder="-- Choose payment method --"
             />
 
-            <InputField name={OrderSearchField.coupon} label="Coupon code" />
+            <InputField name={OrderSearchField.Coupon} label="Coupon code" />
           </div>
 
           {/* Search by Range */}
@@ -74,25 +74,25 @@ export default function OrderSearch() {
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <InputField
-                name={OrderSearchField.orderIdFrom}
+                name={OrderSearchField.OrderIdFrom}
                 label="Order ID From"
                 type="number"
               />
 
               <InputField
-                name={OrderSearchField.orderIdTo}
+                name={OrderSearchField.OrderIdTo}
                 label="Order ID To"
                 type="number"
               />
 
               <InputField
-                name={OrderSearchField.orderTotalFrom}
+                name={OrderSearchField.OrderTotalFrom}
                 label="Order Total From"
                 type="number"
               />
 
               <InputField
-                name={OrderSearchField.orderTotalTo}
+                name={OrderSearchField.OrderTotalTo}
                 label="Order Total To"
                 type="number"
               />
@@ -104,10 +104,10 @@ export default function OrderSearch() {
             <PageTitle title="Search by date" hideActionButton />
 
             <InputField
-              name={OrderSearchField.dateRange}
+              name={OrderSearchField.DateRange}
               label="Date range"
               Component={SelectField}
-              options={DateRangeOptions}
+              options={dateRangeOptions}
               placeholder="-- Choose an order date --"
             />
           </div>
@@ -117,17 +117,17 @@ export default function OrderSearch() {
             <PageTitle title="Sort Order" hideActionButton />
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <InputField
-                name={OrderSearchField.sortBy}
+                name={OrderSearchField.SortBy}
                 label="Sort by"
                 Component={SelectField}
-                options={SortByOptions}
+                options={sortByOptions}
               />
 
               <InputField
-                name={OrderSearchField.sortDirection}
+                name={OrderSearchField.SortDirection}
                 label="Sort direction"
                 Component={SelectField}
-                options={SortDirectionOptions}
+                options={sortDirectionOptions}
               />
             </div>
           </div>
