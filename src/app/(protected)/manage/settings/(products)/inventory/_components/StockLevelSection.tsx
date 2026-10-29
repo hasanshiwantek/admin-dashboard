@@ -1,7 +1,7 @@
 import CheckboxField from "@/components/form/fields/CheckboxField";
 import SelectField from "@/components/form/fields/SelectField";
 import InputField from "@/components/form/InputField";
-import SettingsCard from "@/components/SettingsCard/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import {
   FIELD_CONTROL_CLASS,
   FIELD_LABEL_CLASS,
@@ -16,7 +16,7 @@ import HelpTooltip from "@/components/HelpTooltip/HelpTooltip";
 const StockLevelSection = ({
   showPreOrderInventory,
 }: StockLevelSectionProps) => (
-  <SettingsCard title="Stock level">
+  <SectionCard title="Stock level">
     <InputField
       name={InventoryFormNames.StockLevelDisplay}
       label="Stock level display"
@@ -62,7 +62,7 @@ const StockLevelSection = ({
       Component={CheckboxField}
       text="Show out of stock message on product listing pages"
     />
-  </SettingsCard>
+  </SectionCard>
 );
 
 export default StockLevelSection;

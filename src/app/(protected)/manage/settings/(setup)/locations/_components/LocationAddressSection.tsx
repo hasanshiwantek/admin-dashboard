@@ -1,6 +1,6 @@
 import { SelectField } from "@/components/form/fields/SelectField";
 import InputField from "@/components/form/InputField";
-import SettingsCard from "@/components/SettingsCard/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import {
   countryOptions,
   LocationFormNames,
@@ -16,7 +16,7 @@ const LocationAddressSection = ({
   isUnitedStates,
   onCountryChange,
 }: LocationAddressSectionProps) => (
-  <SettingsCard id={LocationSection.Address} title="Address" className="scroll-mt-6">
+  <SectionCard id={LocationSection.Address} title="Address" className="scroll-mt-6">
     <InputField
       name={LocationFormNames.Address1}
       label="Address 1"
@@ -97,7 +97,7 @@ const LocationAddressSection = ({
         type="number"
       />
     </div>
-  </SettingsCard>
+  </SectionCard>
 );
 
 export default LocationAddressSection;

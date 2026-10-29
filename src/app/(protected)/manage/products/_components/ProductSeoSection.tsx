@@ -1,7 +1,7 @@
 import CheckboxField from "@/components/form/fields/CheckboxField";
 import InputField from "@/components/form/InputField";
 import HelpTooltip from "@/components/HelpTooltip/HelpTooltip";
-import SettingsCard from "@/components/SettingsCard/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import { Button } from "@/components/ui/Button";
 import { ProductFormNames, ProductSection } from "../[id]/constant";
 import { ProductSeoSectionProps } from "./type";
@@ -11,7 +11,7 @@ const ProductSeoSection = ({
   onProductUrlChange,
   onResetProductUrl,
 }: ProductSeoSectionProps) => (
-  <SettingsCard
+  <SectionCard
     id={ProductSection.Seo}
     title="Search engine optimization"
     className="scroll-mt-24"
@@ -64,7 +64,7 @@ const ProductSeoSection = ({
         <HelpTooltip content="The description used in this product's meta description tag." />
       }
     />
-  </SettingsCard>
+  </SectionCard>
 );
 
 export default ProductSeoSection;

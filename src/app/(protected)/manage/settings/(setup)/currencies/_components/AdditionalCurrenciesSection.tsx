@@ -5,7 +5,7 @@ import Table from "@/components/ui/Table/Table";
 import { cn } from "@/lib/utils";
 import AddCurrencyModal from "@/Modals/CurrencyModals/AddCurrencyModal/AddCurrencyModal";
 import Link from "next/link";
-import SettingsCard from "@/components/SettingsCard/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import { PAYMENT_ROUTE } from "../../payment/constant";
 import { AdditionalCurrenciesSectionProps } from "./type";
 
@@ -16,7 +16,7 @@ const AdditionalCurrenciesSection = ({
   loading,
   refreshing,
 }: AdditionalCurrenciesSectionProps) => (
-  <SettingsCard
+  <SectionCard
     title="Additional Currencies"
     description={
       <>
@@ -57,7 +57,7 @@ const AdditionalCurrenciesSection = ({
       />
       {refreshing && <LoadingOverlay text="Updating..." />}
     </div>
-  </SettingsCard>
+  </SectionCard>
 );
 
 export default AdditionalCurrenciesSection;

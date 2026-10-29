@@ -1,4 +1,4 @@
-import SettingsCard from "@/components/SettingsCard/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import { Button } from "@/components/ui/Button";
 import Table from "@/components/ui/Table/Table";
 import { Plus } from "lucide-react";
@@ -10,7 +10,7 @@ const ProductCustomFieldsSection = ({
   customFieldColumns,
   onAddCustomField,
 }: ProductCustomFieldsSectionProps) => (
-  <SettingsCard
+  <SectionCard
     id={ProductSection.CustomFields}
     title="Custom fields"
     description="Custom fields show extra information in the product's details on its page. Remove them all to show none."
@@ -35,7 +35,7 @@ const ProductCustomFieldsSection = ({
       <Plus className="size-5" />
       Add custom field
     </Button>
-  </SettingsCard>
+  </SectionCard>
 );
 
 export default ProductCustomFieldsSection;

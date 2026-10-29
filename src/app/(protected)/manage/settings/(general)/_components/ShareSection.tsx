@@ -9,7 +9,7 @@ import { ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { GeneralSection, ShareField, shareNetworks } from "../constant";
 import { fieldPath } from "../utils";
-import SettingsCard from "@/components/SettingsCard/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import ShareNetworkToggle from "./ShareNetworkToggle";
 
 const name = (field: ShareField) => fieldPath(GeneralSection.Share, field);
@@ -19,7 +19,7 @@ const ShareSection = () => {
   const [showMore, setShowMore] = useState(false);
 
   return (
-    <SettingsCard
+    <SectionCard
       title="Social Sharing Settings"
       description="Share controls are displayed on product pages and blog posts. Click a network to turn it on or off."
     >
@@ -59,7 +59,7 @@ const ShareSection = () => {
           changePropName="onCheckedChange"
         />
       )}
-    </SettingsCard>
+    </SectionCard>
   );
 };
 

@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 
-export interface FormFieldsSkeletonProps {
+export interface ReviewFormSkeletonProps {
   fields: Array<string>;
   layout?: "horizontal" | "vertical";
   className?: string;

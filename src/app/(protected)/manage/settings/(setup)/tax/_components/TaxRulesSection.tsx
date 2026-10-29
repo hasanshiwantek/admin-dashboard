@@ -2,17 +2,17 @@ import { ListRenderer } from "@/components/ListRenderer.tsx/ListRenderer";
 import StatusBadge from "@/components/StatusBadge/StatusBadge";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
-import SettingsCard from "@/components/SettingsCard/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import { BASIC_TAX_ROUTE } from "../constant";
 import { TaxRulesSectionProps } from "./type";
 
 const TaxRulesSection = ({ basicTaxEnabled, stats }: TaxRulesSectionProps) => (
-  <SettingsCard
+  <SectionCard
     title="Tax rules"
     className="border-0 shadow-sm"
     titleClassName="text-[2.2rem]! font-semibold! text-text-heading!"
   >
-    <SettingsCard
+    <SectionCard
       title="Basic Tax"
       titleClassName="text-[2rem]! font-normal! text-text-heading!"
       titleAdornment={
@@ -49,8 +49,8 @@ const TaxRulesSection = ({ basicTaxEnabled, stats }: TaxRulesSectionProps) => (
           </div>
         )}
       />
-    </SettingsCard>
-  </SettingsCard>
+    </SectionCard>
+  </SectionCard>
 );
 
 export default TaxRulesSection;

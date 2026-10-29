@@ -1,9 +1,9 @@
 import PageTitle from "@/components/ui/PageTitle";
 import { cn } from "@/lib/utils";
-import { SettingsCardProps } from "./type";
+import { SectionCardProps } from "./type";
 
 // White card that groups related settings under a title
-const SettingsCard = ({
+const SectionCard = ({
   id,
   title,
   description,
@@ -12,7 +12,7 @@ const SettingsCard = ({
   children,
   className,
   titleClassName,
-}: SettingsCardProps) => (
+}: SectionCardProps) => (
   <section
     id={id}
     className={cn(
@@ -41,4 +41,4 @@ const SettingsCard = ({
   </section>
 );
 
-export default SettingsCard;
+export default SectionCard;

@@ -1,6 +1,6 @@
 import { SelectField } from "@/components/form/fields/SelectField";
 import InputField from "@/components/form/InputField";
-import SettingsCard from "@/components/SettingsCard/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import { CurrencyFormNames, FIELD_WIDTH, LABEL_CLASS } from "../constant";
 import { CurrencyDisplaySectionProps } from "./type";
 
@@ -8,7 +8,7 @@ const CurrencyDisplaySection = ({
   code,
   countries,
 }: CurrencyDisplaySectionProps) => (
-  <SettingsCard
+  <SectionCard
     title="Currency display configurations"
     description="Configure how the currency is presented to your customers."
     className="border-0 shadow-sm"
@@ -38,7 +38,7 @@ const CurrencyDisplaySection = ({
       className={FIELD_WIDTH}
       labelClassName={LABEL_CLASS}
     />
-  </SettingsCard>
+  </SectionCard>
 );
 
 export default CurrencyDisplaySection;

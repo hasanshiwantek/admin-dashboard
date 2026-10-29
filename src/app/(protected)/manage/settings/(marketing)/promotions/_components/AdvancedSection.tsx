@@ -1,10 +1,10 @@
 import CheckboxField from "@/components/form/fields/CheckboxField";
 import InputField from "@/components/form/InputField";
-import SettingsCard from "@/components/SettingsCard/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import { PromotionSettingsFormNames } from "../constant";
 
 const AdvancedSection = () => (
-  <SettingsCard title="Advanced">
+  <SectionCard title="Advanced">
     <InputField
       name={PromotionSettingsFormNames.AllowZeroPriceTrigger}
       layout="vertical"
@@ -17,7 +17,7 @@ const AdvancedSection = () => (
       Component={CheckboxField}
       text="Allow promotions to apply on products with custom price overrides"
     />
-  </SettingsCard>
+  </SectionCard>
 );
 
 export default AdvancedSection;

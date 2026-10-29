@@ -2,7 +2,7 @@ import CheckboxField from "@/components/form/fields/CheckboxField";
 import { SelectField } from "@/components/form/fields/SelectField";
 import InputField from "@/components/form/InputField";
 import HelpTooltip from "@/components/HelpTooltip/HelpTooltip";
-import SettingsCard from "@/components/SettingsCard/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import {
   ProductConditionOptions,
   ProductFormNames,
@@ -11,7 +11,7 @@ import {
 } from "../[id]/constant";
 
 const ProductStorefrontSection = () => (
-  <SettingsCard
+  <SectionCard
     id={ProductSection.Storefront}
     title="Storefront details"
     className="scroll-mt-24"
@@ -98,7 +98,7 @@ const ProductStorefrontSection = () => (
         containerClassName="pb-3"
       />
     </div>
-  </SettingsCard>
+  </SectionCard>
 );
 
 export default ProductStorefrontSection;
