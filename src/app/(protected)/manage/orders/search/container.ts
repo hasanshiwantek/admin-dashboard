@@ -18,7 +18,7 @@ export function useOrderSearchContainer() {
   const onSubmit = (values: OrderSearchFormValues) => {
     const filtered = removeEmptyValues(values) ?? {};
     const queryParams = buildQueryParams(filtered);
-    router.push(`${ORDER_ROUTES.list}${queryParams.toString()}`);
+    router.push(`${ORDER_ROUTES.list}${queryParams}`);
   };
 
   return {
