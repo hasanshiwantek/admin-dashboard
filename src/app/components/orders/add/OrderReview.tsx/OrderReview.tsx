@@ -132,7 +132,8 @@ export default function OrderReview({
     }
   };
 
-  // In the order's currency, unlike the USD prices and discounts
+  // Shipping and the manual discount are in the order's currency; prices and
+  // the coupon discount are in USD
   const shippingCost = Number(watch("shippingMethod.total_charge") || 0);
   const manualDiscount = Number(watch("manualDiscount") || 0);
   const couponDiscount = Number(appliedCoupon?.discountAmount || 0);
@@ -148,13 +149,10 @@ export default function OrderReview({
     const unit = Number(p.price ?? 0);
     return sum + unit * qty;
   }, 0);
-  const totalDiscount = couponDiscount + manualDiscount;
+  const totalDiscount = couponDiscount + fromOrderCurrency(manualDiscount);
   // const total = subtotal + shippingCost;
   const grandTotal = Math.max(
-    subtotal -
-      couponDiscount -
-      manualDiscount +
-      fromOrderCurrency(shippingCost),
+    subtotal - totalDiscount + fromOrderCurrency(shippingCost),
     0,
   );
 
@@ -774,7 +772,7 @@ export default function OrderReview({
                     -
                     {quote
                       ? formatAmount(quote.manualDiscount)
-                      : formatPrice(manualDiscount)}
+                      : formatAmount(manualDiscount)}
                   </span>
                 </div>
               )}
@@ -802,7 +800,6 @@ export default function OrderReview({
 
               {/* Discount input */}
               <div className="flex items-center gap-2">
-                {/* Typed in the order's currency; Apply stores it in USD */}
                 <PriceField
                   name="manualDiscountInput"
                   control={control}
