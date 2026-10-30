@@ -129,6 +129,7 @@ import {
   ref,
   string,
 } from "yup";
+import { CustomerFormField } from "@/app/(protected)/manage/customers/edit/[id]/constant";
 
 export const BannerSchema = object({
   [BannerFormNames.Title]: string().trim().required("Banner name is required"),
@@ -1477,3 +1478,37 @@ export const ScriptSchema = object({
 });
 
 // #endregion Script manager
+
+// #region Customer
+export const CustomerSchema = object({
+  [CustomerFormField.FirstName]: string()
+    .trim()
+    .required("First name is required"),
+
+  [CustomerFormField.LastName]: string()
+    .trim()
+    .required("Last name is required"),
+
+  [CustomerFormField.CompanyName]: string().trim(),
+  [CustomerFormField.Email]: string()
+    .trim()
+    .email("Invalid email address")
+    .required("Email is required"),
+
+  [CustomerFormField.Phone]: string().trim(),
+  [CustomerFormField.StoreCredit]: string().trim(),
+  [CustomerFormField.CustomerGroup]: string().trim(),
+  [CustomerFormField.TaxCode]: string().trim(),
+
+  [CustomerFormField.Password]: string().trim(),
+  [CustomerFormField.ConfirmPassword]: string().trim(),
+
+  [CustomerFormField.ForceReset]: boolean().default(false),
+  [CustomerFormField.AcsEmail]: boolean().default(true),
+
+  [CustomerFormField.Address]: string().trim(),
+  [CustomerFormField.State]: string().trim(),
+  [CustomerFormField.Country]: string().trim(),
+  [CustomerFormField.Notes]: string().trim(),
+});
+// #endregion Customer

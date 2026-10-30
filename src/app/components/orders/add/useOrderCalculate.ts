@@ -27,8 +27,7 @@ type CalculateResponse = {
   amount: number;
   currency: { code: string; exchangeRate: number | string };
   manualDiscount?: number;
-  convertedManualDiscount?: number;
-  convertedDiscount?: number;
+  convertedCouponDiscount?: number;
   convertedShipping?: number;
   shippingCost?: number;
   convertedTax?: number;
@@ -37,7 +36,6 @@ type CalculateResponse = {
 
 const toQuote = (data: CalculateResponse): OrderQuote => {
   const currency = data.currency.code.toUpperCase();
-  const rate = Number(data.currency.exchangeRate) || 0;
   const lines: Record<string, number> = {};
   for (const item of data.items ?? []) {
     lines[String(item.productId)] =
@@ -51,11 +49,9 @@ const toQuote = (data: CalculateResponse): OrderQuote => {
     // convertedShipping is in the order's currency; older responses only
     // send shippingCost
     shipping: Number(data.convertedShipping ?? data.shippingCost) || 0,
-    couponDiscount: Number(data.convertedDiscount) || 0,
-    manualDiscount:
-      Number(
-        data.convertedManualDiscount ?? (data.manualDiscount ?? 0) * rate,
-      ) || 0,
+    couponDiscount: Number(data.convertedCouponDiscount) || 0,
+    // Already in the order's currency, as the form sends it
+    manualDiscount: Number(data.manualDiscount) || 0,
     tax: Number(data.convertedTax) || 0,
     totalMinor,
     total: toMajor({ minor: totalMinor, currency }),

@@ -7,6 +7,7 @@ import type { AppDispatch, RootState } from "@/redux/store";
 import { Eye, EyeOff } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/Button";
+import { REGEX } from "@/const/regex";
 
 function ForgotPasswordForm() {
   const router = useRouter();
@@ -44,8 +45,17 @@ function ForgotPasswordForm() {
       return;
     }
 
-    if (formData.password.length < 8) {
-      setLocalError("Password must be at least 8 characters");
+    // New validation: min 7 chars + letter + number
+    if (formData.password.length < 7) {
+      setLocalError("Password must be at least 7 characters");
+      return;
+    }
+
+    const hasLetter = REGEX.HAS_LETTER.test(formData.password);
+    const hasNumber = REGEX.HAS_NUMBER.test(formData.password);
+
+    if (!hasLetter || !hasNumber) {
+      setLocalError("Password must contain both letters and numbers");
       return;
     }
 
@@ -144,20 +154,6 @@ function ForgotPasswordForm() {
                 )}
               </button>
             </div>
-
-            {/* Confirm Password */}
-            {/* <div className="relative w-full sm:w-[34rem] my-3">
-                            <Input
-                                name="confirmPassword"
-                                type={formData.showConfirmPassword ? "text" : "password"}
-                                placeholder="Confirm New Password"
-                                value={formData.confirmPassword}
-                                onChange={handleChange}
-                                required
-                                className="w-full !text-2xl px-6 h-20 bg-blue-50 text-black placeholder:text-gray-500 pr-16"
-                            />
-
-                        </div> */}
             {/* New Password */}
             <div className="relative w-full sm:w-[34rem]">
               <Input
