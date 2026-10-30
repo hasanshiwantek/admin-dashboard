@@ -6,10 +6,7 @@ import type {
   CustomFieldValues,
   HsCodeValues,
 } from "../[id]/type";
-import type { getPriceInputProps } from "../utils";
 import type { ApiCategory, CategoryTreeItem } from "../type";
-
-export type PriceInputProps = ReturnType<typeof getPriceInputProps>;
 
 export type FieldChangeHandler = (change: {
   name: string;
@@ -56,7 +53,6 @@ export interface ProductMediaRowProps {
 }
 
 export interface ProductBasicInfoSectionProps {
-  priceInputProps: PriceInputProps;
   brands: ProductBrandOption[];
   categories: ApiCategory[];
   onIdentityChange: FieldChangeHandler;
@@ -67,7 +63,6 @@ export interface ProductIdentifiersSectionProps {
 }
 
 export interface ProductPricingSectionProps {
-  priceInputProps: PriceInputProps;
   showAdvanced: boolean;
   onToggleAdvanced: () => void;
   discountTypeOptions: { value: string; label: string }[];
@@ -87,7 +82,6 @@ export interface ProductCustomFieldsSectionProps {
 }
 
 export interface ProductShippingSectionProps {
-  priceInputProps: PriceInputProps;
   freeShipping: boolean;
 }
 

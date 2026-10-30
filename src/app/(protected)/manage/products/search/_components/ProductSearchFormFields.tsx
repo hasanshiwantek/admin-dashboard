@@ -1,6 +1,7 @@
 import CategoryTreeSm from "@/app/components/products/add/CategoryTreeSm";
 import { SelectField } from "@/components/form/fields/SelectField";
 import InputField from "@/components/form/InputField";
+import PriceField from "@/components/form/PriceField";
 import HelpTooltip from "@/components/HelpTooltip/HelpTooltip";
 import SectionCard from "@/components/SectionCard/SectionCard";
 import { wholeNumberInputProps } from "../../utils";
@@ -14,38 +15,38 @@ import {
 } from "../constant";
 import { ProductSearchFormFieldsProps, RangeFieldsProps } from "./type";
 
-const rangeBoxProps = (prefix?: string) =>
-  prefix
-    ? {
-        startIcon: prefix,
-        inputWrapperClassName: "w-[16rem]",
-        className: "w-full",
-      }
+const rangeBoxProps = (isPrice?: boolean) =>
+  isPrice
+    ? { inputWrapperClassName: "w-[16rem]", className: "w-full" }
     : { ...wholeNumberInputProps, className: "w-[16rem] max-w-none" };
 
-const RangeFields = ({ label, min, max, prefix }: RangeFieldsProps) => (
-  <InputField
-    name={min}
-    label={label}
-    showColon
-    controlClassName="w-fit"
-    beforeFieldComponent={
-      <span className="w-14 text-[1.4rem] text-gray-600">From</span>
-    }
-    afterFieldComponent={
-      <>
-        <span className="text-[1.4rem] text-gray-600">to</span>
-        <InputField name={max} layout="vertical" {...rangeBoxProps(prefix)} />
-      </>
-    }
-    {...rangeBoxProps(prefix)}
-  />
-);
+const RangeFields = ({ label, min, max, isPrice }: RangeFieldsProps) => {
+  // PriceField takes InputField's props, so either renders the same JSX
+  const Field = (isPrice ? PriceField : InputField) as typeof InputField;
+
+  return (
+    <Field
+      name={min}
+      label={label}
+      showColon
+      controlClassName="w-fit"
+      beforeFieldComponent={
+        <span className="w-14 text-[1.4rem] text-gray-600">From</span>
+      }
+      afterFieldComponent={
+        <>
+          <span className="text-[1.4rem] text-gray-600">to</span>
+          <Field name={max} layout="vertical" {...rangeBoxProps(isPrice)} />
+        </>
+      }
+      {...rangeBoxProps(isPrice)}
+    />
+  );
+};
 
 const ProductSearchFormFields = ({
   brands,
   brandsLoading,
-  currencySymbol,
 }: ProductSearchFormFieldsProps) => (
   <>
     <SectionCard title="Advanced Search">
@@ -89,7 +90,7 @@ const ProductSearchFormFields = ({
         label="Price Range"
         min={ProductSearchFormNames.PriceMin}
         max={ProductSearchFormNames.PriceMax}
-        prefix={currencySymbol}
+        isPrice
       />
       <RangeFields
         label="Quantity Sold"

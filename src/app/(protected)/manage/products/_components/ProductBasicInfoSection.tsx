@@ -1,6 +1,7 @@
 import CheckboxField from "@/components/form/fields/CheckboxField";
 import { SelectField } from "@/components/form/fields/SelectField";
 import InputField from "@/components/form/InputField";
+import PriceField from "@/components/form/PriceField";
 import SectionCard from "@/components/SectionCard/SectionCard";
 import { Button } from "@/components/ui/Button";
 import { Plus } from "lucide-react";
@@ -16,7 +17,6 @@ import CategoryTreeField from "./CategoryTreeField";
 import { ProductBasicInfoSectionProps } from "./type";
 
 const ProductBasicInfoSection = ({
-  priceInputProps,
   brands,
   categories,
   onIdentityChange,
@@ -62,12 +62,11 @@ const ProductBasicInfoSection = ({
         placeholder="Select type"
         className="max-w-none"
       />
-      <InputField
+      <PriceField
         name={ProductFormNames.Price}
         label="Default price"
         required
         layout="vertical"
-        {...priceInputProps}
         hint="Excluding tax"
       />
       <InputField

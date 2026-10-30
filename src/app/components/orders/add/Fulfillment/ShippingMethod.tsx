@@ -8,6 +8,7 @@ import {
   SelectItem,
   SelectTrigger,
 } from "@/components/ui/Select";
+import { REGEX } from "@/const/regex";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { fetchShippingRates } from "@/redux/slices/orderSlice";
 import { useEffect, useState } from "react";
@@ -41,7 +42,11 @@ export function calculatePackage(products: any[]) {
 const hasFreeShipping = (p: any) => Boolean(p?.freeShipping);
 const hasFixedShipping = (p: any) => Number(p?.fixedShippingCost) > 0;
 
-export function getProductShippingRate(products: any[], currency: string) {
+export function getProductShippingRate(
+  products: any[],
+  currency: string,
+  toOrderCurrency: (amount: number) => number,
+) {
   if (!products?.length) return null;
   if (!products.every((p) => hasFreeShipping(p) || hasFixedShipping(p))) {
     return null;
@@ -58,7 +63,7 @@ export function getProductShippingRate(products: any[], currency: string) {
       method_type: "fixed_shipping",
       service_type: "fixed_shipping",
       display_name: "Fixed Shipping",
-      total_charge: Number(total.toFixed(2)),
+      total_charge: toOrderCurrency(total),
       currency: currency || "USD",
       transit_days: null,
       delivery_date: null,
@@ -82,9 +87,9 @@ export default function ShippingMethod() {
   const { setValue, watch, getValues } = useFormContext();
   const dispatch = useAppDispatch();
   const values = getValues();
-  const { formatPrice, toOrderCurrency, fromOrderCurrency } =
-    useOrderCurrency();
-  // What the user is typing in the cost box, in the order's currency
+  // shippingMethod's charge is in the order's currency: carrier rates come
+  // converted from the API
+  const { formatAmount, toOrderCurrency } = useOrderCurrency();
   const [costDraft, setCostDraft] = useState<string | null>(null);
 
   const selectedMethod = watch("shippingMethod") || {};
@@ -99,12 +104,13 @@ export default function ShippingMethod() {
       ? ""
       : selectedMethod.cost === undefined || selectedMethod.cost === ""
         ? ""
-        : String(toOrderCurrency(selectedMethod.cost));
+        : String(selectedMethod.cost);
   const cart = watch("selectedProducts") || [];
   const { shippingRates } = useAppSelector((state) => state.order);
   const productShippingRate = getProductShippingRate(
     cart,
     values?.selectedCurrency?.code,
+    toOrderCurrency,
   );
   const rates = productShippingRate
     ? [productShippingRate]
@@ -152,11 +158,11 @@ export default function ShippingMethod() {
   };
   const handleCostChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = e.target.value
-      .replace(/[^\d.]/g, "")
-      .replace(/^(\d*\.)(.*)$/, (_m, p1, p2) => p1 + p2.replace(/\./g, ""));
-    const usdCost =
-      formatted === "" ? "" : String(fromOrderCurrency(Number(formatted)));
-
+      .replace(REGEX.DECIMAL_SANITIZE, "")
+      .replace(
+        REGEX.DECIMAL_FIRST_POINT_SPLIT,
+        (_m, p1, p2) => p1 + p2.replace(REGEX.DECIMAL_POINTS, ""),
+      );
     setCostDraft(formatted);
     setValue(
       "shippingMethod",
@@ -164,8 +170,8 @@ export default function ShippingMethod() {
         ...selectedMethod,
         method_type: "custom",
         service_type: "custom",
-        total_charge: usdCost,
-        cost: usdCost,
+        total_charge: formatted,
+        cost: formatted,
       },
       { shouldDirty: true },
     );
@@ -301,7 +307,7 @@ export default function ShippingMethod() {
                   ? `${selectedMethod.display_name} — ${
                       Number(selectedMethod.total_charge) === 0
                         ? "Free"
-                        : formatPrice(selectedMethod.total_charge)
+                        : formatAmount(Number(selectedMethod.total_charge))
                     }`
                   : "Select Shipping Provider"}
               </span>
@@ -319,7 +325,7 @@ export default function ShippingMethod() {
                 const price =
                   Number(rate.total_charge) === 0
                     ? "Free"
-                    : formatPrice(rate.total_charge);
+                    : formatAmount(Number(rate.total_charge));
 
                 return (
                   <SelectItem

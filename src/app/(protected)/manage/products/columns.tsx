@@ -9,6 +9,7 @@ import EditProductStockSheet from "@/Modals/ProductModals/EditProductStockSheet/
 import { Pencil } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import type { ComponentProps } from "react";
 import { editProductRoute, PRODUCT_ROW_ACTIONS } from "./constant";
 import type { ProductCurrency, ProductListItem } from "./type";
 import {
@@ -20,9 +21,12 @@ import {
 
 const CELL_TEXT = "text-xl 2xl:text-[1.6rem]!";
 
-// A value that opens its quick-edit sheet when clicked
-const EditableValue = ({ value }: { value: string }) => (
+const EditableValue = ({
+  value,
+  ...props
+}: { value: string } & ComponentProps<typeof Button>) => (
   <Button
+    {...props}
     type="button"
     variant="ghost"
     className="group h-auto gap-2 rounded-md p-4 font-normal hover:bg-blue-100 hover:text-blue-600"

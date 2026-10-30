@@ -44,7 +44,6 @@ const ProductFormPage = () => {
     navSections,
     activeSection,
     scrollToSection,
-    priceInputProps,
     brands,
     categories,
     handleIdentityChange,
@@ -170,7 +169,6 @@ const ProductFormPage = () => {
               description="Information to help define a product."
             />
             <ProductBasicInfoSection
-              priceInputProps={priceInputProps}
               brands={brands}
               categories={categories}
               onIdentityChange={handleIdentityChange}
@@ -181,7 +179,6 @@ const ProductFormPage = () => {
               onIdentityChange={handleIdentityChange}
             />
             <ProductPricingSection
-              priceInputProps={priceInputProps}
               showAdvanced={showAdvanced}
               onToggleAdvanced={toggleAdvanced}
               discountTypeOptions={discountTypeOptions}
@@ -207,7 +204,6 @@ const ProductFormPage = () => {
             />
             <ProductDimensionsSection />
             <ProductShippingSection
-              priceInputProps={priceInputProps}
               freeShipping={freeShipping}
             />
             <ProductPurchasabilitySection
