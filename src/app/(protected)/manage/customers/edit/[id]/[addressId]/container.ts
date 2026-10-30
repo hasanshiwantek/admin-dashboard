@@ -16,6 +16,7 @@ import { AddressField, addressDefaultValues } from "../[addressId]/constant";
 import type { AddressFormValues, AddressMode } from "./types";
 import { buildAddressPayload, normalizeAddress } from "./utils";
 import { AddressSchema } from "@/validations/formValidations";
+import { CUSTOMER_ROUTES } from "../constant";
 export function useAddressFormContainer() {
   const params = useParams<{ id: string; addressId: string }>();
   const customerId = params.id;
@@ -32,8 +33,8 @@ export function useAddressFormContainer() {
   const { control, reset, setValue } = form;
   const country = useWatch({ control, name: AddressField.country });
   const cancelUrl = customerId
-    ? `/manage/customers/edit/${customerId}`
-    : "/manage/customers";
+    ? CUSTOMER_ROUTES.EDIT_BY_ID(customerId)
+    : CUSTOMER_ROUTES.LIST;
   const countryOptions = useMemo(
     () =>
       Country.getAllCountries().map((item) => ({
