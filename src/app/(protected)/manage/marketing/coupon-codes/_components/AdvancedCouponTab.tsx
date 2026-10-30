@@ -4,7 +4,7 @@ import { Checkbox } from "@/components/ui/Checkbox";
 import { Label } from "@/components/ui/label";
 import { Info } from "lucide-react";
 
-import { CouponCodeForm } from "./types";
+import { CouponCodeForm } from "../types";
 import PageTitle from "@/components/ui/PageTitle";
 import { useFormContext } from "@/components/form/Form";
 
