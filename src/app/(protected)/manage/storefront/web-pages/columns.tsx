@@ -1,8 +1,13 @@
 import Link from "next/link";
 import { convertOptionsToObject } from "@/lib/utils";
-import { PageTypeOptions } from "./constants";
+import { LIST_PATH, PageTypeOptions } from "./[id]/constants";
 import EnableDisable from "@/components/common/EnableDisable";
-export const getWebPageColumns = (onToggleVisibility: (page: any) => void) => [
+import ActionButton from "@/components/ActionButton/ActionButton";
+import { WEBPAGE_ROW_ACTION } from "./constant";
+export const getWebPageColumns = (
+  onToggleVisibility: (page: any) => void,
+  onAction: (page: any) => (actionType: string) => void,
+) => [
   {
     key: "pageName",
     header: "Page Name",
@@ -10,8 +15,8 @@ export const getWebPageColumns = (onToggleVisibility: (page: any) => void) => [
     headClassName: "2xl:!text-[1.6rem]",
     render: (page: any) => (
       <Link
-        href={`/manage/storefront/web-pages/edit/${page.id}`}
-        className="text-blue-600 hover:underline 2xl:!text-2xl"
+        href={`${LIST_PATH}/${page.id}`}
+        className="text-blue-600 hover:underline 2xl:text-2xl"
       >
         {page.pageName}
       </Link>
@@ -40,6 +45,20 @@ export const getWebPageColumns = (onToggleVisibility: (page: any) => void) => [
           handleToggle={onToggleVisibility}
         />
       </div>
+    ),
+  },
+  {
+    key: "actions",
+    header: "Actions",
+    width: "80px",
+    headClassName: "2xl:!text-[1.6rem] text-center",
+    className: "text-center",
+    render: (page: any) => (
+      <ActionButton
+        data={page}
+        actions={WEBPAGE_ROW_ACTION}
+        onAction={onAction}
+      />
     ),
   },
 ];

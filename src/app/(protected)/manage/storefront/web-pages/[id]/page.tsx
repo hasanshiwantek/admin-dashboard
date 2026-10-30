@@ -1,10 +1,4 @@
 "use client";
-
-import { useEffect, useRef, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { useForm, useWatch } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-
 import Form from "@/components/form/Form";
 import InputField from "@/components/form/InputField";
 import CheckboxField from "@/components/form/fields/CheckboxField";
@@ -14,137 +8,58 @@ import RichTextEditor from "@/components/ui/RichTextEditor";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { cn } from "@/lib/utils";
-
-import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
-import {
-  createWebpage,
-  getWebPageById,
-  getWebPages,
-  updateWebPage,
-} from "@/redux/slices/storefrontSlice";
-import { fetchUrlSettings } from "@/redux/slices/homeSlice";
-
 import {
   AdvancedOptions,
   ContactFields,
-  DefaultWebPageValues,
   PageTypeEnums,
   PageTypeOptions,
   WebPageField,
 } from "./constants";
-import { WebPageSchema } from "@/validations/formValidations";
-import type { WebPageFormValues } from "./types";
 import { Button } from "@/components/ui/Button";
 import { REGEX } from "@/const/regex";
-import { generatePageUrl } from "./utils";
-
-const LIST_PATH = "/manage/storefront/web-pages";
+import PageLayout from "@/components/ui/PageLayout";
+import useWebPageContainer from "./container";
 
 const WebPage = () => {
-  const { id } = useParams();
-  const isEdit = !!id;
-  const router = useRouter();
-  const dispatch = useAppDispatch();
-
-  const webPages = useAppSelector((s: any) => s.storefront.webPages) ?? [];
-  const urlSettingData = useAppSelector((s: any) => s.home?.urlSettingData);
-
-  const form = useForm<WebPageFormValues>({
-    resolver: yupResolver(WebPageSchema),
-    defaultValues: DefaultWebPageValues,
-  });
-
-  const { control, reset, setValue, watch } = form;
-  const [isUrlManuallyEdited, setIsUrlManuallyEdited] = useState(false);
-  const submitActionRef = useRef<"exit" | "keepEditing" | "addAnother">("exit");
-
-  const pageType = useWatch({ control, name: WebPageField.PageType });
-  const watchedName = useWatch({ control, name: WebPageField.PageName });
-  const showTheseFields =
-    useWatch({ control, name: WebPageField.ShowTheseFields }) ?? [];
-
-  useEffect(() => {
-    if (!isEdit || !id) return;
-    dispatch(getWebPageById({ id }))
-      .unwrap()
-      .then((res) => reset(res?.data ?? res))
-      .catch(console.error);
-  }, [id, isEdit, dispatch, reset]);
-
-  useEffect(() => {
-    if (isUrlManuallyEdited || !watchedName) return;
-
-    const url = generatePageUrl(watchedName, urlSettingData);
-    if (url) {
-      setValue(WebPageField.PageUrl, url);
-    }
-  }, [watchedName, isUrlManuallyEdited]);
-  useEffect(() => {
-    dispatch(getWebPages());
-    dispatch(fetchUrlSettings("webpage"));
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (id) setIsUrlManuallyEdited(true);
-  }, [id]);
-
-  const onSubmit = async (values: WebPageFormValues) => {
-    try {
-      const result = isEdit
-        ? await dispatch(updateWebPage({ id, data: values }))
-        : await dispatch(createWebpage({ data: values }));
-
-      if ((isEdit ? updateWebPage : createWebpage).fulfilled.match(result)) {
-        dispatch(getWebPages());
-
-        if (submitActionRef.current === "keepEditing" && isEdit) {
-          const refreshed = await dispatch(getWebPageById({ id }));
-          if (getWebPageById.fulfilled.match(refreshed)) {
-            reset(refreshed.payload.data);
-          }
-        } else if (submitActionRef.current === "addAnother") {
-          reset(DefaultWebPageValues);
-          setIsUrlManuallyEdited(false);
-        } else {
-          router.push(LIST_PATH);
-        }
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const toggleContactField = (fieldId: string) => {
-    const current = showTheseFields;
-    const updated = current.includes(fieldId)
-      ? current.filter((f: any) => f !== fieldId)
-      : [...current, fieldId];
-    setValue(WebPageField.ShowTheseFields, updated, { shouldDirty: true });
-  };
-
+  const {
+    form,
+    isEdit,
+    id,
+    control,
+    pageType,
+    showTheseFields,
+    webPages,
+    onSubmit,
+    toggleContactField,
+    handleResetUrl,
+    setSubmitAction,
+    setIsUrlManuallyEdited,
+    watch,
+    setValue,
+    handleCancel,
+  } = useWebPageContainer();
   return (
-    <div className="min-h-screen">
-      <PageTitle
-        title={isEdit ? "Edit a Web Page" : "Create a Web Page"}
-        description='To create a web page (such as an "About Us" page or a contact form), start by choosing the type of page you want and then fill in the other details.'
-        descriptionClassName="text-xl! 2xl:text-2xl!"
-        hideActionButton
-      />
-
+    <PageLayout
+      title={isEdit ? "Edit a Web Page" : "Create a Web Page"}
+      titleProps={{
+        description:
+          "To create a web page (such as an About Us page or a contact form), start by choosing the type of page you want and then fill in the other details.",
+      }}
+    >
       <Form
         form={form}
         onSubmit={onSubmit}
         footer={{
           submitText: "Save and Exit",
-          onCancel: () => router.push(LIST_PATH),
+          onCancel: () => handleCancel(),
           loading: form.formState.isSubmitting,
           extraActions: (
             <Button
-              variant="primary"
+              variant="outline"
               size="md"
               type="submit"
               onClick={() => {
-                submitActionRef.current = isEdit ? "keepEditing" : "addAnother";
+                setSubmitAction(isEdit ? "keepEditing" : "addAnother");
               }}
             >
               {isEdit ? "Save & Keep Editing" : "Save & Add Another"}
@@ -190,18 +105,15 @@ const WebPage = () => {
                     e.preventDefault();
                   }
                 }}
+                getValueOnChange={() => {
+                  setIsUrlManuallyEdited(true);
+                }}
               />
               <Button
                 variant="outline"
                 type="button"
-                className="!py-2 h-13"
-                onClick={() => {
-                  setIsUrlManuallyEdited(false);
-                  const url = generatePageUrl(watchedName, urlSettingData);
-                  if (url) {
-                    setValue(WebPageField.PageUrl, url);
-                  }
-                }}
+                className="py-2 h-13"
+                onClick={handleResetUrl}
               >
                 Reset
               </Button>
@@ -363,7 +275,7 @@ const WebPage = () => {
           />
         </section>
       </Form>
-    </div>
+    </PageLayout>
   );
 };
 

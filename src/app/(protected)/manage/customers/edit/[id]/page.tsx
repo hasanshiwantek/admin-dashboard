@@ -110,7 +110,6 @@ export default function CustomerForm() {
               className="h-12 w-full max-w-none"
               placeholder="••••••••"
             />
-
             <InputField
               name={CustomerFormField.ForceReset}
               Component={CheckboxField}
