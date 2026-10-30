@@ -64,7 +64,7 @@ const Page = () => {
   const topActions = (
   <div className="flex items-center gap-8 px-6 py-4 border-b">
     <Link  href={CouponAddRoute}>
-      <Button variant="outline" className="btn-outline-primary h-full rounded-none border-0 border-l px-3">
+      <Button variant="outline" className="btn-outline-primary h-full! text-[14px]! rounded-none border-0 border-l px-3">
         Create a coupon code
       </Button>
     </Link>
