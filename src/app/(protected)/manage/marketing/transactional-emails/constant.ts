@@ -84,7 +84,7 @@ export const ChannelOptions = [
 export const getTemplateActions = (enabled: boolean) => [
   { type: ActionEnums.EDIT, label: "Edit Template" },
   {
-    type: "toggle" as ActionEnums,
+    type: ActionEnums.TOGGLE,
     label: enabled ? "Disable" : "Enable",
   },
 ];

@@ -54,12 +54,12 @@ const Subscriber = ({
             <div className="text-xl! text-gray-700">
               <span className="text-2xl!">(</span>
               <Button
-                
+                variant="link"
                 onClick={(e) => {
                   e.preventDefault();
                   handleExportSubscribers();
                 }}
-                className="text-blue-600 hover:underline"
+                className="text-blue-600 text-[15px]! hover:underline"
               >
                 Download to CSV file
               </Button>
