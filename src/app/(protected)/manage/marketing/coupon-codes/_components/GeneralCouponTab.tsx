@@ -6,8 +6,8 @@ import RadioGroupField from "@/components/form/fields/RadioGroupField";
 import CheckboxField from "@/components/form/fields/CheckboxField";
 import { Info } from "lucide-react";
 
-import { CouponCodeForm, } from "./types";
-import { AppliesToOptions, CouponFormFields, DiscountType, DiscountTypeOptions } from "./constant";
+import { CouponCodeForm, } from "../types";
+import { AppliesToOptions, CouponFormFields, DiscountType, DiscountTypeOptions } from "../constant"
 import PageTitle from "@/components/ui/PageTitle";
 import { useFormContext } from "@/components/form/Form";
 import PriceField from "@/components/form/PriceField";

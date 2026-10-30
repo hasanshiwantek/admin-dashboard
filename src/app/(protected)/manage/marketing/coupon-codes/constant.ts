@@ -1,4 +1,10 @@
-import { CouponCodeForm } from "./types";
+import { ActionEnums } from "@/const/appConstants";
+import { CouponCodeForm } from "./types"
+
+export enum AppliesTo {
+  Categories = "categories",
+  Products = "products",
+}
 
 export const DefaultCouponCodeFormValues: CouponCodeForm = {
   couponCode: "",
@@ -17,7 +23,7 @@ export const DefaultCouponCodeFormValues: CouponCodeForm = {
 productIds: [],
   limitByLocation: false,
   limitByShipping: false,
-  appliesTo: "categories",
+  appliesTo: AppliesTo.Categories
 };
 
 export enum DiscountType {
@@ -32,10 +38,7 @@ export const DiscountTypeOptions = [
   },
 ];
 
-export enum AppliesTo {
-  Categories = "categories",
-  Products = "products",
-}
+
 export   const values = [9, 11, 13];
 export const AppliesToOptions = [
   {
@@ -68,3 +71,14 @@ export enum CouponFormFields {
   LimitByLocation = "limitByLocation",
   LimitByShipping = "limitByShipping",
 }
+export const couponActions = [
+  { type: ActionEnums.EDIT, label: "Edit" },
+  { type: ActionEnums.COPY, label: "Copy to Clipboard" },
+  { type: ActionEnums.VIEW, label: "View Orders" },
+  { type: ActionEnums.DELETE, label: "Delete", className: "text-red-600" },
+];
+
+export const CouponCodesRoute = "/manage/marketing/coupon-codes";
+export const CouponAddRoute = "/manage/marketing/coupon-codes/new";
+export const CouponEditRoute = (id: number | string) =>
+  `/manage/marketing/coupon-codes/${id}`;

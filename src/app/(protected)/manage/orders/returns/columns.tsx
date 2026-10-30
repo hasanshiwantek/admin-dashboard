@@ -77,7 +77,7 @@ export const getReturnsColumns = (
     header: "Customer",
     render: (ret: any) => (
       <Link
-        href={`/manage/orders/customer/${ret.customerId}`}
+        href={`/manage/customers?customerIdFrom=${ret.customerId}&customerIdTo=${ret.customerId}`}
         className=" text-[15px]"
       >
         {replaceNullWithPlaceholder(ret.customerName)}

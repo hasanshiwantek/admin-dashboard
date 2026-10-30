@@ -1,7 +1,6 @@
 "use client";
 
 import useTableContainer from "@/components/ui/Table/TableContainer";
-import { TableTab } from "@/components/ui/Table/types";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import { refetchCustomers } from "@/lib/customerUtils";
 import {
@@ -14,16 +13,11 @@ import {
 import { errorMessage } from "@/utils/message";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import * as XLSX from "xlsx";
 import { useAlert } from "@/hooks/useAlert";
 import { downloadExport } from "@/redux/slices/exportSlice";
-
-export const CustomerTabs: TableTab[] = [
-  {
-    key: "All customers",
-    label: "All customers",
-  },
-];
+import { getCustomerColumns } from "./column";
+import { getSelectedStore } from "@/utils/storage";
+import { CustomerTabs } from "./constant";
 
 const useAllCustomersContainer = () => {
   const dispatch = useAppDispatch();
@@ -75,21 +69,11 @@ const useAllCustomersContainer = () => {
       label: "Login",
       onClick: async () => {
         const customerId = customer?.id;
-
-        const availableStores = JSON.parse(
-          localStorage.getItem("availableStores") || "[]",
-        );
-
-        const selectedStoreId = Number(localStorage.getItem("storeId"));
-        const selectedStore = availableStores.find(
-          (s: any) => s.id === selectedStoreId,
-        );
-
+        const selectedStore = getSelectedStore();
         if (!selectedStore?.baseUrl) {
           errorMessage("Store not found");
           return;
         }
-
         try {
           const res = await dispatch(loginAsCustomer({ customerId })).unwrap();
           const token = res?.token || res?.data?.token;
@@ -256,7 +240,27 @@ const useAllCustomersContainer = () => {
       console.error("Customer export failed:", error);
     }
   };
+  const columns = useMemo(
+    () => getCustomerColumns(expandedRow, toggleRow),
+    [expandedRow, toggleRow],
+  );
+  const handleToggleRow = (id: string | number, checked: boolean): void => {
+    const customer = customerList.find(
+      (item) => Number(item.id) === Number(id),
+    );
 
+    if (customer) {
+      handleSelectOne(customer, checked);
+    }
+  };
+  const paginationConfig = {
+    currentPage,
+    totalPages,
+    perPage,
+    total,
+    onPageChange: table?.setPage,
+    onPerPageChange: table?.setPerPage,
+  };
   return {
     table,
     customerList,
@@ -290,6 +294,9 @@ const useAllCustomersContainer = () => {
     updateCustomerStoreCredit,
     router,
     Alert,
+    columns,
+    handleToggleRow,
+    paginationConfig,
   };
 };
 

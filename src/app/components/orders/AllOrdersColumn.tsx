@@ -185,7 +185,7 @@ export default function AllOrdersColumn({
               </span>
             ) : (
               <Link
-                href={"/manage/orders/customer/" + order?.customer?.id}
+                href={`/manage/customers?customerIdFrom=${order?.customer?.id}&customerIdTo=${order?.customer?.id}`}
                 className="2xl:!text-2xl !text-blue-500 cursor-pointer hover:underline"
               >
                 {order?.customer?.firstName} {order?.customer?.lastName}

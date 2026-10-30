@@ -1,3 +1,4 @@
+import { ActionEnums } from "@/const/appConstants";
 
 
 export interface CouponCodeForm {
@@ -23,5 +24,13 @@ export interface CouponCodeForm {
   limitByLocation: boolean;
   limitByShipping: boolean;
  appliesTo: "categories" | "products";
+}
+
+export interface CouponColumnsProps {
+  goToEditPage: (id: number) => void;
+  handleToggleEnabled: (coupon: any) => void;
+handleDeleteCoupon: (id: number) => void; 
+  handleAction: (coupon: any) => (action: ActionEnums) => void;
+  deletingId: number | null;
 }
 
