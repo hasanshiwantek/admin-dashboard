@@ -12,7 +12,7 @@ import {
   updateWebPage,
 } from "@/redux/slices/storefrontSlice";
 import { fetchUrlSettings } from "@/redux/slices/homeSlice";
-import { DefaultWebPageValues, LIST_PATH, WebPageField } from "./constants";
+import { defaultWebPageValues, LIST_PATH, WebPageField } from "./constants";
 import { WebPageSchema } from "@/validations/formValidations";
 import type { WebPageFormValues } from "./types";
 import { generatePageUrl } from "./utils";
@@ -30,7 +30,7 @@ const useWebPageContainer = () => {
 
   const form = useForm<WebPageFormValues>({
     resolver: yupResolver(WebPageSchema),
-    defaultValues: DefaultWebPageValues,
+    defaultValues: defaultWebPageValues,
   });
 
   const { control, reset, setValue, watch } = form;
@@ -80,7 +80,7 @@ const useWebPageContainer = () => {
             reset(refreshed.payload.data);
           }
         } else if (submitActionRef.current === "addAnother") {
-          reset(DefaultWebPageValues);
+          reset(defaultWebPageValues);
           setIsUrlManuallyEdited(false);
         } else {
           router.push(LIST_PATH);

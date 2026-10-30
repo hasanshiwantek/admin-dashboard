@@ -55,7 +55,7 @@ export const AdvancedOptions = [
   { label: "Meta Description", name: WebPageField.MetaDescription },
   { label: "Search Keywords", name: WebPageField.SearchKeywords },
 ];
-export const DefaultWebPageValues = {
+export const defaultWebPageValues = {
   [WebPageField.PageType]: PageTypeEnums.WYSIWYG,
   [WebPageField.PageName]: "",
   [WebPageField.PageUrl]: "",
