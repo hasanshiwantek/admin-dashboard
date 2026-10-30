@@ -64,16 +64,16 @@ const Subscriber = ({
                 Download to CSV file
               </Button>
               <span className="text=[#000000] px-2">or</span>
-              <a
-                href="#"
+              <Button
+                  variant="link"
                 onClick={(e) => {
                   e.preventDefault();
                   setOpenDeleteModal(true);
                 }}
-                className="text-blue-600 hover:underline"
+                className="text-blue-600 text-[15px]! hover:underline"
               >
                 Delete all subscribers
-              </a>
+              </Button>
               <span className="text-2xl!">)</span>
             </div>
           </div>
