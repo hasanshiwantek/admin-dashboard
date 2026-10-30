@@ -2,7 +2,7 @@ import { RadioGroupField } from "@/components/form/fields/RadioGroupField";
 import InputField from "@/components/form/InputField";
 import { Button } from "@/components/ui/Button";
 import { ExternalLink } from "lucide-react";
-import SettingsCard from "../../../_components/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import {
   CurrencyFormNames,
   EXCHANGE_RATE_LEARN_MORE_URL,
@@ -98,7 +98,7 @@ const CurrencyTransactionsSection = ({
   );
 
   return (
-    <SettingsCard title="Transactions" className="border-0 shadow-sm">
+    <SectionCard title="Transactions" className="border-0 shadow-sm">
       <InputField
         name={CurrencyFormNames.TransactingCurrency}
         label="Transacting currency"
@@ -176,7 +176,7 @@ const CurrencyTransactionsSection = ({
       ) : (
         staticFields
       )}
-    </SettingsCard>
+    </SectionCard>
   );
 };
 

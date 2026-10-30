@@ -8,6 +8,7 @@ import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { ScriptRecord } from "./type";
+import { SCRIPT_MANAGER_ROUTE } from "./[id]/constant";
 
 const useScriptManagerContainer = () => {
   const router = useRouter();
@@ -39,10 +40,10 @@ const useScriptManagerContainer = () => {
     const matchingScripts = searchTerm
       ? scripts.filter((script) =>
           [
-            script.script_name,
+            script.scriptName,
             script.location,
             script.placement,
-            script.script_type,
+            script.scriptType,
           ].some((value) =>
             String(value ?? "")
               .toLocaleLowerCase()
@@ -103,7 +104,7 @@ const useScriptManagerContainer = () => {
     {
       label: "Edit",
       onClick: () =>
-        router.push(`/manage/storefront/script-manager/edit/${script.id}`),
+        router.push(`${SCRIPT_MANAGER_ROUTE}/${script.id}`),
     },
     {
       label: "Delete",

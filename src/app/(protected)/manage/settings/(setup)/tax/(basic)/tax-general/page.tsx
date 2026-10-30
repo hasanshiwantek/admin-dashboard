@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/Button";
 import ResetBasicTaxModal from "@/Modals/TaxModals/ResetBasicTaxModal/ResetBasicTaxModal";
 import Link from "next/link";
-import SettingsCard from "../../../../_components/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import { STORE_TAX_SETTINGS_ROUTE } from "../../constant";
 import BasicTaxSection from "../_components/BasicTaxSection";
 import BasicTaxShell from "../_components/BasicTaxShell";
@@ -20,7 +20,7 @@ const BasicTaxGeneralPage = () => {
     <BasicTaxShell {...shell}>
       <div className="flex flex-col gap-10">
         <BasicTaxSection title="Tax setup">
-          <SettingsCard
+          <SectionCard
             title="Basic Tax"
             titleClassName="text-[2rem]! font-semibold! text-text-heading!"
             className="border-0 shadow-sm"
@@ -49,11 +49,11 @@ const BasicTaxGeneralPage = () => {
               </Link>{" "}
               page.
             </p>
-          </SettingsCard>
+          </SectionCard>
         </BasicTaxSection>
 
         <BasicTaxSection title="Reset basic tax configuration">
-          <SettingsCard className="flex-row items-center justify-between border-0 shadow-sm p-14!">
+          <SectionCard className="flex-row items-center justify-between border-0 shadow-sm p-14!">
             <p className={BODY_TEXT}>
               This will clear and reset your basic tax configuration to default
               values.
@@ -70,7 +70,7 @@ const BasicTaxGeneralPage = () => {
                 </Button>
               }
             />
-          </SettingsCard>
+          </SectionCard>
         </BasicTaxSection>
       </div>
     </BasicTaxShell>

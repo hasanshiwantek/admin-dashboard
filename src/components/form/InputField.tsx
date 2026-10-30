@@ -12,7 +12,7 @@ import {
   FieldValues,
   useController,
 } from "react-hook-form";
-import { useFormContext } from "./Form";
+import { useOptionalFormContext } from "./Form";
 import InputWrapper from "./InputWrapper";
 
 type InputFieldBaseProps<T extends FieldValues, C extends ElementType> = {
@@ -98,7 +98,7 @@ export function InputField<
   runAfterOnChange,
   ...componentProps
 }: InputFieldProps<T, C>) {
-  const formContext = useFormContext<T>();
+  const formContext = useOptionalFormContext<T>();
   const { field, fieldState } = useController<T>({
     name,
     control: control ?? formContext?.control,

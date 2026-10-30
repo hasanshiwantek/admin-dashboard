@@ -4,7 +4,7 @@ import { ListRenderer } from "@/components/ListRenderer.tsx/ListRenderer";
 import { Button } from "@/components/ui/Button";
 import { X } from "lucide-react";
 import { ReactNode } from "react";
-import SettingsCard from "../../../_components/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import {
   DnsSection,
   MailForwardFormNames,
@@ -114,7 +114,7 @@ const MailServersSection = ({
   );
 
   return (
-    <SettingsCard className="border-0 p-12! shadow-sm">
+    <SectionCard className="border-0 p-12! shadow-sm">
       <InputField
         name={fieldPath(DnsSection.MailServers, MailServerFormNames.Mode)}
         layout="vertical"
@@ -126,7 +126,7 @@ const MailServersSection = ({
         className="gap-6"
         optionClassName="gap-4 text-[1.4rem]! text-text-heading"
       />
-    </SettingsCard>
+    </SectionCard>
   );
 };
 

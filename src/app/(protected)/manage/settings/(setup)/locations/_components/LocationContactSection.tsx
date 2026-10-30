@@ -1,9 +1,9 @@
 import InputField from "@/components/form/InputField";
-import SettingsCard from "../../../_components/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import { LocationFormNames, LocationSection } from "../constant";
 
 const LocationContactSection = () => (
-  <SettingsCard
+  <SectionCard
     id={LocationSection.Contact}
     title="Contact details"
     className="scroll-mt-6"
@@ -23,7 +23,7 @@ const LocationContactSection = () => (
       type="email"
       controlClassName="max-w-[41.6rem]"
     />
-  </SettingsCard>
+  </SectionCard>
 );
 
 export default LocationContactSection;

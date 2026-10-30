@@ -142,8 +142,8 @@ export default function BlogPage() {
           loading: loading || form.formState.isSubmitting,
           extraActions: (
             <Button
+              variant="outline"
               type="button"
-              className="btn-outline-primary"
               disabled={loading}
               onClick={handleDraftSave}
             >

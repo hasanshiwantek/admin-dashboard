@@ -36,7 +36,8 @@ export default function CategoryDropdown({
 }: {
   categoryData: Category[];
   value: { id: number | null; path: string };
-  onChange: (val: { id: number; path: string }) => void;
+  /** Clearing the field reports { id: null, path: "" } */
+  onChange: (val: { id: number | null; path: string }) => void;
   className?: string;
 }) {
   const categories = useMemo(
@@ -45,6 +46,7 @@ export default function CategoryDropdown({
   );
 
   const handleChange = (id: string) => {
+    if (!id) return onChange({ id: null, path: "" });
     const category = categories.find((cat) => String(cat.id) === id);
     if (category) onChange({ id: category.id, path: category.path });
   };
@@ -59,9 +61,7 @@ export default function CategoryDropdown({
       renderOption={(cat) => (
         <div>
           <h3 className="font-medium">{cat.name}</h3>
-          <span className="!font-medium text-muted-foreground">
-            {cat.path}
-          </span>
+          <span className="!font-medium text-muted-foreground">{cat.path}</span>
         </div>
       )}
       placeholder="Start typing category name"

@@ -1,5 +1,5 @@
 import Table from "@/components/ui/Table/Table";
-import SettingsCard from "../../../_components/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import { defaultCurrencyColumns } from "../columns";
 import { DefaultCurrencySectionProps } from "./type";
 
@@ -7,7 +7,7 @@ const DefaultCurrencySection = ({
   currency,
   loading,
 }: DefaultCurrencySectionProps) => (
-  <SettingsCard title="Default Currency" className="border-0 shadow-sm">
+  <SectionCard title="Default Currency" className="border-0 shadow-sm">
     <Table
       data={currency ? [currency] : []}
       columns={defaultCurrencyColumns}
@@ -18,7 +18,7 @@ const DefaultCurrencySection = ({
       hideRecordCount
       bare
     />
-  </SettingsCard>
+  </SectionCard>
 );
 
 export default DefaultCurrencySection;

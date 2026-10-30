@@ -33,20 +33,23 @@ export function FormFooter({
       )}
     >
       {onCancel && (
-        <button
+        <Button
           type="button"
-          className="text-xl! p-4 text-blue-500! cursor-pointer"
+          variant="outline"
+          size="xl"
+          className="text-xl! 2xl:text-2xl! p-4 cursor-pointer"
           onClick={onCancel}
           disabled={loading}
         >
           {cancelText}
-        </button>
+        </Button>
       )}
       {extraActions}
       <Button
+        variant="primary"
         type="submit"
         size="xl"
-        className="btn-primary text-xl! 2xl:text-2xl!"
+        className="text-xl! 2xl:text-2xl!"
         disabled={loading || disabled}
       >
         {loading ? loadingText : submitText}

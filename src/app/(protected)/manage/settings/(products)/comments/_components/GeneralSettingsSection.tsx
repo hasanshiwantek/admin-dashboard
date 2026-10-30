@@ -1,10 +1,10 @@
 import RadioGroupField from "@/components/form/fields/RadioGroupField";
 import InputField from "@/components/form/InputField";
-import SettingsCard from "../../../_components/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import { CommentSettingsFormNames, commentSystemOptions } from "../constant";
 
 const GeneralSettingsSection = () => (
-  <SettingsCard title="Choose a comment system">
+  <SectionCard title="Choose a comment system">
     <InputField
       name={CommentSettingsFormNames.CommentSystem}
       label="I want to use"
@@ -14,7 +14,7 @@ const GeneralSettingsSection = () => (
       optionClassName="gap-4 text-[1.4rem]! text-gray-800"
       showColon ={true}
     />
-  </SettingsCard>
+  </SectionCard>
 );
 
 export default GeneralSettingsSection;

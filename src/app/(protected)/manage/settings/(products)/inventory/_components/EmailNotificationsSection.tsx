@@ -1,6 +1,6 @@
 import InputField from "@/components/form/InputField";
 import { ListRenderer } from "@/components/ListRenderer.tsx/ListRenderer";
-import SettingsCard from "../../../_components/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import {
   emailNotificationFields,
   FIELD_CONTROL_CLASS,
@@ -8,7 +8,7 @@ import {
 } from "../constant";
 
 const EmailNotificationsSection = () => (
-  <SettingsCard title="Email notifications">
+  <SectionCard title="Email notifications">
     <ListRenderer
       data={emailNotificationFields}
       keyExtractor={(field) => field.name}
@@ -26,7 +26,7 @@ const EmailNotificationsSection = () => (
         />
       )}
     />
-  </SettingsCard>
+  </SectionCard>
 );
 
 export default EmailNotificationsSection;

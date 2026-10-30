@@ -33,6 +33,11 @@ export function useFormContext<
   return form as UseFormReturn<T, any, TTransformed>;
 }
 
+// The surrounding <Form>'s form, or null outside one (for fields given a `control`)
+export function useOptionalFormContext<T extends FieldValues = FieldValues>() {
+  return useContext(FormContext) as UseFormReturn<T> | null;
+}
+
 const isFooterProps = (footer: unknown): footer is FormFooterProps =>
   !!footer &&
   typeof footer === "object" &&

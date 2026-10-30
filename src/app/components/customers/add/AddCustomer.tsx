@@ -30,6 +30,7 @@ import {
 import Link from "next/link";
 import { useSelector } from "react-redux";
 import { useAlert } from "@/hooks/useAlert";
+import { Button } from "@/components/ui/Button";
 const AddCustomer = () => {
   const { id } = useParams(); // dynamic route
   const dispatch = useAppDispatch();
@@ -635,10 +636,11 @@ const AddCustomer = () => {
               Cancel
             </button>
           </Link>
-          <button
+          <Button
+            variant="outline"
+            size="md"
             disabled={loading || emailChecking || !!emailError}
             type="button"
-            className="btn-outline-primary"
             onClick={() => {
               setSaveAndAddAnother(true);
               // trigger form submit manually
@@ -650,15 +652,16 @@ const AddCustomer = () => {
             }}
           >
             {loading ? "Saving..." : "Save and add another"}
-          </button>
+          </Button>
 
-          <button
+          <Button
+            variant="primary"
+            size="md"
             disabled={loading || emailChecking || !!emailError}
             type="submit"
-            className="btn-primary"
           >
             {loading ? "Saving..." : isEdit ? "Update Customer" : "Add Customer"}
-          </button>
+          </Button>
         </div>
       </form>
           <Alert />

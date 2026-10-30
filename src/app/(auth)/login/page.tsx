@@ -1,17 +1,14 @@
 "use client";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useDispatch, useSelector } from "react-redux";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/input";
 import { loginUser } from "@/redux/slices/authSlice";
 import type { AppDispatch, RootState } from "@/redux/store";
-import { setStoreId } from "@/redux/slices/configSlice";
-import { Eye, EyeOff } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/Button";
-import { cn } from "@/lib/utils";
 import Cookies from "js-cookie";
-import Image from "next/image";
+import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -22,20 +19,34 @@ export default function LoginPage() {
     password: "",
     showPassword: false,
   });
-  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
+  const isAuthenticated = useSelector(
+    (state: RootState) => state.auth.isAuthenticated,
+  );
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     const result = await dispatch(
-      loginUser({ email: formData.email, password: formData.password })
+      loginUser({ email: formData.email, password: formData.password }),
     );
     if (loginUser.fulfilled.match(result)) {
-      const { token, stores, expireAt, user, isOwner, pending_token, two_factor_required, two_factor_type } = result.payload;
+      const {
+        token,
+        stores,
+        expireAt,
+        user,
+        isOwner,
+        pending_token,
+        two_factor_required,
+        two_factor_type,
+      } = result.payload;
 
       if (pending_token && two_factor_type) {
         router.push("/verify-otp");
         localStorage.setItem("pending_token", pending_token);
-        localStorage.setItem("two_factor_required", two_factor_required.toString());
+        localStorage.setItem(
+          "two_factor_required",
+          two_factor_required.toString(),
+        );
         localStorage.setItem("two_factor_type", two_factor_type);
       } else {
         Cookies.set("token", token, { expires: 7 });
@@ -43,7 +54,7 @@ export default function LoginPage() {
         localStorage.setItem("user", JSON.stringify({ ...user, isOwner }));
         localStorage.setItem(
           "tokenExpiry",
-          new Date(expireAt).getTime().toString()
+          new Date(expireAt).getTime().toString(),
         );
         if (stores?.length > 0) {
           // Always show store selection if there is at least 1 store
@@ -129,23 +140,21 @@ export default function LoginPage() {
 
           <Button
             type="submit"
-            variant="default"
-            size="xxl"
             disabled={loading}
-            className="w-full sm:w-[34rem] cursor-pointer h-20 my-5 bg-blue-600 rounded-lg font-medium !text-2xl focus-within:ring-blue-200 focus-within:border-blue-200 border border-[#2c2c2c] transition hover:border-blue-200 hover:bg-[#3A426E]"
+            className="w-full sm:w-[34rem] h-20 my-5 bg-blue-600 rounded-lg transition hover:bg-indigo-900"
           >
             {loading ? "Logging in..." : "Log In"}
           </Button>
 
           <div className="flex justify-center w-full max-w-full sm:max-w-lg text-gray-100 mt-2 whitespace-nowrap">
-
-
             {/* Right group */}
             <div className="space-x-3">
-              <Link href="/recover/new" className="hover:underline !text-2xl text-white!">
+              <Link
+                href="/recover/new"
+                className="hover:underline !text-2xl text-white!"
+              >
                 Forgot?
               </Link>
-
             </div>
           </div>
         </div>
@@ -157,8 +166,7 @@ export default function LoginPage() {
         used in accordance with our{" "}
         {/* <a href="#" className="underline text-blue-600"> */}
         Privacy Policy
-        {/* </a> */}
-        .
+        {/* </a> */}.
       </p>
     </div>
   );

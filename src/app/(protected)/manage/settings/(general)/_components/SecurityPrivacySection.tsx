@@ -17,7 +17,7 @@ import {
 } from "../constant";
 import { fieldPath } from "../utils";
 import InlineFieldRow from "./InlineFieldRow";
-import SettingsCard from "../../_components/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import SettingsNotice from "../../_components/SettingsNotice";
 import { CircleHelp, Info } from "lucide-react";
 import HelpTooltip from "@/components/HelpTooltip/HelpTooltip";
@@ -38,16 +38,16 @@ const SecurityPrivacySection = () => {
 
   return (
     <div className="flex flex-col gap-8">
-      <SettingsCard title="Security">
+      <SectionCard title="Security">
         <InputField
           name={name(SecurityPrivacyField.EnforcePasswordComplexity)}
           label="Configure complexity of the shopper's password?"
           Component={CheckboxField}
           text="Yes, I would like to enforce complexity rules for shopper passwords"
         />
-      </SettingsCard>
+      </SectionCard>
 
-      <SettingsCard
+      <SectionCard
         title="Inactive Shopper Logout"
         description="For advanced users only, this section allows you to configure the automatic logout duration for inactive shoppers."
       >
@@ -83,9 +83,9 @@ const SecurityPrivacySection = () => {
           Component={CheckboxField}
           text="Yes, extend my shoppers' logout duration while they are active"
         />
-      </SettingsCard>
+      </SectionCard>
 
-      <SettingsCard title="Control Panel & reCAPTCHA">
+      <SectionCard title="Control Panel & reCAPTCHA">
         <InputField
           name={name(SecurityPrivacyField.ControlPanelTimeout)}
           label="Control Panel Inactivity Timeout"
@@ -173,9 +173,9 @@ const SecurityPrivacySection = () => {
           Component={CheckboxField}
           text="Yes, enable reCAPTCHA security on the pre-launch login page."
         />
-      </SettingsCard>
+      </SectionCard>
 
-      <SettingsCard title="Your Customers' Privacy">
+      <SectionCard title="Your Customers' Privacy">
         <InputField
           name={name(SecurityPrivacyField.EnableCookieConsent)}
           label="Cookie consent tracking"
@@ -193,9 +193,9 @@ const SecurityPrivacySection = () => {
           Component={RadioGroupField}
           options={dataCollectionOptions}
         />
-      </SettingsCard>
+      </SectionCard>
 
-      <SettingsCard
+      <SectionCard
         title="Storefront"
         description="For advanced users only, this section allows you to configure advanced security policies for your storefront."
       >
@@ -211,7 +211,7 @@ const SecurityPrivacySection = () => {
           Component={CheckboxField}
           text="Generate and enforce a nonce in the CSP for payment pages."
         />
-      </SettingsCard>
+      </SectionCard>
     </div>
   );
 };

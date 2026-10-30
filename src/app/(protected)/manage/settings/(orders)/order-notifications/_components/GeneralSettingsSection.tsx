@@ -1,6 +1,6 @@
 import CheckboxListField from "@/components/form/fields/CheckboxListField";
 import InputField from "@/components/form/InputField";
-import SettingsCard from "../../../_components/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import {
   customerEmailStatusOptions,
   notificationMethodOptions,
@@ -10,7 +10,7 @@ import {
 import HelpTooltip from "@/components/HelpTooltip/HelpTooltip";
 
 const GeneralSettingsSection = () => (
-  <SettingsCard title="Notification Settings">
+  <SectionCard title="Notification Settings">
     <InputField
       name={OrderNotificationFormNames.Methods}
       label="Notification Methods"
@@ -62,7 +62,7 @@ const GeneralSettingsSection = () => (
       }
       controlClassName="max-w-2xl!"
     />
-  </SettingsCard>
+  </SectionCard>
 );
 
 export default GeneralSettingsSection;

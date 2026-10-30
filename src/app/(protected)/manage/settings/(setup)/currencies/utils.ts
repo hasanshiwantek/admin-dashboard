@@ -1,4 +1,5 @@
 import { REGEX } from "@/const/regex";
+import { roundTo } from "@/lib/money";
 import {
   CurrencyFormNames,
   ExchangeRateType,
@@ -44,7 +45,8 @@ export const formatCurrencyPreview = (
     | CurrencyFormNames.DecimalPlaces
   >,
 ) => {
-  const [whole, fraction] = amount.toFixed(Number(decimalPlaces) || 0).split(".");
+  const places = Number(decimalPlaces) || 0;
+  const [whole, fraction] = roundTo(amount, places).toFixed(places).split(".");
   const grouped = whole.replace(REGEX.THOUSANDS_GROUP, thousandsToken);
   const number = fraction ? `${grouped}${decimalToken}${fraction}` : grouped;
   return symbolLocation === SymbolLocation.Right

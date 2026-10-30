@@ -1,9 +1,9 @@
 export interface ScriptRecord {
   id: number | string;
-  script_name?: string | null;
+  scriptName?: string | null;
   location?: string | null;
   placement?: string | null;
-  script_type?: string | null;
-  created_at?: string | null;
+  scriptType?: string | null;
+  createdAt?: string | null;
   [key: string]: unknown;
 }

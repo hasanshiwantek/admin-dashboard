@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Button } from "@/components/ui/Button";
 
 const ImportCustomerCsv = () => {
   const {
@@ -130,12 +131,12 @@ const ImportCustomerCsv = () => {
 
    
         <div className="sticky bottom-0 w-full border-t p-6 bg-white flex justify-end gap-4">
-          <button type="button" className="btn-outline-primary">
+          <Button variant="outline" size="md" type="button">
             Cancel
-          </button>
-          <button type="submit" className="btn-primary">
+          </Button>
+          <Button variant="primary" size="md" type="submit">
            Next
-          </button>
+          </Button>
         </div>
       </form>
     </div>

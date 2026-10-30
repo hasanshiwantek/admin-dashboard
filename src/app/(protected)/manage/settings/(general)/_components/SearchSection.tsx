@@ -8,13 +8,13 @@ import {
   searchSortOptions,
 } from "../constant";
 import { fieldPath } from "../utils";
-import SettingsCard from "../../_components/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import HelpTooltip from "@/components/HelpTooltip/HelpTooltip";
 
 const name = (field: SearchField) => fieldPath(GeneralSection.Search, field);
 
 const SearchSection = () => (
-  <SettingsCard title="Search Settings">
+  <SectionCard title="Search Settings">
     <InputField
       name={name(SearchField.DefaultProductSort)}
       label="Default Product Sort"
@@ -57,7 +57,7 @@ const SearchSection = () => (
       }
       controlClassName="max-w-md"
     />
-  </SettingsCard>
+  </SectionCard>
 );
 
 export default SearchSection;

@@ -3,7 +3,7 @@ import InputField from "@/components/form/InputField";
 import HelpTooltip from "@/components/HelpTooltip/HelpTooltip";
 import { ListRenderer } from "@/components/ListRenderer.tsx/ListRenderer";
 import Link from "next/link";
-import SettingsCard from "../../../../../_components/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import { BasicTaxTab, basicTaxTabRoute } from "../../constant";
 import { TaxRateClassFormNames, TaxRateFormNames } from "../constant";
 import { TaxRateFieldsProps } from "./type";
@@ -12,7 +12,7 @@ const LABEL = "font-semibold! text-text-heading";
 const SUFFIX = "text-[1.4rem] text-text-heading";
 
 const TaxRateFields = ({ classRates }: TaxRateFieldsProps) => (
-  <SettingsCard className="gap-8 border-0 p-12! shadow-sm">
+  <SectionCard className="gap-8 border-0 p-12! shadow-sm">
     <InputField
       name={TaxRateFormNames.Name}
       label="Tax rate name"
@@ -92,7 +92,7 @@ const TaxRateFields = ({ classRates }: TaxRateFieldsProps) => (
       layout="vertical"
       className="text-[1.4rem]! text-muted-plum-gray"
     />
-  </SettingsCard>
+  </SectionCard>
 );
 
 export default TaxRateFields;

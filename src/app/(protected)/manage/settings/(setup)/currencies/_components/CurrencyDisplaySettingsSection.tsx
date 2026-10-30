@@ -1,6 +1,6 @@
 import { SelectField } from "@/components/form/fields/SelectField";
 import InputField from "@/components/form/InputField";
-import SettingsCard from "../../../_components/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import {
   CurrencyFormNames,
   decimalPlacesOptions,
@@ -12,7 +12,7 @@ import { CurrencyDisplaySettingsSectionProps } from "./type";
 const CurrencyDisplaySettingsSection = ({
   preview,
 }: CurrencyDisplaySettingsSectionProps) => (
-  <SettingsCard
+  <SectionCard
     title="Display settings"
     description="Customize how your currency displays."
     className="border-0 shadow-sm"
@@ -61,7 +61,7 @@ const CurrencyDisplaySettingsSection = ({
         labelClassName={LABEL_CLASS}
       />
     </div>
-  </SettingsCard>
+  </SectionCard>
 );
 
 export default CurrencyDisplaySettingsSection;

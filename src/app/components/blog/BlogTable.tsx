@@ -6,6 +6,7 @@ import Table from "@/components/ui/Table/Table";
 import useBlogTableContainer from "./useBlogTableContainer";
 import { getSelectedStore } from "@/utils/storage";
 import PageTitle from "@/components/ui/PageTitle";
+import { Button } from "@/components/ui/Button";
 
 export default function BlogTable() {
   const {
@@ -40,9 +41,9 @@ export default function BlogTable() {
         {/* Toolbar */}
         <div className="flex flex-wrap items-center gap-4 mb-6">
           <Link href="/manage/storefront/blog/add">
-            <button className="btn-outline-primary flex items-center gap-2">
+            <Button variant="outline" size="md" className="flex items-center gap-2">
               <Plus className="h-5 w-5" />
-            </button>
+            </Button>
           </Link>
         </div>
 

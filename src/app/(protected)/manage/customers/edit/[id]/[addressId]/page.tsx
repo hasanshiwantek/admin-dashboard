@@ -44,8 +44,8 @@ export default function AddressForm() {
           extraActions: !isEdit ? (
             <Button
               type="button"
-              variant="default"
-              className="flex items-center gap-2 px-6! btn-outline-primary 2xl:text-2xl h-13 py-0 my-0"
+              variant="outline"
+              size="xl"
               disabled={form.formState.isSubmitting}
               onClick={() =>
                 void form.handleSubmit(

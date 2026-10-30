@@ -3,6 +3,7 @@ import { ColumnDef } from "@/components/ui/Table/types";
 import { formatDateTime } from "@/lib/utils";
 import dayjs from "dayjs";
 import { FaCirclePlus, FaCircleMinus } from "react-icons/fa6";
+import { Button } from "@/components/ui/Button";
 
 type AllShipmentColumnProps = {
   isExpanded: (shipment: any) => boolean;
@@ -120,14 +121,16 @@ const AllShipmentColumn = ({
               onChange={(e) => onTrackingChange(shipmentId, e.target.value)}
             />
 
-            <button
+            <Button
+              variant="outline"
+              size="md"
               type="button"
-              className="btn-outline-primary whitespace-nowrap shrink-0 ml-2 mr-7 2xl:h-[32.5px]"
+              className="whitespace-nowrap shrink-0 ml-2 mr-7 2xl:h-[32.5px]"
               onClick={() => onSaveTracking(shipment)}
               disabled={isSaving}
             >
               {isSaving ? "Saving..." : "Save"}
-            </button>
+            </Button>
           </div>
         );
       },

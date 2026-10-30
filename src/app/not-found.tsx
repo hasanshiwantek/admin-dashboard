@@ -23,7 +23,7 @@ export default function NotFound() {
 
         {/* Call to action */}
         <Link href="/manage/dashboard">
-          <Button className="mt-4 !p-6 text-lg btn-primary">
+          <Button variant="primary" className="mt-4 !p-6 text-lg">
             ⬅ Return Home
           </Button>
         </Link>

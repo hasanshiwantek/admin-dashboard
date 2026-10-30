@@ -2,6 +2,7 @@
 
 import Chip from "@/components/Chips/Chips";
 import { ListRenderer } from "@/components/ListRenderer.tsx/ListRenderer";
+import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/input";
 import {
   Popover,
@@ -10,7 +11,7 @@ import {
 } from "@/components/ui/popover";
 import { SelectOption } from "@/components/ui/Select";
 import { cn } from "@/lib/utils";
-import { CheckIcon, ChevronDownIcon, Loader2Icon } from "lucide-react";
+import { CheckIcon, ChevronDownIcon, Loader2Icon, XIcon } from "lucide-react";
 import {
   KeyboardEvent,
   MouseEvent,
@@ -29,6 +30,8 @@ type SelectFieldBaseProps<T> = {
   labelKey?: string;
   getOptionValue?: (option: T) => string;
   getOptionLabel?: (option: T) => string;
+  // A heading is shown above the first option of each group
+  getOptionGroup?: (option: T) => string | undefined;
   renderOption?: (option: T) => ReactNode;
   emptyText?: string;
   placeholder?: string;
@@ -47,11 +50,14 @@ type SingleSelectProps = {
   multi?: false;
   value?: string | number | null;
   onChange?: (value: string) => void;
+  /** Show an x that clears the picked value (default true) */
+  clearable?: boolean;
 };
 
 // Pick several options: chips in the box, checkboxes in the list
 type MultiSelectProps = {
   multi: true;
+  clearable?: never;
   value?: readonly string[] | null;
   onChange?: (value: string[]) => void;
 };
@@ -68,10 +74,12 @@ export function SelectField<T = SelectOption>({
   onChange,
   onBlur,
   multi,
+  clearable = true,
   valueKey,
   labelKey,
   getOptionValue: getValueProp,
   getOptionLabel: getLabelProp,
+  getOptionGroup,
   renderOption,
   emptyText = "No results found",
   placeholder,
@@ -164,6 +172,13 @@ export function SelectField<T = SelectOption>({
   const handleSelect = (option: T) => {
     if (multi) return toggleOption(option);
     (onChange as SingleSelectProps["onChange"])?.(getOptionValue(option));
+    closeList();
+  };
+
+  const showClear = !multi && clearable && !!selectedLabel && !isDisabled;
+
+  const handleClear = () => {
+    (onChange as SingleSelectProps["onChange"])?.("");
     closeList();
   };
 
@@ -267,8 +282,22 @@ export function SelectField<T = SelectOption>({
               className="max-w-full truncate pr-10"
             />
           )}
+
           {loading ? (
             <Loader2Icon className="pointer-events-none absolute right-3 top-1/2 size-6 -translate-y-1/2 animate-spin text-gray-400" />
+          ) : showClear ? (
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              aria-label="Clear selection"
+              // Keep focus where it is, so clearing doesn't open the list
+              onMouseDown={(event) => event.preventDefault()}
+              onClick={handleClear}
+              className="absolute top-1/2 right-2.5 size-7 -translate-y-1/2 text-gray-400 hover:bg-transparent hover:text-gray-600"
+            >
+              <XIcon className="size-5!" />
+            </Button>
           ) : (
             <ChevronDownIcon className="pointer-events-none absolute right-3 top-1/2 size-6 -translate-y-1/2 opacity-50" />
           )}
@@ -295,7 +324,7 @@ export function SelectField<T = SelectOption>({
               </p>
             }
             className={cn(
-              "space-y-0! overflow-y-auto p-1!",
+              "no-scrollbar space-y-0! overflow-y-auto p-1!",
               multi ? "max-h-[32rem]" : "max-h-64",
             )}
             renderItem={(option, index) => {
@@ -309,8 +338,16 @@ export function SelectField<T = SelectOption>({
                 onMouseEnter: () => setHighlighted(index),
                 onClick: () => handleSelect(option),
               };
+              const group = getOptionGroup?.(option);
+              const groupHeading = group &&
+                (index === 0 ||
+                  getOptionGroup?.(filtered[index - 1]) !== group) && (
+                  <p className="px-3 pt-3 pb-1 text-[1.3rem] font-semibold text-muted-foreground">
+                    {group}
+                  </p>
+                );
 
-              return multi ? (
+              const item = multi ? (
                 <div
                   {...itemProps}
                   role="option"
@@ -346,6 +383,13 @@ export function SelectField<T = SelectOption>({
                 >
                   {content}
                 </button>
+              );
+
+              return (
+                <>
+                  {groupHeading}
+                  {item}
+                </>
               );
             }}
           />

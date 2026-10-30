@@ -6,11 +6,11 @@ import { REGEX } from "@/const/regex";
 
 const scriptColumns: ColumnDef<ScriptRecord>[] = [
   {
-    key: "script_name",
+    key: "scriptName",
     header: "Name",
     sortable: true,
     className: "font-medium",
-    render: (script) => replaceNullWithPlaceholder(script.script_name),
+    render: (script) => replaceNullWithPlaceholder(script.scriptName),
   },
   {
     key: "location",
@@ -30,18 +30,18 @@ const scriptColumns: ColumnDef<ScriptRecord>[] = [
     render: (script) => replaceNullWithPlaceholder(script.placement),
   },
   {
-    key: "script_type",
+    key: "scriptType",
     header: "Type",
     sortable: true,
     className: "uppercase",
-    render: (script) => replaceNullWithPlaceholder(script.script_type),
+    render: (script) => replaceNullWithPlaceholder(script.scriptType),
   },
   {
-    key: "created_at",
+    key: "createdAt",
     header: "Date installed",
     sortable: true,
     render: (script) =>
-      formatDateTime(script.created_at, DateTimeFormat.SHORT_DATE),
+      formatDateTime(script?.createdAt, DateTimeFormat.SHORT_DATE),
   },
 ];
 

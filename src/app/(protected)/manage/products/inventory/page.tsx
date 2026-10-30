@@ -21,6 +21,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/Button";
 type Product = {
   id: number;
   name: string;
@@ -250,12 +251,12 @@ export default function EditInventoryPage() {
       </div>
       {/* Sticky Footer */}
       <div className="sticky bottom-0 w-full border-t p-6 bg-white flex justify-end gap-4">
-        {/* <button className="btn-outline-primary" onClick={handleSave}>
+        {/* <button onClick={handleSave}>
           Save
         </button> */}
-        <button className="btn-primary" onClick={handleSaveAndExit}>
+        <Button variant="primary" size="md" onClick={handleSaveAndExit}>
           Save and exit
-        </button>
+        </Button>
       </div>
     </>
   );

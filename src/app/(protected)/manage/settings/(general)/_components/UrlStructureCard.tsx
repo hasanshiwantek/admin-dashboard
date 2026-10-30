@@ -8,7 +8,7 @@ import UpdateUrlsModal from "@/Modals/SettingsModals/UpdateUrlsModal/UpdateUrlsM
 import { useWatch } from "react-hook-form";
 import { GeneralSection, UrlFormat } from "../constant";
 import { fieldPath } from "../utils";
-import SettingsCard from "../../_components/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import { UrlStructureCardProps } from "./type";
 import UrlFormatField from "./UrlFormatField";
 
@@ -19,7 +19,7 @@ const UrlStructureCard = ({ section }: UrlStructureCardProps) => {
   const format = useWatch({ control, name: formatName });
 
   return (
-    <SettingsCard title={section.title}>
+    <SectionCard title={section.title}>
       <InputField
         name={formatName}
         layout="vertical"
@@ -45,7 +45,7 @@ const UrlStructureCard = ({ section }: UrlStructureCardProps) => {
           />
         }
       />
-    </SettingsCard>
+    </SectionCard>
   );
 };
 

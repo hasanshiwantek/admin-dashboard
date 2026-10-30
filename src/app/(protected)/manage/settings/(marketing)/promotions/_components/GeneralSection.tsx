@@ -2,7 +2,7 @@ import RadioGroupField from "@/components/form/fields/RadioGroupField";
 import SelectField from "@/components/form/fields/SelectField";
 import InputField from "@/components/form/InputField";
 import Link from "next/link";
-import SettingsCard from "../../../_components/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import {
   maxCouponsOptions,
   PROMOTION_PRIORITIZATION_URL,
@@ -37,7 +37,7 @@ const calculationOptions = [
 ];
 
 const GeneralSection = () => (
-  <SettingsCard title="General">
+  <SectionCard title="General">
     <InputField
       name={PromotionSettingsFormNames.CalculationMethod}
       label="When multiple promotions are in a cart, calculate them"
@@ -67,7 +67,7 @@ const GeneralSection = () => (
       controlClassName="max-w-[42rem]"
       className="max-w-none"
     />
-  </SettingsCard>
+  </SectionCard>
 );
 
 export default GeneralSection;

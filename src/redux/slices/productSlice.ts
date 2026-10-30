@@ -359,7 +359,7 @@ export const updateBrand = createAsyncThunk(
 
 // DELETE BRAND THUNK
 export const deleteBrand = createAsyncThunk(
-  "product/updateBrand",
+  "product/deleteBrand",
   async ({ id }: { id: any }, thunkAPI) => {
     try {
       const response = await axiosInstance.delete(
@@ -495,9 +495,14 @@ export const exportCsv = createAsyncThunk(
 // 2. Initial State
 const initialState = {
   products: [],
+  productsLoading: false,
   filterProducts: [],
   singleProduct: [],
+  singleProductLoading: false,
   brands: [],
+  brandsLoading: false,
+  selectedBrand: null as Record<string, any> | null,
+  selectedBrandLoading: false,
   loading: false,
   error: null as string | null,
   selectedProducts: [],
@@ -524,14 +529,17 @@ const productSlice = createSlice({
     builder
       .addCase(fetchAllProducts.pending, (state) => {
         state.loading = true;
+        state.productsLoading = true;
         state.error = null; // reset error
       })
       .addCase(fetchAllProducts.fulfilled, (state, action) => {
         state.loading = false;
+        state.productsLoading = false;
         state.products = action.payload;
       })
       .addCase(fetchAllProducts.rejected, (state, action) => {
         state.loading = false;
+        state.productsLoading = false;
         state.error =
           (action.payload as string) || action.error.message || "Failed";
       })
@@ -564,33 +572,59 @@ const productSlice = createSlice({
 
       .addCase(fetchSingleProduct.pending, (state) => {
         state.loading = true;
+        state.singleProductLoading = true;
         state.error = null; // reset error
       })
       .addCase(fetchSingleProduct.fulfilled, (state, action) => {
         state.loading = false;
+        state.singleProductLoading = false;
         state.singleProduct = action.payload;
       })
       .addCase(fetchSingleProduct.rejected, (state, action) => {
         state.loading = false;
+        state.singleProductLoading = false;
         state.error =
           (action.payload as string) || action.error.message || "Failed";
       })
       .addCase(fetchBrands.pending, (state) => {
         state.loading = true;
+        state.brandsLoading = true;
         state.error = null; // reset error
       })
       .addCase(fetchBrands.fulfilled, (state, action) => {
         state.loading = false;
+        state.brandsLoading = false;
         state.brands = action.payload;
       })
       .addCase(fetchBrands.rejected, (state, action) => {
         state.loading = false;
+        state.brandsLoading = false;
         state.error =
           (action.payload as string) || action.error.message || "Failed";
       })
+      .addCase(fetchBrandByKeyword.pending, (state) => {
+        state.brandsLoading = true;
+      })
       .addCase(fetchBrandByKeyword.fulfilled, (state, action) => {
         state.loading = false;
+        state.brandsLoading = false;
         state.brands = action.payload;
+      })
+      .addCase(fetchBrandByKeyword.rejected, (state) => {
+        state.brandsLoading = false;
+      })
+      .addCase(getBrandById.pending, (state) => {
+        state.selectedBrandLoading = true;
+      })
+      .addCase(getBrandById.fulfilled, (state, action) => {
+        state.selectedBrandLoading = false;
+        // Keyed by the requested id, which the response may not include
+        state.selectedBrand = action.payload
+          ? { ...action.payload, id: Number(action.meta.arg) }
+          : null;
+      })
+      .addCase(getBrandById.rejected, (state) => {
+        state.selectedBrandLoading = false;
       })
       .addCase(deleteProduct.fulfilled, (state: any, action) => {
         state.loading = false;

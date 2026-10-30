@@ -1,7 +1,7 @@
 import SelectField from "@/components/form/fields/SelectField";
 import InputField from "@/components/form/InputField";
 import { ListRenderer } from "@/components/ListRenderer.tsx/ListRenderer";
-import SettingsCard from "../../../_components/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import { UserField, userRoleOptions } from "../constant";
 import PermissionGroupField from "./PermissionGroupField";
 import { UserFormFieldsProps } from "./type";
@@ -9,7 +9,7 @@ import { UserFormFieldsProps } from "./type";
 // The fields shared by the add and edit user pages (rendered inside <Form>)
 const UserFormFields = ({ permissionGroups, isEdit }: UserFormFieldsProps) => (
   <div className="flex flex-col gap-8">
-    <SettingsCard title="Personal Information">
+    <SectionCard title="Personal Information">
       <InputField
         name={UserField.FirstName}
         label="First Name"
@@ -42,9 +42,9 @@ const UserFormFields = ({ permissionGroups, isEdit }: UserFormFieldsProps) => (
         placeholder="+92 300 1234567"
         controlClassName="max-w-md"
       />
-    </SettingsCard>
+    </SectionCard>
 
-    <SettingsCard title="Permissions">
+    <SectionCard title="Permissions">
       <InputField
         name={UserField.UserRole}
         label="User Role"
@@ -69,7 +69,7 @@ const UserFormFields = ({ permissionGroups, isEdit }: UserFormFieldsProps) => (
           />
         )}
       />
-    </SettingsCard>
+    </SectionCard>
   </div>
 );
 

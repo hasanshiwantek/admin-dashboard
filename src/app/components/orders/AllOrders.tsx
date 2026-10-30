@@ -1,25 +1,19 @@
 "use client";
 
+import SelectField from "@/components/form/fields/SelectField";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/Select";
 import Table from "@/components/ui/Table/Table";
 import TableTabs from "@/components/ui/Table/TableTabs";
+import { X } from "lucide-react";
+import { IoFilterOutline } from "react-icons/io5";
 import useAllOrdersContainer from "./AllOrdersContainer";
-import { BULK_ORDER_ACTIONS, BULK_STATUS_ACTIONS } from "./constant";
+import { ORDER_ACTION_OPTIONS } from "./constant";
 import ConfirmationModal from "./edit/CaptuedPaymentModal";
 import OrderNotesModal from "./edit/OrderNotesModal";
 import { ShipmentModal } from "./edit/ShipmentModal";
 import ShipmentModalForId from "./edit/ShipmentModalForId";
 import ShipmentsTableModal from "./edit/ShipmentsTableModal";
-import { X } from "lucide-react";
-import { IoFilterOutline } from "react-icons/io5";
 
 // Shared height so toolbar buttons, select and input line up
 const TOOLBAR_CONTROL = "h-14! py-4! my-0!";
@@ -38,7 +32,6 @@ const AllOrders = () => {
     activeTab,
     filterLabels,
 
-    rowActions,
     isRowExpanded,
     renderExpandedRow,
 
@@ -73,13 +66,6 @@ const AllOrders = () => {
     router,
   } = useAllOrdersContainer();
 
-  if (error) {
-    return (
-      <div className="text-center py-10 text-red-500 text-lg">
-        Error: {error}
-      </div>
-    );
-  }
   const topActions = (
     <div className="flex flex-wrap gap-3 items-center mb-2">
       <Button
@@ -102,31 +88,14 @@ const AllOrders = () => {
         </Button>
       )}
 
-      <Select onValueChange={setSelectedAction} value={selectedAction}>
-        <SelectTrigger className={`w-fit px-6 ${TOOLBAR_CONTROL}`}>
-          <SelectValue placeholder="Choose an action" />
-        </SelectTrigger>
-        <SelectContent>
-          {BULK_ORDER_ACTIONS.map((action) => (
-            <SelectItem key={action.value} value={action.value}>
-              {action.label}
-            </SelectItem>
-          ))}
-
-          <div className="px-2 pt-2 pb-1 my-3 text-2xl font-semibold text-muted-foreground">
-            Update status for selected to:
-          </div>
-
-          {BULK_STATUS_ACTIONS.map((action) => (
-            <SelectItem
-              key={action.value}
-              value={`updateMultiOrderStatus:${action.value}`}
-            >
-              {action.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      <SelectField
+        options={ORDER_ACTION_OPTIONS}
+        value={selectedAction}
+        onChange={setSelectedAction}
+        getOptionGroup={(option) => option.group}
+        placeholder="Choose an action"
+        className="w-[30rem] [&_input]:h-14"
+      />
 
       <Button
         className={`2xl:!text-2xl ${TOOLBAR_CONTROL}`}
@@ -137,45 +106,47 @@ const AllOrders = () => {
         Confirm
       </Button>
 
-   <div className="flex items-center gap-0">
-  <div className="relative">
-    <Input
-      className={`${TOOLBAR_CONTROL} pr-10 rounded-r-none`}
-      placeholder="Filter by keyword"
-      value={table.search}
-      onChange={(e) => table.setSearch(e.target.value)}
-      onKeyDown={(e) => {
-        if (e.key === "Enter") table.submitSearch();
-      }}
-    />
+      <div className="flex items-center gap-0">
+        <div className="relative">
+          <Input
+            className={`${TOOLBAR_CONTROL} pr-10 rounded-r-none`}
+            placeholder="Filter by keyword"
+            value={table.search}
+            onChange={(e) => table.setSearch(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") table.submitSearch();
+            }}
+          />
 
-    {table.search && (
-      <button
-        type="button"
-        onClick={() => table.clearSearch()}
-        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
+          {table.search && (
+            <button
+              type="button"
+              onClick={() => table.clearSearch()}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
+            >
+              <X size={18} />
+            </button>
+          )}
+        </div>
+
+        <Button
+          variant="outline"
+          size="md"
+          type="button"
+          className={`${TOOLBAR_CONTROL} rounded-l-none`}
+          onClick={() => table.submitSearch()}
+        >
+          <IoFilterOutline />
+        </Button>
+      </div>
+      <Button
+        className={`2xl:!text-2xl ${TOOLBAR_CONTROL}`}
+        onClick={() => router.push("/manage/orders/search")}
+        variant="outline"
+        size="xl"
       >
-        <X size={18} />
-      </button>
-    )}
-  </div>
-
-  <button
-    type="button"
-    className={`btn-outline-primary ${TOOLBAR_CONTROL} rounded-l-none`}
-    onClick={() => table.submitSearch()}
-  >
-    <IoFilterOutline />
-  </button>
-</div>
-    <Button
-  className={`2xl:!text-2xl ${TOOLBAR_CONTROL}`}
-  onClick={() => router.push("/manage/orders/search")}
-  variant="outline"
-  size="xl"
->
-  Search
-</Button>
+        Search
+      </Button>
       <Button
         className={`2xl:!text-2xl ${TOOLBAR_CONTROL}`}
         onClick={table.clearSearch}
@@ -202,6 +173,7 @@ const AllOrders = () => {
         {/* Top actions */}
         {topActions}
         <Table<any>
+          error={error}
           bare
           data={filteredOrders}
           columns={columns}
@@ -220,7 +192,6 @@ const AllOrders = () => {
           onToggleAll={(checked, allIds) =>
             table.setSelectedIds(checked ? allIds.map(Number) : [])
           }
-          rowActions={rowActions}
           renderExpandedRow={renderExpandedRow}
           isRowExpanded={isRowExpanded}
           sort={table.sort}

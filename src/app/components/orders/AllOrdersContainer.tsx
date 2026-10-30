@@ -1,7 +1,9 @@
 "use client";
 
 import useTableContainer from "@/components/ui/Table/TableContainer";
+import { ActionEnums } from "@/const/appConstants";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
+import { downloadExport } from "@/redux/slices/exportSlice";
 import {
   addShipmentOrder,
   captureMultiplePayment,
@@ -16,21 +18,19 @@ import {
   shipmentByOrderId,
   updateOrderStatus,
 } from "@/redux/slices/orderSlice";
+import { errorMessage } from "@/utils/message";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { toast } from "react-toastify";
-import * as XLSX from "xlsx";
 import AllOrdersColumn from "./AllOrdersColumn";
 import OrderDetailRow from "./OrderDetailRow";
 import {
   BulkOrderAction,
-  COMPLETED,
   ORDER_FILTER_LABELS,
   OrderTabs,
   STATUS_MAP,
+  UPDATE_STATUS_ACTION_PREFIX,
 } from "./constant";
 import { findCountry } from "./utils";
-import { downloadExport } from "@/redux/slices/exportSlice";
 
 /** Turn a thunk PDF payload into a Blob and open it in a new tab. */
 const openPdfBlob = (payload: any) => {
@@ -186,112 +186,62 @@ const useAllOrdersContainer = () => {
   const onToggleExpandAll = () =>
     setExpandedRows(isAllExpanded ? [] : filteredOrders.map((o) => o.id));
 
-  // ----- Per-row actions dropdown -----
-  const rowActions = (order: any) => [
-    {
-      label: "Print invoice",
-      onClick: async () => {
-        if (!order?.id) return;
+  // ----- Per-row actions -----
+  const handleOrderAction = (order: any) => async (action: ActionEnums) => {
+    switch (action) {
+      case ActionEnums.EDIT:
+        return router.push(`/manage/orders/edit/${order.id}`);
+      case ActionEnums.PRINT_INVOICE: {
         const result = await dispatch(printInvoicePdf({ orderId: order.id }));
         if (printInvoicePdf.fulfilled.match(result))
           openPdfBlob(result.payload);
-      },
-    },
-    {
-      label: "Print packing slip",
-      onClick: async () => {
-        if (!order?.id) return;
+        return;
+      }
+      case ActionEnums.PRINT_PACKING_SLIP: {
         const result = await dispatch(
           printPackingSlipPdf({ orderId: order.id }),
         );
-        if (printPackingSlipPdf.fulfilled.match(result)) {
+        if (printPackingSlipPdf.fulfilled.match(result))
           openPdfBlob(result.payload);
-        } else {
-          toast.error(
+        else
+          errorMessage(
             (result.payload as string) ||
               result.error?.message ||
               "Failed to print packing slip",
           );
-        }
-      },
-    },
-    {
-      label: "Resend invoice",
-      onClick: async () => {
-        await dispatch(resendInvoice({ orderId: order?.id }));
-      },
-    },
-    ...(!order?.userType
-      ? [
-          {
-            label: "Send Message",
-            onClick: () => router.push(`/manage/orders/message/${order?.id}`),
-          },
-        ]
-      : []),
-    {
-      label: "View notes",
-      onClick: () => onViewNotes(order.id),
-    },
-    ...(!order?.shipmentId
-      ? [{ label: "Ship items", onClick: () => onShipItems(order) }]
-      : []),
-    ...(order?.payment?.payment_intent_id &&
-    order?.payment?.payment_status !== COMPLETED
-      ? [
-          {
-            label: "Capture Funds",
-            onClick: () => onCaptureFunds(order?.payment?.payment_intent_id),
-          },
-        ]
-      : []),
-    ...(order?.shipmentId
-      ? [
-          {
-            label: "View shipments",
-            onClick: () => {
-              setSelectedOrderId(order.id);
-              setShowShipmentTable(true);
-            },
-          },
-        ]
-      : []),
-    ...(String(order?.status || "").toLowerCase() !== "shipped" &&
-    String(order?.status || "").toLowerCase() !== "awaiting fulfillment"
-      ? [
-          {
-            label: "Void Transaction",
-            onClick: () => {
-              setSelectedOrderId(order?.id);
-              setShowVoidConfirm(true);
-            },
-          },
-        ]
-      : []),
-    ...(String(order?.status || "").toLowerCase() !== "cancelled" &&
-    String(order?.status || "").toLowerCase() !== "awaiting payment"
-      ? [
-          {
-            label: "Refund",
-            onClick: async () => {
-              const result = await dispatch(
-                refundOrder({ orderId: order?.id }),
-              );
-              if (refundOrder.fulfilled.match(result)) refetch();
-            },
-          },
-        ]
-      : []),
-    {
-      label: "View order timeline",
-      onClick: () => router.push(`/manage/orders/order-timeline/${order?.id}`),
-    },
-  ];
+        return;
+      }
+      case ActionEnums.RESEND:
+        await dispatch(resendInvoice({ orderId: order.id }));
+        return;
+      case ActionEnums.SEND:
+        return router.push(`/manage/orders/message/${order.id}`);
+      case ActionEnums.VIEW_NOTES:
+        return onViewNotes(order.id);
+      case ActionEnums.SHIP:
+        return onShipItems(order);
+      case ActionEnums.CAPTURE:
+        return onCaptureFunds(order.payment?.payment_intent_id);
+      case ActionEnums.VIEW_SHIPMENTS:
+        setSelectedOrderId(order.id);
+        return setShowShipmentTable(true);
+      case ActionEnums.VOID:
+        setSelectedOrderId(order.id);
+        return setShowVoidConfirm(true);
+      case ActionEnums.REFUND: {
+        const result = await dispatch(refundOrder({ orderId: order.id }));
+        if (refundOrder.fulfilled.match(result)) refetch();
+        return;
+      }
+      case ActionEnums.VIEW_TIMELINE:
+        return router.push(`/manage/orders/order-timeline/${order.id}`);
+    }
+  };
 
   // ----- Bulk action ("Confirm") -----
   const handleConfirmClick = async () => {
     if (
-      selectedAction.startsWith("updateMultiOrderStatus:") &&
+      selectedAction.startsWith(UPDATE_STATUS_ACTION_PREFIX) &&
       selectedOrders.length > 0
     ) {
       const statusId = selectedAction.split(":")[1];
@@ -419,6 +369,7 @@ const useAllOrdersContainer = () => {
 
   // ----- Columns + expanded row -----
   const columns = AllOrdersColumn({
+    onAction: handleOrderAction,
     router,
     dispatch,
     refetch,
@@ -454,7 +405,6 @@ const useAllOrdersContainer = () => {
     activeTab,
     filterLabels: ORDER_FILTER_LABELS,
 
-    rowActions,
     isRowExpanded,
     renderExpandedRow,
 

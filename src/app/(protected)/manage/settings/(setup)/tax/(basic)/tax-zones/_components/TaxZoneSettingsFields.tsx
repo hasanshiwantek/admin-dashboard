@@ -4,7 +4,7 @@ import RadioGroupField from "@/components/form/fields/RadioGroupField";
 import { SelectField } from "@/components/form/fields/SelectField";
 import InputField from "@/components/form/InputField";
 import HelpTooltip from "@/components/HelpTooltip/HelpTooltip";
-import SettingsCard from "../../../../../_components/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import { countryOptions } from "../../../../locations/constant";
 import {
   customerGroupOptions,
@@ -31,7 +31,7 @@ const TaxZoneSettingsFields = ({
   subdivisionOptions,
 }: TaxZoneSettingsFieldsProps) => (
   <>
-    <SettingsCard className={CARD}>
+    <SectionCard className={CARD}>
       <InputField
         name={TaxZoneSettingsFormNames.Name}
         label="Tax zone name"
@@ -140,9 +140,9 @@ const TaxZoneSettingsFields = ({
         layout="vertical"
         className={CHECK}
       />
-    </SettingsCard>
+    </SectionCard>
 
-    <SettingsCard className={CARD}>
+    <SectionCard className={CARD}>
       <InputField
         name={TaxZoneSettingsFormNames.PriceDisplay}
         label="How are prices displayed on your storefront"
@@ -173,7 +173,7 @@ const TaxZoneSettingsFields = ({
           className={CHECK}
         />
       </div>
-    </SettingsCard>
+    </SectionCard>
   </>
 );
 

@@ -1,5 +1,6 @@
 import { ListRenderer } from "@/components/ListRenderer.tsx/ListRenderer";
 import { cn } from "@/lib/utils";
+import { Skeleton } from "./Skeleton";
 
 export interface ListRowSkeletonProps {
   className?: string;
@@ -11,13 +12,11 @@ export interface ListRowSkeletonProps {
   actionWidths?: string[];
 }
 
-const bar = "animate-pulse rounded bg-gray-200";
-
 // Varied widths so stacked lines look like real text
 const LINE_WIDTHS = ["w-[18rem]", "w-[15rem]", "w-[46rem]", "w-[8rem]"];
 
 const ToggleSkeleton = () => (
-  <div className={cn(bar, "h-[1.4rem] w-[3.5rem] shrink-0 rounded-full")} />
+  <Skeleton className="h-[1.4rem] w-[3.5rem] shrink-0 rounded-full" />
 );
 
 // One placeholder row. Pass to ListRenderer's `renderSkeleton`;
@@ -38,11 +37,11 @@ const ListRowSkeleton = ({
         iconColumnClassName,
       )}
     >
-      <div className={cn(bar, "shrink-0", iconClassName)} />
+      <Skeleton className={cn("shrink-0", iconClassName)} />
     </div>
 
     <div className={cn("shrink-0", nameColumnClassName)}>
-      <div className={cn(bar, "h-[1.4rem] w-[9rem]")} />
+      <Skeleton className="h-[1.4rem] w-[9rem]" />
     </div>
 
     <div className="flex flex-1 items-center justify-between gap-4">
@@ -51,8 +50,8 @@ const ListRowSkeleton = ({
         keyExtractor={(i) => i}
         className="space-y-[1.1rem]!"
         renderItem={(i) => (
-          <div
-            className={cn(bar, "h-[1.3rem]", LINE_WIDTHS[i % LINE_WIDTHS.length])}
+          <Skeleton
+            className={cn("h-[1.3rem]", LINE_WIDTHS[i % LINE_WIDTHS.length])}
           />
         )}
       />
@@ -67,7 +66,7 @@ const ListRowSkeleton = ({
           orientation="horizontal"
           emptyComponent={<></>}
           className="space-x-0! gap-3 overflow-visible! p-0!"
-          renderItem={(width) => <div className={cn(bar, "h-[3.4rem]", width)} />}
+          renderItem={(width) => <Skeleton className={cn("h-[3.4rem]", width)} />}
         />
       </div>
     </div>

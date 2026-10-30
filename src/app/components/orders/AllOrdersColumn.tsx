@@ -28,8 +28,11 @@ import { COMPLETED, riskConfig, statusOptions } from "./constant";
 import { OrderColumnsProps } from "./types";
 import { findCountry } from "./utils";
 import { cn } from "@/lib/utils";
+import ActionButton from "@/components/ActionButton/ActionButton";
+import { ORDER_ROW_ACTIONS } from "./constant";
 
 export default function AllOrdersColumn({
+  onAction,
   router,
   dispatch,
   refetch,
@@ -182,7 +185,7 @@ export default function AllOrdersColumn({
               </span>
             ) : (
               <Link
-                href={"/manage/orders/customer/" + order?.customer?.id}
+                href={`/manage/customers?customerIdFrom=${order?.customer?.id}&customerIdTo=${order?.customer?.id}`}
                 className="2xl:!text-2xl !text-blue-500 cursor-pointer hover:underline"
               >
                 {order?.customer?.firstName} {order?.customer?.lastName}
@@ -310,6 +313,18 @@ export default function AllOrdersColumn({
           </div>
         );
       },
+    },
+    {
+      key: "actions",
+      width: "90px",
+      render: (order) => (
+        <ActionButton
+          data={order}
+          actions={ORDER_ROW_ACTIONS}
+          onAction={onAction}
+          label={`Actions for order ${order?.id}`}
+        />
+      ),
     },
   ];
 }

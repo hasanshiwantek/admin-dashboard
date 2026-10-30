@@ -5,7 +5,7 @@ import Table from "@/components/ui/Table/Table";
 import { ValidationError } from "@/components/ui/validation-error";
 import { ExternalLink, Plus, Rocket } from "lucide-react";
 import Link from "next/link";
-import SettingsCard from "../../../_components/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import {
   advancedDisplayCheckboxes,
   BACKORDERS_LEARN_MORE_URL,
@@ -20,7 +20,7 @@ const BackorderDisplaySection = ({
   hasMessageErrors,
   onAddMessage,
 }: BackorderDisplaySectionProps) => (
-  <SettingsCard
+  <SectionCard
     title="Backorder display"
     titleAdornment={
       <Badge
@@ -87,7 +87,7 @@ const BackorderDisplaySection = ({
       className="space-y-5! p-0!"
       renderItem={(option) => <InventoryCheckbox option={option} />}
     />
-  </SettingsCard>
+  </SectionCard>
 );
 
 export default BackorderDisplaySection;

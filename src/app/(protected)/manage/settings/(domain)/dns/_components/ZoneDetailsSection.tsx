@@ -2,7 +2,7 @@ import InputField from "@/components/form/InputField";
 import HelpTooltip from "@/components/HelpTooltip/HelpTooltip";
 import { ListRenderer } from "@/components/ListRenderer.tsx/ListRenderer";
 import { Button } from "@/components/ui/Button";
-import SettingsCard from "../../../_components/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import { DnsSection, zoneDetailFields } from "../constant";
 import { fieldPath } from "../utils";
 import { ZoneDetailsSectionProps } from "./type";
@@ -12,7 +12,7 @@ const ZoneDetailsSection = ({ onRestoreDefaults }: ZoneDetailsSectionProps) => (
     <h2 className="text-[2.2rem]! font-semibold text-text-heading!">
       Zone Details
     </h2>
-    <SettingsCard className="border-0 p-8! shadow-sm">
+    <SectionCard className="border-0 p-8! shadow-sm">
       <ListRenderer
         data={zoneDetailFields}
         keyExtractor={(field) => field.name}
@@ -41,7 +41,7 @@ const ZoneDetailsSection = ({ onRestoreDefaults }: ZoneDetailsSectionProps) => (
           Restore Defaults
         </Button>
       </div>
-    </SettingsCard>
+    </SectionCard>
   </section>
 );
 

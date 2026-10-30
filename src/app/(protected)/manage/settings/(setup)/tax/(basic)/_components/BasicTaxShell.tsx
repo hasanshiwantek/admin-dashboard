@@ -19,7 +19,7 @@ const BasicTaxShell = ({
       titleClassName:
         "text-[36px] font-light leading-tight text-text-primary-light",
       action: (
-        <Button asChild size="xl" className="btn-primary">
+        <Button variant="primary" asChild size="xl">
           <Link href={TAX_ROUTE}>Back to configured services</Link>
         </Button>
       ),

@@ -1,14 +1,14 @@
 import { ListRenderer } from "@/components/ListRenderer.tsx/ListRenderer";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
-import SettingsCard from "../../../_components/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import { STORE_TAX_SETTINGS_ROUTE } from "../constant";
 import { StoreTaxSettingsSectionProps } from "./type";
 
 const StoreTaxSettingsSection = ({
   settings,
 }: StoreTaxSettingsSectionProps) => (
-  <SettingsCard
+  <SectionCard
     title="Store tax settings"
     titleClassName="text-[2.2rem]! font-semibold! text-text-heading!"
     action={
@@ -33,7 +33,7 @@ const StoreTaxSettingsSection = ({
         </div>
       )}
     />
-  </SettingsCard>
+  </SectionCard>
 );
 
 export default StoreTaxSettingsSection;

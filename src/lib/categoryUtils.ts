@@ -1,13 +1,3 @@
-import { AppDispatch } from "@/redux/store";
-import { fetchCategories } from "@/redux/slices/categorySlice";
-export const refetchCategories = async (dispatch: AppDispatch) => {
-  try {
-    await dispatch(fetchCategories()).unwrap();
-  } catch (err) {
-    console.error("❌ Error re-fetching Categories:", err);
-  }
-};
-
 /** Categories from the root down to `targetId` (inclusive), or null if it's not in the tree. */
 export const findCategoryAncestors = (
   nodes: any[],

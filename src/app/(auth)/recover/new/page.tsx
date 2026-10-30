@@ -77,10 +77,8 @@ export default function ForgotPasswordPage() {
 
             <Button
               type="submit"
-              variant="default"
-              size="xxl"
               disabled={loading}
-              className="w-full sm:w-[34rem] cursor-pointer h-20 my-5 bg-blue-600 rounded-lg font-medium !text-2xl focus-within:ring-blue-200 focus-within:border-blue-200 border border-[#2c2c2c] transition hover:border-blue-200 hover:bg-[#3A426E]"
+              className="w-full sm:w-[34rem] h-20 my-5 bg-blue-600 rounded-lg transition hover:bg-indigo-900"
             >
               {loading ? "Sending reset link..." : "Email Reset Link"}
             </Button>

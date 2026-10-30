@@ -1,26 +1,25 @@
 "use client";
-import { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { useRouter } from "next/navigation";
-import { setStoreId } from "@/redux/slices/configSlice";
-import { RootState } from "@/redux/store";
 import ProtectedRoute from "@/auth/ProtectedRoute";
-import Image from "next/image";
+import { Button } from "@/components/ui/Button";
 import {
   Select,
-  SelectTrigger,
-  SelectValue,
   SelectContent,
   SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/Select";
-import { Button } from "@/components/ui/Button";
+import { setStoreId } from "@/redux/slices/configSlice";
+import { RootState } from "@/redux/store";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function StoreSelectPage() {
   const dispatch = useDispatch();
   const router = useRouter();
   const stores = useSelector((state: RootState) => state.auth.stores);
   const isAuthenticated = useSelector(
-    (state: RootState) => state.auth.isAuthenticated
+    (state: RootState) => state.auth.isAuthenticated,
   );
 
   const [selectedStore, setSelectedStore] = useState<number | null>(null);
@@ -30,13 +29,13 @@ export default function StoreSelectPage() {
     localStorage.removeItem("pending_token");
     localStorage.removeItem("two_factor_required");
     localStorage.removeItem("two_factor_type");
-  }
+  };
   const handleContinue = () => {
     if (!selectedStore) return; // prevent click without selection
     setLoading(true);
     dispatch(setStoreId(selectedStore));
     router.push("/manage/dashboard");
-    verifyOTPLocalClear()
+    verifyOTPLocalClear();
   };
 
   useEffect(() => {
@@ -44,7 +43,7 @@ export default function StoreSelectPage() {
     const storeId = localStorage.getItem("storeId");
     if (token && storeId) {
       router.push("/manage/dashboard");
-      verifyOTPLocalClear()
+      verifyOTPLocalClear();
     }
   }, [isAuthenticated]);
 
@@ -104,11 +103,9 @@ export default function StoreSelectPage() {
         {/* Continue button */}
         <Button
           type="button"
-          variant="default"
-          size="xxl"
+          className="w-full sm:w-[34rem] h-20 my-5 bg-blue-600 rounded-lg transition hover:bg-indigo-900"
           disabled={!selectedStore || loading}
           onClick={handleContinue}
-          className="w-full sm:w-[34rem] cursor-pointer h-20 my-5 bg-blue-600 rounded-lg font-medium !text-2xl focus-within:ring-blue-200 focus-within:border-blue-200 border border-[#2c2c2c] transition hover:border-blue-200 hover:bg-[#3A426E]"
         >
           {loading ? "Continuing..." : "Continue"}
         </Button>

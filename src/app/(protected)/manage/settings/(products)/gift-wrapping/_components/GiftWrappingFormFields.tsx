@@ -1,7 +1,8 @@
 import CheckboxField from "@/components/form/fields/CheckboxField";
 import FileField from "@/components/form/fields/FileField";
 import InputField from "@/components/form/InputField";
-import SettingsCard from "../../../_components/SettingsCard";
+import PriceField from "@/components/form/PriceField";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import {
   GiftWrappingFormNames,
   PREVIEW_IMAGE_MAX_SIZE_MB,
@@ -9,7 +10,7 @@ import {
 } from "../constant";
 
 const GiftWrappingFormFields = () => (
-  <SettingsCard title="Gift Wrapping Settings">
+  <SectionCard title="Gift Wrapping Settings">
     <InputField
       name={GiftWrappingFormNames.Name}
       label="Name"
@@ -23,13 +24,10 @@ const GiftWrappingFormFields = () => (
       accept={PREVIEW_IMAGE_TYPES}
       maxSizeMb={PREVIEW_IMAGE_MAX_SIZE_MB}
     />
-    <InputField
+    <PriceField
       name={GiftWrappingFormNames.Price}
       label="Price per Product"
       required
-      type="number"
-      startIcon="$"
-      min={0}
       controlClassName="max-w-[16rem]"
     />
     <InputField
@@ -44,7 +42,7 @@ const GiftWrappingFormFields = () => (
       Component={CheckboxField}
       text="Yes, show this wrapping option to customers"
     />
-  </SettingsCard>
+  </SectionCard>
 );
 
 export default GiftWrappingFormFields;

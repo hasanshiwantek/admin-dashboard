@@ -2,7 +2,7 @@ import CheckboxField from "@/components/form/fields/CheckboxField";
 import SelectField from "@/components/form/fields/SelectField";
 import InputField from "@/components/form/InputField";
 import Link from "next/link";
-import SettingsCard from "../../../_components/SettingsCard";
+import SectionCard from "@/components/SectionCard/SectionCard";
 import SettingsNotice from "../../../_components/SettingsNotice";
 import {
   BACKORDERS_LEARN_MORE_URL,
@@ -22,7 +22,7 @@ const GeneralSection = ({
   showHideInFiltering,
   showBackorderNotice,
 }: GeneralSectionProps) => (
-  <SettingsCard title="General">
+  <SectionCard title="General">
     <InputField
       name={InventoryFormNames.ProductUnavailableAction}
       label="When a product can no longer be sold"
@@ -96,7 +96,7 @@ const GeneralSection = ({
       Component={CheckboxField}
       text="Automatically adjust stock levels when the order status is updated to: “Refunded” or “Cancelled”"
     />
-  </SettingsCard>
+  </SectionCard>
 );
 
 export default GeneralSection;
