@@ -10,7 +10,7 @@ import {
   updateNavigation,
 } from "@/redux/slices/storefrontSlice";
 import { refetchWebpages } from "@/lib/storeFrontUtils";
-import { getWebPageColumns } from "./WebPageColumns";
+import { getWebPageColumns } from "./columns";
 
 const useWebPageTableContainer = () => {
   const dispatch = useAppDispatch();
@@ -32,7 +32,7 @@ const useWebPageTableContainer = () => {
     {
       label: "Edit",
       onClick: () =>
-        router.push(`/manage/storefront/web-pages/edit/${page.id}`),
+        router.push(`/manage/storefront/web-pages/${page.id}`),
     },
   ];
 

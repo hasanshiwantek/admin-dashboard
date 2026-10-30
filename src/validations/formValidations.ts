@@ -92,9 +92,9 @@ import {
   ReviewStatus,
 } from "@/app/(protected)/manage/products/reviews/[id]/constant";
 import {
-  PageTypeEnums,
   WebPageField,
-} from "@/app/components/storefront/constants";
+  PageTypeEnums,
+} from "@/app/(protected)/manage/storefront/web-pages/[id]/constants";
 import { REGEX } from "@/const/regex";
 import { AddCurrencyFormNames } from "@/Modals/CurrencyModals/AddCurrencyModal/constant";
 import { AddMediaFromUrlFormNames } from "@/Modals/ProductModals/AddMediaFromUrlModal/constant";
@@ -586,17 +586,17 @@ export const CouponCodeSchema = object({
 
     return true;
   })
-.test("category-validation", function (values) {
-  // Agar appliesTo categories nahi ya categoryIds empty nahi to skip
-  if (values?.appliesTo !== AppliesTo.Categories) return true;
-  if (values.categoryIds && values.categoryIds.length > 0) return true;
+  .test("category-validation", function (values) {
+    // Agar appliesTo categories nahi ya categoryIds empty nahi to skip
+    if (values?.appliesTo !== AppliesTo.Categories) return true;
+    if (values.categoryIds && values.categoryIds.length > 0) return true;
 
-  // Sirf tab error jab categories selected hai lekin koi category nahi
-  return this.createError({
-    path: "categoryIds",
-    message: "Select at least one category",
+    // Sirf tab error jab categories selected hai lekin koi category nahi
+    return this.createError({
+      path: "categoryIds",
+      message: "Select at least one category",
+    });
   });
-})
 
 export type CouponCodeForm = InferType<typeof CouponCodeSchema>;
 // WebPageSchema

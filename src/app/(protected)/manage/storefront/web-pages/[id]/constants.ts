@@ -31,24 +31,24 @@ export const PageTypeOptions = [
   },
 ];
 
-export const WebPageField = {
-  PageType: "pageType",
-  PageName: "pageName",
-  PageUrl: "pageUrl",
-  PageContent: "pageContent",
-  Link: "link",
-  EmailQuestionsTo: "emailQuestionsTo",
-  ShowTheseFields: "showTheseFields",
-  ShowInNavigation: "showInNavigation",
-  ParentPage: "parentPage",
-  RestrictToCustomersOnly: "restrictToCustomersOnly",
-  SortOrder: "sortOrder",
-  RawHtml: "rawHtml",
-  PageTitle: "pageTitle",
-  MetaKeywords: "metaKeywords",
-  MetaDescription: "metaDescription",
-  SearchKeywords: "searchKeywords",
-} as const;
+export enum WebPageField {
+  PageType = "pageType",
+  PageName = "pageName",
+  PageUrl = "pageUrl",
+  PageContent = "pageContent",
+  Link = "link",
+  EmailQuestionsTo = "emailQuestionsTo",
+  ShowTheseFields = "showTheseFields",
+  ShowInNavigation = "showInNavigation",
+  ParentPage = "parentPage",
+  RestrictToCustomersOnly = "restrictToCustomersOnly",
+  SortOrder = "sortOrder",
+  RawHtml = "rawHtml",
+  PageTitle = "pageTitle",
+  MetaKeywords = "metaKeywords",
+  MetaDescription = "metaDescription",
+  SearchKeywords = "searchKeywords",
+}
 export const AdvancedOptions = [
   { label: "Page Title", name: WebPageField.PageTitle },
   { label: "Meta Keywords", name: WebPageField.MetaKeywords },
@@ -73,3 +73,4 @@ export const DefaultWebPageValues = {
   [WebPageField.MetaDescription]: "",
   [WebPageField.SearchKeywords]: "",
 };
+export const LIST_PATH = "/manage/storefront/web-pages";

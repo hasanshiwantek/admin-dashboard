@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { convertOptionsToObject } from "@/lib/utils";
-import { PageTypeOptions } from "./constants";
+import { LIST_PATH, PageTypeOptions } from "./[id]/constants";
 import EnableDisable from "@/components/common/EnableDisable";
 export const getWebPageColumns = (onToggleVisibility: (page: any) => void) => [
   {
@@ -10,8 +10,8 @@ export const getWebPageColumns = (onToggleVisibility: (page: any) => void) => [
     headClassName: "2xl:!text-[1.6rem]",
     render: (page: any) => (
       <Link
-        href={`/manage/storefront/web-pages/edit/${page.id}`}
-        className="text-blue-600 hover:underline 2xl:!text-2xl"
+        href={`${LIST_PATH}/${page.id}`}
+        className="text-blue-600 hover:underline 2xl:text-2xl"
       >
         {page.pageName}
       </Link>
