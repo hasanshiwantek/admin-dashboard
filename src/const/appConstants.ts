@@ -80,6 +80,7 @@ export enum ActionEnums {
   SHARE = "share",
   SEND = "send",
   RESEND = "resend",
+  TOGGLE= "toggle"
 }
 
 export enum UserRolesEnum {
