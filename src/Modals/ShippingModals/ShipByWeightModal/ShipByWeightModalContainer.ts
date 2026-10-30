@@ -9,6 +9,7 @@ import {
 import { buildMethodPayload } from "../utils";
 import {
   EMPTY_RANGE,
+  RateSymbol,
   shipByWeightDefaults,
   ShipByWeightField,
 } from "./constant";
@@ -68,7 +69,8 @@ const useShipByWeightModalContainer = ({
   return {
     form,
     rangeFields: fields,
-    rateSymbol,
+    // A percentage cost isn't a price, so it gets a "%" suffix instead
+    isPercentageCost: rateSymbol === RateSymbol.Percentage,
     addRange,
     removeRange,
     loading,

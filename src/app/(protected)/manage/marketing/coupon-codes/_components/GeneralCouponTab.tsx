@@ -10,6 +10,7 @@ import { CouponCodeForm, } from "../types";
 import { AppliesToOptions, CouponFormFields, DiscountType, DiscountTypeOptions } from "../constant"
 import PageTitle from "@/components/ui/PageTitle";
 import { useFormContext } from "@/components/form/Form";
+import PriceField from "@/components/form/PriceField";
 
 
 
@@ -71,17 +72,14 @@ const GeneralCouponTab = () => {
         </div>
 
         {discountType !== DiscountType.FreeShipping && (
-          <InputField
+          <PriceField
             name={CouponFormFields.DiscountAmount}
             label="Discount amount"
             labelClassName="text-right text-gray-700"
             required
             control={control}
-            type="number"
-            step="0.01"
             containerClassName="grid grid-cols-[200px_1fr] items-center gap-4"
             controlClassName="max-w-md"
-            beforeFieldComponent={<span className="text-gray-600">$</span>}
             afterFieldComponent={
               <>
                 <span className="text-gray-600">off the order total</span>
@@ -92,7 +90,7 @@ const GeneralCouponTab = () => {
         )}
 
         <div className="mb-6 mt-4">
-          <InputField
+          <PriceField
             name={CouponFormFields.MinimumPurchase}
             label={
               <>
@@ -102,12 +100,9 @@ const GeneralCouponTab = () => {
             }
             labelClassName="text-right text-gray-700"
             control={control}
-            type="number"
-            step="0.01"
             className="w-full max-w-[190px]"
             containerClassName="mb-6"
             controlClassName="flex-row items-center gap-2"
-            beforeFieldComponent={<span className="text-gray-600">$</span>}
             afterFieldComponent={<Info className="w-4 h-4 text-gray-400 shrink-0" />}
           />
         </div>

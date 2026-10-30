@@ -48,11 +48,7 @@ import {
   PRODUCTS_ROUTE,
   FALLBACK_CURRENCY,
 } from "../constant";
-import {
-  getDecimalPlaces,
-  getPriceInputProps,
-  getStorefrontProductUrl,
-} from "../utils";
+import { getDecimalPlaces, getStorefrontProductUrl } from "../utils";
 import type { ApiCategory, Product } from "../type";
 import {
   getBulkPricingColumns,
@@ -352,7 +348,6 @@ const useProductFormPageContainer = () => {
     }
   };
 
-  const priceInputProps = getPriceInputProps(currency);
   const activeDiscountType = discountType ?? productDefaults.discountType;
 
   return {
@@ -372,7 +367,6 @@ const useProductFormPageContainer = () => {
     navSections,
     activeSection,
     scrollToSection,
-    priceInputProps,
     brands: brandOptions,
     categories,
     handleIdentityChange,
@@ -382,7 +376,6 @@ const useProductFormPageContainer = () => {
     bulkPricingTiers: toFieldRows<BulkPricingTierValues>(tiers.fields, tierValues),
     bulkPricingColumns: getBulkPricingColumns({
       currency,
-      priceInputProps,
       discountLabel: getDiscountLabel(activeDiscountType, currency.symbol),
       discountType: activeDiscountType,
       basePrice: getBasePrice({ price, salePrice }),

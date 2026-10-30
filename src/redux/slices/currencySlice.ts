@@ -65,6 +65,12 @@ export const fetchDefaultCurrency = createAsyncThunk(
         err.response?.data?.message || "Failed to fetch default currency"
       );
     }
+  },
+  {
+    // Every PriceField asks for it on mount; one request at a time
+    condition: (_, { getState }) =>
+      !(getState() as { currency: { defaultCurrencyLoading: boolean } })
+        .currency.defaultCurrencyLoading,
   }
 );
 
@@ -185,6 +191,7 @@ const initialState = {
   defaultCurrency: null as DefaultCurrency | null,
   // The default currency request has finished (loaded or failed)
   defaultCurrencyLoaded: false,
+  defaultCurrencyLoading: false,
   selectedCurrency: null as Currency | null,
   selectedCurrencyLoading: false,
   currencySaving: false,
@@ -213,13 +220,16 @@ const currencySlice = createSlice({
       .addCase(fetchDefaultCurrency.pending, (state) => {
         state.defaultCurrency = null;
         state.defaultCurrencyLoaded = false;
+        state.defaultCurrencyLoading = true;
       })
       .addCase(fetchDefaultCurrency.fulfilled, (state, action) => {
         state.defaultCurrency = action.payload;
         state.defaultCurrencyLoaded = true;
+        state.defaultCurrencyLoading = false;
       })
       .addCase(fetchDefaultCurrency.rejected, (state) => {
         state.defaultCurrencyLoaded = true;
+        state.defaultCurrencyLoading = false;
       })
       .addCase(fetchCurrencies.pending, (state) => {
         state.currenciesLoading = true;

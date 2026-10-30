@@ -1,5 +1,6 @@
 import CheckboxField from "@/components/form/fields/CheckboxField";
 import InputField from "@/components/form/InputField";
+import PriceField from "@/components/form/PriceField";
 import HelpTooltip from "@/components/HelpTooltip/HelpTooltip";
 import SectionCard from "@/components/SectionCard/SectionCard";
 import { cn } from "@/lib/utils";
@@ -7,7 +8,6 @@ import { ProductFormNames, ProductSection } from "../[id]/constant";
 import { ProductShippingSectionProps } from "./type";
 
 const ProductShippingSection = ({
-  priceInputProps,
   freeShipping,
 }: ProductShippingSectionProps) => (
   <SectionCard
@@ -16,7 +16,7 @@ const ProductShippingSection = ({
     className="scroll-mt-24"
   >
     <div className="grid grid-cols-1 items-end gap-x-8 gap-y-5 xl:grid-cols-2">
-      <InputField
+      <PriceField
         name={ProductFormNames.FixedShippingCost}
         label="Fixed shipping price"
         layout="vertical"
@@ -25,7 +25,6 @@ const ProductShippingSection = ({
         labelEndComponent={
           <HelpTooltip content="What the shopper pays to ship one unit of this product. Leave blank to use the shipping calculator at checkout. Ignored when free shipping is ticked." />
         }
-        {...priceInputProps}
       />
       <InputField
         name={ProductFormNames.FreeShipping}

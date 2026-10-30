@@ -1,5 +1,6 @@
 import { SelectField } from "@/components/form/fields/SelectField";
 import InputField from "@/components/form/InputField";
+import PriceField from "@/components/form/PriceField";
 import { Button } from "@/components/ui/Button";
 import { ColumnDef } from "@/components/ui/Table/types";
 import { Trash2 } from "lucide-react";
@@ -7,7 +8,6 @@ import type {
   BulkPricingTierRow,
   CustomFieldRow,
   HsCodeRow,
-  PriceInputProps,
 } from "../_components/type";
 import {
   BulkPricingTierFormNames,
@@ -47,14 +47,12 @@ const removeColumn = <T,>(onRemove: (index: number) => void): ColumnDef<T> => ({
 
 export const getBulkPricingColumns = ({
   currency,
-  priceInputProps,
   discountLabel,
   discountType,
   basePrice,
   onRemove,
 }: {
   currency: ProductCurrency;
-  priceInputProps: PriceInputProps;
   discountLabel: string;
   discountType: string;
   basePrice: number;
@@ -81,7 +79,7 @@ export const getBulkPricingColumns = ({
     key: "price",
     header: discountLabel,
     render: (_, index) => (
-      <InputField
+      <PriceField
         name={rowField(
           ProductFormNames.BulkPricingTiers,
           index,
@@ -89,7 +87,7 @@ export const getBulkPricingColumns = ({
         )}
         layout="vertical"
         containerClassName={FIELD}
-        {...priceInputProps}
+        currency={currency}
       />
     ),
   },

@@ -1,6 +1,6 @@
 import { SymbolLocation } from "@/app/(protected)/manage/settings/(setup)/currencies/constant";
 import { formatCurrencyPreview } from "@/app/(protected)/manage/settings/(setup)/currencies/utils";
-import { money, toMajor } from "@/lib/money";
+import { roundTo } from "@/lib/money";
 import {
   normalizeWholeNumberValue,
   restrictDecimalInput,
@@ -67,11 +67,12 @@ export const getCategoryNames = (product: ProductListItem) =>
 export const getDecimalPlaces = (currency: ProductCurrency) =>
   Number(currency.decimalPlaces) || 0;
 
-// Rounds once to the currency's minor unit, half up — the same rule the
-// storefront and backend use, so a saved amount is the amount charged.
-// (`toFixed` rounds the binary float, e.g. 0.425 → 0.42 instead of 0.43.)
+// Rounds to the currency's dashboard decimal places, half up — prices keep
+// that precision (only an order's total is rounded to the minor unit, the
+// same rule the storefront and backend use). `toFixed` alone rounds the
+// binary float, e.g. 0.425 → 0.42 instead of 0.43.
 export const roundToCurrency = (amount: number, currency: ProductCurrency) =>
-  toMajor(money(amount, currency.code));
+  roundTo(amount, getDecimalPlaces(currency));
 
 export const formatPrice = (amount: number, currency: ProductCurrency) =>
   formatCurrencyPreview(amount, {

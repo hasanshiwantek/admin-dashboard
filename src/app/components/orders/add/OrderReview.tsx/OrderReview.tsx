@@ -1,5 +1,6 @@
 "use client";
 
+import PriceField from "@/components/form/PriceField";
 import { Button } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/Checkbox"; // Added Checkbox component
 import { Input } from "@/components/ui/input";
@@ -31,6 +32,7 @@ import {
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
+import type { useOrderCalculate } from "../useOrderCalculate";
 import useOrderCurrency from "../useOrderCurrency";
 
 // Utility arrays for Select options
@@ -52,11 +54,28 @@ const months = [
 const currentYear = new Date().getFullYear();
 const years = Array.from({ length: 10 }, (_, i) => currentYear + i);
 
-export default function OrderReview({ step, setStep }: any) {
-  const { watch, register, setValue, getValues } = useFormContext();
+export default function OrderReview({
+  step,
+  setStep,
+  calculation,
+}: {
+  step: number;
+  setStep: (step: number) => void;
+  // The backend's pricing of this order (order-calculate); its quote, when
+  // there is one, is what the summary shows and the order is charged
+  calculation: ReturnType<typeof useOrderCalculate>;
+}) {
+  const { watch, register, setValue, getValues, control } = useFormContext();
   const dispatch = useAppDispatch();
   const { can } = usePermissions();
-  const { formatPrice, fromOrderCurrency } = useOrderCurrency();
+  const {
+    currency,
+    formatPrice,
+    formatTotal,
+    formatAmount,
+    fromOrderCurrency,
+  } = useOrderCurrency();
+  const quote = calculation.applies ? calculation.quote : null;
   const hasDraftOrderPermission = can("draft_orders");
   const { appliedCoupon, loading } = useAppSelector(
     (state: any) => state.order,
@@ -65,9 +84,6 @@ export default function OrderReview({ step, setStep }: any) {
   const expirationYear = watch("expirationYear") || currentYear.toString();
 
   const [couponCode, setCouponCode] = useState(watch("couponCode") || "");
-  const [manualDiscountInput, setManualDiscountInput] = useState(
-    watch("manualDiscount") ? String(watch("manualDiscount")) : "",
-  );
   const shipping = watch("shipping");
   const billing = watch();
   const selectedProducts = watch("selectedProducts") || [];
@@ -116,6 +132,7 @@ export default function OrderReview({ step, setStep }: any) {
     }
   };
 
+  // In the order's currency, unlike the USD prices and discounts
   const shippingCost = Number(watch("shippingMethod.total_charge") || 0);
   const manualDiscount = Number(watch("manualDiscount") || 0);
   const couponDiscount = Number(appliedCoupon?.discountAmount || 0);
@@ -134,7 +151,10 @@ export default function OrderReview({ step, setStep }: any) {
   const totalDiscount = couponDiscount + manualDiscount;
   // const total = subtotal + shippingCost;
   const grandTotal = Math.max(
-    subtotal - couponDiscount - manualDiscount + shippingCost,
+    subtotal -
+      couponDiscount -
+      manualDiscount +
+      fromOrderCurrency(shippingCost),
     0,
   );
 
@@ -143,8 +163,9 @@ export default function OrderReview({ step, setStep }: any) {
   const isMultiple =
     destinationType === "multiple" || shippingDestinations.length > 0;
   const handleApplyManualDiscount = () => {
-    const amount = Math.max(Number(manualDiscountInput) || 0, 0);
-    setValue("manualDiscount", fromOrderCurrency(amount), { shouldDirty: true });
+    const amount = Math.max(Number(getValues("manualDiscountInput")) || 0, 0);
+    // setValue("manualDiscount", fromOrderCurrency(amount), { shouldDirty: true });
+    setValue("manualDiscount", amount, { shouldDirty: true });
   };
 
   useEffect(() => {
@@ -346,7 +367,7 @@ export default function OrderReview({ step, setStep }: any) {
           </div>
 
           <h1 className="!text-4xl !font-bold">
-            Fulfillment details: items 1 - {selectedProducts.length} of
+            Fulfillment details: items 1 - {selectedProducts.length} of{" "}
             {selectedProducts.length}
           </h1>
           {/* Shipping */}
@@ -499,7 +520,7 @@ export default function OrderReview({ step, setStep }: any) {
                     <div>
                       {billing?.shippingMethod?.display_name}{" "}
                       {billing?.shippingMethod?.total_charge > 0 ? (
-                        `: $${billing?.shippingMethod?.total_charge}`
+                        `: ${formatAmount(shippingCost)}`
                       ) : (
                         <></>
                       )}
@@ -706,13 +727,22 @@ export default function OrderReview({ step, setStep }: any) {
             <div className=" border p-5 rounded-md bg-white space-y-6 !text-[15px]">
               <div className="flex justify-between border-b pb-1">
                 <span className="!text-[15px]">Subtotal</span>
-                <span className="!text-[15px]">{formatPrice(subtotal)}</span>
+                <span className="!text-[15px]">
+                  {quote ? formatAmount(quote.subtotal) : formatPrice(subtotal)}
+                </span>
               </div>
 
-              {billing?.shippingMethod?.total_charge ? (
+              {quote ? (
+                quote.shipping > 0 && (
+                  <div className="flex justify-between">
+                    <span>Shipping</span>
+                    <span>{formatAmount(quote.shipping)}</span>
+                  </div>
+                )
+              ) : billing?.shippingMethod?.total_charge ? (
                 <div className="flex justify-between">
                   <span>Shipping</span>
-                  <span>{formatPrice(billing?.shippingMethod?.total_charge)}</span>
+                  <span>{formatAmount(shippingCost)}</span>
                 </div>
               ) : (
                 <></>
@@ -729,25 +759,56 @@ export default function OrderReview({ step, setStep }: any) {
                       (remove)
                     </button>
                   </div>
-                  <span>-{formatPrice(couponDiscount)}</span>
+                  <span>
+                    -
+                    {quote
+                      ? formatAmount(quote.couponDiscount)
+                      : formatPrice(couponDiscount)}
+                  </span>
                 </div>
               )}
               {manualDiscount > 0 && (
                 <div className="flex justify-between">
                   <span>Discount</span>
-                  <span>-{formatPrice(manualDiscount)}</span>
+                  <span>
+                    -
+                    {quote
+                      ? formatAmount(quote.manualDiscount)
+                      : formatPrice(manualDiscount)}
+                  </span>
                 </div>
               )}
 
               <div className="flex justify-between font-bold !text-[15px]">
                 <span className="!text-[15px]">Grand total</span>
-                <span className="!text-[15px]">{formatPrice(grandTotal)}</span>
+                <span className="!text-[15px]">
+                  {calculation.applies && calculation.loading ? (
+                    // Being re-priced: the total isn't final yet
+                    <span className="text-gray-500 font-normal">
+                      Calculating…
+                    </span>
+                  ) : quote ? (
+                    formatAmount(quote.total)
+                  ) : (
+                    formatTotal(grandTotal)
+                  )}
+                </span>
               </div>
+              {calculation.applies && calculation.error && (
+                <p className="text-sm text-red-600">
+                  {calculation.notReadyMessage}
+                </p>
+              )}
 
               {/* Discount input */}
               <div className="flex items-center gap-2">
-                <Input
-                  onChange={(e) => setManualDiscountInput(e.target.value)}
+                {/* Typed in the order's currency; Apply stores it in USD */}
+                <PriceField
+                  name="manualDiscountInput"
+                  control={control}
+                  currency={currency}
+                  layout="vertical"
+                  containerClassName="flex-1"
                   placeholder="Manual discount"
                   className="text-sm"
                 />

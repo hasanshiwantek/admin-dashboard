@@ -1,6 +1,7 @@
 import CheckboxField from "@/components/form/fields/CheckboxField";
 import FileField from "@/components/form/fields/FileField";
 import InputField from "@/components/form/InputField";
+import PriceField from "@/components/form/PriceField";
 import SectionCard from "@/components/SectionCard/SectionCard";
 import {
   GiftWrappingFormNames,
@@ -23,13 +24,10 @@ const GiftWrappingFormFields = () => (
       accept={PREVIEW_IMAGE_TYPES}
       maxSizeMb={PREVIEW_IMAGE_MAX_SIZE_MB}
     />
-    <InputField
+    <PriceField
       name={GiftWrappingFormNames.Price}
       label="Price per Product"
       required
-      type="number"
-      startIcon="$"
-      min={0}
       controlClassName="max-w-[16rem]"
     />
     <InputField

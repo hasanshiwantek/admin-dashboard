@@ -1,5 +1,6 @@
 import { SelectField } from "@/components/form/fields/SelectField";
 import InputField from "@/components/form/InputField";
+import PriceField from "@/components/form/PriceField";
 import HelpTooltip from "@/components/HelpTooltip/HelpTooltip";
 import SectionCard from "@/components/SectionCard/SectionCard";
 import { Button } from "@/components/ui/Button";
@@ -15,7 +16,6 @@ import { ProductPricingSectionProps } from "./type";
 const SUBHEADING = "text-[1.8rem]! font-normal text-text-heading!";
 
 const ProductPricingSection = ({
-  priceInputProps,
   showAdvanced,
   onToggleAdvanced,
   discountTypeOptions,
@@ -29,13 +29,12 @@ const ProductPricingSection = ({
     className="scroll-mt-24"
   >
     <div className="grid grid-cols-1 gap-x-8 gap-y-5 xl:grid-cols-2">
-      <InputField
+      <PriceField
         name={ProductFormNames.Price}
         label="Default price"
         required
         layout="vertical"
         hint="Excluding tax"
-        {...priceInputProps}
       />
       <InputField
         name={ProductFormNames.TaxClass}
@@ -66,23 +65,20 @@ const ProductPricingSection = ({
     {showAdvanced && (
       <>
         <div className="grid grid-cols-1 gap-x-8 gap-y-5 xl:grid-cols-3">
-          <InputField
+          <PriceField
             name={ProductFormNames.CostPrice}
             label="Cost"
             layout="vertical"
-            {...priceInputProps}
           />
-          <InputField
+          <PriceField
             name={ProductFormNames.Msrp}
             label="MSRP"
             layout="vertical"
-            {...priceInputProps}
           />
-          <InputField
+          <PriceField
             name={ProductFormNames.SalePrice}
             label="Sale price"
             layout="vertical"
-            {...priceInputProps}
           />
         </div>
 

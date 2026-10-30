@@ -10,7 +10,6 @@ const ProductSearchPage = () => {
     form,
     brands,
     brandsLoading,
-    currencySymbol,
     onSubmit,
     handleCancel,
   } = useProductSearchPageContainer();
@@ -37,9 +36,7 @@ const ProductSearchPage = () => {
       >
         <ProductSearchFormFields
           brands={brands}
-          brandsLoading={brandsLoading}
-          currencySymbol={currencySymbol}
-        />
+          brandsLoading={brandsLoading}        />
       </Form>
     </PageLayout>
   );
