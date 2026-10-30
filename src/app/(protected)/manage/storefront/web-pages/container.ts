@@ -30,12 +30,7 @@ const useWebPageTableContainer = () => {
     dispatch(getWebPages());
   }, [dispatch]);
 
-  const getDropdownActions = (page: any) => [
-    {
-      label: "Edit",
-      onClick: () => router.push(`/manage/storefront/web-pages/${page.id}`),
-    },
-  ];
+
 
   const handleSelectAll = (checked: boolean) => {
     setSelectedIds(checked ? webPages.map((p: any) => p.id) : []);
@@ -96,7 +91,6 @@ const useWebPageTableContainer = () => {
     selectedIds,
     showDeleteModal,
     setShowDeleteModal,
-    getDropdownActions,
     handleSelectAll,
     handleSelectOne,
     deleteWebpageHandler,

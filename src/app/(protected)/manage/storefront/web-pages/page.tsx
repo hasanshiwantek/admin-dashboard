@@ -17,7 +17,6 @@ const WebPageTable = () => {
     selectedIds,
     showDeleteModal,
     setShowDeleteModal,
-    getDropdownActions,
     handleSelectAll,
     handleSelectOne,
     deleteWebpageHandler,
