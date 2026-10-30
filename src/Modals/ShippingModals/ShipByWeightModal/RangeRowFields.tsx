@@ -1,14 +1,15 @@
 import InputField from "@/components/form/InputField";
+import PriceField from "@/components/form/PriceField";
 import { Button } from "@/components/ui/Button";
 import { Plus, Trash2 } from "lucide-react";
-import { ShipByWeightField } from "./constant";
+import { RateSymbol, ShipByWeightField } from "./constant";
 import { RangeRowFieldsProps, ShipByWeightFormValues } from "./type";
 
 // Fields come from the surrounding <Form> context, so no `control` prop needed
 const RangeRowFields = ({
   index,
   isLast,
-  rateSymbol,
+  isPercentageCost,
   onAdd,
   onRemove,
 }: RangeRowFieldsProps) => {
@@ -31,17 +32,22 @@ const RangeRowFields = ({
         placeholder="1 000.00"
         className="h-14"
       />
-      <div className="relative flex-1">
-        <span className="pointer-events-none absolute top-[1.4rem] left-3 z-10 text-sm text-gray-400">
-          {rateSymbol}
-        </span>
+      {isPercentageCost ? (
         <InputField<ShipByWeightFormValues>
           name={name("cost")}
           layout="vertical"
-          placeholder="10.00"
-          className="h-14 pl-7"
+          containerClassName="flex-1"
+          className="h-14"
+          endIcon={RateSymbol.Percentage}
         />
-      </div>
+      ) : (
+        <PriceField<ShipByWeightFormValues>
+          name={name("cost")}
+          layout="vertical"
+          containerClassName="flex-1"
+          className="h-14"
+        />
+      )}
 
       {isLast ? (
         <Button

@@ -1,5 +1,6 @@
 "use client";
 
+import PriceField from "@/components/form/PriceField";
 import { Button } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/Checkbox"; // Added Checkbox component
 import { Input } from "@/components/ui/input";
@@ -64,11 +65,16 @@ export default function OrderReview({
   // there is one, is what the summary shows and the order is charged
   calculation: ReturnType<typeof useOrderCalculate>;
 }) {
-  const { watch, register, setValue, getValues } = useFormContext();
+  const { watch, register, setValue, getValues, control } = useFormContext();
   const dispatch = useAppDispatch();
   const { can } = usePermissions();
-  const { formatPrice, formatTotal, formatAmount, fromOrderCurrency } =
-    useOrderCurrency();
+  const {
+    currency,
+    formatPrice,
+    formatTotal,
+    formatAmount,
+    fromOrderCurrency,
+  } = useOrderCurrency();
   const quote = calculation.applies ? calculation.quote : null;
   const hasDraftOrderPermission = can("draft_orders");
   const { appliedCoupon, loading } = useAppSelector(
@@ -78,9 +84,6 @@ export default function OrderReview({
   const expirationYear = watch("expirationYear") || currentYear.toString();
 
   const [couponCode, setCouponCode] = useState(watch("couponCode") || "");
-  const [manualDiscountInput, setManualDiscountInput] = useState(
-    watch("manualDiscount") ? String(watch("manualDiscount")) : "",
-  );
   const shipping = watch("shipping");
   const billing = watch();
   const selectedProducts = watch("selectedProducts") || [];
@@ -148,7 +151,10 @@ export default function OrderReview({
   const totalDiscount = couponDiscount + manualDiscount;
   // const total = subtotal + shippingCost;
   const grandTotal = Math.max(
-    subtotal - couponDiscount - manualDiscount + fromOrderCurrency(shippingCost),
+    subtotal -
+      couponDiscount -
+      manualDiscount +
+      fromOrderCurrency(shippingCost),
     0,
   );
 
@@ -157,7 +163,7 @@ export default function OrderReview({
   const isMultiple =
     destinationType === "multiple" || shippingDestinations.length > 0;
   const handleApplyManualDiscount = () => {
-    const amount = Math.max(Number(manualDiscountInput) || 0, 0);
+    const amount = Math.max(Number(getValues("manualDiscountInput")) || 0, 0);
     // setValue("manualDiscount", fromOrderCurrency(amount), { shouldDirty: true });
     setValue("manualDiscount", amount, { shouldDirty: true });
   };
@@ -361,7 +367,7 @@ export default function OrderReview({
           </div>
 
           <h1 className="!text-4xl !font-bold">
-            Fulfillment details: items 1 - {selectedProducts.length} of
+            Fulfillment details: items 1 - {selectedProducts.length} of{" "}
             {selectedProducts.length}
           </h1>
           {/* Shipping */}
@@ -796,8 +802,13 @@ export default function OrderReview({
 
               {/* Discount input */}
               <div className="flex items-center gap-2">
-                <Input
-                  onChange={(e) => setManualDiscountInput(e.target.value)}
+                {/* Typed in the order's currency; Apply stores it in USD */}
+                <PriceField
+                  name="manualDiscountInput"
+                  control={control}
+                  currency={currency}
+                  layout="vertical"
+                  containerClassName="flex-1"
                   placeholder="Manual discount"
                   className="text-sm"
                 />

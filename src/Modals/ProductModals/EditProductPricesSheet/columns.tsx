@@ -1,11 +1,13 @@
-import type { PriceInputProps } from "@/app/(protected)/manage/products/_components/type";
-import type { ProductListItem } from "@/app/(protected)/manage/products/type";
-import InputField from "@/components/form/InputField";
+import type {
+  ProductCurrency,
+  ProductListItem,
+} from "@/app/(protected)/manage/products/type";
+import PriceField from "@/components/form/PriceField";
 import { ColumnDef } from "@/components/ui/Table/types";
 import { PRICE_COLUMNS } from "./constant";
 
 export const getPriceColumns = (
-  priceInputProps: PriceInputProps,
+  currency: ProductCurrency,
 ): ColumnDef<ProductListItem>[] => [
   { key: "name", header: "Product name" },
   { key: "sku", header: "SKU" },
@@ -14,11 +16,11 @@ export const getPriceColumns = (
       key: value,
       header: label,
       render: () => (
-        <InputField
+        <PriceField
           name={value}
           layout="vertical"
           containerClassName="mb-0"
-          {...priceInputProps}
+          currency={currency}
         />
       ),
     }),

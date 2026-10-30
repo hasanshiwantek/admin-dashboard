@@ -1,7 +1,9 @@
 "use client";
 
+import InputWrapper from "@/components/form/InputWrapper";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import useDefaultCurrency from "@/hooks/useDefaultCurrency";
 import {
   Select,
   SelectContent,
@@ -21,6 +23,9 @@ import { HiQuestionMarkCircle } from "react-icons/hi2";
 import { Button } from "@/components/ui/Button";
 const OrderSearch = () => {
   const router = useRouter();
+  const {
+    priceInputProps: { startIcon, endIcon, ...priceInputHandlers },
+  } = useDefaultCurrency();
   const [formData, setFormData] = useState({
     keywords: "",
     status: "",
@@ -307,27 +312,39 @@ const OrderSearch = () => {
                   Order total:
                 </Label>
                 <span className="text-sm text-gray-600 2xl:!text-2xl">
-                  From$
+                  From
                 </span>
-                <Input
-                  id="orderTotalFrom"
-                  type="number"
-                  className="w-[100px]"
-                  value={formData.orderTotalFrom}
-                  onChange={(e) =>
-                    handleChange("orderTotalFrom", e.target.value)
-                  }
-                />
+                <InputWrapper
+                  startIcon={startIcon}
+                  endIcon={endIcon}
+                  className="w-[12rem]"
+                >
+                  <Input
+                    id="orderTotalFrom"
+                    {...priceInputHandlers}
+                    value={formData.orderTotalFrom}
+                    onChange={(e) =>
+                      handleChange("orderTotalFrom", e.target.value)
+                    }
+                  />
+                </InputWrapper>
                 <span className="text-sm text-gray-600 ml-4 2xl:!text-2xl">
-                  to$
+                  to
                 </span>
-                <Input
-                  id="orderTotalTo"
-                  type="number"
-                  className="w-[100px]"
-                  value={formData.orderTotalTo}
-                  onChange={(e) => handleChange("orderTotalTo", e.target.value)}
-                />
+                <InputWrapper
+                  startIcon={startIcon}
+                  endIcon={endIcon}
+                  className="w-[12rem]"
+                >
+                  <Input
+                    id="orderTotalTo"
+                    {...priceInputHandlers}
+                    value={formData.orderTotalTo}
+                    onChange={(e) =>
+                      handleChange("orderTotalTo", e.target.value)
+                    }
+                  />
+                </InputWrapper>
               </div>
             </div>
           </div>

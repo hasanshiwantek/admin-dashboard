@@ -2,6 +2,7 @@
 
 import SelectField from "@/components/form/fields/SelectField";
 import InputField from "@/components/form/InputField";
+import PriceField from "@/components/form/PriceField";
 import { ListRenderer } from "@/components/ListRenderer.tsx/ListRenderer";
 import Modal from "@/components/Modal/Modal";
 import { useModal } from "@/components/Modal/ModalContainer";
@@ -11,6 +12,7 @@ import {
   chargeShippingOptions,
   LABEL_CLASS,
   RANGE_FIELD_LABELS,
+  RateSymbol,
   rateSymbolOptions,
   ShipByWeightField,
 } from "./constant";
@@ -27,7 +29,7 @@ const ShipByWeightModal = ({
   const {
     form,
     rangeFields,
-    rateSymbol,
+    isPercentageCost,
     addRange,
     removeRange,
     loading,
@@ -62,14 +64,26 @@ const ShipByWeightModal = ({
       />
 
       <div className="mb-8 flex flex-col gap-2 sm:flex-row sm:items-start sm:gap-3">
-        <InputField
-          control={form.control}
-          name={ShipByWeightField.DefaultShippingCost}
-          label="Default shipping cost (optional)"
-          layout="vertical"
-          containerClassName="flex-1"
-          labelClassName={LABEL_CLASS}
-        />
+        {isPercentageCost ? (
+          <InputField
+            control={form.control}
+            name={ShipByWeightField.DefaultShippingCost}
+            label="Default shipping cost (optional)"
+            layout="vertical"
+            containerClassName="flex-1"
+            labelClassName={LABEL_CLASS}
+            endIcon={RateSymbol.Percentage}
+          />
+        ) : (
+          <PriceField
+            control={form.control}
+            name={ShipByWeightField.DefaultShippingCost}
+            label="Default shipping cost (optional)"
+            layout="vertical"
+            containerClassName="flex-1"
+            labelClassName={LABEL_CLASS}
+          />
+        )}
         <InputField
           control={form.control}
           name={ShipByWeightField.RateSymbol}
@@ -111,7 +125,7 @@ const ShipByWeightModal = ({
             <RangeRowFields
               index={index}
               isLast={index === rangeFields.length - 1}
-              rateSymbol={rateSymbol}
+              isPercentageCost={isPercentageCost}
               onAdd={addRange}
               onRemove={() => removeRange(index)}
             />

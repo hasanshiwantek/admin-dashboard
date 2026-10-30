@@ -14,11 +14,12 @@ export interface FedExSelectFieldConfig {
   options: SelectOption[];
 }
 
-// Quote-tab number inputs with a "$" prefix or "Inches" suffix
+// Quote-tab inputs: a price in the default currency, or a number with an
+// "Inches" suffix
 export interface FedExUnitFieldConfig {
   name: FedExField;
   label: string;
-  startIcon?: string;
+  isPrice?: boolean;
   endIcon?: string;
 }
 

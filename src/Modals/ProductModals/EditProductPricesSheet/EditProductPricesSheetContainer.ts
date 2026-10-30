@@ -1,7 +1,4 @@
-import {
-  getDecimalPlaces,
-  getPriceInputProps,
-} from "@/app/(protected)/manage/products/utils";
+import { getDecimalPlaces } from "@/app/(protected)/manage/products/utils";
 import { useAppDispatch } from "@/hooks/useReduxHooks";
 import { updateProduct } from "@/redux/slices/productSlice";
 import { errorMessage, successMessage } from "@/utils/message";
@@ -69,7 +66,7 @@ const useEditProductPricesContainer = ({
 
   return {
     form,
-    columns: getPriceColumns(getPriceInputProps(currency)),
+    columns: getPriceColumns(currency),
     onSubmit,
   };
 };

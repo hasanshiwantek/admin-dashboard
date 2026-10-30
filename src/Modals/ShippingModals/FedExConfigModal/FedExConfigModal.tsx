@@ -4,6 +4,7 @@ import { ListRenderer } from "@/components/ListRenderer.tsx/ListRenderer";
 import CheckboxField from "@/components/form/fields/CheckboxField";
 import SelectField from "@/components/form/fields/SelectField";
 import InputField from "@/components/form/InputField";
+import PriceField from "@/components/form/PriceField";
 import { Button } from "@/components/ui/Button";
 import Modal from "@/components/Modal/Modal";
 import { useModal } from "@/components/Modal/ModalContainer";
@@ -165,16 +166,23 @@ const FedExConfigModal = ({
           data={fedexQuoteUnitFields}
           keyExtractor={(field) => field.name}
           className="space-y-6!"
-          renderItem={(field) => (
-            <InputField
-              {...fieldProps}
-              name={field.name}
-              label={field.label}
-              type="number"
-              startIcon={field.startIcon}
-              endIcon={field.endIcon}
-            />
-          )}
+          renderItem={(field) =>
+            field.isPrice ? (
+              <PriceField
+                {...fieldProps}
+                name={field.name}
+                label={field.label}
+              />
+            ) : (
+              <InputField
+                {...fieldProps}
+                name={field.name}
+                label={field.label}
+                type="number"
+                endIcon={field.endIcon}
+              />
+            )
+          }
         />
 
         <Button type="button" variant="outline" className="w-fit">

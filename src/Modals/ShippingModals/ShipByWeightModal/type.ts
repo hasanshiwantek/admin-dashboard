@@ -15,7 +15,7 @@ export interface RangeRowFieldsProps {
   index: number;
   // Last row shows "add", the others show "remove"
   isLast: boolean;
-  rateSymbol: string;
+  isPercentageCost: boolean;
   onAdd: () => void;
   onRemove: () => void;
 }
