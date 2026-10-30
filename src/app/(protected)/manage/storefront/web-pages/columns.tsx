@@ -2,7 +2,12 @@ import Link from "next/link";
 import { convertOptionsToObject } from "@/lib/utils";
 import { LIST_PATH, PageTypeOptions } from "./[id]/constants";
 import EnableDisable from "@/components/common/EnableDisable";
-export const getWebPageColumns = (onToggleVisibility: (page: any) => void) => [
+import ActionButton from "@/components/ActionButton/ActionButton";
+import { ActionEnums } from "@/const/appConstants";
+export const getWebPageColumns = (
+  onToggleVisibility: (page: any) => void,
+  onAction: (page: any) => (actionType: string) => void,
+) => [
   {
     key: "pageName",
     header: "Page Name",
@@ -40,6 +45,25 @@ export const getWebPageColumns = (onToggleVisibility: (page: any) => void) => [
           handleToggle={onToggleVisibility}
         />
       </div>
+    ),
+  },
+  {
+    key: "actions",
+    header: "Actions",
+    width: "80px",
+    headClassName: "2xl:!text-[1.6rem] text-center",
+    className: "text-center",
+    render: (page: any) => (
+      <ActionButton
+        data={page}
+        actions={[
+          {
+            type: ActionEnums.EDIT,
+            label: "Edit",
+          },
+        ]}
+        onAction={onAction}
+      />
     ),
   },
 ];

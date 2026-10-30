@@ -11,6 +11,8 @@ import {
 } from "@/redux/slices/storefrontSlice";
 import { refetchWebpages } from "@/lib/storeFrontUtils";
 import { getWebPageColumns } from "./columns";
+import { ActionEnums } from "@/const/appConstants";
+import { LIST_PATH } from "./[id]/constants";
 
 const useWebPageTableContainer = () => {
   const dispatch = useAppDispatch();
@@ -31,8 +33,7 @@ const useWebPageTableContainer = () => {
   const getDropdownActions = (page: any) => [
     {
       label: "Edit",
-      onClick: () =>
-        router.push(`/manage/storefront/web-pages/${page.id}`),
+      onClick: () => router.push(`/manage/storefront/web-pages/${page.id}`),
     },
   ];
 
@@ -82,10 +83,13 @@ const useWebPageTableContainer = () => {
       .unwrap()
       .then(() => dispatch(getWebPages()));
   };
-  const columns = useMemo(
-    () => getWebPageColumns(toggleVisibility),
-    [toggleVisibility],
-  );
+  const handleAction = (page: any) => (actionType: string) => {
+    if (actionType === ActionEnums.EDIT) {
+      router.push(`${LIST_PATH}/${page.id}`);
+    }
+  };
+
+  const columns = getWebPageColumns(toggleVisibility, handleAction);
   return {
     webPages,
     loading,
@@ -100,7 +104,7 @@ const useWebPageTableContainer = () => {
     toggleVisibility,
     router,
     Alert,
-    columns
+    columns,
   };
 };
 

@@ -69,7 +69,6 @@ const WebPageTable = () => {
           selectedIds={selectedIds}
           onToggleRow={(id, checked) => handleSelectOne(id, checked)}
           onToggleAll={handleSelectAll}
-          rowActions={getDropdownActions}
           actionsColumnWidth="80px"
         />
       </div>
