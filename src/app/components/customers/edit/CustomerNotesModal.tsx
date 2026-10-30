@@ -28,7 +28,7 @@ export default function CustomerNotesModal({
   const dispatch = useAppDispatch();
 
   const { singleOrder, loading } = useAppSelector(
-    (state: any) => state.order || {}
+    (state: any) => state.order || {},
   );
 
   const order = singleOrder;
@@ -63,7 +63,7 @@ export default function CustomerNotesModal({
       updateOrder({
         id: orderId,
         data: payload,
-      })
+      }),
     );
 
     handleClose();
@@ -90,9 +90,7 @@ export default function CustomerNotesModal({
 
         {/* Order Comments */}
         <div className="space-y-2">
-          <Label htmlFor="order-comments">
-            Order Comments
-          </Label>
+          <Label htmlFor="order-comments">Order Comments</Label>
 
           <Textarea
             id="order-comments"
@@ -110,9 +108,7 @@ export default function CustomerNotesModal({
 
         {/* Staff Notes */}
         <div className="space-y-2 mt-4">
-          <Label htmlFor="staff-notes">
-            Staff Notes
-          </Label>
+          <Label htmlFor="staff-notes">Staff Notes</Label>
 
           <Textarea
             id="staff-notes"
@@ -132,15 +128,16 @@ export default function CustomerNotesModal({
           <Button
             variant="outline"
             onClick={handleClose}
-            className="!text-lg !p-6"
+            className="text-lg p-6"
           >
             Cancel
           </Button>
 
           <Button
+            variant="primary"
             onClick={handleSave}
             disabled={loading || !orderId}
-            className="!text-lg !p-6"
+            className="text-lg p-6"
           >
             {loading ? "Saving..." : "Save"}
           </Button>

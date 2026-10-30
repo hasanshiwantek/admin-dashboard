@@ -31,31 +31,31 @@ export const PageTypeOptions = [
   },
 ];
 
-export const WebPageField = {
-  PageType: "pageType",
-  PageName: "pageName",
-  PageUrl: "pageUrl",
-  PageContent: "pageContent",
-  Link: "link",
-  EmailQuestionsTo: "emailQuestionsTo",
-  ShowTheseFields: "showTheseFields",
-  ShowInNavigation: "showInNavigation",
-  ParentPage: "parentPage",
-  RestrictToCustomersOnly: "restrictToCustomersOnly",
-  SortOrder: "sortOrder",
-  RawHtml: "rawHtml",
-  PageTitle: "pageTitle",
-  MetaKeywords: "metaKeywords",
-  MetaDescription: "metaDescription",
-  SearchKeywords: "searchKeywords",
-} as const;
+export enum WebPageField {
+  PageType = "pageType",
+  PageName = "pageName",
+  PageUrl = "pageUrl",
+  PageContent = "pageContent",
+  Link = "link",
+  EmailQuestionsTo = "emailQuestionsTo",
+  ShowTheseFields = "showTheseFields",
+  ShowInNavigation = "showInNavigation",
+  ParentPage = "parentPage",
+  RestrictToCustomersOnly = "restrictToCustomersOnly",
+  SortOrder = "sortOrder",
+  RawHtml = "rawHtml",
+  PageTitle = "pageTitle",
+  MetaKeywords = "metaKeywords",
+  MetaDescription = "metaDescription",
+  SearchKeywords = "searchKeywords",
+}
 export const AdvancedOptions = [
   { label: "Page Title", name: WebPageField.PageTitle },
   { label: "Meta Keywords", name: WebPageField.MetaKeywords },
   { label: "Meta Description", name: WebPageField.MetaDescription },
   { label: "Search Keywords", name: WebPageField.SearchKeywords },
 ];
-export const DefaultWebPageValues = {
+export const defaultWebPageValues = {
   [WebPageField.PageType]: PageTypeEnums.WYSIWYG,
   [WebPageField.PageName]: "",
   [WebPageField.PageUrl]: "",
@@ -73,3 +73,4 @@ export const DefaultWebPageValues = {
   [WebPageField.MetaDescription]: "",
   [WebPageField.SearchKeywords]: "",
 };
+export const LIST_PATH = "/manage/storefront/web-pages";
