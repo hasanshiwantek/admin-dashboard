@@ -1,7 +1,21 @@
+import { REGEX } from "@/const/regex";
+
 // Money helpers, matching the storefront's (new-town-spares src/lib/money.ts).
-// Every amount is rounded once to whole minor units (cents/pence; whole yen
-// for zero-decimal currencies; fils for three-decimal currencies), half up, so
-// the dashboard, storefront and backend arrive at the same amounts.
+// Prices are kept at the currency's dashboard decimal places (roundTo): a
+// price converted from USD stays exact (e.g. 57.576614 GBP at 6 places). Only
+// an amount that is charged — an order's total — is rounded once to whole
+// minor units (money: cents/pence; whole yen for zero-decimal currencies;
+// fils for three-decimal currencies), half up, after the exact amounts are
+// added up. The dashboard, storefront and backend arrive at the same amounts.
+
+// Rounds half up to `places` decimals without float drift
+// (56.5078896 → 56.50789 at 5 places; 1.005 → 1.01 at 2, where toFixed gives 1.00)
+export const roundTo = (value: number, places: number) => {
+  const shifted = `${value}e${places}`;
+  return REGEX.DOUBLE_EXPONENT.test(shifted)
+    ? Math.round(value * 10 ** places) / 10 ** places
+    : Number(`${Math.round(Number(shifted))}e-${places}`);
+};
 
 export type Money = { minor: number; currency: string };
 

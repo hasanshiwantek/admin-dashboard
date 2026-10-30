@@ -1,6 +1,7 @@
 "use client";
 import ConfirmationModal from "@/app/(protected)/manage/user-settings/additional-authentication/helpers/ConfirmationModal";
 import { Button } from "@/components/ui/Button";
+import { REGEX } from "@/const/regex";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHooks";
 import {
   addOrder,
@@ -14,6 +15,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import OrderReview from "../OrderReview.tsx/OrderReview";
+import { buildOrderPricing, useOrderCalculate } from "../useOrderCalculate";
 
 export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
   const dispatch = useAppDispatch();
@@ -23,7 +25,10 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
   const [loading, setLoading] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const { appliedCoupon } = useAppSelector((state: any) => state.order);
+  const { currencies } = useAppSelector((state) => state.currency);
   const router = useRouter();
+  // The order priced by the backend in the selected currency
+  const calculation = useOrderCalculate();
 
   const handleCancel = () => {
     setShowCancelModal(true);
@@ -38,9 +43,9 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
 
     const userAgent = navigator.userAgent;
 
-    if (/mobile/i.test(userAgent))
+    if (REGEX.MOBILE_USER_AGENT.test(userAgent))
       return `${selectedStore?.name} (Manual order)`;
-    if (/tablet/i.test(userAgent))
+    if (REGEX.TABLET_USER_AGENT.test(userAgent))
       return `${selectedStore?.name} (Manual order)`;
 
     return `${selectedStore?.name} (Manual order)`;
@@ -50,7 +55,6 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
     const values = getValues(); // ✅ collect all step data
     const isNewCustomer = !values.selectedCustomer?.id;
     const isDraft = values.paymentMethod === "draft";
-    const manualDiscount = Number(values.manualDiscount || 0);
     // Build payment method object
     const buildPaymentMethod = () => {
       const baseData = { method: values.paymentMethod || null };
@@ -87,6 +91,34 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
       return;
     }
 
+    // The total isn't final until the backend has priced the order
+    if (calculation.notReadyMessage) {
+      errorMessage(calculation.notReadyMessage);
+      return;
+    }
+    // Minor units (cents/pence) of the selected currency: the total the
+    // backend priced, which the order is placed and charged at. Left out
+    // when the backend can't price the order (custom products or prices,
+    // custom shipping cost, several destinations).
+    const amount =
+      calculation.applies && calculation.quote
+        ? { amount: calculation.quote.totalMinor }
+        : {};
+
+    const currency =
+      currencies.find(({ code }) => code === values.selectedCurrency?.code) ??
+      values.selectedCurrency;
+    const orderPricing = {
+      ...buildOrderPricing(values, currency, appliedCoupon),
+      products: (values.selectedProducts ?? []).map((product: any) => ({
+        product_id: Number(product.id),
+        quantity: Number(product.quantity) || 1,
+        ...(Number(product.actualPrice) !== Number(product.price)
+          ? { price: Number(product.price ?? 0) }
+          : {}),
+      })),
+    };
+
     // Main payload function (keeps payload exactly as original)
     const finalPayload = (() => {
       if (isNewCustomer) {
@@ -102,14 +134,11 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
           customerGroup: values.customerGroup || "",
           ipAddress,
           orderPlaceCountry,
-          couponCode: appliedCoupon?.couponCode,
-          discountAmount: appliedCoupon?.discountAmount,
           isSaveAddressForBilling: values.saveAddress ? true : false,
           isSaveAddressForShipping: values?.shipping?.saveToAddressBook
             ? true
             : false,
           emailInvoice: values.emailInvoice,
-          manualDiscount: manualDiscount,
           billingAddress: {
             //billing address is same as billing address
             firstName: values.billingFirstName || "",
@@ -139,57 +168,11 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
             country: values?.shipping?.country,
           },
           isDraft,
-          selectedCurrency: values.selectedCurrency,
+          ...orderPricing,
+          ...amount,
           paymentMethod: buildPaymentMethod(),
           comments: values.customerComments || "",
           staffNotes: values.staffNotes || "",
-          shippingMethod: {
-            method_id: values.shippingMethod?.method_id ?? null,
-            method_type:
-              values.shippingMethod?.method_type ||
-              values.shippingMethod?.service_type ||
-              "",
-            display_name:
-              values.shippingMethod?.display_name ||
-              values.shippingMethod?.method ||
-              "",
-            total_charge: Number(
-              values.shippingMethod?.total_charge ??
-                values.shippingMethod?.cost ??
-                0,
-            ),
-            currency: values.shippingMethod?.currency || "USD",
-            transit_days: values.shippingMethod?.transit_days ?? null,
-            delivery_date: values.shippingMethod?.delivery_date ?? null,
-            service_type: values.shippingMethod?.service_type || "",
-            is_fedex: !!values.shippingMethod?.is_fedex,
-
-            provider:
-              values.shippingMethod?.display_name ||
-              values.shippingMethod?.method ||
-              "",
-            method:
-              values.shippingMethod?.display_name ||
-              values.shippingMethod?.method ||
-              "",
-            cost: Number(
-              values.shippingMethod?.total_charge ??
-                values.shippingMethod?.cost ??
-                0,
-            ),
-            data:
-              values.shippingMethod?.display_name ||
-              values.shippingMethod?.method ||
-              "",
-          },
-          products:
-            values.selectedProducts?.map((product: any) => ({
-              productId: product.id,
-              quantity: product.quantity || 1,
-              ...(Number(product.actualPrice) !== Number(product.price)
-                ? { price: Number(product.price ?? 0) }
-                : {}),
-            })) || [],
           shippingDestinations:
             values.shippingDestinations?.map((dest: any) => ({
               address: {
@@ -220,7 +203,8 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
       } else {
         return {
           isDraft,
-          selectedCurrency: values.selectedCurrency,
+          ...orderPricing,
+          ...amount,
           customerId: values.selectedCustomer?.id,
           deviceType: getDeviceType(),
           userType: null,
@@ -228,9 +212,6 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
           orderPlaceCountry,
           comments: values.customerComments || "",
           staffNotes: values.staffNotes || "",
-          couponCode: appliedCoupon?.couponCode,
-          discountAmount: appliedCoupon?.discountAmount,
-          manualDiscount: manualDiscount,
           billingAddress: {
             //billing address is same as billing address
             firstName: values.billingFirstName || "",
@@ -260,58 +241,11 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
             country: values?.shipping?.country,
           },
           paymentMethod: buildPaymentMethod(),
-          shippingMethod: {
-            method_id: values.shippingMethod?.method_id ?? null,
-            method_type:
-              values.shippingMethod?.method_type ||
-              values.shippingMethod?.service_type ||
-              "",
-            display_name:
-              values.shippingMethod?.display_name ||
-              values.shippingMethod?.method ||
-              "",
-            total_charge: Number(
-              values.shippingMethod?.total_charge ??
-                values.shippingMethod?.cost ??
-                0,
-            ),
-            currency: values.shippingMethod?.currency || "USD",
-            transit_days: values.shippingMethod?.transit_days ?? null,
-            delivery_date: values.shippingMethod?.delivery_date ?? null,
-            service_type: values.shippingMethod?.service_type || "",
-            is_fedex: !!values.shippingMethod?.is_fedex,
-
-            provider:
-              values.shippingMethod?.display_name ||
-              values.shippingMethod?.method ||
-              "",
-            method:
-              values.shippingMethod?.display_name ||
-              values.shippingMethod?.method ||
-              "",
-            cost: Number(
-              values.shippingMethod?.total_charge ??
-                values.shippingMethod?.cost ??
-                0,
-            ),
-            data:
-              values.shippingMethod?.display_name ||
-              values.shippingMethod?.method ||
-              "",
-          },
           isSaveAddressForBilling: values.saveAddress ? true : false,
           isSaveAddressForShipping: values?.shipping?.saveToAddressBook
             ? true
             : false,
           emailInvoice: values?.emailInvoice,
-          products:
-            values.selectedProducts?.map((product: any) => ({
-              productId: product.id,
-              quantity: product.quantity || 1,
-              ...(Number(product.actualPrice) !== Number(product.price)
-                ? { price: Number(product.price ?? 0) }
-                : {}),
-            })) || [],
           shippingDestinations:
             values.shippingDestinations?.map((dest: any) => ({
               address: {
@@ -424,7 +358,7 @@ export default function StepFour({ step, setStep, isEditMode, orderId }: any) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="p-10">
-        <OrderReview step={step} setStep={setStep} />
+        <OrderReview step={step} setStep={setStep} calculation={calculation} />
       </div>
       <div className="sticky bottom-0 w-full border-t p-6 bg-white flex justify-end gap-4">
         <Button

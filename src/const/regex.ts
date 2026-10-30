@@ -24,6 +24,11 @@ export const REGEX = {
   DECIMAL_SANITIZE: /[^\d.]/g,
   DECIMAL_DUPLICATE_POINT: /\.(.*)\./g,
   DECIMAL_LEADING_ZEROS: /^0+(?=\d)/,
+  // Splits at the first decimal point: "1.2.3" → "1." and "2.3"
+  DECIMAL_FIRST_POINT_SPLIT: /^(\d*\.)(.*)$/,
+  DECIMAL_POINTS: /\./g,
+  // A number string with two exponents, e.g. "1e-7e2" (can't be shifted by appending e<n>)
+  DOUBLE_EXPONENT: /e.*e/,
   // Gap before each group of three digits from the right, e.g. 1|234|567
   THOUSANDS_GROUP: /\B(?=(\d{3})+(?!\d))/g,
   SLUG_BLOCKED_CHARS: /[#$*&@!=+%`'":;<>{}[]|]/,
@@ -39,6 +44,10 @@ export const REGEX = {
 
   HAS_LETTER: /[a-zA-Z]/,
   HAS_NUMBER: /\d/,
+
+  // User agent
+  MOBILE_USER_AGENT: /mobile/i,
+  TABLET_USER_AGENT: /tablet/i,
 
   // HTTPS URL
   HTTPS_PREFIX: /^https:\/\//i,
