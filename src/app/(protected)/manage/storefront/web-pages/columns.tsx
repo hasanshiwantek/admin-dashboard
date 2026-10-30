@@ -3,7 +3,7 @@ import { convertOptionsToObject } from "@/lib/utils";
 import { LIST_PATH, PageTypeOptions } from "./[id]/constants";
 import EnableDisable from "@/components/common/EnableDisable";
 import ActionButton from "@/components/ActionButton/ActionButton";
-import { ActionEnums } from "@/const/appConstants";
+import { WEBPAGE_ROW_ACTION } from "./constant";
 export const getWebPageColumns = (
   onToggleVisibility: (page: any) => void,
   onAction: (page: any) => (actionType: string) => void,
@@ -56,12 +56,7 @@ export const getWebPageColumns = (
     render: (page: any) => (
       <ActionButton
         data={page}
-        actions={[
-          {
-            type: ActionEnums.EDIT,
-            label: "Edit",
-          },
-        ]}
+        actions={WEBPAGE_ROW_ACTION}
         onAction={onAction}
       />
     ),
